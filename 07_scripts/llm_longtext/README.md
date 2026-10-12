@@ -14,4 +14,4 @@ Steps (paths in the scripts point to the session scratchpad; change `S`/`R` to r
 4. `merge.py` – merges the JSONL outputs with the parser table.
 5. `fix.py`, `fix2.py` – the two manual review passes (5 collar cases aligned to Frettage; 32 loose E4 moves
    "câble manquant, à fournir" sent back from Amont to Manquant – câble).
-6. `out_build.py` – writes `05_outputs/fto2_defects_llm_longtext.csv` and `05_outputs/FTO2_llm_longtext_review.xlsx`.
+6. The labels were saved as `04_reference/llm_labels_longtext.csv`; `build/build_all.py` joins them and writes every output (the earlier `out_build.py` is gone).

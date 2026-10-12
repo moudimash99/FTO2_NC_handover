@@ -141,6 +141,10 @@ DEFECT_TIMES = {
     # --- Amont (upstream)
     "Amont · Câble":                             (5,  0.00,  "Upstream: cable",                        "Q12-003", "TEAM"),
     "Amont · Identification / barrette VT":      (5,  0.00,  "Upstream: identification or terminal block", "Q12-006", "TEAM"),
+    # --- classes of parser v4.8 / the long-text labelling with no line in the team table (Oct 2026): default time, to be set by the team
+    "Dommage – tresse de masse":                 (10, 0.00,  "Damage: ground braid",                   "Q11-009", "ASSUMED - no team time, default 10 min"),
+    "Mesure hors tolérance":                     (10, 0.00,  "Measurement out of tolerance",           "T06",     "ASSUMED - no team time, default 10 min"),
+    "Non classé":                                (10, 0.00,  "Not classified",                         "",        "ASSUMED - defect not described, default 10 min"),
 }
 DEFECT_FIELDS = ("minutes", "material_eur", "label_en", "reference_code", "basis")
 

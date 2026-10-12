@@ -42,7 +42,7 @@ PERIOD_START = "2026-01-01"    # first creation date counted on the dashboard
 PERIOD_END = ""                # empty = up to today. Only for the install check: "2026-07-06", then empty again.
 
 # Line shown on the dashboard: the first pattern found in the programme value wins.
-LINES = [("A350", r"350"), ("A330", r"330"), ("A400M", r"400"), ("A320", r"32\d")]
+LINES = [("A350", r"350"), ("A330", r"330"), ("A400M", r"400|^MT$"), ("A320", r"32\d")]   # A400M is "MT" in Skywise
 
 # RCA names shown on the charts. Left: code from the parser (do not change). Right: the name shown.
 RCA_NAMES = {

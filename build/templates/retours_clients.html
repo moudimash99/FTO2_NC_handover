@@ -371,7 +371,7 @@ window.RC = __DATA__;
         '<td class="nc">' + esc(r.nc) + (r.seq > 1 ? ' · ' + r.seq : '') + (r.scope ? '' : '<br><span class="tag out">' + esc(S('out')) + '</span>') + '</td>' +
         '<td class="num">' + esc(shortDay(r.date)) + '</td><td>' + esc(r.line) + '</td><td>' + esc(L(r.cat)) + '</td><td>' + esc(L(r.rca)) + '</td>' +
         '<td>' + esc(r.sub) + (r.nat ? '<br><span class="sym">' + esc(S('nat_' + r.nat)) + '</span>' : '') + '</td>' +
-        '<td class="why">' + esc(r.why) + (r.sym ? '<br><span class="sym">' + esc(S('iSym')) + ' : ' + esc(r.sym) + '</span>' : '') + '</td>' +
+        '<td class="why">' + esc(r.why) + (r.sym ? '<br><span class="sym">' + esc(S('iSym')) + (state.lang === 'fr' ? ' : ' : ': ') + esc(r.sym) + '</span>' : '') + '</td>' +
         '<td><span class="tag ' + r.conf + '">' + esc(S(r.conf)) + '</span></td></tr>';
       if (!open) return main;
       var info = [['iTitle', r.title], ['iPlant', r.plant], ['iLiab', r.liab], ['iGps', r.gps], ['iDet', r.det], ['iSym', r.sym], ['iCode', r.code], ['iParser', L(r.pcat)]]

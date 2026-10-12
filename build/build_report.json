@@ -1,0 +1,57 @@
+{
+  "inputs": {
+    "fto2_dashboard_data_12.csv": 1000,
+    "fto2_dashboard_data_missing_ids_3.csv": 127
+  },
+  "nc_rows": 1127,
+  "created_from": "2025-12-15",
+  "created_to": "2026-09-28",
+  "labels": {
+    "ok": 3098
+  },
+  "unknown_cnq_classes": [],
+  "cnq": {
+    "classification": "root cause (long text)",
+    "nc_on_aec": 856,
+    "level1": 403488.79,
+    "level2": 144264.77,
+    "level3": 181404.77,
+    "cable_allocated": 42747.88,
+    "cable_share": 0.2356,
+    "level3_parser": 182887.14,
+    "cable_share_parser": 0.2354
+  },
+  "scope": {
+    "FTO2": 786,
+    "Supprimée": 136,
+    "Fournisseur": 84,
+    "Retour client": 69,
+    "Hors périmètre": 52
+  },
+  "defects_by_scope": {
+    "FTO2": 2768,
+    "Supprimée": 152,
+    "Retour client": 69,
+    "Fournisseur": 64,
+    "Hors périmètre": 45
+  },
+  "cnq_package_checks": {
+    "build_dashboard.py": "OK",
+    "test_queries.py": "OK",
+    "test_dashboard.js": "OK"
+  },
+  "cnq_package_totals": {
+    "nc_rows": 1127,
+    "nc_on_aec": 856,
+    "nc_no_master_data": 0,
+    "level1_airbus_aec": 403488.79,
+    "level2_global_aec": 144264.77,
+    "level3_detailed_aec": 181404.77
+  },
+  "customer_returns": {
+    "in_scope_defects": 69,
+    "in_scope_ncs": 65,
+    "out_of_scope_ncs": 45
+  },
+  "review_disagreements": 330
+}

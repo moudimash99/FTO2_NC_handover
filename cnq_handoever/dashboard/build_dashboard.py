@@ -48,6 +48,8 @@ BASIS = {
 def basis(s):
     if s.startswith("TEAM RULE"):
         return {"flag": 0, "en": "Team rule", "fr": "Règle de l'équipe"}
+    if s.startswith("ASSUMED"):
+        return {"flag": 1, "en": "Assumed: no team time, default 10 min", "fr": "Hypothèse : pas de temps de l'équipe, 10 min par défaut"}
     f, en, fr = BASIS[s]
     return {"flag": f, "en": en, "fr": fr}
 
@@ -55,7 +57,7 @@ dates = pd.to_datetime(nc.date_creation)
 data = {
     "meta": {"version": P.MODEL_VERSION, "built": datetime.date.today().isoformat(),
              "from": dates.min().strftime("%Y-%m-%d"), "to": dates.max().strftime("%Y-%m-%d"),
-             "source": {"en": "FTO2 NC and defect datasets, parser v4.7", "fr": "jeux de données NC et défauts FTO2, parseur v4.7"}},
+             "source": {"en": "FTO2 NC and defect datasets: parser v4.8 defect lines, root-cause labels read from the full NC text", "fr": "jeux de données NC et défauts FTO2 : lignes de défaut du parseur v4.8, classées par cause racine à partir du texte complet"}},
     "rules": {k: dict(alert=v[0], write=v[1], support=v[2], work=v[3], recheck=v[4], eng=v[5], part=v[6], label={"en": v[7], "fr": RULE_FR[k]}) for k, v in P.RULES.items()},
     "airbusBasis": AIRBUS_BASIS,
     "classes": [{"k": k, "en": P.DEFECT_TIMES[k][2], "ref": P.DEFECT_TIMES[k][3], "basis": basis(P.DEFECT_TIMES[k][4])} for k in classes],

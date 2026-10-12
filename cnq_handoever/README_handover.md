@@ -1,6 +1,6 @@
 # Cost of non-quality (CNQ) for Airbus Electric Center - handover
 
-Version `cnq-2026.10`, updated 7 October 2026.
+Version `cnq-2026.10`, updated 7 October 2026. Figures refreshed 12 October 2026 on the current Skywise exports (see section 13).
 
 ## 1. What this is
 
@@ -28,16 +28,17 @@ into Slate.
 
 ## 2. Three levels, for the same NCs
 
-Only NCs where AEC is liable are counted (595 NCs, 5 Jan to 6 Jul 2026, parser v4.7 data).
+Only NCs where AEC is liable are counted (856 NCs, created 15 Dec 2025 to 28 Sep 2026). Defect lines come from parser v4.8 and are
+classified by root cause from the full NC text (`04_reference/llm_labels_longtext.csv`); with the parser v4.8 labels instead, level 3 is 182,887 EUR.
 
 | Level | What it does | Total | Per NC | Column |
 |---|---|---|---|---|
-| 1. Airbus transnational | Each NC at the official Airbus standard cost for its decision. No material. | 280,004 EUR | 471 EUR | `cnq_cost_airbus` |
-| 2. Global average | Each NC at AEC's average times: 30 min to write the NC, 1 hour of work for a rework. Plus material. | 102,500 EUR | 172 EUR | `cnq_cost_global` |
-| 3. Per defect | AEC's steps, with the work built from each defect found. Plus material. | 134,206 EUR | 226 EUR | `cnq_cost_total` |
+| 1. Airbus transnational | Each NC at the official Airbus standard cost for its decision. No material. | 403,489 EUR | 471 EUR | `cnq_cost_airbus` |
+| 2. Global average | Each NC at AEC's average times: 30 min to write the NC, 1 hour of work for a rework. Plus material. | 144,265 EUR | 169 EUR | `cnq_cost_global` |
+| 3. Per defect | AEC's steps, with the work built from each defect found. Plus material. | 181,405 EUR | 212 EUR | `cnq_cost_total` |
 
 Level 3 is the reference. Levels 1 and 2 are there to compare: what the general Airbus model would
-say, and what a flat average would say. NCs on other plants or suppliers (131 NCs, 15,746 EUR of
+say, and what a flat average would say. NCs on other plants or suppliers (271 NCs, 32,081 EUR of
 handling at level 3) are shown aside and are in none of the totals.
 
 ## 3. How one NC is costed, with examples
@@ -65,20 +66,20 @@ applied", 10 minutes.
 30 + 30 + 60 + 50 + 10 + 30 = 210 minutes. 210 / 60 x 50 = **175.00 EUR**. No material.
 
 **Example B - nine defects, found at final inspection (NC 216224176).**
-Hands-on: 6 connection errors x 35 min + 2 wrong electrical references x 30 min + 1 component out
-of order x 30 min = 300 minutes.
-30 + 60 (final inspection) + 60 + 50 + 300 + 30 = 530 minutes. 530 / 60 x 50 = 441.67 EUR, plus
-0.36 EUR of material = **442.03 EUR**.
+Hands-on: 6 connection errors x 35 min + 1 wrong electrical reference x 30 min + 1 component out
+of order x 30 min + 1 wrong identification x 4 min = 274 minutes.
+30 + 30 + 60 + 50 + 274 + 30 = 474 minutes. 474 / 60 x 50 = 395.00 EUR, plus
+4.61 EUR of material = **399.61 EUR**. (The NC type in the export is not "final inspection", so writing is 30 min.)
 
 **Example C - a one-minute defect.** Hands-on 1 minute. 50 + 1 = 51 minutes of work is under the
 minimum, so the time around the job becomes 59 minutes. The NC costs the same 175.00 EUR as
-example A. This applies to 130 AEC NCs.
+example A. This applies to 147 AEC NCs.
 
 Other decisions:
 
 | Decision | What is charged | Example |
 |---|---|---|
-| Rejection, scrap | Alert, writing, technical support, closing. No work. Plus the value of the part. | NC 16995857: 30 + 30 + 60 + 30 = 150 min = **125.00 EUR**. Part: 0 EUR, no price in the data. |
+| Rejection, scrap | Alert, writing, technical support, closing. No work. Plus the value of the part. | NC 216052773: 30 + 30 + 60 + 30 = 150 min = **125.00 EUR**. Part: 0 EUR, no price in the data. |
 | Deleted (any decision) | Alert and writing only | NC 216123618: 30 + 30 = 60 min = **50.00 EUR** |
 | Design query | Alert, writing, technical support, closing, plus 8 h of engineering at 78.16 EUR/h | NC 216733534: 125.00 + 625.28 = **750.28 EUR** |
 | Exchange | Same as rework, plus the value of the swapped part | |
@@ -89,7 +90,7 @@ Only the rework process was described by the team. The other rows are assumption
 
 ### Customer returns
 
-A customer return on AEC (45 NCs, 8,089 EUR) is in the total and is costed like any NC of its
+A customer return on AEC (69 NCs, 11,877 EUR; a customer return now requires FTO2 in `liability`) is in the total and is costed like any NC of its
 decision: only the handling of the NC is estimated. Two ways to go further, both already built:
 
 - `CUSTOMER_RETURN_EXTRA` in `cnq_params.py`: a flat amount added to every customer return
@@ -107,7 +108,7 @@ The same steps, but every NC gets the average times whatever its defects: 30 min
 NC and 1 hour of work for a rework. Material is added as in level 3.
 
 - Example A: 30 + 30 + 60 + 60 + 30 = 210 min = 175.00 EUR. Same as level 3.
-- Example B: 210 min = 175.00 EUR + 0.36 EUR material = **175.36 EUR**, against 442.03 EUR at level 3.
+- Example B: 210 min = 175.00 EUR + 4.61 EUR material = **179.61 EUR**, against 399.61 EUR at level 3.
   This is what the flat average hides: an NC with nine defects costs the same as one with one.
 
 ### Level 1, Airbus transnational
@@ -157,7 +158,7 @@ code table said 60 min.
 | `dashboard/cnq_dashboard.html` | Standalone dashboard, French / English, fully offline. One page: summary, how an NC is costed (steps, rules per decision, any real NC line by line), breakdown, customer returns, editable times, limits. |
 | `dashboard/build_dashboard.py` | Rebuilds the check sheet from the output datasets. |
 | `params/*.csv` | The parameters as three tables, for review. Generated from `cnq_params.py`. |
-| `sample_output/*.csv` | The two output datasets computed on the v4.7 data. |
+| `sample_output/*.csv` | The two output datasets computed on the current exports (parser v4.8 lines, root-cause labels). Rebuilt by `build/build_all.py`. |
 | `tests/run_local.py` | Runs the calculation on two CSV files and writes the expected totals. |
 | `tests/test_queries.py` | Runs every Slate query and checks the charts add up to the totals. |
 | `tests/test_dashboard.js` | Checks the check sheet gives the same cost as the pipeline for every NC. |
@@ -178,14 +179,13 @@ code table said 60 min.
 To check anything outside Foundry:
 
 ```
-python tests/run_local.py fto2_nc_v4_7.csv fto2_parsed_defects_v4_7.csv nc_with_counts.csv
+python3 build/build_all.py          (from the repository root: rebuilds everything and runs the two checks below)
 python tests/test_queries.py
-python dashboard/build_dashboard.py
 node tests/test_dashboard.js
 ```
 
-The third file of the first command is a stopgap: it supplies the columns the v4.7 NC export does
-not have yet.
+`tests/run_local.py <nc.csv> <defects.csv>` runs the calculation alone on any pair of CSV files, for example the first
+Foundry build. The NC file must carry the columns of section 7; `build_all.py` takes them from the Skywise export.
 
 ## 7. What the NC dataset must contain
 
@@ -228,24 +228,22 @@ confirms or rejects any of these times. The only way to firm them up is to time 
 
 ## 9. Known gaps, most important first
 
-1. **Parts have no price.** 97 AEC NCs are rejects, scraps or exchanges, and the lost part counts
+1. **Parts have no price.** 132 AEC NCs are rejects, scraps or exchanges, and the lost part counts
    as 0 EUR. To fix: add a `part_value` column (the SAP price of the rejected part, not of the
    assembly). The calculation already uses it when present.
 2. **Customer returns are under-estimated.** Only the handling of the NC is counted. Analysis,
    reply to the customer, transport and penalties are not, until the flat extra or the real
    amounts are filled in (section 3).
 3. **Connection errors rest on a borrowed time.** Swapped and wrong connections are the two most
-   frequent defects and cost 18,375 EUR of hands-on work, all at 35 minutes from a 2021 study.
-4. **57 AEC NCs are missing from the NC dataset.** They are in the Skywise export but not in the
-   v4.7 NC dataset, most likely because the parser found no defect line for them. They still cost
-   handling time. To fix: keep NCs with zero defect lines in the NC dataset.
-5. **150 NCs have no master data** (no status, programme or date). They cannot be costed and are
-   counted in the data-gap query.
+   frequent defects and cost 23,421 EUR of hands-on work, all at 35 minutes from a 2021 study.
+4. ~~57 AEC NCs missing from the NC dataset~~ **Solved (12 Oct):** the NC dataset is now built from the Skywise export
+   itself, so NCs with no defect line are kept (68 AEC NCs, 11,725 EUR, work at the flat 10-minute estimate).
+5. ~~150 NCs with no master data~~ **Solved (12 Oct):** every NC now carries its status, decision and liability from the export.
 6. **The class-to-time mapping is one person's judgement.** Each of the 40 parser classes was
    matched by meaning to one line of the team's code table. Someone who knows the work should
    review `params/cnq_defect_times.csv`, or the class table in the check sheet.
 7. **Two material figures look too high**: 45.20 EUR for a badly positioned identification plate
-   and 63.77 EUR for unfinished wiring. Together they drive about 3,500 EUR.
+   and 63.77 EUR for unfinished wiring. Together they drive about 3,200 EUR.
 8. **Routing and printing defects** are open points from the team's notes (section 4).
 9. **Other processes are assumptions.** Reject, exchange and design query have not been described
    by the team, and their level 1 match to the Airbus model is assumed too.
@@ -284,3 +282,21 @@ Edit `cnq/cnq_params.py`, rebuild, and the datasets and charts follow. If the pa
 `sous_groupe`, it gets a default 10 minutes until a line is added to `DEFECT_TIMES`; the data-gap
 query (`q14_data_gaps`) shows how many lines are affected. To try a value before committing it, use
 the check sheet: its changes stay in the browser.
+
+## 13. Refresh of 12 October 2026: one dataset for everything
+
+Every output is now rebuilt by one script from the raw Skywise exports:
+
+```
+python3 build/build_all.py
+```
+
+It reads `06_input_data/fto2_dashboard_data*.csv` (standard export + NCs fetched by number), runs parser v4.8, joins the
+root-cause labels, runs this CNQ model, rewrites `sample_output/`, `params/`, `tests/expected_totals.json` and
+`dashboard/cnq_dashboard.html`, then runs `tests/test_queries.py` and `tests/test_dashboard.js`. The same figures feed the
+FTO2 NC dashboard (`03_reports/FTO2_NC_Dashboard.html`, CNQ tab). `tests/run_local.py` still works on any pair of CSV files.
+
+Changes in the figures against the July version: longer period (to 28 Sep), parser v4.8, root-cause labels, NCs with no
+defect line kept, customer returns only when FTO2 is in `liability`. Three classes had no team time and now carry an explicit
+10-minute ASSUMED line in `DEFECT_TIMES`: damaged ground braid, measurement out of tolerance, not classified.
+Section 11 compares with the workbook on the July export and is kept as history.

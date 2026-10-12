@@ -39,3 +39,6 @@ Bleu non appliqué,2,0.0,Bonding protection not applied,Q09-001,TEAM
 Point de masse / mesure,5,0.0,Ground point or measurement,Q09-003,TEAM
 Amont · Câble,5,0.0,Upstream: cable,Q12-003,TEAM
 Amont · Identification / barrette VT,5,0.0,Upstream: identification or terminal block,Q12-006,TEAM
+Dommage – tresse de masse,10,0.0,Damage: ground braid,Q11-009,"ASSUMED - no team time, default 10 min"
+Mesure hors tolérance,10,0.0,Measurement out of tolerance,T06,"ASSUMED - no team time, default 10 min"
+Non classé,10,0.0,Not classified,,"ASSUMED - defect not described, default 10 min"

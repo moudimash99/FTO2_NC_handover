@@ -682,9 +682,9 @@ window.DASH = __DATA__;
     document.getElementById('cCableRange').innerHTML = [[S('rDirect'), cabDirect], [S('rAlloc'), cabAlloc], [S('rWhole'), cabWhole]].map(function (p) {
       return '<dt>' + esc(p[0]) + '</dt><dd>' + eur(p[1]) + ' · ' + pct(p[1] / t3 * 100) + '</dd>'; }).join('');
   }
-  // direct cost of a defect line = its allocated cost minus its share of the NC fixed part; recomputed from the NC: share = (c3 - work hands-on - material) / lines is not stored, so use the stored split
+  // direct cost (hands-on work + material) of each costed defect line, [parser, root cause]
   var DIRECT = D.direct || null;
-  function directCost(r) { return DIRECT ? (G.cls === 'L' ? DIRECT[r[0] + '|' + r[1]][1] : DIRECT[r[0] + '|' + r[1]][0]) : 0; }
+  function directCost(r) { var v = DIRECT && DIRECT[r[0] + '|' + r[1]]; return v ? v[G.cls === 'L' ? 1 : 0] : 0; }
 
   // ---------------------------------------------------------------- global switches, tabs, text
   function applyText() {
