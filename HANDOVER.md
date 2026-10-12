@@ -26,6 +26,7 @@ Read sections 1, 2 and 9 first. Everything else is reference. Every number below
 | Skywise dashboard pack v4.8 | Delivered, **install not confirmed**; 2 known fixes pending | `02_dashboard_pack/`, handover doc (section 10) |
 | Real pipeline notebook | Running in Skywise today, uses an older parser; read-only context | `06_input_data/pipeline_notebook.py`, section 5 |
 | Professional FR/EN Pareto dashboard (offline HTML) | Done | `03_reports/FTO2_Pareto_defauts.html` |
+| Merged NC dashboard: Pareto · weekly Pareto · CNQ (FR/EN, root-cause or parser classification, clickable filters) | Done 12 Oct; CNQ run on v4.8 data with `cnq_handoever/` model | `03_reports/FTO2_NC_Dashboard.html`, https://claude.ai/artifact/988FNWFkPFRB1aPiBU2Tg1, `07_scripts/dashboard/`, `05_outputs/fto2_nc_cnq_v48_*.csv` |
 | Customer returns page (FR/EN, clickable filters + defect table), corrected scope = FTO2 in `liability` | Done 12 Oct | `03_reports/FTO2_Retours_clients.html`, https://claude.ai/artifact/MqRPgo7bmHEpKv9UTXPJ4C |
 | Cable defects analysis | Findings done, **decision pending** (options A–D) | section 6, Docs "FTO2 Cable Defects – Findings" |
 | REC tagging | Rule + regex proposed, **definition decision and precision check pending** | section 7, Docs "REC NC Tagging – Findings" |
