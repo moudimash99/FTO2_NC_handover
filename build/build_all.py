@@ -20,8 +20,7 @@ Outputs:
     05_outputs/fto2_defects_cnq.csv, fto2_nc_cnq.csv             CNQ step output (parser classification, as in Skywise)
     05_outputs/FTO2_defects_detail.xlsx                          one row per defect, all columns, live summary
     05_outputs/FTO2_llm_longtext_review.xlsx                     disagreements parser vs long-text labels, to review
-    03_reports/FTO2_NC_Dashboard.html                            Pareto · weekly Pareto · CNQ
-    03_reports/FTO2_Retours_clients.html                         customer returns with the NC texts
+    03_reports/FTO2_NC_Dashboard.html                            Pareto · weekly Pareto · CNQ · customer returns · root causes
     cnq_handoever/sample_output, tests/expected_totals.json, params/*.csv, dashboard/cnq_dashboard.html
     build/build_report.json                                      counts and checks of this run
 """
