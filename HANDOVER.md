@@ -29,6 +29,7 @@ Read sections 1, 2 and 9 first. Everything else is reference. Every number below
 | Cable defects analysis | Findings done, **decision pending** (options A–D) | section 6, Docs "FTO2 Cable Defects – Findings" |
 | REC tagging | Rule + regex proposed, **definition decision and precision check pending** | section 7, Docs "REC NC Tagging – Findings" |
 | Full defect table for the presentation | Done | `05_outputs/FTO2_defects_detail_v48.xlsx` |
+| LLM re-labelling with full long text + root-cause rule (Sonnet, in-session) | Done 12 Oct; 303 FTO2 disagreements with parser **awaiting Mohammad's verdicts** | `05_outputs/FTO2_llm_longtext_review.xlsx`, `07_scripts/llm_longtext/` |
 | H1 2026 deep dive, writing standard, entry-tool spec | Done (Aug–Sep), not deployed | section 8, `03_reports/` |
 | CNQ reconciliation (predecessor files vs official method M1888 / UG2600252) | Mentioned by Mohammad, **not started here** | — |
 
