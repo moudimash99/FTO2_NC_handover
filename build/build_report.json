@@ -62,11 +62,16 @@
     "level2_global_aec": 144264.77,
     "level3_detailed_aec": 181404.77
   },
-  "rca_without_definition": [],
   "customer_returns": {
-    "in_scope_defects": 69,
-    "in_scope_ncs": 65,
-    "out_of_scope_ncs": 45
+    "ncs": 69,
+    "defects": 69,
+    "damage_types": {
+      "phys": 16,
+      "hs": 4,
+      "recu": 2,
+      "nc": 1
+    }
   },
+  "rca_without_definition": [],
   "review_disagreements": 301
 }

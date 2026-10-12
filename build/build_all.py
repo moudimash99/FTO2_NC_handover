@@ -193,8 +193,7 @@ def main():
     # ======================================================== 4a. CNQ package: same data, same totals
     refresh_cnq_package(nc_in, d)
     # ======================================================== 4b. pages and workbooks
-    build_dashboard(d, nc_ref)
-    build_customer_returns(d, nc_ref, lt)
+    build_dashboard(d, nc_ref, lt)
     build_review(d, lt)
     build_detail(d, nc_ref, x)
     json.dump(REPORT, open(os.path.join(ROOT, "build", "build_report.json"), "w"), indent=2, ensure_ascii=False, default=str)
@@ -246,7 +245,7 @@ def _page(template, data, name):
 S_ = lambda v: "" if v is None or (isinstance(v, float) and np.isnan(v)) else str(v)
 
 
-def build_dashboard(d, nc):
+def build_dashboard(d, nc, lt):
     rca = lambda t: L.RCA_NAMES.get(t, t)
     ncd = nc.set_index("notification_number")
     defs = []
@@ -255,7 +254,7 @@ def build_dashboard(d, nc):
                      r.groupe, rca(r.rca_type), r.sous_groupe, int(bool(r.mineur)), int(bool(r.defaut_cable)),
                      r.llm_categorie, r.llm_rca_nom, r.llm_sous_categorie, int(bool(r.llm_mineur)), int(bool(r.llm_defaut_cable)),
                      round(float(r.cnq_cost_allocated), 2), round(float(r.cnq_cost_allocated_llm), 2), S_(r.text)[:220],
-                     S_(r.llm_raison).split(" | revue")[0][:160], r.scope, S_(r.phase)])
+                     "", r.scope, S_(r.phase)])   # [19] kept empty: the labelling notes are working notes, not for the page
     ncs = []
     for r in nc.itertuples():
         if not r.date_creation:
@@ -268,11 +267,14 @@ def build_dashboard(d, nc):
     direct = {"%s|%d" % (r.notification_number, r.seq): [round(float(r.cnq_cost_direct), 2), round(float(r.cnq_cost_direct_llm), 2)]
               for r in d.itertuples() if r.cnq_cost_allocated or r.cnq_cost_allocated_llm}
     aec = nc[nc.cnq_on_aec == 1]
-    aside = [[k, int((aec.cnq_rule == "DELETED").sum() if k == "deleted" else ((aec.scope == "") & (aec.cnq_rule != "DELETED")).sum()),
-              round(float(aec.loc[(aec.cnq_rule == "DELETED") if k == "deleted" else ((aec.scope == "") & (aec.cnq_rule != "DELETED")), "cnq_cost_total"].sum()), 2)]
-             for k in ("deleted", "other")]
-    data = {"defects": defs, "ncs": ncs, "direct": direct, "rca": rca_reference(d),
-            "meta": {"from": "2026-01-01", "to": REPORT["created_to"], "aside": aside, "modelTotal": round(float(aec.cnq_cost_total.sum()), 2)}}
+    dele, other = aec.cnq_rule == "DELETED", (aec.scope == "") & (aec.cnq_rule != "DELETED")
+    aside = {"deleted": [int(dele.sum()), round(float(aec.loc[dele, "cnq_cost_total"].sum()), 2)],
+             "other": [int(other.sum()), round(float(aec.loc[other, "cnq_cost_total"].sum()), 2)]}
+    no_line = int(((nc.scope == "serie") & (nc.cnq_defect_lines == 0)).sum())
+    client, lt_client = customer_return_extras(d, nc, lt)
+    data = {"defects": defs, "ncs": ncs, "direct": direct, "rca": rca_reference(d), "client": client, "lt": lt_client,
+            "meta": {"from": "2026-01-01", "to": REPORT["created_to"], "aside": aside, "noLine": no_line,
+                     "modelTotal": round(float(aec.cnq_cost_total.sum()), 2)}}
     _page("dashboard.html", data, "FTO2_NC_Dashboard.html")
 
 
@@ -300,11 +302,11 @@ def rca_reference(d):
     return out
 
 
-def build_customer_returns(d, nc, lt):
+def customer_return_extras(d, nc, lt):
+    """Customer-return tab: damage type, detection, observed consequence, cause text, plant, liability; and the NC texts."""
     ncd = nc.set_index("notification_number")
-    r = d[d.perimetre.isin(["Retour client", "Hors périmètre"])]
-    r = r[r.notification_number.map(lambda n: ncd.at[n, "plant"] != "FTO2")]
-    rows = []
+    r = d[d.scope == "client"]
+    extra, texts = {}, {}
     for x in r.itertuples():
         n = ncd.loc[x.notification_number]
         L_ = lt.get(x.notification_number, "")
@@ -320,16 +322,12 @@ def build_customer_returns(d, nc, lt):
                 nat = "nc"
             else:
                 nat = "phys"
-        rows.append({"nc": x.notification_number, "seq": int(x.seq), "date": x.date_creation, "line": S_(x.ligne), "plant": S_(n.plant),
-                     "liab": S_(n.liability), "scope": int(x.perimetre == "Retour client"), "gps": S_(n.gps_type_nc), "title": S_(n.description_short),
-                     "cat": x.llm_categorie, "rca": x.llm_rca_nom, "sub": x.llm_sous_categorie, "code": S_(x.llm_sous_code),
-                     "why": S_(x.llm_raison).split(" | revue")[0], "sym": S_(x.llm_symptome), "conf": S_(x.llm_confiance) or "medium",
-                     "pcat": x.groupe, "snip": S_(x.text)[:600], "lt": L_[:2200], "det": det, "nat": nat})
-    rows.sort(key=lambda z: (z["date"], z["nc"], z["seq"]), reverse=True)
-    REPORT["customer_returns"] = {"in_scope_defects": sum(z["scope"] for z in rows), "in_scope_ncs": len({z["nc"] for z in rows if z["scope"]}),
-                                  "out_of_scope_ncs": len({z["nc"] for z in rows if not z["scope"]})}
-    no_line = int(((nc.scope == "client") & (nc.cnq_defect_lines == 0)).sum())
-    _page("retours_clients.html", {"rows": rows, "meta": {"from": "2026-01-01", "to": REPORT["created_to"], "ncNoLine": no_line}}, "FTO2_Retours_clients.html")
+        sym = S_(x.llm_symptome)
+        extra["%s|%d" % (x.notification_number, x.seq)] = [nat, det, sym[:1].upper() + sym[1:], "", S_(n.plant), S_(n.liability)]
+        texts[x.notification_number] = L_[:2500]
+    REPORT["customer_returns"] = {"ncs": int((nc.scope == "client").sum()), "defects": int(len(r)),
+                                  "damage_types": pd.Series([v[0] for v in extra.values() if v[0]]).value_counts().to_dict()}
+    return extra, texts
 
 
 # ============================================================ workbooks

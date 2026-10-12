@@ -26,9 +26,8 @@ Read sections 1, 2 and 9 first. Everything else is reference. Every number below
 | Skywise dashboard pack v4.8 | Delivered, **install not confirmed**; MT → A400M and customer-return scope fixed 12 Oct; A400M chart still to drop | `02_dashboard_pack/`, handover doc (section 10) |
 | Real pipeline notebook | Running in Skywise today, uses an older parser; read-only context | `06_input_data/pipeline_notebook.py`, section 5 |
 | **One build for everything** | Done 12 Oct: `python3 build/build_all.py` rebuilds every table, page, workbook and the CNQ package from the raw exports | `build/`, section 2b |
-| NC dashboard: Pareto · weekly Pareto · CNQ (FR/EN, root-cause labels by default, parser as option, clickable filters) | Done 12 Oct | `03_reports/FTO2_NC_Dashboard.html`, https://claude.ai/artifact/988FNWFkPFRB1aPiBU2Tg1 |
+| NC dashboard for presentation, five tabs: Pareto · weekly Pareto · CNQ (series) · customer returns · root causes (RCA); FR/EN, root-cause classification | Done 12 Oct | `03_reports/FTO2_NC_Dashboard.html`, https://claude.ai/artifact/988FNWFkPFRB1aPiBU2Tg1 |
 | CNQ model (Mohammad's `cnq_handoever/`) | Refreshed on the same data: 181,405 EUR level 3, 856 NCs; cables 23.6 % | `cnq_handoever/README_handover.md` section 13 |
-| Customer returns page (FR/EN, clickable filters + defect table), corrected scope = FTO2 in `liability` | Done 12 Oct | `03_reports/FTO2_Retours_clients.html`, https://claude.ai/artifact/MqRPgo7bmHEpKv9UTXPJ4C |
 | Cable defects analysis | Findings done, **decision pending** (options A–D) | section 6, Docs "FTO2 Cable Defects – Findings" |
 | REC tagging | Rule + regex proposed, **definition decision and precision check pending** | section 7, Docs "REC NC Tagging – Findings" |
 | Full defect table | Done, rebuilt 12 Oct with both classifications and CNQ | `05_outputs/FTO2_defects_detail.xlsx` |
@@ -53,7 +52,7 @@ Reporting scope, the same on every page (column `scope` in `fto2_nc.csv` / `fto2
 FTO2 in `liability`, not deleted (727 NCs, 2,709 defects, 63 NCs without a defect line, all A400M with redacted text);
 **Retours clients** = raised elsewhere with FTO2 in `liability` (69 NCs, 69 defects). CNQ: Série 166,428 EUR + Retours 11,877 EUR;
 the model total 181,405 EUR also counts 59 deleted NCs (2,975 EUR) and 1 supplier NC (125 EUR), shown aside on the CNQ tab.
-The dashboard has four tabs: Pareto, weekly Pareto, CNQ, Causes (RCA). The RCA tab explains the hierarchy
+The dashboard is meant to be presented: five tabs (Pareto, weekly Pareto and CNQ on the series scope; customer returns; root causes), one classification (root cause), no working notes on the page; the parser labels stay in the files. The separate customer-returns page is retired (`03_reports/archive/`). The RCA tab explains the hierarchy
 (123 official sub-codes → 42 sub-categories → 25 RCA → 9 categories); definitions are in `04_reference/rca_definitions.csv`
 (FR/EN, written 12 Oct from the code sheet, **to be checked by Mohammad**).
 
@@ -262,7 +261,7 @@ Full detail: `03_reports/dossier_stage_NC.md` (French master dossier) and `NC_de
 
 - Skywise NC Dashboard Handover (install guide for pack v4.8): https://claude.ai/code/artifact/691b9b8e-8254-4684-a8db-75a332082083
 - FTO2 NC Dashboard (Pareto · weekly · CNQ): https://claude.ai/artifact/988FNWFkPFRB1aPiBU2Tg1
-- FTO2 Customer Returns: https://claude.ai/artifact/MqRPgo7bmHEpKv9UTXPJ4C
+- Superseded (now a tab of the dashboard): FTO2 Customer Returns https://claude.ai/artifact/MqRPgo7bmHEpKv9UTXPJ4C
 - Superseded: FTO2 Defect Pareto (July data) https://claude.ai/artifact/M6Ge6BcdZwxPRo3A8LD3dM
 - FTO2 Cable Defects – Findings: https://claude.ai/artifact/UNhxy243Yyco6n15hzppNm
 - REC NC Tagging – Findings: https://claude.ai/artifact/5H6psRy637FS91KfsKBF4s
@@ -288,11 +287,11 @@ Full detail: `03_reports/dossier_stage_NC.md` (French master dossier) and `NC_de
 | --- | --- |
 | `01_parser/` | `nc_defect_parser.py` v4.8 (current); `archive/` v4.5–v4.7 and the Sep v1 |
 | `02_dashboard_pack/` | Install pack v4.8 (pipeline, Slate queries, check values, reference) + zips v1 and v4.8 |
-| `03_reports/` | **FTO2_NC_Dashboard.html**, **FTO2_Retours_clients.html** (both built); H1 dossier, deep dive, classification spec, code-sheet analysis, taxonomy notes, writing standard, entry-tool spec, findings PDF/HTML, presentation (H1 work, kept as is); `archive/` old Pareto page and Slate preview (July data) |
+| `03_reports/` | **FTO2_NC_Dashboard.html** (built); H1 dossier, deep dive, classification spec, code-sheet analysis, taxonomy notes, writing standard, entry-tool spec, findings PDF/HTML, presentation (H1 work, kept as is); `archive/` old Pareto page and Slate preview (July data), retired customer-returns page |
 | `04_reference/` | Official codes, sub-category reference, mappings, codes to verify, **root-cause labels per defect line** (`llm_labels_longtext.csv`, input of the build) |
 | `05_outputs/` | Built by `build/build_all.py`: `fto2_defects.csv`, `fto2_nc.csv` (reference datasets), `fto2_*_cnq.csv`, `FTO2_defects_detail.xlsx`, `FTO2_llm_longtext_review.xlsx`. `archive/`: older snapshots (v4.1–v4.7, NC table v4.7, old LLM sub-codes and review list, cable review files, count disagreements) |
 | `06_input_data/` | Inputs Mohammad uploaded: dashboard export, missing IDs, nc-rec, REC tracker, cable team tracker, MFT action trackers (A330/A350), pipeline notebook, earlier REC note, sample NC text, code sheet text |
 | `07_scripts/` | `rec_checks.py`, `cable_check.py`, `llm_longtext/` (how the root-cause labels were made) (+ older working scripts in `archive/`) |
-| `build/` | `build_all.py` (one script for every output), `templates/` (the two HTML pages), `build_report.json` (counts and checks of the last run) |
+| `build/` | `build_all.py` (one script for every output), `templates/dashboard.html` (the dashboard page), `build_report.json` (counts and checks of the last run) |
 | `cnq_handoever/` | Mohammad's CNQ model, refreshed on the same data (README section 13) |
 | `08_tools/` | NC entry tool prototypes (JSX), logic flow (Mermaid), old Slate SQL and preview |
