@@ -101,6 +101,17 @@ select { font: inherit; font-size: 13.5px; padding: 5px 10px; border: 1px solid 
 .bars.pareto .bar { grid-template-columns: minmax(0, 13em) minmax(0, 1fr) 4.2em 3.6em; }
 .bars.money.pareto .bar { grid-template-columns: minmax(0, 13em) minmax(0, 1fr) 6.4em 3.6em; }
 .bars.longname .bar { grid-template-columns: minmax(0, 40em) minmax(0, 1fr) 4.2em; }
+.bars.x2 .bar { grid-template-columns: minmax(0, 13em) minmax(0, 1fr) 6.4em 4.2em 4.2em; }
+.bars.x2.pareto .bar { grid-template-columns: minmax(0, 13em) minmax(0, 1fr) 6.4em 4.2em 4.2em 3.6em; }
+.bars.x2.longname .bar { grid-template-columns: minmax(0, 34em) minmax(0, 1fr) 6.4em 4.2em 4.2em; }
+.bar .ext { text-align: right; font-variant-numeric: tabular-nums; color: var(--ink-2); }
+.barhead { display: grid; gap: 10px; padding: 0 4px; font-size: 11.5px; color: var(--muted); text-align: right; }
+.bars.x2 .barhead { grid-template-columns: minmax(0, 13em) minmax(0, 1fr) 6.4em 4.2em 4.2em; }
+.bars.x2.pareto .barhead { grid-template-columns: minmax(0, 13em) minmax(0, 1fr) 6.4em 4.2em 4.2em 3.6em; }
+.bars.x2.longname .barhead { grid-template-columns: minmax(0, 34em) minmax(0, 1fr) 6.4em 4.2em 4.2em; }
+.card:not(.wide) .bars.x2 .bar, .card:not(.wide) .bars.x2 .barhead { grid-template-columns: minmax(0, 1fr) 5.6em 3.6em 3.8em; row-gap: 3px; }
+.card:not(.wide) .bars.x2 .bar .track { grid-column: 1 / -1; grid-row: 2; height: 6px; }
+.card:not(.wide) .bars.x2 .barhead span:nth-child(2) { display: none; }
 .bar:hover { background: var(--track); }
 .bar .name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .bar .track { position: relative; height: 13px; background: var(--track); border-radius: 2px; }
@@ -220,6 +231,11 @@ footer p { max-width: none; }
   .bar, .bars.pareto .bar { grid-template-columns: minmax(0, 9em) minmax(0, 1fr) 3.6em; }
   .bars.pareto .bar .cum { display: none; }
   .bars.longname .bar { grid-template-columns: minmax(0, 1fr) 4em 3.4em; }
+  .bars.x2 .bar, .bars.x2.pareto .bar, .bars.x2.longname .bar, .bars.x2 .barhead, .bars.x2.pareto .barhead, .bars.x2.longname .barhead { grid-template-columns: minmax(0, 7em) minmax(0, 1fr) 4.6em 3em 3em; }
+  .bars.x2 .cum, .bars.x2 .barhead .cumh { display: none; }
+  .card .bars.x2.money .bar, .card .bars.x2.money .barhead { grid-template-columns: minmax(0, 1fr) 5em 3em 3.4em; row-gap: 3px; }
+  .bars.x2 .bar .track { grid-column: 1 / -1; grid-row: 2; height: 6px; }
+  .bars.x2 .barhead span:nth-child(2) { display: none; }
   .bars.money .bar, .bars.money.pareto .bar { grid-template-columns: minmax(0, 8em) minmax(0, 1fr) 5.8em; }
   .level { grid-template-columns: minmax(0, 9em) minmax(0, 1fr) 6.4em; }
 }
@@ -418,9 +434,9 @@ window.DASH = {"defects":[["216055047",1,"2026-01-06","2026-W02","A350","FTO2","
       tabPareto: 'Pareto', tabCost: 'Pareto des coûts', tabWeek: 'Pareto hebdomadaire', tabCnq: 'Coût de non-qualité', tabClient: 'Retours clients', tabRca: 'Causes (RCA)',
       serieSub: 'NC émises à FTO2 sous responsabilité FTO2.',
       paretoTitle: 'Pareto des défauts', costTitle: 'Pareto des coûts de non-qualité',
-      costSub: 'Même Pareto, en euros : le coût de chaque NC série est réparti entre ses défauts.',
+      costSub: 'Même Pareto, en euros : le coût de chaque NC série est réparti entre ses défauts. Les colonnes Défauts et NC donnent le volume correspondant.',
       kTotal: 'Coût de non-qualité, série', kPerNc: 'Coût moyen par NC', kTop: 'Première cause en coût', topCostSub: '{e} · {p}',
-      tblCost: 'Détail des défauts et de leur coût', cCost: 'Coût réparti', weekTitle: 'Pareto hebdomadaire', cnqTitle: 'Coût de non-qualité', clientTitle: 'Retours clients',
+      tblCost: 'Détail des défauts et de leur coût', cCost: 'Coût réparti', hCost: 'Coût', hDef: 'Défauts', hNc: 'NC', hCum: 'Cumul', cShare: 'Part de NC', ncShareNote: 'NC : chaque NC est partagée entre ses défauts (1 défaut d’une NC qui en compte 35 = 1/35 de NC).', weekTitle: 'Pareto hebdomadaire', cnqTitle: 'Coût de non-qualité', clientTitle: 'Retours clients',
       clientSub: 'NC émises hors de FTO2 (lignes d’assemblage, clients) sous responsabilité FTO2.',
       rcaTitle: 'Les causes des défauts (RCA)', rcaSub: 'Définition de chaque cause, sous-catégories et codes officiels, chiffres et exemples réels.',
       figDefects: 'Défauts', figNcs: 'NC', figPerNc: 'Défauts par NC (moyenne)', figTopRca: 'Première cause', topSub: '{n} défauts · {p}',
@@ -467,9 +483,9 @@ window.DASH = {"defects":[["216055047",1,"2026-01-06","2026-W02","A350","FTO2","
       tabPareto: 'Pareto', tabCost: 'Cost Pareto', tabWeek: 'Weekly Pareto', tabCnq: 'Cost of non-quality', tabClient: 'Customer returns', tabRca: 'Root causes (RCA)',
       serieSub: 'NCs raised at FTO2 that FTO2 is liable for.',
       paretoTitle: 'Defect Pareto', costTitle: 'Cost of non-quality Pareto',
-      costSub: 'Same Pareto, in euros: each series NC’s cost is shared among its defects.',
+      costSub: 'Same Pareto, in euros: each series NC’s cost is shared among its defects. The Defects and NCs columns give the matching volume.',
       kTotal: 'Cost of non-quality, series', kPerNc: 'Average cost per NC', kTop: 'Top root cause by cost', topCostSub: '{e} · {p}',
-      tblCost: 'Defect and cost detail', cCost: 'Allocated cost', weekTitle: 'Weekly Pareto', cnqTitle: 'Cost of non-quality', clientTitle: 'Customer returns',
+      tblCost: 'Defect and cost detail', cCost: 'Allocated cost', hCost: 'Cost', hDef: 'Defects', hNc: 'NCs', hCum: 'Cumulative', cShare: 'NC share', ncShareNote: 'NCs: each NC is shared among its defects (1 defect of an NC that has 35 = 1/35 of an NC).', weekTitle: 'Weekly Pareto', cnqTitle: 'Cost of non-quality', clientTitle: 'Customer returns',
       clientSub: 'NCs raised outside FTO2 (assembly lines, customers) that FTO2 is liable for.',
       rcaTitle: 'Root causes of defects (RCA)', rcaSub: 'Definition of each root cause, its sub-categories and official codes, figures and real examples.',
       figDefects: 'Defects', figNcs: 'NCs', figPerNc: 'Defects per NC (average)', figTopRca: 'Top root cause', topSub: '{n} defects · {p}',
@@ -592,7 +608,7 @@ window.DASH = {"defects":[["216055047",1,"2026-01-06","2026-W02","A350","FTO2","
       c.innerHTML = '<div class="card-head"><h3 data-t="' + d.t + '"></h3><button type="button" class="clear-one" data-dim="' + d.k + '" hidden></button></div>' +
         (d.sub ? '<p class="sub" data-t="' + d.sub + '"></p>' : '') + (d.split && !d.nokey ? '<div class="key" data-key="1"></div>' : '') +
         (d.cols ? '<div class="cols-wrap"><div class="cols" id="' + o.grid + '-' + d.k + '"></div></div>' :
-          '<div class="bars' + (d.pareto ? ' pareto' : '') + (d.longName ? ' longname' : '') + (o.money ? ' money' : '') + '" id="' + o.grid + '-' + d.k + '"></div>');
+          '<div class="bars' + (d.pareto ? ' pareto' : '') + (d.longName ? ' longname' : '') + (o.money ? ' money' : '') + (o.extras ? ' x2' : '') + '" id="' + o.grid + '-' + d.k + '"></div>');
       grid.appendChild(c);
     });
     grid.addEventListener('click', function (e) {
@@ -629,8 +645,9 @@ window.DASH = {"defects":[["216055047",1,"2026-01-06","2026-W02","A350","FTO2","
     b.renderDim = function (d) {
       var all = b.base(), rs = b.filtered(d.k), m = {}, base = {};
       all.forEach(function (r) { var v = d.get(r); if (v != null && v !== '') base[v] = 1; });
-      var m2 = {};
-      rs.forEach(function (r) { var v = d.get(r); if (v != null && v !== '') { m[v] = (m[v] || 0) + measure(r); if (d.split && d.split(r)) m2[v] = (m2[v] || 0) + measure(r); } });
+      var m2 = {}, ex = (o.extras || []).map(function () { return {}; });
+      rs.forEach(function (r) { var v = d.get(r); if (v != null && v !== '') { m[v] = (m[v] || 0) + measure(r); if (d.split && d.split(r)) m2[v] = (m2[v] || 0) + measure(r);
+        (o.extras || []).forEach(function (x, i) { ex[i][v] = (ex[i][v] || 0) + x.f(r); }); } });
       var vals = Object.keys(base);
       vals = d.order ? d.order(vals) : vals.sort(function (x, y) { return (m[y] || 0) - (m[x] || 0) || (x < y ? -1 : 1); });
       if (d.pareto) { var main = vals.filter(function (v) { return !ASIDE[v]; }).sort(function (x, y) { return (m[y] || 0) - (m[x] || 0); }), side = vals.filter(function (v) { return ASIDE[v]; }); vals = main.concat(side); }
@@ -650,7 +667,8 @@ window.DASH = {"defects":[["216055047",1,"2026-01-06","2026-W02","A350","FTO2","
       } else {
         var totMain = 0; if (d.pareto) vals.forEach(function (v) { if (!ASIDE[v]) totMain += m[v] || 0; });
         var cum = 0, sepDone = false;
-        el.innerHTML = vals.map(function (v) {
+        var hd = o.extras ? '<div class="barhead" aria-hidden="true"><span></span><span></span><span>' + esc(S('hCost')) + '</span>' + o.extras.map(function (x) { return '<span>' + esc(S(x.t)) + '</span>'; }).join('') + (d.pareto ? '<span class="cumh">' + esc(S('hCum')) + '</span>' : '') + '</div>' : '';
+        el.innerHTML = hd + vals.map(function (v) {
           var n = m[v] || 0, on = b.f[d.k] === v, lab = esc(d.show(v)), aside = d.pareto && ASIDE[v], head = '';
           if (aside && !sepDone) { sepDone = true; head = '<div class="sep">' + esc(S('aside')) + '</div>'; }
           if (d.pareto && !aside) cum += n;
@@ -659,6 +677,7 @@ window.DASH = {"defects":[["216055047",1,"2026-01-06","2026-W02","A350","FTO2","
           var tip = d.split ? lab + ' : ' + S('ofWhichCable', { n: fmt(n), c: fmt(c2) }) : lab;
           return head + '<button type="button" class="bar' + (n ? '' : ' zero') + (aside ? ' aside' : '') + '" data-dim="' + d.k + '" data-v="' + esc(v) + '" aria-pressed="' + on + '" title="' + tip + '" aria-label="' + tip + '">' +
             '<span class="name">' + lab + '</span><span class="track"><span class="fill" style="width:' + (n / max * 100) + '%">' + cab + '</span>' + tick + '</span><span class="val">' + fmt(n) + '</span>' +
+            (o.extras || []).map(function (x, i) { return '<span class="ext">' + x.fmt(ex[i][v] || 0) + '</span>'; }).join('') +
             (d.pareto ? '<span class="cum">' + (aside || !totMain ? '' : pct0(cum / totMain * 100)) + '</span>' : '') + '</button>';
         }).join('');
       }
@@ -728,11 +747,16 @@ window.DASH = {"defects":[["216055047",1,"2026-01-06","2026-W02","A350","FTO2","
   })();
   function kCost(u) { return u.d ? dAlloc(u.d) : u.n[12]; }
   function kCab(u) { return !!(u.d && dCable(u.d)); }
+  // NC share: each NC counts once, shared equally among its defect lines (1/35 for an NC with 35 defects)
+  var NLINES = {}; D.defects.forEach(function (r) { NLINES[r[0]] = (NLINES[r[0]] || 0) + 1; });
+  function kShare(u) { return u.d ? 1 / NLINES[u.d[0]] : 1; }
   var costPareto = Board({
     grid: 'kg', chips: 'kc', search: 'kq', count: 'kn', thead: 'kth', tbody: 'ktb', more: 'km', money: true,
     rows: function () { return COST_UNITS.filter(function (u) { return !u.d || keepMinor(u.d); }); }, measure: kCost,
+    extras: [{ t: 'hDef', f: function (u) { return u.d ? 1 : 0; }, fmt: function (n) { return num(n); } },
+             { t: 'hNc', f: kShare, fmt: function (n) { return (Math.round(n * 10) / 10).toLocaleString(loc(), { minimumFractionDigits: n > 0 && n < 100 ? 1 : 0, maximumFractionDigits: 1 }); } }],
     dims: [
-      { k: 'cat', t: 'dCat', sub: 'paretoSub', wide: true, pareto: true, split: kCab, get: function (u) { return u.d ? dCat(u.d) : '__none'; }, show: function (v) { return v === '__none' ? S('noLine') : L(v); } },
+      { k: 'cat', t: 'dCat', sub: 'ncShareNote', wide: true, pareto: true, split: kCab, get: function (u) { return u.d ? dCat(u.d) : '__none'; }, show: function (v) { return v === '__none' ? S('noLine') : L(v); } },
       { k: 'rca', t: 'dRca', top: 15, split: kCab, get: function (u) { return u.d ? dRca(u.d) : null; }, show: L },
       { k: 'cable', t: 'dCable', sub: 'cableSub', split: kCab, nokey: true, get: function (u) { return kCab(u) ? 'c' : 'n'; }, show: function (v) { return v === 'c' ? S('cable') : S('notCable'); }, order: function () { return ['c', 'n']; } },
       { k: 'line', t: 'dLine', get: function (u) { return u.n[3]; }, show: function (v) { return v; }, order: lineOrder },
@@ -742,11 +766,11 @@ window.DASH = {"defects":[["216055047",1,"2026-01-06","2026-W02","A350","FTO2","
     ],
     text: function (u) { return u.n[0] + ' ' + u.n[22] + ' ' + (u.d ? defectText(u.d) : ''); },
     sort: function (a, b2) { return kCost(b2) - kCost(a); },
-    head: function () { return [['cNc'], ['cDate'], ['cLine'], ['cCat'], ['cRca'], ['cCode'], ['cCab'], ['cCost', 'r'], ['cText']].map(function (p) { return '<th scope="col"' + (p[1] ? ' class="r"' : '') + '>' + esc(S(p[0])) + '</th>'; }).join(''); },
+    head: function () { return [['cNc'], ['cDate'], ['cLine'], ['cCat'], ['cRca'], ['cCode'], ['cCab'], ['cCost', 'r'], ['cShare', 'r'], ['cText']].map(function (p) { return '<th scope="col"' + (p[1] ? ' class="r"' : '') + '>' + esc(S(p[0])) + '</th>'; }).join(''); },
     row: function (u) {
       var r = u.d;
-      if (!r) return '<tr><td class="nc">' + esc(u.n[0]) + '</td><td class="num">' + esc(shortDay(u.n[1])) + '</td><td>' + esc(u.n[3]) + '</td><td colspan="4">' + esc(S('noLine')) + '</td><td class="num r">' + eur(kCost(u)) + '</td><td class="txt">' + esc(u.n[22]) + '</td></tr>';
-      return '<tr><td class="nc">' + esc(r[0]) + (r[1] > 1 ? ' · ' + r[1] : '') + '</td><td class="num">' + esc(shortDay(r[2])) + '</td><td>' + esc(r[4]) + '</td><td>' + esc(L(dCat(r))) + '</td><td>' + esc(L(dRca(r))) + '</td><td class="nc" title="' + esc(codeDesc(dCode(r))) + '">' + esc(dCode(r)) + '</td><td>' + (dCable(r) ? '<span class="tag">' + esc(S('yes')) + '</span>' : '') + '</td><td class="num r">' + eur(kCost(u)) + '</td><td class="txt">' + esc(tidy(r[18])) + '</td></tr>';
+      if (!r) return '<tr><td class="nc">' + esc(u.n[0]) + '</td><td class="num">' + esc(shortDay(u.n[1])) + '</td><td>' + esc(u.n[3]) + '</td><td colspan="4">' + esc(S('noLine')) + '</td><td class="num r">' + eur(kCost(u)) + '</td><td class="num r">1</td><td class="txt">' + esc(u.n[22]) + '</td></tr>';
+      return '<tr><td class="nc">' + esc(r[0]) + (r[1] > 1 ? ' · ' + r[1] : '') + '</td><td class="num">' + esc(shortDay(r[2])) + '</td><td>' + esc(r[4]) + '</td><td>' + esc(L(dCat(r))) + '</td><td>' + esc(L(dRca(r))) + '</td><td class="nc" title="' + esc(codeDesc(dCode(r))) + '">' + esc(dCode(r)) + '</td><td>' + (dCable(r) ? '<span class="tag">' + esc(S('yes')) + '</span>' : '') + '</td><td class="num r">' + eur(kCost(u)) + '</td><td class="num r">' + (NLINES[r[0]] > 1 ? '1/' + NLINES[r[0]] : '1') + '</td><td class="txt">' + esc(tidy(r[18])) + '</td></tr>';
     },
     after: function (b) {
       var rs = b.filtered(null), tot = 0, ncs = {}, m = {};
