@@ -119,6 +119,7 @@ def main():
     d["llm_rca_type"] = d["llm_sous_categorie"].map(lambda s: PARSER.SOUS_CATEGORIES.get(s, (None, "AUTRE"))[1])
     d["llm_rca_nom"] = d["llm_rca_type"].map(L.RCA_NAMES).fillna("Non classé")
     d["llm_mineur"] = d["llm_sous_categorie"].map(PARSER.est_mineur)
+    d["sous_code_officiel"] = official_subcode(d)
     d = d.drop(columns=["snippet"])
     REPORT["labels"] = d["llm_status"].value_counts().to_dict()
     say("labels:", REPORT["labels"])
@@ -253,7 +254,7 @@ def build_dashboard(d, nc, lt):
                      r.groupe, rca(r.rca_type), r.sous_groupe, int(bool(r.mineur)), int(bool(r.defaut_cable)),
                      r.llm_categorie, r.llm_rca_nom, r.llm_sous_categorie, int(bool(r.llm_mineur)), int(bool(r.llm_defaut_cable)),
                      round(float(r.cnq_cost_allocated), 2), round(float(r.cnq_cost_allocated_llm), 2), S_(r.text)[:220],
-                     "", r.scope, S_(r.phase)])   # [19] kept empty: the labelling notes are working notes, not for the page
+                     "", r.scope, S_(r.phase), r.sous_code_officiel])   # [19] kept empty: the labelling notes are working notes, not for the page
     ncs = []
     for r in nc.itertuples():
         if not r.date_creation:
@@ -271,10 +272,40 @@ def build_dashboard(d, nc, lt):
              "other": [int(other.sum()), round(float(aec.loc[other, "cnq_cost_total"].sum()), 2)]}
     no_line = int(((nc.scope == "serie") & (nc.cnq_defect_lines == 0)).sum())
     client, lt_client = customer_return_extras(d, nc, lt)
-    data = {"defects": defs, "ncs": ncs, "direct": direct, "rca": rca_reference(d), "client": client, "lt": lt_client,
+    data = {"defects": defs, "ncs": ncs, "direct": direct, "rca": rca_reference(d), "client": client, "lt": lt_client, "codes": CODE_DESC,
             "meta": {"from": "2026-01-01", "to": REPORT["created_to"], "aside": aside, "noLine": no_line,
                      "modelTotal": round(float(aec.cnq_cost_total.sum()), 2)}}
     _page("dashboard.html", data, "FTO2_NC_Dashboard.html")
+
+
+CODE_DESC = {}
+
+
+def official_subcode(d):
+    """Official sub-code of each defect line: the one chosen by the long-text labelling; for the approved exceptions,
+    which have no sub-code of their own, the parent code (E1 = part of Q06-001; E2 = a Q11 component code)."""
+    ref = pd.read_csv(os.path.join(ROOT, "04_reference", "reference_souscodes_pareto.csv"), encoding="utf-8-sig")
+    ref = ref[~ref.sous_code.astype(str).str.startswith("(")]
+    CODE_DESC.update(dict(zip(ref.sous_code, ref.object_desc)))
+    first = ref.groupby("sous_categorie").sous_code.first()
+    fallback = {"Câble à refaire (ligne)": "Q06-001", "Composant HS": "Q11 (composant)", "Composant – cause non écrite": "Q11 (composant)",
+                "Non classé": "Non codé"}
+    CODE_DESC.update({"Q11 (composant)": "Component (sub-code not specified)", "Non codé": "No code"})
+    out = []
+    for code, sub, status in zip(d.llm_sous_code.fillna("").astype(str).str.strip(), d.llm_sous_categorie, d.llm_status):
+        if status == "ok" and code in CODE_DESC:
+            out.append(code)
+        elif sub in fallback:
+            out.append(fallback[sub])
+        elif sub in first.index:
+            head = first[sub][:3] + " (non précisé)"
+            CODE_DESC.setdefault(head, "Sub-code not specified")
+            out.append(head)
+        else:
+            out.append("Non codé")
+    s = pd.Series(out, index=d.index)
+    REPORT["subcodes"] = {"exact": int(s.isin(ref.sous_code).sum()), "parent_or_none": int((~s.isin(ref.sous_code)).sum())}
+    return s
 
 
 def rca_reference(d):
@@ -397,7 +428,7 @@ def build_detail(d, nc, x):
         "Description poste": m.station_description, "Décision": m.decision_label, "Responsabilité": m.liability, "Rédacteur": m.user_department,
         "FIN": m.fin, "Défaut (extrait)": m.text, "Code écrit": m.code,
         "Parser – catégorie": m.groupe, "Parser – sous-catégorie": m.sous_groupe, "Parser – RCA": m.rca_nom,
-        "Cause racine – catégorie": m.llm_categorie, "Cause racine – sous-catégorie": m.llm_sous_categorie, "Cause racine – RCA": m.llm_rca_nom,
+        "Cause racine – catégorie": m.llm_categorie, "Cause racine – sous-catégorie": m.llm_sous_categorie, "Cause racine – RCA": m.llm_rca_nom, "Sous-code officiel": m.sous_code_officiel,
         "Symptôme": m.llm_symptome, "Confiance": m.llm_confiance, "Statut du label": m.llm_status,
         "Mineur": yn(m.mineur), "Défaut câble": yn(m.defaut_cable), "Provenance câble": m.provenance.where(m.defaut_cable, ""),
         "CNQ réparti (EUR)": m.cnq_cost_allocated_llm.round(2), "Titre NC": m.description_short,
