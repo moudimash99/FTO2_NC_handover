@@ -20,6 +20,6 @@ The pipeline builds two datasets:
 
 Pareto categories: MEO Câblage · Erreur Branchement · Élément Manquant · Élément Endommagé · Déverrouillage ·
 Grounding/Bonding · Kitting Factory · FOD · Autre (the last three shown aside, in grey).
-Scope (`perimetre`): FTO2 · Retour client (raised outside FTO2, we are liable) · Fournisseur · Supprimée · Autre.
+Scope (`perimetre`): FTO2 · Retour client (raised outside FTO2, FTO2 in `liability`) · Fournisseur · Supprimée · Hors périmètre (raised outside FTO2, FTO2 not liable) · Autre.
 Minor (`mineur`): a missing tyrap, frette or ficelle, or a missing cap, cerise or plug.
 Top 5 per line: the 5 biggest RCA, plus Déverrouillage every time.

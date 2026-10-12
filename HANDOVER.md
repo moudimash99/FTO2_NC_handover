@@ -26,6 +26,7 @@ Read sections 1, 2 and 9 first. Everything else is reference. Every number below
 | Skywise dashboard pack v4.8 | Delivered, **install not confirmed**; 2 known fixes pending | `02_dashboard_pack/`, handover doc (section 10) |
 | Real pipeline notebook | Running in Skywise today, uses an older parser; read-only context | `06_input_data/pipeline_notebook.py`, section 5 |
 | Professional FR/EN Pareto dashboard (offline HTML) | Done | `03_reports/FTO2_Pareto_defauts.html` |
+| Customer returns page (FR/EN, clickable filters + defect table), corrected scope = FTO2 in `liability` | Done 12 Oct | `03_reports/FTO2_Retours_clients.html`, https://claude.ai/artifact/MqRPgo7bmHEpKv9UTXPJ4C |
 | Cable defects analysis | Findings done, **decision pending** (options A–D) | section 6, Docs "FTO2 Cable Defects – Findings" |
 | REC tagging | Rule + regex proposed, **definition decision and precision check pending** | section 7, Docs "REC NC Tagging – Findings" |
 | Full defect table for the presentation | Done | `05_outputs/FTO2_defects_detail_v48.xlsx` |
@@ -107,6 +108,7 @@ File: `06_input_data/pipeline_notebook.py` (sent as `pipeline.ipynb`, actually p
 - **`.head(1000)`** on newest creation date → the export is capped at 1,000 NCs (this is why early January is cut).
 - Joins Test list (`data/NC TEST - NC.csv`) and GPS register (`data/GPS NC INT_SERIE ELEC 2026 - NC REGISTRE.csv`) → `Ext_*`, `GPS_*` columns.
 - Writes `fto2_dashboard_data` and `fto2_parsed_defects` (or `_missing_ids` in MISSING_IDS mode).
+- **Scope bug found 12 Oct:** `cond_retour_client` = plant ≠ FTO2 only, and MISSING_IDS mode fetches by number with no liability filter. NCs where FTO2 is not liable (e.g. 25 Saint-Nazaire "DAMAGES", liability VCS…, responsible Y6) were counted as customer returns (90 NCs instead of 65). Fixed in the pack (`_perimetre` now requires FTO2 in `liability`, else "Hors périmètre"); the notebook still needs the same check (pipeline team).
 - **Bug to mention to Mohammad when relevant:** in STANDARD mode it writes `fto2_dashboard_data` twice; the second write (`final_df`) overwrites the enriched NC table from `explode_dataframe`.
 
 ### 5b. The v4.8 install pack (`02_dashboard_pack/`)

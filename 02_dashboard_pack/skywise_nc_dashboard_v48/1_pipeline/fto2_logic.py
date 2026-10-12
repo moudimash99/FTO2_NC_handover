@@ -34,6 +34,7 @@ SAP_COLUMNS = {
     "plant": "plant",                                 # plant where the NC was raised (FTO2 for us)
     "statut": "status_open_closed",                   # open / closed / deleted
     "responsabilite": "liability_description",        # [PLANT] / [SUPPLIER] / [OTHERS]
+    "liabilite": "liability",                         # plant(s) liable, e.g. [FTO2] (array in Skywise)
 }
 OUR_PLANT = "FTO2"
 
@@ -101,13 +102,17 @@ def _ligne(programme):
     return p.strip() or "Autre"
 
 
-def _perimetre(statut, plant, resp):
+def _perimetre(statut, plant, resp, liab=None):
     statut, plant, resp = str(statut or "").upper(), str(plant or "").strip().upper(), str(resp or "").upper()
     if "DELET" in statut or "SUPPRIM" in statut:
         return "Supprimée"
     if "SUPPLIER" in resp:
         return "Fournisseur"
     if plant != OUR_PLANT.upper():
+        # a customer return only when our plant is in the liability list; "[PLANT]" alone means some plant is liable.
+        # NCs fetched by number (MISSING_IDS) can belong to other plants: they go to "Hors périmètre", not counted.
+        if OUR_PLANT.upper() not in str(liab if liab is not None else "").upper():
+            return "Hors périmètre"
         return "Retour client" if "PLANT" in resp else "Autre"
     return "FTO2"
 
@@ -126,7 +131,7 @@ def nc_fields(sap_nc: pd.DataFrame) -> pd.DataFrame:
         keep &= dt.dt.strftime("%Y-%m-%d") <= PERIOD_END
     nc["dans_periode"] = keep.fillna(False).astype(bool)
     nc["ligne"] = nc["programme"].map(_ligne)
-    nc["perimetre"] = [_perimetre(s, p, r) for s, p, r in zip(nc["statut"], nc["plant"], nc["responsabilite"])]
+    nc["perimetre"] = [_perimetre(s, p, r, l) for s, p, r, l in zip(nc["statut"], nc["plant"], nc["responsabilite"], nc["liabilite"])]
     for c in NC_TEXT:
         nc[c] = nc[c].fillna("").astype(str)
     return nc
