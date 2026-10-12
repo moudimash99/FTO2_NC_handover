@@ -1,0 +1,124 @@
+sous_code,code_tete,libelle,objet,mode,severity,severite,rpn,cdve
+Q01-001,Q01,"Contact (Copper, aluminum, fiber optic)",TERMINAISON,OMISSION,7.0,MINEURE,245,False
+Q01-002,Q01,False contact (Not locked),TERMINAISON,OMISSION,3.0,MINEURE,120,False
+Q01-003,Q01,"CDVE Contact (Copper, aluminum, fiber optic)",TERMINAISON,OMISSION,10.0,MAJEURE,70,True
+Q03-001,Q03,"Shutter/obturateur (Circular, rectangular, VT module, ventilation hole)",OBTURATION,OMISSION,3.0,MINEURE,72,False
+Q03-002,Q03,"Heat shrink tubing (Low temp, high temp)",GAINE,OMISSION,3.0,MINEURE,72,False
+Q03-003,Q03,"Mechanical element (Screw, washer, nut, spacer)",VISSERIE,OMISSION,4.0,MINEURE,96,False
+Q03-004,Q03,"Electrical element (Cable, contact, diode, resistor, connector, VG module, rear connector)",CABLE,OMISSION,4.0,MINEURE,64,False
+Q03-005,Q03,"Braking/freinage (Brake wire, glue, frangible paint line)",FRETTAGE,OMISSION,3.0,MINEURE,48,False
+Q03-006,Q03,"Collar/collier (routing, plastic shrink, string shrink, V-support, plastic, metal)",COLLIER,OMISSION,3.0,MINEURE,108,False
+Q03-007,Q03,"Protective caps (Ventilation hole, open hole)",OBTURATION,OMISSION,3.0,MINEURE,60,False
+Q03-008,Q03,"End protection (Socket plug, plastic bag)",OBTURATION,OMISSION,3.0,MINEURE,72,False
+Q03-009,Q03,"Tamper-evident label (Furniture door lock, cut-off socket)",IDENTIFICATION,OMISSION,3.0,MINEURE,36,False
+Q03-010,Q03,"Sheathing/gaine (Textile, corrugated, EMI, spare)",GAINE,OMISSION,4.0,MINEURE,72,False
+Q03-011,Q03,"Identification plate/sleeve/flag (END, route, cable number, clamp, ramp)",IDENTIFICATION,OMISSION,3.0,MINEURE,48,False
+Q03-012,Q03,"Identification label (FIN, MSN)",IDENTIFICATION,OMISSION,3.0,MINEURE,60,False
+Q04-001,Q04,"Shutter (Reference, mounting direction)",OBTURATION,SELECTION,3.0,MINEURE,72,False
+Q04-002,Q04,"Heat shrink tubing (Reference, size)",GAINE,SELECTION,3.0,MINEURE,72,False
+Q04-003,Q04,"Mechanical (Screw, washer, nut, spacer, V-bracket, structure, VT bar - ref/size/orientation)",VISSERIE,SELECTION,4.0,MINEURE,128,False
+Q04-004,Q04,"Contact (Reference, copper, aluminum)",TERMINAISON,SELECTION,9.0,MAJEURE,216,False
+Q04-005,Q04,"Resistor, connector, circuit breaker, relay, switch, rear connection (Ref, mounting, orientation)",COMPOSANT,SELECTION,3.0,MINEURE,63,False
+Q04-006,Q04,Lock wire (Reference),FRETTAGE,SELECTION,3.0,MINEURE,54,False
+Q04-007,Q04,"Plastic routing collar (Reference, size, orientation)",COLLIER,SELECTION,3.0,MINEURE,75,False
+Q04-008,Q04,"Metal routing collar (Reference, size, orientation)",COLLIER,SELECTION,3.0,MINEURE,45,False
+Q04-009,Q04,"Error correction/detrompage (Coding key, ARINC plug pin, polarization key)",COMPOSANT,SELECTION,4.0,MINEURE,80,False
+Q04-010,Q04,Ventilation hole protective caps (Reference),OBTURATION,SELECTION,3.0,MINEURE,36,False
+Q04-011,Q04,"Electrical element (Ground braid, terminal, indicator light - ref/orientation/charging)",MASSE,SELECTION,4.0,MINEURE,96,False
+Q04-012,Q04,"Socket protective cap (Reference, size)",OBTURATION,SELECTION,3.0,MINEURE,36,False
+Q04-013,Q04,"Identification plate (plate, function label, adhesive END, flame, sleeve - ref/identification/reversal)",IDENTIFICATION,SELECTION,3.0,MINEURE,72,False
+Q04-014,Q04,"Frettage (Reference plastic fret collar, reference string fret)",FRETTAGE,SELECTION,3.0,MINEURE,60,False
+Q05-001,Q05,"Electrical element (Rear connection, connector, VG module, terminal, circuit breaker - over/under/loose)",COMPOSANT,EXECUTION,8.0,MAJEURE,480,False
+Q05-002,Q05,"Mechanical (screws, safety wire, frangible paint, clamp, diode block, BAND-IT, VT bar, standoff, sleeve, light, switch, relay)",VISSERIE,EXECUTION,4.0,MINEURE,160,False
+Q05-003,Q05,Rope collar (Over/under/loose screws),COLLIER,EXECUTION,4.0,MINEURE,240,False
+Q05-004,Q05,"Frettage (Plastic collar, string fret)",FRETTAGE,EXECUTION,4.0,MINEURE,120,False
+Q05-005,Q05,"CDVE Electrical components (rear connection, connector, VG module, terminal, circuit breaker)",COMPOSANT,EXECUTION,10.0,MAJEURE,600,True
+Q06-001,Q06,"Harness (Routing, cable management, under/overlength, wrong destination, not in collar, V-support, pinched)",CHEMINEMENT,EXECUTION,4.0,MINEURE,96,False
+Q06-002,Q06,"Poor sheathing installation (Visible line, incorrect twist, branch, sock)",GAINE,EXECUTION,4.0,MINEURE,96,False
+Q06-003,Q06,"Combining tape/amalgamant (Overlap, permitted overlap)",GAINE,EXECUTION,3.0,MINEURE,75,False
+Q06-004,Q06,"Cable in contact with structural element (Clash with plate, ramp, pipe, screw, connecting rod)",CHEMINEMENT,EXECUTION,5.0,MINEURE,120,False
+Q06-005,Q06,"Cable in contact with electrical component (Clash with VG, connector)",CHEMINEMENT,EXECUTION,5.0,MINEURE,80,False
+Q06-006,Q06,"Incorrect positioning of shrink ring (Plastic collar, string)",COLLIER,EXECUTION,3.0,MINEURE,60,False
+Q06-007,Q06,"Fringing on rear connection (Sheath not secured, sheath too short)",GAINE,EXECUTION,3.0,MINEURE,90,False
+Q06-008,Q06,"Sheathing (Too short, in contact with grommet, not secured to rear connector)",GAINE,EXECUTION,4.0,MINEURE,96,False
+Q06-009,Q06,Route not resumed after test (Cabling not completed),CHEMINEMENT,OMISSION,3.0,MINEURE,60,False
+Q06-010,Q06,"Identification (Positioning flame, plate, sleeve - offset, not specified, too short/long, illegible)",IDENTIFICATION,EXECUTION,4.0,MINEURE,80,False
+Q06-011,Q06,"Frettage implementation (double capstan knot, fret length cut, ferrule clamp)",FRETTAGE,EXECUTION,3.0,MINEURE,90,False
+Q06-012,Q06,Implementation of connections in Band-it collar,COLLIER,EXECUTION,5.0,MINEURE,60,False
+Q07-001,Q07,"Aluminum contact (Stripping, Crimping)",TERMINAISON,EXECUTION,9.0,MAJEURE,135,False
+Q07-002,Q07,"Copper contact (Stripping, Crimping)",TERMINAISON,EXECUTION,9.0,MAJEURE,180,False
+Q07-003,Q07,"Self-welding sleeve (Deformation, overheating)",TERMINAISON,EXECUTION,9.0,MAJEURE,180,False
+Q07-004,Q07,"Copper lug (Stripping, Crimping)",TERMINAISON,EXECUTION,9.0,MAJEURE,135,False
+Q07-005,Q07,"Aluminum lug (Stripping, Crimping)",TERMINAISON,EXECUTION,9.0,MAJEURE,135,False
+Q07-006,Q07,"CDVE Aluminum contact (Stripping, Crimping)",TERMINAISON,EXECUTION,9.0,MAJEURE,27,True
+Q07-007,Q07,"CDVE Copper contact (Stripping, Crimping)",TERMINAISON,EXECUTION,9.0,MAJEURE,36,True
+Q07-008,Q07,"CDVE Self-welding sleeve (Deformation, overheating)",TERMINAISON,EXECUTION,9.0,MAJEURE,36,True
+Q07-009,Q07,"CDVE Copper lug (Stripping, Crimping)",TERMINAISON,EXECUTION,9.0,MAJEURE,27,True
+Q07-010,Q07,"CDVE Aluminum lug (Stripping, Crimping)",TERMINAISON,EXECUTION,9.0,MAJEURE,27,True
+Q08-001,Q08,"QUADRAX contact (Stripping, Crimping)",TERMINAISON,EXECUTION,9.0,MAJEURE,27,False
+Q08-002,Q08,"TWINAX contact (Stripping, Crimping)",TERMINAISON,EXECUTION,9.0,MAJEURE,27,False
+Q08-003,Q08,"TRIAXIAL contact (Stripping, Crimping)",TERMINAISON,EXECUTION,9.0,MAJEURE,27,False
+Q08-004,Q08,"BUSCAN contact (Stripping, Crimping)",TERMINAISON,EXECUTION,9.0,MAJEURE,27,False
+Q08-005,Q08,"Coax contact (Stripping, Crimping)",TERMINAISON,EXECUTION,9.0,MAJEURE,27,False
+Q08-006,Q08,"Optical fiber contact (Stripping, gluing)",TERMINAISON,EXECUTION,6.0,MINEURE,18,False
+Q08-007,Q08,Brazing (Non-compliant weld),TERMINAISON,EXECUTION,9.0,MAJEURE,135,False
+Q09-001,Q09,"Protection not applied (Petroleum jelly, protective paint)",MASSE,OMISSION,6.0,MINEURE,42,False
+Q09-002,Q09,"Application of protection (Partially applied, metallization visible)",MASSE,EXECUTION,6.0,MINEURE,42,False
+Q09-003,Q09,"Ground point (Oxidation, non-compliant brush diameter, non-compliant measurement)",MASSE,EXECUTION,6.0,MINEURE,42,False
+Q09-004,Q09,CDVE Protection not applied,MASSE,OMISSION,6.0,MINEURE,42,True
+Q09-005,Q09,CDVE Application of protection,MASSE,EXECUTION,6.0,MINEURE,42,True
+Q09-006,Q09,CDVE Ground point,MASSE,EXECUTION,6.0,MINEURE,42,True
+Q10-001,Q10,"Damaged plate (Impact, scratch, bent, soiling)",STRUCTURE,MANIPULATION,4.0,MINEURE,120,False
+Q10-002,Q10,"Damaged structure (Impact, scratch, soiling)",STRUCTURE,MANIPULATION,4.0,MINEURE,120,False
+Q10-003,Q10,"Damaged handrail (Impact, scratch, bent, soiled)",STRUCTURE,MANIPULATION,4.0,MINEURE,100,False
+Q10-004,Q10,"Column (Impact, scratch, soiling)",STRUCTURE,MANIPULATION,4.0,MINEURE,80,False
+Q10-005,Q10,"Damaged piping (Impact, scratch, soiling)",STRUCTURE,MANIPULATION,4.0,MINEURE,80,False
+Q10-006,Q10,"Mechanism (Insert, screws - damaged threads, broken screws inside)",VISSERIE,MANIPULATION,4.0,MINEURE,160,False
+Q11-001,Q11,Cable cut,CABLE,MANIPULATION,8.0,MAJEURE,48,False
+Q11-014,Q11,"Scratched, damaged cable",CABLE,MANIPULATION,8.0,MAJEURE,480,False
+Q11-002,Q11,"Identification (Wave, label, sleeve - torn, soiled)",IDENTIFICATION,MANIPULATION,3.0,MINEURE,72,False
+Q11-003,Q11,"Component (VG module, circuit breaker, VT strip module, connector, rear fitting, lighting plate)",COMPOSANT,MANIPULATION,4.0,MINEURE,168,False
+Q11-004,Q11,"Protective sheath (Textile, corrugated, EMI)",GAINE,MANIPULATION,4.0,MINEURE,96,False
+Q11-005,Q11,"Lug (copper, aluminum)",TERMINAISON,MANIPULATION,4.0,MINEURE,140,False
+Q11-006,Q11,"Contact (Copper, aluminum)",TERMINAISON,MANIPULATION,9.0,MAJEURE,189,False
+Q11-007,Q11,"Amalgamating tape (Torn, soiled)",GAINE,MANIPULATION,3.0,MINEURE,45,False
+Q11-008,Q11,"Heat shrink tubing (Torn, soiled)",GAINE,MANIPULATION,3.0,MINEURE,45,False
+Q11-009,Q11,Ground braid metallization (Broken strands),MASSE,MANIPULATION,4.0,MINEURE,60,False
+Q11-010,Q11,"Cable collar (Plastic, metal, V-bracket)",COLLIER,MANIPULATION,3.0,MINEURE,60,False
+Q11-011,Q11,"BAND-IT clamp (Metal clamp, PTFE tape)",COLLIER,MANIPULATION,5.0,MINEURE,40,False
+Q11-012,Q11,"VT strip (Damaged module, deformed rail)",COMPOSANT,MANIPULATION,3.0,MINEURE,60,False
+Q11-013,Q11,Damaged sealing sleeves,GAINE,MANIPULATION,4.0,MINEURE,112,False
+Q11-016,Q11,CDVE Component,COMPOSANT,MANIPULATION,4.0,MINEURE,48,True
+Q11-018,Q11,CDVE Lug,TERMINAISON,MANIPULATION,4.0,MINEURE,40,True
+Q11-019,Q11,CDVE Contact,TERMINAISON,MANIPULATION,9.0,MAJEURE,54,True
+Q11-022,Q11,CDVE Ground braid metallization,MASSE,MANIPULATION,4.0,MINEURE,24,True
+Q11-026,Q11,CDVE Damaged sealing sleeves,GAINE,MANIPULATION,4.0,MINEURE,32,True
+Q12-001,Q12,"Cable gauge error (G20, G18)",CABLE,AMONT,4.0,MINEURE,80,False
+Q12-002,Q12,"Cable type error (DR, AD)",CABLE,AMONT,4.0,MINEURE,120,False
+Q12-003,Q12,"Cable length error (Too short, too long)",CABLE,AMONT,4.0,MINEURE,60,False
+Q12-004,Q12,"Cable identification (Readability, ID number error, marking characteristics)",IDENTIFICATION,AMONT,4.0,MINEURE,80,False
+Q12-005,Q12,"Identification (Sleeve, plate, label - legibility, incorrect reference, color)",IDENTIFICATION,AMONT,3.0,MINEURE,45,False
+Q12-006,Q12,"VT bar (Module identification error, module reference, rail size)",IDENTIFICATION,AMONT,3.0,MINEURE,63,False
+Q12-007,Q12,CDVE Cable gauge error,CABLE,AMONT,,,0,True
+Q12-008,Q12,CDVE Cable type error,CABLE,AMONT,,,0,True
+Q13-001,Q13,"Operation (Not badged, order of operations not respected)",DOSSIER,PROCESS,3.0,MINEURE,72,False
+Q13-002,Q13,"Stamp (Not affixed to tracking sheet, partially visible)",DOSSIER,PROCESS,3.0,MINEURE,36,False
+Q13-003,Q13,"Traceability label (CT176 not completed, CT129D not completed)",DOSSIER,PROCESS,4.0,MINEURE,64,False
+Q13-004,Q13,"Documentation (Missing, non-compliant)",DOSSIER,PROCESS,4.0,MINEURE,80,False
+Q13-005,Q13,"Tool entry (Not performed, tool kit error)",DOSSIER,PROCESS,4.0,MINEURE,48,False
+Q16-001,Q16,"Tools (Flashlight, mirror, wrench, screwdriver, Allen key)",FOD,OMISSION,8.0,MAJEURE,96,False
+Q16-002,Q16,"Fasteners and aircraft parts (Bolts, washers, nuts)",FOD,OMISSION,8.0,MAJEURE,96,False
+Q16-003,Q16,"Personal effects (ID badge, glasses, phone, laptop, tablet)",FOD,OMISSION,8.0,MAJEURE,96,False
+Q16-004,Q16,"Industrial debris (Silver filings, dust, insulation, metal chips)",FOD,OMISSION,8.0,MAJEURE,128,False
+Q16-005,Q16,"Additional items (Consumables, caps, plugs, work order)",FOD,OMISSION,8.0,MAJEURE,128,False
+Q16-006,Q16,"Maintenance (Item left in work area, workshop, workstation, corridor)",FOD,OMISSION,4.0,MINEURE,48,False
+T01,T01,"Missing cable (Copper, aluminum, fiber optic)",CABLE,OMISSION,8.0,MAJEURE,80,False
+T02,T02,"Connection error (Copper, aluminum, fiber optic)",BRANCHEMENT,SELECTION,8.0,MAJEURE,96,False
+T03,T03,"Missing shunt (Electrical, Mechanical)",CABLE,OMISSION,8.0,MAJEURE,96,False
+T04,T04,"Connection reversal (Copper, Aluminum, Fiber optic)",BRANCHEMENT,SELECTION,8.0,MAJEURE,96,False
+T05,T05,"Unconnected cable (Copper, aluminum, fiber optic)",BRANCHEMENT,OMISSION,8.0,MAJEURE,200,False
+T06,T06,Insertion loss measurement on non-compliant optical links,CABLE,EXECUTION,6.0,MINEURE,72,False
+T07,T07,"Resistance measurement on non-conforming metallization (VN, VG, VH)",MASSE,EXECUTION,6.0,MINEURE,36,False
+T07-CDVE,T07,CDVE Resistance measurement on non-conforming metallization,MASSE,EXECUTION,8.0,MAJEURE,48,True
+T08,T08,"Non-compliant linear resistance measurement (EMI sheath, overbraiding)",GAINE,EXECUTION,6.0,MINEURE,36,False
+T08-CDVE,T08,CDVE Non-compliant linear resistance measurement,GAINE,EXECUTION,8.0,MAJEURE,48,True

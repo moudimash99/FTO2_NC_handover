@@ -1,0 +1,124 @@
+code,famille_off,subcode,object_desc,severity,occurrence,detectability,rpn,priority
+Q01,LOCKING,Q01-001,"Contact (Copper, aluminum, fiber optic)",7,7,5,245,Average
+Q01,LOCKING,Q01-002,False contact (Not locked),3,5,8,120,Average
+Q01,LOCKING,Q01-003,"CDVE Contact (Copper, aluminum, fiber optic)",10,7,1,70,High
+Q03,MISSING,Q03-001,"Shutter/obturateur (Circular, rectangular, VT module, ventilation hole)",3,6,4,72,Average
+Q03,MISSING,Q03-002,"Heat shrink tubing (Low temp, high temp)",3,4,6,72,Average
+Q03,MISSING,Q03-003,"Mechanical element (Screw, washer, nut, spacer)",4,4,6,96,Average
+Q03,MISSING,Q03-004,"Electrical element (Cable, contact, diode, resistor, connector, VG module, rear connector)",4,4,4,64,Average
+Q03,MISSING,Q03-005,"Braking/freinage (Brake wire, glue, frangible paint line)",3,4,4,48,Low
+Q03,MISSING,Q03-006,"Collar/collier (routing, plastic shrink, string shrink, V-support, plastic, metal)",3,6,6,108,Average
+Q03,MISSING,Q03-007,"Protective caps (Ventilation hole, open hole)",3,5,4,60,Average
+Q03,MISSING,Q03-008,"End protection (Socket plug, plastic bag)",3,6,4,72,Average
+Q03,MISSING,Q03-009,"Tamper-evident label (Furniture door lock, cut-off socket)",3,3,4,36,Low
+Q03,MISSING,Q03-010,"Sheathing/gaine (Textile, corrugated, EMI, spare)",4,3,6,72,Average
+Q03,MISSING,Q03-011,"Identification plate/sleeve/flag (END, route, cable number, clamp, ramp)",3,4,4,48,Low
+Q03,MISSING,Q03-012,"Identification label (FIN, MSN)",3,5,4,60,Average
+Q04,ASSEMBLY_ERROR,Q04-001,"Shutter (Reference, mounting direction)",3,6,4,72,Average
+Q04,ASSEMBLY_ERROR,Q04-002,"Heat shrink tubing (Reference, size)",3,4,6,72,Average
+Q04,ASSEMBLY_ERROR,Q04-003,"Mechanical (Screw, washer, nut, spacer, V-bracket, structure, VT bar - ref/size/orientation)",4,4,8,128,Average
+Q04,ASSEMBLY_ERROR,Q04-004,"Contact (Reference, copper, aluminum)",9,3,8,216,Average
+Q04,ASSEMBLY_ERROR,Q04-005,"Resistor, connector, circuit breaker, relay, switch, rear connection (Ref, mounting, orientation)",3,3,7,63,Average
+Q04,ASSEMBLY_ERROR,Q04-006,Lock wire (Reference),3,3,6,54,Low
+Q04,ASSEMBLY_ERROR,Q04-007,"Plastic routing collar (Reference, size, orientation)",3,5,5,75,Average
+Q04,ASSEMBLY_ERROR,Q04-008,"Metal routing collar (Reference, size, orientation)",3,3,5,45,Low
+Q04,ASSEMBLY_ERROR,Q04-009,"Error correction/detrompage (Coding key, ARINC plug pin, polarization key)",4,5,4,80,Average
+Q04,ASSEMBLY_ERROR,Q04-010,Ventilation hole protective caps (Reference),3,3,4,36,Low
+Q04,ASSEMBLY_ERROR,Q04-011,"Electrical element (Ground braid, terminal, indicator light - ref/orientation/charging)",4,3,8,96,Average
+Q04,ASSEMBLY_ERROR,Q04-012,"Socket protective cap (Reference, size)",3,3,4,36,Low
+Q04,ASSEMBLY_ERROR,Q04-013,"Identification plate (plate, function label, adhesive END, flame, sleeve - ref/identification/reversal)",3,6,4,72,Average
+Q04,ASSEMBLY_ERROR,Q04-014,"Frettage (Reference plastic fret collar, reference string fret)",3,4,5,60,Average
+Q05,TIGHTENING,Q05-001,"Electrical element (Rear connection, connector, VG module, terminal, circuit breaker - over/under/loose)",8,6,10,480,High
+Q05,TIGHTENING,Q05-002,"Mechanical (screws, safety wire, frangible paint, clamp, diode block, BAND-IT, VT bar, standoff, sleeve, light, switch, relay)",4,4,10,160,Average
+Q05,TIGHTENING,Q05-003,"Rope collar (Over/under/loose screws)",4,6,10,240,Average
+Q05,TIGHTENING,Q05-004,"Frettage (Plastic collar, string fret)",4,6,5,120,Average
+Q05,TIGHTENING,Q05-005,"CDVE Electrical components (rear connection, connector, VG module, terminal, circuit breaker)",10,6,10,600,High
+Q06,CABLING_INSTALL,Q06-001,"Harness (Routing, cable management, under/overlength, wrong destination, not in collar, V-support, pinched)",4,6,4,96,Average
+Q06,CABLING_INSTALL,Q06-002,"Poor sheathing installation (Visible line, incorrect twist, branch, sock)",4,6,4,96,Average
+Q06,CABLING_INSTALL,Q06-003,"Combining tape/amalgamant (Overlap, permitted overlap)",3,5,5,75,Average
+Q06,CABLING_INSTALL,Q06-004,"Cable in contact with structural element (Clash with plate, ramp, pipe, screw, connecting rod)",5,6,4,120,Average
+Q06,CABLING_INSTALL,Q06-005,"Cable in contact with electrical component (Clash with VG, connector)",5,4,4,80,Average
+Q06,CABLING_INSTALL,Q06-006,"Incorrect positioning of shrink ring (Plastic collar, string)",3,5,4,60,Average
+Q06,CABLING_INSTALL,Q06-007,"Fringing on rear connection (Sheath not secured, sheath too short)",3,6,5,90,Average
+Q06,CABLING_INSTALL,Q06-008,"Sheathing (Too short, in contact with grommet, not secured to rear connector)",4,6,4,96,Average
+Q06,CABLING_INSTALL,Q06-009,Route not resumed after test (Cabling not completed),3,5,4,60,Average
+Q06,CABLING_INSTALL,Q06-010,"Identification (Positioning flame, plate, sleeve - offset, not specified, too short/long, illegible)",4,5,4,80,Average
+Q06,CABLING_INSTALL,Q06-011,"Frettage implementation (double capstan knot, fret length cut, ferrule clamp)",3,6,5,90,Average
+Q06,CABLING_INSTALL,Q06-012,Implementation of connections in Band-it collar,5,3,4,60,Average
+Q07,CRIMP_BASIC,Q07-001,"Aluminum contact (Stripping, Crimping)",9,3,5,135,Average
+Q07,CRIMP_BASIC,Q07-002,"Copper contact (Stripping, Crimping)",9,4,5,180,Average
+Q07,CRIMP_BASIC,Q07-003,"Self-welding sleeve (Deformation, overheating)",9,4,5,180,Average
+Q07,CRIMP_BASIC,Q07-004,"Copper lug (Stripping, Crimping)",9,3,5,135,Average
+Q07,CRIMP_BASIC,Q07-005,"Aluminum lug (Stripping, Crimping)",9,3,5,135,Average
+Q07,CRIMP_BASIC,Q07-006,"CDVE Aluminum contact (Stripping, Crimping)",9,3,1,27,Low
+Q07,CRIMP_BASIC,Q07-007,"CDVE Copper contact (Stripping, Crimping)",9,4,1,36,Low
+Q07,CRIMP_BASIC,Q07-008,"CDVE Self-welding sleeve (Deformation, overheating)",9,4,1,36,Low
+Q07,CRIMP_BASIC,Q07-009,"CDVE Copper lug (Stripping, Crimping)",9,3,1,27,Low
+Q07,CRIMP_BASIC,Q07-010,"CDVE Aluminum lug (Stripping, Crimping)",9,3,1,27,Low
+Q08,CRIMP_SPECIFIC,Q08-001,"QUADRAX contact (Stripping, Crimping)",9,3,1,27,Low
+Q08,CRIMP_SPECIFIC,Q08-002,"TWINAX contact (Stripping, Crimping)",9,3,1,27,Low
+Q08,CRIMP_SPECIFIC,Q08-003,"TRIAXIAL contact (Stripping, Crimping)",9,3,1,27,Low
+Q08,CRIMP_SPECIFIC,Q08-004,"BUSCAN contact (Stripping, Crimping)",9,3,1,27,Low
+Q08,CRIMP_SPECIFIC,Q08-005,"Coax contact (Stripping, Crimping)",9,3,1,27,Low
+Q08,CRIMP_SPECIFIC,Q08-006,"Optical fiber contact (Stripping, gluing)",6,3,1,18,Low
+Q08,CRIMP_SPECIFIC,Q08-007,Brazing (Non-compliant weld),9,3,5,135,Average
+Q09,BONDING,Q09-001,"Protection not applied (Petroleum jelly, protective paint)",6,7,1,42,Low
+Q09,BONDING,Q09-002,"Application of protection (Partially applied, metallization visible)",6,7,1,42,Low
+Q09,BONDING,Q09-003,"Ground point (Oxidation, non-compliant brush diameter, non-compliant measurement)",6,7,1,42,Low
+Q09,BONDING,Q09-004,CDVE Protection not applied,6,7,1,42,Low
+Q09,BONDING,Q09-005,CDVE Application of protection,6,7,1,42,Low
+Q09,BONDING,Q09-006,CDVE Ground point,6,7,1,42,Low
+Q10,DAMAGED_STRUCT,Q10-001,"Damaged plate (Impact, scratch, bent, soiling)",4,6,5,120,Average
+Q10,DAMAGED_STRUCT,Q10-002,"Damaged structure (Impact, scratch, soiling)",4,6,5,120,Average
+Q10,DAMAGED_STRUCT,Q10-003,"Damaged handrail (Impact, scratch, bent, soiled)",4,5,5,100,Average
+Q10,DAMAGED_STRUCT,Q10-004,"Column (Impact, scratch, soiling)",4,4,5,80,Average
+Q10,DAMAGED_STRUCT,Q10-005,"Damaged piping (Impact, scratch, soiling)",4,4,5,80,Average
+Q10,DAMAGED_STRUCT,Q10-006,"Mechanism (Insert, screws - damaged threads, broken screws inside)",4,4,10,160,Average
+Q11,DAMAGED_ELEC,Q11-001,Cable cut,8,6,1,48,Low
+Q11,DAMAGED_ELEC,Q11-014,"Scratched, damaged cable",8,6,10,480,High
+Q11,DAMAGED_ELEC,Q11-002,"Identification (Wave, label, sleeve - torn, soiled)",3,6,4,72,Average
+Q11,DAMAGED_ELEC,Q11-003,"Component (VG module, circuit breaker, VT strip module, connector, rear fitting, lighting plate)",4,6,7,168,Average
+Q11,DAMAGED_ELEC,Q11-004,"Protective sheath (Textile, corrugated, EMI)",4,3,8,96,Average
+Q11,DAMAGED_ELEC,Q11-005,"Lug (copper, aluminum)",4,5,7,140,Average
+Q11,DAMAGED_ELEC,Q11-006,"Contact (Copper, aluminum)",9,3,7,189,Average
+Q11,DAMAGED_ELEC,Q11-007,"Amalgamating tape (Torn, soiled)",3,3,5,45,Low
+Q11,DAMAGED_ELEC,Q11-008,"Heat shrink tubing (Torn, soiled)",3,3,5,45,Low
+Q11,DAMAGED_ELEC,Q11-009,Ground braid metallization (Broken strands),4,3,5,60,Average
+Q11,DAMAGED_ELEC,Q11-010,"Cable collar (Plastic, metal, V-bracket)",3,4,5,60,Average
+Q11,DAMAGED_ELEC,Q11-011,"BAND-IT clamp (Metal clamp, PTFE tape)",5,4,2,40,Low
+Q11,DAMAGED_ELEC,Q11-012,"VT strip (Damaged module, deformed rail)",3,4,5,60,Average
+Q11,DAMAGED_ELEC,Q11-013,Damaged sealing sleeves,4,4,7,112,Average
+Q11,DAMAGED_ELEC,Q11-016,CDVE Component,4,6,2,48,Low
+Q11,DAMAGED_ELEC,Q11-018,CDVE Lug,4,5,2,40,Low
+Q11,DAMAGED_ELEC,Q11-019,CDVE Contact,9,3,2,54,Low
+Q11,DAMAGED_ELEC,Q11-022,CDVE Ground braid metallization,4,3,2,24,Low
+Q11,DAMAGED_ELEC,Q11-026,CDVE Damaged sealing sleeves,4,4,2,32,Low
+Q12,PRINTING,Q12-001,"Cable gauge error (G20, G18)",4,4,5,80,Average
+Q12,PRINTING,Q12-002,"Cable type error (DR, AD)",4,3,10,120,Average
+Q12,PRINTING,Q12-003,"Cable length error (Too short, too long)",4,3,5,60,Average
+Q12,PRINTING,Q12-004,"Cable identification (Readability, ID number error, marking characteristics)",4,4,5,80,Average
+Q12,PRINTING,Q12-005,"Identification (Sleeve, plate, label - legibility, incorrect reference, color)",3,3,5,45,Low
+Q12,PRINTING,Q12-006,"VT bar (Module identification error, module reference, rail size)",3,3,7,63,Average
+Q12,PRINTING,Q12-007,CDVE Cable gauge error,,,,0,
+Q12,PRINTING,Q12-008,CDVE Cable type error,,,,0,
+Q13,MANUFACTURING_FILE,Q13-001,"Operation (Not badged, order of operations not respected)",3,6,4,72,Average
+Q13,MANUFACTURING_FILE,Q13-002,"Stamp (Not affixed to tracking sheet, partially visible)",3,3,4,36,Low
+Q13,MANUFACTURING_FILE,Q13-003,"Traceability label (CT176 not completed, CT129D not completed)",4,4,4,64,Average
+Q13,MANUFACTURING_FILE,Q13-004,"Documentation (Missing, non-compliant)",4,5,4,80,Average
+Q13,MANUFACTURING_FILE,Q13-005,"Tool entry (Not performed, tool kit error)",4,3,4,48,Low
+Q16,FOD,Q16-001,"Tools (Flashlight, mirror, wrench, screwdriver, Allen key)",8,3,4,96,Average
+Q16,FOD,Q16-002,"Fasteners and aircraft parts (Bolts, washers, nuts)",8,3,4,96,Average
+Q16,FOD,Q16-003,"Personal effects (ID badge, glasses, phone, laptop, tablet)",8,3,4,96,Average
+Q16,FOD,Q16-004,"Industrial debris (Silver filings, dust, insulation, metal chips)",8,4,4,128,Average
+Q16,FOD,Q16-005,"Additional items (Consumables, caps, plugs, work order)",8,4,4,128,Average
+Q16,FOD,Q16-006,"Maintenance (Item left in work area, workshop, workstation, corridor)",4,3,4,48,Low
+T01,TEST,T01,"Missing cable (Copper, aluminum, fiber optic)",8,5,2,80,Average
+T02,TEST,T02,"Connection error (Copper, aluminum, fiber optic)",8,6,2,96,Average
+T03,TEST,T03,"Missing shunt (Electrical, Mechanical)",8,6,2,96,Average
+T04,TEST,T04,"Connection reversal (Copper, Aluminum, Fiber optic)",8,6,2,96,Average
+T05,TEST,T05,"Unconnected cable (Copper, aluminum, fiber optic)",8,5,5,200,Average
+T06,TEST,T06,Insertion loss measurement on non-compliant optical links,6,3,4,72,Average
+T07,TEST,T07,"Resistance measurement on non-conforming metallization (VN, VG, VH)",6,3,2,36,Low
+T07,TEST,T07-CDVE,"CDVE Resistance measurement on non-conforming metallization",8,3,2,48,Low
+T08,TEST,T08,"Non-compliant linear resistance measurement (EMI sheath, overbraiding)",6,3,2,36,Low
+T08,TEST,T08-CDVE,"CDVE Non-compliant linear resistance measurement",8,3,2,48,Low

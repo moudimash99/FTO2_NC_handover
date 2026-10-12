@@ -1,0 +1,166 @@
+﻿requete,w_mineurs,w_groupe,ligne_du_resultat,defects
+q01_pareto_global,Avec mineurs,,MEO Câblage,806
+q01_pareto_global,Avec mineurs,,Erreur Branchement,640
+q01_pareto_global,Avec mineurs,,Élément Manquant,241
+q01_pareto_global,Avec mineurs,,Élément Endommagé,221
+q01_pareto_global,Avec mineurs,,Déverrouillage,110
+q01_pareto_global,Avec mineurs,,Grounding/Bonding,81
+q01_pareto_global,Avec mineurs,,Kitting Factory,34
+q01_pareto_global,Avec mineurs,,FOD,18
+q01_pareto_global,Avec mineurs,,Autre,16
+q04_client_pareto,Avec mineurs,,Élément Endommagé,27
+q04_client_pareto,Avec mineurs,,MEO Câblage,10
+q04_client_pareto,Avec mineurs,,Élément Manquant,7
+q04_client_pareto,Avec mineurs,,Déverrouillage,1
+q04_client_pareto,Avec mineurs,,Erreur Branchement,1
+q04_client_pareto,Avec mineurs,,Grounding/Bonding,1
+q04_client_pareto,Avec mineurs,,FOD,2
+q02_top5_A350,Avec mineurs,,Inversion,320
+q02_top5_A350,Avec mineurs,,Mauvais Cheminement,182
+q02_top5_A350,Avec mineurs,,Mauvaise Borne,170
+q02_top5_A350,Avec mineurs,,Frettage Incorrect,125
+q02_top5_A350,Avec mineurs,,MEO Gainage,101
+q02_top5_A350,Avec mineurs,,Déverrouillage (ajouté),85
+q02_top5_A330,Avec mineurs,,Mauvaise Borne,97
+q02_top5_A330,Avec mineurs,,Composant Endommagé,72
+q02_top5_A330,Avec mineurs,,Inversion,44
+q02_top5_A330,Avec mineurs,,Erreur Composant Électrique,40
+q02_top5_A330,Avec mineurs,,Câble ou Élément Manquant,34
+q02_top5_A330,Avec mineurs,,Déverrouillage (ajouté),17
+q02_top5_A400M,Avec mineurs,,Déverrouillage (ajouté),0
+q02_top5_A320,Avec mineurs,,Défaut de Sertissage sur câble standard,16
+q02_top5_A320,Avec mineurs,,Déverrouillage,8
+q02_top5_A320,Avec mineurs,,Mauvais Cheminement,4
+q02_top5_A320,Avec mineurs,,Erreur Composant Électrique,3
+q02_top5_A320,Avec mineurs,,Composant Endommagé,2
+q05_client_top_rca,Avec mineurs,,Composant Endommagé,24
+q05_client_top_rca,Avec mineurs,,Erreur Fixation ou Protection,5
+q05_client_top_rca,Avec mineurs,,Câble ou Élément Manquant,3
+q05_client_top_rca,Avec mineurs,,Identification Manquante,3
+q05_client_top_rca,Avec mineurs,,Structure Endommagée,3
+q05_client_top_rca,Avec mineurs,,Déverrouillage (ajouté),1
+q03_rca_par_categorie,Avec mineurs,MEO Câblage,Mauvais Cheminement,219
+q03_rca_par_categorie,Avec mineurs,MEO Câblage,Frettage Incorrect,136
+q03_rca_par_categorie,Avec mineurs,MEO Câblage,MEO Gainage,104
+q03_rca_par_categorie,Avec mineurs,MEO Câblage,Erreur Composant Électrique,100
+q03_rca_par_categorie,Avec mineurs,MEO Câblage,Finition Inachevée,75
+q03_rca_par_categorie,Avec mineurs,MEO Câblage,Erreur Fixation ou Protection,68
+q03_rca_par_categorie,Avec mineurs,MEO Câblage,Serrage Incorrect,51
+q03_rca_par_categorie,Avec mineurs,MEO Câblage,Défaut de Sertissage sur câble standard,43
+q03_rca_par_categorie,Avec mineurs,MEO Câblage,Défaut de Sertissage sur câble spécifique,10
+q03_rca_par_categorie,Avec mineurs,Erreur Branchement,Inversion,364
+q03_rca_par_categorie,Avec mineurs,Erreur Branchement,Mauvaise Borne,267
+q03_rca_par_categorie,Avec mineurs,Erreur Branchement,Non Connecté,9
+q03_rca_par_categorie,Avec mineurs,Élément Manquant,Fixation ou Protection Manquante,110
+q03_rca_par_categorie,Avec mineurs,Élément Manquant,Câble ou Élément Manquant,70
+q03_rca_par_categorie,Avec mineurs,Élément Manquant,Obturateur Manquant,35
+q03_rca_par_categorie,Avec mineurs,Élément Manquant,Identification Manquante,26
+q03_rca_par_categorie,Avec mineurs,Élément Endommagé,Composant Endommagé,95
+q03_rca_par_categorie,Avec mineurs,Élément Endommagé,Câble Endommagé,48
+q03_rca_par_categorie,Avec mineurs,Élément Endommagé,Protection Endommagée,41
+q03_rca_par_categorie,Avec mineurs,Élément Endommagé,Structure Endommagée,37
+q03_rca_par_categorie,Avec mineurs,Déverrouillage,Déverrouillage,110
+q03_rca_par_categorie,Avec mineurs,Grounding/Bonding,Défaut de Métallisation,81
+q03_rca_par_categorie,Avec mineurs,Kitting Factory,Défaut d'Impression,34
+q03_rca_par_categorie,Avec mineurs,FOD,FOD,18
+q03_rca_par_categorie,Avec mineurs,Autre,Erreur Dossier,16
+q06_client_rca_par_categorie,Avec mineurs,MEO Câblage,Erreur Fixation ou Protection,5
+q06_client_rca_par_categorie,Avec mineurs,MEO Câblage,Mauvais Cheminement,2
+q06_client_rca_par_categorie,Avec mineurs,MEO Câblage,Défaut de Sertissage sur câble standard,1
+q06_client_rca_par_categorie,Avec mineurs,MEO Câblage,Erreur Composant Électrique,1
+q06_client_rca_par_categorie,Avec mineurs,MEO Câblage,MEO Gainage,1
+q06_client_rca_par_categorie,Avec mineurs,Erreur Branchement,Inversion,1
+q06_client_rca_par_categorie,Avec mineurs,Élément Manquant,Câble ou Élément Manquant,3
+q06_client_rca_par_categorie,Avec mineurs,Élément Manquant,Identification Manquante,3
+q06_client_rca_par_categorie,Avec mineurs,Élément Manquant,Fixation ou Protection Manquante,1
+q06_client_rca_par_categorie,Avec mineurs,Élément Endommagé,Composant Endommagé,24
+q06_client_rca_par_categorie,Avec mineurs,Élément Endommagé,Structure Endommagée,3
+q06_client_rca_par_categorie,Avec mineurs,Déverrouillage,Déverrouillage,1
+q06_client_rca_par_categorie,Avec mineurs,Grounding/Bonding,Défaut de Métallisation,1
+q06_client_rca_par_categorie,Avec mineurs,FOD,FOD,2
+q08_chiffres_cles,Avec mineurs,,defauts_fto2,2167
+q08_chiffres_cles,Avec mineurs,,nc_fto2,547
+q08_chiffres_cles,Avec mineurs,,defauts_client,49
+q08_chiffres_cles,Avec mineurs,,nc_client,45
+q01_pareto_global,Sans mineurs,,MEO Câblage,806
+q01_pareto_global,Sans mineurs,,Erreur Branchement,640
+q01_pareto_global,Sans mineurs,,Élément Endommagé,221
+q01_pareto_global,Sans mineurs,,Élément Manquant,115
+q01_pareto_global,Sans mineurs,,Déverrouillage,110
+q01_pareto_global,Sans mineurs,,Grounding/Bonding,81
+q01_pareto_global,Sans mineurs,,Kitting Factory,34
+q01_pareto_global,Sans mineurs,,FOD,18
+q01_pareto_global,Sans mineurs,,Autre,16
+q04_client_pareto,Sans mineurs,,Élément Endommagé,27
+q04_client_pareto,Sans mineurs,,MEO Câblage,10
+q04_client_pareto,Sans mineurs,,Élément Manquant,7
+q04_client_pareto,Sans mineurs,,Déverrouillage,1
+q04_client_pareto,Sans mineurs,,Erreur Branchement,1
+q04_client_pareto,Sans mineurs,,Grounding/Bonding,1
+q04_client_pareto,Sans mineurs,,FOD,2
+q02_top5_A350,Sans mineurs,,Inversion,320
+q02_top5_A350,Sans mineurs,,Mauvais Cheminement,182
+q02_top5_A350,Sans mineurs,,Mauvaise Borne,170
+q02_top5_A350,Sans mineurs,,Frettage Incorrect,125
+q02_top5_A350,Sans mineurs,,MEO Gainage,101
+q02_top5_A350,Sans mineurs,,Déverrouillage (ajouté),85
+q02_top5_A330,Sans mineurs,,Mauvaise Borne,97
+q02_top5_A330,Sans mineurs,,Composant Endommagé,72
+q02_top5_A330,Sans mineurs,,Inversion,44
+q02_top5_A330,Sans mineurs,,Erreur Composant Électrique,40
+q02_top5_A330,Sans mineurs,,Câble ou Élément Manquant,34
+q02_top5_A330,Sans mineurs,,Déverrouillage (ajouté),17
+q02_top5_A400M,Sans mineurs,,Déverrouillage (ajouté),0
+q02_top5_A320,Sans mineurs,,Défaut de Sertissage sur câble standard,16
+q02_top5_A320,Sans mineurs,,Déverrouillage,8
+q02_top5_A320,Sans mineurs,,Mauvais Cheminement,4
+q02_top5_A320,Sans mineurs,,Erreur Composant Électrique,3
+q02_top5_A320,Sans mineurs,,Composant Endommagé,2
+q05_client_top_rca,Sans mineurs,,Composant Endommagé,24
+q05_client_top_rca,Sans mineurs,,Erreur Fixation ou Protection,5
+q05_client_top_rca,Sans mineurs,,Câble ou Élément Manquant,3
+q05_client_top_rca,Sans mineurs,,Identification Manquante,3
+q05_client_top_rca,Sans mineurs,,Structure Endommagée,3
+q05_client_top_rca,Sans mineurs,,Déverrouillage (ajouté),1
+q03_rca_par_categorie,Sans mineurs,MEO Câblage,Mauvais Cheminement,219
+q03_rca_par_categorie,Sans mineurs,MEO Câblage,Frettage Incorrect,136
+q03_rca_par_categorie,Sans mineurs,MEO Câblage,MEO Gainage,104
+q03_rca_par_categorie,Sans mineurs,MEO Câblage,Erreur Composant Électrique,100
+q03_rca_par_categorie,Sans mineurs,MEO Câblage,Finition Inachevée,75
+q03_rca_par_categorie,Sans mineurs,MEO Câblage,Erreur Fixation ou Protection,68
+q03_rca_par_categorie,Sans mineurs,MEO Câblage,Serrage Incorrect,51
+q03_rca_par_categorie,Sans mineurs,MEO Câblage,Défaut de Sertissage sur câble standard,43
+q03_rca_par_categorie,Sans mineurs,MEO Câblage,Défaut de Sertissage sur câble spécifique,10
+q03_rca_par_categorie,Sans mineurs,Erreur Branchement,Inversion,364
+q03_rca_par_categorie,Sans mineurs,Erreur Branchement,Mauvaise Borne,267
+q03_rca_par_categorie,Sans mineurs,Erreur Branchement,Non Connecté,9
+q03_rca_par_categorie,Sans mineurs,Élément Manquant,Câble ou Élément Manquant,70
+q03_rca_par_categorie,Sans mineurs,Élément Manquant,Identification Manquante,26
+q03_rca_par_categorie,Sans mineurs,Élément Manquant,Fixation ou Protection Manquante,19
+q03_rca_par_categorie,Sans mineurs,Élément Endommagé,Composant Endommagé,95
+q03_rca_par_categorie,Sans mineurs,Élément Endommagé,Câble Endommagé,48
+q03_rca_par_categorie,Sans mineurs,Élément Endommagé,Protection Endommagée,41
+q03_rca_par_categorie,Sans mineurs,Élément Endommagé,Structure Endommagée,37
+q03_rca_par_categorie,Sans mineurs,Déverrouillage,Déverrouillage,110
+q03_rca_par_categorie,Sans mineurs,Grounding/Bonding,Défaut de Métallisation,81
+q03_rca_par_categorie,Sans mineurs,Kitting Factory,Défaut d'Impression,34
+q03_rca_par_categorie,Sans mineurs,FOD,FOD,18
+q03_rca_par_categorie,Sans mineurs,Autre,Erreur Dossier,16
+q06_client_rca_par_categorie,Sans mineurs,MEO Câblage,Erreur Fixation ou Protection,5
+q06_client_rca_par_categorie,Sans mineurs,MEO Câblage,Mauvais Cheminement,2
+q06_client_rca_par_categorie,Sans mineurs,MEO Câblage,Défaut de Sertissage sur câble standard,1
+q06_client_rca_par_categorie,Sans mineurs,MEO Câblage,Erreur Composant Électrique,1
+q06_client_rca_par_categorie,Sans mineurs,MEO Câblage,MEO Gainage,1
+q06_client_rca_par_categorie,Sans mineurs,Erreur Branchement,Inversion,1
+q06_client_rca_par_categorie,Sans mineurs,Élément Manquant,Câble ou Élément Manquant,3
+q06_client_rca_par_categorie,Sans mineurs,Élément Manquant,Identification Manquante,3
+q06_client_rca_par_categorie,Sans mineurs,Élément Manquant,Fixation ou Protection Manquante,1
+q06_client_rca_par_categorie,Sans mineurs,Élément Endommagé,Composant Endommagé,24
+q06_client_rca_par_categorie,Sans mineurs,Élément Endommagé,Structure Endommagée,3
+q06_client_rca_par_categorie,Sans mineurs,Déverrouillage,Déverrouillage,1
+q06_client_rca_par_categorie,Sans mineurs,Grounding/Bonding,Défaut de Métallisation,1
+q06_client_rca_par_categorie,Sans mineurs,FOD,FOD,2
+q08_chiffres_cles,Sans mineurs,,defauts_fto2,2041
+q08_chiffres_cles,Sans mineurs,,nc_fto2,547
+q08_chiffres_cles,Sans mineurs,,defauts_client,49
+q08_chiffres_cles,Sans mineurs,,nc_client,45

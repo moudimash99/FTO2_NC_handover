@@ -1,0 +1,45 @@
+SUIVI DES ACTIONS ET MFT,,,,,,,,,,,
+,,,,,,,,,,,
+NC Category (Type),Défauts,Début de l'analyse,Analyse de cause racine,Action,Porteur de l'action,Début de l'action,Statut,Quand (bénéfices estimés),Informations complémentaires,, 
+Equipements endommagés 13CE/17CE/Platine F92513600000200,"Socle relais :  Fixations / platines abîmées 
+",JUIN 2026,Le moyen de serrage n’est pas adapté,"prévoir système de maintien (étau) de la platine
+→ lancé avis O9
+",TEAM LEADER,JUILLET 2026,EN COURS,DECEMBRE 2026,,,
+EQUIPEMENT,"Fourreau abîmés
+",JUIN 2026,Stock en vrac dans un kanban,"1/ Mise en place d’un nouveau conditionnement de stockage à déployer
+FAIT 
+
+2/ Kanban à redimensionner
+","TEAM LEADER
+
+LOGISTIQUE",AOUT 2026,EN COURS,DECEMBRE 2026,Avant ,Après ,
+Mise en oeuvre,"On constate un nombre élevé de retouches, principalement généré par des problèmes de mise en œuvre et des écarts par rapport au dossier de définition.
+",JUILLET 2026,Mauvais suivi de l’AIPI et de la définition,"1/ MFT hebdomadaire avec les team leaders pour l'analyse des retouches
+
+2/ Réalisation des surveillances opérationnelles
+
+3/ Assigner des tuteurs dédiés par vacation pour garantir la disponibilité et l'alignement horaire","QLS/TEAM LEADER
+
+QLS
+
+
+TEAM LEADER",SEPTEMBRE 2026,EN COURS,DECEMBRE 2026,,,
+Mise en oeuvre,"Métallisation non conforme
+- Bleu de métallisation posé avant la prise des mesures.
+",JUILLET 2026,Process E2E non appliqué donc opérateur ne sait sait pas si mesure OK → délégation L2 ,"1/ Planifier des formations en salle training. 
+
+2/ Mettre en place une QA adaptée au besoin.
+
+3/ Qualifier le personnel opérateur associé à cette QA.
+
+4/ Mettre à jour les gammes de travail et les SOI.
+
+
+
+","QLS
+
+
+TEAM LEADER
+
+
+TRAINING",SEPTEMBRE 2026,EN COURS,DECEMBRE 2026,,,

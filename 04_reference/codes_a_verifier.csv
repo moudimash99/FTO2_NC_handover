@@ -1,0 +1,33 @@
+nc,defaut,code_ecrit,sous_categorie_retenue,le_texte_dirait,texte
+218199816,6,T04,Inversion,Amont · Câble,2 Inversions de branchements en 1013VC entre les bornes 5 et 11 suite à un marquage déffectueux des câbles.
+218199816,7,T04,Inversion,Amont · Câble,"2 Inversions de branchements en 1009VC entre les bornes 23 et 32 suite à un marquage déffectueux des câbles. Test bon après remise en conformité effectuée. Torquages des prises 1009 , 1013 , 1021 , 1023 et 1029VC à reprendre merci. *"
+218199442,1,Q08,Sertissage spécifique,Sertissage,18RN BORNE 5 SOUDURE INCORRECTE. VEUILLEZ REMETTRE LE VU EN CONFORMITE.
+218195772,1,Q08,Sertissage spécifique,Sertissage,15RN BORNE 1 SOUDURE INCORRECTE. VEUILLEZ REMETTRE LE VU EN CONFORMITE.
+218108402,12,Q08,Sertissage spécifique,Sertissage,3RN2B MAUVAISE MISE EN OEUVRE CHAINETTE. TEST OK.
+217943819,1,Q04,Mauvaise réf. – identification,Amont · Identification / barrette VT,"ERREUR D ETIQUETTE ,1608VC160A AU LIEU DE 1608VC060A ( A CHANGER ) ."
+217876056,1,Q04,Mauvaise réf. – identification,Amont · Identification / barrette VT,ERREUR REFERENCE PLAQUETTE FIN:300VT402 AU LIEU DE 300VT103. ( A CHANGER )
+217728808,6,Q05,Serrage électrique,Sertissage,300VG105 MAUVAIS SERTISSAGE SUR UN CONTACT.
+217530835,1,Q08,Sertissage spécifique,Sertissage,1610VC049 CONTACT A REFAIRE EN BB. REMISE EN CONFORMITE DEJA FAITE.
+217493875,1,Q08,Sertissage spécifique,Sertissage,1610VC049 CONTACT A CHANGER SUR CABLE 3119-0390 BORNE BB. VEUILLEZ CHANGER LE CONTACT.
+217493717,1,Q04,Mauvaise réf. – identification,Manquant – identification,1610VC043 ETIQUETTE FIN MANQUANTE
+217451299,1,Q06,Cheminement – longueur / tension,Mauvaise réf. – électrique / détrompage,Le Câblage en 653VT 7 a été effectué avec le MSN 02159 au lieu de 02160. - Câble BF24 N° : 3314-1130 branché entre 653VT 7L et 650VC BB à déposer.
+217451299,2,Q06,Cheminement – longueur / tension,Mauvaise réf. – électrique / détrompage,Le Câblage en 653VT 7 a été effectué avec le MSN 02159 au lieu de 02160. - Shunt BF24 N° : 3314-1154 branché entre 653VT 7K et 653VT 7U à déposer.
+217448049,2,Q07,Sertissage,Mauvaise réf. – électrique / détrompage,302VMB MAUVAIS CONTACT SERTI.
+217394339,6,T04,Inversion,Mauvaise réf. – électrique / détrompage,1608VC070A INVERSION DE MANCHON ENTRE #PRS~ #PRS~ #TEL~ #TEL~ ET 58 59.
+217344532,1,Q11,Composant – cause non écrite,Dommage – structure,ETEC 417LF CMS 6374843100 SURPLUS DE MATIERE POUR LE MONTAGE CORRECTE D'UNE VIS.
+217331925,1,Q11,Composant – cause non écrite,Inversion,"Suite à Inversion de branchement ( T04 ) et un mauvais sertissage ( Q07 ) sur un câble en 10DG2 , un contact est resté coincé dans le bouton poussoir. Merci remplacer ce bouton poussoir , refaire le contac , vérifier le sertissage de l'autre contact de l'équipement et remettre le VU en conformité."
+217305316,1,Q11,Composant – cause non écrite,Dommage – structure,"Fixation du bouton de commande 22LE sur l'équipement impossible , mauvais taraudage du trou côté mépla , vis coincée. Merci de fournir un nouveau bouton."
+217251646,10,Q04,Mauvaise réf. – électrique / détrompage,Inversion,1610VC049 INVERSION DE BRANCHEMENT ENTRE LES BORNES AA ET CC.
+217135366,5,T02,Erreur de branchement,Inversion,T04 : Inversion de branchement en 1011VC entre les bornes 2 et 16. Test bon après mise en conformité effectuée.
+217124312,1,Q08,Sertissage spécifique,Dommage – tresse de masse,1608VC076A BORNE DD BRIN DE LA TRESSE DE MASSE ENTRE LES CONTACTS.
+217055268,2,T01,Manquant – câble / shunt / élément,Amont · Câble,Câble BF24 N° : 2351-0459 Manquant entre 18RN 2 et 19RN 1. Câbles Non imprimés. Merci de remettre le VU en conformité.
+216902596,18,Q04,Mauvaise réf. – identification,Identification – positionnement,PLAQUETTES INVERSEES ENTRE LES FIN 11CP1B ET 11CP1G. TEST OK.
+216900574,1,T04,Inversion,Câble à refaire (ligne),Inversion de branchement entre 2HB2 A Borne D3 et 4HA2 A Borne D3. Câble 3611-1593 normalement branché en 4HA2 A D3 vers 550VT 7 S trop court. Merci de remettre le VU en conformité.
+216493778,1,Q04,Mauvaise réf. – électrique / détrompage,Inversion,INVERSION DES PRISES 701VDA ET 705VDA.
+216463975,8,Q07,Sertissage,Dommage – câble,"1608VC091A BORNE 10 #PRS~ #PRS~ , CABLE SECTIONNE AU NIVEAU DU CONTACT."
+216307098,1,Q08,Sertissage spécifique,Sertissage,1610VC049 BORNE BB ERREUR SUR TWINAX SUITE AU RATTRAPAGE DE LA NC 216285613.
+216251193,1,Q04,Mauvaise réf. – identification,Identification – positionnement,9KSJ25 ET 9KSJ26 INVERSION PLAQUETTES.
+216224176,1,Q04,Mauvaise réf. – électrique / détrompage,Inversion,Inversion des prises et étiquettes repères entre 701VD et 705VD.
+216195031,1,Q04,Mauvaise réf. – électrique / détrompage,Inversion,INVERSION REFERENCE PRISES ENTRE 11CP1A ET 11CP1F ET INVERSION DES BRANCHEMENTS STADE E.
+216083260,10,T02,Erreur de branchement,Inversion,3CBB INVERSION DE BRANCHEMENT ENTRE LES BORNES 31 ET 32.
+216064950,1,T05,Non connecté,Câble à refaire (ligne),"1610VC047 BORNE 53 CABLE NON CONNECTE , TROP COURT A COMMANDER."

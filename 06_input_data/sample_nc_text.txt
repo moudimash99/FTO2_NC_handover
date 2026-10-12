@@ -1,0 +1,206 @@
+"* 21.05.2026 07:43:24 CET ( #UID~ OLMEP14/AIRBUS OPERATIONS SAS ) Tél. 33607800814
+NonConformity 0001 :
+Type of nonconformity : Harness
+* DEF 1-T02 : 1027VC CABLE EN 27 AU LIEU DE 24.
+DEF 2-TO4 : 23CS1A INVERSION ENTRE LES BORNES X1 ET X2.
+DEF 3-T02 : 3XCD CABLE EN 10 AU LIEU DE 20.
+DEF 4-T02 : 4XBA CABLE EN A3 AU LIEU DE B3.
+DEF 5-T02 : 701VDA CABLE EN 21 AU LIEU DE 22.
+DEF 6-T02 : 26XEA CABLE EN 1 AU LIEU DE Z.
+DEF 7-T02 : CABLE SUR 30CS1 BORNE 2 AU LIEU DE 5CS1 BORNE 2.
+DEF 8-T02 : 1005VC CABLE EN 42 AU LIEU DE 43.
+TEST OK.
+-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -
+21.05.2026 07:44:12 CET ( #UID~ OLMEP14/AIRBUS OPERATIONS SAS ) Tél. 33607800814
+Task Completed : 0100 `` DEC0 ``
+Decision Taken : REWORK
+Justification :
+RETOUCHES TEST 740 VU MSN 2159
+Task Description :
+* -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -
+22.05.2026 14:57:41 CET ( DDURT7PO OLMEM/DAHER INDUSTRIAL SERVICES ) Tél. #TEL~ #TEL~
+Task Completed : 0150 `` DO00 ``
+Task Description :
+NC prise en compte par OF 1029693251 ."
+"* 20.05.2026 09:51:57 CET ( #UID~ OLMEP14/AIRBUS OPERATIONS SAS ) Tél. 33607800814
+NonConformity 0001 :
+Type of nonconformity : Harness
+* DEF 1-T02 : 1WK22A CABLE EN 9A AU LIEU DE 8A.
+DEF 2-T02 : 1WK22A CABLE EN 10D AU LIEU DE 9D.
+DEF 3-T02 : 3RN1B CABLE EN W AU LIEU DE < W.
+DEF 4-T02 : 1608VC070A CABLE EN 1 AU LIEU DE 3.
+DEF 5-T02 : 1608VC070A CABLE EN 2 AU LIEU DE 1.
+DEF 6-T02 : 1608VC070A CABLE EN 3 AU LIEU DE 2.
+DEF 7-T04 : 100VT400 MODULE 1 INVERSION ENTRE #PRS~ #PRS~ #PRS~ #PRS~ #PRS~
+DEF 8-T04 : 411VC001A INVERSION ENTRE LES BORNES 6 ET 15.
+DEF 9-Q01 : 300VG133 1 BORNE DEVERROUILLE.
+DEF 10-T02 : 3CBB CABLE EN 37 AU LIEU DE 26.
+DEF 11-T02 : 3CBB CABLE EN 38 AU LIEU DE 27.
+DEF 12-T02 : 3CBB CABLE EN 43 AU LIEU DE 42.
+DEF 13-T04 : 1608VC056A INVERSION ENTRE LES BORNES 11 ET 12.
+DEF 14-T04 : 10CP1B INVERSION ENTRE LES BORNES A ET B.
+DEF 15-T04 : 11CP1C INVERSION ENTRE #PRS~ #PRS~ #PRS~ #PRS~ #PRS~
+DEF 16-T04 : 314VC002A INVERSION ENTRE LES BORNES B ET C.
+DEF 17-T04 : 300VT402 MODULE 1 INVERSION ENTRE #PRS~ #PRS~ #PRS~ #PRS~ #PRS~
+DEF 18-T04 : 1608VC046A INVERSION ENTRE LES BORNES 35 ET 37.
+DEF 19-QQ01 : 54LEA BORNE 3 DEVERROUILLE.
+DEF 20-Q03 : 3CBB OBTURATEURS MANQUANTS.
+TEST OK.
+* -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -
+20.05.2026 09:52:38 CET ( #UID~ OLMEP14/AIRBUS OPERATIONS SAS ) Tél. 33607800814
+Task Completed : 0100 `` DEC0 ``
+Decision Taken : REWORK
+Justification :
+RETOUCHES TEST MSN 847 VB1101
+Task Description :
+* -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -
+27.05.2026 13:43:35 CET ( ST26713 QRT/DERICHEBOURG AERONAUTICS ) Tél. 00 0
+Task Completed : 1000 `` ATQ0 ``
+Task Description :
+Retouches effectuées"
+"* 18.05.2026 12:56:51 CET ( #UID~ OLMEP14/AIRBUS OPERATIONS SAS ) Tél. 33607800814
+NonConformity 0001 :
+Type of nonconformity : Harness
+* DEF1-Q04 : PRISES 115VM B ET 135VM B MAUVAISES REFERENCES DE PRISE
+MONTEES.
+VEUILLEZ REMETTRE EN CONFORMITE.
+-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -
+18.05.2026 12:57:33 CET ( #UID~ OLMEP14/AIRBUS OPERATIONS SAS ) Tél. 33607800814
+Task Completed : 0100 `` DEC0 ``
+Decision Taken : REWORK
+Justification :
+RETOUCHES MAUVAISES REFERENCES DES PRISES MONTEES SUR 115VMB ET 135VMB.
+Task Description :
+* 21.05.2026 13:37:30 CET ( #UID~ OLMEP1/AIRBUS OPERATIONS SAS ) Tél. 33683769677
+retouche effectuées
+-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -
+22.05.2026 08:48:13 CET ( ST26713 QRT/DERICHEBOURG AERONAUTICS ) Tél. 00 0
+Task Completed : 1000 `` ATQ0 ``
+Task Description :
+Travail effectué"
+"* 12.05.2026 10:39:43 CET ( #UID~ OLMEP14/AIRBUS OPERATIONS SAS ) Tél. 33607800814
+NonConformity 0001 :
+Type of nonconformity : Missing Part/Component / Incomplete Kit
+* DEF 1-Q03 : Switch guard E0419A6 manquants ( quantité 3 ) sur 4XC,2XT1
+ET 2XT2.
+Remettre VU en conformité.
+* -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -
+12.05.2026 10:40:48 CET ( #UID~ OLMEP14/AIRBUS OPERATIONS SAS ) Tél. 33607800814
+Task Completed : 0100 `` DEC0 ``
+Decision Taken : REWORK
+Justification :
+RETOUCHES PTVU 235 VU MSN 2140
+Task Description :
+* -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -
+13.05.2026 08:13:15 CET ( DDURT7PO OLMEM/DAHER INDUSTRIAL SERVICES ) Tél. #TEL~ #TEL~
+Task Completed : 0150 `` DO00 ``
+Task Description :
+NC prise en compte par OF 1029571104.
+-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -
+29.05.2026 08:46:27 CET ( #UID~ OLMEP12/AIRBUS OPERATIONS SAS ) Tél. 33786603546
+Task Completed : 0200 `` ATW0 ``
+Task Description :
+remis en conformité
+-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -
+29.05.2026 08:48:10 CET ( TO41873 QRTE/AIRBUS OPERATIONS SAS ) Tél. 33631173280
+Task Completed : 1000 `` ATQ0 ``
+Task Description :
+REMIS EN CONFORMITE"
+"* 18.03.2026 14:46:34 CET ( #UID~ OLMEP14/AIRBUS OPERATIONS SAS ) Tél. 33607800814
+NonConformity 0001 :
+Type of nonconformity : Harness
+* DEF 1-T02 : 1WK12A CABLE EN 1D AU LIEU DE 1E.
+DEF 2-T02 : 1WK12A CABLE EN 15A AU LIEU DE 14A.
+DEF 3-T02 : 1WK21A CABLE EN 5A AU LIEU DE 5B.
+DEF 4-T02 : 1WK22A CABLE EN 4A AU LIEU DE 4B.
+DEF 5-TO2 : 3RN1B CABLE EN W AU LIEU DE < W.
+DEF 6-T02 : 115VMB CABLE EN P AU LIEU DE R.
+DEF 7-T02 : 1608VC091A CABLE EN 17 AU LIEU DE 5.
+DEF 8-T04 : 312VMA INVERSION ENTRE LES BORNES T ET S.
+DEF 9-T04 : 411VC005A INVERSION ENTRE LES BORNES C ET D.
+DEF 10-T04 1608VC097A INVERSION ENTRE LES BORNES 45 ET 60 PUIS 46
+ET 61.
+DEF 11-T02 : 1WK53A CABLE EN 7H AU LIEU DE 7G ET 7J AU LIEU DE 7H.
+DEF 12-T04 : 11CP1F INVERSION ENTRE #PRS~ #PRS~ #PRS~ #PRS~ #PRS~
+DEF 13-T04 : 3RN2A INVERSION ENTRE LES BORNES E ET F.
+DEF 14-T05 : 300VN359 CABLE NON CONNECTE.
+DEF 15-T04 : 300VT101 MODULE 9 INVERSION ENTRE LES BORNES B ET D.
+DEF 16-T04 : 11CP2C INVERSION ENTRE #PRS~ #PRS~ #PRS~ #PRS~ #PRS~
+TEST OK
+* -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -
+18.03.2026 14:47:25 CET ( #UID~ OLMEP14/AIRBUS OPERATIONS SAS ) Tél. 33607800814
+Task Completed : 0100 `` DEC0 ``
+Decision Taken : REWORK
+Justification :
+RETOUCHES TEST MSN 831 1101VB
+Task Description :
+* -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -
+18.03.2026 23:34:12 CET ( #UID~ OLMEM1/AIRBUS OPERATIONS SAS ) Tél. 33617203797
+Task Completed : 0150 `` DO00 ``
+Task Description :
+NC traité par le ST via SO3 1028892273
+-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -
+23.03.2026 13:50:28 CET ( BBERB62V OLMEP11/AIRBUS OPERATIONS SAS ) Tél. 33785850681
+Task Completed : 0200 `` ATW0 ``
+Task Description :
+TRAVAIL EFFECTUE"
+"* 16.03.2026 10:01:49 CET ( #UID~ OLMEP14/AIRBUS OPERATIONS SAS ) Tél. 33607800814
+NonConformity 0001 :
+Type of nonconformity : Harness
+* DEF 1-T04 : 27QAA INVERSION ENTRE Z ET 2.
+DEF 2-T04 : 703VT16 INVERSION ENTRE M #PRS~ #PRS~
+DEF 3-T02 CABLE EN 13B AU LIEU DE 14B.
+TEST OK
+-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -
+16.03.2026 10:02:50 CET ( #UID~ OLMEP14/AIRBUS OPERATIONS SAS ) Tél. 33607800814
+Task Completed : 0100 `` DEC0 ``
+Decision Taken : REWORK
+Justification :
+TEST RETOUCHES 740 VU MSN 2156.
+Task Description :
+* 16.03.2026 12:58:35 CET ( DDURT7PO OLMEM/DAHER INDUSTRIAL SERVICES ) Tél. #TEL~ #TEL~
+Vu avec les Test , défaut 3 sur FIN 703VT
+16.03.2026 13:53:07 CET ( DDURT7PO OLMEM/DAHER INDUSTRIAL SERVICES ) Tél. #TEL~ #TEL~
+Câble en 703VT 13 B au lieu de 703VT 14 B
+-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -
+17.03.2026 07:44:31 CET ( DDURT7PO OLMEM/DAHER INDUSTRIAL SERVICES ) Tél. #TEL~ #TEL~
+Task Completed : 0150 `` DO00 ``
+Task Description :
+NC prise en compte par OF 1028844837 ."
+"* 10.03.2026 10:12:58 CET ( #UID~ OLMEP14/AIRBUS OPERATIONS SAS ) Tél. 33607720167
+NonConformity 0001 :
+Type of nonconformity : Harness
+* DEF 1-TO : Sur 1401RH borne 2 fil 2373-0786 au lieu de 2373-0784.
+DEF 2-TO : Sur 1402RH borne 2 fil 2373-0149 au lieu de 2373-0786.
+DEF 3-TO : Sur 1417RH borne 2 fil 2373-0784 au lieu de 2373-0149.
+Veuillez changer les 3 cables afin de remettre le VU en
+conformité.
+-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -
+10.03.2026 10:17:35 CET ( #UID~ OLMEP14/AIRBUS OPERATIONS SAS ) Tél. 33607720167
+Task Completed : 0100 `` DEC0 ``
+Decision Taken : REWORK
+Justification :
+RETOUCHES TEST MSN 2156
+Task Description :
+* -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -
+11.03.2026 11:27:56 CET ( DDURT7PO OLMEM/DAHER INDUSTRIAL SERVICES ) Tél. #TEL~ #TEL~
+Task Completed : 0150 `` DO00 ``
+Task Description :
+NC prise en compte par OF 1028760583.
+-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -
+27.03.2026 11:34:25 CET ( #UID~ OLMEP1/AIRBUS OPERATIONS SAS ) Tél. #TEL~
+Task Completed : 0200 `` ATW0 ``
+Task Description :
+Taravil effectué
+-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -
+27.03.2026 12:50:43 CET ( #UID~ QRT/DERICHEBOURG AERONAUTICS )
+Task Completed : 1000 `` ATQ0 ``
+Task Description :
+CHECK OK"

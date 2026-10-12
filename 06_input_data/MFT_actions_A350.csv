@@ -1,0 +1,89 @@
+SUIVI DES ACTIONS ET MFT,,,,,,,,,,,,,
+,,,,,,,,,,,,,
+NC Category (Type),Défauts,Début de l'analyse,Analyse de cause racine,Porteur de l'analyse,Statut,Action,Porteur de l'action,Début de l'action,Statut,Quand (bénéfices estimés),Informations complémentaires,, 
+Erreurs/Inversions de branchements,Erreurs et inversions de branchements de câble détectés au niveau du TEST.,février 2026,"Etape 1: Mise en place d'un tableau de suivi des retouches test par le ME => Pas de récurrence / Pas de problème technique.
+Resultat:  Problème de tutorat , manque de suivi du tuteur",PPE/ME/ST,Clos,"Action 1 — Optimisation du tutorat :
+
+Allègement : Réduire la charge de travail des tuteurs.
+
+Planning : Aligner les vacations tuteurs/tutorés.
+
+Compétences : Vérifier l'expérience et la capacité à transmettre des tuteurs.",Team Leader,Juillet 2026,En cours,,,,
+Déverrouillages,"Pannes intermitentes, pas de connexion électrique entre les 2 prises.",Fevrier 2026,"1/ suite à Analyse des récurrences produit et retouches individuelles. 
+--> Surtout de VG et VT
+
+2/ Pas d'outillage pour check déverrouillage (ex: pesons)
+
+3/ Analyse Qualité du tutorat :
+Freins : Surcharge des tuteurs, décalage d'horaires et manque d'expérience produit.
+Impact : Hausse des retouches chez les stagiaires et nouveaux arrivants en intégration.
+      ","Qualité (QLS de la ligne), Team Leader",En cours,"1/ Y' a t il une reccurence sur les VT (Ex: 103) et VG ? les bornes associées?
+
+ 
+2/ Valider un outillage pour éviter tout déverrouillage
+
+3/- Stopper l'affectation des stagiaires sur les postes d'Intégration
+    - Dédier des tuteurs par vacation
+
+
+ ","1/   Q +ST
+
+
+
+2/ Méthodes
+
+3 / TL",JUILLET 2026,En cours,,,,
+Améloration point de contrôle,"Des retouches qualité générées au poste Mécanique ont été détectées au contrôle final.
+
+
+ 
+ ",Avril 2026,"Voici une version synthétique et percutante :
+
+Mise en place d'un contrôle L2 anticipé au poste Mécanique
+
+Suite à des retouches détectées au contrôle final, un contrôle L2 est déplacé en amont, directement au poste Mécanique.
+
+Bénéfices :
+
+Validation amont : Contrôle des structures et équipements mécaniques avant câblage.
+
+Retouches facilitées : Interventions simplifiées, sans risque pour les éléments adjacents.
+
+Traçabilité optimisée : Imputation directe des non-conformités (NC) fournisseurs.
+
+Instructions ciblées : Consignes de contrôle (QSOI) adaptées à chaque poste.","Qualité (QLS de la ligne), Team Leader.",En cours,"Planifier les réunion avec les métiers supports impactés par le sujet :
+- ME pour les gammes.
+- Production pour faire des tests.
+- PPE pour les temps.
+
+Création d'une QA L2 Méca.
+
+Création d'une QSOI.
+
+
+",Qualité,,,En cours,,,
+Câbles coupés,"Câble trop court
+",Juin 2026,"Suite à analyse, probléme sur Rapid share qui coupe trop court.
+",Support technique de chaque ligne.,En cours,"1/ Modification paramétrage RapidShare pour confort du Personnel sur le retrait d’un scotch
+→ Paramétrer la machine comme à l’ancienne version
+
+2/ Appliquer rigoureusement la maintenance ( ex: nettoyage des couteaux)
+","Gimenez.M
+
+
+
+
+TL",JUILLET 2026,E/C,,,,
+Câbles Abîmés,Abimés Opérateurs,Juin 2026,"1/ Abimés lors de la manutention
+
+2/ Câbles abimés lors de la mise en oeuvre sur les SE",Support technique de chaque ligne.,En cours,"1/ Modification de la structure des arbres à câbles qui abîme  → PAT Compagnons en cours
+
+2.1/  Quel sous Ensemble est impactés?
+
+2.2 / Quelle Mise en oeuvre? 
+","1/ Team Leader
+
+
+2/ ST
+
+3/ Q",JUILLET 2026,E/C,,,,

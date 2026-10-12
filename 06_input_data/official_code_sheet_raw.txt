@@ -1,0 +1,132 @@
+
+ Retouching codes, Sub-code description, Severity, "Occurrence
+ ", Detectability, RPN, Priority
+ Q01 (LOCKING), "Q01-001_Contact (Copper, aluminum, fiber optic, etc...)", 7, 7, 5, 245, Average
+ Q01 (LOCK), Q01-002_False contact (Not locked), 3, 5, 8, 120, Average
+ Q01 (LOCKING), "Q01-003_CDVE_Contact (Copper, aluminum, fiber optic, etc...)", 10, 7, 1, 70, High
+ Q03 (MISSING ELEMENT), "Q03-001_Shutter (Circular, rectangular, VT module, ventilation hole, etc.)", 3, 6, 4, 72, Average
+ Q03 (MISSING ITEM), "Q03-002_Heat shrink tubing (Low temperature, high temperature, etc...)", 3, 4, 6, 72, Medium
+ Q03 (MISSING ELEMENT), "Q03-003_Mechanical element (Screw, washer, nut, spacer, etc...)", 4, 4, 6, 96, Average
+ Q03 (MISSING ELEMENT), "Q03-004_Electrical element (Cable, Contact, diode, resistor, connector, faulty contact, VG module, diode block, rear connector, etc...)", 4, 4, 4, 64, Average
+ Q03 (MISSING ELEMENT), "Q03-005_Braking (Brake wire, glue, frangible paint line, etc...)", 3, 4, 4, 48, Low
+ Q03 (MISSING ELEMENT), "Q03-006_Collar (for routing, plastic shrink-fitting, string shrink-fitting, V-shaped support, plastic, metal, etc...)", 3, 6, 6, 108, Average
+ Q03 (MISSING ITEM), "Q03-007_Protective Caps (Ventilation Hole, line for a hole left open)", 3, 5, 4, 60, Medium
+ Q03 (MISSING ELEMENT), "Q03-008_End Protection (Socket Plug, Plastic Bag, etc.)", 3, 6, 4, 72, Average
+ Q03 (MISSING ELEMENT), "Q03-009_Tamper-evident label (Furniture door lock, Cut-off socket, etc.)", 3, 3, 4, 36, Low
+ Q03 (MISSING ELEMENT), "Q03-010_Sheathing (Textile sheath, corrugated sheath, EMI sheath, spare sheath, etc...)", 4, 3, 6, 72, Average
+ Q03 (MISSING ELEMENT), "Q03-011_Identification (plate (END, route...), sleeve (cable number...), positioning flag (clamp, ramp, ...)", 3, 4, 4, 48, Low
+ Q03 (MISSING ELEMENT), "Q03-012_Identification Label (FIN, MSN, etc...)", 3, 5, 4, 60, Average
+ Q04 (ELEMENT ASSEMBLY ERROR), "Q04-001_Shutter (Reference, mounting direction, etc...)", 3, 6, 4, 72, Average
+ Q04 (ELEMENT ASSEMBLY ERROR), "Q04-002_Heat Shrink Tubing (Reference, size, etc...)", 3, 4, 6, 72, Average
+ Q04 (ELEMENT ASSEMBLY ERROR), "Q04-003_Mechanical (Screw, washer, nut, spacer, V-bracket, structure, VT bar (Reference, size, orientation, etc...))", 4, 4, 8, 128, Average
+ Q04 (ELEMENT ASSEMBLY ERROR), "Q04-004_Contact (Reference, copper, aluminum, etc...)", 9, 3, 8, 216, Average
+ Q04 (ELEMENT ASSEMBLY ERROR), "Q04-005_Resistor, connector, circuit breaker, relay, switch, rear connection (Reference, mounting method, orientation, etc...)", 3, 3, 7, 63, Average
+ Q04 (ELEMENT ASSEMBLY ERROR), Q04-006_Lock wire (Reference), 3, 3, 6, 54, Low
+ Q04 (ELEMENT ASSEMBLY ERROR), "Q04-007_Plastic routing collar (Reference, size, orientation, etc...)", 3, 5, 5, 75, Average
+ Q04 (ELEMENT ASSEMBLY ERROR), "Q04-008_Metal routing collar (Reference, size, orientation, etc...)", 3, 3, 5, 45, Low
+ Q04 (ELEMENT ASSEMBLY ERROR), "Q04-009_Error Correction (Coding Key, ARINC Plug Pin, Polarization Key, etc...)", 4, 5, 4, 80, Average
+ Q04 (ELEMENT ASSEMBLY ERROR), Q04-010_Ventilation Hole Protective Caps (Reference), 3, 3, 4, 36, Low
+ Q04 (ELEMENT ASSEMBLY ERROR), "Q04-011_Electrical Element (Ground braid, terminal, indicator light (Reference, orientation, charging, etc...)", 4, 3, 8, 96, Average
+ Q04 (ELEMENT ASSEMBLY ERROR), "Q04-012_Socket Protective Cap (Reference, size, etc...)", 3, 3, 4, 36, Low
+ Q04 (ELEMENT ASSEMBLY ERROR), "Q04-013_Identification Plate (plate, function label, adhesive END, positioning flame, sleeve (Reference, identification, reversal, etc...)", 3, 6, 4, 72, Average
+ Q04 (ELEMENT ASSEMBLY ERROR), "Q04-014_Frettage (Reference plastic fret collar, reference string fret, etc...)", 3, 4, 5, 60, Average
+ Q05 (TIGHTENING ELEMENT), "Q05-001_Electrical Element (Rear connection, connector, VG module, terminal, circuit breaker (Overtightened, Undertightened, Loose, etc...))", 8, 6, 10, 480, High
+ Q05 (CLOSING ELEMENT), "Q05-002_Mechanical (screws, safety wire, frangible paint strip, clamp on air conditioning pipe, diode block, BAND-IT metal clamp, VT bar, standoff, sleeve, indicator light, switch, relay)", 4, 4, 10, 160, Average
+ Q05 (ELEMENT TIGHTENING), "Q05-003_Rope collar (Overtightening of screws, undertightening of screws, loose screws, etc...)", 4, 6, 10, 240, Average
+ Q05 (ELEMENT CLAMPING), "Q05-004_Frettage (Plastic collar, string fret, etc...)", 4, 6, 5, 120, Medium
+ Q05 (CLOSING ELEMENT), "Q05-005_CDVE_Electrical components (rear connection, connector, VG module, terminal, circuit breaker)", 10, 6, 10, 600, High
+ Q06 (CABLING INSTALLATION), "Q06-001_Harness (Routing, cable management, under or overlength (Incorrect destination, not positioned in the cable routing collar, V-shaped support, cable pinched in the collar, etc...)", 4, 6, 4, 96, Average
+ Q06 (CABLING INSTALLATION), "Q06-002_Poor sheathing installation (Visible line, incorrect twist, branch, sock, etc.)", 4, 6, 4, 96, Average
+ Q06 (CABLING IMPLEMENTATION), "Q06-003_Combining Tape (Overlap, Permitted Overlap, etc...)", 3, 5, 5, 75, Average
+ Q06 (CABLING INSTALLATION), "Q06-004_Cable in contact with a structural element (Clash with a plate, a ramp, a pipe, a screw, a connecting rod, etc...)", 5, 6, 4, 120, Average
+ Q06 (CABLING IMPLEMENTATION), "Q06-005_Cable in contact with an electrical component (Clash with a VG, a connector, etc...)", 5, 4, 4, 80, Average
+ Q06 (WIRE IMPLEMENTATION), "Q06-006_Incorrect positioning of the shrink ring (Plastic shrink ring collar, string shrink ring, etc.)", 3, 5, 4, 60, Average
+ Q06 (CABLING INSTALLATION), "Q06-007_Fringing on rear connection (Sheath not secured, sheath too short, etc...)", 3, 6, 5, 90, Average
+ Q06 (CABLING INSTALLATION), "Q06-008_Sheathing (Too short, sheath in contact with a grommet, sheath not secured to the rear connector, etc...)", 4, 6, 4, 96, Average
+ Q06 (CABLING IMPLEMENTATION), "Q06-009_Route not resumed after test (Cabling not completed, etc...)", 3, 5, 4, 60, Average
+ Q06 (CABLING IMPLEMENTATION), "Q06-010_Identification (Positioning flame, plate, sleeve (Offset, not specified, too short, too long, illegible, etc...))", 4, 5, 4, 80, Average
+ Q06 (CABLING IMPLEMENTATION), "Q06-011_Fringing, implementation (double capstan knot, fret length cut or ferrule clamp)", 3, 6, 5, 90, Average
+ Q06 (CABLING IMPLEMENTATION), Q06-012_Implementation of connections in Band-it collar, 5, 3, 4, 60, Average
+ Q07 (MEO BASIC END ELEMENT), "Q07-001_Aluminum Contact (Stripping, Crimping)", 9, 3, 5, 135, Average
+ Q07 (MEO BASIC END ELEMENT), "Q07-002_Copper Contact (Stripping, Crimping)", 9, 4, 5, 180, Average
+ Q07 (MEO BASIC END ELEMENT), "Q07-003_Self-welding sleeve (Deformation, overheating, etc...)", 9, 4, 5, 180, Average
+ Q07 (MEO BASIC END ELEMENT), "Q07-004_Copper Lug (Stripping, Crimping)", 9, 3, 5, 135, Average
+ Q07 (MEO BASIC END ELEMENT), "Q07-005_Aluminum Lug (Stripping, Crimping)", 9, 3, 5, 135, Average
+ Q07 (MEO BASIC END ELEMENT), "Q07-006_CDVE_Aluminum Contact (Stripping, Crimping)", 9, 3, 1, 27, Low
+ Q07 (MEO BASIC END ELEMENT), "Q07-007_CDVE_Copper Contact (Stripping, Crimping)", 9, 4, 1, 36, Low
+ Q07 (MEO BASIC END ELEMENT), "Q07-008_CDVE_Self-welding sleeve (Deformation, overheating, etc...)", 9, 4, 1, 36, Low
+ Q07 (MEO BASIC END ELEMENT), "Q07-009_CDVE_Copper Lug (Stripping, Crimping)", 9, 3, 1, 27, Low
+ Q07 (MEO BASIC END ELEMENT), "Q07-010_CDVE_Aluminum Lug (Stripping, Crimping)", 9, 3, 1, 27, Low
+ Q08 (MEO SPECIFIC END ELEMENT), "Q08-001_QUADRAX Contact (Stripping, Crimping)", 9, 3, 1, 27, Low
+ Q08 (MEO SPECIFIC END ELEMENT), "Q08-002_TWINAX Contact (Stripping, Crimping)", 9, 3, 1, 27, Low
+ Q08 (MEO SPECIFIC END ELEMENT), "Q08-003_TRIAXIAL Contacts (Stripping, Crimping)", 9, 3, 1, 27, Low
+ Q08 (MEO SPECIFIC END ELEMENT), "Q08-004_BUSCAN Contact (Stripping, Crimping)", 9, 3, 1, 27, Low
+ Q08 (MEO SPECIFIC END ELEMENT), "Q08-005_Coax Contact (Stripping, Crimping)", 9, 3, 1, 27, Low
+ Q08 (MEO SPECIFIC END ELEMENT), "Q08-006_Optical Fiber Contact (Stripping, gluing, etc...)", 6, 3, 1, 18, Low
+ Q08 (MEO SPECIFIC END ELEMENT), "Q08-007_Brazing (Non-compliant weld, etc...)", 9, 3, 5, 135, Average
+ Q09 (GROUNDING / BONDING), "Q09-001_Protection not applied (Petroleum jelly, protective paint, etc.)", 6, 7, 1, 42, Low
+ Q09 (GROUNDING / BONDING), "Q09-002_Application of protection (Petroleum jelly applied partially, metallization visible after application of protective paint, etc...)", 6, 7, 1, 42, Low
+ Q09 (GROUNDING / BONDING), "Q09-003_Ground Point (Presence of oxidation, non-compliant brush diameter, non-compliant measurement, etc.)", 6, 7, 1, 42, Low
+ Q09 (GROUNDING / BONDING), "Q09-004_CDVE_Protection not applied (Petroleum jelly, protective paint, etc.)", 6, 7, 1, 42, Low
+ Q09 (GROUNDING / BONDING), "Q09-005_CDVE_Application of protection (Oil jelly applied partially, metallization visible after application of protective paint, etc...)", 6, 7, 1, 42, Low
+ Q09 (GROUNDING / BONDING), "Q09-006_CDVE_Ground Point (Presence of oxidation, non-compliant brush diameter, non-compliant measurement, etc...)", 6, 7, 1, 42, Low
+ Q10 (DAMAGED STRUCTURAL ELEMENT), "Q10-001_Damaged Plate (Impact, scratch, bent, soiling, etc...)", 4, 6, 5, 120, Average
+ Q10 (DAMAGED STRUCTURAL ELEMENT), "Q10-002_Damaged Structure (Impact, scratch, soiling, etc.)", 4, 6, 5, 120, Average
+ Q10 (DAMAGED STRUCTURAL ELEMENT), "Q10-003_Damaged Handrail (Impact, scratch, bent, soiled, etc.)", 4, 5, 5, 100, Average
+ Q10 (DAMAGED STRUCTURAL ELEMENT), "Q10-004_Column (Impact, scratch, soiling, etc.)", 4, 4, 5, 80, Average
+ Q10 (DAMAGED STRUCTURAL ELEMENT), "Q10-005_Damaged Piping (Impact, scratch, soiling, etc.)", 4, 4, 5, 80, Average
+ Q10 (DAMAGED STRUCTURAL ELEMENT), "Q10-006_Mechanism (Insert, screws (Damaged threads, broken screws inside, etc...)", 4, 4, 10, 160, Average
+ Q11 (DAMAGED ELECTRICAL COMPONENT), Q11-001_Cable Cut, 8, 6, 1, 48, Low
+ Q11 (DAMAGED ELECTRICAL COMPONENT), "Q11-014_Scratched, damaged cable...", 8, 6, 10, 480, High
+ Q11 (DAMAGED ELECTRICAL COMPONENT), "Q11-002_Identification (Wave, label, sleeve (Torn, soiled, etc...)", 3, 6, 4, 72, Average
+ Q11 (DAMAGED ELECTRICAL COMPONENT), "Q11-003_Component (VG Module, circuit breaker, VT strip module, connector, rear fitting, lighting plate, etc...)", 4, 6, 7, 168, Average
+ Q11 (DAMAGED ELECTRICAL COMPONENT), "Q11-004_Protective Sheath (Textile, Corrugated, EMI, etc.)", 4, 3, 8, 96, Average
+ Q11 (DAMAGED ELECTRICAL COMPONENT), "Q11-005_Lug (copper, aluminum, etc.)", 4, 5, 7, 140, Average
+ Q11 (DAMAGED ELECTRICAL COMPONENT), "Q11-006_Contact (Copper, aluminum, etc.)", 9, 3, 7, 189, Average
+ Q11 (DAMAGED ELECTRICAL ELEMENT), "Q11-007_Amalgamating Tape (Torn, soiled, etc...)", 3, 3, 5, 45, Low
+ Q11 (DAMAGED ELECTRICAL COMPONENT), "Q11-008_Heat Shrink Tubing (Torn, soiled, etc...)", 3, 3, 5, 45, Low
+ Q11 (DAMAGED ELECTRICAL COMPONENT), "Q11-009_Ground braid metallization (Broken strands, etc...)", 4, 3, 5, 60, Average
+ Q11 (DAMAGED ELECTRICAL COMPONENT), "Q11-010_Cable collar (Plastic, metal, V-shaped bracket, etc.)", 3, 4, 5, 60, Average
+ Q11 (DAMAGED ELECTRICAL COMPONENT), "Q11-011_BAND-IT Clamp (Metal clamp, PTFE tape, etc.)", 5, 4, 2, 40, Low
+ Q11 (DAMAGED ELECTRICAL COMPONENT), "Q11-012_VT Strip (Damaged Module, Deformed Rail, etc...)", 3, 4, 5, 60, Average
+ Q11 (DAMAGED ELECTRICAL COMPONENT), Q11-013_Damaged Sealing Sleeves, 4, 4, 7, 112, Average
+ Q11 (DAMAGED ELECTRICAL COMPONENT), "Q11-016_CDVE_Component (VG Module, Circuit Breaker, VT Busbar Module, Connector, Rear Connector, Lighting Plate, etc...)", 4, 6, 2, 48, Low
+ Q11 (DAMAGED ELECTRICAL COMPONENT), "Q11-018_CDVE_Lug (copper, aluminum, etc...)", 4, 5, 2, 40, Low
+ Q11 (DAMAGED ELECTRICAL COMPONENT), "Q11-019_CDVE_Contact (Copper, aluminum, etc...)", 9, 3, 2, 54, Low
+ Q11 (DAMAGED ELECTRICAL ELEMENT), "Q11-022_CDVE_Ground braid metallization (Broken strands, etc...)", 4, 3, 2, 24, Low
+ Q11 (DAMAGED ELECTRICAL COMPONENT), Q11-026_CDVE_Damaged Sealing Sleeves, 4, 4, 2, 32, Low
+ Q12 (PRINT), "Q12-001_Cable gauge error (G20, G18, etc...)", 4, 4, 5, 80, Average
+ Q12 (PRINT), "Q12-002_Cable type error (DR, AD, etc...)", 4, 3, 10, 120, Average
+ Q12 (PRINT), "Q12-003_Cable length error (Too short, too long, etc...)", 4, 3, 5, 60, Average
+ Q12 (PRINTING), "Q12-004_Cable Identification (Readability, identification number error, marking characteristics, etc.)", 4, 4, 5, 80, Average
+ Q12 (PRINTING), "Q12-005_Identification (Sleeve, plate, label (Legibility, incorrect reference, color, etc.)", 3, 3, 5, 45, Low
+ Q12 (PRINT), "Q12-006_VT Bar (Module identification error, module reference, rail size, etc...)", 3, 3, 7, 63, Average
+ Q12 (PRINT), "Q12-007_CDVE_Cable gauge error (G20, G18, etc...)", , , , 0,
+ Q12 (PRINT), "Q12-008_CDVE_Cable type error (DR, AD, etc...)", , , , 0,
+ Q13 (MANUFACTURING FILE), "Q13-001_Operation (Not badged, order of operations not respected, etc...)", 3, 6, 4, 72, Average
+ Q13 (MANUFACTURING FILE), "Q13-002_Stamp (Not affixed to the tracking sheet, partially visible, etc...)", 3, 3, 4, 36, Low
+ Q13 (MANUFACTURING FILE), "Q13-003_Traceability label (CT176 not completed, CT129D not completed, etc...)", 4, 4, 4, 64, Average
+ Q13 (MANUFACTURING FILE), "Q13-004_Documentation (Missing, non-compliant, etc...)", 4, 5, 4, 80, Average
+ Q13 (MANUFACTURING FILE), "Q13-005_Tool Entry (Not performed, tool kit error, etc...)", 4, 3, 4, 48, Low
+ Q16 (FOD), "Q16-001_Tools (Flashlight, mirror, wrench, screwdriver, Allen key, all tools, etc.)", 8, 3, 4, 96, Average
+ Q16 (FOD), "Q16-002_Fasteners and aircraft parts (Bolts, washers, nuts, etc.)", 8, 3, 4, 96, Average
+ Q16 (FOD), "Q16-003_Personal effects (ID badge, glasses, personal devices (phone, laptop, tablet), etc.)", 8, 3, 4, 96, Average
+ Q16 (FOD), "Q16-004_Industrial Debris (Silver Filings, Dust, Insulation, Metal Chips, etc.)", 8, 4, 4, 128, Average
+ Q16 (FOD), "Q16-005_Additional Items (Consumables, caps, plugs, work order, etc.)", 8, 4, 4, 128, Average
+ Q16 (FOD), "Q16-006_Maintenance (Presence of an item in the work area, workshop, workstation, corridor, etc.)", 4, 3, 4, 48, Low
+ T01 (TEST), "T01_Missing cable (Copper, aluminum, fiber optic, etc.)", 8, 5, 2, 80, Average
+ T02 (TEST), "T02_Connection error (Copper, aluminum, fiber optic, etc.)", 8, 6, 2, 96, Average
+ T03 (TEST), "T03_Missing Shunt (Electrical, Mechanical)", 8, 6, 2, 96, Average
+ T04 (TEST), "T04_Connection Reversal (Copper, Aluminum, Fiber Optic, etc.)", 8, 6, 2, 96, Average
+ T05 (TEST), "T05_Unconnected cable (Copper, aluminum, fiber optic, etc.)", 8, 5, 5, 200, Average
+ T06 (TEST), T06_Insertion loss measurement on non-compliant optical links, 6, 3, 4, 72, Average
+ T07 (TEST), "T07_Resistance measurement on a non-conforming metallization (VN, VG, VH, etc...)", 6, 3, 2, 36, Low
+ T07 (TEST), "T07_CDVE_Resistance measurement on a non-conforming metallization (VN, VG, VH, etc...)", 8, 3, 2, 48, Low
+ T08 (TEST), "T08_Non-compliant linear resistance measurement (EMI sheath, overbraiding, etc.)", 6, 3, 2, 36, Low
+ T08 (TEST), "T08_CDVE_Non-compliant linear resistance measurement (EMI sheath, overbraiding, etc.)", 8, 3, 2, 48, Low
+ , , , , , ,
+ , , , , , ,
+ , , , , , ,
+ , , , , , ,
+ Note: Following the merger of 19/11/24, this 2025 list contains 16 fewer sub-codes compared to the 2024 list, despite the addition of 31 " CDVE " codes .
+ The RPN ratings were carried out before the separate addition of the CDVEs => a new rating session will be scheduled for early 2025

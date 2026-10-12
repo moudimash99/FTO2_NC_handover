@@ -1,0 +1,877 @@
+﻿notification_number,programme,plant,statut,responsabilite,date_creation,perimetre,nb_defauts,nb_mineurs,nb_Câblage,nb_Branchement,nb_Dommage & manquant,nb_Métallisation,nb_Amont,nb_FOD,nb_Dossier,groupe_principal,sous_categories
+16995857,A330,51,closed,[PLANT],2026-01-14,Retour client,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – composant cassé
+17063910,A330,51,open,[PLANT],2026-03-12,Retour client,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – composant cassé
+17232524,A330,51,open,[PLANT],2026-06-18,Retour client,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – composant cassé
+216037622,A330,FTO2,closed,[PLANT],2026-01-05,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – structure
+216038266,A350,FTO2,closed,[SUPPLIER],2026-01-05,Fournisseur,1,0,1,0,0,0,0,0,0,Câblage,Identification – positionnement
+216048991,A350,FTO2,closed,[PLANT],2026-01-06,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – câble
+216050458,A350,FTO2,closed,[PLANT],2026-01-06,FTO2,1,0,0,1,0,0,0,0,0,Branchement,Inversion
+216052773,A330,FTO2,closed,[PLANT],2026-01-06,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – structure
+216055047,A350,FTO2,closed,[PLANT],2026-01-06,FTO2,17,0,10,2,2,3,0,0,0,Câblage,Gainage / protection | Bleu non appliqué | Déverrouillage | Frettage / colliers – pose | Cheminement – clash | Manquant – identification | Manquant – gaine / thermo | Mauvaise réf. – électrique / détrompage | Cheminement – longueur / tension
+216058462,A330,FTO2,closed,[SUPPLIER],2026-01-07,Fournisseur,1,0,0,0,1,0,0,0,0,Dommage & manquant,Composant HS
+216060124,A330,FTO2,closed,[PLANT],2026-01-07,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – composant cassé
+216062695,A350,FTO2,closed,[PLANT],2026-01-07,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Manquant – câble / shunt / élément
+216064223,A350,FTO2,closed,[PLANT],2026-01-07,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – câble
+216064934,A330,FTO2,closed,[PLANT],2026-01-07,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Composant – cause non écrite
+216064950,A350,FTO2,closed,[PLANT],2026-01-07,FTO2,1,0,0,1,0,0,0,0,0,Branchement,Non connecté
+216074010,A330,FTO2,closed,[PLANT],2026-01-08,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – composant cassé
+216074163,A330,FTO2,closed,[PLANT],2026-01-08,FTO2,2,0,0,0,2,0,0,0,0,Dommage & manquant,Manquant – câble / shunt / élément
+216079347,A350,FTO2,closed,[PLANT],2026-01-08,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Manquant – câble / shunt / élément
+216083260,A350,FTO2,closed,[PLANT],2026-01-09,FTO2,13,0,0,12,1,0,0,0,0,Branchement,Inversion | Déverrouillage | Non connecté | Manquant – câble / shunt / élément | Erreur de branchement
+216083909,A350,FTO2,closed,[PLANT],2026-01-09,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Composant – cause non écrite
+216084911,A330,FTO2,closed,[PLANT],2026-01-09,FTO2,3,1,2,0,1,0,0,0,0,Câblage,Mauvaise réf. – électrique / détrompage | Manquant – colliers
+216085084,A350,FTO2,closed,[PLANT],2026-01-09,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – structure
+216087194,A330,FTO2,closed,[PLANT],2026-01-09,FTO2,1,0,1,0,0,0,0,0,0,Câblage,Sertissage
+216087834,A330,FTO2,closed,[PLANT],2026-01-09,FTO2,1,0,0,0,0,1,0,0,0,Métallisation,Bleu non appliqué
+216088032,A350,FTO2,closed,[PLANT],2026-01-09,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Manquant – câble / shunt / élément
+216088280,A330,FTO2,closed,[PLANT],2026-01-09,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – structure
+216091729,A350,FTO2,closed,[PLANT],2026-01-12,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – composant cassé
+216095063,A350,FTO2,closed,[PLANT],2026-01-12,FTO2,16,5,9,1,5,1,0,0,0,Câblage,Frettage / colliers – pose | Manquant – colliers | Gainage / protection | Cheminement – clash | Manquant – obturateurs / bouchons | Inversion | Identification – positionnement | Bleu non appliqué
+216098505,A330,FTO2,closed,[PLANT],2026-01-12,FTO2,1,0,1,0,0,0,0,0,0,Câblage,Mauvaise réf. – électrique / détrompage
+216099114,A350,FTO2,closed,[PLANT],2026-01-12,FTO2,1,0,1,0,0,0,0,0,0,Câblage,Câble à refaire (ligne)
+216105468,A350,FTO2,closed,[PLANT],2026-01-13,FTO2,13,0,0,13,0,0,0,0,0,Branchement,Inversion | Erreur de branchement | Déverrouillage
+216106072,A350,FTO2,closed,[PLANT],2026-01-13,FTO2,2,0,1,1,0,0,0,0,0,Câblage,Mauvaise réf. – identification | Inversion
+216106549,A350,FTO2,closed,[SUPPLIER],2026-01-13,Fournisseur,1,0,1,0,0,0,0,0,0,Câblage,Serrage mécanique
+216109128,A350,FTO2,deleted,[PLANT],2026-01-13,Supprimée,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – structure
+216111281,A330,FTO2,closed,[PLANT],2026-01-13,FTO2,2,0,0,0,2,0,0,0,0,Dommage & manquant,Manquant – câble / shunt / élément
+216111411,A330,FTO2,closed,[PLANT],2026-01-13,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – composant cassé
+216120479,A330,FTO2,closed,[PLANT],2026-01-14,FTO2,10,2,3,0,5,2,0,0,0,Dommage & manquant,Serrage mécanique | Manquant – colliers | Point de masse / mesure | Manquant – gaine / thermo | Manquant – identification | Frettage / colliers – pose | Manquant – mécanique / freinage
+216123618,A330,FTO2,deleted,[PLANT],2026-01-14,Supprimée,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – composant cassé
+216125341,A330,FTO2,closed,[PLANT],2026-01-14,FTO2,6,0,0,6,0,0,0,0,0,Branchement,Erreur de branchement | Inversion
+216133847,A350,FTO2,closed,[PLANT],2026-01-15,FTO2,1,0,1,0,0,0,0,0,0,Câblage,Sertissage spécifique
+216134911,A350,FTO2,closed,[PLANT],2026-01-15,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Manquant – câble / shunt / élément
+216135746,A330,FTO2,closed,[PLANT],2026-01-15,FTO2,1,0,0,0,0,1,0,0,0,Métallisation,Bleu mal appliqué / débordant
+216136623,A330,FTO2,closed,[PLANT],2026-01-15,FTO2,1,0,0,1,0,0,0,0,0,Branchement,Inversion
+216147860,A350,FNZ1,closed,[PLANT],2026-01-16,Retour client,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – composant cassé
+216149115,A350,FTO2,deleted,[PLANT],2026-01-16,Supprimée,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – identification
+216149991,A350,FTO2,closed,[PLANT],2026-01-16,FTO2,35,2,20,3,3,6,1,2,0,Câblage,Cheminement – longueur / tension | Identification – positionnement | Bleu non appliqué | Déverrouillage | Frettage / colliers – pose | Manquant – obturateurs / bouchons | Bleu mal appliqué / débordant | FOD | Gainage / protection | Câble à refaire (ligne) | Manquant – identification | Amont · Câble | Serrage électrique | Cheminement – clash | Câblage non terminé
+216150332,A330,FTO2,closed,[PLANT],2026-01-16,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Composant HS
+216153397,A350,FTO2,deleted,[PLANT],2026-01-16,Supprimée,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – identification
+216154099,A350,FTO2,deleted,[SUPPLIER],2026-01-16,Supprimée,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – composant cassé
+216156635,A330,FTO2,closed,[PLANT],2026-01-16,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – structure
+216161437,A350,FTO2,closed,[PLANT],2026-01-19,FTO2,1,0,1,0,0,0,0,0,0,Câblage,Cheminement – clash
+216163812,A330,FTO2,deleted,[PLANT],2026-01-19,Supprimée,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – structure
+216163882,A330,FTO2,closed,[PLANT],2026-01-19,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – structure
+216164096,A350,FTO2,closed,[PLANT],2026-01-19,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – identification
+216164418,A350,FTO2,deleted,[SUPPLIER],2026-01-19,Supprimée,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – composant cassé
+216165997,A330,FTO2,closed,[PLANT],2026-01-19,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Composant – cause non écrite
+216169015,A350,FTO2,closed,[PLANT],2026-01-19,FTO2,15,0,2,13,0,0,0,0,0,Branchement,Inversion | Erreur de branchement | Mauvaise réf. – électrique / détrompage
+216169847,A330,FTO2,deleted,[PLANT],2026-01-19,Supprimée,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – structure
+216171252,A330,FTO2,closed,[PLANT],2026-01-19,FTO2,1,0,0,1,0,0,0,0,0,Branchement,Inversion
+216175185,A350,FTO2,closed,[PLANT],2026-01-19,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – câble
+216177953,A350,FTO2,closed,[PLANT],2026-01-20,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – structure
+216179045,A350,FTO2,closed,[PLANT],2026-01-20,FTO2,14,2,12,0,2,0,0,0,0,Câblage,Gainage / protection | Manquant – colliers | Identification – positionnement | Sertissage | Cheminement – clash | Câble à refaire (ligne)
+216180778,A350,FTO2,closed,[PLANT],2026-01-20,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – composant cassé
+216194149,A330,FTO2,closed,[PLANT],2026-01-21,FTO2,8,0,7,0,1,0,0,0,0,Câblage,Mauvaise réf. – électrique / détrompage | Cheminement – clash | Serrage mécanique | Dommage – habillage
+216194151,A330,FTO2,closed,[PLANT],2026-01-21,FTO2,1,0,0,0,0,0,1,0,0,Amont,Amont · Câble
+216194905,A350,FTO2,closed,[SUPPLIER],2026-01-21,Fournisseur,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – composant cassé
+216195031,A350,FTO2,closed,[PLANT],2026-01-21,FTO2,1,0,1,0,0,0,0,0,0,Câblage,Mauvaise réf. – électrique / détrompage
+216195196,A350,FTO2,closed,[SUPPLIER],2026-01-21,Fournisseur,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – composant cassé
+216195247,A350,FTO2,closed,[SUPPLIER],2026-01-21,Fournisseur,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – composant cassé
+216195285,A350,FTO2,closed,[SUPPLIER],2026-01-21,Fournisseur,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – composant cassé
+216195310,A330,FTO2,closed,[PLANT],2026-01-21,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Manquant – câble / shunt / élément
+216195391,A350,FTO2,closed,[SUPPLIER],2026-01-21,Fournisseur,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – composant cassé
+216195473,A350,FTO2,closed,[SUPPLIER],2026-01-21,Fournisseur,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – composant cassé
+216195654,A330,FTO2,closed,[PLANT],2026-01-21,FTO2,4,0,0,1,3,0,0,0,0,Dommage & manquant,Manquant – câble / shunt / élément | Erreur de branchement
+216198387,A350,FTO2,closed,[PLANT],2026-01-21,FTO2,1,0,0,0,0,0,1,0,0,Amont,Amont · Câble
+216198504,A330,FTO2,closed,[PLANT],2026-01-21,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – structure
+216199739,A330,FTO2,closed,[PLANT],2026-01-21,FTO2,7,0,1,6,0,0,0,0,0,Branchement,Erreur de branchement | Déverrouillage | Mauvaise réf. – électrique / détrompage | Inversion
+216207223,A330,FTO2,closed,[PLANT],2026-01-22,FTO2,1,0,0,0,0,0,1,0,0,Amont,Amont · Câble
+216207337,A330,FTO2,closed,[PLANT],2026-01-22,FTO2,1,0,1,0,0,0,0,0,0,Câblage,Identification – positionnement
+216214582,A330,FTO2,closed,[PLANT],2026-01-22,FTO2,1,0,0,0,0,0,1,0,0,Amont,Amont · Câble
+216215650,A350,FTO2,closed,[PLANT],2026-01-22,FTO2,1,0,1,0,0,0,0,0,0,Câblage,Câble à refaire (ligne)
+216216573,A350,FTO2,closed,[PLANT],2026-01-22,FTO2,1,0,1,0,0,0,0,0,0,Câblage,Câble à refaire (ligne)
+216217484,A330,FFF1,closed,[PLANT],2026-01-22,Retour client,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – structure
+216219894,A350,FTO2,closed,[PLANT],2026-01-22,FTO2,21,0,13,1,4,0,0,0,3,Câblage,Gainage / protection | Dommage – identification | Dossier | Frettage / colliers – pose | Déverrouillage | Mauvaise réf. – identification | Identification – positionnement | Cheminement – clash | Mauvaise réf. – mécanique
+216222585,A350,FTO2,closed,[PLANT],2026-01-23,FTO2,1,0,1,0,0,0,0,0,0,Câblage,Sertissage spécifique
+216223943,A350,FTO2,closed,[PLANT],2026-01-23,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – câble
+216224176,A330,FTO2,closed,[PLANT],2026-01-23,FTO2,9,0,2,6,1,0,0,0,0,Branchement,Erreur de branchement | Mauvaise réf. – électrique / détrompage | Inversion | Composant HS
+216225110,A330,FFF1,closed,[PLANT],2026-01-23,Retour client,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – composant cassé
+216225174,A330,FTO2,closed,[SUPPLIER],2026-01-23,Fournisseur,1,0,0,0,1,0,0,0,0,Dommage & manquant,Composant HS
+216227502,A330,FTO2,closed,[PLANT],2026-01-23,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Composant – cause non écrite
+216227907,A330,FTO2,closed,[PLANT],2026-01-23,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – composant cassé
+216228052,A330,FTO2,closed,[PLANT],2026-01-23,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – composant cassé
+216230049,A350,FTO2,closed,[PLANT],2026-01-23,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – câble
+216236664,A350,FTO2,closed,[PLANT],2026-01-26,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – câble
+216237277,A350,FTO2,deleted,[PLANT],2026-01-26,Supprimée,1,0,0,0,0,0,1,0,0,Amont,Amont · Câble
+216242374,A330,FTO2,closed,[PLANT],2026-01-26,FTO2,1,0,1,0,0,0,0,0,0,Câblage,Sertissage
+216243485,A330,FTO2,closed,[PLANT],2026-01-26,FTO2,1,0,0,1,0,0,0,0,0,Branchement,Inversion
+216247547,A350,FTO2,deleted,[PLANT],2026-01-26,Supprimée,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – structure
+216247653,A350,FTO2,closed,[PLANT],2026-01-26,FTO2,2,0,0,0,2,0,0,0,0,Dommage & manquant,Dommage – structure
+216251193,A350,FTO2,closed,[PLANT],2026-01-27,FTO2,20,0,2,16,2,0,0,0,0,Branchement,Inversion | Déverrouillage | Erreur de branchement | Composant HS | Mauvaise réf. – identification | Mauvaise réf. – électrique / détrompage
+216251578,A330,FTO2,closed,[PLANT],2026-01-27,FTO2,6,1,3,1,2,0,0,0,0,Câblage,Mauvaise réf. – électrique / détrompage | Manquant – mécanique / freinage | Déverrouillage | Gainage / protection | Manquant – colliers
+216251878,A350,FTO2,closed,[PLANT],2026-01-27,FTO2,1,0,0,0,0,0,1,0,0,Amont,Amont · Câble
+216265884,A330,FTO2,closed,[PLANT],2026-01-28,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Manquant – câble / shunt / élément
+216265972,A330,FTO2,closed,[PLANT],2026-01-28,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – composant cassé
+216266092,A330,FTO2,deleted,[PLANT],2026-01-28,Supprimée,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – composant cassé
+216266516,A330,FTO2,deleted,[PLANT],2026-01-28,Supprimée,1,0,0,0,1,0,0,0,0,Dommage & manquant,Composant – cause non écrite
+216267121,A350,FTO2,closed,[PLANT],2026-01-28,FTO2,21,0,1,20,0,0,0,0,0,Branchement,Inversion | Erreur de branchement | Déverrouillage | Sertissage spécifique
+216269064,A330,FTO2,closed,[PLANT],2026-01-28,FTO2,1,0,0,0,0,0,1,0,0,Amont,Amont · Câble
+216273067,A330,FTO2,closed,[PLANT],2026-01-28,FTO2,2,0,2,0,0,0,0,0,0,Câblage,Mauvaise réf. – électrique / détrompage | Serrage mécanique
+216278405,A350,FTO2,closed,[PLANT],2026-01-29,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – composant cassé
+216279936,A350,FTO2,closed,[PLANT],2026-01-29,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – composant cassé
+216280652,A350,FTO2,closed,[PLANT],2026-01-29,FTO2,1,0,1,0,0,0,0,0,0,Câblage,Câble à refaire (ligne)
+216280851,A350,FTO2,deleted,[PLANT],2026-01-29,Supprimée,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – câble
+216282251,A330,FTO2,deleted,[PLANT],2026-01-29,Supprimée,1,0,0,0,1,0,0,0,0,Dommage & manquant,Composant – cause non écrite
+216285411,A330,FTO2,deleted,[PLANT],2026-01-29,Supprimée,1,0,0,0,1,0,0,0,0,Dommage & manquant,Composant – cause non écrite
+216285613,A350,FTO2,closed,[PLANT],2026-01-29,FTO2,1,0,1,0,0,0,0,0,0,Câblage,Sertissage spécifique
+216286560,A330,FTO2,closed,[PLANT],2026-01-29,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Composant – cause non écrite
+216288447,A350,FTO2,closed,[PLANT],2026-01-29,FTO2,16,1,10,2,3,1,0,0,0,Câblage,Cheminement – longueur / tension | Gainage / protection | Déverrouillage | Cheminement – clash | Manquant – identification | Frettage / colliers – pose | Manquant – obturateurs / bouchons | Mauvaise réf. – électrique / détrompage | Dommage – identification | Câblage non terminé | Bleu non appliqué
+216294895,A350,FTO2,closed,[PLANT],2026-01-30,FTO2,1,0,1,0,0,0,0,0,0,Câblage,Sertissage
+216307098,A350,FTO2,closed,[PLANT],2026-02-02,FTO2,1,0,1,0,0,0,0,0,0,Câblage,Sertissage spécifique
+216307227,A330,FTO2,closed,[PLANT],2026-02-02,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – composant cassé
+216308985,A330,FFF1,closed,[PLANT],2026-02-02,Retour client,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – composant cassé
+216309208,A350,FTO2,closed,[PLANT],2026-02-02,FTO2,23,6,10,2,8,2,0,1,0,Câblage,Manquant – colliers | Mauvaise réf. – électrique / détrompage | Frettage / colliers – pose | Serrage électrique | Bleu mal appliqué / débordant | Manquant – obturateurs / bouchons | Gainage / protection | Dommage – composant cassé | Déverrouillage | FOD | Inversion | Manquant – identification | Sertissage
+216310033,A350,FTO2,closed,[PLANT],2026-02-02,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – câble
+216311784,A350,FTO2,closed,[PLANT],2026-02-02,FTO2,1,0,1,0,0,0,0,0,0,Câblage,Sertissage
+216312177,A330,FTO2,closed,[SUPPLIER],2026-02-02,Fournisseur,1,0,0,0,1,0,0,0,0,Dommage & manquant,Manquant – mécanique / freinage
+216313341,A320,FFF1,closed,[PLANT],2026-02-02,Retour client,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – composant cassé
+216313639,A330,FTO2,closed,[PLANT],2026-02-02,FTO2,1,0,0,1,0,0,0,0,0,Branchement,Inversion
+216318106,A350,FTO2,closed,[PLANT],2026-02-02,FTO2,1,0,1,0,0,0,0,0,0,Câblage,Câble à refaire (ligne)
+216318944,A350,FTO2,closed,[PLANT],2026-02-02,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Manquant – câble / shunt / élément
+216320751,A350,FTO2,closed,[PLANT],2026-02-03,FTO2,10,0,0,9,1,0,0,0,0,Branchement,Inversion | Erreur de branchement | Dommage – composant cassé
+216321594,A350,FTO2,closed,[PLANT],2026-02-03,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – câble
+216321686,A350,FTO2,closed,[PLANT],2026-02-03,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – câble
+216321850,A330,FTO2,deleted,[SUPPLIER],2026-02-03,Supprimée,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – composant cassé
+216323243,A330,FTO2,closed,[SUPPLIER],2026-02-03,Fournisseur,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – composant cassé
+216328444,A350,FTO2,deleted,[PLANT],2026-02-03,Supprimée,1,0,0,0,0,0,0,0,1,Dossier,Dossier
+216329035,A350,FTO2,deleted,[PLANT],2026-02-03,Supprimée,1,0,0,0,0,0,0,0,1,Dossier,Dossier
+216333275,A350,FTO2,deleted,[PLANT],2026-02-03,Supprimée,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – structure
+216336213,A350,FTO2,closed,[PLANT],2026-02-04,FTO2,11,0,0,11,0,0,0,0,0,Branchement,Inversion | Déverrouillage | Erreur de branchement
+216336723,A330,FTO2,closed,[PLANT],2026-02-04,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Composant HS
+216337073,A350,FTO2,deleted,[PLANT],2026-02-04,Supprimée,1,0,0,0,1,0,0,0,0,Dommage & manquant,Manquant – câble / shunt / élément
+216340381,A350,FNZ1,closed,[PLANT],2026-02-04,Retour client,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – composant cassé
+216341273,A330,FTO2,closed,[PLANT],2026-02-04,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Composant – cause non écrite
+216342861,A350,FTO2,closed,[PLANT],2026-02-04,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Manquant – câble / shunt / élément
+216343309,A350,FTO2,closed,[PLANT],2026-02-04,FTO2,1,0,0,0,0,0,0,0,1,Dossier,Dossier
+216343483,A350,FTO2,closed,[PLANT],2026-02-04,FTO2,1,0,0,0,0,0,0,0,1,Dossier,Dossier
+216343489,A350,FTO2,closed,[PLANT],2026-02-04,FTO2,1,0,0,0,0,0,0,0,1,Dossier,Dossier
+216343617,A350,FTO2,closed,[PLANT],2026-02-04,FTO2,1,0,0,0,0,0,0,0,1,Dossier,Dossier
+216343729,A350,FTO2,closed,[PLANT],2026-02-04,FTO2,1,0,0,0,0,0,0,0,1,Dossier,Dossier
+216343847,A350,FTO2,closed,[PLANT],2026-02-04,FTO2,1,0,0,0,0,0,0,0,1,Dossier,Dossier
+216350524,A330,FTO2,closed,[PLANT],2026-02-05,FTO2,1,0,0,0,0,0,0,0,1,Dossier,Dossier
+216354076,A350,FTO2,closed,[PLANT],2026-02-05,FTO2,19,5,13,0,6,0,0,0,0,Câblage,Frettage / colliers – pose | Cheminement – longueur / tension | Manquant – colliers | Manquant – obturateurs / bouchons | Mauvaise réf. – colliers / frettage | Gainage / protection | Manquant – gaine / thermo | Sertissage
+216357178,A330,FTO2,closed,[PLANT],2026-02-05,FTO2,10,0,1,8,1,0,0,0,0,Branchement,Erreur de branchement | Inversion | Mauvaise réf. – électrique / détrompage | Composant HS
+216363993,A330,FTO2,deleted,[SUPPLIER],2026-02-06,Supprimée,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – structure
+216364146,A330,FTO2,closed,[PLANT],2026-02-06,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Manquant – câble / shunt / élément
+216366914,A330,FTO2,closed,[SUPPLIER],2026-02-06,Fournisseur,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – structure
+216368810,A330,FTO2,closed,[PLANT],2026-02-06,FTO2,5,0,3,1,1,0,0,0,0,Câblage,Cheminement – clash | Frettage / colliers – pose | Dommage – structure | Déverrouillage
+216369423,A330,FTO2,closed,[PLANT],2026-02-06,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – composant cassé
+216369702,A330,FTO2,deleted,[PLANT],2026-02-06,Supprimée,1,0,1,0,0,0,0,0,0,Câblage,Identification – positionnement
+216376456,A350,FTO2,deleted,[PLANT],2026-02-09,Supprimée,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – structure
+216376660,A350,FTO2,closed,[PLANT],2026-02-09,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – structure
+216380858,A350,FTO2,closed,[PLANT],2026-02-09,FTO2,2,0,0,0,2,0,0,0,0,Dommage & manquant,Dommage – câble
+216382175,A350,FTO2,deleted,[PLANT],2026-02-09,Supprimée,1,1,0,0,1,0,0,0,0,Dommage & manquant,Manquant – colliers
+216383860,A330,FTO2,closed,[PLANT],2026-02-09,FTO2,1,0,1,0,0,0,0,0,0,Câblage,Cheminement – longueur / tension
+216386756,A350,FTO2,closed,[PLANT],2026-02-09,FTO2,1,0,0,0,0,0,1,0,0,Amont,Amont · Câble
+216391179,A330,FTO2,closed,[PLANT],2026-02-10,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – composant cassé
+216394948,A350,FNZ1,closed,[PLANT],2026-02-10,Retour client,1,0,0,0,1,0,0,0,0,Dommage & manquant,Composant – cause non écrite
+216395214,A350,FTO2,closed,[PLANT],2026-02-10,FTO2,10,0,0,9,1,0,0,0,0,Branchement,Inversion | Déverrouillage | Erreur de branchement | Composant HS
+216395324,A330,FTO2,closed,[PLANT],2026-02-10,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – composant cassé
+216397936,A350,FTO2,closed,[PLANT],2026-02-10,FTO2,28,3,22,0,4,0,1,0,1,Câblage,Frettage / colliers – pose | Gainage / protection | Manquant – colliers | Mauvaise réf. – colliers / frettage | Identification – positionnement | Cheminement – longueur / tension | Serrage électrique | Amont · Identification / barrette VT | Dommage – identification | Dossier
+216402535,A350,FTO2,deleted,[PLANT],2026-02-11,Supprimée,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – structure
+216406175,A330,FTO2,closed,[PLANT],2026-02-11,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – structure
+216406194,A350,FTO2,closed,[PLANT],2026-02-11,FTO2,11,0,0,11,0,0,0,0,0,Branchement,Inversion | Erreur de branchement | Déverrouillage
+216408728,A320,FTO2,closed,[PLANT],2026-02-11,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – câble
+216418839,A350,FTO2,deleted,[PLANT],2026-02-12,Supprimée,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – structure
+216431908,A330,FTO2,closed,[SUPPLIER],2026-02-13,Fournisseur,1,0,0,0,1,0,0,0,0,Dommage & manquant,Manquant – mécanique / freinage
+216431918,A330,FTO2,closed,[PLANT],2026-02-13,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – composant cassé
+216433296,A350,FTO2,closed,[PLANT],2026-02-13,FTO2,28,3,19,1,6,2,0,0,0,Câblage,Frettage / colliers – pose | Cheminement – longueur / tension | Serrage électrique | Dommage – identification | Identification – positionnement | Manquant – colliers | Bleu non appliqué | Manquant – obturateurs / bouchons | Déverrouillage | Mauvaise réf. – mécanique | Gainage / protection | Cheminement – clash | Mauvaise réf. – obturation / thermo | Manquant – identification
+216433442,A330,FTO2,closed,[SUPPLIER],2026-02-13,Fournisseur,1,0,0,0,1,0,0,0,0,Dommage & manquant,Manquant – mécanique / freinage
+216438566,A330,FTO2,closed,[PLANT],2026-02-13,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Composant – cause non écrite
+216438718,A330,FTO2,closed,[PLANT],2026-02-13,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Composant – cause non écrite
+216438895,A330,FTO2,closed,[PLANT],2026-02-13,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Composant – cause non écrite
+216438950,A330,FTO2,closed,[PLANT],2026-02-13,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Composant – cause non écrite
+216438953,A330,FTO2,closed,[PLANT],2026-02-13,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Composant – cause non écrite
+216438958,A330,FTO2,closed,[PLANT],2026-02-13,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Composant – cause non écrite
+216450637,A350,FTO2,closed,[PLANT],2026-02-16,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Composant – cause non écrite
+216457592,A330,FFF1,closed,[PLANT],2026-02-16,Retour client,1,0,0,0,1,0,0,0,0,Dommage & manquant,Manquant – mécanique / freinage
+216459539,A330,FTO2,closed,[PLANT],2026-02-17,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Composant HS
+216463975,A350,FTO2,closed,[PLANT],2026-02-17,FTO2,10,0,1,9,0,0,0,0,0,Branchement,Inversion | Erreur de branchement | Déverrouillage | Sertissage
+216474438,A330,FTO2,closed,[PLANT],2026-02-18,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Manquant – câble / shunt / élément
+216475092,A350,FTO2,closed,[PLANT],2026-02-18,FTO2,25,1,18,1,2,4,0,0,0,Câblage,Frettage / colliers – pose | Identification – positionnement | Gainage / protection | Bleu non appliqué | Serrage électrique | Bleu mal appliqué / débordant | Manquant – colliers | Inversion | Mauvaise réf. – obturation / thermo | Dommage – composant cassé | Cheminement – clash | Mauvaise réf. – électrique / détrompage | Cheminement – longueur / tension
+216475788,A330,FTO2,deleted,[PLANT],2026-02-18,Supprimée,1,0,0,0,1,0,0,0,0,Dommage & manquant,Composant – cause non écrite
+216479154,A330,FTO2,closed,[PLANT],2026-02-18,FTO2,1,0,1,0,0,0,0,0,0,Câblage,Sertissage
+216479646,A330,FTO2,closed,[PLANT],2026-02-18,FTO2,1,0,1,0,0,0,0,0,0,Câblage,Sertissage
+216493778,A330,FTO2,closed,[PLANT],2026-02-19,FTO2,2,0,1,1,0,0,0,0,0,Câblage,Mauvaise réf. – électrique / détrompage | Erreur de branchement
+216498732,A350,FTO2,closed,[PLANT],2026-02-19,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Manquant – câble / shunt / élément
+216498789,A350,FTO2,closed,[PLANT],2026-02-19,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – câble
+216498856,A350,FTO2,closed,[PLANT],2026-02-19,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Manquant – câble / shunt / élément
+216499104,A350,FTO2,closed,[PLANT],2026-02-19,FTO2,24,2,18,0,3,2,0,0,1,Câblage,Cheminement – longueur / tension | Gainage / protection | Frettage / colliers – pose | Identification – positionnement | Bleu non appliqué | Manquant – obturateurs / bouchons | Cheminement – clash | Mauvaise réf. – obturation / thermo | Dommage – habillage | Dossier
+216501197,A350,FNZ1,closed,[PLANT],2026-02-20,Retour client,1,0,1,0,0,0,0,0,0,Câblage,Mauvaise réf. – électrique / détrompage
+216502898,A330,FTO2,closed,[PLANT],2026-02-20,FTO2,1,0,1,0,0,0,0,0,0,Câblage,Cheminement – longueur / tension
+216506719,A350,FTO2,closed,[PLANT],2026-02-20,FTO2,1,0,0,0,0,0,1,0,0,Amont,Amont · Câble
+216507151,A330,FTO2,closed,[PLANT],2026-02-20,FTO2,1,0,1,0,0,0,0,0,0,Câblage,Câble à refaire (ligne)
+216507904,A350,FTO2,closed,[PLANT],2026-02-20,FTO2,1,0,1,0,0,0,0,0,0,Câblage,Mauvaise réf. – électrique / détrompage
+216516544,A330,FTO2,deleted,[PLANT],2026-02-23,Supprimée,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – structure
+216519053,A330,FTO2,deleted,[PLANT],2026-02-23,Supprimée,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – structure
+216520552,A350,FTO2,closed,[PLANT],2026-02-23,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – câble
+216528300,A330,FTO2,closed,[PLANT],2026-02-24,FTO2,5,0,0,5,0,0,0,0,0,Branchement,Erreur de branchement | Inversion
+216529850,A350,FTO2,closed,[PLANT],2026-02-24,FTO2,11,0,0,11,0,0,0,0,0,Branchement,Inversion | Erreur de branchement | Déverrouillage
+216531439,A350,FTO2,closed,[PLANT],2026-02-24,FTO2,1,0,0,0,0,0,1,0,0,Amont,Amont · Câble
+216532230,A330,FTO2,closed,[PLANT],2026-02-24,FTO2,1,0,1,0,0,0,0,0,0,Câblage,Mauvaise réf. – électrique / détrompage
+216535870,A330,FTO2,deleted,[SUPPLIER],2026-02-24,Supprimée,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – structure
+216540202,A350,FTO2,deleted,[PLANT],2026-02-24,Supprimée,2,0,0,0,2,0,0,0,0,Dommage & manquant,Dommage – structure
+216540276,A350,FTO2,deleted,[PLANT],2026-02-24,Supprimée,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – structure
+216541701,A350,FTO2,deleted,[PLANT],2026-02-25,Supprimée,1,0,1,0,0,0,0,0,0,Câblage,Câble à refaire (ligne)
+216543121,A350,FTO2,deleted,[PLANT],2026-02-25,Supprimée,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – structure
+216543752,A350,FTO2,closed,[PLANT],2026-02-25,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – câble
+216543756,A350,FTO2,closed,[PLANT],2026-02-25,FTO2,1,0,0,0,0,0,1,0,0,Amont,Amont · Câble
+216543862,A330,FTO2,closed,[SUPPLIER],2026-02-25,Fournisseur,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – structure
+216546227,A350,FTO2,deleted,[PLANT],2026-02-25,Supprimée,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – structure
+216557757,A350,FTO2,closed,[PLANT],2026-02-26,FTO2,8,0,0,8,0,0,0,0,0,Branchement,Inversion | Erreur de branchement | Déverrouillage
+216558190,A350,FTO2,closed,[PLANT],2026-02-26,FTO2,1,0,1,0,0,0,0,0,0,Câblage,Frettage / colliers – pose
+216558368,A320,FTO2,closed,[PLANT],2026-02-26,FTO2,1,0,0,1,0,0,0,0,0,Branchement,Déverrouillage
+216558682,A330,FTO2,deleted,[SUPPLIER],2026-02-26,Supprimée,1,0,0,0,1,0,0,0,0,Dommage & manquant,Composant HS
+216558741,A330,FTO2,closed,[PLANT],2026-02-26,FTO2,9,3,5,1,3,0,0,0,0,Câblage,Manquant – colliers | Sertissage | Déverrouillage | Cheminement – clash | Frettage / colliers – pose | Serrage électrique
+216558859,A350,FTO2,closed,[SUPPLIER],2026-02-26,Fournisseur,1,0,1,0,0,0,0,0,0,Câblage,Frettage / colliers – pose
+216560119,A320,FTO2,closed,[PLANT],2026-02-26,FTO2,1,0,0,1,0,0,0,0,0,Branchement,Déverrouillage
+216560642,A330,FTO2,closed,[PLANT],2026-02-26,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Manquant – identification
+216570343,A350,FTO2,closed,[PLANT],2026-02-26,FTO2,26,4,19,0,5,2,0,0,0,Câblage,Gainage / protection | Frettage / colliers – pose | Manquant – colliers | Bleu non appliqué | Mauvaise réf. – colliers / frettage | Mauvaise réf. – électrique / détrompage | Manquant – gaine / thermo | Identification – positionnement | Cheminement – clash | Câblage non terminé | Cheminement – longueur / tension
+216572701,A330,FTO2,closed,[PLANT],2026-02-27,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Manquant – câble / shunt / élément
+216572880,A330,FTO2,closed,[PLANT],2026-02-27,FTO2,9,0,1,7,1,0,0,0,0,Branchement,Erreur de branchement | Manquant – câble / shunt / élément | Inversion | Déverrouillage | Mauvaise réf. – électrique / détrompage
+216573781,A320,DST1,open,[PLANT],2026-02-27,Retour client,1,0,1,0,0,0,0,0,0,Câblage,Sertissage
+216575897,A330,FTO2,closed,[PLANT],2026-02-27,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – composant cassé
+216579114,A350,FTO2,closed,[PLANT],2026-02-27,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Composant – cause non écrite
+216579161,A350,FTO2,closed,[PLANT],2026-02-27,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – câble
+216579410,A330,FTO2,closed,[PLANT],2026-02-27,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – composant cassé
+216588429,A330,FTO2,closed,[PLANT],2026-03-02,FTO2,4,0,3,0,0,1,0,0,0,Câblage,Cheminement – longueur / tension | Point de masse / mesure | Frettage / colliers – pose
+216592042,A330,FTO2,deleted,[PLANT],2026-03-02,Supprimée,1,0,0,0,1,0,0,0,0,Dommage & manquant,Composant – cause non écrite
+216593864,A350,FTO2,closed,[PLANT],2026-03-02,FTO2,1,0,0,0,0,0,1,0,0,Amont,Amont · Câble
+216600929,A350,FTO2,closed,[PLANT],2026-03-03,FTO2,13,0,0,13,0,0,0,0,0,Branchement,Erreur de branchement | Inversion | Déverrouillage
+216602069,A330,FTO2,closed,[PLANT],2026-03-03,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – composant cassé
+216605359,A330,FTO2,closed,[PLANT],2026-03-03,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – structure
+216606860,A350,FTO2,closed,[PLANT],2026-03-03,FTO2,21,1,19,1,1,0,0,0,0,Câblage,Frettage / colliers – pose | Gainage / protection | Mauvaise réf. – colliers / frettage | Cheminement – longueur / tension | Mauvaise réf. – obturation / thermo | Déverrouillage | Manquant – colliers | Cheminement – clash | Identification – positionnement
+216609710,A350,FTO2,closed,[PLANT],2026-03-03,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – structure
+216616954,A350,FTO2,closed,[PLANT],2026-03-04,FTO2,1,0,0,0,0,0,1,0,0,Amont,Amont · Câble
+216618487,A350,FTO2,closed,[PLANT],2026-03-04,FTO2,12,0,0,12,0,0,0,0,0,Branchement,Inversion | Erreur de branchement | Déverrouillage
+216626817,A350,FTO2,deleted,[PLANT],2026-03-05,Supprimée,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – composant cassé
+216627760,A330,FTO2,closed,[PLANT],2026-03-05,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – composant cassé
+216640105,A350,FTO2,closed,[PLANT],2026-03-06,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Manquant – câble / shunt / élément
+216640513,A350,FFF1,closed,[PLANT],2026-03-06,Retour client,1,0,1,0,0,0,0,0,0,Câblage,Gainage / protection
+216642382,A350,FFF1,closed,[PLANT],2026-03-06,Retour client,1,0,0,0,0,0,0,1,0,FOD,FOD
+216643933,A330,FTO2,closed,[PLANT],2026-03-06,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Manquant – câble / shunt / élément
+216647964,A350,FTO2,closed,[PLANT],2026-03-06,FTO2,22,1,13,0,3,3,0,3,0,Câblage,Frettage / colliers – pose | Cheminement – longueur / tension | Bleu mal appliqué / débordant | FOD | Dommage – identification | Manquant – obturateurs / bouchons | Dommage – composant cassé | Mauvaise réf. – électrique / détrompage
+216650708,A320,AFM1,closed,[PLANT],2026-03-07,Retour client,2,0,0,0,2,0,0,0,0,Dommage & manquant,Composant HS
+216651361,A320,AFM1,closed,[PLANT],2026-03-08,Retour client,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – composant cassé
+216652419,A350,FTO2,closed,[PLANT],2026-03-09,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Manquant – câble / shunt / élément
+216653358,A330,FTO2,deleted,[PLANT],2026-03-09,Supprimée,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – structure
+216653500,A320,FTO2,closed,[PLANT],2026-03-09,FTO2,1,0,0,1,0,0,0,0,0,Branchement,Déverrouillage
+216655650,A330,FTO2,closed,[PLANT],2026-03-09,FTO2,2,0,0,1,1,0,0,0,0,Branchement,Déverrouillage | Dommage – structure
+216658604,A330,FTO2,closed,[SUPPLIER],2026-03-09,Fournisseur,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – structure
+216664944,A350,FTO2,closed,[PLANT],2026-03-09,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Manquant – câble / shunt / élément
+216666114,A350,FFF1,closed,[PLANT],2026-03-09,Retour client,1,0,0,0,0,1,0,0,0,Métallisation,Point de masse / mesure
+216666831,A350,FTO2,closed,[PLANT],2026-03-10,FTO2,1,0,0,1,0,0,0,0,0,Branchement,Erreur de branchement
+216668449,A330,FTO2,closed,[PLANT],2026-03-10,FTO2,1,0,0,0,0,0,0,1,0,FOD,FOD
+216668591,A350,FTO2,closed,[PLANT],2026-03-10,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Manquant – câble / shunt / élément
+216668677,A350,FNZ1,closed,[PLANT],2026-03-10,Retour client,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – composant cassé
+216669205,A330,FTO2,closed,[PLANT],2026-03-10,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – composant cassé
+216670072,A330,FTO2,closed,[PLANT],2026-03-10,FTO2,3,0,0,3,0,0,0,0,0,Branchement,Erreur de branchement
+216670079,A330,FTO2,closed,[PLANT],2026-03-10,FTO2,1,0,1,0,0,0,0,0,0,Câblage,Cheminement – clash
+216672801,A320,A-DU,closed,[PLANT],2026-03-10,Retour client,2,0,0,0,2,0,0,0,0,Dommage & manquant,Dommage – composant cassé
+216674962,A330,FTO2,deleted,[PLANT],2026-03-10,Supprimée,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – composant cassé
+216675307,A330,FTO2,closed,[PLANT],2026-03-10,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – câble
+216675392,A330,FTO2,closed,[PLANT],2026-03-10,FTO2,1,0,1,0,0,0,0,0,0,Câblage,Cheminement – longueur / tension
+216675554,A350,FTO2,closed,[SUPPLIER],2026-03-10,Fournisseur,1,0,1,0,0,0,0,0,0,Câblage,Mauvaise réf. – mécanique
+216675884,A330,FTO2,deleted,[SUPPLIER],2026-03-10,Supprimée,1,0,0,0,1,0,0,0,0,Dommage & manquant,Composant – cause non écrite
+216676916,A350,FTO2,closed,[PLANT],2026-03-10,FTO2,14,0,0,14,0,0,0,0,0,Branchement,Inversion | Déverrouillage | Erreur de branchement
+216678821,A350,FNZ1,closed,[PLANT],2026-03-10,Retour client,1,0,0,0,1,0,0,0,0,Dommage & manquant,Composant – cause non écrite
+216679350,A350,FTO2,deleted,[PLANT],2026-03-10,Supprimée,1,0,1,0,0,0,0,0,0,Câblage,Câble à refaire (ligne)
+216684231,A350,FTO2,closed,[PLANT],2026-03-11,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Manquant – câble / shunt / élément
+216684707,A330,FTO2,deleted,[PLANT],2026-03-11,Supprimée,1,0,0,0,1,0,0,0,0,Dommage & manquant,Composant – cause non écrite
+216685012,A330,FTO2,deleted,[PLANT],2026-03-11,Supprimée,1,0,0,0,1,0,0,0,0,Dommage & manquant,Composant – cause non écrite
+216685204,A330,FTO2,deleted,[PLANT],2026-03-11,Supprimée,1,0,0,0,1,0,0,0,0,Dommage & manquant,Composant – cause non écrite
+216685374,A330,FTO2,deleted,[PLANT],2026-03-11,Supprimée,1,0,0,0,1,0,0,0,0,Dommage & manquant,Composant – cause non écrite
+216686269,A330,FTO2,closed,[PLANT],2026-03-11,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Composant – cause non écrite
+216686540,A330,FTO2,closed,[PLANT],2026-03-11,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Composant – cause non écrite
+216686546,A330,FTO2,closed,[PLANT],2026-03-11,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Composant – cause non écrite
+216686630,A330,FTO2,closed,[PLANT],2026-03-11,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Composant – cause non écrite
+216690173,A330,FTO2,closed,[PLANT],2026-03-11,FTO2,1,0,1,0,0,0,0,0,0,Câblage,Mauvaise réf. – colliers / frettage
+216691174,A350,FTO2,closed,[PLANT],2026-03-11,FTO2,4,0,1,3,0,0,0,0,0,Branchement,Inversion | Sertissage spécifique
+216696565,A350,FFF1,closed,[PLANT],2026-03-11,Retour client,1,0,1,0,0,0,0,0,0,Câblage,Cheminement – clash
+216698452,A350,FTO2,closed,[PLANT],2026-03-12,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Manquant – câble / shunt / élément
+216699966,A350,FTO2,closed,[PLANT],2026-03-12,FTO2,19,3,13,0,6,0,0,0,0,Câblage,Manquant – obturateurs / bouchons | Cheminement – longueur / tension | Identification – positionnement | Frettage / colliers – pose | Gainage / protection | Dommage – identification | Mauvaise réf. – colliers / frettage | Manquant – identification | Mauvaise réf. – obturation / thermo | Mauvaise réf. – mécanique | Mauvaise réf. – électrique / détrompage | Manquant – colliers
+216701404,A330,FTO2,closed,[PLANT],2026-03-12,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – composant cassé
+216701496,A330,FTO2,closed,[SUPPLIER],2026-03-12,Fournisseur,1,0,1,0,0,0,0,0,0,Câblage,Serrage mécanique
+216704810,A330,FTO2,closed,[PLANT],2026-03-12,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – composant cassé
+216707983,A350,FFF1,closed,[PLANT],2026-03-12,Retour client,1,0,0,0,0,0,0,1,0,FOD,FOD
+216712276,A330,FTO2,closed,[PLANT],2026-03-13,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – structure
+216728113,A330,FTO2,closed,[PLANT],2026-03-16,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Manquant – câble / shunt / élément
+216729186,A330,FTO2,deleted,[PLANT],2026-03-16,Supprimée,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – habillage
+216729497,A330,FTO2,closed,[PLANT],2026-03-16,FTO2,3,0,0,3,0,0,0,0,0,Branchement,Inversion | Erreur de branchement
+216732644,A330,FTO2,deleted,[PLANT],2026-03-16,Supprimée,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – habillage
+216733193,A330,FTO2,deleted,[PLANT],2026-03-16,Supprimée,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – habillage
+216733534,A350,FTO2,closed,[PLANT],2026-03-16,FTO2,1,0,0,0,0,0,0,0,1,Dossier,Dossier
+216739491,A350,FTO2,closed,[PLANT],2026-03-16,FTO2,17,7,10,0,7,0,0,0,0,Câblage,Manquant – colliers | Frettage / colliers – pose | Mauvaise réf. – obturation / thermo | Mauvaise réf. – colliers / frettage | Identification – positionnement
+216742459,A350,FTO2,deleted,[OTHERS],2026-03-17,Supprimée,1,0,0,1,0,0,0,0,0,Branchement,Inversion
+216743009,A330,FTO2,closed,[PLANT],2026-03-17,FTO2,1,0,1,0,0,0,0,0,0,Câblage,Mauvaise réf. – mécanique
+216743090,A350,FTO2,deleted,[SUPPLIER],2026-03-17,Supprimée,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – structure
+216744375,A330,FTO2,deleted,[PLANT],2026-03-17,Supprimée,1,0,0,0,0,0,0,0,1,Dossier,Dossier
+216745007,A350,FTO2,deleted,[PLANT],2026-03-17,Supprimée,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – structure
+216746271,A350,FTO2,closed,[PLANT],2026-03-17,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Manquant – câble / shunt / élément
+216748577,A350,FFF1,closed,[PLANT],2026-03-17,Retour client,1,0,0,1,0,0,0,0,0,Branchement,Déverrouillage
+216749346,A330,FTO2,closed,[PLANT],2026-03-17,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Manquant – câble / shunt / élément
+216750973,A330,FFF1,closed,[PLANT],2026-03-17,Retour client,1,0,0,1,0,0,0,0,0,Branchement,Inversion
+216751384,A350,FTO2,closed,[OTHERS],2026-03-17,FTO2,1,0,1,0,0,0,0,0,0,Câblage,Mauvaise réf. – électrique / détrompage
+216757467,A350,FTO2,closed,[PLANT],2026-03-18,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – câble
+216757718,A350,FTO2,closed,[SUPPLIER],2026-03-18,Fournisseur,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – structure
+216758007,A330,FTO2,closed,[PLANT],2026-03-18,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – composant cassé
+216758388,A350,FTO2,closed,[PLANT],2026-03-18,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – structure
+216762276,A330,FTO2,closed,[PLANT],2026-03-18,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – habillage
+216763232,A330,FTO2,closed,[PLANT],2026-03-18,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – habillage
+216763414,A350,FTO2,closed,[PLANT],2026-03-18,FTO2,2,0,0,2,0,0,0,0,0,Branchement,Inversion
+216763640,A320,FTO2,closed,[PLANT],2026-03-18,FTO2,1,0,1,0,0,0,0,0,0,Câblage,Sertissage
+216763878,A350,FTO2,closed,[PLANT],2026-03-18,FTO2,16,0,0,16,0,0,0,0,0,Branchement,Erreur de branchement | Inversion | Non connecté
+216764356,A320,FTO2,closed,[PLANT],2026-03-18,FTO2,1,0,1,0,0,0,0,0,0,Câblage,Sertissage
+216764494,A320,FTO2,closed,[PLANT],2026-03-18,FTO2,1,0,1,0,0,0,0,0,0,Câblage,Sertissage
+216764872,A350,FTO2,closed,[PLANT],2026-03-18,FTO2,13,3,7,0,4,2,0,0,0,Câblage,Manquant – colliers | Frettage / colliers – pose | Gainage / protection | Bleu mal appliqué / débordant | Serrage électrique | Bleu non appliqué | Cheminement – longueur / tension | Manquant – identification | Mauvaise réf. – colliers / frettage
+216771748,A320,FTO2,closed,[PLANT],2026-03-19,FTO2,1,0,0,1,0,0,0,0,0,Branchement,Déverrouillage
+216772278,A320,FTO2,closed,[PLANT],2026-03-19,FTO2,1,0,1,0,0,0,0,0,0,Câblage,Sertissage
+216772572,A350,FTO2,closed,[PLANT],2026-03-19,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Manquant – câble / shunt / élément
+216772860,A320,FTO2,closed,[PLANT],2026-03-19,FTO2,1,0,1,0,0,0,0,0,0,Câblage,Sertissage
+216772989,A330,FTO2,closed,[PLANT],2026-03-19,FTO2,1,0,0,1,0,0,0,0,0,Branchement,Erreur de branchement
+216773100,A320,FTO2,closed,[PLANT],2026-03-19,FTO2,1,0,1,0,0,0,0,0,0,Câblage,Sertissage
+216773204,A320,FTO2,closed,[PLANT],2026-03-19,FTO2,1,0,1,0,0,0,0,0,0,Câblage,Sertissage
+216773710,A320,FTO2,closed,[PLANT],2026-03-19,FTO2,1,0,1,0,0,0,0,0,0,Câblage,Sertissage
+216773861,A330,FTO2,closed,[PLANT],2026-03-19,FTO2,1,0,1,0,0,0,0,0,0,Câblage,Cheminement – longueur / tension
+216773933,A350,FTO2,closed,[PLANT],2026-03-19,FTO2,2,0,0,0,2,0,0,0,0,Dommage & manquant,Dommage – câble
+216773962,A320,FTO2,closed,[PLANT],2026-03-19,FTO2,1,0,1,0,0,0,0,0,0,Câblage,Sertissage
+216774193,A320,FTO2,closed,[PLANT],2026-03-19,FTO2,1,0,1,0,0,0,0,0,0,Câblage,Sertissage
+216774341,A320,FTO2,closed,[PLANT],2026-03-19,FTO2,1,0,1,0,0,0,0,0,0,Câblage,Sertissage
+216775453,A350,FTO2,closed,[PLANT],2026-03-19,FTO2,1,0,0,0,0,0,1,0,0,Amont,Amont · Identification / barrette VT
+216776386,A320,FTO2,closed,[PLANT],2026-03-19,FTO2,1,0,1,0,0,0,0,0,0,Câblage,Sertissage
+216776663,A330,FTO2,closed,[PLANT],2026-03-19,FTO2,9,0,0,6,3,0,0,0,0,Branchement,Erreur de branchement | Déverrouillage | Manquant – câble / shunt / élément | Composant – cause non écrite | Composant HS
+216776950,A320,FTO2,closed,[PLANT],2026-03-19,FTO2,1,0,1,0,0,0,0,0,0,Câblage,Sertissage
+216776959,A320,FTO2,closed,[PLANT],2026-03-19,FTO2,1,0,1,0,0,0,0,0,0,Câblage,Sertissage
+216777065,A320,FTO2,closed,[PLANT],2026-03-19,FTO2,1,0,1,0,0,0,0,0,0,Câblage,Sertissage
+216777144,A320,FTO2,closed,[PLANT],2026-03-19,FTO2,1,0,1,0,0,0,0,0,0,Câblage,Sertissage
+216783456,A350,FTO2,closed,[PLANT],2026-03-19,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Manquant – câble / shunt / élément
+216785207,A330,FTO2,closed,[SUPPLIER],2026-03-20,Fournisseur,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – structure
+216787600,A350,FTO2,closed,[PLANT],2026-03-20,FTO2,8,1,0,7,1,0,0,0,0,Branchement,Inversion | Erreur de branchement | Manquant – obturateurs / bouchons
+216798161,A350,FTO2,closed,[PLANT],2026-03-23,FTO2,1,0,1,0,0,0,0,0,0,Câblage,Sertissage
+216799151,A330,FTO2,closed,[PLANT],2026-03-23,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – câble
+216799298,A330,FTO2,closed,[PLANT],2026-03-23,FTO2,1,0,1,0,0,0,0,0,0,Câblage,Câble à refaire (ligne)
+216801004,A320,FTO2,closed,[PLANT],2026-03-23,FTO2,1,0,1,0,0,0,0,0,0,Câblage,Cheminement – longueur / tension
+216806620,A350,FTO2,closed,[PLANT],2026-03-23,FTO2,25,3,12,3,6,4,0,0,0,Câblage,Cheminement – longueur / tension | Bleu mal appliqué / débordant | Manquant – colliers | Identification – positionnement | Inversion | Cheminement – clash | Manquant – identification | Déverrouillage | Mauvaise réf. – électrique / détrompage | Gainage / protection | Bleu non appliqué | Dommage – structure | Manquant – obturateurs / bouchons | Dommage – identification
+216815252,A320,FTO2,closed,,2026-03-24,FTO2,1,0,1,0,0,0,0,0,0,Câblage,Cheminement – longueur / tension
+216826753,A350,FTO2,closed,[PLANT],2026-03-24,FTO2,1,0,1,0,0,0,0,0,0,Câblage,Câble à refaire (ligne)
+216831701,A350,FTO2,closed,[PLANT],2026-03-25,FTO2,21,0,3,18,0,0,0,0,0,Branchement,Inversion | Erreur de branchement | Mauvaise réf. – électrique / détrompage | Mauvaise réf. – identification
+216834851,A350,FTO2,closed,[PLANT],2026-03-25,FTO2,17,1,14,0,3,0,0,0,0,Câblage,Identification – positionnement | Cheminement – longueur / tension | Mauvaise réf. – obturation / thermo | Mauvaise réf. – colliers / frettage | Manquant – gaine / thermo | Gainage / protection | Cheminement – clash | Manquant – colliers | Serrage électrique | Frettage / colliers – pose
+216836886,A330,FTO2,deleted,[SUPPLIER],2026-03-25,Supprimée,3,0,0,0,1,0,2,0,0,Amont,Amont · Identification / barrette VT | Dommage – identification
+216846510,A330,FTO2,closed,[PLANT],2026-03-26,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – composant cassé
+216849146,A330,FTO2,closed,[PLANT],2026-03-26,FTO2,3,1,2,0,1,0,0,0,0,Câblage,Cheminement – clash | Cheminement – longueur / tension | Manquant – colliers
+216851659,A350,FTO2,closed,[PLANT],2026-03-26,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – composant cassé
+216851683,A350,FTO2,closed,[PLANT],2026-03-26,FTO2,13,0,0,13,0,0,0,0,0,Branchement,Inversion | Erreur de branchement | Déverrouillage
+216851910,A330,FTO2,closed,[PLANT],2026-03-26,FTO2,1,0,0,1,0,0,0,0,0,Branchement,Erreur de branchement
+216854426,A350,FTO2,closed,[PLANT],2026-03-26,FTO2,1,0,1,0,0,0,0,0,0,Câblage,Câble à refaire (ligne)
+216854475,A350,FFF1,closed,[PLANT],2026-03-26,Retour client,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – structure
+216860197,A330,FTO2,deleted,[SUPPLIER],2026-03-27,Supprimée,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – structure
+216866658,A330,FTO2,closed,[PLANT],2026-03-27,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Manquant – câble / shunt / élément
+216872258,A330,FTO2,closed,[PLANT],2026-03-30,FTO2,5,1,3,0,2,0,0,0,0,Câblage,Cheminement – clash | Mauvaise réf. – mécanique | Manquant – colliers | Dommage – identification
+216872509,A330,FTO2,closed,[SUPPLIER],2026-03-30,Fournisseur,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – structure
+216872831,A330,FTO2,closed,[PLANT],2026-03-30,FTO2,1,0,1,0,0,0,0,0,0,Câblage,Cheminement – longueur / tension
+216873346,A330,FTO2,deleted,[PLANT],2026-03-30,Supprimée,4,0,1,3,0,0,0,0,0,Branchement,Erreur de branchement | Mauvaise réf. – électrique / détrompage
+216874454,A330,FTO2,closed,[PLANT],2026-03-30,FTO2,1,0,1,0,0,0,0,0,0,Câblage,Serrage mécanique
+216875395,A330,FTO2,deleted,[PLANT],2026-03-30,Supprimée,1,0,0,0,1,0,0,0,0,Dommage & manquant,Composant – cause non écrite
+216877896,A330,FTO2,deleted,[PLANT],2026-03-30,Supprimée,1,0,0,0,1,0,0,0,0,Dommage & manquant,Composant – cause non écrite
+216878524,A330,FTO2,closed,[PLANT],2026-03-30,FTO2,4,0,1,3,0,0,0,0,0,Branchement,Erreur de branchement | Mauvaise réf. – mécanique
+216878805,A330,FTO2,closed,[PLANT],2026-03-30,FTO2,1,0,0,0,0,0,1,0,0,Amont,Amont · Câble
+216879333,A330,FTO2,closed,[SUPPLIER],2026-03-30,Fournisseur,1,0,0,0,1,0,0,0,0,Dommage & manquant,Composant HS
+216887860,A320,FTO2,closed,[PLANT],2026-03-31,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Composant – cause non écrite
+216888625,A320,FTO2,closed,[PLANT],2026-03-31,FTO2,1,0,1,0,0,0,0,0,0,Câblage,Mauvaise réf. – électrique / détrompage
+216888776,A350,FTO2,closed,[PLANT],2026-03-31,FTO2,21,2,11,1,6,2,1,0,0,Câblage,Gainage / protection | Manquant – identification | Identification – positionnement | Cheminement – clash | Bleu non appliqué | Déverrouillage | Manquant – colliers | Dommage – composant cassé | Dommage – identification | Cheminement – longueur / tension | Manquant – obturateurs / bouchons | Amont · Identification / barrette VT | Mauvaise réf. – colliers / frettage | Mauvaise réf. – mécanique
+216889831,A350,FTO2,closed,[PLANT],2026-03-31,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – câble
+216897403,A320,FTO2,closed,[PLANT],2026-03-31,FTO2,1,0,1,0,0,0,0,0,0,Câblage,Mauvaise réf. – électrique / détrompage
+216899465,A330,FTO2,closed,[PLANT],2026-04-01,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – structure
+216900121,A350,FTO2,closed,[PLANT],2026-04-01,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Manquant – câble / shunt / élément
+216900574,A330,FTO2,closed,[PLANT],2026-04-01,FTO2,1,0,0,1,0,0,0,0,0,Branchement,Inversion
+216902202,A330,FTO2,closed,[PLANT],2026-04-01,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – câble
+216902596,A350,FTO2,closed,[PLANT],2026-04-01,FTO2,18,0,2,15,1,0,0,0,0,Branchement,Inversion | Erreur de branchement | Déverrouillage | Sertissage | Manquant – câble / shunt / élément | Mauvaise réf. – identification
+216905392,A350,FTO2,closed,[PLANT],2026-04-01,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – structure
+216905770,A330,FTO2,closed,[PLANT],2026-04-01,FTO2,1,0,0,0,0,0,0,0,1,Dossier,Dossier
+216914342,A330,FTO2,closed,[PLANT],2026-04-02,FTO2,1,0,1,0,0,0,0,0,0,Câblage,Mauvaise réf. – électrique / détrompage
+216915228,A330,FTO2,closed,[PLANT],2026-04-02,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Composant HS
+216920395,A330,FTO2,closed,[SUPPLIER],2026-04-02,Fournisseur,1,0,0,0,1,0,0,0,0,Dommage & manquant,Composant HS
+216920654,A330,FTO2,closed,[SUPPLIER],2026-04-02,Fournisseur,1,0,0,0,1,0,0,0,0,Dommage & manquant,Composant HS
+216924343,A350,FTO2,closed,[PLANT],2026-04-02,FTO2,14,3,8,0,4,2,0,0,0,Câblage,Gainage / protection | Bleu non appliqué | Manquant – colliers | Mauvaise réf. – colliers / frettage | Identification – positionnement | Manquant – obturateurs / bouchons | Serrage électrique | Dommage – composant cassé | Cheminement – clash | Frettage / colliers – pose
+216926542,A350,FTO2,closed,[PLANT],2026-04-03,FTO2,1,0,0,0,0,0,0,0,1,Dossier,Dossier
+216926613,A330,FFF1,closed,[PLANT],2026-04-03,Retour client,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – structure
+216927866,A350,FTO2,closed,[PLANT],2026-04-03,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – structure
+216928788,A350,FTO2,deleted,[SUPPLIER],2026-04-03,Supprimée,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – structure
+216929567,A330,FTO2,closed,[PLANT],2026-04-03,FTO2,1,0,0,0,0,0,1,0,0,Amont,Amont · Câble
+216931441,A330,FTO2,closed,[PLANT],2026-04-03,FTO2,16,0,0,15,1,0,0,0,0,Branchement,Inversion | Erreur de branchement | Déverrouillage | Manquant – câble / shunt / élément
+216931836,A330,FTO2,closed,[PLANT],2026-04-03,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Composant HS
+216931839,A350,FTO2,deleted,[SUPPLIER],2026-04-03,Supprimée,1,0,0,0,0,1,0,0,0,Métallisation,Bleu mal appliqué / débordant
+216932469,A330,FTO2,closed,[PLANT],2026-04-03,FTO2,1,0,0,0,0,0,1,0,0,Amont,Amont · Câble
+216937725,A330,FFF1,closed,[PLANT],2026-04-05,Retour client,1,0,0,0,1,0,0,0,0,Dommage & manquant,Composant – cause non écrite
+216942977,A350,FTO2,closed,[PLANT],2026-04-07,FTO2,14,0,1,13,0,0,0,0,0,Branchement,Inversion | Erreur de branchement | Déverrouillage | Non connecté | Sertissage
+216943435,A330,FTO2,closed,[PLANT],2026-04-07,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Composant HS
+216943511,A330,FTO2,closed,[PLANT],2026-04-07,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – composant cassé
+216944789,A330,FTO2,closed,[PLANT],2026-04-07,FTO2,9,1,7,0,1,0,0,1,0,Câblage,Mauvaise réf. – électrique / détrompage | Gainage / protection | FOD | Manquant – colliers | Câblage non terminé | Frettage / colliers – pose
+216945078,A330,FTO2,closed,[PLANT],2026-04-07,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – composant cassé
+216947614,A330,FFF1,closed,[PLANT],2026-04-07,Retour client,1,0,1,0,0,0,0,0,0,Câblage,Mauvaise réf. – mécanique
+216955620,A350,FTO2,deleted,[SUPPLIER],2026-04-08,Supprimée,1,0,0,0,0,1,0,0,0,Métallisation,Bleu mal appliqué / débordant
+216956743,A350,FTO2,closed,[PLANT],2026-04-08,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – câble
+216958097,A330,FTO2,closed,[PLANT],2026-04-08,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – composant cassé
+216958854,A330,FTO2,closed,[PLANT],2026-04-08,FTO2,1,0,0,0,0,0,1,0,0,Amont,Amont · Câble
+216958965,A350,FTO2,closed,[PLANT],2026-04-08,FTO2,1,0,0,0,0,0,1,0,0,Amont,Amont · Identification / barrette VT
+216960077,A350,FTO2,deleted,[SUPPLIER],2026-04-08,Supprimée,1,0,0,0,0,1,0,0,0,Métallisation,Bleu mal appliqué / débordant
+216961691,A350,FTO2,closed,[PLANT],2026-04-08,FTO2,1,0,0,0,0,0,1,0,0,Amont,Amont · Identification / barrette VT
+216969649,A350,FTO2,closed,[PLANT],2026-04-09,FTO2,26,2,14,0,6,2,0,4,0,Câblage,Frettage / colliers – pose | FOD | Dommage – identification | Bleu non appliqué | Identification – positionnement | Cheminement – longueur / tension | Manquant – colliers | Mauvaise réf. – électrique / détrompage | Serrage mécanique | Dommage – structure
+216969696,A330,FTO2,closed,[PLANT],2026-04-09,FTO2,1,0,0,0,0,0,1,0,0,Amont,Amont · Câble
+216969942,A330,FTO2,closed,[SUPPLIER],2026-04-09,Fournisseur,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – composant cassé
+216972425,A350,FTO2,closed,[PLANT],2026-04-09,FTO2,1,0,0,0,0,0,1,0,0,Amont,Amont · Identification / barrette VT
+216973912,A350,FTO2,closed,[PLANT],2026-04-09,FTO2,1,0,1,0,0,0,0,0,0,Câblage,Sertissage
+216974038,A350,FTO2,closed,[PLANT],2026-04-09,FTO2,18,0,0,18,0,0,0,0,0,Branchement,Inversion | Erreur de branchement | Déverrouillage
+216981246,A330,FFF1,closed,[PLANT],2026-04-09,Retour client,1,0,0,0,1,0,0,0,0,Dommage & manquant,Manquant – câble / shunt / élément
+216996839,A350,FTO2,closed,[PLANT],2026-04-13,FTO2,14,3,9,0,5,0,0,0,0,Câblage,Manquant – identification | Gainage / protection | Manquant – colliers | Cheminement – clash | Mauvaise réf. – électrique / détrompage | Cheminement – longueur / tension | Serrage électrique | Manquant – obturateurs / bouchons | Identification – positionnement | Frettage / colliers – pose
+216999721,A330,FTO2,closed,[PLANT],2026-04-13,FTO2,1,0,0,0,0,0,1,0,0,Amont,Amont · Câble
+217001742,A330,FTO2,closed,[PLANT],2026-04-13,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – structure
+217005967,A350,FTO2,deleted,[PLANT],2026-04-13,Supprimée,1,0,0,0,0,0,0,0,1,Dossier,Dossier
+217010788,A330,FTO2,closed,[PLANT],2026-04-14,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – composant cassé
+217010898,A350,FTO2,closed,[PLANT],2026-04-14,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – câble
+217010970,A330,FTO2,deleted,[PLANT],2026-04-14,Supprimée,1,0,0,0,0,0,0,0,1,Dossier,Dossier
+217011468,A350,FTO2,closed,[PLANT],2026-04-14,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – structure
+217016584,A330,FTO2,closed,[PLANT],2026-04-14,FTO2,1,0,1,0,0,0,0,0,0,Câblage,Câble à refaire (ligne)
+217019027,A330,FTO2,closed,[PLANT],2026-04-14,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Manquant – câble / shunt / élément
+217024637,A350,FTO2,closed,[PLANT],2026-04-15,FTO2,1,0,1,0,0,0,0,0,0,Câblage,Sertissage
+217026194,A350,FTO2,closed,[PLANT],2026-04-15,FTO2,10,0,0,10,0,0,0,0,0,Branchement,Erreur de branchement | Inversion
+217026822,A330,FTO2,closed,[PLANT],2026-04-15,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Composant HS
+217031012,A330,FTO2,closed,[PLANT],2026-04-15,FTO2,2,0,1,1,0,0,0,0,0,Câblage,Mauvaise réf. – électrique / détrompage | Non connecté
+217031143,A330,FTO2,deleted,[PLANT],2026-04-15,Supprimée,1,0,0,0,0,1,0,0,0,Métallisation,Point de masse / mesure
+217032579,A330,FTO2,closed,[PLANT],2026-04-15,FTO2,1,0,0,0,0,1,0,0,0,Métallisation,Point de masse / mesure
+217033006,A350,FTO2,closed,[PLANT],2026-04-15,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – câble
+217037135,A350,FTO2,closed,[PLANT],2026-04-15,FTO2,15,5,9,0,5,1,0,0,0,Câblage,Manquant – colliers | Cheminement – longueur / tension | Mauvaise réf. – obturation / thermo | Bleu mal appliqué / débordant | Frettage / colliers – pose | Mauvaise réf. – identification | Gainage / protection | Identification – positionnement | Serrage électrique | Manquant – obturateurs / bouchons
+217037645,A320,AFM1,closed,[PLANT],2026-04-15,Retour client,1,0,0,0,1,0,0,0,0,Dommage & manquant,Composant HS
+217040142,A350,FTO2,closed,[PLANT],2026-04-16,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – structure
+217041638,A330,FTO2,closed,[PLANT],2026-04-16,FTO2,10,0,0,10,0,0,0,0,0,Branchement,Erreur de branchement | Déverrouillage | Inversion | Non connecté
+217042404,A350,FTO2,closed,[PLANT],2026-04-16,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – câble
+217045579,A350,FTO2,closed,[PLANT],2026-04-16,FTO2,1,0,0,0,0,0,1,0,0,Amont,Amont · Câble
+217054293,A350,FTO2,closed,[PLANT],2026-04-17,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – câble
+217055094,A350,FTO2,closed,[PLANT],2026-04-17,FTO2,1,0,1,0,0,0,0,0,0,Câblage,Sertissage spécifique
+217055268,A330,FTO2,closed,[PLANT],2026-04-17,FTO2,2,0,0,0,2,0,0,0,0,Dommage & manquant,Manquant – câble / shunt / élément
+217060330,A330,FTO2,deleted,[PLANT],2026-04-17,Supprimée,1,0,1,0,0,0,0,0,0,Câblage,Cheminement – longueur / tension
+217067617,A350,FTO2,closed,[PLANT],2026-04-20,FTO2,18,0,1,15,2,0,0,0,0,Branchement,Inversion | Erreur de branchement | Mauvaise réf. – électrique / détrompage | Manquant – identification | Dommage – identification | Déverrouillage
+217067656,A330,FTO2,closed,[SUPPLIER],2026-04-20,Fournisseur,1,0,1,0,0,0,0,0,0,Câblage,Mauvaise réf. – mécanique
+217068263,A330,FTO2,closed,[PLANT],2026-04-20,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – composant cassé
+217070011,A330,FFF1,closed,[PLANT],2026-04-20,Retour client,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – composant cassé
+217071294,A350,FTO2,closed,[PLANT],2026-04-20,FTO2,9,0,0,9,0,0,0,0,0,Branchement,Inversion | Erreur de branchement | Déverrouillage
+217075785,A350,FTO2,closed,[PLANT],2026-04-20,FTO2,15,4,11,0,4,0,0,0,0,Câblage,Manquant – colliers | Frettage / colliers – pose | Identification – positionnement | Cheminement – clash | Gainage / protection | Cheminement – longueur / tension | Mauvaise réf. – colliers / frettage
+217081687,A330,FTO2,deleted,[SUPPLIER],2026-04-21,Supprimée,1,0,1,0,0,0,0,0,0,Câblage,Mauvaise réf. – électrique / détrompage
+217083685,A350,FTO2,deleted,[SUPPLIER],2026-04-21,Supprimée,1,0,0,0,1,0,0,0,0,Dommage & manquant,Composant HS
+217085364,A350,FTO2,closed,[PLANT],2026-04-21,FTO2,1,0,1,0,0,0,0,0,0,Câblage,Câble à refaire (ligne)
+217087015,A350,FTO2,closed,[SUPPLIER],2026-04-21,Fournisseur,1,0,0,0,1,0,0,0,0,Dommage & manquant,Composant HS
+217088266,A330,FTO2,closed,[PLANT],2026-04-21,FTO2,5,0,0,4,1,0,0,0,0,Branchement,Erreur de branchement | Manquant – câble / shunt / élément | Inversion
+217092063,A350,FTO2,closed,[PLANT],2026-04-21,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – composant cassé
+217092501,A350,FTO2,closed,[PLANT],2026-04-21,FTO2,1,0,1,0,0,0,0,0,0,Câblage,Identification – positionnement
+217095394,A330,FTO2,deleted,[SUPPLIER],2026-04-22,Supprimée,1,0,0,0,1,0,0,0,0,Dommage & manquant,Composant HS
+217097277,A350,FTO2,closed,[PLANT],2026-04-22,FTO2,1,0,0,0,0,0,1,0,0,Amont,Amont · Câble
+217103724,A350,FTO2,closed,[PLANT],2026-04-22,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Manquant – câble / shunt / élément
+217106860,A350,FTO2,closed,[PLANT],2026-04-23,FTO2,1,0,0,0,0,1,0,0,0,Métallisation,Bleu mal appliqué / débordant
+217107871,A330,FTO2,closed,[PLANT],2026-04-23,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – composant cassé
+217108321,A350,FTO2,deleted,[PLANT],2026-04-23,Supprimée,1,0,1,0,0,0,0,0,0,Câblage,Sertissage spécifique
+217108427,A350,FTO2,closed,[PLANT],2026-04-23,FTO2,1,0,0,1,0,0,0,0,0,Branchement,Non connecté
+217108805,A350,FTO2,closed,[PLANT],2026-04-23,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Manquant – câble / shunt / élément
+217109218,A330,FTO2,closed,[PLANT],2026-04-23,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – composant cassé
+217109331,A330,FTO2,closed,[PLANT],2026-04-23,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Manquant – mécanique / freinage
+217112253,A330,FTO2,closed,[PLANT],2026-04-23,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Manquant – mécanique / freinage
+217113153,A350,FTO2,deleted,[SUPPLIER],2026-04-23,Supprimée,1,0,0,0,0,1,0,0,0,Métallisation,Bleu mal appliqué / débordant
+217113800,A330,FTO2,deleted,[SUPPLIER],2026-04-23,Supprimée,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – identification
+217113926,A330,FTO2,closed,[SUPPLIER],2026-04-23,Fournisseur,1,0,0,0,1,0,0,0,0,Dommage & manquant,Composant HS
+217114961,A350,FTO2,closed,[PLANT],2026-04-23,FTO2,17,1,10,0,3,4,0,0,0,Câblage,Cheminement – longueur / tension | Bleu mal appliqué / débordant | Frettage / colliers – pose | Câble à refaire (ligne) | Manquant – gaine / thermo | Gainage / protection | Cheminement – clash | Dommage – identification | Manquant – obturateurs / bouchons
+217116734,A350,FTO2,closed,[PLANT],2026-04-23,FTO2,1,0,1,0,0,0,0,0,0,Câblage,Câble à refaire (ligne)
+217123040,A350,FTO2,closed,[PLANT],2026-04-24,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – câble
+217123359,A330,FTO2,closed,[PLANT],2026-04-24,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – composant cassé
+217123505,A350,FTO2,closed,[PLANT],2026-04-24,FTO2,1,0,1,0,0,0,0,0,0,Câblage,Câble à refaire (ligne)
+217124312,A350,FTO2,closed,[PLANT],2026-04-24,FTO2,1,0,1,0,0,0,0,0,0,Câblage,Sertissage spécifique
+217127437,A350,FTO2,deleted,[PLANT],2026-04-24,Supprimée,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – identification
+217128024,A330,FTO2,closed,[SUPPLIER],2026-04-24,Fournisseur,1,0,0,0,1,0,0,0,0,Dommage & manquant,Composant HS
+217128158,A350,FTO2,deleted,[PLANT],2026-04-24,Supprimée,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – identification
+217133496,A350,FTO2,closed,[PLANT],2026-04-27,FTO2,20,1,2,16,2,0,0,0,0,Branchement,Inversion | Erreur de branchement | Déverrouillage | Mauvaise réf. – électrique / détrompage | Manquant – obturateurs / bouchons | Manquant – identification
+217133901,A350,FTO2,closed,[PLANT],2026-04-27,FTO2,1,0,1,0,0,0,0,0,0,Câblage,Câble à refaire (ligne)
+217134018,A350,FTO2,closed,[PLANT],2026-04-27,FTO2,1,0,1,0,0,0,0,0,0,Câblage,Sertissage
+217134162,A350,FTO2,closed,[PLANT],2026-04-27,FTO2,1,0,0,0,0,0,1,0,0,Amont,Amont · Identification / barrette VT
+217134193,A350,FTO2,closed,[PLANT],2026-04-27,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – identification
+217135366,A330,FTO2,closed,[PLANT],2026-04-27,FTO2,5,0,0,5,0,0,0,0,0,Branchement,Erreur de branchement | Déverrouillage | Inversion
+217135427,A330,FTO2,closed,[PLANT],2026-04-27,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Manquant – mécanique / freinage
+217139270,A330,FTO2,closed,[PLANT],2026-04-27,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – composant cassé
+217139918,A350,FTO2,closed,[PLANT],2026-04-27,FTO2,13,3,7,0,5,1,0,0,0,Câblage,Manquant – obturateurs / bouchons | Frettage / colliers – pose | Identification – positionnement | Serrage électrique | Manquant – identification | Bleu non appliqué | Manquant – gaine / thermo | Mauvaise réf. – colliers / frettage | Cheminement – longueur / tension
+217140319,A330,FTO2,deleted,[PLANT],2026-04-27,Supprimée,1,0,0,0,1,0,0,0,0,Dommage & manquant,Manquant – câble / shunt / élément
+217143872,A350,FNZ1,closed,[PLANT],2026-04-27,Retour client,1,0,0,0,1,0,0,0,0,Dommage & manquant,Manquant – identification
+217147112,A350,FTO2,closed,[PLANT],2026-04-27,FTO2,1,0,1,0,0,0,0,0,0,Câblage,Serrage mécanique
+217149326,A330,FTO2,closed,[PLANT],2026-04-28,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – composant cassé
+217149659,A330,FTO2,closed,[PLANT],2026-04-28,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – composant cassé
+217149828,A330,FTO2,closed,[PLANT],2026-04-28,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – composant cassé
+217154111,A350,FTO2,closed,[PLANT],2026-04-28,FTO2,1,0,1,0,0,0,0,0,0,Câblage,Câble à refaire (ligne)
+217162621,A330,FTO2,closed,[PLANT],2026-04-29,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – structure
+217163845,A330,FTO2,closed,[PLANT],2026-04-29,FTO2,4,0,3,0,1,0,0,0,0,Câblage,Frettage / colliers – pose | Dommage – habillage | Mauvaise réf. – électrique / détrompage
+217165051,A350,FTO2,closed,[PLANT],2026-04-29,FTO2,19,0,1,17,1,0,0,0,0,Branchement,Inversion | Déverrouillage | Erreur de branchement | Mauvaise réf. – électrique / détrompage | Manquant – câble / shunt / élément
+217168998,A330,FTO2,closed,[PLANT],2026-04-29,FTO2,1,0,0,0,0,0,1,0,0,Amont,Amont · Câble
+217171047,A330,FFF1,closed,[PLANT],2026-04-29,Retour client,1,0,1,0,0,0,0,0,0,Câblage,Mauvaise réf. – mécanique
+217171214,A330,FFF1,closed,[PLANT],2026-04-29,Retour client,2,0,2,0,0,0,0,0,0,Câblage,Mauvaise réf. – mécanique
+217174106,A350,FTO2,closed,[PLANT],2026-04-29,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Manquant – câble / shunt / élément
+217176147,A350,FTO2,closed,[PLANT],2026-04-30,FTO2,1,0,1,0,0,0,0,0,0,Câblage,Câble à refaire (ligne)
+217176809,A330,FTO2,closed,[PLANT],2026-04-30,FTO2,1,0,0,0,0,0,1,0,0,Amont,Amont · Câble
+217184066,A350,FTO2,closed,[PLANT],2026-04-30,FTO2,15,3,10,0,4,1,0,0,0,Câblage,Cheminement – clash | Cheminement – longueur / tension | Manquant – colliers | Serrage mécanique | Dommage – identification | Bleu mal appliqué / débordant | Gainage / protection
+217189830,A350,FTO2,closed,[PLANT],2026-05-04,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – câble
+217190187,A330,FTO2,deleted,[SUPPLIER],2026-05-04,Supprimée,1,0,1,0,0,0,0,0,0,Câblage,Mauvaise réf. – électrique / détrompage
+217190344,A330,FTO2,closed,[PLANT],2026-05-04,FTO2,1,0,0,0,0,0,1,0,0,Amont,Amont · Câble
+217191998,A330,FTO2,closed,[PLANT],2026-05-04,FTO2,1,0,0,0,0,0,1,0,0,Amont,Amont · Câble
+217192194,A350,FTO2,closed,[PLANT],2026-05-04,FTO2,1,0,0,0,0,0,1,0,0,Amont,Amont · Identification / barrette VT
+217192676,A330,FTO2,closed,[SUPPLIER],2026-05-04,Fournisseur,1,0,1,0,0,0,0,0,0,Câblage,Mauvaise réf. – électrique / détrompage
+217195075,A330,FTO2,closed,[SUPPLIER],2026-05-04,Fournisseur,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – structure
+217195435,A330,FTO2,closed,[SUPPLIER],2026-05-04,Fournisseur,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – structure
+217196903,A350,FTO2,closed,[PLANT],2026-05-04,FTO2,1,0,1,0,0,0,0,0,0,Câblage,Cheminement – longueur / tension
+217197100,A330,FTO2,closed,[PLANT],2026-05-04,FTO2,2,0,0,1,1,0,0,0,0,Branchement,Manquant – mécanique / freinage | Erreur de branchement
+217203646,A330,FTO2,closed,[PLANT],2026-05-05,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – structure
+217203719,A350,FTO2,closed,[PLANT],2026-05-05,FTO2,1,0,0,0,0,0,1,0,0,Amont,Amont · Câble
+217205879,A330,FTO2,closed,[PLANT],2026-05-05,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – structure
+217214052,A350,FTO2,closed,[PLANT],2026-05-05,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – câble
+217214573,A350,FTO2,closed,[PLANT],2026-05-05,FTO2,1,0,0,0,0,0,1,0,0,Amont,Amont · Câble
+217216194,A350,FTO2,closed,[PLANT],2026-05-06,FTO2,27,0,2,25,0,0,0,0,0,Branchement,Erreur de branchement | Inversion | Mauvaise réf. – électrique / détrompage | Déverrouillage
+217219203,A350,FTO2,closed,[PLANT],2026-05-06,FTO2,30,1,18,2,5,5,0,0,0,Câblage,Cheminement – longueur / tension | Frettage / colliers – pose | Bleu mal appliqué / débordant | Gainage / protection | Dommage – identification | Identification – positionnement | Câble à refaire (ligne) | Manquant – colliers | Dommage – structure | Inversion | Déverrouillage | Cheminement – clash
+217219461,A330,FTO2,closed,[SUPPLIER],2026-05-06,Fournisseur,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – structure
+217230702,A330,FTO2,closed,[PLANT],2026-05-07,FTO2,1,0,0,0,0,0,1,0,0,Amont,Amont · Câble
+217231587,A320,FTO2,closed,[PLANT],2026-05-07,FTO2,1,0,0,1,0,0,0,0,0,Branchement,Déverrouillage
+217235886,A330,FTO2,closed,[PLANT],2026-05-07,FTO2,1,0,1,0,0,0,0,0,0,Câblage,Cheminement – longueur / tension
+217250487,A350,FTO2,closed,[PLANT],2026-05-11,FTO2,1,0,0,0,0,0,1,0,0,Amont,Amont · Câble
+217251646,A350,FTO2,closed,[PLANT],2026-05-11,FTO2,24,0,13,11,0,0,0,0,0,Câblage,Mauvaise réf. – électrique / détrompage | Inversion | Erreur de branchement | Déverrouillage
+217252994,A350,FTO2,closed,[PLANT],2026-05-11,FTO2,1,0,0,0,0,1,0,0,0,Métallisation,Bleu mal appliqué / débordant
+217253170,A350,FTO2,closed,[PLANT],2026-05-11,FTO2,17,3,9,1,4,3,0,0,0,Câblage,Cheminement – longueur / tension | Manquant – colliers | Bleu non appliqué | Frettage / colliers – pose | Gainage / protection | Manquant – identification | Inversion | Cheminement – clash | Câblage non terminé
+217253448,A330,FTO2,closed,[PLANT],2026-05-11,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – composant cassé
+217253630,A350,FNZ1,closed,[PLANT],2026-05-11,Retour client,1,0,0,0,1,0,0,0,0,Dommage & manquant,Manquant – câble / shunt / élément
+217254765,A350,FTO2,deleted,[PLANT],2026-05-11,Supprimée,1,0,0,0,0,1,0,0,0,Métallisation,Point de masse / mesure
+217264272,A350,FTO2,closed,[PLANT],2026-05-12,FTO2,1,0,1,0,0,0,0,0,0,Câblage,Câble à refaire (ligne)
+217264775,A330,FTO2,closed,[PLANT],2026-05-12,FTO2,1,0,0,0,0,0,0,0,1,Dossier,Dossier
+217266643,A330,FTO2,closed,[PLANT],2026-05-12,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Manquant – mécanique / freinage
+217270655,A350,FTO2,closed,[PLANT],2026-05-12,FTO2,28,0,9,19,0,0,0,0,0,Branchement,Inversion | Mauvaise réf. – électrique / détrompage | Erreur de branchement | Déverrouillage | Mauvaise réf. – identification
+217276677,A350,FTO2,deleted,[PLANT],2026-05-13,Supprimée,1,0,0,0,0,1,0,0,0,Métallisation,Point de masse / mesure
+217278240,A350,FTO2,closed,[PLANT],2026-05-13,FTO2,1,0,0,0,0,0,1,0,0,Amont,Amont · Câble
+217283307,A330,FTO2,closed,[SUPPLIER],2026-05-13,Fournisseur,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – structure
+217283624,A350,FTO2,closed,[PLANT],2026-05-13,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Manquant – câble / shunt / élément
+217298092,A350,FTO2,closed,[PLANT],2026-05-18,FTO2,1,0,1,0,0,0,0,0,0,Câblage,Câble à refaire (ligne)
+217298227,A350,FTO2,closed,[PLANT],2026-05-18,FTO2,1,0,1,0,0,0,0,0,0,Câblage,Câble à refaire (ligne)
+217298590,A350,FTO2,closed,[PLANT],2026-05-18,FTO2,14,0,0,14,0,0,0,0,0,Branchement,Erreur de branchement | Inversion | Déverrouillage
+217299080,A350,FTO2,closed,[PLANT],2026-05-18,FTO2,15,2,12,1,2,0,0,0,0,Câblage,Câblage non terminé | Cheminement – longueur / tension | Manquant – colliers | Identification – positionnement | Déverrouillage | Gainage / protection | Frettage / colliers – pose | Mauvaise réf. – mécanique | Cheminement – clash
+217299194,A330,FTO2,closed,[SUPPLIER],2026-05-18,Fournisseur,1,0,0,0,1,0,0,0,0,Dommage & manquant,Composant HS
+217300652,A330,FTO2,closed,[PLANT],2026-05-18,FTO2,1,0,1,0,0,0,0,0,0,Câblage,Câble à refaire (ligne)
+217302452,A350,FTO2,closed,[PLANT],2026-05-18,FTO2,1,0,1,0,0,0,0,0,0,Câblage,Mauvaise réf. – électrique / détrompage
+217305316,A330,FTO2,closed,[SUPPLIER],2026-05-18,Fournisseur,1,0,0,0,1,0,0,0,0,Dommage & manquant,Composant – cause non écrite
+217310574,A350,FTO2,closed,[PLANT],2026-05-19,FTO2,1,0,1,0,0,0,0,0,0,Câblage,Cheminement – longueur / tension
+217313045,A330,FTO2,closed,[PLANT],2026-05-19,FTO2,5,0,0,4,0,0,1,0,0,Branchement,Inversion | Amont · Câble | Erreur de branchement
+217317069,A350,FTO2,closed,[PLANT],2026-05-19,FTO2,1,0,1,0,0,0,0,0,0,Câblage,Cheminement – longueur / tension
+217324884,A350,FTO2,closed,[PLANT],2026-05-20,FTO2,1,0,0,0,0,0,1,0,0,Amont,Amont · Câble
+217325057,A330,FTO2,closed,[SUPPLIER],2026-05-20,Fournisseur,1,0,0,0,1,0,0,0,0,Dommage & manquant,Composant HS
+217325244,A330,FTO2,closed,[SUPPLIER],2026-05-20,Fournisseur,1,0,0,0,1,0,0,0,0,Dommage & manquant,Composant HS
+217326655,A350,FTO2,closed,[PLANT],2026-05-20,FTO2,20,1,0,19,1,0,0,0,0,Branchement,Erreur de branchement | Inversion | Déverrouillage | Manquant – obturateurs / bouchons
+217328612,A320,FTO2,closed,[PLANT],2026-05-20,FTO2,1,0,1,0,0,0,0,0,0,Câblage,Cheminement – longueur / tension
+217331925,A330,FTO2,closed,[PLANT],2026-05-20,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Composant – cause non écrite
+217332861,A350,FTO2,closed,[PLANT],2026-05-20,FTO2,1,0,1,0,0,0,0,0,0,Câblage,Câble à refaire (ligne)
+217333540,A350,FTO2,closed,[PLANT],2026-05-20,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – câble
+217334609,A350,FTO2,closed,[PLANT],2026-05-20,FTO2,11,1,9,0,2,0,0,0,0,Câblage,Cheminement – longueur / tension | Frettage / colliers – pose | Câblage non terminé | Manquant – obturateurs / bouchons | Dommage – identification | Gainage / protection | Identification – positionnement | Cheminement – clash
+217335973,A350,FTO2,closed,[PLANT],2026-05-20,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – câble
+217337402,A330,FTO2,closed,[PLANT],2026-05-21,FTO2,8,0,0,8,0,0,0,0,0,Branchement,Erreur de branchement | Inversion
+217337645,A350,FTO2,closed,[PLANT],2026-05-21,FTO2,1,0,0,0,0,0,1,0,0,Amont,Amont · Câble
+217338047,A350,FTO2,closed,[PLANT],2026-05-21,FTO2,1,0,0,0,0,0,1,0,0,Amont,Amont · Câble
+217339657,A350,FTO2,closed,[PLANT],2026-05-21,FTO2,1,0,1,0,0,0,0,0,0,Câblage,Câble à refaire (ligne)
+217342648,A350,FTO2,closed,[PLANT],2026-05-21,FTO2,1,0,1,0,0,0,0,0,0,Câblage,Câble à refaire (ligne)
+217344532,A330,FTO2,closed,[PLANT],2026-05-21,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Composant – cause non écrite
+217349796,A350,FTO2,closed,[PLANT],2026-05-21,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – câble
+217356649,A330,FTO2,closed,[PLANT],2026-05-22,FTO2,8,1,4,0,3,0,0,1,0,Câblage,Mauvaise réf. – électrique / détrompage | Dommage – identification | Câblage non terminé | Manquant – colliers | Frettage / colliers – pose | Dommage – structure | Serrage électrique | FOD
+217363914,A330,FFF1,closed,[PLANT],2026-05-25,Retour client,1,0,0,0,1,0,0,0,0,Dommage & manquant,Manquant – identification
+217365334,A350,FTO2,closed,[PLANT],2026-05-26,FTO2,1,0,0,0,0,0,1,0,0,Amont,Amont · Câble
+217365338,A350,FTO2,closed,[PLANT],2026-05-26,FTO2,1,0,1,0,0,0,0,0,0,Câblage,Câble à refaire (ligne)
+217365491,A330,FTO2,closed,[PLANT],2026-05-26,FTO2,1,0,0,0,0,0,1,0,0,Amont,Amont · Câble
+217367333,A350,FTO2,closed,[PLANT],2026-05-26,FTO2,29,4,19,0,5,4,0,1,0,Câblage,Frettage / colliers – pose | Bleu non appliqué | Serrage électrique | Gainage / protection | Cheminement – longueur / tension | Manquant – colliers | Serrage mécanique | Manquant – obturateurs / bouchons | Mauvaise réf. – colliers / frettage | Identification – positionnement | Dommage – identification | FOD | Bleu mal appliqué / débordant
+217368214,A350,FTO2,closed,[PLANT],2026-05-26,FTO2,1,0,1,0,0,0,0,0,0,Câblage,Câble à refaire (ligne)
+217368374,A330,FTO2,closed,[PLANT],2026-05-26,FTO2,1,0,1,0,0,0,0,0,0,Câblage,Serrage électrique
+217368831,A350,FTO2,closed,[PLANT],2026-05-26,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Manquant – câble / shunt / élément
+217369833,A350,FTO2,closed,[PLANT],2026-05-26,FTO2,1,0,0,0,0,0,1,0,0,Amont,Amont · Identification / barrette VT
+217371362,A350,FTO2,closed,[PLANT],2026-05-26,FTO2,1,0,0,1,0,0,0,0,0,Branchement,Erreur de branchement
+217371688,A350,FTO2,closed,[PLANT],2026-05-26,FTO2,8,3,3,0,5,0,0,0,0,Dommage & manquant,Dommage – identification | Manquant – colliers | Cheminement – longueur / tension | Manquant – obturateurs / bouchons | Gainage / protection
+217371996,A350,FTO2,closed,[PLANT],2026-05-26,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – câble
+217376442,A350,FTO2,closed,[PLANT],2026-05-26,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Manquant – câble / shunt / élément
+217376581,A350,FTO2,closed,[PLANT],2026-05-26,FTO2,1,0,1,0,0,0,0,0,0,Câblage,Identification – positionnement
+217386716,A350,FTO2,closed,[PLANT],2026-05-27,FTO2,1,0,0,0,0,0,1,0,0,Amont,Amont · Câble
+217394034,A330,FTO2,closed,[PLANT],2026-05-28,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – structure
+217394339,A350,FTO2,closed,[PLANT],2026-05-28,FTO2,18,0,0,18,0,0,0,0,0,Branchement,Inversion | Erreur de branchement | Déverrouillage
+217394622,A330,FTO2,closed,[PLANT],2026-05-28,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Composant – cause non écrite
+217394837,A330,FTO2,closed,[PLANT],2026-05-28,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Composant HS
+217406539,A350,FNZ1,closed,[PLANT],2026-05-29,Retour client,1,0,0,0,1,0,0,0,0,Dommage & manquant,Manquant – câble / shunt / élément
+217406743,A350,FTO2,closed,[PLANT],2026-05-29,FTO2,1,0,0,0,0,0,1,0,0,Amont,Amont · Identification / barrette VT
+217407652,A330,FTO2,closed,[PLANT],2026-05-29,FTO2,1,0,0,1,0,0,0,0,0,Branchement,Déverrouillage
+217408449,A330,FTO2,closed,[PLANT],2026-05-29,FTO2,7,0,0,7,0,0,0,0,0,Branchement,Erreur de branchement | Inversion | Déverrouillage
+217409137,A350,FTO2,closed,[PLANT],2026-05-29,FTO2,1,0,1,0,0,0,0,0,0,Câblage,Cheminement – longueur / tension
+217420085,A330,FTO2,closed,[PLANT],2026-06-01,FTO2,1,0,1,0,0,0,0,0,0,Câblage,Cheminement – longueur / tension
+217421016,A350,FTO2,closed,[PLANT],2026-06-01,FTO2,21,0,0,20,1,0,0,0,0,Branchement,Inversion | Erreur de branchement | Déverrouillage | Manquant – identification
+217426573,A330,FTO2,closed,[PLANT],2026-06-01,FTO2,2,0,0,2,0,0,0,0,0,Branchement,Erreur de branchement
+217428138,A350,FTO2,closed,[PLANT],2026-06-01,FTO2,19,4,11,1,5,2,0,0,0,Câblage,Identification – positionnement | Manquant – colliers | Mauvaise réf. – colliers / frettage | Cheminement – longueur / tension | Manquant – identification | Gainage / protection | Déverrouillage | Manquant – obturateurs / bouchons | Mauvaise réf. – mécanique | Bleu non appliqué | Câblage non terminé | Cheminement – clash | Bleu mal appliqué / débordant
+217429328,A320,FTO2,deleted,[PLANT],2026-06-01,Supprimée,1,0,1,0,0,0,0,0,0,Câblage,Cheminement – longueur / tension
+217434411,A350,FTO2,closed,[PLANT],2026-06-02,FTO2,1,0,0,0,0,0,1,0,0,Amont,Amont · Câble
+217442373,A350,FTO2,closed,[PLANT],2026-06-02,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Manquant – identification
+217445085,A350,FTO2,closed,[PLANT],2026-06-03,FTO2,1,0,1,0,0,0,0,0,0,Câblage,Cheminement – longueur / tension
+217445590,A330,FTO2,closed,[PLANT],2026-06-03,FTO2,1,0,0,0,0,0,1,0,0,Amont,Amont · Câble
+217446552,A330,FTO2,closed,[PLANT],2026-06-03,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Composant HS
+217447449,A330,FTO2,closed,[PLANT],2026-06-03,FTO2,1,0,1,0,0,0,0,0,0,Câblage,Sertissage
+217448049,A350,FTO2,closed,[PLANT],2026-06-03,FTO2,11,0,2,8,1,0,0,0,0,Branchement,Inversion | Sertissage | Erreur de branchement | Manquant – câble / shunt / élément
+217448134,A330,FTO2,closed,[PLANT],2026-06-03,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – composant cassé
+217451299,A330,FTO2,closed,[PLANT],2026-06-03,FTO2,3,0,2,1,0,0,0,0,0,Câblage,Cheminement – longueur / tension | Erreur de branchement
+217451846,A330,FTO2,closed,[PLANT],2026-06-03,FTO2,1,0,1,0,0,0,0,0,0,Câblage,Mauvaise réf. – électrique / détrompage
+217455194,A350,FTO2,closed,[PLANT],2026-06-03,FTO2,1,0,0,0,0,0,1,0,0,Amont,Amont · Câble
+217462243,A330,FTO2,closed,[PLANT],2026-06-04,FTO2,2,0,2,0,0,0,0,0,0,Câblage,Mauvaise réf. – électrique / détrompage
+217465837,A330,FTO2,closed,[PLANT],2026-06-04,FTO2,5,0,0,5,0,0,0,0,0,Branchement,Erreur de branchement
+217471685,A350,FTO2,closed,[PLANT],2026-06-04,FTO2,19,2,13,0,6,0,0,0,0,Câblage,Gainage / protection | Cheminement – longueur / tension | Dommage – identification | Cheminement – clash | Manquant – colliers | Manquant – identification | Identification – positionnement | Mauvaise réf. – colliers / frettage
+217474320,A330,FTO2,open,[PLANT],2026-06-05,FTO2,1,0,1,0,0,0,0,0,0,Câblage,Cheminement – longueur / tension
+217475055,A330,FTO2,closed,[PLANT],2026-06-05,FTO2,1,0,0,0,0,0,1,0,0,Amont,Amont · Identification / barrette VT
+217487945,A350,FTO2,closed,[PLANT],2026-06-08,FTO2,1,0,0,0,0,0,1,0,0,Amont,Amont · Câble
+217490797,A350,FTO2,closed,[PLANT],2026-06-08,FTO2,1,0,1,0,0,0,0,0,0,Câblage,Câble à refaire (ligne)
+217493717,A350,FTO2,closed,[PLANT],2026-06-08,FTO2,1,0,1,0,0,0,0,0,0,Câblage,Mauvaise réf. – identification
+217493875,A350,FTO2,closed,[PLANT],2026-06-08,FTO2,1,0,1,0,0,0,0,0,0,Câblage,Sertissage spécifique
+217493989,A350,FTO2,closed,[PLANT],2026-06-08,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Manquant – câble / shunt / élément
+217494119,A330,FTO2,closed,[PLANT],2026-06-08,FTO2,1,0,1,0,0,0,0,0,0,Câblage,Mauvaise réf. – électrique / détrompage
+217498881,A350,FTO2,deleted,[SUPPLIER],2026-06-08,Supprimée,1,0,0,0,1,0,0,0,0,Dommage & manquant,Manquant – identification
+217499367,A350,FTO2,deleted,[SUPPLIER],2026-06-08,Supprimée,1,0,0,0,1,0,0,0,0,Dommage & manquant,Manquant – identification
+217501688,A350,FTO2,closed,[PLANT],2026-06-09,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – composant cassé
+217501773,A330,FTO2,closed,[PLANT],2026-06-09,FTO2,1,0,1,0,0,0,0,0,0,Câblage,Câble à refaire (ligne)
+217504203,A330,FTO2,closed,[PLANT],2026-06-09,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – composant cassé
+217504324,A330,FTO2,closed,[PLANT],2026-06-09,FTO2,2,0,1,1,0,0,0,0,0,Câblage,Inversion | Serrage électrique
+217505992,A330,FTO2,closed,[PLANT],2026-06-09,FTO2,12,3,9,0,3,0,0,0,0,Câblage,Manquant – colliers | Frettage / colliers – pose | Serrage électrique | Mauvaise réf. – électrique / détrompage | Sertissage | Cheminement – clash | Cheminement – longueur / tension
+217506240,A350,FTO2,deleted,[SUPPLIER],2026-06-09,Supprimée,1,0,0,0,1,0,0,0,0,Dommage & manquant,Manquant – identification
+217506669,A330,FFF1,closed,[PLANT],2026-06-09,Retour client,2,0,0,0,2,0,0,0,0,Dommage & manquant,Composant HS
+217507234,A350,FTO2,closed,[PLANT],2026-06-09,FTO2,3,0,0,3,0,0,0,0,0,Branchement,Inversion | Déverrouillage
+217507243,A350,FTO2,deleted,[SUPPLIER],2026-06-09,Supprimée,1,0,0,0,1,0,0,0,0,Dommage & manquant,Manquant – identification
+217507424,A350,FNZ1,closed,[PLANT],2026-06-09,Retour client,1,0,1,0,0,0,0,0,0,Câblage,Cheminement – longueur / tension
+217509313,A350,FNZ1,closed,[PLANT],2026-06-09,Retour client,1,0,0,0,1,0,0,0,0,Dommage & manquant,Composant – cause non écrite
+217513743,A330,FFF1,closed,[PLANT],2026-06-09,Retour client,1,0,0,0,1,0,0,0,0,Dommage & manquant,Composant HS
+217516124,A350,FTO2,closed,[PLANT],2026-06-10,FTO2,1,0,0,0,0,0,1,0,0,Amont,Amont · Câble
+217516799,A330,FTO2,open,[PLANT],2026-06-10,FTO2,1,0,0,0,0,0,1,0,0,Amont,Amont · Câble
+217517473,A330,FTO2,closed,[PLANT],2026-06-10,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – câble
+217519810,A330,FTO2,closed,[PLANT],2026-06-10,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – câble
+217524512,A350,FTO2,closed,[PLANT],2026-06-10,FTO2,24,1,17,1,4,1,1,0,0,Câblage,Identification – positionnement | Gainage / protection | Cheminement – longueur / tension | Frettage / colliers – pose | Manquant – identification | Câblage non terminé | Bleu non appliqué | Mauvaise réf. – identification | Déverrouillage | Dommage – identification | Mauvaise réf. – colliers / frettage | Amont · Identification / barrette VT | Manquant – colliers | Cheminement – clash
+217528750,A330,FTO2,closed,[PLANT],2026-06-11,FTO2,4,0,0,4,0,0,0,0,0,Branchement,Erreur de branchement | Inversion
+217529476,A330,FTO2,closed,[PLANT],2026-06-11,FTO2,3,0,0,3,0,0,0,0,0,Branchement,Inversion | Erreur de branchement
+217530835,A350,FTO2,closed,[PLANT],2026-06-11,FTO2,1,0,1,0,0,0,0,0,0,Câblage,Sertissage spécifique
+217530973,A350,FTO2,closed,[PLANT],2026-06-11,FTO2,6,0,1,5,0,0,0,0,0,Branchement,Inversion | Mauvaise réf. – électrique / détrompage
+217533020,A320,FTO2,closed,[PLANT],2026-06-11,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – composant cassé
+217542391,A330,FFF1,closed,[PLANT],2026-06-12,Retour client,1,0,0,0,1,0,0,0,0,Dommage & manquant,Manquant – identification
+217542504,A350,FTO2,deleted,[PLANT],2026-06-12,Supprimée,1,0,1,0,0,0,0,0,0,Câblage,Cheminement – longueur / tension
+217545589,A330,FTO2,closed,[PLANT],2026-06-12,FTO2,2,0,1,1,0,0,0,0,0,Câblage,Mauvaise réf. – électrique / détrompage | Erreur de branchement
+217556762,A330,FTO2,closed,[SUPPLIER],2026-06-15,Fournisseur,1,0,0,0,1,0,0,0,0,Dommage & manquant,Composant HS
+217571217,A330,FTO2,closed,[PLANT],2026-06-16,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Composant HS
+217572395,A330,FTO2,open,[PLANT],2026-06-16,FTO2,1,0,0,0,0,0,1,0,0,Amont,Amont · Câble
+217573612,A320,FTO2,deleted,[PLANT],2026-06-16,Supprimée,2,0,2,0,0,0,0,0,0,Câblage,Cheminement – longueur / tension
+217576132,A350,FTO2,closed,[PLANT],2026-06-16,FTO2,11,0,7,1,1,2,0,0,0,Câblage,Gainage / protection | Bleu non appliqué | Mauvaise réf. – colliers / frettage | Cheminement – clash | Déverrouillage | Serrage électrique | Dommage – habillage
+217577268,A330,FTO2,closed,[PLANT],2026-06-16,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – structure
+217582044,A330,FFF1,closed,[PLANT],2026-06-16,Retour client,1,0,0,0,1,0,0,0,0,Dommage & manquant,Composant HS
+217584051,A330,FTO2,open,[PLANT],2026-06-17,FTO2,1,0,0,0,0,0,1,0,0,Amont,Amont · Câble
+217584201,A330,FTO2,open,[PLANT],2026-06-17,FTO2,1,0,1,0,0,0,0,0,0,Câblage,Cheminement – longueur / tension
+217584208,A330,FTO2,open,[PLANT],2026-06-17,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – composant cassé
+217589371,A330,FTO2,closed,[PLANT],2026-06-17,FTO2,1,0,1,0,0,0,0,0,0,Câblage,Mauvaise réf. – mécanique
+217590666,A330,FTO2,open,[PLANT],2026-06-17,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – structure
+217590735,A320,FTO2,closed,[PLANT],2026-06-17,FTO2,1,0,1,0,0,0,0,0,0,Câblage,Cheminement – longueur / tension
+217599035,A350,FTO2,deleted,[PLANT],2026-06-18,Supprimée,1,0,1,0,0,0,0,0,0,Câblage,Câble à refaire (ligne)
+217600000,A330,FTO2,closed,[PLANT],2026-06-18,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – composant cassé
+217601679,A350,FTO2,closed,[PLANT],2026-06-18,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – câble
+217602602,A350,FTO2,closed,[PLANT],2026-06-18,FTO2,19,1,14,1,1,3,0,0,0,Câblage,Cheminement – longueur / tension | Gainage / protection | Identification – positionnement | Bleu mal appliqué / débordant | Frettage / colliers – pose | Câblage non terminé | Manquant – colliers | Inversion | Cheminement – clash | Bleu non appliqué | Mauvaise réf. – électrique / détrompage
+217602695,A330,FTO2,closed,[PLANT],2026-06-18,FTO2,11,0,9,1,1,0,0,0,0,Câblage,Serrage électrique | Déverrouillage | Manquant – gaine / thermo
+217604561,A330,FTO2,closed,[PLANT],2026-06-18,FTO2,11,0,2,9,0,0,0,0,0,Branchement,Erreur de branchement | Inversion | Mauvaise réf. – électrique / détrompage | Sertissage
+217606128,A350,FTO2,closed,[PLANT],2026-06-18,FTO2,11,0,2,9,0,0,0,0,0,Branchement,Déverrouillage | Inversion | Sertissage | Erreur de branchement | Mauvaise réf. – électrique / détrompage
+217607114,A350,FTO2,closed,[PLANT],2026-06-18,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – structure
+217608638,A350,FTO2,closed,[SUPPLIER],2026-06-18,Fournisseur,1,1,0,0,1,0,0,0,0,Dommage & manquant,Manquant – colliers
+217611974,A350,FTO2,closed,[PLANT],2026-06-19,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Manquant – identification
+217613460,A330,FTO2,open,[PLANT],2026-06-19,FTO2,1,0,0,0,0,0,1,0,0,Amont,Amont · Câble
+217613680,A330,FTO2,closed,[PLANT],2026-06-19,FTO2,1,0,1,0,0,0,0,0,0,Câblage,Sertissage
+217613893,A330,FTO2,closed,[PLANT],2026-06-19,FTO2,1,0,1,0,0,0,0,0,0,Câblage,Sertissage
+217614283,A350,FTO2,closed,[PLANT],2026-06-19,FTO2,11,1,6,0,2,3,0,0,0,Câblage,Bleu non appliqué | Mauvaise réf. – colliers / frettage | Manquant – colliers | Gainage / protection | Bleu mal appliqué / débordant | Cheminement – longueur / tension | Manquant – identification | Identification – positionnement | Cheminement – clash
+217614808,A350,FTO2,closed,[PLANT],2026-06-19,FTO2,12,0,0,12,0,0,0,0,0,Branchement,Inversion | Erreur de branchement
+217636544,A350,FTO2,closed,[PLANT],2026-06-22,FTO2,1,0,1,0,0,0,0,0,0,Câblage,Câble à refaire (ligne)
+217641518,A350,FTO2,closed,[PLANT],2026-06-23,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – câble
+217642570,A350,FTO2,closed,[PLANT],2026-06-23,FTO2,2,0,0,1,1,0,0,0,0,Branchement,Erreur de branchement | Dommage – câble
+217654809,A320,FTO2,open,[PLANT],2026-06-24,FTO2,2,0,0,2,0,0,0,0,0,Branchement,Déverrouillage
+217654866,A330,FTO2,closed,[PLANT],2026-06-24,FTO2,1,0,1,0,0,0,0,0,0,Câblage,Mauvaise réf. – électrique / détrompage
+217654980,A330,FTO2,closed,[PLANT],2026-06-24,FTO2,6,0,2,4,0,0,0,0,0,Branchement,Erreur de branchement | Inversion | Mauvaise réf. – électrique / détrompage | Mauvaise réf. – identification
+217654997,A350,FTO2,deleted,[PLANT],2026-06-24,Supprimée,1,0,0,0,1,0,0,0,0,Dommage & manquant,Manquant – câble / shunt / élément
+217656584,A330,FTO2,closed,[PLANT],2026-06-24,FTO2,1,0,0,1,0,0,0,0,0,Branchement,Déverrouillage
+217660228,A330,FTO2,closed,[PLANT],2026-06-24,FTO2,1,0,1,0,0,0,0,0,0,Câblage,Mauvaise réf. – mécanique
+217660906,A330,FTO2,open,[PLANT],2026-06-24,FTO2,1,0,0,0,0,0,1,0,0,Amont,Amont · Câble
+217666206,A330,FFF1,closed,[PLANT],2026-06-24,Retour client,1,0,1,0,0,0,0,0,0,Câblage,Mauvaise réf. – mécanique
+217669726,A330,FTO2,closed,[PLANT],2026-06-25,FTO2,5,0,5,0,0,0,0,0,0,Câblage,Cheminement – longueur / tension | Mauvaise réf. – électrique / détrompage | Cheminement – clash | Frettage / colliers – pose
+217682128,A320,FTO2,open,[PLANT],2026-06-26,FTO2,1,0,1,0,0,0,0,0,0,Câblage,Mauvaise réf. – électrique / détrompage
+217685208,A330,FTO2,open,[PLANT],2026-06-26,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Composant HS
+217687101,A350,FTO2,closed,[PLANT],2026-06-26,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Manquant – câble / shunt / élément
+217687557,A330,FTO2,open,[PLANT],2026-06-26,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Composant HS
+217687721,A330,FTO2,closed,[PLANT],2026-06-26,FTO2,1,0,0,0,0,0,1,0,0,Amont,Amont · Identification / barrette VT
+217687725,A330,FTO2,closed,[PLANT],2026-06-26,FTO2,1,0,0,0,0,0,1,0,0,Amont,Amont · Identification / barrette VT
+217687967,A320,FTO2,open,[PLANT],2026-06-26,FTO2,1,0,0,1,0,0,0,0,0,Branchement,Déverrouillage
+217695381,A350,FTO2,closed,[PLANT],2026-06-29,FTO2,27,4,15,0,4,4,0,4,0,Câblage,Frettage / colliers – pose | FOD | Manquant – obturateurs / bouchons | Serrage électrique | Bleu mal appliqué / débordant | Gainage / protection | Mauvaise réf. – colliers / frettage | Cheminement – longueur / tension | Manquant – colliers | Identification – positionnement | Bleu non appliqué | Mauvaise réf. – électrique / détrompage
+217703054,A350,FTO2,closed,[PLANT],2026-06-29,FTO2,1,0,0,0,0,0,1,0,0,Amont,Amont · Câble
+217704145,A350,FTO2,closed,[PLANT],2026-06-29,FTO2,1,0,0,0,0,0,1,0,0,Amont,Amont · Câble
+217711033,A350,FTO2,closed,[PLANT],2026-06-30,FTO2,12,2,7,0,4,1,0,0,0,Câblage,Serrage électrique | Manquant – gaine / thermo | Gainage / protection | Cheminement – longueur / tension | Manquant – obturateurs / bouchons | Mauvaise réf. – colliers / frettage | Identification – positionnement | Manquant – colliers | Bleu non appliqué
+217716255,A350,FTO2,open,[PLANT],2026-06-30,FTO2,15,0,2,13,0,0,0,0,0,Branchement,Erreur de branchement | Inversion | Mauvaise réf. – électrique / détrompage | Non connecté
+217718803,A350,FTO2,closed,[PLANT],2026-06-30,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – câble
+217724439,A330,FTO2,open,[SUPPLIER],2026-07-01,Fournisseur,1,0,0,0,1,0,0,0,0,Dommage & manquant,Composant – cause non écrite
+217728808,A350,FTO2,open,[PLANT],2026-07-01,FTO2,24,0,3,19,2,0,0,0,0,Branchement,Inversion | Erreur de branchement | Déverrouillage | Dommage – composant cassé | Composant – cause non écrite | Mauvaise réf. – identification | Serrage électrique | Sertissage
+217730763,A330,FTO2,closed,[PLANT],2026-07-01,FTO2,1,0,1,0,0,0,0,0,0,Câblage,Mauvaise réf. – électrique / détrompage
+217733722,,,,,,,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – identification
+217735573,A350,FTO2,closed,[PLANT],2026-07-01,FTO2,1,0,0,0,0,0,1,0,0,Amont,Amont · Câble
+217737732,A350,FTO2,closed,[PLANT],2026-07-02,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – habillage
+217739535,A330,FTO2,open,[PLANT],2026-07-02,FTO2,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – composant cassé
+217746964,A350,FTO2,open,[PLANT],2026-07-02,FTO2,1,0,0,0,0,0,1,0,0,Amont,Amont · Câble
+217749687,A350,FTO2,open,[PLANT],2026-07-02,FTO2,2,0,0,0,2,0,0,0,0,Dommage & manquant,Dommage – structure
+217752419,A320,FTO2,open,[SUPPLIER],2026-07-03,Fournisseur,1,0,0,1,0,0,0,0,0,Branchement,Déverrouillage
+217752609,A330,FTO2,open,[PLANT],2026-07-03,FTO2,1,0,0,0,0,0,1,0,0,Amont,Amont · Câble
+217752723,A320,FTO2,open,[SUPPLIER],2026-07-03,Fournisseur,1,0,0,1,0,0,0,0,0,Branchement,Déverrouillage
+217752880,A330,FTO2,open,[PLANT],2026-07-03,FTO2,8,0,2,6,0,0,0,0,0,Branchement,Erreur de branchement | Mauvaise réf. – électrique / détrompage | Déverrouillage
+217766442,A350,FTO2,open,[SUPPLIER],2026-07-06,Fournisseur,1,0,0,0,1,0,0,0,0,Dommage & manquant,Composant HS
+217766863,A350,FTO2,deleted,[PLANT],2026-07-06,Supprimée,1,0,0,0,1,0,0,0,0,Dommage & manquant,Manquant – câble / shunt / élément
+217768574,A350,FTO2,open,[PLANT],2026-07-06,FTO2,1,0,0,0,0,0,1,0,0,Amont,Amont · Identification / barrette VT
+217775753,A350,FTO2,open,[PLANT],2026-07-06,FTO2,1,0,0,0,0,0,1,0,0,Amont,Amont · Câble
+217779693,,,,,,,1,0,1,0,0,0,0,0,0,Câblage,Mauvaise réf. – électrique / détrompage
+217780100,,,,,,,1,0,0,0,0,0,1,0,0,Amont,Amont · Identification / barrette VT
+217780394,,,,,,,1,0,0,0,0,0,1,0,0,Amont,Amont · Identification / barrette VT
+217785594,,,,,,,1,0,1,0,0,0,0,0,0,Câblage,Câble à refaire (ligne)
+217795241,,,,,,,1,0,1,0,0,0,0,0,0,Câblage,Mauvaise réf. – électrique / détrompage
+217795249,,,,,,,1,0,1,0,0,0,0,0,0,Câblage,Mauvaise réf. – électrique / détrompage
+217798709,,,,,,,1,0,0,0,0,0,1,0,0,Amont,Amont · Identification / barrette VT
+217799601,,,,,,,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – câble
+217800312,,,,,,,3,2,1,0,2,0,0,0,0,Dommage & manquant,Manquant – colliers | Mauvaise réf. – colliers / frettage
+217803687,,,,,,,1,0,1,0,0,0,0,0,0,Câblage,Mauvaise réf. – mécanique
+217804240,,,,,,,1,0,1,0,0,0,0,0,0,Câblage,Mauvaise réf. – mécanique
+217811190,,,,,,,11,0,1,9,1,0,0,0,0,Branchement,Inversion | Erreur de branchement | Dommage – câble | Mauvaise réf. – électrique / détrompage
+217814067,,,,,,,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – composant cassé
+217823906,,,,,,,1,0,0,0,1,0,0,0,0,Dommage & manquant,Composant HS
+217824020,,,,,,,11,3,8,0,3,0,0,0,0,Câblage,Manquant – colliers | Frettage / colliers – pose | Serrage électrique | Cheminement – clash | Identification – positionnement | Mauvaise réf. – mécanique
+217825086,,,,,,,7,0,1,6,0,0,0,0,0,Branchement,Erreur de branchement | Inversion | Mauvaise réf. – électrique / détrompage
+217838827,,,,,,,1,0,1,0,0,0,0,0,0,Câblage,Câble à refaire (ligne)
+217860541,,,,,,,1,0,0,0,1,0,0,0,0,Dommage & manquant,Composant – cause non écrite
+217862026,,,,,,,1,0,0,0,1,0,0,0,0,Dommage & manquant,Composant – cause non écrite
+217863110,,,,,,,1,0,1,0,0,0,0,0,0,Câblage,Câble à refaire (ligne)
+217868217,,,,,,,1,0,0,0,0,0,1,0,0,Amont,Amont · Câble
+217871420,,,,,,,1,0,1,0,0,0,0,0,0,Câblage,Câble à refaire (ligne)
+217874230,,,,,,,1,0,0,0,1,0,0,0,0,Dommage & manquant,Composant – cause non écrite
+217875306,,,,,,,1,0,0,0,1,0,0,0,0,Dommage & manquant,Manquant – mécanique / freinage
+217876056,,,,,,,16,0,1,15,0,0,0,0,0,Branchement,Inversion | Déverrouillage | Mauvaise réf. – identification
+217876176,,,,,,,1,0,1,0,0,0,0,0,0,Câblage,Mauvaise réf. – mécanique
+217876510,,,,,,,1,0,1,0,0,0,0,0,0,Câblage,Mauvaise réf. – mécanique
+217876825,,,,,,,23,3,13,1,4,4,0,1,0,Câblage,Gainage / protection | Frettage / colliers – pose | Cheminement – longueur / tension | Cheminement – clash | Bleu non appliqué | Manquant – obturateurs / bouchons | Bleu mal appliqué / débordant | Manquant – colliers | Serrage électrique | Déverrouillage | Dommage – identification | FOD
+217890692,,,,,,,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – composant cassé
+217895101,,,,,,,1,0,0,0,1,0,0,0,0,Dommage & manquant,Composant – cause non écrite
+217896339,,,,,,,1,0,1,0,0,0,0,0,0,Câblage,Serrage électrique
+217899785,,,,,,,1,0,0,0,0,0,1,0,0,Amont,Amont · Câble
+217908587,,,,,,,1,0,1,0,0,0,0,0,0,Câblage,Câble à refaire (ligne)
+217912654,,,,,,,3,0,3,0,0,0,0,0,0,Câblage,Serrage électrique | Mauvaise réf. – électrique / détrompage | Mauvaise réf. – mécanique
+217913046,,,,,,,1,0,0,0,1,0,0,0,0,Dommage & manquant,Composant – cause non écrite
+217913295,,,,,,,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – composant cassé
+217921499,,,,,,,1,0,1,0,0,0,0,0,0,Câblage,Serrage électrique
+217921767,,,,,,,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – composant cassé
+217921915,,,,,,,13,3,9,1,3,0,0,0,0,Câblage,Manquant – colliers | Gainage / protection | Cheminement – clash | Mauvaise réf. – mécanique | Identification – positionnement | Cheminement – longueur / tension | Mauvaise réf. – électrique / détrompage | Déverrouillage
+217931614,,,,,,,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – câble
+217931840,,,,,,,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – structure
+217943819,,,,,,,15,0,4,10,1,0,0,0,0,Branchement,Inversion | Erreur de branchement | Mauvaise réf. – électrique / détrompage | Mauvaise réf. – identification | Déverrouillage | Sertissage | Manquant – câble / shunt / élément
+217944228,,,,,,,1,0,0,0,1,0,0,0,0,Dommage & manquant,Composant HS
+217944725,,,,,,,14,2,9,0,3,0,2,0,0,Câblage,Gainage / protection | Amont · Identification / barrette VT | Serrage électrique | Manquant – obturateurs / bouchons | Mauvaise réf. – colliers / frettage | Identification – positionnement | Dommage – identification | Cheminement – clash | Manquant – colliers | Cheminement – longueur / tension
+217944847,,,,,,,1,0,0,0,1,0,0,0,0,Dommage & manquant,Composant HS
+217947196,,,,,,,1,1,0,0,1,0,0,0,0,Dommage & manquant,Manquant – obturateurs / bouchons
+217961371,,,,,,,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – structure
+217982664,,,,,,,1,0,0,0,0,0,1,0,0,Amont,Amont · Câble
+217986779,,,,,,,1,0,0,0,1,0,0,0,0,Dommage & manquant,Composant – cause non écrite
+217995383,,,,,,,1,0,0,0,1,0,0,0,0,Dommage & manquant,Manquant – câble / shunt / élément
+217999863,,,,,,,12,0,1,11,0,0,0,0,0,Branchement,Inversion | Déverrouillage | Erreur de branchement | Mauvaise réf. – électrique / détrompage
+218005905,,,,,,,1,0,0,0,0,0,0,1,0,FOD,FOD
+218006480,,,,,,,2,0,0,0,0,0,2,0,0,Amont,Amont · Câble
+218012174,,,,,,,1,0,1,0,0,0,0,0,0,Câblage,Câble à refaire (ligne)
+218014667,,,,,,,1,0,0,0,1,0,0,0,0,Dommage & manquant,Composant – cause non écrite
+218015822,,,,,,,1,0,1,0,0,0,0,0,0,Câblage,Câble à refaire (ligne)
+218016079,,,,,,,2,0,2,0,0,0,0,0,0,Câblage,Mauvaise réf. – électrique / détrompage
+218017224,,,,,,,1,0,0,0,1,0,0,0,0,Dommage & manquant,Composant – cause non écrite
+218017308,,,,,,,1,0,0,0,1,0,0,0,0,Dommage & manquant,Composant – cause non écrite
+218017365,,,,,,,1,0,0,0,1,0,0,0,0,Dommage & manquant,Composant – cause non écrite
+218020323,,,,,,,1,0,1,0,0,0,0,0,0,Câblage,Câble à refaire (ligne)
+218022212,,,,,,,12,0,0,12,0,0,0,0,0,Branchement,Erreur de branchement | Inversion | Déverrouillage
+218023660,,,,,,,1,0,0,0,1,0,0,0,0,Dommage & manquant,Composant – cause non écrite
+218023731,,,,,,,1,0,0,0,1,0,0,0,0,Dommage & manquant,Composant – cause non écrite
+218023739,,,,,,,1,0,0,0,1,0,0,0,0,Dommage & manquant,Composant – cause non écrite
+218027807,,,,,,,1,0,0,0,1,0,0,0,0,Dommage & manquant,Composant – cause non écrite
+218028102,,,,,,,1,0,0,0,1,0,0,0,0,Dommage & manquant,Composant – cause non écrite
+218028105,,,,,,,1,0,0,0,1,0,0,0,0,Dommage & manquant,Composant – cause non écrite
+218034251,,,,,,,1,0,0,0,0,0,1,0,0,Amont,Amont · Câble
+218037206,,,,,,,14,0,6,1,1,4,0,0,2,Câblage,Bleu mal appliqué / débordant | Serrage électrique | Dossier | Frettage / colliers – pose | Manquant – identification | Inversion | Serrage mécanique | Mauvaise réf. – identification
+218044605,,,,,,,2,0,0,0,2,0,0,0,0,Dommage & manquant,Dommage – structure
+218045227,,,,,,,1,0,0,0,1,0,0,0,0,Dommage & manquant,Composant – cause non écrite
+218045986,,,,,,,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – structure
+218048019,,,,,,,1,0,0,0,1,0,0,0,0,Dommage & manquant,Composant – cause non écrite
+218048183,,,,,,,1,0,1,0,0,0,0,0,0,Câblage,Identification – positionnement
+218048287,,,,,,,1,0,0,0,1,0,0,0,0,Dommage & manquant,Composant – cause non écrite
+218048597,,,,,,,1,0,0,0,1,0,0,0,0,Dommage & manquant,Composant – cause non écrite
+218048644,,,,,,,1,0,0,0,1,0,0,0,0,Dommage & manquant,Composant – cause non écrite
+218048795,,,,,,,1,0,0,0,1,0,0,0,0,Dommage & manquant,Composant – cause non écrite
+218048799,,,,,,,1,0,0,0,1,0,0,0,0,Dommage & manquant,Composant – cause non écrite
+218048980,,,,,,,1,0,0,0,1,0,0,0,0,Dommage & manquant,Composant – cause non écrite
+218048984,,,,,,,1,0,0,0,1,0,0,0,0,Dommage & manquant,Composant – cause non écrite
+218055142,,,,,,,1,0,0,1,0,0,0,0,0,Branchement,Déverrouillage
+218055814,,,,,,,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – structure
+218056077,,,,,,,1,0,1,0,0,0,0,0,0,Câblage,Câble à refaire (ligne)
+218056243,,,,,,,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – structure
+218056821,,,,,,,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – câble
+218058588,,,,,,,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – structure
+218060863,,,,,,,1,0,0,0,1,0,0,0,0,Dommage & manquant,Manquant – identification
+218065585,,,,,,,20,0,5,15,0,0,0,0,0,Branchement,Inversion | Erreur de branchement | Mauvaise réf. – électrique / détrompage | Sertissage spécifique | Déverrouillage | Non connecté
+218067687,,,,,,,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – structure
+218067875,,,,,,,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – structure
+218069153,,,,,,,1,0,1,0,0,0,0,0,0,Câblage,Frettage / colliers – pose
+218069982,,,,,,,1,0,0,0,1,0,0,0,0,Dommage & manquant,Manquant – câble / shunt / élément
+218070027,,,,,,,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – composant cassé
+218070160,,,,,,,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – composant cassé
+218072156,,,,,,,1,0,0,1,0,0,0,0,0,Branchement,Inversion
+218077278,,,,,,,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – composant cassé
+218078858,,,,,,,1,0,1,0,0,0,0,0,0,Câblage,Câble à refaire (ligne)
+218080112,,,,,,,1,0,1,0,0,0,0,0,0,Câblage,Mauvaise réf. – électrique / détrompage
+218081284,,,,,,,1,0,1,0,0,0,0,0,0,Câblage,Serrage mécanique
+218082562,,,,,,,1,0,0,0,0,1,0,0,0,Métallisation,Point de masse / mesure
+218092093,,,,,,,1,0,1,0,0,0,0,0,0,Câblage,Mauvaise réf. – électrique / détrompage
+218092186,,,,,,,1,0,1,0,0,0,0,0,0,Câblage,Mauvaise réf. – électrique / détrompage
+218094742,,,,,,,1,0,1,0,0,0,0,0,0,Câblage,Serrage mécanique
+218095661,,,,,,,1,0,1,0,0,0,0,0,0,Câblage,Cheminement – longueur / tension
+218096765,,,,,,,4,0,1,2,1,0,0,0,0,Branchement,Mauvaise réf. – électrique / détrompage | Erreur de branchement | Inversion | Manquant – mécanique / freinage
+218098372,,,,,,,1,0,1,0,0,0,0,0,0,Câblage,Mauvaise réf. – mécanique
+218101303,,,,,,,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – câble
+218102989,,,,,,,1,0,0,0,0,0,1,0,0,Amont,Amont · Câble
+218103313,,,,,,,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – habillage
+218105386,,,,,,,1,0,1,0,0,0,0,0,0,Câblage,Mauvaise réf. – électrique / détrompage
+218105723,,,,,,,1,0,1,0,0,0,0,0,0,Câblage,Mauvaise réf. – mécanique
+218105928,,,,,,,15,5,5,2,6,2,0,0,0,Dommage & manquant,Manquant – obturateurs / bouchons | Déverrouillage | Bleu non appliqué | Manquant – colliers | Mauvaise réf. – colliers / frettage | Gainage / protection | Identification – positionnement | Serrage électrique | Manquant – identification
+218108402,,,,,,,12,0,2,10,0,0,0,0,0,Branchement,Inversion | Sertissage spécifique | Déverrouillage
+218113625,,,,,,,1,0,1,0,0,0,0,0,0,Câblage,Câble à refaire (ligne)
+218118290,,,,,,,1,0,1,0,0,0,0,0,0,Câblage,Mauvaise réf. – électrique / détrompage
+218118359,,,,,,,1,0,0,0,1,0,0,0,0,Dommage & manquant,Manquant – câble / shunt / élément
+218120039,,,,,,,1,0,0,0,1,0,0,0,0,Dommage & manquant,Composant HS
+218121463,,,,,,,1,0,0,0,1,0,0,0,0,Dommage & manquant,Composant – cause non écrite
+218121468,,,,,,,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – composant cassé
+218128823,,,,,,,1,0,1,0,0,0,0,0,0,Câblage,Cheminement – longueur / tension
+218129758,,,,,,,1,0,1,0,0,0,0,0,0,Câblage,Cheminement – longueur / tension
+218131003,,,,,,,5,3,1,1,3,0,0,0,0,Dommage & manquant,Manquant – obturateurs / bouchons | Déverrouillage | Mauvaise réf. – mécanique
+218142855,,,,,,,3,0,0,2,1,0,0,0,0,Branchement,Inversion | Manquant – câble / shunt / élément | Erreur de branchement
+218143189,,,,,,,12,3,5,0,4,3,0,0,0,Câblage,Bleu non appliqué | Gainage / protection | Manquant – colliers | Identification – positionnement | Manquant – obturateurs / bouchons | Dommage – identification | Mauvaise réf. – colliers / frettage | Serrage électrique
+218145092,,,,,,,1,0,0,0,0,0,1,0,0,Amont,Amont · Câble
+218145781,,,,,,,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – identification
+218148347,,,,,,,1,0,1,0,0,0,0,0,0,Câblage,Câble à refaire (ligne)
+218149694,,,,,,,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – structure
+218150937,,,,,,,1,0,1,0,0,0,0,0,0,Câblage,Câble à refaire (ligne)
+218159740,,,,,,,19,1,0,17,2,0,0,0,0,Branchement,Inversion | Déverrouillage | Erreur de branchement | Manquant – câble / shunt / élément | Manquant – obturateurs / bouchons
+218166898,,,,,,,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – structure
+218167727,,,,,,,1,0,0,0,0,0,1,0,0,Amont,Amont · Identification / barrette VT
+218168768,,,,,,,1,0,0,0,0,0,1,0,0,Amont,Amont · Identification / barrette VT
+218169402,,,,,,,1,0,0,0,0,0,1,0,0,Amont,Amont · Identification / barrette VT
+218173233,,,,,,,3,0,0,3,0,0,0,0,0,Branchement,Erreur de branchement | Déverrouillage
+218174458,,,,,,,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – câble
+218176953,,,,,,,16,1,12,0,1,2,1,0,0,Câblage,Gainage / protection | Frettage / colliers – pose | Bleu mal appliqué / débordant | Manquant – obturateurs / bouchons | Cheminement – longueur / tension | Mauvaise réf. – colliers / frettage | Cheminement – clash | Mauvaise réf. – électrique / détrompage | Câblage non terminé | Amont · Identification / barrette VT
+218177900,,,,,,,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – composant cassé
+218185629,,,,,,,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – structure
+218186429,,,,,,,1,0,0,0,0,0,1,0,0,Amont,Amont · Câble
+218192626,,,,,,,1,0,0,0,0,0,1,0,0,Amont,Amont · Câble
+218193059,,,,,,,1,0,0,0,1,0,0,0,0,Dommage & manquant,Dommage – câble
+218193726,,,,,,,1,0,0,0,0,0,1,0,0,Amont,Amont · Câble
+218193868,,,,,,,1,0,1,0,0,0,0,0,0,Câblage,Cheminement – longueur / tension
+218195772,,,,,,,1,0,1,0,0,0,0,0,0,Câblage,Sertissage spécifique
+218199442,,,,,,,1,0,1,0,0,0,0,0,0,Câblage,Sertissage spécifique
+218199816,,,,,,,7,0,1,6,0,0,0,0,0,Branchement,Erreur de branchement | Inversion | Mauvaise réf. – électrique / détrompage

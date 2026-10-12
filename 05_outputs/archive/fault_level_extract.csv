@@ -1,0 +1,2541 @@
+nc,produit,type_nc,month,family,line
+217775753,1211VB,CABLES,2026-07,Longueur câble (court/surlongueur),"Câble trop court 
+Type of nonconformity : Harness length
+* Il à été constaté qu'un câble bi-filaire "
+217770059,OHP,FOURNISSEUR,2026-07,Etiquette / marquage,Etiquettes Châssis décollées
+217768851,OHP,DEMANDE DE DQN,2026-07,Autre,Non-compliant stiffener positioning
+217768574,MIP A350,CONTROLE FINAL,2026-07,Longueur câble (court/surlongueur),"Rail VT trop court 
+Type of nonconformity : Part incorrectly fitted
+* Sur la ligne A350 poste meca ,"
+217766863,MIP A350,CABLES,2026-07,Câble/pièce manquant(e),"2 Cables DR24 manquants 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la ligne A35"
+217766442,MIP A350,INTERNE,2026-07,Autre,"Modules VG défefectueux 
+Type of nonconformity : Electrical Bonding
+* Lors de branchements/connexion"
+217757059,300VU,Unknown,2026-07,Autre,Bague épaulée décollée sur 300VU (MB046)
+217752880,740VU,CONTROLE FINAL,2026-07,Inversion branchement / mauvaise borne,10REA ET 23XEA RELAIS INVERSES.
+217752880,740VU,CONTROLE FINAL,2026-07,Autre,1033VC MAUVAIS DETROMPAGE.
+217752880,740VU,CONTROLE FINAL,2026-07,Borne déverrouillée,12KS1 BORNE 3 DEVERROUILLE.
+217752880,740VU,CONTROLE FINAL,2026-07,Inversion branchement / mauvaise borne,7XCA CABLE EN B3 AU LIEU DE B2.
+217752880,740VU,CONTROLE FINAL,2026-07,Inversion branchement / mauvaise borne,11XCA CABLE EN D1 AU LIEU DE X2.
+217752880,740VU,CONTROLE FINAL,2026-07,Inversion branchement / mauvaise borne,10REA CABLE EN A3 AU LIEU DE A1.
+217752880,740VU,CONTROLE FINAL,2026-07,Inversion branchement / mauvaise borne,10REA CABLE EN B3 AU LIEU DE B1.
+217752880,740VU,CONTROLE FINAL,2026-07,Inversion branchement / mauvaise borne,10REA CABLE EN C3 AU LIEU DE C1.
+217752723,E-RUDDER,INTERNE,2026-07,Autre,"Deverouillage contact prise 26CE2-A 
+Type of nonconformity : Electrical Assembly Installation
+* Lors"
+217752609,742VU,CABLES,2026-07,Autre,"CABLE DK246 NON MARQUES F95103670 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la"
+217752419,E-RUDDER,INTERNE,2026-07,Autre,"Deverouillage contact prise 26CE2-A 
+Type of nonconformity : Electrical Assembly Installation
+* Lors"
+217749687,MIP A350,FOURNISSEUR,2026-07,Câble coupé / abîmé / cassé,"Colonette Cassée 
+Type of nonconformity : Structural and Mechanical Assembly
+* Sur le MIP A350 poste"
+217746964,MIP A350,CABLES,2026-07,Câble/pièce manquant(e),"Câble manquant 
+Type of nonconformity : Missing Part/Component / Incomplete Kit
+* Il à été constaté "
+217739535,PTVU,INTERNE,2026-07,Câble coupé / abîmé / cassé,"Ailette tordue sur voyant rectangulaire 
+Type of nonconformity : Electrical Assembly Installation
+* "
+217738262,OHP,Unknown,2026-07,Frètes / freinage,Prise 7LZ1 B FREINAGE NON CONFORME
+217737732,MIP A350,CONTROLE FINAL,2026-07,Câble coupé / abîmé / cassé,"Endommagement grommet 
+Type of nonconformity : Electrical Assembly Installation
+* Lors de la mise en"
+217735573,MIP A350,CABLES,2026-07,Longueur câble (court/surlongueur),"Câble trop court 
+Type of nonconformity : Harness length
+* Il à été constaté que sur la ligne A350 r"
+217730763,PTVU,CONTROLE FINAL,2026-07,Autre,Mauvaise référence de prise montée en 774VC. Me^me
+217728808,MIP A350,CONTROLE FINAL,2026-07,Câble coupé / abîmé / cassé,1608VC109A PRISE CASSEE.
+217728808,MIP A350,CONTROLE FINAL,2026-07,Erreur référence / plaquette,517VC002A ERREUR REFERENCE PRISE PLUS RACCORD.
+217728808,MIP A350,CONTROLE FINAL,2026-07,Erreur référence / plaquette,INVERSION DE PLAQUETTE ENTRE 2WTA ET 2WTB.
+217728808,MIP A350,CONTROLE FINAL,2026-07,Inversion branchement / mauvaise borne,115VMB INVERSION DE BRANCHEMENT ENTRE LES BORNES AA ET
+217728808,MIP A350,CONTROLE FINAL,2026-07,Inversion branchement / mauvaise borne,115VMB INVERSION DE BRANCHEMENT ENTRE LES BORNES R ET
+217728808,MIP A350,CONTROLE FINAL,2026-07,Sertissage,300VG105 MAUVAIS SERTISSAGE SUR UN CONTACT.
+217728808,MIP A350,CONTROLE FINAL,2026-07,Inversion branchement / mauvaise borne,3RN3B INVERSION DE BRANCHEMENT ENTRE LES BORNES < M ET
+217728808,MIP A350,CONTROLE FINAL,2026-07,Inversion branchement / mauvaise borne,3RN3B INVERSION DE BRANCHEMENT ENTRE LES BORNES AA ET
+217728808,MIP A350,CONTROLE FINAL,2026-07,Inversion branchement / mauvaise borne,5CPB INVERSION DE BRANCHEMENT ENTRE LES BORNES G ET J.
+217728808,MIP A350,CONTROLE FINAL,2026-07,Inversion branchement / mauvaise borne,3SEA INVERSION DE BRANCHEMENT ENTRE #PRS~ #PRS~ #PRS~ #PRS~ #PRS~
+217728808,MIP A350,CONTROLE FINAL,2026-07,Inversion branchement / mauvaise borne,3RN1A CABLE EN BORNE < K AU LIEU DE K.
+217728808,MIP A350,CONTROLE FINAL,2026-07,Inversion branchement / mauvaise borne,11CP2F INVERSION DE BRANCHEMENT ENTRE LES BORNES J ET
+217728808,MIP A350,CONTROLE FINAL,2026-07,Inversion branchement / mauvaise borne,1608VC006A CABLE EN BORNE 73 AU LIEU DE 74.
+217728808,MIP A350,CONTROLE FINAL,2026-07,Inversion branchement / mauvaise borne,1608VC006A CABLE EN BORNE 74 AU LIEU DE 73.
+217728808,MIP A350,CONTROLE FINAL,2026-07,Inversion branchement / mauvaise borne,11CP1J INVERSION DE BRANCHEMENT ENTRE LES BORNES B ET
+217728808,MIP A350,CONTROLE FINAL,2026-07,Inversion branchement / mauvaise borne,11CP1J INVERSION DE BRANCHEMENT ENTRE LES BORNES D ET
+217728808,MIP A350,CONTROLE FINAL,2026-07,Inversion branchement / mauvaise borne,1WK11A CABLE EN BORNE 7K AU LIEU DE 7A.
+217728808,MIP A350,CONTROLE FINAL,2026-07,Inversion branchement / mauvaise borne,3RN3B INVERSION DE BRANCHEMENT ENTRE LES BORNES < I ET
+217728808,MIP A350,CONTROLE FINAL,2026-07,Inversion branchement / mauvaise borne,3RN3B INVERSION DE BRANCHEMENT ENTRE LES BORNES < V ET
+217728808,MIP A350,CONTROLE FINAL,2026-07,Borne déverrouillée,100VT400 BORNE 6H DEVERROUILLEE.
+217728808,MIP A350,CONTROLE FINAL,2026-07,Borne déverrouillée,300VT103 BORNE 2A DEVERROUILLEE.
+217728808,MIP A350,CONTROLE FINAL,2026-07,Borne déverrouillée,300VT103 BORNE 2E DEVERROUILLEE.
+217728808,MIP A350,CONTROLE FINAL,2026-07,Borne déverrouillée,300VT103 BORNE 2M DEVERROUILLEE.
+217728808,MIP A350,CONTROLE FINAL,2026-07,Sertissage,300VT200 BORNE 3G MAUVAIS SERTISSAGE.
+217724439,PTVU,INTERNE,2026-07,Câble/pièce manquant(e),"ETEC 115VU non conforme , trou de fixation manquant en"
+217718803,MIP A350,CABLES,2026-06,Autre,"Câble abimé 
+Type of nonconformity : Damaged Harness
+* Il a été constaté sue la ligne A350 tête A qu"
+217716255,MIP A350,CONTROLE FINAL,2026-06,Autre,20TC1A INVERSION ENTRE LES BORNES AA ET CC.
+217716255,MIP A350,CONTROLE FINAL,2026-06,Inversion branchement / mauvaise borne,3RN2A CABLE EN < F AU LIEU DE < G.
+217716255,MIP A350,CONTROLE FINAL,2026-06,Inversion branchement / mauvaise borne,1WK21A CABLE EN 7J AU LIEU DE 7K.
+217716255,MIP A350,CONTROLE FINAL,2026-06,Autre,115VMA INVERSION ENTRE LES BORNES B ET < C.
+217716255,MIP A350,CONTROLE FINAL,2026-06,Inversion branchement / mauvaise borne,3RN3B CABLE EN X AU LIEU DE < X.
+217716255,MIP A350,CONTROLE FINAL,2026-06,Autre,11CP1D INVERSION ENTRE LES BORNES H ET J.
+217716255,MIP A350,CONTROLE FINAL,2026-06,Inversion branchement / mauvaise borne,3RN2A CABLE EN < E AU LIEU DE K.
+217716255,MIP A350,CONTROLE FINAL,2026-06,Autre,11CP2E INVERSION ENTRE LES BORNES C ET A.
+217716255,MIP A350,CONTROLE FINAL,2026-06,Inversion branchement / mauvaise borne,300VT103 MODULE 1 CABLE EN U AU LIEU DE T.
+217716255,MIP A350,CONTROLE FINAL,2026-06,Autre,500VT105 MODULE 1 INVERSION ENTRE LES BORNES U ET V.
+217716255,MIP A350,CONTROLE FINAL,2026-06,Autre,1608VC074A MAUVAIS DETROMPAGE.
+217716255,MIP A350,CONTROLE FINAL,2026-06,Autre,1608VC050A MAUVAIS DETROMPAGE.
+217716255,MIP A350,CONTROLE FINAL,2026-06,Autre,3RN2A CABLE EN < P NON CONNECTE.
+217716255,MIP A350,CONTROLE FINAL,2026-06,Inversion branchement / mauvaise borne,300VT103 MODULE 1 CABLE EN C AU LIEU DE U.
+217716255,MIP A350,CONTROLE FINAL,2026-06,Inversion branchement / mauvaise borne,300VT103 MODULE 1 CABLE EN T AU LIEU DE K.
+217715966,MIP A400M,CABLES,2026-06,Câble/pièce manquant(e),Câble manquant MSN167
+217711033,MIP A350,INTERNE,2026-06,Autre,"retouches finales qualité après test 
+Type of nonconformity : Electrical Assembly Installation
+* Mer"
+217704145,MIP A350,CABLES,2026-06,Autre,"Câble abimé 
+Type of nonconformity : Wiring damage
+* il a été constaté sur le poste tête A qu'un câb"
+217703054,MIP A350,CABLES,2026-06,Longueur câble (court/surlongueur),"Câble trop court 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la ligne A350 il à "
+217695381,MIP A350,CONTROLE FINAL,2026-06,Câble/pièce manquant(e),FIN 1608VC064 A : Mq obturateur
+217695381,MIP A350,CONTROLE FINAL,2026-06,Torquage / couple,FIN 2 GC B : torquage ko
+217695381,MIP A350,CONTROLE FINAL,2026-06,Cheminement / contrainte,ROUTE ESS 2S 2SF et ROUTE ESS 2M 2MF : frète à reprendre
+217695381,MIP A350,CONTROLE FINAL,2026-06,FOD,"FOD poussière : sur table , platine aspiration"
+217695381,MIP A350,CONTROLE FINAL,2026-06,FOD,FOD brin métallique
+217695381,MIP A350,CONTROLE FINAL,2026-06,Autre,Clamps ABS2195 fixé de travers
+217695381,MIP A350,CONTROLE FINAL,2026-06,Métallisation / bonding,"Bleu de métallisation à reprendre sur : 100VN121 , 100VN123 ,"
+217695381,MIP A350,CONTROLE FINAL,2026-06,Longueur câble (court/surlongueur),FIN 135VMD : frète coupée trop courte.
+217695381,MIP A350,CONTROLE FINAL,2026-06,Longueur câble (court/surlongueur),FIN 4DB2 A : surlongueur de câble
+217695381,MIP A350,CONTROLE FINAL,2026-06,Métallisation / bonding,100VN131 : bleu sous rondelle à reprendre
+217695381,MIP A350,CONTROLE FINAL,2026-06,Longueur câble (court/surlongueur),2GG A : surlongueur câble +frète.
+217695381,MIP A350,CONTROLE FINAL,2026-06,Torquage / couple,FIN 4DB1 A : torquage à reprendre.
+217695381,MIP A350,CONTROLE FINAL,2026-06,Câble/pièce manquant(e),FIN 411VC007 A : Manque 4 obturateurs
+217695381,MIP A350,CONTROLE FINAL,2026-06,Câble/pièce manquant(e),FIN 3CB B : manque 2 obturateurs
+217695381,MIP A350,CONTROLE FINAL,2026-06,FOD,FOD sur table
+217695381,MIP A350,CONTROLE FINAL,2026-06,Erreur référence / plaquette,Plaquette jaune 1S 1SF : longueur frètes à reprendre
+217695381,MIP A350,CONTROLE FINAL,2026-06,Cheminement / contrainte,ROUTE ESS 1M 1MD 1MG : Liseré apparent
+217695381,MIP A350,CONTROLE FINAL,2026-06,Autre,"FIN 1608VC075 A , 1608VC069 A : longueur frètes à reprendre"
+217695381,MIP A350,CONTROLE FINAL,2026-06,Autre,FIN 1608VC093 A : frète désserée
+217695381,MIP A350,CONTROLE FINAL,2026-06,Câble/pièce manquant(e),FIN 1608VC097 A : Manque une frète sur reprise de blindage
+217695381,MIP A350,CONTROLE FINAL,2026-06,Métallisation / bonding,ROUTE ESS 2M : flamme bleu CLAMP à reprendre attention au
+217695381,MIP A350,CONTROLE FINAL,2026-06,Cheminement / contrainte,"ROUTE ESS 2M : Liseré apparent et gaine vrillée , reprendre le"
+217695381,MIP A350,CONTROLE FINAL,2026-06,Câble/pièce manquant(e),TressE de masse V9241939000400 Manque bleu de métallisation
+217695381,MIP A350,CONTROLE FINAL,2026-06,Métallisation / bonding,"300VN359 , 300VN200 : bleu à reprendre : attention derrière les"
+217695381,MIP A350,CONTROLE FINAL,2026-06,Torquage / couple,FIN 5GA B : Torquage à reprendre
+217695381,MIP A350,CONTROLE FINAL,2026-06,Autre,"FIN 1706VC001 : orientation à reprendre , positionner le"
+217695381,MIP A350,CONTROLE FINAL,2026-06,FOD,"FOD : sur gaine , derrière la cornière et au dessus , dans les"
+217687967,E-RUDDER,INTERNE,2026-06,Autre,"Deverouillage contact prise 26CE2-A 
+Type of nonconformity : Electrical Assembly Installation
+* Lors"
+217687725,PTVU,Unknown,2026-06,Autre,"Barrette non conforme 
+Type of nonconformity : Structural and Mechanical Assembly
+* Sur la ligne A33"
+217687721,PTVU,Unknown,2026-06,Autre,"RAIL NON CONFORME 
+Type of nonconformity : Structural and Mechanical Assembly
+* Sur la ligne A330 , "
+217687557,PTVU,INTERNE,2026-06,Autre,"Enfichage prise 681VC impossible 
+Type of nonconformity : Incorrect connector
+* Lors de l'enfichage "
+217685208,PTVU,INTERNE,2026-06,Continuité / composant HS,"Borne K HS SUR CONNECTEUR VC 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la lign"
+217682128,E-RUDDER,INTERNE,2026-06,Autre,"Backshell non conforme 
+Type of nonconformity : Electrical Assembly Installation
+* Lors de la réalis"
+217669726,740VU,INTERNE,2026-06,Autre,1 câble qui ressort du toron au niveau du T de dérivation du
+217669726,740VU,INTERNE,2026-06,Autre,Orientation de la cosse 729VN
+217669726,740VU,INTERNE,2026-06,Autre,1 câble qui ressort du toron au niveau du T de dérivation du
+217669726,740VU,INTERNE,2026-06,Autre,Contact entre la route P et la structure au niveau de la
+217669726,740VU,INTERNE,2026-06,Autre,1 tyrap mal serré en partie bas gauche de la porte 742VU
+217666206,Other,Unknown,2026-06,Autre,"313VU VT mal positionnée 
+Type of nonconformity : Electrical Assembly Installation
+* En poste cockpi"
+217666118,Other,Unknown,2026-06,Autre,"313VU VT mal positionnée 
+Type of nonconformity : Electrical Assembly Installation
+* En poste cockpi"
+217660906,742VU,CABLES,2026-06,Autre,"Cable avec defaut d'isolant 2434-0041 
+Type of nonconformity : Wiring damage
+* Lors du branchement d"
+217660228,740VU,Unknown,2026-06,Câble coupé / abîmé / cassé,"helicoil endommagé sur 740VU 
+Type of nonconformity : Fastener not available
+* Sur meuble 740VU MSN "
+217656584,PTVU,CONTROLE FINAL,2026-06,Autre,"Contact déverrouillé en 21CE borne K , C.D.V.E."
+217654980,740VU,CONTROLE FINAL,2026-06,Autre,Mauvais détrompages des prises 1003VC et 1027VC.
+217654980,740VU,CONTROLE FINAL,2026-06,Erreur référence / plaquette,Inversion des plaquettes repères entre 1PEA et 1PEB.
+217654980,740VU,CONTROLE FINAL,2026-06,Autre,"Erreur de branchement en 6PB1 B , fil branché en 18 au"
+217654980,740VU,CONTROLE FINAL,2026-06,Inversion branchement / mauvaise borne,Inversion de branchement en 5XE A entre les bornes X1
+217654980,740VU,CONTROLE FINAL,2026-06,Autre,"Erreur de branchement en 27QA A , fil branché en B au"
+217654980,740VU,CONTROLE FINAL,2026-06,Autre,Inversion lors de l'association des câbles 2458-0118 et
+217654866,743VU,INTERNE,2026-06,Autre,"Retouche QUAL 743VU MSN 2163 
+Type of nonconformity : Electrical Assembly Installation
+* Lors du con"
+217654809,E-RUDDER,INTERNE,2026-06,Autre,"Deverouillage contact prise 26CE2-A 
+Type of nonconformity : Electrical Assembly Installation
+* Lors"
+217642570,MIP A350,Unknown,2026-06,Autre,erreur branchement : Fibre 3161-0582 qui va de la 1608VC061
+217642570,MIP A350,Unknown,2026-06,Câble coupé / abîmé / cassé,Endommagement fibre : Fibre 3161-0582 cassée.
+217641518,MIP A350,CABLES,2026-06,Autre,"Aléa OZ2084327 mauvais sens KL24 
+Type of nonconformity : Cable routing
+* De : PIERRE , BENOIT Actio"
+217636544,MIP A350,CABLES,2026-06,Longueur câble (court/surlongueur),"Câble abimé 
+Type of nonconformity : Wiring damage
+* Il à été constaté sur la ligne A350 route 2M qu"
+217614808,MIP A350,CONTROLE FINAL,2026-06,Inversion branchement / mauvaise borne,1WK11A INVERSION DE BRANCHEMENT ENTRE LES BORNES HH ET
+217614808,MIP A350,CONTROLE FINAL,2026-06,Inversion branchement / mauvaise borne,3RN1B INVERSION DE BRANCHEMENT ENTRE LES BORNES < M ET
+217614808,MIP A350,CONTROLE FINAL,2026-06,Inversion branchement / mauvaise borne,3RN1B CABLE EN BORNE X AU LIEU DE < X .
+217614808,MIP A350,CONTROLE FINAL,2026-06,Inversion branchement / mauvaise borne,9KSJ22 INVERSION DE BRANCHEMENT ENTRE LES BORNES E ET
+217614808,MIP A350,CONTROLE FINAL,2026-06,Inversion branchement / mauvaise borne,1706VC002 INVERSION DE BRANCHEMENT ENTRE LES BORNES D
+217614808,MIP A350,CONTROLE FINAL,2026-06,Inversion branchement / mauvaise borne,1608VC080A INVERSION DE BRANCHEMENT ENTRE LES BORNES 1
+217614808,MIP A350,CONTROLE FINAL,2026-06,Inversion branchement / mauvaise borne,3RN1B INVERSION DE BRANCHEMENT ENTRE #PRS~ #PRS~ #PRS~ #PRS~
+217614808,MIP A350,CONTROLE FINAL,2026-06,Inversion branchement / mauvaise borne,3RN1B CABLE EN BORNE W AU LIEU DE < W.
+217614808,MIP A350,CONTROLE FINAL,2026-06,Inversion branchement / mauvaise borne,1608VC070A INVERSION DE BRANCHEMENT ENTRE LES BORNES 52
+217614808,MIP A350,CONTROLE FINAL,2026-06,Inversion branchement / mauvaise borne,1WK21A CABLE EN BORNE 12D AU LIEU DE 11D.
+217614808,MIP A350,CONTROLE FINAL,2026-06,Inversion branchement / mauvaise borne,1610VC027 INVERSION DE BRANCHEMENT ENTRE LES BORNES 4
+217614808,MIP A350,CONTROLE FINAL,2026-06,Inversion branchement / mauvaise borne,1610VC027 INVERSION DE BRANCHEMENT ENTRE LES BORNES 5
+217614283,MIP A350,INTERNE,2026-06,Autre,"retouches finales qualité après test 
+Type of nonconformity : Electrical Assembly Installation
+* Mer"
+217613893,PTVU,INTERNE,2026-06,Câble coupé / abîmé / cassé,"CABLES ABIMES SUR OPTICAL ENCODER 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la"
+217613680,PTVU,INTERNE,2026-06,Câble coupé / abîmé / cassé,"CABLES ABIMES SUR OPTICAL ENCODER 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la"
+217613460,742VU,CABLES,2026-06,Câble/pièce manquant(e),"Cable manquant 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la oligne A330 , nous"
+217608638,Other,FOURNISSEUR,2026-06,Autre,"Tuyauterie ATA 21 mal positionnée 
+Type of nonconformity : Missing Part/Component/Incomplete Kit
+* I"
+217607114,MIP A350,INTERNE,2026-06,Câble coupé / abîmé / cassé,"Rampe cassée 
+Type of nonconformity : Welding/Soldering
+* L'operateur a endommagé la rampe sur la so"
+217606128,MIP A350,CONTROLE FINAL,2026-06,Borne déverrouillée,300VG202 1 BORNE DEVERROUILLE.
+217606128,MIP A350,CONTROLE FINAL,2026-06,Borne déverrouillée,300VG101 1 BORNE DEVERROUILLE.
+217606128,MIP A350,CONTROLE FINAL,2026-06,Borne déverrouillée,100VG204 1 BORNE DEVERROUILLE.
+217606128,MIP A350,CONTROLE FINAL,2026-06,Autre,1608VC074A INVERSION ENTRE LES BORNES 48 ET 49.
+217606128,MIP A350,CONTROLE FINAL,2026-06,Autre,1608VC043A INVERSION ENTRE LES BORNES 63 ET 64.
+217606128,MIP A350,CONTROLE FINAL,2026-06,Autre,9KSJ15 INVERSION ENTRE LES BORNES A ET B.
+217606128,MIP A350,CONTROLE FINAL,2026-06,Sertissage,1608VC019 BORNE 40 MAUVAIS SERTISSAGE.
+217606128,MIP A350,CONTROLE FINAL,2026-06,Borne déverrouillée,300VT301 MODULE 14 BORNE J DEVERROUILLE.
+217606128,MIP A350,CONTROLE FINAL,2026-06,Inversion branchement / mauvaise borne,3RN3A CABLE EN < J AU LIEU DE < I.
+217606128,MIP A350,CONTROLE FINAL,2026-06,Borne déverrouillée,300VG131 1 BORNE DEVERROUILLE.
+217606128,MIP A350,CONTROLE FINAL,2026-06,Autre,1610VC005 ERREUR DETROMPAGE.
+217604561,740VU,CONTROLE FINAL,2026-06,Autre,Inversion sur 32CS1 A entre les bornes X1 et X2.
+217604561,740VU,CONTROLE FINAL,2026-06,Autre,Inversion sur 9PH entre les bornes T1 et T2.
+217604561,740VU,CONTROLE FINAL,2026-06,Inversion branchement / mauvaise borne,Cable sur 703VD A borne 18 au lieu de 17.
+217604561,740VU,CONTROLE FINAL,2026-06,Inversion branchement / mauvaise borne,Cable sur 1023VC borne 45 au lieu de 26.
+217604561,740VU,CONTROLE FINAL,2026-06,Inversion branchement / mauvaise borne,Cable sur 6XE A borne B3 au lieu de B1.
+217604561,740VU,CONTROLE FINAL,2026-06,Autre,Mauvaise référence de module sur 707VT 5 ; monté MA2011 au
+217604561,740VU,CONTROLE FINAL,2026-06,Inversion branchement / mauvaise borne,Cable sur 1005VC borne 31 au lieu de 21.
+217604561,740VU,CONTROLE FINAL,2026-06,Inversion branchement / mauvaise borne,Cable sur 4XH A borne B au lieu de X.
+217604561,740VU,CONTROLE FINAL,2026-06,Autre,Inversion sur 703VT entre les bornes 18A et 19E.
+217604561,740VU,CONTROLE FINAL,2026-06,Autre,Inversion sur les bornes 3 et 5 entre les disjoncteurs
+217604561,740VU,CONTROLE FINAL,2026-06,Sertissage,Mauvaise mise en oeuvre du sertissage des cosses sur
+217602695,740VU,CONTROLE FINAL,2026-06,Autre,"RETOUCHES CONTROLE FINAL 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la ligne A3"
+217602602,MIP A350,CONTROLE FINAL,2026-06,Autre,"Controle final MIP A350 MSN 851 
+Type of nonconformity : Electrical Assembly Installation
+* Contrôle"
+217601679,MIP A350,CABLES,2026-06,Câble coupé / abîmé / cassé,"DR18 coupé court aléa OZ2075757 
+Type of nonconformity : Wiring damage
+* De : SANS , YOHANN Action :"
+17232524,Other,Unknown,2026-06,Continuité / composant HS,"WARNING HORN DETROMPAGE HS 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la ligne "
+217600000,PTVU,INTERNE,2026-06,Continuité / composant HS,"WARNING HORN DETROMPAGE HS 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la ligne "
+217599521,MIP A400M,CABLES,2026-06,Longueur câble (court/surlongueur),Câble reçu trop court
+217599035,MIP A350,CABLES,2026-06,Longueur câble (court/surlongueur),"DR18 coupé trop court 
+Type of nonconformity : Wiring damage
+* Prélevement effectué suite à câble co"
+217590735,MFRL,INTERNE,2026-06,Autre,"Harnais 451VB court 
+Type of nonconformity : Harness length
+* Lors du controle morphplogique du Harn"
+217590694,MIP A400M,CONTROLE FINAL,2026-06,Autre,INSPECTION FINALE MIP MSN 164
+217590666,PTVU,INTERNE,2026-06,Câble coupé / abîmé / cassé,"614VU STRUCTURE ENDOMMAGEE 
+Type of nonconformity : Scratch
+* Sur la ligne A330 , nous constatons qu"
+217589371,740VU,CONTROLE FINAL,2026-06,Autre,715VT MAUVAIS MONTAGE DE LA BARETTE.
+217584208,PTVU,INTERNE,2026-06,Câble coupé / abîmé / cassé,"Plume cassé dans borne P 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la ligne A3"
+217584201,742VU,CABLES,2026-06,Autre,"cables mal cheminés 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la ligne A330 , "
+217584160,300VU,FOURNISSEUR,2026-06,Autre,Côtes Meuble 300VU hors tolérences
+217584051,740VU,CABLES,2026-06,Câble/pièce manquant(e),"CABLES MANQUANTS NON RECU 
+Type of nonconformity : Electrical Assembly Installation
+* Nous constaton"
+217577268,740VU,FOURNISSEUR,2026-06,Câble coupé / abîmé / cassé,"Ecrou autofreine endommagé 
+Type of nonconformity : Structural and Mechanical Assembly
+* Sur la lign"
+217576132,MIP A350,INTERNE,2026-06,Autre,"retoches finales qualité après test 
+Type of nonconformity : Electrical Assembly Installation
+* Merc"
+217573612,MFRL,INTERNE,2026-06,Autre,"Harnais 451VB court 
+Type of nonconformity : Harness length
+* Lors du controle morphplogique du Harn"
+217572395,740VU,CABLES,2026-06,Longueur câble (court/surlongueur),"CABLE RECU TROP COURT 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la ligne A330 "
+217571217,PTVU,INTERNE,2026-06,Continuité / composant HS,"BORNE HS SUR SWITCH OVER 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la ligne A3"
+217562169,300VU,CONTROLE FINAL,2026-06,Autre,RETOUCHES TEST MSN 162
+217556762,PTVU,INTERNE,2026-06,Autre,Faux contact sur la borne 5 du Pushbutton Indicator
+217545589,PTVU,CONTROLE FINAL,2026-06,Autre,Mauvaise orientation du TOP de la prise 354VC.
+217545589,PTVU,CONTROLE FINAL,2026-06,Autre,"Erreur de branchement en 354VC , fil branché en < A au"
+217542504,MIP A350,CABLES,2026-06,Autre,"Cable DR24 court 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la ligne A350 poste"
+217542391,Other,Unknown,2026-06,Câble/pièce manquant(e),"EQPMT/_/MECA 
+Type of nonconformity : Part not installed
+* au deballage nous constatons qu il manque"
+217533020,MFRL,INTERNE,2026-06,Câble coupé / abîmé / cassé,"Connecteur 9LB-A endommagé 
+Type of nonconformity : Impact
+* Lors de la realisations des mesures lin"
+217530973,MIP A350,CONTROLE FINAL,2026-06,Autre,100VT400 MODULE 3 MAUVAIS MODULE MONTE.
+217530973,MIP A350,CONTROLE FINAL,2026-06,Autre,10CP1A INVERSION ENTRE LES BORNES C ET H.
+217530973,MIP A350,CONTROLE FINAL,2026-06,Autre,115VMB INVERSION ENTRE LES BORNES M ET < B.
+217530973,MIP A350,CONTROLE FINAL,2026-06,Autre,3SEB INVERSION ENTRE #PRS~ #PRS~ #PRS~ #PRS~ #PRS~
+217530973,MIP A350,CONTROLE FINAL,2026-06,Autre,1608VC045A INVERSION ENTRE LES BORNES 14 ET 13.
+217530973,MIP A350,CONTROLE FINAL,2026-06,Autre,1608VC020A INVERSION ENTRE LES BORNES 15 ET 16.
+217530835,MIP A350,CONTROLE FINAL,2026-06,Autre,1610VC049 CONTACT A REFAIRE EN BB.
+217529476,743VU,CONTROLE FINAL,2026-06,Autre,Inversion sur 14PH A entre les bornes G et J.
+217529476,743VU,CONTROLE FINAL,2026-06,Autre,Inversion sur 71JG A entre les bornes 3 et 4.
+217529476,743VU,CONTROLE FINAL,2026-06,Inversion branchement / mauvaise borne,Cable sur 905VC borne 2 au lieu de 1.
+217528750,740VU,CONTROLE FINAL,2026-06,Inversion branchement / mauvaise borne,1003VC CABLE EN 25 AU LIEU DE 26.
+217528750,740VU,CONTROLE FINAL,2026-06,Autre,6XEA INVERSION ENTRE LES BORNES B1 ET C1.
+217528750,740VU,CONTROLE FINAL,2026-06,Inversion branchement / mauvaise borne,1035VC CABLE EN 17 AU LIEU DE 16.
+217528750,740VU,CONTROLE FINAL,2026-06,Inversion branchement / mauvaise borne,27QAA CABLE EN B AU LIEU DE A.
+217524512,MIP A350,INTERNE,2026-06,Autre,"Retouches finales 
+Type of nonconformity : Electrical Assembly Installation
+* Merci de reprendre les"
+217519810,740VU,CABLES,2026-06,Autre,"CABLE A RECOMMANDER SUITE NC CTRL FINAL 
+Type of nonconformity : Electrical Assembly Installation
+* "
+217517473,740VU,CABLES,2026-06,Câble coupé / abîmé / cassé,"CABLE ABIME LORS DU TYRAPAGE 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la lign"
+217516799,742VU,CABLES,2026-06,Câble/pièce manquant(e),"CABLE MANQUANT A LA LIVRAISON 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la lig"
+217516124,MIP A350,CABLES,2026-06,Autre,"Cable AD22 court 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la ligne A350 , pos"
+217509313,MIP A350,Unknown,2026-06,Autre,"Localisation : Cockpit , Cadre 7/8 , Lisse 23/25 , Côté Gauche."
+217509313,MIP A350,Unknown,2026-06,Autre,Plan d’Installation : V9271770500000 // OF : 1029478670.
+217509313,MIP A350,Unknown,2026-06,Câble/pièce manquant(e),"Description du défaut : Constatons sur avion , l'insert métallique de la prise 7HT1_A manquant."
+217509313,MIP A350,Unknown,2026-06,Autre,Impact sur les accès : N/A.
+217509313,MIP A350,Unknown,2026-06,Autre,Intervention Demandée : Demandons remise en conformité.
+217507424,Other,Unknown,2026-06,Autre,CKPT*C2/3*G*Orientation Backshell*FB*
+217507243,Other,FOURNISSEUR,2026-06,Câble/pièce manquant(e),"Etiquettes manquantes sur la structure 
+Type of nonconformity : Missing Part/Component/Incomplete Ki"
+217507234,MIP A350,CONTROLE FINAL,2026-06,Autre,1608VC070A INVERSION ENTRE LES CABLES 3313-0181 ET
+217507234,MIP A350,CONTROLE FINAL,2026-06,Borne déverrouillée,3CBB BORNE 57 CABLE DEVERROUILLE.
+217507234,MIP A350,CONTROLE FINAL,2026-06,Autre,11CP2H INVERSION ENTRE LES CABLES 2792-0969 ET 2792-
+217506240,Other,FOURNISSEUR,2026-06,Câble/pièce manquant(e),"Etiquettes manquantes sur la structure 
+Type of nonconformity : Missing Part/Component/Incomplete Ki"
+217505992,740VU,INTERNE,2026-06,Câble/pièce manquant(e),manque 1 tyrap à la sortie su Grommet
+217505992,740VU,INTERNE,2026-06,Sertissage,mauvais sertissage sur la cosse 1PE+
+217505992,740VU,INTERNE,2026-06,Frètes / freinage,Frettage à reprendre sur l'arrivée des VD
+217505992,740VU,INTERNE,2026-06,Frètes / freinage,Frettage à reprendre sur l'arrivée de la barrette 709VT
+217505992,740VU,INTERNE,2026-06,Autre,Cosses en contact avec les séparateurs sur 715VT
+217505992,740VU,INTERNE,2026-06,Autre,Cosse sur 38JY pliée à plus de 30° et non serrée
+217505992,740VU,INTERNE,2026-06,Autre,Cosse sur 65JG2 mal orientée ( tension sur le câble )
+217505992,740VU,INTERNE,2026-06,Autre,Cosse mal serrée sur 1004WL
+217505992,740VU,INTERNE,2026-06,Autre,1 câble cerisé mal fixé
+217505992,740VU,INTERNE,2026-06,Autre,Mauvais calibre de breaker sur
+217505992,740VU,INTERNE,2026-06,Câble/pièce manquant(e),Manque Double tyrap aux extrémités de la gaine textile
+217505992,740VU,INTERNE,2026-06,Câble/pièce manquant(e),Manque 1 tyrap sur le cheminement à coté de la 701VT
+217504324,PTVU,CONTROLE FINAL,2026-06,Autre,Suite à inversion entre les étiquettes repères 186RH et
+217504324,PTVU,CONTROLE FINAL,2026-06,Torquage / couple,Mauvais torquage du voyant 150RH.
+217504203,PTVU,INTERNE,2026-06,Câble coupé / abîmé / cassé,Guard switch endommagé en 180RH.
+217501773,740VU,CABLES,2026-06,Longueur câble (court/surlongueur),"CABLES TROP COURTS SUITE ERREUR DE COUPE 
+Type of nonconformity : Electrical Assembly Installation
+*"
+217501688,MIP A350,CONTROLE FINAL,2026-06,Câble coupé / abîmé / cassé,PRISE 20TC2-A CASSEE
+217499367,Other,FOURNISSEUR,2026-06,Câble/pièce manquant(e),"Manque etiquettes FIN Arinc 
+Type of nonconformity : Missing Part/Component / Incomplete Kit
+*
+Il à "
+217498881,Other,FOURNISSEUR,2026-06,Câble/pièce manquant(e),"Manque etiquettes FIN Arinc 
+Type of nonconformity : Missing Part/Component / Incomplete Kit
+* Il à "
+217494684,Other,Unknown,2026-06,Câble/pièce manquant(e),Cock D&G  Manque 3 prises F/O (2220VB)
+217494119,PTVU,CONTROLE FINAL,2026-06,Autre,Mauvaise référence d'équipement monté en 3WX.
+217493989,MIP A350,CONTROLE FINAL,2026-06,Câble/pièce manquant(e),3CBB BORNE 57 CONTACT MANQUANT CABLE 2797-0869 NON
+217493875,MIP A350,CONTROLE FINAL,2026-06,Autre,1610VC049 CONTACT A CHANGER SUR CABLE 3119-0390 BORNE
+217493717,MIP A350,CONTROLE FINAL,2026-06,Câble/pièce manquant(e),1610VC043 ETIQUETTE FIN MANQUANTE
+217490797,1211VB,CABLES,2026-06,Autre,"Cables courts route 1R 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la ligne A350"
+217487945,MIP A350,CABLES,2026-06,Autre,"ADB24 recu court 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la ligne A350 , rou"
+217475055,740VU,INTERNE,2026-06,Etiquette / marquage,"LOT ETIQUETTE 740VU INCOMPLET 
+Type of nonconformity : Structural and Mechanical Assembly
+* Sur la l"
+217474320,742VU,CABLES,2026-06,Longueur câble (court/surlongueur),"Cable 2453-2203B trop court mauvais chem 
+Type of nonconformity : Cable routing
+* Suite à mauvais ch"
+217471685,MIP A350,INTERNE,2026-06,Autre,"Retouches finales 
+Type of nonconformity : Electrical Assembly Installation
+* Merci de reprendre les"
+217465837,740VU,CONTROLE FINAL,2026-06,Inversion branchement / mauvaise borne,Cable sur 7XE A borne 2 au lieu de 1.
+217465837,740VU,CONTROLE FINAL,2026-06,Inversion branchement / mauvaise borne,Cable sur 1035VC borne 42 au lieu de 41.
+217465837,740VU,CONTROLE FINAL,2026-06,Inversion branchement / mauvaise borne,Cable sur 27QA A borne B au lieu de X.
+217465837,740VU,CONTROLE FINAL,2026-06,Inversion branchement / mauvaise borne,Cable sur 32CS1 A borne A3 au lieu de A2.
+217465837,740VU,CONTROLE FINAL,2026-06,Autre,Shunt mécanique 407PPD01 mal positionné.il était monté
+217462243,740VU,CONTROLE FINAL,2026-06,Autre,"RETOUCHES CONTROLE FINAL 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la ligne A3"
+217455194,MIP A350,CABLES,2026-06,Câble/pièce manquant(e),"Câble manquant 
+Type of nonconformity : Missing Part/Component / Incomplete Kit
+* Il a été constaté "
+217451846,PTVU,CONTROLE FINAL,2026-06,Autre,Inversion de références entre les prises 772VC et 774VC
+217451299,PTVU,CONTROLE FINAL,2026-06,Autre,Le Câblage en 653VT 7 a été effectué avec le MSN 02159
+217451299,PTVU,CONTROLE FINAL,2026-06,Autre,Le Câblage en 653VT 7 a été effectué avec le MSN 02159
+217451299,PTVU,CONTROLE FINAL,2026-06,Autre,Erreur de branchement en 653VT 7 suite au Q06
+217448163,MIP A400M,CONTROLE FINAL,2026-06,Autre,RETOUCHES TEST MSN 164
+217448134,PTVU,INTERNE,2026-06,Câble coupé / abîmé / cassé,"VOYANT RECTANGULAIRE ENDOMMAGE 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la li"
+217448049,MIP A350,CONTROLE FINAL,2026-06,Autre,2WTA INVERSION ENTRE LES BORNES U ET V.
+217448049,MIP A350,CONTROLE FINAL,2026-06,Autre,302VMB MAUVAIS CONTACT SERTI.
+217448049,MIP A350,CONTROLE FINAL,2026-06,Autre,300VG206 1 CONTACT MAL SERTI.
+217448049,MIP A350,CONTROLE FINAL,2026-06,Inversion branchement / mauvaise borne,3SEB CABLE EN L AU LIEU DE M.
+217448049,MIP A350,CONTROLE FINAL,2026-06,Inversion branchement / mauvaise borne,3SEB CABLE EN X AU LIEU DE Y.
+217448049,MIP A350,CONTROLE FINAL,2026-06,Autre,5CPA INVERSION ENTRE LES BORNES A ET B.
+217448049,MIP A350,CONTROLE FINAL,2026-06,Autre,5CPA INVERSION ENTRE LES BORNES N ET P.
+217448049,MIP A350,CONTROLE FINAL,2026-06,Autre,1GCB INVERSION ENTRE LES BORNES A ET J.
+217448049,MIP A350,CONTROLE FINAL,2026-06,Autre,1608VC020A INVERSION ENTRE LES BORNES 44 ET 45.
+217448049,MIP A350,CONTROLE FINAL,2026-06,Câble/pièce manquant(e),3RN1A 1 SHUNT MANQUANT ENTRE LES BORNES N ET FF.
+217448049,MIP A350,CONTROLE FINAL,2026-06,Autre,3RN1B INVERSION ENTRE LES BORNES < I ET < J.
+217447449,PTVU,INTERNE,2026-06,Sertissage,"CABLE COURT SUITE ERREUR SERTISSAGE 
+Type of nonconformity : Electrical Assembly Installation
+* Sur "
+217446552,PTVU,INTERNE,2026-06,Autre,"BORNE 1A NE VERROUILLE PAS 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la ligne "
+217445590,740VU,CABLES,2026-06,Câble/pièce manquant(e),"CABLE MANQUANT 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la ligne A330 , nous "
+217445085,MIP A350,CABLES,2026-06,Longueur câble (court/surlongueur),"Aléa OZ2044604 mauvais cheminement 
+Type of nonconformity : Cable routing
+* Commentaire : bonjour Ca"
+217442373,MIP A350,Unknown,2026-06,Câble/pièce manquant(e),"Plaquettes manquante 
+Type of nonconformity : Missing Part/Component / Incomplete Kit
+* Il a été con"
+217434411,MIP A350,CABLES,2026-06,Longueur câble (court/surlongueur),"CABLE ADB24 BIFILAIRE TROP COURT 
+Type of nonconformity : Size/Dimensions
+* Commentaire : BONJOUR OF"
+217429328,MFRL,INTERNE,2026-06,Autre,"Harnais 451VB court 
+Type of nonconformity : Harness length
+* Lors du contrôle final du Harnais WIRE"
+217428138,MIP A350,INTERNE,2026-06,Autre,"Retouches finales 
+Type of nonconformity : Electrical Assembly Installation
+* Merci de reprendre les"
+217426573,PTVU,CONTROLE FINAL,2026-06,Autre,"Erreur de branchement , Câble 3346-0006 , branché en"
+217426573,PTVU,CONTROLE FINAL,2026-06,Autre,"Erreur de branchement , Câble 3351-0130 , branché en"
+217422901,MIP A400M,CONTROLE FINAL,2026-06,Autre,Harnais Tempest dégradé par opérateur
+217421016,MIP A350,CONTROLE FINAL,2026-06,Câble/pièce manquant(e),1608VC087A ETIQUETTE FIN MANQUANTE.
+217421016,MIP A350,CONTROLE FINAL,2026-06,Inversion branchement / mauvaise borne,3RN3B CABLE EN < B AU LIEU DE < C.
+217421016,MIP A350,CONTROLE FINAL,2026-06,Autre,3WTA INVERSION ENTRE LES BORNES A ET B.
+217421016,MIP A350,CONTROLE FINAL,2026-06,Autre,2WTA INVERSION ENTRE LES BORNES U ET V.
+217421016,MIP A350,CONTROLE FINAL,2026-06,Inversion branchement / mauvaise borne,3RN3A CABLE EN < J AU LIEU DE J.
+217421016,MIP A350,CONTROLE FINAL,2026-06,Autre,100VG301 1 CABLE DEVEROUILLE.
+217421016,MIP A350,CONTROLE FINAL,2026-06,Autre,1608VC019 INVERSION ENTRE LES BORNES 52 ET 53.
+217421016,MIP A350,CONTROLE FINAL,2026-06,Inversion branchement / mauvaise borne,3RN3A CABLE EN < Q AU LIEU DE CC.
+217421016,MIP A350,CONTROLE FINAL,2026-06,Autre,1608VC046A INVERSION ENTRE LES BORNES 55 ET 56.
+217421016,MIP A350,CONTROLE FINAL,2026-06,Autre,10CP2A INVERSION ENTRE LES BORNES D ET E.
+217421016,MIP A350,CONTROLE FINAL,2026-06,Autre,100VT311 MODULE 2 INVERSION ENTRE LES BORNES E ET N.
+217421016,MIP A350,CONTROLE FINAL,2026-06,Inversion branchement / mauvaise borne,3RN3B CABLE EN < C AU LIEU DE < D.
+217421016,MIP A350,CONTROLE FINAL,2026-06,Inversion branchement / mauvaise borne,3RN3B CABLE EN W AU LIEU DE < W.
+217421016,MIP A350,CONTROLE FINAL,2026-06,Autre,115VMB INVERSION ENTRE LES BORNES F ET E.
+217421016,MIP A350,CONTROLE FINAL,2026-06,Autre,300VT101 MODULE 3 INVERSION ENTRE LES BORNES S ET U.
+217421016,MIP A350,CONTROLE FINAL,2026-06,Autre,300VT101 MODULE 3 INVERSION ENTRE LES BORNES T ET V.
+217421016,MIP A350,CONTROLE FINAL,2026-06,Borne déverrouillée,1GGA BORNE D DEVERROUILLE.
+217421016,MIP A350,CONTROLE FINAL,2026-06,Inversion branchement / mauvaise borne,3RN3A CABLE REPRIS SUR RACCORD ARRIERE AU LIEU DE < P.
+217421016,MIP A350,CONTROLE FINAL,2026-06,Inversion branchement / mauvaise borne,3RN2A CABLE EN S AU LIEU DET.
+217421016,MIP A350,CONTROLE FINAL,2026-06,Inversion branchement / mauvaise borne,3RN2A CABLE EN T AU LIEU DE U.
+217421016,MIP A350,CONTROLE FINAL,2026-06,Autre,3RN3A INVERSION ENTRE LES BORNES < I ET K.
+217420085,740VU,CABLES,2026-06,Cheminement / contrainte,"CABLE COURT SUITE ERREUR CHEMINEMENT 
+Type of nonconformity : Electrical Assembly Installation
+* Sur"
+217409137,MIP A350,CONTROLE FINAL,2026-05,Autre,QUADRAX A CHANGER DE 1608VC082A BORNE AA A 3RN2A ERREUR
+217408449,740VU,CONTROLE FINAL,2026-05,Autre,Inversion sur 3XC C entre les bornes 16 et 17.
+217408449,740VU,CONTROLE FINAL,2026-05,Autre,Déverrouillage sur 1033VC borne 49.
+217408449,740VU,CONTROLE FINAL,2026-05,Inversion branchement / mauvaise borne,Cable sur 1035VC borne 17 au lieu de 16.
+217408449,740VU,CONTROLE FINAL,2026-05,Inversion branchement / mauvaise borne,Cable sur 703VT 7 borne E au lieu de N.
+217408449,740VU,CONTROLE FINAL,2026-05,Inversion branchement / mauvaise borne,Cable sur 703VT 7 borne D au lieu de E.
+217408449,740VU,CONTROLE FINAL,2026-05,Autre,Inversion sur 1DG1 entre les bornes A2 et B2.
+217408449,740VU,CONTROLE FINAL,2026-05,Inversion branchement / mauvaise borne,Cables sur 1017VC bornes 40 et 41 au lieu de 30 et 31.
+217407744,MIP A400M,DEMANDE DE DQN,2026-05,Autre,Excessive shunt length on 8RZA connector
+217407652,740VU,INTERNE,2026-05,Autre,"Retouches finales 740VU MSN 2159 
+Type of nonconformity : Electrical Assembly Installation
+* Lors de"
+217406743,MIP A350,Unknown,2026-05,Erreur référence / plaquette,"Plaquettes 100VN220 à réimprimer 
+Type of nonconformity : Electrical Assembly Installation
+* Au post"
+217406539,Other,Unknown,2026-05,Autre,"ATT*FB*C8/9*D*étiquettes VCs mqtes*BA@* 
+Type of nonconformity : Placard missing / defect
+* 29.05.20"
+217399034,MIP A400M,CABLES,2026-05,Longueur câble (court/surlongueur),Câble trop court
+217394837,PTVU,INTERNE,2026-05,Autre,"Borne 5 ne verrouille pas fin 7XG 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la"
+217394339,MIP A350,CONTROLE FINAL,2026-05,Borne déverrouillée,100VG301 UNE BORNE DEVERROUILLEE.
+217394339,MIP A350,CONTROLE FINAL,2026-05,Inversion branchement / mauvaise borne,15FC2A CABLE EN BORNE C AU LIEU DE D.
+217394339,MIP A350,CONTROLE FINAL,2026-05,Inversion branchement / mauvaise borne,51CVA CABLE EN BORNE R AU LIEU DE C.
+217394339,MIP A350,CONTROLE FINAL,2026-05,Inversion branchement / mauvaise borne,5CPB INVERSION DE BRANCHEMENT ENTRE #PRS~ #PRS~ #PRS~ #PRS~ #PRS~
+217394339,MIP A350,CONTROLE FINAL,2026-05,Inversion branchement / mauvaise borne,1608VC070A INVERSION DE BRANCHEMENT ENTRE LES BORNES 54
+217394339,MIP A350,CONTROLE FINAL,2026-05,Autre,1608VC070A INVERSION DE MANCHON ENTRE #PRS~ #PRS~ #TEL~ #TEL~
+217394339,MIP A350,CONTROLE FINAL,2026-05,Inversion branchement / mauvaise borne,1608VC070A INVERSION DE BRANCHEMENT ENTRE LES BORNES 1-
+217394339,MIP A350,CONTROLE FINAL,2026-05,Inversion branchement / mauvaise borne,1608VC075A INVERSION DE BRANCHEMENT ENTRE LES BORNES 27
+217394339,MIP A350,CONTROLE FINAL,2026-05,Inversion branchement / mauvaise borne,1608VC070A INVERSION DE BRANCHEMENT ENTRE LES BORNES 41
+217394339,MIP A350,CONTROLE FINAL,2026-05,Inversion branchement / mauvaise borne,3RN1A CABLE EN BORNE AA AU LIEU DE A.
+217394339,MIP A350,CONTROLE FINAL,2026-05,Inversion branchement / mauvaise borne,7CYH INVERSION DE BRANCHEMENT ENTRE LES BORNES A ET E.
+217394339,MIP A350,CONTROLE FINAL,2026-05,Inversion branchement / mauvaise borne,7CYH INVERSION DE BRANCHEMENT ENTRE LES BORNES B ET F.
+217394339,MIP A350,CONTROLE FINAL,2026-05,Inversion branchement / mauvaise borne,3RN3B CABLE EN BORNE W AU LIEU DE < W.
+217394339,MIP A350,CONTROLE FINAL,2026-05,Inversion branchement / mauvaise borne,3RN2B CABLE EN BORNE W AU LIEU DE < W.
+217394339,MIP A350,CONTROLE FINAL,2026-05,Inversion branchement / mauvaise borne,1608VC070A INVERSION DE BRANCHEMENT ENTRE LES BORNES
+217394339,MIP A350,CONTROLE FINAL,2026-05,Inversion branchement / mauvaise borne,500VT204 INVERSION DE BRANCHEMENT ENTRE LES BORNES 1M
+217394339,MIP A350,CONTROLE FINAL,2026-05,Inversion branchement / mauvaise borne,500VT204 INVERSION DE BRANCHEMENT ENTRE 1L ET 1N.
+217394339,MIP A350,CONTROLE FINAL,2026-05,Inversion branchement / mauvaise borne,3RN3A CABLE EN BORNE W AU LIEU DE < W.
+217394034,740VU,INTERNE,2026-05,Câble coupé / abîmé / cassé,"Filetage endommagé sur relais 27XE 
+Type of nonconformity : Electrical Assembly Installation
+* Lors "
+217386716,MIP A350,CABLES,2026-05,Longueur câble (court/surlongueur),"Câble trop court 
+Type of nonconformity : Harness length
+* Il a été constaté sur la planche 2R qu'un"
+217376581,MIP A350,Unknown,2026-05,Etiquette / marquage,"Etiquette fournie non conforme 
+Type of nonconformity : Electrical Assembly Installation
+* Il à été "
+217376442,MIP A350,CABLES,2026-05,Câble/pièce manquant(e),"Câbles manquant 
+Type of nonconformity : Missing Part/Component / Incomplete Kit
+* Il à été constaté"
+217371996,MIP A350,CONTROLE FINAL,2026-05,Câble coupé / abîmé / cassé,CABLE COUPE ENTRE 1608VC062A BORNE 19 ET 100VT400 5D.
+217371688,MIP A350,CONTROLE FINAL,2026-05,Autre,"Controle final + MIP A350 MSN 841 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la"
+217371362,Other,Unknown,2026-05,Autre,"CAM A DEFAULT BELLY FAIRING 
+Type of nonconformity : Measure out of tolerances
+* MSN : 701
+*
+Localis"
+217369833,MIP A350,Unknown,2026-05,Câble/pièce manquant(e),"ALEA OZ2027874 plaquettes MANQUANTES 
+Type of nonconformity : Missing Part/Component / Incomplete Ki"
+217368831,MIP A350,Unknown,2026-05,Câble/pièce manquant(e),"ALEA OZ2027740 PLAQUETTES MANQUANTES 
+Type of nonconformity : Missing Part/Component / Incomplete Ki"
+217368374,740VU,INTERNE,2026-05,Autre,"Filetage vis relais incorrect 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la lig"
+217368214,MIP A350,CABLES,2026-05,Longueur câble (court/surlongueur),"Câble coupé trop court 
+Type of nonconformity : Electrical Assembly Installation
+* Au sous-ensemble "
+217367333,MIP A350,CONTROLE FINAL,2026-05,Autre,"INSPECTION FINALE MIP MSN 841 
+Type of nonconformity : Electrical Assembly Installation
+* Lors de l’"
+217365491,742VU,CABLES,2026-05,Longueur câble (court/surlongueur),"cable trop court 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la ligne A330 , nou"
+217365338,MIP A350,CABLES,2026-05,Longueur câble (court/surlongueur),"Câble coupé trop court 
+Type of nonconformity : Electrical Assembly Installation
+* Au poste sous-ens"
+217365334,MIP A350,CABLES,2026-05,Longueur câble (court/surlongueur),"Câble DR24 trop court RTE 2M 
+Type of nonconformity : Harness length
+* Commentaire : Bonjour , Merci"
+217363914,Other,Unknown,2026-05,Câble/pièce manquant(e),"etiquette identification absenteSur536VU 
+Type of nonconformity : Missing Part/Component / Incomplet"
+217356649,740VU,CONTROLE FINAL,2026-05,Autre,"RETOUCHES CONTROLE FINAL 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la ligne A3"
+217349796,MIP A350,CABLES,2026-05,Autre,"Câble abimé 
+Type of nonconformity : Electrical Assembly Installation
+* Il a été constaté sur le pos"
+217344532,PTVU,INTERNE,2026-05,Autre,ETEC 417LF CMS 6374843100 SURPLUS DE MATIERE POUR LE
+217342648,MIP A350,CABLES,2026-05,Autre,"Cable DR24 coupé court 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la ligne A350"
+217339657,MIP A350,CABLES,2026-05,Autre,"Cables à remplacés 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la ligne A350 , p"
+217338047,MIP A350,CABLES,2026-05,Autre,"câble abimé 
+Type of nonconformity : Electrical Assembly Installation
+* Au poste Intégration/branche"
+217337645,MIP A350,CABLES,2026-05,Autre,"KL24 IMP laser ko 
+Type of nonconformity : Electrical Assembly Installation
+* Lors du contrôle du câ"
+217337402,740VU,CONTROLE FINAL,2026-05,Inversion branchement / mauvaise borne,1027VC CABLE EN 27 AU LIEU DE 24.
+217337402,740VU,CONTROLE FINAL,2026-05,Autre,TO4 : 23CS1A INVERSION ENTRE LES BORNES X1 ET X2.
+217337402,740VU,CONTROLE FINAL,2026-05,Inversion branchement / mauvaise borne,3XCD CABLE EN 10 AU LIEU DE 20.
+217337402,740VU,CONTROLE FINAL,2026-05,Inversion branchement / mauvaise borne,4XBA CABLE EN A3 AU LIEU DE B3.
+217337402,740VU,CONTROLE FINAL,2026-05,Inversion branchement / mauvaise borne,701VDA CABLE EN 21 AU LIEU DE 22.
+217337402,740VU,CONTROLE FINAL,2026-05,Inversion branchement / mauvaise borne,26XEA CABLE EN 1 AU LIEU DE Z.
+217337402,740VU,CONTROLE FINAL,2026-05,Inversion branchement / mauvaise borne,CABLE SUR 30CS1 BORNE 2 AU LIEU DE 5CS1 BORNE 2.
+217337402,740VU,CONTROLE FINAL,2026-05,Inversion branchement / mauvaise borne,1005VC CABLE EN 42 AU LIEU DE 43.
+217335973,MIP A350,CABLES,2026-05,Autre,"Câble abimé 
+Type of nonconformity : Electrical Assembly Installation
+* 2 câbles ont été abimés sur "
+217334609,MIP A350,INTERNE,2026-05,Autre,"Retouches finales 
+Type of nonconformity : Electrical Assembly Installation
+* Merci de reprendre les"
+217333540,MIP A350,CABLES,2026-05,Autre,"Câble abimé 
+Type of nonconformity : Damaged Harness
+* Un câble a été constaté abimé , veuillez s'il"
+217332861,MIP A350,CABLES,2026-05,Longueur câble (court/surlongueur),"Câble trop court 
+Type of nonconformity : Harness length
+* Il a été constaté qu'un câble est trops c"
+217331925,PTVU,INTERNE,2026-05,Inversion branchement / mauvaise borne,Suite à Inversion de branchement ( T04 ) et un mauvais
+217328612,MFRL,INTERNE,2026-05,Autre,"Harnais 452VB court 
+Type of nonconformity : Harness length
+* Lors du controle final du Harnais Wire"
+217326655,MIP A350,Unknown,2026-05,Inversion branchement / mauvaise borne,1WK22A CABLE EN 9A AU LIEU DE 8A.
+217326655,MIP A350,Unknown,2026-05,Inversion branchement / mauvaise borne,1WK22A CABLE EN 10D AU LIEU DE 9D.
+217326655,MIP A350,Unknown,2026-05,Inversion branchement / mauvaise borne,3RN1B CABLE EN W AU LIEU DE < W.
+217326655,MIP A350,Unknown,2026-05,Inversion branchement / mauvaise borne,1608VC070A CABLE EN 1 AU LIEU DE 3.
+217326655,MIP A350,Unknown,2026-05,Inversion branchement / mauvaise borne,1608VC070A CABLE EN 2 AU LIEU DE 1.
+217326655,MIP A350,Unknown,2026-05,Inversion branchement / mauvaise borne,1608VC070A CABLE EN 3 AU LIEU DE 2.
+217326655,MIP A350,Unknown,2026-05,Autre,100VT400 MODULE 1 INVERSION ENTRE #PRS~ #PRS~ #PRS~ #PRS~ #PRS~
+217326655,MIP A350,Unknown,2026-05,Autre,411VC001A INVERSION ENTRE LES BORNES 6 ET 15.
+217326655,MIP A350,Unknown,2026-05,Borne déverrouillée,300VG133 1 BORNE DEVERROUILLE.
+217326655,MIP A350,Unknown,2026-05,Inversion branchement / mauvaise borne,3CBB CABLE EN 37 AU LIEU DE 26.
+217326655,MIP A350,Unknown,2026-05,Inversion branchement / mauvaise borne,3CBB CABLE EN 38 AU LIEU DE 27.
+217326655,MIP A350,Unknown,2026-05,Inversion branchement / mauvaise borne,3CBB CABLE EN 43 AU LIEU DE 42.
+217326655,MIP A350,Unknown,2026-05,Autre,1608VC056A INVERSION ENTRE LES BORNES 11 ET 12.
+217326655,MIP A350,Unknown,2026-05,Autre,10CP1B INVERSION ENTRE LES BORNES A ET B.
+217326655,MIP A350,Unknown,2026-05,Autre,11CP1C INVERSION ENTRE #PRS~ #PRS~ #PRS~ #PRS~ #PRS~
+217326655,MIP A350,Unknown,2026-05,Autre,314VC002A INVERSION ENTRE LES BORNES B ET C.
+217326655,MIP A350,Unknown,2026-05,Autre,300VT402 MODULE 1 INVERSION ENTRE #PRS~ #PRS~ #PRS~ #PRS~ #PRS~
+217326655,MIP A350,Unknown,2026-05,Autre,1608VC046A INVERSION ENTRE LES BORNES 35 ET 37.
+217326655,MIP A350,Unknown,2026-05,Borne déverrouillée,QQ01 : 54LEA BORNE 3 DEVERROUILLE.
+217326655,MIP A350,Unknown,2026-05,Câble/pièce manquant(e),3CBB OBTURATEURS MANQUANTS.
+217325244,PTVU,INTERNE,2026-05,Autre,Défaut d'isolement entre la borne 4 et et corp du
+217325057,PTVU,INTERNE,2026-05,Autre,"Défaut intermitent , le bouton 24FP3 se bloque parfois"
+217324884,MIP A350,CABLES,2026-05,Câble/pièce manquant(e),"Cable DR24 manquant 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la ligne A350 , "
+217317069,MIP A350,CABLES,2026-05,Longueur câble (court/surlongueur),"Erreur cheminement ALEA OZ2018492 
+Type of nonconformity : Cable routing
+* Commentaire : Mauvais che"
+217313045,740VU,CONTROLE FINAL,2026-05,Autre,Erreur de manchon sur le cable 729VN-1049VN monté 2428-
+217313045,740VU,CONTROLE FINAL,2026-05,Inversion branchement / mauvaise borne,Cable sur 707VD A borne 18 au lieu de 17.
+217313045,740VU,CONTROLE FINAL,2026-05,Autre,Inversion sur 2XE B entre les bornes 6 et 7.
+217313045,740VU,CONTROLE FINAL,2026-05,Autre,Inversion sur 1013VC entre les bornes 46 et 48.
+217313045,740VU,CONTROLE FINAL,2026-05,Autre,Inversion entre les disjoncteurs 6QN et 22XE des bornes
+217311536,300VU,CABLES,2026-05,Câble/pièce manquant(e),Manque 2 câbles faisceau M001112700000
+217310574,MIP A350,CABLES,2026-05,Cheminement / contrainte,"Erreur de cheminement 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la ligne A350 "
+217305316,PTVU,INTERNE,2026-05,Autre,Fixation du bouton de commande 22LE sur l'équipement
+217302452,MIP A350,CONTROLE FINAL,2026-05,Autre,PRISES 115VM B ET 135VM B MAUVAISES REFERENCES DE PRISE
+217300652,740VU,CABLES,2026-05,Longueur câble (court/surlongueur),"CABLE RECU TROP COURT 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la ligne A330 "
+217299080,MIP A350,INTERNE,2026-05,Autre,"Retouches qualité contrôle final 
+Type of nonconformity : Electrical Assembly Installation
+* Merci d"
+217298590,MIP A350,CONTROLE FINAL,2026-05,Autre,20TC2 INVERSION ENTRE LES BORNES BB ET AA.
+217298590,MIP A350,CONTROLE FINAL,2026-05,Autre,300VG206 1 BORNE DEVEROUILLE.
+217298590,MIP A350,CONTROLE FINAL,2026-05,Autre,1608VC070 INVERSION ENTRE LES BORNES 55 ET 54.
+217298590,MIP A350,CONTROLE FINAL,2026-05,Autre,3RN2 INVERSION ENTRE LES BORNES V ET < N.
+217298590,MIP A350,CONTROLE FINAL,2026-05,Inversion branchement / mauvaise borne,3RN3 CABLE EN G AU LIEU DE H.
+217298590,MIP A350,CONTROLE FINAL,2026-05,Autre,30LE INVERSION ENTRE LES BORNES 2 ET 5.
+217298590,MIP A350,CONTROLE FINAL,2026-05,Inversion branchement / mauvaise borne,1WK03 CABLE EN 1G AU LIEU DE 1H.
+217298590,MIP A350,CONTROLE FINAL,2026-05,Inversion branchement / mauvaise borne,1WK03 CABLE EN 2G AU LIEU DE 2H.
+217298590,MIP A350,CONTROLE FINAL,2026-05,Inversion branchement / mauvaise borne,1WK03 CABLE EN 3G AU LIEU DE 3H.
+217298590,MIP A350,CONTROLE FINAL,2026-05,Inversion branchement / mauvaise borne,1WK03 CABLE EN 4G AU LIEU DE 4H.
+217298590,MIP A350,CONTROLE FINAL,2026-05,Inversion branchement / mauvaise borne,1WK53 CABLE EN 7E AU LIEU DE 7D.
+217298590,MIP A350,CONTROLE FINAL,2026-05,Inversion branchement / mauvaise borne,1WK12 CABLE EN 3G AU LIEU DE 3H.
+217298590,MIP A350,CONTROLE FINAL,2026-05,Inversion branchement / mauvaise borne,1WK12 CABLE EN 4G AU LIEU DE 4H.
+217298590,MIP A350,CONTROLE FINAL,2026-05,Autre,11CP1D INVERSION ENTRE #PRS~ #PRS~ #PRS~ #PRS~ #PRS~
+217298227,MIP A350,CABLES,2026-05,Autre,"Cables coupés courts 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la ligne A350 ,"
+217298092,MIP A350,CABLES,2026-05,Autre,"Cables DR20 coupés courts 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la ligne A"
+217283624,MIP A350,CABLES,2026-05,Câble/pièce manquant(e),"câble manquant, jeté en têtes A 
+Type of nonconformity : Electrical Assembly Installation
+* Au poste"
+217283307,743VU,FOURNISSEUR,2026-05,Câble/pièce manquant(e),"MANQUE PEINTURE PORTE 743VU 
+Type of nonconformity : Structural and Mechanical Assembly
+* Sur la lig"
+217278240,MIP A350,CABLES,2026-05,Autre,"2 câbles non fournis 
+Type of nonconformity : Electrical Assembly Installation
+* Au poste méca , pou"
+217276677,Other,Unknown,2026-05,Autre,"MESURE HORS TOLERANCE 
+Type of nonconformity : Measure out of tolerance
+* LORS DE L'EXECUTION DE L'O"
+217270655,MIP A350,CONTROLE FINAL,2026-05,Erreur référence / plaquette,INVERSION DE PLAQUETTE ENTRE 312VMA ET 317VC001A.
+217270655,MIP A350,CONTROLE FINAL,2026-05,Autre,1610VC043 ERREUR DETROMPAGE.
+217270655,MIP A350,CONTROLE FINAL,2026-05,Autre,1610VC047 ERREUR DETROMPAGE.
+217270655,MIP A350,CONTROLE FINAL,2026-05,Autre,1610VC049 ERREUR DETROMPAGE.
+217270655,MIP A350,CONTROLE FINAL,2026-05,Autre,1610VC051 ERREUR DETROMPAGE.
+217270655,MIP A350,CONTROLE FINAL,2026-05,Autre,1608VC101A ERREUR DETROMPAGE.
+217270655,MIP A350,CONTROLE FINAL,2026-05,Autre,1608VC105A ERREUR DETROMPAGE.
+217270655,MIP A350,CONTROLE FINAL,2026-05,Autre,1608VC103A ERREUR DETROMPAGE.
+217270655,MIP A350,CONTROLE FINAL,2026-05,Autre,1608VC109A ERREUR DETROMPAGE.
+217270655,MIP A350,CONTROLE FINAL,2026-05,Inversion branchement / mauvaise borne,1610VC049 INVERSION DE BRANCHEMENT ENTRE LES BORNES BB
+217270655,MIP A350,CONTROLE FINAL,2026-05,Inversion branchement / mauvaise borne,1608VC068A INVERSION DE BRANCHEMENT ENTRE LES BORNES
+217270655,MIP A350,CONTROLE FINAL,2026-05,Inversion branchement / mauvaise borne,1WK22A CABLE EN BORNE 14J AU LIEU DE 14K.
+217270655,MIP A350,CONTROLE FINAL,2026-05,Inversion branchement / mauvaise borne,1WK22A CABLE EN BORNE 15J AU LIEU DE 15K.
+217270655,MIP A350,CONTROLE FINAL,2026-05,Borne déverrouillée,300VG131 UNE BORNE DEVERROUILLEE.
+217270655,MIP A350,CONTROLE FINAL,2026-05,Borne déverrouillée,100VG430 UNE BORNE DEVERROUILLEE.
+217270655,MIP A350,CONTROLE FINAL,2026-05,Inversion branchement / mauvaise borne,51CVA INVERSION DE BRANCHEMENT ENTRE LES BORNES N ET
+217270655,MIP A350,CONTROLE FINAL,2026-05,Inversion branchement / mauvaise borne,1608VC105A INVERSION DE BRANCHEMENT ENTRE LES BORNES 3
+217270655,MIP A350,CONTROLE FINAL,2026-05,Inversion branchement / mauvaise borne,1610VC047 INVERSION DE BRANCHEMENT ENTRE LES BORNES 26
+217270655,MIP A350,CONTROLE FINAL,2026-05,Inversion branchement / mauvaise borne,1608VC006A INVERSION DE BRANCHEMENT ENTRE LES BORNES
+217270655,MIP A350,CONTROLE FINAL,2026-05,Inversion branchement / mauvaise borne,1608VC006A INVERSION DE BRANCHEMENT ENTRE LES BORNES
+217270655,MIP A350,CONTROLE FINAL,2026-05,Inversion branchement / mauvaise borne,1608VC006A INVERSION DE BRANCHEMENT ENTRE LES BORNES
+217270655,MIP A350,CONTROLE FINAL,2026-05,Inversion branchement / mauvaise borne,1608VC093A INVERSION DE BRANCHEMENT ENTRE LES BORNES
+217270655,MIP A350,CONTROLE FINAL,2026-05,Inversion branchement / mauvaise borne,1608VC085A INVERSION DE BRANCHEMENT ENTRE LES BORNES
+217270655,MIP A350,CONTROLE FINAL,2026-05,Inversion branchement / mauvaise borne,1610VC051 INVERSION DE BRANCHEMENT ENTRE LES BORNES 41
+217270655,MIP A350,CONTROLE FINAL,2026-05,Inversion branchement / mauvaise borne,3CBA INVERSION DE BRANCHEMENT ENTRE LES BORNES 7 ET
+217270655,MIP A350,CONTROLE FINAL,2026-05,Inversion branchement / mauvaise borne,300VT402 INVERSION DE BRANCHEMENT ENTRE LES BORNES 1H
+217270655,MIP A350,CONTROLE FINAL,2026-05,Inversion branchement / mauvaise borne,300VT402 INVERSION DE BRANCHEMENT ENTRE LES BORNES 1J
+217270655,MIP A350,CONTROLE FINAL,2026-05,Inversion branchement / mauvaise borne,1WK21A CABLE EN BORNE 11B AU LIEU DE 11D.
+217266643,PTVU,CONTROLE FINAL,2026-05,Câble/pièce manquant(e),"Switch guard E0419A6 manquants ( quantité 3 ) sur 4XC,2XT1"
+217264775,PTVU,INTERNE,2026-05,Câble/pièce manquant(e),"Débit plaquette tyrap manquant 113TU 
+Type of nonconformity : Missing Part/Component / Incomplete Ki"
+217264272,MIP A350,CABLES,2026-05,Longueur câble (court/surlongueur),"Câbles coupés trop court 
+Type of nonconformity : Cable routing
+* Au poste sous ensemble route 2M CD"
+217263566,300VU,CABLES,2026-05,Longueur câble (court/surlongueur),Câble coupé trop court
+217253448,PTVU,INTERNE,2026-05,Câble coupé / abîmé / cassé,"INDICATEUR ENDOMMAGE 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la ligne A330 ,"
+217253170,MIP A350,INTERNE,2026-05,Autre,"Retouches qualité contrôle final 
+Type of nonconformity : Electrical Assembly Installation
+* Merci d"
+217252994,Other,CONTROLE FINAL,2026-05,Autre,"Rampe recu avec protection alodine 
+Type of nonconformity : Part not installable as per Work Order
+*"
+217251646,MIP A350,CONTROLE FINAL,2026-05,Autre,1608VC076A ERREUR DETROMPAGE.
+217251646,MIP A350,CONTROLE FINAL,2026-05,Autre,1608VC006A ERREUR DETROMPAGE.
+217251646,MIP A350,CONTROLE FINAL,2026-05,Autre,1608VC058A ERREUR DETROMPAGE.
+217251646,MIP A350,CONTROLE FINAL,2026-05,Autre,1608VC078A ERREUR DETROMPAGE.
+217251646,MIP A350,CONTROLE FINAL,2026-05,Autre,1608VC101A ERREUR DETROMPAGE.
+217251646,MIP A350,CONTROLE FINAL,2026-05,Autre,1608VC072A ERREUR DETROMPAGE.
+217251646,MIP A350,CONTROLE FINAL,2026-05,Autre,1608VC066A ERREUR DETROMPAGE.
+217251646,MIP A350,CONTROLE FINAL,2026-05,Autre,1608VC062A ERREUR DETROMPAGE.
+217251646,MIP A350,CONTROLE FINAL,2026-05,Autre,1608VC044A ERREUR DETROMPAGE.
+217251646,MIP A350,CONTROLE FINAL,2026-05,Inversion branchement / mauvaise borne,1610VC049 INVERSION DE BRANCHEMENT ENTRE LES BORNES AA
+217251646,MIP A350,CONTROLE FINAL,2026-05,Inversion branchement / mauvaise borne,3RN3A CABLE EN BORNE < I AU LIEU DE K.
+217251646,MIP A350,CONTROLE FINAL,2026-05,Erreur référence / plaquette,300VT103 MODULE 3 ERREUR REFERENCE.
+217251646,MIP A350,CONTROLE FINAL,2026-05,Inversion branchement / mauvaise borne,5GAA CABLE EN BORNE K AU LIEU DE X.
+217251646,MIP A350,CONTROLE FINAL,2026-05,Inversion branchement / mauvaise borne,115VMA INVERSION DE BRANCHEMENT ENTRE LES BORNES B ET
+217251646,MIP A350,CONTROLE FINAL,2026-05,Inversion branchement / mauvaise borne,3SEA INVERSION DE BRANCHEMENT ENTRE #PRS~ #PRS~ #PRS~ #PRS~ #PRS~
+217251646,MIP A350,CONTROLE FINAL,2026-05,Inversion branchement / mauvaise borne,1606VC002 INVERSION DE BRANCHEMENT ENTRE LES BORNES 12
+217251646,MIP A350,CONTROLE FINAL,2026-05,Inversion branchement / mauvaise borne,1606VC002 INVERSION DE BRANCHEMENT ENTRE LES BORNES 13
+217251646,MIP A350,CONTROLE FINAL,2026-05,Inversion branchement / mauvaise borne,1606VC002 INVERSION DE BRANCHEMENT ENTRE LES BORNES 14
+217251646,MIP A350,CONTROLE FINAL,2026-05,Borne déverrouillée,314VC002A BORNE W DEVERROUILLEE.
+217251646,MIP A350,CONTROLE FINAL,2026-05,Inversion branchement / mauvaise borne,10FC1A INVERSION DE BRANCHEMENT ENTRE LES BORNES < M ET
+217251646,MIP A350,CONTROLE FINAL,2026-05,Inversion branchement / mauvaise borne,11CP2A INVERSION DE BRANCHEMENT ENTRE LES BORNES H ET
+217251646,MIP A350,CONTROLE FINAL,2026-05,Erreur référence / plaquette,300VT103 MODULE 2 ERREUR REFERENCE.
+217251646,MIP A350,CONTROLE FINAL,2026-05,Erreur référence / plaquette,300VT303 MODULE 3 ERREUR REFERENCE.
+217251646,MIP A350,CONTROLE FINAL,2026-05,Inversion branchement / mauvaise borne,3RN3A CABLE EN BORNE P AU LIEU DE < P.
+217250487,MIP A350,CABLES,2026-05,Longueur câble (court/surlongueur),"Câble  ADB24 livré trop court 
+Type of nonconformity : Size/Dimensions
+* Commentaire : Bonjour , Sui"
+217249978,MIP A400M,CABLES,2026-05,Longueur câble (court/surlongueur),Câbles coupés trop court
+217235886,740VU,INTERNE,2026-05,Autre,"Retouches finales 740VU MSN 2155 
+Type of nonconformity : Electrical Assembly Installation
+* Lors du"
+217231587,MFRL,INTERNE,2026-05,Autre,"Devérouillage Wire Bundle 451 VB 
+Type of nonconformity : Clash / Clearance
+* Lors du controle avant"
+217230702,740VU,CABLES,2026-05,Câble/pièce manquant(e),"CABLE MANQUANT 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la ligne A330 , 740 V"
+217221994,300VU,CONTROLE FINAL,2026-05,Autre,RETOUCHES 300 VU MSN 161
+217219461,743VU,FOURNISSEUR,2026-05,Câble/pièce manquant(e),"manque peinture STRUCTURE BOITE 
+Type of nonconformity : Structural and Mechanical Assembly
+* Sur la"
+217219203,MIP A350,CONTROLE FINAL,2026-05,Autre,"Controle final MIP A350 MSN 837 
+Type of nonconformity : Electrical Assembly Installation
+* Contrôle"
+217218812,300VU,CABLES,2026-05,Autre,Mauvaise jauge de câbles
+217216194,MIP A350,CONTROLE FINAL,2026-05,Inversion branchement / mauvaise borne,1608VC099A ERREUR DETROMPAGE EN A7 AU LIEU DE A8.
+217216194,MIP A350,CONTROLE FINAL,2026-05,Inversion branchement / mauvaise borne,1608VC075A ERREUR DETROMPAGE EN B3 AU LIEU DE A7.
+217216194,MIP A350,CONTROLE FINAL,2026-05,Inversion branchement / mauvaise borne,1WK03A CABLE EN BORNE HH AU LIEU DE KK.
+217216194,MIP A350,CONTROLE FINAL,2026-05,Inversion branchement / mauvaise borne,1WK21A INVERSION DE BRANCHEMENT ENTRE LES BORNE 14K ET
+217216194,MIP A350,CONTROLE FINAL,2026-05,Inversion branchement / mauvaise borne,1WK53A CABLE EN BORNE 10D AU LIEU DE 9D.
+217216194,MIP A350,CONTROLE FINAL,2026-05,Inversion branchement / mauvaise borne,1WK22A CABLE EN BORNE 6D AU LIEU DE 8D.
+217216194,MIP A350,CONTROLE FINAL,2026-05,Inversion branchement / mauvaise borne,1WK11A CABLE EN BORNE 8B AU LIEU DE 8D.
+217216194,MIP A350,CONTROLE FINAL,2026-05,Inversion branchement / mauvaise borne,1WK53A CABLE EN BORNE 9D AU LIEU DE 8D.
+217216194,MIP A350,CONTROLE FINAL,2026-05,Inversion branchement / mauvaise borne,1610VC047A INVERSION DE BRANCHEMENT ENTRE LES BORNES 14
+217216194,MIP A350,CONTROLE FINAL,2026-05,Inversion branchement / mauvaise borne,3RN1B CABLE EN BORNE < A AU LIEU DE < S.
+217216194,MIP A350,CONTROLE FINAL,2026-05,Inversion branchement / mauvaise borne,1608VC089A CABLE EN BORNE 78 AU LIEU DE 59.
+217216194,MIP A350,CONTROLE FINAL,2026-05,Inversion branchement / mauvaise borne,1608VC056A INVERSION DE BRANCHEMENT ENTRE LES BORNES
+217216194,MIP A350,CONTROLE FINAL,2026-05,Inversion branchement / mauvaise borne,1608VC056A INVERSION DE BRANCHEMENT ENTRE LES BORNES
+217216194,MIP A350,CONTROLE FINAL,2026-05,Inversion branchement / mauvaise borne,3DG2A INVERSION DE BRANCHEMENT ENTRE LES BORNES 4 ET
+217216194,MIP A350,CONTROLE FINAL,2026-05,Inversion branchement / mauvaise borne,1608VC064A INVERSION DE BRANCHEMENT ENTRE LES BORNES 1
+217216194,MIP A350,CONTROLE FINAL,2026-05,Borne déverrouillée,1608VC008A BORNE 46 DEVERROUILLEE.
+217216194,MIP A350,CONTROLE FINAL,2026-05,Inversion branchement / mauvaise borne,3RN2A CABLE EN BORNE AA AU LIEU DE A.
+217216194,MIP A350,CONTROLE FINAL,2026-05,Inversion branchement / mauvaise borne,300VT101 INVERSION DE BRANCHEMENT ENTRE LES BORNES 3U
+217216194,MIP A350,CONTROLE FINAL,2026-05,Inversion branchement / mauvaise borne,10FC1A INVERSION DE BRANCHEMENT ENTRE LES BORNES U ET
+217216194,MIP A350,CONTROLE FINAL,2026-05,Inversion branchement / mauvaise borne,3RN2A CABLE EN BORNE < T AU LIEU DE T.
+217216194,MIP A350,CONTROLE FINAL,2026-05,Inversion branchement / mauvaise borne,3RN2A CABLE EN BORNE < U AU LIEU DE U.
+217216194,MIP A350,CONTROLE FINAL,2026-05,Inversion branchement / mauvaise borne,1WK22A CABLE EN BORNE 1K AU LIEU DE 1H.
+217216194,MIP A350,CONTROLE FINAL,2026-05,Inversion branchement / mauvaise borne,1WK22A CABLE EN BORNE 2K AU LIEU DE 2H.
+217216194,MIP A350,CONTROLE FINAL,2026-05,Inversion branchement / mauvaise borne,1WK22A CABLE EN BORNE 3K AU LIEU DE 3H.
+217216194,MIP A350,CONTROLE FINAL,2026-05,Inversion branchement / mauvaise borne,1WK22A CABLE EN BORNE 4K AU LIEU DE 4H.
+217216194,MIP A350,CONTROLE FINAL,2026-05,Inversion branchement / mauvaise borne,1WK22A CABLE EN BORNE 14K AU LIEU DE 14H.
+217216194,MIP A350,CONTROLE FINAL,2026-05,Inversion branchement / mauvaise borne,1WK22A CABLE EN BORNE 15K AU LIEU DE 15H.
+217214573,MIP A350,CABLES,2026-05,Câble/pièce manquant(e),"Câble manquant 
+Type of nonconformity : Missing Part/Component / Incomplete Kit
+* I a été constaté s"
+217214052,MIP A350,CABLES,2026-05,Câble coupé / abîmé / cassé,"Câble abimé 
+Type of nonconformity : Damaged Harness
+* Il a été constaté sur le MIP A350 qu'un câble"
+217205879,740VU,INTERNE,2026-05,Câble coupé / abîmé / cassé,"Socle relais 4XE taraudage endommagé 
+Type of nonconformity : Electrical Assembly Installation
+* Lor"
+217203719,MIP A350,CABLES,2026-05,Autre,"N° câble DR24 effacé 
+Type of nonconformity : Electrical Assembly Installation
+* Commentaire : Numér"
+217203646,740VU,INTERNE,2026-05,Autre,"VIS TORDUE SUR RELAIS 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la ligne A330 "
+217197100,740VU,CONTROLE FINAL,2026-05,Câble/pièce manquant(e),103PHDO1 1 VIS MANQUANTE SUR LE SHUNT MECA.
+217197100,740VU,CONTROLE FINAL,2026-05,Inversion branchement / mauvaise borne,CABLE EN 38CS BORNE 2 AU LIEU DE 5CS BORNE 2.
+217196903,MIP A350,CABLES,2026-05,Autre,"Err de chem AD22 3162-0012 coupé court 
+Type of nonconformity : Cable routing
+* De : MICONI , MARGET"
+217195435,740VU,FOURNISSEUR,2026-05,Autre,"VIS NON CONFORME 
+Type of nonconformity : Structural and Mechanical Assembly
+* Sur la ligne A330 , n"
+217195075,740VU,FOURNISSEUR,2026-05,Autre,"VIS NON CONFORME 
+Type of nonconformity : Structural and Mechanical Assembly
+* Sur la ligne A330 , n"
+217192676,PTVU,INTERNE,2026-05,Inversion branchement / mauvaise borne,"MONTAGE TETE DE BRANCHEMENT INVERSE 
+Type of nonconformity : Electrical Assembly Installation
+* Sur "
+217192194,MIP A350,Unknown,2026-05,Etiquette / marquage,"Etiquettes non conformes 100VN220 BC2 
+Type of nonconformity : Electrical Assembly Installation
+* Su"
+217191998,742VU,CABLES,2026-05,Câble/pièce manquant(e),"CABLE MANQUANT 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la ligne A330 , nous "
+217190344,742VU,CABLES,2026-05,Câble/pièce manquant(e),"CABLE MANQUANT 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la ligne A330 , nous "
+217190187,PTVU,INTERNE,2026-05,Inversion branchement / mauvaise borne,"MONTAGE TETE DE BRANCHEMENT INVERSE 
+Type of nonconformity : Electrical Assembly Installation
+* Sur "
+217189830,MIP A350,CABLES,2026-05,Autre,"5 câbles abimés à l'intégration 
+Type of nonconformity : Electrical Assembly Installation
+* A l'inté"
+217184066,MIP A350,INTERNE,2026-04,Autre,"Retouches finales 
+Type of nonconformity : Electrical Assembly Installation
+* Merci de reprendre les"
+217176809,740VU,CABLES,2026-04,Câble/pièce manquant(e),"CABLE MANQUANT 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la ligne A330 , 742VU"
+217176147,1211VB,CABLES,2026-04,Autre,"Cables DR24 coupés courts 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la ligne A"
+217174106,MIP A350,CABLES,2026-04,Câble/pièce manquant(e),"Câble manquant 
+Type of nonconformity : Missing Part/Component / Incomplete Kit
+* Il a été constaté "
+217169141,300VU,CABLES,2026-04,Longueur câble (court/surlongueur),Câble trop court suite a erreur
+217168998,740VU,CABLES,2026-04,Câble coupé / abîmé / cassé,"CABLE RECU COUPE 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la ligne A330 , nou"
+217168967,MIP A400M,CABLES,2026-04,Longueur câble (court/surlongueur),Câbles servis trop courts
+217165051,MIP A350,CONTROLE FINAL,2026-04,Autre,300VD001A ERREUR DE DETROMPAGE.
+217165051,MIP A350,CONTROLE FINAL,2026-04,Borne déverrouillée,500VT206 BORNE 1P DEVERROUILLEE.
+217165051,MIP A350,CONTROLE FINAL,2026-04,Borne déverrouillée,500VT206 BORNE 1N DEVERROUILLEE.
+217165051,MIP A350,CONTROLE FINAL,2026-04,Borne déverrouillée,300VG430 UNE BORNE DEVERROUILLEE.
+217165051,MIP A350,CONTROLE FINAL,2026-04,Borne déverrouillée,1608VC075A BORNE 2 DEVERROUILLEE.
+217165051,MIP A350,CONTROLE FINAL,2026-04,Borne déverrouillée,8DG2A BORNE D DEVERROUILLEE.
+217165051,MIP A350,CONTROLE FINAL,2026-04,Inversion branchement / mauvaise borne,5GAA INVERSION DE BRANCHEMENT ENTRE LES BORNES B ET C.
+217165051,MIP A350,CONTROLE FINAL,2026-04,Inversion branchement / mauvaise borne,1WK11A CABLE EN BORNE 8C AU LIEU DE 8D.
+217165051,MIP A350,CONTROLE FINAL,2026-04,Inversion branchement / mauvaise borne,115VMA INVERSION DE BRANCHEMENT ENTRE LES BORNES J ET
+217165051,MIP A350,CONTROLE FINAL,2026-04,Inversion branchement / mauvaise borne,3SEA CABLE EN BORNE L AU LIEU DE M -PUIS N AU LIEU DE
+217165051,MIP A350,CONTROLE FINAL,2026-04,Inversion branchement / mauvaise borne,1606VVC002 INVERSION DE BRANCHEMENT ENTRE LES BORNES
+217165051,MIP A350,CONTROLE FINAL,2026-04,Inversion branchement / mauvaise borne,1608VC056A INVERSION DE BRANCHEMENT ENTRE LES BORNES
+217165051,MIP A350,CONTROLE FINAL,2026-04,Inversion branchement / mauvaise borne,3RN1A INVERSION DE BRANCHEMENT ENTRE LES BORNES < N ET
+217165051,MIP A350,CONTROLE FINAL,2026-04,Inversion branchement / mauvaise borne,3RN1A CABLE EN BORNE < K AU LIEU DE K.
+217165051,MIP A350,CONTROLE FINAL,2026-04,Inversion branchement / mauvaise borne,11CP1A INVERSION DE BRANCHEMENT ENTRE LES BORNES J ET
+217165051,MIP A350,CONTROLE FINAL,2026-04,Câble/pièce manquant(e),SHUNT MANQUANT ENTRE 3RN1A BORNE N ET 3RN1A BORNE FF.
+217165051,MIP A350,CONTROLE FINAL,2026-04,Inversion branchement / mauvaise borne,300VT103 INVERSION DE BRANCHEMENT ENTRE LES BORNES 1U
+217165051,MIP A350,CONTROLE FINAL,2026-04,Inversion branchement / mauvaise borne,3RN1A CABLE BRANCHE EN GND AU LIEU DE LA BORNE < P.
+217165051,MIP A350,CONTROLE FINAL,2026-04,Inversion branchement / mauvaise borne,300VT200 INVERSION DE BRANCHEMENT ENTRE LES BORNES 9F
+217163845,740VU,CONTROLE FINAL,2026-04,Autre,"RETOUCHES CONTROLE FINAL 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la ligne A3"
+217162621,743VU,FOURNISSEUR,2026-04,Câble coupé / abîmé / cassé,"PAS DE VIS HS SUR SUPPORT PRISES 
+Type of nonconformity : Structural and Mechanical Assembly
+* Sur l"
+217154111,1211VB,CABLES,2026-04,Longueur câble (court/surlongueur),"Câble MLB20 coupé trop court 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la lign"
+217149659,740VU,INTERNE,2026-04,Câble coupé / abîmé / cassé,"SOCLE DE RACCORDEMENT ABIME 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la ligne"
+217149326,740VU,INTERNE,2026-04,Câble coupé / abîmé / cassé,"DECOUPLING UNIT CASSE 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la ligne A330 "
+217147112,MIP A350,FOURNISSEUR,2026-04,Autre,"Tuyauterie ATA21 desserrée 
+Type of nonconformity : Fastener ( incl. Bolt/Screw/Washer/Bush )
+* Il a"
+217143872,Other,Unknown,2026-04,Etiquette / marquage,CKPT*C8/9*L21/22*D&G*Etiquette mqte*FB*
+217140319,616VU,CABLES,2026-04,Autre,BF24 N° 2351-0459 entre 18RN 2 et 19RN 1
+217139918,MIP A350,INTERNE,2026-04,Autre,"Contrôle final qualité après test 
+Type of nonconformity : Structural and Mechanical Assembly
+* Merc"
+217139270,PTVU,INTERNE,2026-04,Câble coupé / abîmé / cassé,"BOUTON POUSSOIR ENDOMMAGE 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la ligne A"
+217135366,740VU,CONTROLE FINAL,2026-04,Autre,"Erreur de branchement en 2PC B , fil branché en 15 au"
+217135366,740VU,CONTROLE FINAL,2026-04,Autre,Contact déverrouillé en 26XE A borne 4.
+217135366,740VU,CONTROLE FINAL,2026-04,Autre,"Erreur de branchement en 9XE A , fil branché en 4 au"
+217135366,740VU,CONTROLE FINAL,2026-04,Inversion branchement / mauvaise borne,Inversion de branchement en 703VT 8 suite à inversion
+217135366,740VU,CONTROLE FINAL,2026-04,Inversion branchement / mauvaise borne,T04 : Inversion de branchement en 1011VC entre les
+217134193,MIP A350,INTERNE,2026-04,Autre,"Part Number effacé de la platine 
+Type of nonconformity : Part not installed
+* Sur la ligne A350 pos"
+217134162,MIP A350,Unknown,2026-04,Erreur référence / plaquette,"Plaquettes de masse centrés 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la ligne"
+217134018,MIP A350,CONTROLE FINAL,2026-04,Sertissage,1WK12A G2 MAUVAISE MISE EN OEUVRE SERTISSAGE CONTACT.
+217133901,MIP A350,CABLES,2026-04,Autre,"Cable DR24 coupé court 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la ligne A350"
+217133496,MIP A350,CONTROLE FINAL,2026-04,Câble/pièce manquant(e),MANQUE BEAUCOUP DE BOUCHONS.
+217133496,MIP A350,CONTROLE FINAL,2026-04,Autre,ERREUR DETROMPAGE SUR 1608VC109A-1608VC105A-1608VC095A.
+217133496,MIP A350,CONTROLE FINAL,2026-04,Câble/pièce manquant(e),MANQUE ETIQUETTE FIN:1608VC087A -1608VC095A.
+217133496,MIP A350,CONTROLE FINAL,2026-04,Inversion branchement / mauvaise borne,1WK12A CABLE EN BORNE 6D AU LIEU DE 8D ET 6A AU LIEU DE
+217133496,MIP A350,CONTROLE FINAL,2026-04,Inversion branchement / mauvaise borne,1WK12A CABLE EN BORNE 13K AU LIEU DE 14K.
+217133496,MIP A350,CONTROLE FINAL,2026-04,Inversion branchement / mauvaise borne,1WK21A CABLE EN BORNE 14J AU LIEU DE 14K ET 15J AU LIEU
+217133496,MIP A350,CONTROLE FINAL,2026-04,Borne déverrouillée,300VG131 UNE BORNE DEVERROUILLEE.
+217133496,MIP A350,CONTROLE FINAL,2026-04,Inversion branchement / mauvaise borne,1608VC105A INVERSION DE BRANCHEMENT ENTRE LES BORNES 5
+217133496,MIP A350,CONTROLE FINAL,2026-04,Inversion branchement / mauvaise borne,1608VC048A INVERSION DE BRANCHEMENT ENTRE #PRS~ #PRS~ #TEL~
+217133496,MIP A350,CONTROLE FINAL,2026-04,Inversion branchement / mauvaise borne,3RN1B CABLE EN BORNE < D AU LIEU DE < E.
+217133496,MIP A350,CONTROLE FINAL,2026-04,Inversion branchement / mauvaise borne,3RN1B INVERSION DE BRANCHEMENT ENTRE LES BORNES < M ET
+217133496,MIP A350,CONTROLE FINAL,2026-04,Inversion branchement / mauvaise borne,10FC1A INVERSION DE BRANCHEMENT ENTRE LES BORNES < I ET
+217133496,MIP A350,CONTROLE FINAL,2026-04,Inversion branchement / mauvaise borne,11CP1B INVERSION DE BRANCHEMENT ENTRE LES BORNES K ET
+217133496,MIP A350,CONTROLE FINAL,2026-04,Inversion branchement / mauvaise borne,30LEA INVERSION DE BRANCHEMENT ENTRE LES BORNES 8 ET
+217133496,MIP A350,CONTROLE FINAL,2026-04,Inversion branchement / mauvaise borne,3RN1B INVERSION DE BRANCHEMENT ENTRE LES BORNES < S ET
+217133496,MIP A350,CONTROLE FINAL,2026-04,Borne déverrouillée,300VT103 BORNE 1G DEVERROUILLEE.
+217133496,MIP A350,CONTROLE FINAL,2026-04,Borne déverrouillée,300VT103 BORNE 1F DEVERROUILLEE.
+217133496,MIP A350,CONTROLE FINAL,2026-04,Inversion branchement / mauvaise borne,300VT103 INVERSION DE BRANCHEMENT ENTRE LES BORNES 2P
+217133496,MIP A350,CONTROLE FINAL,2026-04,Erreur référence / plaquette,300VT400 MODULE 7 ERREUR REFERENCE MODULE.
+217133496,MIP A350,CONTROLE FINAL,2026-04,Inversion branchement / mauvaise borne,11CP1C INVERSION DE BRANCHEMENT ENTRE LES BORNES H ET
+217128158,MIP A350,INTERNE,2026-04,Autre,"Part Number effacé de la platine924 
+Type of nonconformity : Part not installed
+* Sur la ligne A350 "
+217128024,PTVU,INTERNE,2026-04,Continuité / composant HS,"NC TEST DEFAUT CONTINUITE 
+Type of nonconformity : Electrical Assembly Installation
+* Defaut de cont"
+217127437,MIP A350,INTERNE,2026-04,Autre,"Part Number effacé de la platine 
+Type of nonconformity : Part not installed
+* Sur la ligne A350 pos"
+217124312,MIP A350,CONTROLE FINAL,2026-04,Autre,1608VC076A BORNE DD BRIN DE LA TRESSE DE MASSE ENTRE
+217123505,MIP A350,CABLES,2026-04,Autre,"Cable DR courts 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la ligne A350 , rout"
+217123359,PTVU,INTERNE,2026-04,Autre,"Fourreau 31WZ raiillé 
+Type of nonconformity : Scratch or tool mark
+* Lors de l'inspection finale du"
+217123040,MIP A350,CONTROLE FINAL,2026-04,Câble coupé / abîmé / cassé,CABLE ENDOMMAGE 300VT101 7U AU NIVEAU DE LA FERRULE.
+217122802,300VU,CABLES,2026-04,Longueur câble (court/surlongueur),Câbles reçus trop courts de l'impression
+217116734,MIP A350,CABLES,2026-04,Longueur câble (court/surlongueur),"Câble trop court 
+Type of nonconformity : Harness length
+* Sur la station sous ensemble un câble à é"
+217114961,MIP A350,CONTROLE FINAL,2026-04,Autre,"Controle final MIP A350 MSN 839 
+Type of nonconformity : Electrical Assembly Installation
+* Contrôle"
+217113926,PTVU,INTERNE,2026-04,Autre,Court circuit entre la borne 4 et le corp du voyant
+217113800,740VU,INTERNE,2026-04,Autre,"BARRE: p/n non conforme 
+Type of nonconformity : Structural and Mechanical Assembly
+* Sur la ligne A"
+217113153,Other,INTERNE,2026-04,Autre,"Rampe recu avec protection alodine 
+Type of nonconformity : Part not installable as per Work Order
+*"
+217112253,PTVU,INTERNE,2026-04,Autre,"BOUTON POUSSOIR INCOMPLET 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la ligne A"
+217109331,PTVU,INTERNE,2026-04,Autre,"BOUTON POUSSOIR INCOMPLET 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la ligne A"
+217109184,300VU,FOURNISSEUR,2026-04,Autre,INSERT douilles autofréines NAS1836 NC
+217108805,MIP A350,CABLES,2026-04,Câble/pièce manquant(e),"Cables AD manquants 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la ligne A350 no"
+217108427,MIP A350,CONTROLE FINAL,2026-04,Autre,115VMA DR24 N°3119-0344 NON CONNECTE AU GND.
+217108427,MIP A350,CONTROLE FINAL,2026-04,Autre,ERREUR SUR N° DE CABLE .CABLE NON CONNECTE SUR GND EST LE N° 3119-0345 EST LE FIN EST 115VMA.
+217108321,MIP A350,CONTROLE FINAL,2026-04,Autre,1608VC076A MAUVAISE MISE EN OEUVRE CONTACT QUADRAX.
+217107871,740VU,INTERNE,2026-04,Câble coupé / abîmé / cassé,"SOCLE DE RACCORDEMENT ABIME 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la ligne"
+217103724,MIP A350,CABLES,2026-04,Câble/pièce manquant(e),"Câble manquant 
+Type of nonconformity : Missing Part/Component / Incomplete Kit
+* Sur le poste sous "
+217100326,300VU,CONTROLE FINAL,2026-04,Câble/pièce manquant(e),Manque goupilles AA55487-4
+217097277,MIP A350,CABLES,2026-04,Autre,"Cable ADB24 recu court 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la ligne A350"
+217095394,PTVU,INTERNE,2026-04,Autre,Court circuit entre la borne 4 et le corp du voyant
+217092063,MIP A350,INTERNE,2026-04,Câble coupé / abîmé / cassé,"Arinc endommagé 
+Type of nonconformity : Scratch
+* Suite à mauvaise manipulation le block Arinc 1WK1"
+217088266,PTVU,CONTROLE FINAL,2026-04,Autre,"Erreur de branchement en 584VC , fil branché en < U au"
+217088266,PTVU,CONTROLE FINAL,2026-04,Câble/pièce manquant(e),Shunts BF22 manquants entre les bornes 5 et 9 sur les
+217088266,PTVU,CONTROLE FINAL,2026-04,Inversion branchement / mauvaise borne,Inversion de branchement entre les bornes < K et < M sur
+217088266,PTVU,CONTROLE FINAL,2026-04,Autre,"Erreur de branchement en 3HG A , fil branché en B3 au"
+217088266,PTVU,CONTROLE FINAL,2026-04,Autre,"Câbles 2126-0020 , 2121-0001 et 7325-1471 branchés en"
+217087015,MIP A350,INTERNE,2026-04,Autre,"Modules VG non conformes 
+Type of nonconformity : Electrical Bonding
+* Sur la ligne A350 , au poste "
+217085364,MIP A350,CABLES,2026-04,Longueur câble (court/surlongueur),"Cable AD22 coupé trop court 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la ligne"
+217083685,MIP A350,INTERNE,2026-04,Autre,"Modules VG non conformes 
+Type of nonconformity : Electrical Bonding
+* Sur la ligne A350 , au poste "
+217081687,PTVU,INTERNE,2026-04,Inversion branchement / mauvaise borne,"MONTAGE TETE DE BRANCHEMENT INVERSE 
+Type of nonconformity : Electrical Assembly Installation
+* Sur "
+217075785,MIP A350,INTERNE,2026-04,Autre,"Retouches finales 
+Type of nonconformity : Electrical Assembly Installation
+* Merci de reprendre les"
+217071294,MIP A350,CONTROLE FINAL,2026-04,Autre,100VG301 4 BORNES DEVEROUILLES.
+217071294,MIP A350,CONTROLE FINAL,2026-04,Autre,11CP2B INVERSION ENTRE LES BORNES W ET D.
+217071294,MIP A350,CONTROLE FINAL,2026-04,Inversion branchement / mauvaise borne,3RN1A CABLE EN < K AU LIEU DE K.
+217071294,MIP A350,CONTROLE FINAL,2026-04,Autre,11CP1J INVERSION ENTRE LES BORNES F ET K
+217071294,MIP A350,CONTROLE FINAL,2026-04,Autre,11CP1J INVERSION ENTRE #PRS~ #PRS~ #PRS~ #PRS~ #PRS~
+217071294,MIP A350,CONTROLE FINAL,2026-04,Autre,7CYH INVERSION ENTRE LES BORNES C ET E.
+217071294,MIP A350,CONTROLE FINAL,2026-04,Autre,7CYH INVERSION ENTRE LES BORNES D ET F.
+217071294,MIP A350,CONTROLE FINAL,2026-04,Inversion branchement / mauvaise borne,3RN1B CABLE EN Z AU LIEU DE < S.
+217071294,MIP A350,CONTROLE FINAL,2026-04,Inversion branchement / mauvaise borne,411VC001A CABLE EN 6 AU LIEU DE 15.
+217067656,743VU,FOURNISSEUR,2026-04,Autre,"MAUVAISE EQUERRE EQUIPEE MONTEE 
+Type of nonconformity : Structural and Mechanical Assembly
+* Sur la"
+217067617,MIP A350,CONTROLE FINAL,2026-04,Autre,1608VC085A ERREUR DETROMPAGE.
+217067617,MIP A350,CONTROLE FINAL,2026-04,Câble/pièce manquant(e),ROUTE 2S MANQUE LES 5 ETIQUETTES REPERE.
+217067617,MIP A350,CONTROLE FINAL,2026-04,Erreur référence / plaquette,5CPD PLAQUETTE PARTIELLEMENT EFFACEE.
+217067617,MIP A350,CONTROLE FINAL,2026-04,Autre,300VH200 INVERSION BRANHCEMENT ENTRE LES BORNES J ET A.
+217067617,MIP A350,CONTROLE FINAL,2026-04,Borne déverrouillée,300VG101 UNE BORNE DEVERROUILLEE.
+217067617,MIP A350,CONTROLE FINAL,2026-04,Inversion branchement / mauvaise borne,1610VC051 INVERSION DE BRANCHEMENT ENTRE LES BORNES 27
+217067617,MIP A350,CONTROLE FINAL,2026-04,Inversion branchement / mauvaise borne,3SEA INVERSION DE BRANCHEMENT ENTRE #PRS~ #PRS~ #PRS~ #PRS~ #PRS~
+217067617,MIP A350,CONTROLE FINAL,2026-04,Inversion branchement / mauvaise borne,8DG1A INVERSION DE BRANCHEMENT ENTRE LES BORNES L ET A.
+217067617,MIP A350,CONTROLE FINAL,2026-04,Inversion branchement / mauvaise borne,11CP2J INVERSION DE BRANCHEMENT ENTRE LES BORNES B ET C
+217067617,MIP A350,CONTROLE FINAL,2026-04,Inversion branchement / mauvaise borne,1WK03A CABLE EN BORNE 10B AU LIEU DE 7B.
+217067617,MIP A350,CONTROLE FINAL,2026-04,Autre,300VT101 INVERSION DE BRANCHEMNET ENTRE LES BORNES 3U
+217067617,MIP A350,CONTROLE FINAL,2026-04,Inversion branchement / mauvaise borne,1WK03A CABLE EN ORNE 10D AU LIEU DE 9D.
+217067617,MIP A350,CONTROLE FINAL,2026-04,Inversion branchement / mauvaise borne,300VD001A INVERSION DE BRANCHEMENT ENTRE LES BORNES 46
+217067617,MIP A350,CONTROLE FINAL,2026-04,Inversion branchement / mauvaise borne,11CP1B INVERSION DE BRANCHEMENT ENTRE #PRS~ #PRS~ #PRS~ #PRS~
+217067617,MIP A350,CONTROLE FINAL,2026-04,Inversion branchement / mauvaise borne,11CP1C INVERSION DE BRANCHEMENT ENTRE LES BORNES G ET
+217067617,MIP A350,CONTROLE FINAL,2026-04,Inversion branchement / mauvaise borne,500VT111 INVERSION DE BRANCHEMENT ENTRE LES BORNES 1X
+217067617,MIP A350,CONTROLE FINAL,2026-04,Inversion branchement / mauvaise borne,300VT200 INVERSION DE BRANCHEMENT ENTRE LES BORNES 6J
+217067617,MIP A350,CONTROLE FINAL,2026-04,Inversion branchement / mauvaise borne,1608VC046A INVERSION DE BRANCHEMENT ENTRE LES BORNES
+217066793,300VU,CABLES,2026-04,Longueur câble (court/surlongueur),Câble servi trop court
+217055268,PTVU,CONTROLE FINAL,2026-04,Câble/pièce manquant(e),Câble BF24 N° : 2351-0458 Manquant entre 18RN 1 et 19RN
+217055268,PTVU,CONTROLE FINAL,2026-04,Câble/pièce manquant(e),Câble BF24 N° : 2351-0459 Manquant entre 18RN 2 et 19RN
+217055094,MIP A350,CONTROLE FINAL,2026-04,Autre,1WK03A BORNE LL MAUVAISE MISE EN OEUVRE CONTACT
+217054293,MIP A350,CONTROLE FINAL,2026-04,Câble coupé / abîmé / cassé,500VT202 MODULE 2 BORNE X CABLE ENDOMMAGE.
+217045579,MIP A350,CABLES,2026-04,Autre,"Cable ADB24 recu court 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la ligne A350"
+217042404,MIP A350,CONTROLE FINAL,2026-04,Câble coupé / abîmé / cassé,500VT200 MODULE 2 BORNE G ENDOMMAGE CABLE 2797-1246 A
+217041638,740VU,CONTROLE FINAL,2026-04,Autre,Cable déverrouillé sur 701VC en borne H.
+217041638,740VU,CONTROLE FINAL,2026-04,Inversion branchement / mauvaise borne,Cable sur 1021VC en borne 9 au lieu de 10.
+217041638,740VU,CONTROLE FINAL,2026-04,Autre,Cable déverrouillé sur 701VC en borne A.
+217041638,740VU,CONTROLE FINAL,2026-04,Inversion branchement / mauvaise borne,Cable sur 13CE A en borne 5 au lieu de 3.
+217041638,740VU,CONTROLE FINAL,2026-04,Autre,Inversion sur 3XB A entre les bornes B2 et C2.
+217041638,740VU,CONTROLE FINAL,2026-04,Inversion branchement / mauvaise borne,Cable sur 1023VC en borne 48 au lieu de 38.
+217041638,740VU,CONTROLE FINAL,2026-04,Inversion branchement / mauvaise borne,Cable sur 3PE B en borne 16 au lieu de 19.
+217041638,740VU,CONTROLE FINAL,2026-04,Inversion branchement / mauvaise borne,Cable sur 2XE B en borne 20 au lieu de 21.
+217041638,740VU,CONTROLE FINAL,2026-04,Autre,Cable non connecté sur 1PH B en borne 21.
+217041638,740VU,CONTROLE FINAL,2026-04,Inversion branchement / mauvaise borne,Cable sur 22XH A en borne B au lieu de X.
+217040142,Other,FOURNISSEUR,2026-04,Câble coupé / abîmé / cassé,"Colonnette de la structure du MIP cassée 
+Type of nonconformity : Broken
+* Sur le MIP A350 , MSN843 "
+217037645,Other,Unknown,2026-04,Autre,"ESAO: GTI: 15XE-A INOP 
+Type of nonconformity : Broken component
+* While performing GTI : 8242612 we"
+217037135,MIP A350,INTERNE,2026-04,Autre,"Retouches finales 
+Type of nonconformity : Electrical Assembly Installation
+* Merci de reprendre les"
+217033006,MIP A350,CABLES,2026-04,Autre,"Câble abimé 
+Type of nonconformity : Electrical Assembly Installation
+* Il a été constaté qu'un câbl"
+217032579,PTVU,INTERNE,2026-04,Autre,"MESURE 590VN HORS TOLERANCE 
+Type of nonconformity : Electrical Bonding
+* Lors de la mesure de masse"
+217032194,300VU,CABLES,2026-04,Longueur câble (court/surlongueur),Câbles coupés trop court
+217031143,PTVU,INTERNE,2026-04,Autre,"MESURE 590VN HORS TOLERANCE 
+Type of nonconformity : Electrical Bonding
+* Lors de la mesure de masse"
+217031012,PTVU,CONTROLE FINAL,2026-04,Autre,Inversioin de montage entre les indicateurs 4QJ1 A et
+217031012,PTVU,CONTROLE FINAL,2026-04,Autre,Câble non connecté en 5QJ2 A borne 3.
+217026822,PTVU,INTERNE,2026-04,Continuité / composant HS,"Connecteur E0682-01 HS 
+Type of nonconformity : Structural and Mechanical Assembly
+* Sur le MSN 2155"
+217026194,MIP A350,CONTROLE FINAL,2026-04,Inversion branchement / mauvaise borne,1WK21 CABLE EN KK AU LIEU DE HH.
+217026194,MIP A350,CONTROLE FINAL,2026-04,Inversion branchement / mauvaise borne,1WK53 CABLE EN 57 AU LIEU DE 58.
+217026194,MIP A350,CONTROLE FINAL,2026-04,Inversion branchement / mauvaise borne,1610VC051 CABLE EN 24 AU LIEU DE 27.
+217026194,MIP A350,CONTROLE FINAL,2026-04,Inversion branchement / mauvaise borne,3SEA CABLE EN L AU LIEU DE M ET X AU LIEU DE Y.
+217026194,MIP A350,CONTROLE FINAL,2026-04,Autre,9KSJ11 INVERSION ENTRE LES BORNES D ET F.
+217026194,MIP A350,CONTROLE FINAL,2026-04,Autre,1608VC056A INVERSION ENTRE LES BORNES M ET P ET PUIS N
+217026194,MIP A350,CONTROLE FINAL,2026-04,Autre,317VC001A INVERSION ENTRE LES BORNES D ET E PUIS F ET
+217026194,MIP A350,CONTROLE FINAL,2026-04,Autre,300VT101 MODULE 5 INVERSION ENTRE LES BORNES A ET L.
+217026194,MIP A350,CONTROLE FINAL,2026-04,Inversion branchement / mauvaise borne,1610VC051 CABLE EN 27 AU LIEU DE 26 PUIS 25 AU LIEU DE
+217026194,MIP A350,CONTROLE FINAL,2026-04,Autre,300VT101 MODULE 4 INVERSION ENTRE LES BORNES T ET B.
+217024637,MIP A350,CONTROLE FINAL,2026-04,Autre,115VMA BORNE EE-FF-GG ARRET DE BLINDAGE NON EFFECTUE.
+217019027,PTVU,CONTROLE FINAL,2026-04,Câble/pièce manquant(e),Shunt BF24 N° : 3314-0919 Manquant entre 651VT3 C et
+217016584,742VU,CABLES,2026-04,Longueur câble (court/surlongueur),"CABLE TROP COURT 
+Type of nonconformity : Electrical Assembly Installation
+* Sur a ligne A330 , MSN "
+217013474,OHP,INTERNE,2026-04,Autre,Platine équipée non conforme
+217011468,Other,INTERNE,2026-04,Câble coupé / abîmé / cassé,"Platine Arinc endommagée 
+Type of nonconformity : Part not installed
+* Sur la ligne A350 , poste Mec"
+217010970,743VU,DEMANDE DE DQN,2026-04,Autre,"Schematic diagram for relay socket 
+Type of nonconformity : Structural and Mechanical Assembly
+* Cou"
+217010898,MIP A350,CABLES,2026-04,Autre,"Câble DR24 abimé sur l'arbre 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la lign"
+217010788,PTVU,INTERNE,2026-04,Câble coupé / abîmé / cassé,"Fourreau 13HL endommagé 
+Type of nonconformity : Scratch or tool mark
+* Lors de l'inspection du 225V"
+217005967,Other,Unknown,2026-04,Câble coupé / abîmé / cassé,"DECOUPE DADOS PANEL 
+Type of nonconformity : Drilling
+* Veuillez applmiquer la SI V50MC000515A qui d"
+217003375,300VU,CABLES,2026-04,Autre,Câble abimé
+217003038,MIP A400M,CONTROLE FINAL,2026-04,Autre,RETOUCHES TEST MSN 163
+217001742,743VU,DEMANDE DE DQN,2026-04,Autre,"Deviation between the plan and CIRCE 
+Type of nonconformity : Structural and Mechanical Assembly
+* O"
+216999721,742VU,CABLES,2026-04,Câble/pièce manquant(e),"CABLE MANQUANT 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la ligne A330 , nous "
+216996839,MIP A350,INTERNE,2026-04,Autre,"Contrôle final qualité après test 
+Type of nonconformity : Electrical Assembly Installation
+* Merci "
+216984759,MIP A400M,CABLES,2026-04,Longueur câble (court/surlongueur),Câble servi trop court
+216981246,Other,Unknown,2026-04,Câble/pièce manquant(e),"17CE manquant 
+Type of nonconformity : Missing Part/Component / Incomplete Kit
+* Bonjour
+suite au GT"
+216974038,MIP A350,CONTROLE FINAL,2026-04,Inversion branchement / mauvaise borne,115VMB INVERSION DE BRANCHEMENT ENTRE LES BORNES C ET
+216974038,MIP A350,CONTROLE FINAL,2026-04,Inversion branchement / mauvaise borne,1WK21A CABLE EN BORNE 4D AU LIEU DE 8D.
+216974038,MIP A350,CONTROLE FINAL,2026-04,Inversion branchement / mauvaise borne,1GGA INVERSION DE BRANCHEMENT ENTRE LES BORNES < C ET C.
+216974038,MIP A350,CONTROLE FINAL,2026-04,Inversion branchement / mauvaise borne,7HT2A CABLE EN BORNE B AU LIEU DE E.
+216974038,MIP A350,CONTROLE FINAL,2026-04,Inversion branchement / mauvaise borne,1609VC002 INVERSION DE BRANCHEMENT ENTRE LES BORNES 56
+216974038,MIP A350,CONTROLE FINAL,2026-04,Inversion branchement / mauvaise borne,3SEA CABLE EN BORNE L AU LIEU DE M PUIS CABLE EN BORNE
+216974038,MIP A350,CONTROLE FINAL,2026-04,Inversion branchement / mauvaise borne,3SEB INVERSION DE BRANCHEMENT ENTRE #PRS~ #PRS~ #PRS~ #PRS~ #PRS~
+216974038,MIP A350,CONTROLE FINAL,2026-04,Borne déverrouillée,1610VC047 BORNE 26 DEVERROUILLEE.
+216974038,MIP A350,CONTROLE FINAL,2026-04,Inversion branchement / mauvaise borne,1608VC070A INVERSION DE BRANCHEMENT ENTRE LES BORNES 50
+216974038,MIP A350,CONTROLE FINAL,2026-04,Inversion branchement / mauvaise borne,1608VC109A INVERSION DE BRANCHEMENT ENTRE LES BORNES 3
+216974038,MIP A350,CONTROLE FINAL,2026-04,Inversion branchement / mauvaise borne,11CP2B INVERSION DE BRANCHEMENT ENTRE LES BORNES W ET
+216974038,MIP A350,CONTROLE FINAL,2026-04,Inversion branchement / mauvaise borne,1WK11A CABLE EN BORNE 10B AU LIEU DE 9B.
+216974038,MIP A350,CONTROLE FINAL,2026-04,Inversion branchement / mauvaise borne,3CBB INVERSION DE BRANCHEMENT ENTRE LES BORNES 59 ET
+216974038,MIP A350,CONTROLE FINAL,2026-04,Inversion branchement / mauvaise borne,500VT101 INVERSION DE BRANCHEMENT ENTRE LES BORNES 2E
+216974038,MIP A350,CONTROLE FINAL,2026-04,Inversion branchement / mauvaise borne,500VT101 INVERSION DE BRANCHEMENT ENTRE LES BORNES 1U
+216974038,MIP A350,CONTROLE FINAL,2026-04,Inversion branchement / mauvaise borne,500VT103 INVERSION DE BRANCHEMENT ENTRE LES BORNES 1L
+216974038,MIP A350,CONTROLE FINAL,2026-04,Borne déverrouillée,500VT111 BORNE 1P DEVERROUILLEE.
+216974038,MIP A350,CONTROLE FINAL,2026-04,Inversion branchement / mauvaise borne,1608VC064A INVERSION DE BRANCHEMENT ENTRE LES BORNES
+216973912,MIP A350,CONTROLE FINAL,2026-04,Autre,130RHA BORNE 3 MAUVAISE MISE EN OEUVRE CONTACT.
+216972425,MIP A350,Unknown,2026-04,Erreur référence / plaquette,"Erreur d'écriture sur plaquette 5CP B 
+Type of nonconformity : Structural and Mechanical Assembly
+* "
+216971047,OHP,Unknown,2026-04,Frètes / freinage,Prise 7LZ1 B FREINAGE NON CONFORME
+216969942,PTVU,INTERNE,2026-04,Câble coupé / abîmé / cassé,"Indicateur HS 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la ligne A330 , nous a"
+216969696,740VU,CABLES,2026-04,Autre,"IDENTIFICATION CABLES NON CONFORME 
+Type of nonconformity : Electrical Assembly Installation
+* Sur l"
+216969649,MIP A350,CONTROLE FINAL,2026-04,Longueur câble (court/surlongueur),1608VC017 A : longueur frette. Trop longue.
+216969649,MIP A350,CONTROLE FINAL,2026-04,FOD,"Route 1M , 1MD , 1MF : FOD mousse de néoprène se désagrège"
+216969649,MIP A350,CONTROLE FINAL,2026-04,Frètes / freinage,Route 1M : frette non finalisée sur plaquette.
+216969649,MIP A350,CONTROLE FINAL,2026-04,Longueur câble (court/surlongueur),Route 1S : longueur frette. Trop longue.
+216969649,MIP A350,CONTROLE FINAL,2026-04,Longueur câble (court/surlongueur),"Route 1M , 1MF , 1MF9 : longueur frette trop longue."
+216969649,MIP A350,CONTROLE FINAL,2026-04,Câble/pièce manquant(e),sur platine ; FIN 500VN106 et FIN 500VN107 bleu manquant
+216969649,MIP A350,CONTROLE FINAL,2026-04,Métallisation / bonding,Platine V924184340000 : sur la rampe le repère bleu est
+216969649,MIP A350,CONTROLE FINAL,2026-04,Longueur câble (court/surlongueur),Route 1R ESS / FIN 25RN1 : frette trop longue.
+216969649,MIP A350,CONTROLE FINAL,2026-04,Câble coupé / abîmé / cassé,"Sur platine , FIN 11CP1 G étiquette CDVE endommagée."
+216969649,MIP A350,CONTROLE FINAL,2026-04,Autre,FIN : 1706VC001
+216969649,MIP A350,CONTROLE FINAL,2026-04,Câble coupé / abîmé / cassé,FIN 1610VC007 : étiquette CDVE endommagée.
+216969649,MIP A350,CONTROLE FINAL,2026-04,Frètes / freinage,FIN 7CY B et 7CY longueur des frettes top longues.
+216969649,MIP A350,CONTROLE FINAL,2026-04,Autre,FIN 115VM G : étiquette CDVE lecture inversée en main
+216969649,MIP A350,CONTROLE FINAL,2026-04,Câble coupé / abîmé / cassé,FIN 51CV A : étiquette endommagée. Lecture effacée
+216969649,MIP A350,CONTROLE FINAL,2026-04,Autre,FIN 1606VC002 : connecteur rectangulaire mal inséré sur la
+216969649,MIP A350,CONTROLE FINAL,2026-04,Autre,"Sur platine V9241953600000 FIN 11CP2 A , fils en tension ,"
+216969649,MIP A350,CONTROLE FINAL,2026-04,FOD,"Route 2M , 2MG , 2MF : FOD mousse de néoprène se désagrège"
+216969649,MIP A350,CONTROLE FINAL,2026-04,Câble/pièce manquant(e),Plaquette repère 500VT200 manque une frette sur étiquette.
+216969649,MIP A350,CONTROLE FINAL,2026-04,FOD,"Route 2S , 2SF ESS : FOD ( bout de câble ) sur support en V."
+216969649,MIP A350,CONTROLE FINAL,2026-04,Longueur câble (court/surlongueur),FIN 5GA A : longueur frette trop longue.
+216969649,MIP A350,CONTROLE FINAL,2026-04,Autre,"BARRETTE 300VT2000 : mauvaise MEO du serre module du bas ,"
+216969649,MIP A350,CONTROLE FINAL,2026-04,Câble coupé / abîmé / cassé,Rampe V9241948700000 : peinture endommagée.
+216969649,MIP A350,CONTROLE FINAL,2026-04,Câble/pièce manquant(e),Sur les 2 platines : Manque des frettes pour la séparation
+216969649,MIP A350,CONTROLE FINAL,2026-04,FOD,"FOD : tyrap , bouts de cable , contact…. Caché derrière la"
+216969649,MIP A350,CONTROLE FINAL,2026-04,Câble/pièce manquant(e),Platine V924192200000 FIN 100VN123 : manque bleu de
+216969649,MIP A350,CONTROLE FINAL,2026-04,Longueur câble (court/surlongueur),"Route 1M , 1MD , 1MF : longueur frette trop longue."
+216961691,MIP A350,Unknown,2026-04,Erreur référence / plaquette,"Plaquettes à refabriquer 
+Type of nonconformity : Structural and Mechanical Assembly
+* Problème loca"
+216960077,Other,INTERNE,2026-04,Autre,"Rampe recu avec protection alodine 
+Type of nonconformity : Part not installable as per Work Order
+*"
+216958965,MIP A350,Unknown,2026-04,Erreur référence / plaquette,"Plaquettes 7DG2 A, 8DG2 A, 7DG1 A, 8DG1A 
+Type of nonconformity : Structural and Mechanical Assembly"
+216958854,740VU,CABLES,2026-04,Autre,"MAUVAISE JAUGE DE CABLE 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la ligne A33"
+216958097,PTVU,INTERNE,2026-04,Câble coupé / abîmé / cassé,"BOUTON OPTICAL ENCODEUR HS 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la ligne "
+216956743,MIP A350,CABLES,2026-04,Autre,"Câble DR24 abimé sur l'arbre 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la lign"
+216955620,Other,INTERNE,2026-04,Autre,"Rampe recu avec protection alodine 
+Type of nonconformity : Part not installable as per Work Order
+*"
+216945078,740VU,INTERNE,2026-04,Câble coupé / abîmé / cassé,"Gromet endommagé sur Socket 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la ligne"
+216944789,740VU,CONTROLE FINAL,2026-04,Autre,"RETOUCHES CONTROLE FINAL 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la ligne A3"
+216943511,PTVU,INTERNE,2026-04,Câble coupé / abîmé / cassé,"BOUTON OPTICAL ENCODEUR HS 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la ligne "
+216943435,PTVU,INTERNE,2026-04,Autre,"CONNECTEUR borne ne verrouille pas 
+Type of nonconformity : Electrical Assembly Installation
+* Sur l"
+216942977,MIP A350,CONTROLE FINAL,2026-04,Borne déverrouillée,300VG333 UN DEVERROUILLAGE.
+216942977,MIP A350,CONTROLE FINAL,2026-04,Inversion branchement / mauvaise borne,3RN1B INVERSION DE BRANCHEMENT ENTRE LES BORNES < E ET
+216942977,MIP A350,CONTROLE FINAL,2026-04,Inversion branchement / mauvaise borne,1608VC074A INVERSION DE BRANCHEMENT ENTRE LES BORNES 57
+216942977,MIP A350,CONTROLE FINAL,2026-04,Inversion branchement / mauvaise borne,1608VC097A INVERSION DE BRANCHEMENT ENTRE LES BORNES
+216942977,MIP A350,CONTROLE FINAL,2026-04,Inversion branchement / mauvaise borne,1610VC045 INVERSION DE BRANCHEMENT ENTRE LES BORNES 7
+216942977,MIP A350,CONTROLE FINAL,2026-04,Inversion branchement / mauvaise borne,10FC1A INVERSION DE BRANCHEMENT ENTRE LES BORNES P ET
+216942977,MIP A350,CONTROLE FINAL,2026-04,Inversion branchement / mauvaise borne,7CYB INVERSION DE BRANCHEMENT ENTRE LES BORNES A ET B.
+216942977,MIP A350,CONTROLE FINAL,2026-04,Inversion branchement / mauvaise borne,11CP2J INVERSION DE BRANCHEMENT ENTRE LES BORNES B ET
+216942977,MIP A350,CONTROLE FINAL,2026-04,Inversion branchement / mauvaise borne,1608VC060A CABLE EN BORNE 16 AU LIEU DE 17 PUIS CABLE
+216942977,MIP A350,CONTROLE FINAL,2026-04,Autre,300VG161 UN CABLE NON CONNECTE.
+216942977,MIP A350,CONTROLE FINAL,2026-04,Inversion branchement / mauvaise borne,300VT402 INVERSION DE BRANCHEMENT ENTRE LES BORNES 1U
+216942977,MIP A350,CONTROLE FINAL,2026-04,Inversion branchement / mauvaise borne,300VD001A INVERSION DE BRANCHEMENT ENTRE LES BORNES 46
+216942977,MIP A350,CONTROLE FINAL,2026-04,Inversion branchement / mauvaise borne,1WK11A CABLE EN BORNE 1J AU LIEU DE 1H PUIS 2J AU LIEU
+216942977,MIP A350,CONTROLE FINAL,2026-04,Autre,115VMA ARRET DE BLINDAGE NON FAITE BORNE EE-FF-GG.
+216937725,Other,Unknown,2026-04,Autre,"FIN breakers érronés 
+Type of nonconformity : Electrical Assembly Installation
+* En soute EE , sur l"
+216932469,742VU,CABLES,2026-04,Câble/pièce manquant(e),"CABLE MANQUANT 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la ligne A330 , MSN 2"
+216931839,Other,INTERNE,2026-04,Autre,"Rampe recu avec protection alodine 
+Type of nonconformity : Part not installable as per Work Order
+*"
+216931836,PTVU,INTERNE,2026-04,Autre,"CONNECTEUR borne ne verrouille pas 
+Type of nonconformity : Electrical Assembly Installation
+* Sur l"
+216931441,740VU,CONTROLE FINAL,2026-04,Inversion branchement / mauvaise borne,6XEA CABLE EN B3 AU LIEU DE D3.
+216931441,740VU,CONTROLE FINAL,2026-04,Autre,26XEA BORNE 3 DEVEROUILLE.
+216931441,740VU,CONTROLE FINAL,2026-04,Autre,16XHA INVERSION ENTRE LES BORNES X1 ET X2.
+216931441,740VU,CONTROLE FINAL,2026-04,Inversion branchement / mauvaise borne,3XCC CABLE EN 20 AU LIEU DE 21.
+216931441,740VU,CONTROLE FINAL,2026-04,Autre,6PB1B INVERSION ENTRE LES BORNES 7 ET 9.
+216931441,740VU,CONTROLE FINAL,2026-04,Autre,27CEA INVERSION ENTRE LES BORNES B1 ET B3.
+216931441,740VU,CONTROLE FINAL,2026-04,Inversion branchement / mauvaise borne,707VT CABLE EN MODULE 3 BORNE H AU LIEU DE MODULE 2
+216931441,740VU,CONTROLE FINAL,2026-04,Inversion branchement / mauvaise borne,707VT CABLE EN MODULE 3 BORNE F AU LIEU DE MODULE 2
+216931441,740VU,CONTROLE FINAL,2026-04,Inversion branchement / mauvaise borne,703VT MODULE 2 CABLE EN K AU LIEU DE L ET CABLE EN J AU
+216931441,740VU,CONTROLE FINAL,2026-04,Autre,3XCC INVERSION ENTRE LES BORNES 7 ET 20.
+216931441,740VU,CONTROLE FINAL,2026-04,Inversion branchement / mauvaise borne,3XEA CABLE EN D1 AU LIEU DE X2.
+216931441,740VU,CONTROLE FINAL,2026-04,Autre,52QA2 INVERSION ENTRE B1 ET C1.
+216931441,740VU,CONTROLE FINAL,2026-04,Câble/pièce manquant(e),801PPD05 SHUNT MECA MANQUANT.
+216931441,740VU,CONTROLE FINAL,2026-04,Autre,INVERSION ENTRE 1QC BORNE 2 ET 1QM1 BORNE 2.
+216931441,740VU,CONTROLE FINAL,2026-04,Autre,4PE INVERSION ENTRE LES BORNES B1 ET C1.
+216931441,740VU,CONTROLE FINAL,2026-04,Autre,12XH INVERSION ENTRE LES BORNES B1 ET C1.
+216929567,742VU,CABLES,2026-04,Câble/pièce manquant(e),"CABLE MANQUANT 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la ligne A330 , MSN 2"
+216928788,Other,INTERNE,2026-04,Autre,"Rampe recu avec protection alodine 
+Type of nonconformity : Part not installable as per Work Order
+*"
+216927866,Other,INTERNE,2026-04,Câble coupé / abîmé / cassé,"Rampe endommagée 
+Type of nonconformity : Riveting
+* Sur la ligne A350 , poste MECA , nous avons con"
+216926542,Other,Unknown,2026-04,Câble/pièce manquant(e),"Provion V89P03115000 manquante sur avion 
+Type of nonconformity : Part not installable as per Work O"
+216924343,MIP A350,INTERNE,2026-04,Autre,"Retouches finales 
+Type of nonconformity : Electrical Assembly Installation
+* Merci de reprendre les"
+216920654,PTVU,INTERNE,2026-04,Autre,Défaut de continuité sur l'encodeur 105SG2 entre les
+216920395,PTVU,INTERNE,2026-04,Autre,Défaut de continuité sur l'encodeur 105SG1 entre les
+216915228,PTVU,INTERNE,2026-04,Autre,"BORNE NE VERROUILLE PAS 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la ligne A33"
+216914342,PTVU,INTERNE,2026-04,Autre,"prise non conforme 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la ligne A330 , n"
+216905770,PTVU,Unknown,2026-04,Autre,"Traitement de surface non conforme 
+Type of nonconformity : Structural and Mechanical Assembly
+* Not"
+216905392,MIP A350,INTERNE,2026-04,Câble coupé / abîmé / cassé,"RAMPE SOUDEE ENDOMMAGEE 
+Type of nonconformity : Broken
+* Sur la ligne A350 MIP MSN 840 , lors de la"
+216902596,MIP A350,CONTROLE FINAL,2026-04,Sertissage,1608VC068A MAUVAISE MISE EN OEUVRE SERTISSAGE ( UN BRIN
+216902596,MIP A350,CONTROLE FINAL,2026-04,Inversion branchement / mauvaise borne,312VMA INVERSION DE BRANCHEMENT ENTRE LES BORNES T ET
+216902596,MIP A350,CONTROLE FINAL,2026-04,Inversion branchement / mauvaise borne,2WTB INVERSION DE BRANCHEMENT ENTRE LES BORNES A ET Z.
+216902596,MIP A350,CONTROLE FINAL,2026-04,Borne déverrouillée,300VG105 UNE BORNE DEVERROUILLEE.
+216902596,MIP A350,CONTROLE FINAL,2026-04,Borne déverrouillée,100VG200 UNE BORNE DEVERROUILLEE.
+216902596,MIP A350,CONTROLE FINAL,2026-04,Inversion branchement / mauvaise borne,1WK53A CABLE EN BORNE 6B AU LIEU DE 5B.
+216902596,MIP A350,CONTROLE FINAL,2026-04,Inversion branchement / mauvaise borne,3RN1A CABLE EN BORNE H AU LIEU DE J.
+216902596,MIP A350,CONTROLE FINAL,2026-04,Inversion branchement / mauvaise borne,3RN3B CABLE EN BORNE E AU LIEU DE < E PUIS CABLE EN
+216902596,MIP A350,CONTROLE FINAL,2026-04,Inversion branchement / mauvaise borne,5CPB INVERSION DE BRANCHEMENT ENTRE #PRS~ #PRS~ #PRS~ #PRS~ #PRS~
+216902596,MIP A350,CONTROLE FINAL,2026-04,Inversion branchement / mauvaise borne,135VME INVERSION DE BRANCHEMENT ENTRE LES BORNES A ET
+216902596,MIP A350,CONTROLE FINAL,2026-04,Inversion branchement / mauvaise borne,9KSJ12A INVERSION DE BRANCHEMENT ENTRE LES BORNES A ET
+216902596,MIP A350,CONTROLE FINAL,2026-04,Inversion branchement / mauvaise borne,11CP1B INVERSION DE BRANCHEMENT ENTRE LES BORNES K ET
+216902596,MIP A350,CONTROLE FINAL,2026-04,Borne déverrouillée,1608VC097A BORNE 51 DEVERROUILLEE.
+216902596,MIP A350,CONTROLE FINAL,2026-04,Inversion branchement / mauvaise borne,1WK53A CABLE EN BORNE 5J AU LIEU DE 6H.
+216902596,MIP A350,CONTROLE FINAL,2026-04,Inversion branchement / mauvaise borne,300VT200 INVERSION DE BRANCHEMENT ENTRE LES BORNES 3A
+216902596,MIP A350,CONTROLE FINAL,2026-04,Inversion branchement / mauvaise borne,3RN3A CABLE EN BORNE W AU LIEU DE < W.
+216902596,MIP A350,CONTROLE FINAL,2026-04,Câble/pièce manquant(e),3RN2A MANQUE LE CABLE DE REPRISE EN BORNE < P.
+216902596,MIP A350,CONTROLE FINAL,2026-04,Inversion branchement / mauvaise borne,PLAQUETTES INVERSEES ENTRE LES FIN 11CP1B ET 11CP1G.
+216902202,742VU,CABLES,2026-04,Câble coupé / abîmé / cassé,"cable endommagé trifilaire 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la ligne "
+216900574,PTVU,CONTROLE FINAL,2026-04,Inversion branchement / mauvaise borne,Inversion de branchement entre 2HB2 A Borne D3 et 4HA2
+216900121,MIP A350,CABLES,2026-04,Câble/pièce manquant(e),"Cable VNB24 manquant 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la ligne A350 ,"
+216899465,740VU,FOURNISSEUR,2026-04,Câble coupé / abîmé / cassé,"TOLE DE FOND ENDOMMAGEE 
+Type of nonconformity : Structural and Mechanical Assembly
+* Sur la ligne A"
+216897403,E-RUDDER,INTERNE,2026-03,Autre,"Mauvaise Référence de connecteur 
+Type of nonconformity : Incorrect connector
+* Nous constatons que "
+216889831,MIP A350,CONTROLE FINAL,2026-03,Métallisation / bonding,1608VC068A BORNE AA CABLE BLEU ENTAILLEE.
+216888776,MIP A350,INTERNE,2026-03,Autre,"Retouches qualité contrôle final 
+Type of nonconformity : Electrical Assembly Installation
+* Merci d"
+216888625,E-RUDDER,CONTROLE FINAL,2026-03,Autre,Mauvaise référence de connecteur monté en 1000CE3 B.
+216887860,E-RUDDER,CONTROLE FINAL,2026-03,Autre,Mauvaise référence de connecteur monté en 1000CE2 B.
+216886841,300VU,CABLES,2026-03,Longueur câble (court/surlongueur),Harnais reçu trop court
+216885187,Other,Unknown,2026-03,Cheminement / contrainte,"Interference 313VU structure 
+Type of nonconformity : Clash between parts
+*
+Cadre 3 gauche poste pil"
+216879333,PTVU,INTERNE,2026-03,Autre,Défaut de continuité entre les bornes W4 et W5 de
+216878805,742VU,CABLES,2026-03,Câble/pièce manquant(e),"CABLES MANQUANTS 742VU 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la ligne A330"
+216878524,740VU,CONTROLE FINAL,2026-03,Inversion branchement / mauvaise borne,7XCA CABLE EN A1 AU LIEU DE A3.
+216878524,740VU,CONTROLE FINAL,2026-03,Inversion branchement / mauvaise borne,2PHA CABLE EN D3 AU LIEU DE D2.
+216878524,740VU,CONTROLE FINAL,2026-03,Autre,103PHD01 SHUNT MECA MAL POSITIONNE.
+216878524,740VU,CONTROLE FINAL,2026-03,Inversion branchement / mauvaise borne,CABLE EN 14QM1 BORNE 2 AU LIEU DE 6XB BORNE 2.
+216877896,743VU,INTERNE,2026-03,Autre,14PHB BASE CONTACTEUR A REMPLACER PAR LA PRODUCTION.
+216875395,743VU,CONTROLE FINAL,2026-03,Autre,14PHB BASE CONTACTEUR A CHANGER.
+216874454,PTVU,CONTROLE FINAL,2026-03,Autre,"PLATINE F9251026720200 NON SERREE 
+Type of nonconformity : Structural and Mechanical Assembly
+* Sur "
+216873346,740VU,CONTROLE FINAL,2026-03,Inversion branchement / mauvaise borne,7XCA CABLE EN A1 AU LIEU DE A3.
+216873346,740VU,CONTROLE FINAL,2026-03,Inversion branchement / mauvaise borne,2PHA CABLE EN D3 AU LIEU DE D2.
+216873346,740VU,CONTROLE FINAL,2026-03,Autre,103PHD01 MAL POSITIONNE.
+216873346,740VU,CONTROLE FINAL,2026-03,Inversion branchement / mauvaise borne,CABLE EN 14QM1 BORNE 2 AU LIEU DE 6XB BORNE2.
+216872831,740VU,CABLES,2026-03,Autre,"CABLE MAL CHEMINE 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la ligne A330 , MS"
+216872509,631VU,INTERNE,2026-03,Câble coupé / abîmé / cassé,"RAMPE EQUIPEE F9251059700400 ENDOMMAGEE 
+Type of nonconformity : Structural and Mechanical Assembly
+"
+216872258,740VU,INTERNE,2026-03,Longueur câble (court/surlongueur),1 vis trop courte sur fixation de harnais côté façade avant
+216872258,740VU,INTERNE,2026-03,Autre,"Sous platine shunt , 3 tyraps à rerprendre"
+216872258,740VU,INTERNE,2026-03,Autre,"Sous platine shunt , côté structure , 1 faisceau trop"
+216872258,740VU,INTERNE,2026-03,Autre,"Porte 742VU , 4 points de fixation d'étiquettes fonction"
+216872258,740VU,INTERNE,2026-03,Autre,Circuit de surveillance du 31WF ( G78 ) en contact avec la rampe
+216866658,740VU,CABLES,2026-03,Câble/pièce manquant(e),"CABLES MANQUANTSET TROP COURTS 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la li"
+216864922,300VU,CONTROLE FINAL,2026-03,Autre,Contrôle final 300VU MSN 160
+216860197,631VU,INTERNE,2026-03,Câble coupé / abîmé / cassé,"RAMPE F9251059700400 ABIMEE 
+Type of nonconformity : Structural and Mechanical Assembly
+* Sur la lig"
+216854475,Other,Unknown,2026-03,Autre,BF4-FR63/64-197AT-LH-ABS2210B301F-DC
+216854426,1211VB,CABLES,2026-03,Longueur câble (court/surlongueur),"Câble trop court 
+Type of nonconformity : Harness length
+* Sur le poste sous ensemble il a été const"
+216851910,PTVU,CONTROLE FINAL,2026-03,Inversion branchement / mauvaise borne,Câble BF24 N° : 3163-0588 branché en 1WS A 7 au lieu de
+216851683,MIP A350,CONTROLE FINAL,2026-03,Borne déverrouillée,100VG400 UN DEVERROUILLAGE.
+216851683,MIP A350,CONTROLE FINAL,2026-03,Inversion branchement / mauvaise borne,1609VC002 INVERSION DE BRANCHEMENT ENTRE LES BORNES 48
+216851683,MIP A350,CONTROLE FINAL,2026-03,Inversion branchement / mauvaise borne,115VMA INVERSION DE BRANCHEMENT ENTRE LES BORNES L ET
+216851683,MIP A350,CONTROLE FINAL,2026-03,Inversion branchement / mauvaise borne,3SEA INVERSION DE BRANCHEMENT ENTRE #PRS~ #PRS~ #PRS~ #PRS~ #PRS~
+216851683,MIP A350,CONTROLE FINAL,2026-03,Inversion branchement / mauvaise borne,5CPC INVERSION DE BRANCHEMENT ENTRE LES BORNES A ET B
+216851683,MIP A350,CONTROLE FINAL,2026-03,Inversion branchement / mauvaise borne,130RHA INVERSION DE BRANCHEMENT ENTRE LES BORNES 7 ET
+216851683,MIP A350,CONTROLE FINAL,2026-03,Inversion branchement / mauvaise borne,1608VC020A INVERSION DE BRANCHEMENT ENTRE LES BORNES 58
+216851683,MIP A350,CONTROLE FINAL,2026-03,Inversion branchement / mauvaise borne,1WK11A CABLE EN BORNE 9A AU LIEU DE 9B.
+216851683,MIP A350,CONTROLE FINAL,2026-03,Inversion branchement / mauvaise borne,8DG2A INVERSION DE BRANCHEMENT ENTRE #PRS~ #PRS~ #PRS~ #PRS~ #PRS~
+216851683,MIP A350,CONTROLE FINAL,2026-03,Inversion branchement / mauvaise borne,3RN3B CABLE EN BORNE W AU LIEU DE < W.
+216851683,MIP A350,CONTROLE FINAL,2026-03,Inversion branchement / mauvaise borne,11CP1E INVERSION DE BRANCHEMENT ENTRE LES BORNES C ET
+216851683,MIP A350,CONTROLE FINAL,2026-03,Inversion branchement / mauvaise borne,1610VC027 INVERSION DE BRANCHEMENT ENTRE LES BORNES 4
+216851683,MIP A350,CONTROLE FINAL,2026-03,Inversion branchement / mauvaise borne,3RN3A CABLE EN BORNE W AU LIEU DE < W.
+216851659,MIP A350,CONTROLE FINAL,2026-03,Câble coupé / abîmé / cassé,1610VC047 PRISE DETERIORE DETROMPEUR CASSE.
+216849146,740VU,INTERNE,2026-03,Autre,Contact avec la structure à proximité de 6PB1
+216849146,740VU,INTERNE,2026-03,Autre,Faisceau lâche entre les supports le long de la structure
+216849146,740VU,INTERNE,2026-03,Autre,Ajouter un tyrap à proximité de 7CA1
+216848575,Other,Unknown,2026-03,Autre,"Support Harnais 1506VB cassé 
+Type of nonconformity : Broken
+* MSN 802 / FUSELAGE EXTERIEUR / BELLYF"
+216846510,PTVU,INTERNE,2026-03,Câble coupé / abîmé / cassé,"EQUIPEMENT ENDOMMAGE 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la ligne A330 ,"
+216837425,MIP A400M,CABLES,2026-03,Autre,Mauvaise MEO reprises de blindage
+216836886,740VU,INTERNE,2026-03,Autre,"BARRE: p/n non conforme 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la ligne A33"
+216834851,MIP A350,INTERNE,2026-03,Autre,"Retouches qualité contrôle final 
+Type of nonconformity : Electrical Assembly Installation
+* Merci d"
+216831990,300VU,CONTROLE FINAL,2026-03,Autre,RETOUCHES TEST MSN 160
+216831701,MIP A350,CONTROLE FINAL,2026-03,Inversion branchement / mauvaise borne,1608VC091A DETROMPAGE EN A5 AU LIEU DE A4
+216831701,MIP A350,CONTROLE FINAL,2026-03,Erreur référence / plaquette,INVERSION DE PLAQUETTE ENTRE LES FIN 9KSJ14 ET 9KSJ24.
+216831701,MIP A350,CONTROLE FINAL,2026-03,Inversion branchement / mauvaise borne,1702VT001 INVERSION DE BRANCHEMENT ENTRE LES BORNES 1A
+216831701,MIP A350,CONTROLE FINAL,2026-03,Erreur référence / plaquette,3RN2A BORNE CC ERREUR REFERENCE CONTACT.
+216831701,MIP A350,CONTROLE FINAL,2026-03,Inversion branchement / mauvaise borne,3RN3A CABLE EN BORNE < E AU LIEU DE K.
+216831701,MIP A350,CONTROLE FINAL,2026-03,Inversion branchement / mauvaise borne,1WK12A CABLE EN BORNE 14J AU LIEU DE 14K ET 15J AU LIEU
+216831701,MIP A350,CONTROLE FINAL,2026-03,Inversion branchement / mauvaise borne,1WK53A CABLE EN BORNE 13K AU LIEU DE 15K.
+216831701,MIP A350,CONTROLE FINAL,2026-03,Inversion branchement / mauvaise borne,3RN3B INVERSION DE BRANCHEMENT ENTRE LES BORNES < E ET
+216831701,MIP A350,CONTROLE FINAL,2026-03,Inversion branchement / mauvaise borne,51CVA CABLE EN BORNE D AU LIEU DE B.
+216831701,MIP A350,CONTROLE FINAL,2026-03,Autre,1608VC105 INVERSION DE BRANHCEMENT ENTRE LES BORNES 2
+216831701,MIP A350,CONTROLE FINAL,2026-03,Inversion branchement / mauvaise borne,3SEB CABLE EN BORNE B AU LIEU DE A.
+216831701,MIP A350,CONTROLE FINAL,2026-03,Autre,9KSJ14 BORNE 14 INVERSION AVEC 9KSJ24 BORNE 14.
+216831701,MIP A350,CONTROLE FINAL,2026-03,Inversion branchement / mauvaise borne,412VC006A INVERSION DE BRANCHEMENT ENTRE LES BORNES B
+216831701,MIP A350,CONTROLE FINAL,2026-03,Inversion branchement / mauvaise borne,1608VC020A INVERSION DE BRANCHEMENT ENTRE LES BORNES
+216831701,MIP A350,CONTROLE FINAL,2026-03,Inversion branchement / mauvaise borne,11CP2B CABLE EN BORNE H AU LIEU DE F PUIS EN G AU LIEU
+216831701,MIP A350,CONTROLE FINAL,2026-03,Inversion branchement / mauvaise borne,3RN2A CABLE EN < E AU LIEU DE K.
+216831701,MIP A350,CONTROLE FINAL,2026-03,Inversion branchement / mauvaise borne,3RN2B INVERSION DE BRANCHEMENT ENTRE LES BORNES < I ET
+216831701,MIP A350,CONTROLE FINAL,2026-03,Inversion branchement / mauvaise borne,3RN2B CABLE EN W AU LIEU DE < W.
+216831701,MIP A350,CONTROLE FINAL,2026-03,Inversion branchement / mauvaise borne,1WK21A CABLE EN BORNE 6D AU LIEU DE 11D.
+216831701,MIP A350,CONTROLE FINAL,2026-03,Inversion branchement / mauvaise borne,11CP1C INVERSION DE BRANCHEMENT ENTRE LES BORNES G ET
+216831701,MIP A350,CONTROLE FINAL,2026-03,Inversion branchement / mauvaise borne,500VT111 INVERSION DE BRANCHEMENT ENTRE LES BORNES 1N
+216826753,MIP A350,CABLES,2026-03,Longueur câble (court/surlongueur),"Câble trop court 
+Type of nonconformity : Harness length
+* Sur le poste sous ensemble des câbles ont"
+216820892,300VU,CONTROLE FINAL,2026-03,Autre,3 détrompeurs montés fabriqués par ATM
+216815252,E-RUDDER,Unknown,2026-03,Autre,Suspicion lot de tyrap défectueux
+216806620,MIP A350,CONTROLE FINAL,2026-03,Autre,"Controle final MIP A350 MSN 831 
+Type of nonconformity : Electrical Assembly Installation
+* Contrôle"
+216801004,MFRL,INTERNE,2026-03,Longueur câble (court/surlongueur),"Harnais 452VB court 
+Type of nonconformity : Harness length
+* Lors du controle final du harnais 452V"
+216799298,742VU,CABLES,2026-03,Longueur câble (court/surlongueur),"CABLE TROP COURT 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la ligne A330 , MSN"
+216799151,742VU,CABLES,2026-03,Câble coupé / abîmé / cassé,"CABLE ENDOMMAGE 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la ligne A330 , MSN "
+216787600,MIP A350,CONTROLE FINAL,2026-03,Câble/pièce manquant(e),20TC1A MANQUE LES DEUX CERISES.
+216787600,MIP A350,CONTROLE FINAL,2026-03,Inversion branchement / mauvaise borne,20TC1A INVERSION DE BRANCHEMENT ENTRE LES BORNES BB ET
+216787600,MIP A350,CONTROLE FINAL,2026-03,Inversion branchement / mauvaise borne,1610VC049 CABLE EN BORNE EE AU LIEU DE AA ET CABLE EN
+216787600,MIP A350,CONTROLE FINAL,2026-03,Inversion branchement / mauvaise borne,3SEA CABLE EN BORNE X AU LIEU DE Y.
+216787600,MIP A350,CONTROLE FINAL,2026-03,Inversion branchement / mauvaise borne,3RN1B INVERSION DE BRANCHEMENT ENTRE #PRS~ #PRS~ #PRS~ #PRS~ #PRS~
+216787600,MIP A350,CONTROLE FINAL,2026-03,Inversion branchement / mauvaise borne,9KSJ11 INVERSION DE BRANCHEMENT ENTRE LES BORNES H ET
+216787600,MIP A350,CONTROLE FINAL,2026-03,Inversion branchement / mauvaise borne,7DG1A INVERSION DE BRANCHEMENT ENTRE LES BORNES B ET N.
+216787600,MIP A350,CONTROLE FINAL,2026-03,Inversion branchement / mauvaise borne,300VD001A INVERSION DE BRANCHEMENT ENTRE LES BORNES 37
+216785207,743VU,Unknown,2026-03,Autre,"INSERT ASNA2551A01 NON CONFORME 
+Type of nonconformity : Structural and Mechanical Assembly
+* Sur la"
+216783456,MIP A350,CABLES,2026-03,Câble/pièce manquant(e),"Câble manquant 
+Type of nonconformity : Part lost during production
+* Sur le poste tête A il à été c"
+216777144,E-RUDDER,CONTROLE FINAL,2026-03,Autre,"Pince à sertir non conforme 
+Type of nonconformity : Electrical crimping
+* Sur le E-Rudder Harnais 4"
+216777065,E-RUDDER,CONTROLE FINAL,2026-03,Autre,"Pince à sertir non conforme 
+Type of nonconformity : Electrical crimping
+* Sur le E-Rudder Harnais 4"
+216776959,E-RUDDER,CONTROLE FINAL,2026-03,Autre,"Pince à sertir non conforme 
+Type of nonconformity : Electrical crimping
+* Sur le E-Rudder Harnais 4"
+216776950,E-RUDDER,CONTROLE FINAL,2026-03,Autre,"Pince à sertir non conforme 
+Type of nonconformity : Electrical crimping
+* Sur le E-Rudder Harnais 4"
+216776663,740VU,CONTROLE FINAL,2026-03,Inversion branchement / mauvaise borne,Cable sur 1003VC borne 30 au lieu de 20.
+216776663,740VU,CONTROLE FINAL,2026-03,Inversion branchement / mauvaise borne,Cable sur 1003VC borne 31 au lieu de 21.
+216776663,740VU,CONTROLE FINAL,2026-03,Autre,Cable déverrouillé sur 26XE A borne 2.
+216776663,740VU,CONTROLE FINAL,2026-03,Inversion branchement / mauvaise borne,Cable sur 707VD A borne 21 au lieu de 20.
+216776663,740VU,CONTROLE FINAL,2026-03,Inversion branchement / mauvaise borne,Cable sur 1QF borne 2 au lieu de 1QG1 borne 2.
+216776663,740VU,CONTROLE FINAL,2026-03,Câble/pièce manquant(e),Manque cable 2621-0416 entre 37WE1 borne 2 et 1007VC
+216776663,740VU,CONTROLE FINAL,2026-03,Autre,Mauvaise référence de module sur 707VT 5 ; monté MA2011 au
+216776663,740VU,CONTROLE FINAL,2026-03,Inversion branchement / mauvaise borne,Cable sur 1031VC borne 42 au lieu de 43.
+216776663,740VU,CONTROLE FINAL,2026-03,Continuité / composant HS,Disjoncteur 52QA1 defectueux entre bornes 3 et 5.
+216776386,E-RUDDER,CONTROLE FINAL,2026-03,Autre,"Pince à sertir non conforme 
+Type of nonconformity : Electrical crimping
+* Sur le E-Rudder Harnais 4"
+216775453,MIP A350,Unknown,2026-03,Erreur référence / plaquette,"Plaquettes 7DG2 A et 8DG2 A à refabrique 
+Type of nonconformity : Structural and Mechanical Assembly"
+216774341,E-RUDDER,CONTROLE FINAL,2026-03,Autre,"Pince à sertir non conforme 
+Type of nonconformity : Electrical crimping
+* Sur le E-Rudder Harnais 4"
+216774193,E-RUDDER,CONTROLE FINAL,2026-03,Autre,"Pince à sertir non conforme 
+Type of nonconformity : Electrical crimping
+* Sur le E-Rudder Harnais 4"
+216773962,E-RUDDER,CONTROLE FINAL,2026-03,Autre,"Pince à sertir non conforme 
+Type of nonconformity : Electrical crimping
+* Sur le E-Rudder Harnais 4"
+216773861,740VU,CABLES,2026-03,Longueur câble (court/surlongueur),"Cable 2823-0001 mal cheminé trop court 
+Type of nonconformity : Cable routing
+* Lors du test du meub"
+216773933,MIP A350,CONTROLE FINAL,2026-03,Métallisation / bonding,CABLE 2799-0055 BLEU ENTAILLE AU NIVEAU DE LA FERRULE.
+216773933,MIP A350,CONTROLE FINAL,2026-03,Autre,CABLE 2799-0073 ENTAILLE.
+216773710,E-RUDDER,CONTROLE FINAL,2026-03,Autre,"Pince à sertir non conforme 
+Type of nonconformity : Electrical crimping
+* Sur le E-Rudder Harnais 4"
+216773204,E-RUDDER,CONTROLE FINAL,2026-03,Autre,"Pince à sertir non conforme 
+Type of nonconformity : Electrical crimping
+* Sur le E-Rudder Harnais 4"
+216773100,E-RUDDER,CONTROLE FINAL,2026-03,Autre,"Pince à sertir non conforme 
+Type of nonconformity : Electrical crimping
+* Sur le E-Rudder Harnais 4"
+216772989,740VU,CONTROLE FINAL,2026-03,Autre,Inversion des cables entre les disjoncteurs 1QE 2 et 1WR
+216772860,E-RUDDER,CONTROLE FINAL,2026-03,Autre,"Pince à sertir non conforme 
+Type of nonconformity : Electrical crimping
+* Sur le E-Rudder Harnais 4"
+216772572,MDCD,CABLES,2026-03,Câble/pièce manquant(e),"Câble manquant 
+Type of nonconformity : Electrical Assembly Installation
+* Au poste têtes A , le com"
+216772278,E-RUDDER,CONTROLE FINAL,2026-03,Autre,"Pince à sertir non conforme 
+Type of nonconformity : Electrical crimping
+* Sur le E-Rudder Harnais 4"
+216771748,MFRL,INTERNE,2026-03,Autre,"Dévérouillage prise 9LB-A 
+Type of nonconformity : Electrical Assembly Installation
+* Lors du contro"
+216764872,MIP A350,INTERNE,2026-03,Autre,"Retouches finales 
+Type of nonconformity : Electrical Assembly Installation
+* Merci de reprendre les"
+216764494,E-RUDDER,CONTROLE FINAL,2026-03,Autre,"Pince à sertir non conforme 
+Type of nonconformity : Electrical crimping
+* Sur le E-Rudder Harnais 4"
+216764356,E-RUDDER,CONTROLE FINAL,2026-03,Autre,"Pince à sertir non conforme 
+Type of nonconformity : Electrical crimping
+* Sur le E-Rudder Harnais 4"
+216763878,MIP A350,CONTROLE FINAL,2026-03,Inversion branchement / mauvaise borne,1WK12A CABLE EN 1D AU LIEU DE 1E.
+216763878,MIP A350,CONTROLE FINAL,2026-03,Inversion branchement / mauvaise borne,1WK12A CABLE EN 15A AU LIEU DE 14A.
+216763878,MIP A350,CONTROLE FINAL,2026-03,Inversion branchement / mauvaise borne,1WK21A CABLE EN 5A AU LIEU DE 5B.
+216763878,MIP A350,CONTROLE FINAL,2026-03,Inversion branchement / mauvaise borne,1WK22A CABLE EN 4A AU LIEU DE 4B.
+216763878,MIP A350,CONTROLE FINAL,2026-03,Inversion branchement / mauvaise borne,TO2 : 3RN1B CABLE EN W AU LIEU DE < W.
+216763878,MIP A350,CONTROLE FINAL,2026-03,Inversion branchement / mauvaise borne,115VMB CABLE EN P AU LIEU DE R.
+216763878,MIP A350,CONTROLE FINAL,2026-03,Inversion branchement / mauvaise borne,1608VC091A CABLE EN 17 AU LIEU DE 5.
+216763878,MIP A350,CONTROLE FINAL,2026-03,Autre,312VMA INVERSION ENTRE LES BORNES T ET S.
+216763878,MIP A350,CONTROLE FINAL,2026-03,Autre,411VC005A INVERSION ENTRE LES BORNES C ET D.
+216763878,MIP A350,CONTROLE FINAL,2026-03,Autre,1608VC097A INVERSION ENTRE LES BORNES 45 ET 60 PUIS 46
+216763878,MIP A350,CONTROLE FINAL,2026-03,Inversion branchement / mauvaise borne,1WK53A CABLE EN 7H AU LIEU DE 7G ET 7J AU LIEU DE 7H.
+216763878,MIP A350,CONTROLE FINAL,2026-03,Autre,11CP1F INVERSION ENTRE #PRS~ #PRS~ #PRS~ #PRS~ #PRS~
+216763878,MIP A350,CONTROLE FINAL,2026-03,Autre,3RN2A INVERSION ENTRE LES BORNES E ET F.
+216763878,MIP A350,CONTROLE FINAL,2026-03,Autre,300VN359 CABLE NON CONNECTE.
+216763878,MIP A350,CONTROLE FINAL,2026-03,Autre,300VT101 MODULE 9 INVERSION ENTRE LES BORNES B ET D.
+216763878,MIP A350,CONTROLE FINAL,2026-03,Autre,11CP2C INVERSION ENTRE #PRS~ #PRS~ #PRS~ #PRS~ #PRS~
+216763640,E-RUDDER,CONTROLE FINAL,2026-03,Autre,"Pince à sertir non conforme 
+Type of nonconformity : Electrical crimping
+* Sur le E-Rudder Harnais 4"
+216763414,MDCD,CONTROLE FINAL,2026-03,Inversion branchement / mauvaise borne,Inversion de branchement entre les bornes J et K sur la
+216763414,MDCD,CONTROLE FINAL,2026-03,Autre,Inversion des câbles N° : 3336-5047 et 5048 entre les
+216763232,1033VB,DEMANDE DE DQN,2026-03,Autre,"Déformation boot ABS1379-003 
+Type of nonconformity : Contact twisted / broken
+* Sur le 1033VB , côt"
+216762276,1032VB,DEMANDE DE DQN,2026-03,Autre,"Déformation boot ABS1379-003 
+Type of nonconformity : Contact twisted / broken
+* Sur le 1032VB , côt"
+216758388,Other,FOURNISSEUR,2026-03,Câble coupé / abîmé / cassé,"Ecrou riveté endommagé sur la structure 
+Type of nonconformity : Fastener ( incl. Bolt/Screw/Washer/"
+216758007,PTVU,INTERNE,2026-03,Autre,"INDICATEUR ABS0951B3LM002 H.S. 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la li"
+216757718,Other,INTERNE,2026-03,Autre,"Rampe recu non coudé 
+Type of nonconformity : Incorrect Shape
+* A l'unité électrique , ligne A350 po"
+216757467,MIP A350,CABLES,2026-03,Autre,"câble abimé AD24 
+Type of nonconformity : Damaged Harness
+* Sur la ligne intégration , il a été cons"
+216751384,Other,Unknown,2026-03,Autre,"Incorrect positioning TATprobes C0 RH/LH 
+Type of nonconformity : Part incorrectly fitted
+* MSN : 70"
+216749346,740VU,CABLES,2026-03,Câble/pièce manquant(e),"CABLE MANQUANT 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la ligne A330 , MSN 2"
+216746271,MIP A350,CABLES,2026-03,Câble/pièce manquant(e),"Cable AD24 manquant 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la ligne A350 , "
+216745943,MIP A400M,CONTROLE FINAL,2026-03,Autre,INSPECTION FINALE MIP MSN 162
+216745007,Other,INTERNE,2026-03,Câble coupé / abîmé / cassé,"Platine Arinc endommagée 
+Type of nonconformity : Part not installed
+* Sur la ligne A350 , poste Mec"
+216744375,740VU,INTERNE,2026-03,Autre,"Mauvais numéro de série 6PB2 
+Type of nonconformity : Incorrect content
+* Suite au contrôle des numé"
+216743009,PTVU,CONTROLE FINAL,2026-03,Autre,"RETOUCHE CONTROLE FINAL 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la ligne A33"
+216743090,Other,INTERNE,2026-03,Autre,"Rampe recu non coudé 
+Type of nonconformity : Incorrect Shape
+* A l'unité électrique , ligne A350 po"
+216742459,Other,Unknown,2026-03,Autre,"Incorrect positioning of TAT probes 
+Type of nonconformity : Mis-alignment
+* les sondes TAT que nous"
+216739491,MIP A350,INTERNE,2026-03,Autre,"Retouches finales 
+Type of nonconformity : Electrical Assembly Installation
+* Merci de reprendre les"
+216733534,MDCD,Unknown,2026-03,Autre,"Definition problem MDCD A350 5893VB 
+Type of nonconformity : Electrical Assembly Installation
+* On t"
+216733193,1033VB,DEMANDE DE DQN,2026-03,Autre,"Déformation du Boot 
+Type of nonconformity : Contact twisted / broken
+* A l'Unité Electrique , au la"
+216732644,1032VB,DEMANDE DE DQN,2026-03,Autre,"Déformation du Boot 
+Type of nonconformity : Contact twisted / broken
+* A l'Unité Electrique , au la"
+216729497,740VU,CONTROLE FINAL,2026-03,Autre,27QAA INVERSION ENTRE Z ET 2.
+216729497,740VU,CONTROLE FINAL,2026-03,Autre,703VT16 INVERSION ENTRE M #PRS~ #PRS~
+216729497,740VU,CONTROLE FINAL,2026-03,Inversion branchement / mauvaise borne,CABLE EN 13B AU LIEU DE 14B.
+216729186,1032VB,CONTROLE FINAL,2026-03,Autre,"Déformation du Boot 
+Type of nonconformity : Contact twisted / broken
+* A l'Unité Electrique , au la"
+216728113,740VU,CABLES,2026-03,Autre,"CABLES MANQANTS 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la ligne A330 , MSN "
+216718458,MIP A400M,CABLES,2026-03,Longueur câble (court/surlongueur),Câbles coupés trop courts
+216707983,Other,Unknown,2026-03,Autre,"NC.ITEM/CARGO1/ATTENUATOR/CAP 
+Type of nonconformity : Damaged Parts / Non conform parts
+* During th"
+216706441,Other,Unknown,2026-03,Autre,"ELEC/CARGO1/PLUG/FTI/NOT CONNECTED 
+Type of nonconformity : Connection
+* During the inspection PNE ,"
+216704810,PTVU,INTERNE,2026-03,Autre,"INTEGRALLY LIGHTED PLATE H.S. 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la lig"
+216704011,300VU,FOURNISSEUR,2026-03,Autre,Pions mal positionnés
+17063910,Other,Unknown,2026-03,Autre,"ERGOT WARNING HORN H.S. 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la ligne A33"
+216701496,PTVU,INTERNE,2026-03,Autre,"INDICATEUR CONTROLE-SIGNAL NON CONFORME 
+Type of nonconformity : Electrical Assembly Installation
+* "
+216701404,PTVU,INTERNE,2026-03,Autre,"ERGOT WARNING HORN H.S. 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la ligne A33"
+216699966,MIP A350,INTERNE,2026-03,Autre,"Contrôle final qualité après test 
+Type of nonconformity : Electrical Assembly Installation
+* Merci "
+216698452,MIP A350,CABLES,2026-03,Câble/pièce manquant(e),"Cable AD24 manquant 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la ligne A350 po"
+216696565,Other,Unknown,2026-03,Autre,"ELEC/CARGO1/HARNESS/CLASH/ESN/FTI 
+Type of nonconformity : Clash / Clearance
+* During the inspection"
+216691174,MIP A350,CONTROLE FINAL,2026-03,Autre,1608VC095A MISE EN OEUVRE CONTACT QUADRAX ( ERREUR
+216691174,MIP A350,CONTROLE FINAL,2026-03,Inversion branchement / mauvaise borne,1610VC025 INVERSION DE BRANCHEMENT ENTRE LES BORNES 7
+216691174,MIP A350,CONTROLE FINAL,2026-03,Inversion branchement / mauvaise borne,1608VC019A INVERSION DE BRANCHEMENT ENTRE LES BORNES 37
+216691174,MIP A350,CONTROLE FINAL,2026-03,Inversion branchement / mauvaise borne,300VT101 INVERSION DE BRANCHEMENT ENTRE LES BORNES 3D
+216690173,742VU,CONTROLE FINAL,2026-03,Autre,"Taille collier non conforme 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la ligne"
+216684231,MIP A350,CABLES,2026-03,Câble/pièce manquant(e),"Cable DR24 manquant 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la ligne A350 po"
+216679350,MIP A350,CABLES,2026-03,Longueur câble (court/surlongueur),"Câble trop court 
+Type of nonconformity : Harness length
+* Sur le poste sous ensemble 2S des câbles "
+216678821,Other,Unknown,2026-03,Autre,"CKPT*C6*L24/25*D*Prise harnais NC*BA@* 
+Type of nonconformity : IncorrectFastener/Bolt/Screw/Washer/"
+216676916,MIP A350,CONTROLE FINAL,2026-03,Borne déverrouillée,100VH202 BORNE A DEVERROUILLEE.
+216676916,MIP A350,CONTROLE FINAL,2026-03,Inversion branchement / mauvaise borne,3RN2A CABLE EN BORNE N AU LIEU DE M.
+216676916,MIP A350,CONTROLE FINAL,2026-03,Inversion branchement / mauvaise borne,3RN3A CABLE EN < M AU LIEU DE V.
+216676916,MIP A350,CONTROLE FINAL,2026-03,Inversion branchement / mauvaise borne,1WK21A CABLE EN BORNE KK AU LIEU DE LL.
+216676916,MIP A350,CONTROLE FINAL,2026-03,Inversion branchement / mauvaise borne,8DG2A INVERSION DE BRANCHEMENT ENTRE LES BORNES D ET H.
+216676916,MIP A350,CONTROLE FINAL,2026-03,Inversion branchement / mauvaise borne,115VMA INVERSION DE BRANCHEMENT ENTRE LES BORNES < F ET
+216676916,MIP A350,CONTROLE FINAL,2026-03,Inversion branchement / mauvaise borne,9KSJ26 INVERSION DE BRANCHEMENT ENTRE LES BORNES A ET
+216676916,MIP A350,CONTROLE FINAL,2026-03,Inversion branchement / mauvaise borne,9KSJ25 INVERSION DE BRANCHEMENT ENTRE LES BORNES A ET
+216676916,MIP A350,CONTROLE FINAL,2026-03,Inversion branchement / mauvaise borne,11CP2H INVERSION DE BRANCHEMENT ENTRE LES BORNES N ET
+216676916,MIP A350,CONTROLE FINAL,2026-03,Inversion branchement / mauvaise borne,1608VC020A INVERSION DE BRANCHEMENT ENTRE LES BORNES
+216676916,MIP A350,CONTROLE FINAL,2026-03,Inversion branchement / mauvaise borne,3RN2A INVERSION DE BRANCHEMENT ENTRE LES BORNES < B ET
+216676916,MIP A350,CONTROLE FINAL,2026-03,Borne déverrouillée,500VT200 BORNE 1B DEVERROUILLEE.
+216676916,MIP A350,CONTROLE FINAL,2026-03,Inversion branchement / mauvaise borne,300VT200 INVERSION DE BRANCHEMENT ENTRE LES BORNES 4M
+216676916,MIP A350,CONTROLE FINAL,2026-03,Borne déverrouillée,300VT200 BORNE 9L DEVERROUILLEE.
+216675884,PTVU,INTERNE,2026-03,Inversion branchement / mauvaise borne,"Les inverseurs 8GF1 ET 8GF2 sont non conformes , les"
+216675554,MIP A350,FOURNISSEUR,2026-03,Autre,"problème de rivet sur la VN 300VN359 B1 
+Type of nonconformity : Part incorrectly fitted
+* Lors de l"
+216675392,743VU,CABLES,2026-03,Autre,"Câbles mal cheminés 
+Type of nonconformity : Electrical Assembly Installation
+* Suite à la NC Test 2"
+216675307,742VU,CABLES,2026-03,Câble coupé / abîmé / cassé,"Cables endommagés 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la ligne A330 , no"
+216674962,PTVU,Unknown,2026-03,Autre,"RAIL NON CONFORME 
+Type of nonconformity : Structural and Mechanical Assembly
+* Sur la ligne A330 , "
+216672801,Other,Unknown,2026-03,Autre,"ESAO/GTI/1GA Circuit Breaker Tripping 
+Type of nonconformity : Scratch
+* While troubleshooting 1GA b"
+216670079,740VU,CONTROLE FINAL,2026-03,Autre,"Controle final 2149/740VU 
+Type of nonconformity : Electrical Assembly Installation
+* Lors du contro"
+216670072,743VU,CONTROLE FINAL,2026-03,Inversion branchement / mauvaise borne,TO : Sur 1401RH borne 2 fil 2373-0786 au lieu de 2373-0784.
+216670072,743VU,CONTROLE FINAL,2026-03,Inversion branchement / mauvaise borne,TO : Sur 1402RH borne 2 fil 2373-0149 au lieu de 2373-0786.
+216670072,743VU,CONTROLE FINAL,2026-03,Inversion branchement / mauvaise borne,TO : Sur 1417RH borne 2 fil 2373-0784 au lieu de 2373-0149.
+216669268,OHP,FOURNISSEUR,2026-03,Autre,Rampe OHP non conforme
+216669205,PTVU,INTERNE,2026-03,Câble coupé / abîmé / cassé,"SWITCH OVER CASSE 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la ligne A330 , no"
+216668677,Other,Unknown,2026-03,Autre,CKPT*C9*L22*D*Détrompeur cassé*MV*
+216668591,MIP A350,CABLES,2026-03,Câble/pièce manquant(e),"câble manquant 
+Type of nonconformity : Electrical Assembly Installation
+* A350 MSN840 route 2S B
+câ"
+216668449,740VU,INTERNE,2026-03,Autre,"Retouches finales 740VU MSN 2147 
+Type of nonconformity : Electrical Assembly Installation
+* Lors du"
+216666831,Other,Unknown,2026-03,Autre,"Mauvais branchement câble 2791-2056 
+Type of nonconformity : Swap
+* Lors de l'execution de l'of 1028"
+216666114,Other,Unknown,2026-03,Autre,"ELEC/CARGO1/FTI/BONDINGBRAID/DISCONNECT 
+Type of nonconformity : Electrical Bonding
+* During the ins"
+216664944,MIP A350,CABLES,2026-03,Câble/pièce manquant(e),"Câble manquant 
+Type of nonconformity : Missing Part/Component / Incomplete Kit
+* Sur la chaine sous"
+216660994,MIP A400M,CABLES,2026-03,Longueur câble (court/surlongueur),NC DE REGUL Câble trop court
+216658604,PTVU,INTERNE,2026-03,Autre,Empreinte de la tête de vis centrale du bouton 30CE mal
+216655650,PTVU,CONTROLE FINAL,2026-03,Autre,"216655650 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la ligne A330 , MSN 2147 ,"
+216653358,740VU,FOURNISSEUR,2026-03,Câble coupé / abîmé / cassé,"TOLE DE FOND ENDOMMAGEE 
+Type of nonconformity : Structural and Mechanical Assembly
+* Sur la ligne A"
+216653500,MFRL,CONTROLE FINAL,2026-03,Autre,"Déverouillage prise 9LB-A 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la ligne A"
+216652419,MIP A350,CABLES,2026-03,Câble/pièce manquant(e),"DR 24 manquant lors du branchement VT 
+Type of nonconformity : Lack of Material
+* De : FERNANDES , #"
+216651361,Other,Unknown,2026-03,Autre,"ESAO/GTI/1GA Circuit breaker tripping 
+Type of nonconformity : Contact twisted / broken
+* While powe"
+216650708,Other,Unknown,2026-03,Autre,"ESAO/ENG 2/SERVICE INTERPHONE INOP 
+Type of nonconformity : Connection
+* During perfomance of Servic"
+216647964,MIP A350,CONTROLE FINAL,2026-03,Autre,"Plusieurs frètes à reprendre : longueur , serrage."
+216647964,MIP A350,CONTROLE FINAL,2026-03,Autre,"ROUTE 1S , un câble mal pris sous frète."
+216647964,MIP A350,CONTROLE FINAL,2026-03,Autre,FIN 15FC1 A : sur longueur.
+216647964,MIP A350,CONTROLE FINAL,2026-03,Autre,Flamme abimée sur route.
+216647964,MIP A350,CONTROLE FINAL,2026-03,Câble/pièce manquant(e),FIN 500VG133 1 obturateur manquant.
+216647964,MIP A350,CONTROLE FINAL,2026-03,Autre,Frètes à reprendre
+216647964,MIP A350,CONTROLE FINAL,2026-03,Autre,"Tresse V9241939001000 : cosse rayée , le cuivre est apparent"
+216647964,MIP A350,CONTROLE FINAL,2026-03,Autre,"Plusieurs frètes à reprendre : longueur , serrage."
+216647964,MIP A350,CONTROLE FINAL,2026-03,Métallisation / bonding,Bleu à reprendre sur platine V9241902200000
+216647964,MIP A350,CONTROLE FINAL,2026-03,Autre,"ROUTE 2 MP , sur longueur sur 1 câble."
+216647964,MIP A350,CONTROLE FINAL,2026-03,Autre,"ROUTE 1S et 2MP , 2 tyrap bougent en translation , serrage"
+216647964,MIP A350,CONTROLE FINAL,2026-03,Autre,2 frètes à reprendre sur ROUTE 2R ESS.
+216647964,MIP A350,CONTROLE FINAL,2026-03,FOD,FOD : plusieurs bouts de frètes déposées.
+216647964,MIP A350,CONTROLE FINAL,2026-03,FOD,"FOD : ROUTE 2M , outillage de support en mousse de néoprène"
+216647964,MIP A350,CONTROLE FINAL,2026-03,Autre,"Plusieurs frètes à reprendre : longueur , serrage."
+216647964,MIP A350,CONTROLE FINAL,2026-03,Autre,FIN 1608VC020 A : sur longueur.
+216647964,MIP A350,CONTROLE FINAL,2026-03,FOD,FOD : une chute de frète coincée dans le toron.
+216647964,MIP A350,CONTROLE FINAL,2026-03,Autre,"ROUTE 2M , frète à reprendre."
+216647964,MIP A350,CONTROLE FINAL,2026-03,Métallisation / bonding,FIN 100VN206 : bleu à reprendre.
+216647964,MIP A350,CONTROLE FINAL,2026-03,Autre,FIN 7CY H : orientation à reprendre et repositionner à
+216647964,MIP A350,CONTROLE FINAL,2026-03,Métallisation / bonding,Platine V9241937400000 : bleu à reprendre sous platine.
+216647964,MIP A350,CONTROLE FINAL,2026-03,Autre,ROUTE 1R une sur longueur sur un câble.
+216643933,742VU,CABLES,2026-03,Câble/pièce manquant(e),"cables manquants 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la ligne A330 , nou"
+216642516,MIP A400M,CONTROLE FINAL,2026-03,Autre,RETOUCHES TEST MSN 162
+216642382,Other,Unknown,2026-03,FOD,FOD-WINGBOX-LHS-RIB2-521DB-IN-FOD-HA
+216627760,740VU,INTERNE,2026-03,Câble coupé / abîmé / cassé,"MICROSWITCH ENDOMMAGE 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la ligne A330 "
+216618487,MIP A350,CONTROLE FINAL,2026-03,Inversion branchement / mauvaise borne,20TC1A INVERSION DE BRANCHEMENT ENTRE LES BORNES 6 ET
+216618487,MIP A350,CONTROLE FINAL,2026-03,Inversion branchement / mauvaise borne,3RN3B CABLE EN BORNE X AU LIEU DE < X PUIS EN W AU LIEU
+216618487,MIP A350,CONTROLE FINAL,2026-03,Inversion branchement / mauvaise borne,3SEA CABLE EN BORNE L AU LIEU DE M PUIS EN N AU LIEU DE
+216618487,MIP A350,CONTROLE FINAL,2026-03,Borne déverrouillée,2WTA BORNE JJ DEVERROUILLEE.
+216618487,MIP A350,CONTROLE FINAL,2026-03,Inversion branchement / mauvaise borne,1608VC008A INVERSION DE BRANCHEMENT ENTRE LES BORNES 4
+216618487,MIP A350,CONTROLE FINAL,2026-03,Inversion branchement / mauvaise borne,1608VC097A INVERSION DE BRANCHEMENT ENTRE LES BORNES 7
+216618487,MIP A350,CONTROLE FINAL,2026-03,Borne déverrouillée,1GCA BORNE D DEVERROUILLEE.
+216618487,MIP A350,CONTROLE FINAL,2026-03,Inversion branchement / mauvaise borne,3RN1A CABLE EN BORNE B AU LIEU DE A.
+216618487,MIP A350,CONTROLE FINAL,2026-03,Inversion branchement / mauvaise borne,1608VC056A INVERSION DE BRANCHEMENT ENTRE LES BORNES 24
+216618487,MIP A350,CONTROLE FINAL,2026-03,Inversion branchement / mauvaise borne,1608VC010A INVERSION DE BRANCHEMENT ENTRE LES BORNES 7
+216618487,MIP A350,CONTROLE FINAL,2026-03,Inversion branchement / mauvaise borne,1609VC002 INVERSION DE BRANCHEMENT ENTRE LES BORNES 6
+216618487,MIP A350,CONTROLE FINAL,2026-03,Autre,1608VC010A INVERSION DE BRANCHEMENNT ENTRE LES BORNES
+216616954,MIP A350,CABLES,2026-03,Câble/pièce manquant(e),"Cable manquant ADB24 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la ligne A350 p"
+216609710,MIP A350,FOURNISSEUR,2026-03,Câble coupé / abîmé / cassé,"Colonnette de la structure du MIP cassée 
+Type of nonconformity : Structural and Mechanical Assembly"
+216606860,MIP A350,INTERNE,2026-03,Autre,"Retouches finales 
+Type of nonconformity : Electrical Assembly Installation
+* Merci de reprendre les"
+216605359,740VU,INTERNE,2026-03,Câble coupé / abîmé / cassé,"Vis de fixation endommagée decoupling 
+Type of nonconformity : Electrical Assembly Installation
+* Lo"
+216602069,740VU,INTERNE,2026-03,Câble coupé / abîmé / cassé,"Socle de raccordement relais endommagé 
+Type of nonconformity : Electrical Assembly Installation
+* S"
+216600929,MIP A350,CONTROLE FINAL,2026-03,Borne déverrouillée,3RN3B BORNE < Y DEVERROUILLEE.
+216600929,MIP A350,CONTROLE FINAL,2026-03,Inversion branchement / mauvaise borne,3CBA CABLE EN BORNE 41 AU LIEU DE 42.
+216600929,MIP A350,CONTROLE FINAL,2026-03,Inversion branchement / mauvaise borne,1WK53A CABLE EN BORNE 10D AU LIEU DE 10C.
+216600929,MIP A350,CONTROLE FINAL,2026-03,Inversion branchement / mauvaise borne,1WK53A CABLE EN BORNE 11B AU LIEU DE 12A.
+216600929,MIP A350,CONTROLE FINAL,2026-03,Inversion branchement / mauvaise borne,10FC2A INVERSION DE BRANCHEMENT ENTRE #PRS~ #PRS~ #PRS~ #PRS~
+216600929,MIP A350,CONTROLE FINAL,2026-03,Inversion branchement / mauvaise borne,10FC1A INVERSION DE BRANCHEMENT ENTRE LES BORNES < I ET
+216600929,MIP A350,CONTROLE FINAL,2026-03,Inversion branchement / mauvaise borne,1608VC020A INVERSION DE BRANCHEMENT ENTRE LES BORNES 32
+216600929,MIP A350,CONTROLE FINAL,2026-03,Inversion branchement / mauvaise borne,3RN3A CABLE EN BORNE < E AU LIEU DE K PUIS < J AU LIEU DE
+216600929,MIP A350,CONTROLE FINAL,2026-03,Inversion branchement / mauvaise borne,6XFA CABLE EN BORNE 9 AU LIEU DE 8.PUIS EN 8 AU LIEU DE
+216600929,MIP A350,CONTROLE FINAL,2026-03,Inversion branchement / mauvaise borne,11CP1C INVERSION DE BRANCHEMENT ENTRE LES BORNES H ET
+216600929,MIP A350,CONTROLE FINAL,2026-03,Inversion branchement / mauvaise borne,11CP1E INVERSION DE BRANCHEMENT ENTRE LES BORNES C ET
+216600929,MIP A350,CONTROLE FINAL,2026-03,Inversion branchement / mauvaise borne,3RN3B CABLE EN W AU LIEU DE < W.
+216600929,MIP A350,CONTROLE FINAL,2026-03,Inversion branchement / mauvaise borne,11CP2C INVERSION DE BRANCHEMENT ENTRE LES BORNES D ET
+216598114,MIP A400M,CABLES,2026-03,Autre,Câble coupé
+216593864,MIP A350,CABLES,2026-03,Câble/pièce manquant(e),"Câble manquant 
+Type of nonconformity : Electrical Assembly Installation
+* Sur le Poste tête A , il "
+216590798,OHP,FOURNISSEUR,2026-03,Autre,Mauvaise position plaques sur rampe OHP
+216588429,743VU,INTERNE,2026-03,Autre,"Retouches qualité contrôle final 743 VU 
+Type of nonconformity : Electrical Assembly Installation
+* "
+216579161,MIP A350,CONTROLE FINAL,2026-02,Câble coupé / abîmé / cassé,10FC2A CABLE 3422-0293 ABIME A CHANGER.
+216579114,MIP A350,CONTROLE FINAL,2026-02,Autre,10FC2A PRISE A CHANGER.
+216578566,300VU,CABLES,2026-02,Câble/pièce manquant(e),"305VU, Câble  manquant DR22"
+216575897,740VU,INTERNE,2026-02,Câble coupé / abîmé / cassé,"SOCLE DE RACCORDEMENT ENDOMMAGE 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la l"
+216573781,Other,Unknown,2026-02,Autre,"NoE from Supplier 
+Type of nonconformity : Material Characteristics
+* Note : Description taken from "
+216572880,740VU,CONTROLE FINAL,2026-02,Inversion branchement / mauvaise borne,701VDA CABLE EN 9 AU LIEU DE 11.
+216572880,740VU,CONTROLE FINAL,2026-02,Inversion branchement / mauvaise borne,1011VC CABLE EN 25 AU LIEU DE 21.
+216572880,740VU,CONTROLE FINAL,2026-02,Inversion branchement / mauvaise borne,1003VC CABLE EN 22 AU LIEU DE 32.
+216572880,740VU,CONTROLE FINAL,2026-02,Inversion branchement / mauvaise borne,7XCA CABLE EN A2 AU LIEU DE C3.
+216572880,740VU,CONTROLE FINAL,2026-02,Câble/pièce manquant(e),29FPA 1 SHUNT MANQUANT.
+216572880,740VU,CONTROLE FINAL,2026-02,Autre,703VT MODULE 19 INVERSION ENTRE A ET E.
+216572880,740VU,CONTROLE FINAL,2026-02,Borne déverrouillée,2WR BORNE 3 CABLE DEVERROUILLE.
+216572880,740VU,CONTROLE FINAL,2026-02,Autre,10REA ET 23XEA INVERSION DE CES 2 SOCLES RELAIS.
+216572880,740VU,CONTROLE FINAL,2026-02,Inversion branchement / mauvaise borne,CABLE EN 1003VC 17 AU LIEU DE 1001VC 17.
+216572701,740VU,CABLES,2026-02,Câble/pièce manquant(e),"Câbles manquants sur 740 VU 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la ligne"
+216570343,MIP A350,INTERNE,2026-02,Autre,"Retouches finales 
+Type of nonconformity : Electrical Assembly Installation
+* Merci de reprendre les"
+216560642,PTVU,CONTROLE FINAL,2026-02,Etiquette / marquage,"Prise VC MONTE A L'ENVERS +etiquette FIN 
+Type of nonconformity : Electrical Assembly Installation
+*"
+216560177,OHP,Unknown,2026-02,Autre,Lot d'étiquette à recommander
+216560119,MFRL,CONTROLE FINAL,2026-02,Autre,FIN 10 LB A
+216558859,Other,FOURNISSEUR,2026-02,Autre,"Collier de tuyauterie non serré 
+Type of nonconformity : Structural and Mechanical Assembly
+* Sur la"
+216558741,740VU,INTERNE,2026-02,Autre,"Retouches finales 740VU MSN 2152 
+Type of nonconformity : Electrical Assembly Installation
+* lors de"
+216558682,PTVU,INTERNE,2026-02,Autre,La borne M de la prise 774VC se trouve en face du top
+216558368,MFRL,CONTROLE FINAL,2026-02,Autre,FIN 7589VC A
+216558368,MFRL,CONTROLE FINAL,2026-02,Autre,FIN 7589VC A
+216558368,MFRL,CONTROLE FINAL,2026-02,Autre,FIN 7589VC A
+216558368,MFRL,CONTROLE FINAL,2026-02,Autre,FIN 7589VC A
+216558190,Other,INTERNE,2026-02,Câble coupé / abîmé / cassé,"Rampe endommagée 
+Type of nonconformity : Riveting
+* Sur la ligne A350 , poste MECA , nous avons con"
+216557757,MIP A350,CONTROLE FINAL,2026-02,Inversion branchement / mauvaise borne,INVERSION DE BRANCHEMENT ENTRE LES PRISES 9KSJ26 ET
+216557757,MIP A350,CONTROLE FINAL,2026-02,Borne déverrouillée,31LEA BORNE 6 DEVERROUILLEE.
+216557757,MIP A350,CONTROLE FINAL,2026-02,Inversion branchement / mauvaise borne,3WTB CABLE EN HH AU LIEU DE NN.
+216557757,MIP A350,CONTROLE FINAL,2026-02,Inversion branchement / mauvaise borne,3SEA CABLE EN BORNE L AU LIEU DE M PUIS CABLE EN X AU
+216557757,MIP A350,CONTROLE FINAL,2026-02,Inversion branchement / mauvaise borne,11CP1C INVERSION DE BRANCHEMENT ENTRE LES BORNES E ET
+216557757,MIP A350,CONTROLE FINAL,2026-02,Inversion branchement / mauvaise borne,1608VC044A INVERSION DE BRANCHEMENT ENTRE LES BORNES 6
+216557757,MIP A350,CONTROLE FINAL,2026-02,Inversion branchement / mauvaise borne,10FC1A INVERSION DE BRANCHEMENT ENTRE LES BORNES S ET
+216557757,MIP A350,CONTROLE FINAL,2026-02,Inversion branchement / mauvaise borne,3RN1A CABLE EN BORNE W AU LIEU DE < W.
+216548060,OHP,FOURNISSEUR,2026-02,Autre,Nouvelle rampe OHP non conforme
+216546227,MIP A350,INTERNE,2026-02,Câble coupé / abîmé / cassé,"Rampe endommagée 
+Type of nonconformity : Riveting
+* Il a été constaté au poste integration que la r"
+216543862,PTVU,INTERNE,2026-02,Autre,Mauvaises empreintes des vis latérales des boutons de
+216543756,MIP A350,CABLES,2026-02,Câble coupé / abîmé / cassé,"Cables DR24 endommagé 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la ligne A350 "
+216543752,MIP A350,CONTROLE FINAL,2026-02,Autre,317VC001A BORNE E CABLE ENTAILLE AU NIVEAU DE LA
+216543121,MIP A350,INTERNE,2026-02,Câble coupé / abîmé / cassé,"Rampe endommagée 
+Type of nonconformity : Riveting
+* Il a été constaté au poste integration que la r"
+216540276,MIP A350,INTERNE,2026-02,Câble coupé / abîmé / cassé,"Rampe endommagée 
+Type of nonconformity : Riveting
+* Il a été constaté au poste integration que la r"
+216540202,MIP A350,INTERNE,2026-02,Câble coupé / abîmé / cassé,"Rampe endommagée 
+Type of nonconformity : Riveting
+* Il a été constaté au poste integration que la r"
+216535870,PTVU,CONTROLE FINAL,2026-02,Autre,L'empreinte des vis latérales des boutons des
+216532230,PTVU,CONTROLE FINAL,2026-02,Autre,La prise 671VD est montée du mauvais coté de la
+216531439,MIP A350,CABLES,2026-02,Câble coupé / abîmé / cassé,"Cables AD24 endommagés 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la ligne A350"
+216529850,MIP A350,CONTROLE FINAL,2026-02,Inversion branchement / mauvaise borne,100VT400 INVERSION DE BRANCHEMENT ENTRE LES BORNES 1K
+216529850,MIP A350,CONTROLE FINAL,2026-02,Inversion branchement / mauvaise borne,312VMA INVERSION DE BRANCHEMENT ENTRE LES BORNES C ET
+216529850,MIP A350,CONTROLE FINAL,2026-02,Inversion branchement / mauvaise borne,5GAA INVERSION DE BRANCHEMENT ENTRE LES BORNES E ET F.
+216529850,MIP A350,CONTROLE FINAL,2026-02,Autre,300VG333 UNE BORNE DEVERROOUILLEE.
+216529850,MIP A350,CONTROLE FINAL,2026-02,Inversion branchement / mauvaise borne,1608VC105A INVERSION DE BRANCHEMENT ENTRE LES BORNES 3
+216529850,MIP A350,CONTROLE FINAL,2026-02,Inversion branchement / mauvaise borne,135VMF INVERSION DE BRANCHEMENT ENTRE LES BORNES K ET .
+216529850,MIP A350,CONTROLE FINAL,2026-02,Inversion branchement / mauvaise borne,3RN1B CABLE EN BORNE < B AU LIEU DE < C PUIS < T AU LIEU
+216529850,MIP A350,CONTROLE FINAL,2026-02,Inversion branchement / mauvaise borne,3RN2B CABLE EN BORNE X AU LIEU DE < X.
+216529850,MIP A350,CONTROLE FINAL,2026-02,Inversion branchement / mauvaise borne,3DG2A INVERSION DE BRANCHEMENT ENTRE LES BORNES 1 ET 6.
+216529850,MIP A350,CONTROLE FINAL,2026-02,Inversion branchement / mauvaise borne,1WK03A CABLE EN BORNE 9C AU LIEU DE 9D PUIS CABLE EN
+216529850,MIP A350,CONTROLE FINAL,2026-02,Autre,300VT103 INVERSION DE BRANHCEMENT ENTRE LES BORNES 1P
+216528300,740VU,CONTROLE FINAL,2026-02,Inversion branchement / mauvaise borne,10XA CABLE EN B1 AU LIEU DE A1.
+216528300,740VU,CONTROLE FINAL,2026-02,Inversion branchement / mauvaise borne,701VDA CABLE EN 24 AU LIEU DE 14.
+216528300,740VU,CONTROLE FINAL,2026-02,Inversion branchement / mauvaise borne,703VT MODULE 16 CABLE EN C AU LIEU DE U.
+216528300,740VU,CONTROLE FINAL,2026-02,Autre,1005VC INVERSION ENTRE LES BORNES 6 ET 4.
+216528300,740VU,CONTROLE FINAL,2026-02,Inversion branchement / mauvaise borne,1005VC CABLE EN 19 AU LIEU DE 9.
+216520552,MIP A350,CABLES,2026-02,Câble coupé / abîmé / cassé,"Cable AD24 endommagé 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la ligne A350 ,"
+216519053,PTVU,INTERNE,2026-02,Etiquette / marquage,"Marquage colonnette effacé 
+Type of nonconformity : Structural and Mechanical Assembly
+* Sur la lign"
+216518890,OHP,FOURNISSEUR,2026-02,Autre,Rampe OHP non conforme
+216516544,PTVU,INTERNE,2026-02,Etiquette / marquage,"Marquage colonnette effacé 
+Type of nonconformity : Structural and Mechanical Assembly
+* Sur la lign"
+216514767,OHP,Unknown,2026-02,Autre,Mauvaise position plaque sur rampe OHP
+216507904,MIP A350,CONTROLE FINAL,2026-02,Autre,1608VC087A MAUVAIS CONTACT DANS LA BORNE EE.
+216507151,740VU,CABLES,2026-02,Longueur câble (court/surlongueur),"câbles trop court 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la ligne A330 , 74"
+216506719,MIP A350,CABLES,2026-02,Longueur câble (court/surlongueur),"3 câbles trop courts venant de l'impress 
+Type of nonconformity : Harness length
+* De : MONTANA , VI"
+216502898,740VU,CONTROLE FINAL,2026-02,Autre,703VT15 BORNE B ET 10XHA BORNE X1 ERREUR DE
+216501197,Other,Unknown,2026-02,Autre,"Localisation : Cockpit , Cadre 4/5 , Lisse 23 , Côté Droit."
+216501197,Other,Unknown,2026-02,Autre,Plan d’Installation : VDOMPAINSQIP5 // OF : 1027703997.
+216501197,Other,Unknown,2026-02,Inversion branchement / mauvaise borne,"Description du défaut : Constatons sur avion , le backshell de la prise 15FC2_A mal orienté ( 105° a"
+216501197,Other,Unknown,2026-02,Autre,Impact sur les accès en FAL : Aucun.
+216501197,Other,Unknown,2026-02,Autre,Intervention Demandée : Demandons remise en conformité.
+216499104,MIP A350,INTERNE,2026-02,Autre,"1027537814 
+Type of nonconformity : Electrical Assembly Installation
+* Merci de reprendre les points"
+216498856,MIP A350,CABLES,2026-02,Câble/pièce manquant(e),"Câble manquant 
+Type of nonconformity : Electrical Assembly Installation
+* Sur le poste sous ensembl"
+216498789,1211VB,CABLES,2026-02,Autre,"Câble abimé 
+Type of nonconformity : Electrical Assembly Installation
+* Un câble à été abimé en sous"
+216498732,MIP A350,CABLES,2026-02,Câble/pièce manquant(e),"Câble manquant 
+Type of nonconformity : Electrical Assembly Installation
+* Il a été constaté sur le "
+216493778,740VU,CONTROLE FINAL,2026-02,Autre,INVERSION DES PRISES 701VDA ET 705VDA.
+216493778,740VU,CONTROLE FINAL,2026-02,Inversion branchement / mauvaise borne,27QAA CABLE EN B AU LIEU DE X.
+216491380,MIP A400M,CABLES,2026-02,Longueur câble (court/surlongueur),Câble trop court
+216491021,MIP A400M,CABLES,2026-02,Longueur câble (court/surlongueur),Câble trop court
+216487866,300VU,CABLES,2026-02,Longueur câble (court/surlongueur),Câble trop court
+216487754,MIP A400M,CABLES,2026-02,Autre,Mauvaise MEO du câble
+216487707,MIP A400M,CABLES,2026-02,Autre,2 câbles reçus non imprimés
+216475162,MIP A400M,CABLES,2026-02,Autre,Mauvaise MEO du câble
+216475092,MIP A350,CONTROLE FINAL,2026-02,Autre,"Controle final MIP A350 MSN 823 
+Type of nonconformity : Electrical Assembly Installation
+* Veuillez"
+216474438,740VU,CABLES,2026-02,Câble/pièce manquant(e),"cable manquant 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la ligne A330 , nous "
+216472727,MIP A400M,CABLES,2026-02,Longueur câble (court/surlongueur),NC DE REGUL Câble trop court
+216465926,OHP,FOURNISSEUR,2026-02,Autre,Mauvaise position plaque sur rampe OHP
+216463975,MIP A350,CONTROLE FINAL,2026-02,Inversion branchement / mauvaise borne,3RN1B CABLE EN B AU LIEU DE U.
+216463975,MIP A350,CONTROLE FINAL,2026-02,Autre,9KSJ15 ET 9KSJ16 INVERSION DE PRISES.
+216463975,MIP A350,CONTROLE FINAL,2026-02,Autre,311VC001A INVERSION ENTRE LES BORNES 12 ET 6.
+216463975,MIP A350,CONTROLE FINAL,2026-02,Autre,2GGA INVERSION ENTRE LES BORNES Y ET P.
+216463975,MIP A350,CONTROLE FINAL,2026-02,Inversion branchement / mauvaise borne,3RN1A CABLE EN AA AU LIEU DE A.
+216463975,MIP A350,CONTROLE FINAL,2026-02,Autre,7CYA INVERSION ENTRE LES BORNES A ET B.
+216463975,MIP A350,CONTROLE FINAL,2026-02,Borne déverrouillée,100VT311 MODULE 3 BORNES J ET D DEVERROUILLES.
+216463975,MIP A350,CONTROLE FINAL,2026-02,Autre,"1608VC091A BORNE 10 #PRS~ #PRS~ , CABLE SECTIONNE"
+216463975,MIP A350,CONTROLE FINAL,2026-02,Borne déverrouillée,100VT400 MODULE 8 BORNE C DEVERROUILLE.
+216463975,MIP A350,CONTROLE FINAL,2026-02,Autre,1608VC010A INVERSION ENTRE LES BORNES 13 ET 4 PUIS 14
+216459539,PTVU,INTERNE,2026-02,Autre,"Borne H ne verrouille pas 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la ligne A"
+216450637,MIP A350,CONTROLE FINAL,2026-02,Autre,51CVC BORNE N A CHANGER.
+216433442,PTVU,INTERNE,2026-02,Câble/pièce manquant(e),"Manque visserie sur interrupteur 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la "
+216433296,MIP A350,INTERNE,2026-02,Autre,"Retouches qualité contrôle final 
+Type of nonconformity : Electrical Assembly Installation
+* Merci d"
+216431918,PTVU,INTERNE,2026-02,Câble coupé / abîmé / cassé,"SWITCH-OVER ENDOMMAGE 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la ligne A330 "
+216431908,PTVU,INTERNE,2026-02,Inversion branchement / mauvaise borne,"Manque misserie sur inverseur 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la lig"
+216418839,Other,INTERNE,2026-02,Câble coupé / abîmé / cassé,"Platine Arinc endommagée 
+Type of nonconformity : Part not installed
+* Sur la ligne A350 , poste Mec"
+216417528,300VU,FOURNISSEUR,2026-02,Câble/pièce manquant(e),Manque percage porte 304VU
+216409973,300VU,FOURNISSEUR,2026-02,Câble/pièce manquant(e),Manque percage porte 304VU
+216408728,E-RUDDER,INTERNE,2026-02,Câble coupé / abîmé / cassé,"Cables endommagés 4715VB 
+Type of nonconformity : Wiring damage
+* Lors du branchement des têtes B du"
+216406194,MIP A350,CONTROLE FINAL,2026-02,Inversion branchement / mauvaise borne,3RN3A CABLE EN BORNE C AU LIEU DE CC PUIS EN < J AU LIEU
+216406194,MIP A350,CONTROLE FINAL,2026-02,Inversion branchement / mauvaise borne,1WK12A INVERSION DE BRANCHEMENT ENTRE LES BORNES KK ET
+216406194,MIP A350,CONTROLE FINAL,2026-02,Inversion branchement / mauvaise borne,411VC001A INVERSION DE BRANCHEMENT ENTRE LES BORNES 6
+216406194,MIP A350,CONTROLE FINAL,2026-02,Borne déverrouillée,100VG301 UNE BORNE DEVERROUILLEE.
+216406194,MIP A350,CONTROLE FINAL,2026-02,Inversion branchement / mauvaise borne,3SEA INVERSION DE BRANCHEMENT ENTRE LES BORNES L-N-X.
+216406194,MIP A350,CONTROLE FINAL,2026-02,Inversion branchement / mauvaise borne,11CP1B INVERSION DE BRANCHEMENT ENTRE LES BORNES L-W-D.
+216406194,MIP A350,CONTROLE FINAL,2026-02,Inversion branchement / mauvaise borne,1608VC097A INVERSION DE BRANCHEMENT ENTRE LES BORNES 30
+216406194,MIP A350,CONTROLE FINAL,2026-02,Inversion branchement / mauvaise borne,4DB1A INVERSION DE BRANCHEMENT ENTRE LES BORNES A ET D.
+216406194,MIP A350,CONTROLE FINAL,2026-02,Inversion branchement / mauvaise borne,7CYC INVERSION DE BRANCHEMENT ENTRE LES BORNES A ET B.
+216406194,MIP A350,CONTROLE FINAL,2026-02,Inversion branchement / mauvaise borne,7CYA INVERSION DE BRANCHEMENT ENTRE LES BORNES A ET B.
+216406194,MIP A350,CONTROLE FINAL,2026-02,Inversion branchement / mauvaise borne,1608VC089A INVERSION DE BRANCHEMENT ENTRE LES BORNES
+216406175,743VU,FOURNISSEUR,2026-02,Câble coupé / abîmé / cassé,"DOUILLES AUTO-FREINE ENDOMMAGEES 
+Type of nonconformity : Structural and Mechanical Assembly
+* Sur l"
+216402660,300VU,CONTROLE FINAL,2026-02,Autre,Trous ovalisés hors tolérence
+216402535,Other,INTERNE,2026-02,Câble coupé / abîmé / cassé,"Platine Arinc endommagée 
+Type of nonconformity : Part not installed
+* Sur la ligne A350 , poste Mec"
+216397936,MIP A350,INTERNE,2026-02,Autre,"Retouches finales 
+Type of nonconformity : Electrical Assembly Installation
+* Merci de reprendre les"
+216395214,MIP A350,CONTROLE FINAL,2026-02,Continuité / composant HS,300VH400 HS.
+216395214,MIP A350,CONTROLE FINAL,2026-02,Autre,130RH INVERSION ENTRE LES BORNES 3 ET 8.
+216395214,MIP A350,CONTROLE FINAL,2026-02,Autre,2WTB INVERSION ENTRE LES BORNES A ET Z.
+216395214,MIP A350,CONTROLE FINAL,2026-02,Borne déverrouillée,100VG430 1 BORNE DEVERROUILLE.
+216395214,MIP A350,CONTROLE FINAL,2026-02,Inversion branchement / mauvaise borne,115VMA CABLE EN < P AU LIEU DE P.
+216395214,MIP A350,CONTROLE FINAL,2026-02,Autre,"1610VC047 INVERSION ENTRE LES BORNES 12,13,44 ET 31."
+216395214,MIP A350,CONTROLE FINAL,2026-02,Inversion branchement / mauvaise borne,3SEA CABLE EN L AU LIEU DE M ET X AU LIEU DE Y.
+216395214,MIP A350,CONTROLE FINAL,2026-02,Autre,"11CP2F INVERSION ENTRE LES BORNES E , F , N ET K."
+216395214,MIP A350,CONTROLE FINAL,2026-02,Autre,11CP2A INVERSION ENTRE LES BORNES D ET P.
+216395214,MIP A350,CONTROLE FINAL,2026-02,Borne déverrouillée,3RN2B BORNES 20 ET 25 DEVERROUILLES.
+216394948,Other,Unknown,2026-02,Autre,CKPT*C4/5*G*Montage x2 non conf MIP*RL*
+216386756,MIP A350,CABLES,2026-02,Longueur câble (court/surlongueur),"Câble trop court 
+Type of nonconformity : Electrical Assembly Installation
+* Il à été constaté que l"
+216383860,Other,Unknown,2026-02,Autre,"TLB ID 255: 241VU 
+Type of nonconformity : Electrical Assembly Installation
+*"
+216382175,Other,FOURNISSEUR,2026-02,Autre,"Bielle non fixée sur le bati du MIP 
+Type of nonconformity : Structural and Mechanical Assembly
+* Il"
+216381151,300VU,CONTROLE FINAL,2026-02,Autre,Trous ovalisés hors tolérence
+216380858,MIP A350,CONTROLE FINAL,2026-02,Autre,3CBB BORNE 91 CABLE A CHANGER.
+216380858,MIP A350,CONTROLE FINAL,2026-02,Autre,5CPD BORNE F CABLE A CHANGER.
+216380744,MIP A400M,CABLES,2026-02,Longueur câble (court/surlongueur),NC DE REGUL : Câbles trop courts
+216378865,Other,Unknown,2026-02,Autre,INC-CRG2-FR78/79-Y+2215-LH-SEALING-P-BA
+216378612,300VU,CONTROLE FINAL,2026-02,Autre,Contrôle final 300VU MSN 159
+216378434,MIP A400M,CONTROLE FINAL,2026-02,Autre,INSPECTION FINALE MIP MSN 161
+216377519,300VU,Unknown,2026-02,Autre,S/N CNTOR non conforme
+216376660,Other,FOURNISSEUR,2026-02,Câble coupé / abîmé / cassé,"Colonnette de la structure du MIP cassée 
+Type of nonconformity : Broken
+* Sur la ligne A350 , poste"
+216376456,MIP A350,FOURNISSEUR,2026-02,Câble coupé / abîmé / cassé,"Colonnette de la structure du MIP cassée 
+Type of nonconformity : Broken
+* Sur la ligne A350 , poste"
+216369702,740VU,INTERNE,2026-02,Etiquette / marquage,"ETIQUETTE DE FONCTION NON CONFORME 
+Type of nonconformity : Electrical Assembly Installation
+* Sur l"
+216369423,PTVU,INTERNE,2026-02,Câble coupé / abîmé / cassé,"Grommets endommagés 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la ligne A330 , "
+216368810,740VU,CONTROLE FINAL,2026-02,Autre,"5ETOUCHES CONTROLE FINAL 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la ligne A3"
+216366914,PTVU,INTERNE,2026-02,Autre,"314 VU STRUCTURE peinture cadre NC 
+Type of nonconformity : Structural and Mechanical Assembly
+* Sur"
+216364146,743VU,INTERNE,2026-02,Câble/pièce manquant(e),"MANQUE ECROU SUR BASE CONTACTEUR 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la "
+216363993,PTVU,INTERNE,2026-02,Câble/pièce manquant(e),"314 VU STRUCTURE peinture cadre NC 
+Type of nonconformity : Structural and Mechanical Assembly
+* Sur"
+216357178,740VU,CONTROLE FINAL,2026-02,Autre,Mauvaise référence de socle relais monté en 29FP.
+216357178,740VU,CONTROLE FINAL,2026-02,Autre,"Erreur de branchement en 1003VC , fil branché en 31 au"
+216357178,740VU,CONTROLE FINAL,2026-02,Inversion branchement / mauvaise borne,Inversion de branchement en 29FP Aentre les bornes B2
+216357178,740VU,CONTROLE FINAL,2026-02,Inversion branchement / mauvaise borne,Inversion de branchement en 707VD A entre les bornes 16
+216357178,740VU,CONTROLE FINAL,2026-02,Autre,"Erreur de branchement en 707VD A , fil branché en 35 au"
+216357178,740VU,CONTROLE FINAL,2026-02,Inversion branchement / mauvaise borne,Inversion de branchement en 13XE A entre les bornes B
+216357178,740VU,CONTROLE FINAL,2026-02,Inversion branchement / mauvaise borne,Inversion de branchement entre les câbles 2452-0017 et
+216357178,740VU,CONTROLE FINAL,2026-02,Autre,"Erreur de branchement en 27QA A , fil branché en B au"
+216357178,740VU,CONTROLE FINAL,2026-02,Autre,"Erreur de branchement en 703VT 7 , fil branché en L au"
+216357178,740VU,CONTROLE FINAL,2026-02,Autre,"Disjoncteur 2FV H.S , pas de continuité entre les"
+216354076,MIP A350,INTERNE,2026-02,Autre,"Contrôle final qualité après test 
+Type of nonconformity : Electrical Assembly Installation
+* Merci "
+216350524,740VU,INTERNE,2026-02,Etiquette / marquage,"Lot etiquettes foctions non conforme 
+Type of nonconformity : Electrical Assembly Installation
+* Sur"
+216343847,Other,Unknown,2026-02,Autre,"Syst Tuyaut à changer C14/C20 L8/L13 LH 
+Type of nonconformity : Incorrect part fitted
+* MSN : 701
+*"
+216343729,Other,Unknown,2026-02,Autre,"Syst Tuyaut à changer C14/C20 L8/L13 LH 
+Type of nonconformity : Incorrect part fitted
+* MSN : 701
+*"
+216343617,Other,Unknown,2026-02,Autre,"Syst Tuyaut à changer C14/C20 L8/L13 LH 
+Type of nonconformity : Incorrect part fitted
+* MSN : 701
+*"
+216343489,Other,Unknown,2026-02,Autre,"Syst Tuyaut à changer C14/C20 L8/L13 LH 
+Type of nonconformity : Incorrect part fitted
+* MSN : 701
+*"
+216343483,Other,Unknown,2026-02,Autre,"Syst Tuyaut à changer C14/C20 L8/L13 LH 
+Type of nonconformity : Incorrect part fitted
+* MSN : 701
+*"
+216343309,Other,Unknown,2026-02,Autre,"Syst Tuyaut à changer C14/C20 L8/L13 LH 
+Type of nonconformity : Incorrect part fitted
+* MSN : 701
+*"
+216342861,MIP A350,CABLES,2026-02,Câble/pièce manquant(e),"Cable manquant AD22 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la ligne A350 po"
+216340381,Other,Unknown,2026-02,Autre,"Localisation : Cockpit , Cadre 1/3 , Rail Y0/Y-280 , Côté Droit."
+216340381,Other,Unknown,2026-02,Autre,Plan d’Installation : VDOMPAINSQIP3 // OF : 1027668042.
+216340381,Other,Unknown,2026-02,Autre,"Description du défaut : Constatons lors de la réception , un clamp NSA5516-28ND abîmé sur la MIP WF0"
+216340381,Other,Unknown,2026-02,Autre,Impact sur les accès en FAL : Aucun.
+216340381,Other,Unknown,2026-02,Autre,Intervention Demandée : Demandons parachèvement pour remise en conformité.
+216337073,MIP A350,CABLES,2026-02,Câble/pièce manquant(e),"Cables manquants 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la ligne A350 poste"
+216336723,PTVU,INTERNE,2026-02,Autre,"BORNE NE VERROUILLE PAS 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la ligne A33"
+216336213,MIP A350,CONTROLE FINAL,2026-02,Inversion branchement / mauvaise borne,300VH200 INVERSION DE BRANCHEMENT ENTRE LES BORNES L ET
+216336213,MIP A350,CONTROLE FINAL,2026-02,Borne déverrouillée,500VG131 UNE BORNE DEVERROUILLEE.
+216336213,MIP A350,CONTROLE FINAL,2026-02,Borne déverrouillée,100VG204 UNE BORNE DEVERROUILLEE.
+216336213,MIP A350,CONTROLE FINAL,2026-02,Inversion branchement / mauvaise borne,1608VC020A INVERSION DE BRANCHEMENT ENTRE LES BORNES 7-
+216336213,MIP A350,CONTROLE FINAL,2026-02,Inversion branchement / mauvaise borne,1706VC002 INVERSION DE BRANCHEMENT ENTRE LES BORNES B-
+216336213,MIP A350,CONTROLE FINAL,2026-02,Inversion branchement / mauvaise borne,1608VC105A INVERSION DE BRANCHEMENT ENTRE LES BORNES 16
+216336213,MIP A350,CONTROLE FINAL,2026-02,Inversion branchement / mauvaise borne,1WK53A INVERSION DE BRANCHEMENT ENTRE LES BORNES 12A ET
+216336213,MIP A350,CONTROLE FINAL,2026-02,Inversion branchement / mauvaise borne,6TCA INVERSION DE BRANCHEMENT ENTRE LES BORNES D ET E.
+216336213,MIP A350,CONTROLE FINAL,2026-02,Inversion branchement / mauvaise borne,11CP1H INVERSION DE BRANCHEMENT ENTRE LES BORNES U ET
+216336213,MIP A350,CONTROLE FINAL,2026-02,Inversion branchement / mauvaise borne,3RN3A CABLE EN BORNE < J AU LIEU DE < I.
+216336213,MIP A350,CONTROLE FINAL,2026-02,Inversion branchement / mauvaise borne,3RN1A CABLE EN BORNE W AU LIEU DE < W.
+216333275,Other,Unknown,2026-02,Câble coupé / abîmé / cassé,"Trou pour vis de fixation endommagé 
+Type of nonconformity : Defective hole surface/edge
+* MSN : 701"
+216329035,Other,Unknown,2026-02,Autre,"Syst Tuyaut à changer C14/C20 L8/L13 LH 
+Type of nonconformity : Incorrect part fitted
+* MSN : 701
+*"
+216328444,Other,Unknown,2026-02,Autre,"Syst Tuyaut à changer C14/C20 L8/L13 LH 
+Type of nonconformity : Incorrect part fitted
+* MSN : 701
+*"
+216323347,300VU,CONTROLE FINAL,2026-02,Autre,RETOUCHES TEST MSN 159
+216323243,PTVU,Unknown,2026-02,Autre,"RAIL NON CONFORME 
+Type of nonconformity : Bent
+* Sur la ligne A330 , nous avons constaté une
+barret"
+216321850,PTVU,Unknown,2026-02,Autre,"RAIL NON CONFORME 
+Type of nonconformity : Structural and Mechanical Assembly
+* Sur la ligne A330 , "
+216321686,MIP A350,CONTROLE FINAL,2026-02,Autre,CABLE QUADRAX DU FIN 1WK11A BORNE HH AU FIN 1608VC095A
+216321594,MIP A350,CABLES,2026-02,Câble coupé / abîmé / cassé,"Cable MLB24 endommagé 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la ligne A350 "
+216320751,MIP A350,CONTROLE FINAL,2026-02,Câble coupé / abîmé / cassé,1610VC051 DETROMPAGE CASSE.
+216320751,MIP A350,CONTROLE FINAL,2026-02,Inversion branchement / mauvaise borne,1WK22AB CABLE EN 8C AU LIEU DE 8D ET 5A AU LIEU DE 5B
+216320751,MIP A350,CONTROLE FINAL,2026-02,Inversion branchement / mauvaise borne,115VMA CABLE EN < C AU LIEU DE B.
+216320751,MIP A350,CONTROLE FINAL,2026-02,Autre,"1610VC051 INVERSION ENTRE LES BORNES 12,13,14,15 ET 16."
+216320751,MIP A350,CONTROLE FINAL,2026-02,Autre,1606VC002 INVERSION ENTRE LES BORNES 12 ET 13.
+216320751,MIP A350,CONTROLE FINAL,2026-02,Autre,300VD001A INVERSION ENTRE LES BORNES 37 ET 39.
+216320751,MIP A350,CONTROLE FINAL,2026-02,Inversion branchement / mauvaise borne,1WK21AB CABLE EN 5A AU LIEU DE 11A.
+216320751,MIP A350,CONTROLE FINAL,2026-02,Autre,3RN3B INVERSION ENTRE LES BORNES < I ET < J.
+216320751,MIP A350,CONTROLE FINAL,2026-02,Autre,10FC2A INVERSION ENTRE #PRS~ #PRS~ #PRS~ #PRS~ #PRS~
+216320751,MIP A350,CONTROLE FINAL,2026-02,Autre,500VT210 MODULE 1 INVERSION ENTRE LES BORNES U ET V
+216318944,MIP A350,CABLES,2026-02,Câble/pièce manquant(e),"Câble manquant 
+Type of nonconformity : Electrical Assembly Installation
+* Il à été constaté sur le "
+216318106,MIP A350,CABLES,2026-02,Longueur câble (court/surlongueur),"Câble trop court 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la ligne A350 route"
+216313639,740VU,CABLES,2026-02,Longueur câble (court/surlongueur),"cable trop court 
+Type of nonconformity : Electrical Assembly Installation
+* sur la ligne A330 , nou"
+216312731,300VU,FOURNISSEUR,2026-02,Autre,Longueur vis non conforme
+216312177,743VU,FOURNISSEUR,2026-02,Câble/pièce manquant(e),"MANQUE INSERT ASNA2551A01 
+Type of nonconformity : Structural and Mechanical Assembly
+* Sur la ligne"
+216311784,MDCD,CONTROLE FINAL,2026-02,Autre,"Inspection MDCD 5883VB 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la ligne MDCD"
+216310033,MIP A350,CONTROLE FINAL,2026-02,Autre,1608VC043A BORNE 16 CABLE ENTAILLE. ( URGENT CABLE A
+216309208,MIP A350,CONTROLE FINAL,2026-02,Autre,"INSPECTION FINALE MIP MSN 818 
+Type of nonconformity : Electrical Assembly Installation
+* Lors du co"
+216307227,740VU,FOURNISSEUR,2026-02,Câble coupé / abîmé / cassé,"AXE A ANNEAU RABAT CASSE 
+Type of nonconformity : Structural and Mechanical Assembly
+* Sur la ligne "
+216307098,MIP A350,CONTROLE FINAL,2026-02,Autre,1610VC049 BORNE BB ERREUR SUR TWINAX SUITE AU
+216294895,MDCD,CONTROLE FINAL,2026-01,Autre,"Inspection MDCD 5883VB 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la ligne MDCD"
+216288447,MIP A350,INTERNE,2026-01,Autre,"Retouches finales 
+Type of nonconformity : Electrical Assembly Installation
+* Merci de reprendre les"
+216285613,MIP A350,CONTROLE FINAL,2026-01,Autre,1610VC049A BORNE BB MOE CONTACT TWINAX.
+216282409,300VU,Unknown,2026-01,Autre,Trous ovalisés hors tolérence
+216280851,MIP A350,CABLES,2026-01,Autre,"Cable ADB24 abimé 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la ligne A350 , so"
+216280652,1211VB,CABLES,2026-01,Autre,"Cable VNC24 court 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la ligne A350 , po"
+216279936,MIP A350,CONTROLE FINAL,2026-01,Câble coupé / abîmé / cassé,1610VC051 DETROMPAGE CASSEE. ( A CHANGER )
+216273067,PTVU,CONTROLE FINAL,2026-01,Autre,Interdits montés sur les indicateurs 3QL1 et 3QL2 au
+216273067,PTVU,CONTROLE FINAL,2026-01,Torquage / couple,Mauvais torquage des indicateurs. Merci de reprendre le
+216269064,742VU,CABLES,2026-01,Câble/pièce manquant(e),"cable manquant DR22 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la ligne A330 , "
+216267931,300VU,Unknown,2026-01,Autre,Trous ovalisés hors tolérence
+216267947,MIP A400M,CONTROLE FINAL,2026-01,Autre,RETOUCHES TEST MSN 161
+216267121,MIP A350,CONTROLE FINAL,2026-01,Autre,1610VC049 BORNE CC MAUVAISE MISE EN OEUVRE CONTACT
+216267121,MIP A350,CONTROLE FINAL,2026-01,Inversion branchement / mauvaise borne,312VMA INVERSION DE BRANCHEMENT ENTRE LES BORNES T ET
+216267121,MIP A350,CONTROLE FINAL,2026-01,Inversion branchement / mauvaise borne,3WTA INVERSION DE BRANCHEMENT ENTRE LES BORNES U ET V.
+216267121,MIP A350,CONTROLE FINAL,2026-01,Inversion branchement / mauvaise borne,411VC002A INVERSION DE BRANCHEMENT ENTRE LES BORNES P
+216267121,MIP A350,CONTROLE FINAL,2026-01,Borne déverrouillée,300VG101 UNE BORNE DEVERROUILLEE.
+216267121,MIP A350,CONTROLE FINAL,2026-01,Borne déverrouillée,100VG430 UNE BORNE DEVERROUILLEE.
+216267121,MIP A350,CONTROLE FINAL,2026-01,Inversion branchement / mauvaise borne,1610VC051 INVERSION DE BRANCHEMENT ENTRE LES BORNES
+216267121,MIP A350,CONTROLE FINAL,2026-01,Inversion branchement / mauvaise borne,3SEA CABLE EN BORNE N AU LIEU DE M PUIS X AU LIEU DE Y.
+216267121,MIP A350,CONTROLE FINAL,2026-01,Inversion branchement / mauvaise borne,5CPC INVERSION DE BRANCHEMENT ENTRE LES BORNES A ET C.
+216267121,MIP A350,CONTROLE FINAL,2026-01,Inversion branchement / mauvaise borne,3RN1B CABLE EN BORNE X AU LIEU DE < X PUIS W AU LIEU DE
+216267121,MIP A350,CONTROLE FINAL,2026-01,Inversion branchement / mauvaise borne,1610VC047 INVERSION DE BRANCHEMENT ENTRE LES BORNES
+216267121,MIP A350,CONTROLE FINAL,2026-01,Inversion branchement / mauvaise borne,9KSJ22 INVERSION DE BRANCHEMENT ENTRE LES BORNES E ET
+216267121,MIP A350,CONTROLE FINAL,2026-01,Inversion branchement / mauvaise borne,10FC1A INVERSION DE BRANCHEMENT ENTRE LES BORNES < M ET
+216267121,MIP A350,CONTROLE FINAL,2026-01,Autre,1608VC089A INVERSION DE BRANHCEMENT ENTRE LES BORNES
+216267121,MIP A350,CONTROLE FINAL,2026-01,Inversion branchement / mauvaise borne,50LEA INVERSION DE BRANCHEMENT ENTRE LES BORNES 2 ET
+216267121,MIP A350,CONTROLE FINAL,2026-01,Inversion branchement / mauvaise borne,3RN2A CABLE EN BORNE AA AU LIEU DE A.
+216267121,MIP A350,CONTROLE FINAL,2026-01,Inversion branchement / mauvaise borne,1WK11A CABLE EN BORNE 9A AU LIEU DE 9D.
+216267121,MIP A350,CONTROLE FINAL,2026-01,Inversion branchement / mauvaise borne,300VD003A INVERSION DE BRANCHEMENT ENTRE #PRS~ #PRS~ #PRS~
+216267121,MIP A350,CONTROLE FINAL,2026-01,Inversion branchement / mauvaise borne,3RN1A CABLE EN BORNE P AU LIEU DE < P.
+216267121,MIP A350,CONTROLE FINAL,2026-01,Inversion branchement / mauvaise borne,11CP1H INVERSION DE BRANCHEMENT ENTRE LES BORNES R ET
+216267121,MIP A350,CONTROLE FINAL,2026-01,Borne déverrouillée,31LEA BORNE 5 DEVERROUILLEE.
+216266092,PTVU,INTERNE,2026-01,Câble coupé / abîmé / cassé,"SWITCH OVER CASSE 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la ligne A330 , no"
+216265972,PTVU,INTERNE,2026-01,Câble coupé / abîmé / cassé,"Grommet endommagé 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la ligne A330 , no"
+216265884,742VU,CABLES,2026-01,Câble/pièce manquant(e),"cable manquant DR22 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la ligne A330 , "
+216252882,300VU,CABLES,2026-01,Longueur câble (court/surlongueur),Câble trop court
+216251878,MDCD,CABLES,2026-01,Longueur câble (court/surlongueur),"Câbles reçus trop court 
+Type of nonconformity : Size/Dimensions
+* Sur MDCD A350 MSN5106 nous avons "
+216251578,740VU,CONTROLE FINAL,2026-01,Autre,"4ETOUCHES CONTROLE FINAL 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la ligne A3"
+216251193,MIP A350,CONTROLE FINAL,2026-01,Erreur référence / plaquette,9KSJ25 ET 9KSJ26 INVERSION PLAQUETTES.
+216251193,MIP A350,CONTROLE FINAL,2026-01,Autre,100VG400 1 BORNE DEVEROUILLE.
+216251193,MIP A350,CONTROLE FINAL,2026-01,Autre,300VG333 1 BORNE DEVEROUILLE.
+216251193,MIP A350,CONTROLE FINAL,2026-01,Inversion branchement / mauvaise borne,1WK12AB CABLE EN 5A AU LIEU DE 5B.
+216251193,MIP A350,CONTROLE FINAL,2026-01,Autre,300VD003A INVERSION ENTRE LES BORNES 43 ET 41.
+216251193,MIP A350,CONTROLE FINAL,2026-01,Autre,302VMB INVERSION ENTRE #PRS~ #PRS~ #PRS~ #PRS~ #PRS~
+216251193,MIP A350,CONTROLE FINAL,2026-01,Autre,1610VC025 INVERSION ENTRE LES BORNES 19 ET 20.
+216251193,MIP A350,CONTROLE FINAL,2026-01,Autre,7DG2A INVERSION ENTRE LES BORNES D ET H.
+216251193,MIP A350,CONTROLE FINAL,2026-01,Autre,1609VC002 INVERSION ENTRE LES BORNES 9 ET 10.
+216251193,MIP A350,CONTROLE FINAL,2026-01,Autre,3RN2B INVERSION ENTRE LES BORNES < V ET EE.
+216251193,MIP A350,CONTROLE FINAL,2026-01,Autre,1WK53AB INVERSION ENTRE LES BORNES 5H ET 6H.
+216251193,MIP A350,CONTROLE FINAL,2026-01,Autre,300VT200 MODULE 4 BORNE R DEVEROUILLE.
+216251193,MIP A350,CONTROLE FINAL,2026-01,Continuité / composant HS,300VT 200 MODULE 4 BORNE R HS.
+216251193,MIP A350,CONTROLE FINAL,2026-01,Inversion branchement / mauvaise borne,1WK12AB CABLE EN 6D AU LIEU DE 7D.
+216251193,MIP A350,CONTROLE FINAL,2026-01,Autre,300VT400 MODULE 5 BORNE D DEVEROUILLE.
+216251193,MIP A350,CONTROLE FINAL,2026-01,Erreur référence / plaquette,300VT400 MODULE 5 MAUVAISE REFERENCE MONTEE.
+216251193,MIP A350,CONTROLE FINAL,2026-01,Autre,3RN1A INVERSION ENTRE LES BORNES T ET U.
+216251193,MIP A350,CONTROLE FINAL,2026-01,Inversion branchement / mauvaise borne,3RN3A CABLE EN K AU LIEU DE < I.
+216251193,MIP A350,CONTROLE FINAL,2026-01,Inversion branchement / mauvaise borne,3RN1A CABLE EN W AU LIEU DE < W.
+216251193,MIP A350,CONTROLE FINAL,2026-01,Continuité / composant HS,100VH202 HS.
+216247653,Other,FOURNISSEUR,2026-01,Câble coupé / abîmé / cassé,"Colonnette de la structure du MIP cassée 
+Type of nonconformity : Structural and Mechanical Assembly"
+216247547,Other,FOURNISSEUR,2026-01,Câble coupé / abîmé / cassé,"Colonnette de la structure du MIP cassée 
+Type of nonconformity : Structural and Mechanical Assembly"
+216243485,PTVU,CONTROLE FINAL,2026-01,Autre,Inversions de branchements entre les prises 677VC et
+216242498,300VU,Unknown,2026-01,Autre,Rails barrettes tordues
+216242374,PTVU,CONTROLE FINAL,2026-01,Sertissage,"retouches 255VU 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la ligne A330 , nous"
+216237277,MIP A350,CABLES,2026-01,Longueur câble (court/surlongueur),"Câble ADB24 court Qté 4 
+Type of nonconformity : Harness length
+* Sur la route 2S harnais 1101VB du "
+216236664,MIP A350,CONTROLE FINAL,2026-01,Autre,QUADRAX N°3161-0319 SUR 1WK11A #PRS~ #PRS~ #PRS~ ( A
+216230049,MDCD,CABLES,2026-01,Câble coupé / abîmé / cassé,"Câble KL24 abimé 4451-5301 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la ligne "
+216228052,PTVU,INTERNE,2026-01,Autre,"COMPOSANT SCRAPE 
+Type of nonconformity : Electrical Assembly Installation
+* FIRE PUSH SCRAPE"
+216227907,PTVU,INTERNE,2026-01,Autre,"COMPOSANT SCRAPE 
+Type of nonconformity : Electrical Assembly Installation
+* FIRE PUSH SCRAPE
+*"
+216227502,PTVU,INTERNE,2026-01,Autre,"COMPOSANT SCRAPE 
+Type of nonconformity : Electrical Assembly Installation
+* le FIRE PUSH A ETE SCAP"
+216225174,740VU,INTERNE,2026-01,Autre,Défaut de continuité entre les bornes 3 et 5 du
+216224176,740VU,CONTROLE FINAL,2026-01,Autre,Inversion des prises et étiquettes repères entre 701VD
+216224176,740VU,CONTROLE FINAL,2026-01,Autre,Mauvaise référence de socle relais monté en 10RE ligne
+216224176,740VU,CONTROLE FINAL,2026-01,Autre,"Erreur de branchement en 4PCB , câble branché en 16 au"
+216224176,740VU,CONTROLE FINAL,2026-01,Autre,"Erreur de branchement en 3XBA , câble branché en D2 au"
+216224176,740VU,CONTROLE FINAL,2026-01,Inversion branchement / mauvaise borne,Inversion de branchement en 13CE A entre les bornes 2
+216224176,740VU,CONTROLE FINAL,2026-01,Autre,"Erreur de branchement en 2XEB , câble branché en 4 au"
+216224176,740VU,CONTROLE FINAL,2026-01,Autre,"Erreur de branchement en 6PEA , câble branché en B2 au"
+216224176,740VU,CONTROLE FINAL,2026-01,Inversion branchement / mauvaise borne,Inversion de branchement entre 24PB1 borne 2 et 24PB2
+216224176,740VU,CONTROLE FINAL,2026-01,Autre,( N.I ) Défaut de continuité entre les bornes 3 et 5 du
+216223943,1211VB,CABLES,2026-01,Autre,"Cable VNB24 abimé 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la ligne A350 , po"
+216222585,MIP A350,CONTROLE FINAL,2026-01,Autre,1610VC049 BORNE CC MAUVAISE MISE EN OEUVRE CONTACT
+216219894,MIP A350,INTERNE,2026-01,Autre,"Retouches finales 
+Type of nonconformity : Electrical Assembly Installation
+* Merci de reprendre les"
+216216573,MIP A350,CABLES,2026-01,Longueur câble (court/surlongueur),"Câble trop court 
+Type of nonconformity : Harness length
+* Il a été constaté qu'un câble à été coupé"
+216215650,MIP A350,CABLES,2026-01,Longueur câble (court/surlongueur),"Câble trop court 
+Type of nonconformity : Harness length
+* Suite a une erreur sur le poste Tête A un"
+216214582,740VU,CABLES,2026-01,Câble/pièce manquant(e),"CABLE MANQUANT 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la ligne A330 , nous "
+216207337,740VU,INTERNE,2026-01,Etiquette / marquage,"ETIQUETTE FONCTION NON CONFORME 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la l"
+216207223,740VU,CABLES,2026-01,Autre,"erreur de jauge 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la ligne A330 , nous"
+216199739,PTVU,CONTROLE FINAL,2026-01,Autre,Mauvaise référence de contacts montés sur les shunts
+216199739,PTVU,CONTROLE FINAL,2026-01,Autre,"Erreur de branchement en 2WD1 A , fil branché en D1 au"
+216199739,PTVU,CONTROLE FINAL,2026-01,Autre,"Erreur de branchement en 12WG A , fil branché en D1 au"
+216199739,PTVU,CONTROLE FINAL,2026-01,Autre,"Erreur de branchement en 5WD , fil branché en C1 au lieu"
+216199739,PTVU,CONTROLE FINAL,2026-01,Inversion branchement / mauvaise borne,Inversion de branchement en 751VT entre les modules 1
+216199739,PTVU,CONTROLE FINAL,2026-01,Autre,Contact déverrouillé en 5WE1 A borne C3.
+216199739,PTVU,CONTROLE FINAL,2026-01,Autre,"3 contacts déverrouillés en 6WE1 A , bornes B1 , B2 et"
+216198504,743VU,FOURNISSEUR,2026-01,Autre,"PLATINE EQUIPEE NON CONFORME 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la lign"
+216198387,MIP A350,CABLES,2026-01,Câble coupé / abîmé / cassé,"cables AD24 endommagé 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la ligne A350 "
+216195654,PTVU,CONTROLE FINAL,2026-01,Câble/pièce manquant(e),3 Câbles manquants en 260VT 1 :
+216195654,PTVU,CONTROLE FINAL,2026-01,Autre,"Erreur de branchement en 4WZ A , fil branché en D2 au"
+216195654,PTVU,CONTROLE FINAL,2026-01,Câble/pièce manquant(e),Shunt BF24 N° : 3448-0056 Manquant sur 4WZ2 A entre les
+216195654,PTVU,CONTROLE FINAL,2026-01,Câble/pièce manquant(e),Shunt BF24 N° : 3163-0923 Manquant sur 54FP2 A entre les
+216195473,MIP A350,Unknown,2026-01,Câble coupé / abîmé / cassé,"Rails barrettes tordues 
+Type of nonconformity : Bent
+* A réception des rails barrettes « RAIL.BARRE"
+216195391,MIP A350,Unknown,2026-01,Câble coupé / abîmé / cassé,"Rails barrettes tordues 
+Type of nonconformity : Bent
+* A réception des rails barrettes « RAIL.BARRE"
+216195285,MIP A350,Unknown,2026-01,Câble coupé / abîmé / cassé,"Rails barrettes tordues 
+Type of nonconformity : Bent
+* A réception des rails barrettes « RAIL.BARRE"
+216195310,PTVU,CONTROLE FINAL,2026-01,Câble/pièce manquant(e),4 Câbles manquants en 261VT 1 :
+216195247,MIP A350,Unknown,2026-01,Câble coupé / abîmé / cassé,"Rails barrettes tordues 
+Type of nonconformity : Bent
+* A réception des rails barrettes « RAIL.BARRE"
+216195196,MIP A350,Unknown,2026-01,Câble coupé / abîmé / cassé,"Rails barrettes tordues 
+Type of nonconformity : Bent
+* A réception des rails barrettes « RAIL.BARRE"
+216194905,MIP A350,Unknown,2026-01,Câble coupé / abîmé / cassé,"Barrettes tordues 
+Type of nonconformity : Bent
+* A réception des rails barrettes « RAIL.BARRETTE.40"
+216195031,MIP A350,CONTROLE FINAL,2026-01,Autre,INVERSION REFERENCE PRISES ENTRE 11CP1A ET 11CP1F ET
+216194151,740VU,CABLES,2026-01,Câble/pièce manquant(e),"cable manquant 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la ligne A33 , nous c"
+216194149,740VU,CONTROLE FINAL,2026-01,Autre,"RETOUCHES CONTROLE FINAL 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la ligne A3"
+216184552,300VU,FOURNISSEUR,2026-01,Autre,Visserie courtes dans inserts structure
+216180778,MIP A350,Unknown,2026-01,Autre,"rail barrette tordue 
+Type of nonconformity : Distortion
+* Déformation en bout du rail"
+216179045,MIP A350,INTERNE,2026-01,Autre,"Retouches qualité contrôle final 
+Type of nonconformity : Electrical Assembly Installation
+* Merci d"
+216177953,Other,FOURNISSEUR,2026-01,Câble coupé / abîmé / cassé,"Colonnette de la structure du MIP cassée 
+Type of nonconformity : Structural and Mechanical Assembly"
+216175185,1211VB,CABLES,2026-01,Autre,"Câble abimé 
+Type of nonconformity : Damaged Harness
+* Sur la station route 1R il à été constaté qu'"
+216172114,OHP,Unknown,2026-01,Autre,OHP-G Dérivation mal positionnée 2400VB
+216171252,740VU,CONTROLE FINAL,2026-01,Inversion branchement / mauvaise borne,Cable sur 3PC B en borne 16 au lieu de 17.
+216169847,PTVU,INTERNE,2026-01,Continuité / composant HS,"Vis du bouton de commande HS 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la lign"
+216169015,MIP A350,CONTROLE FINAL,2026-01,Autre,1608VC010A ERREUR DETROMPAGE.
+216169015,MIP A350,CONTROLE FINAL,2026-01,Erreur référence / plaquette,ERREUR REFERENCE PRISE SUR 7DG1A ET 8DG1A.
+216169015,MIP A350,CONTROLE FINAL,2026-01,Inversion branchement / mauvaise borne,1WK21A CABLE EN BORNE KK AU LIEU DE HH.
+216169015,MIP A350,CONTROLE FINAL,2026-01,Inversion branchement / mauvaise borne,115VMA INVERSION DE BRANCHEMENT ENTRE LES BORNES H ET
+216169015,MIP A350,CONTROLE FINAL,2026-01,Inversion branchement / mauvaise borne,1608VC075A INVERSION DE BRANCHEMENT ENTRE LES BORNES 16
+216169015,MIP A350,CONTROLE FINAL,2026-01,Inversion branchement / mauvaise borne,3RN3B CABLE EN BORNE E AU LIEU DE < E PUIS EN F AU LIEU
+216169015,MIP A350,CONTROLE FINAL,2026-01,Inversion branchement / mauvaise borne,5CPB INVERSION DE BRANCHEMENT ENTRE LES BORNES G ET J.
+216169015,MIP A350,CONTROLE FINAL,2026-01,Inversion branchement / mauvaise borne,5CPC INVERSION DE BRANCHEMENT ENTRE LES BORNES B ET D.
+216169015,MIP A350,CONTROLE FINAL,2026-01,Inversion branchement / mauvaise borne,51CVC CABLE EN BORNE D AU LIEU DE B.
+216169015,MIP A350,CONTROLE FINAL,2026-01,Inversion branchement / mauvaise borne,1WK03A CABLE EN BORNE 11C AU LIEU DE 10C.
+216169015,MIP A350,CONTROLE FINAL,2026-01,Inversion branchement / mauvaise borne,1608VC074A INVERSION DE BRANCHEMENT ENTRE LES BORNES
+216169015,MIP A350,CONTROLE FINAL,2026-01,Inversion branchement / mauvaise borne,311VC001A INVERSION DE BRANCHEMENT ENTRE LES BORNES 12
+216169015,MIP A350,CONTROLE FINAL,2026-01,Autre,10CP2B INVERSION DE BRANHCEMET ENTRE LES BORNES D ET
+216169015,MIP A350,CONTROLE FINAL,2026-01,Inversion branchement / mauvaise borne,1WK03A CABLE EN BORNE 7E AU LIEU DE 7D.
+216169015,MIP A350,CONTROLE FINAL,2026-01,Inversion branchement / mauvaise borne,3RN3A CABLE EN BORNE W AU LIEU DE < W.
+216164418,MIP A350,Unknown,2026-01,Autre,"rail barrette tordue 
+Type of nonconformity : Distortion
+* Lors de la réception , il a été constaté "
+216164096,MIP A350,INTERNE,2026-01,Autre,"Numéro de serie effacé de la platine 
+Type of nonconformity : Part not installed
+* Sur la ligne A350"
+216163882,PTVU,INTERNE,2026-01,Câble coupé / abîmé / cassé,"Filetage Rampe F9251201000000 endommagé 
+Type of nonconformity : Structural and Mechanical Assembly
+"
+216163812,PTVU,INTERNE,2026-01,Câble coupé / abîmé / cassé,"Vis du bouton de commande HS 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la lign"
+216161437,Other,Unknown,2026-01,Cheminement / contrainte,"S11/12 PRESSURE TEST PORT 13007 
+Type of nonconformity : Assembly Disbonding
+* Lors de l'execution d"
+216156635,PTVU,INTERNE,2026-01,Câble coupé / abîmé / cassé,"Rampe endommagée 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la ligne A330 , MSN"
+216154099,MIP A350,Unknown,2026-01,Autre,"rail barrette tordue 
+Type of nonconformity : Distortion
+* Lors de la réception , il a été constaté "
+216153397,MIP A350,INTERNE,2026-01,Autre,"Numéro de serie effacé de la platine 
+Type of nonconformity : Part not installed
+* Sur la ligne A350"
+216150332,PTVU,INTERNE,2026-01,Autre,"Temp Selector 671HK Hors Tolérance en butée droite ,"
+216149991,MIP A350,CONTROLE FINAL,2026-01,Autre,"Controle final MIP A350 MSN 811 
+Type of nonconformity : Electrical Assembly Installation
+* Contrôle"
+216149115,MIP A350,INTERNE,2026-01,Autre,"Numéro de serie effacé de la platine 
+Type of nonconformity : Part not installed
+* Sur la ligne A350"
+216136623,PTVU,CONTROLE FINAL,2026-01,Inversion branchement / mauvaise borne,Inversion de branchement des câbles entre les prises
+216135746,PTVU,CONTROLE FINAL,2026-01,Autre,"RETOUCHE CONTROLE FINAL 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la ligne A33"
+216134911,MDCD,CABLES,2026-01,Câble/pièce manquant(e),"Câbles manquants 
+Type of nonconformity : Electrical Assembly Installation
+* Au poste têtes A , le c"
+216133847,MIP A350,Unknown,2026-01,Continuité / composant HS,"Boots fibre optique 3161 0582 HS 
+Type of nonconformity : Broken
+* Lors du branchements des fibres o"
+216125341,740VU,CONTROLE FINAL,2026-01,Inversion branchement / mauvaise borne,Cable sur 4PC B en borne 16 au lieu de 15.
+216125341,740VU,CONTROLE FINAL,2026-01,Inversion branchement / mauvaise borne,Cable sur 707VD A en borne 35 au lieu de 34.
+216125341,740VU,CONTROLE FINAL,2026-01,Inversion branchement / mauvaise borne,Cable sur 701VD A en borne 21 au lieu de 22.
+216125341,740VU,CONTROLE FINAL,2026-01,Inversion branchement / mauvaise borne,Cable sur 703VD A en borne 22 au lieu de 19.
+216125341,740VU,CONTROLE FINAL,2026-01,Inversion branchement / mauvaise borne,Cable sur 703VD A en borne 24 au lieu de 22.
+216125341,740VU,CONTROLE FINAL,2026-01,Autre,Inversion sur 703VT entre borne 18A et 19E.
+16995857,Other,Unknown,2026-01,Câble coupé / abîmé / cassé,"ERGOT ENDOMMAGE SUR WARNING HORN 
+* Type of nonconformity : Electrical Assembly Installation
+*
+* Sur"
+216123618,PTVU,INTERNE,2026-01,Câble coupé / abîmé / cassé,"ERGOT ENDOMMAGE SUR WARNING HORN 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la "
+216120479,740VU,INTERNE,2026-01,Autre,"Retouches finales 740VU MSN 2144 
+Type of nonconformity : Electrical Assembly Installation
+*"
+216111411,740VU,INTERNE,2026-01,Autre,"SOCLE DE RACCORDEMENT NSA932847AA H.S. 
+Type of nonconformity : Electrical Assembly Installation
+* S"
+216111281,PTVU,CONTROLE FINAL,2026-01,Câble/pièce manquant(e),Câble BF 24 N° : 2351-0303 manquant entre 15RN 1 et 16RN
+216111281,PTVU,CONTROLE FINAL,2026-01,Câble/pièce manquant(e),Câble BF 24 N° : 2351-0302 manquant entre 15RN 2 et 16RN
+216109128,Other,Unknown,2026-01,Autre,"Connexion oxygène sans habilitation 
+Type of nonconformity : Structural and Mechanical Assembly
+* Lo"
+216106549,Other,FOURNISSEUR,2026-01,Autre,"MeO goupille sur Bielle 
+Type of nonconformity : Part incorrectly fitted
+* A l'unité électrique , su"
+216106072,MDCD,CONTROLE FINAL,2026-01,Erreur référence / plaquette,Inversion de montage des plaquettes repères entre les
+216106072,MDCD,CONTROLE FINAL,2026-01,Inversion branchement / mauvaise borne,Inversion de branchement des câbles entre les prises
+216105468,MIP A350,CONTROLE FINAL,2026-01,Inversion branchement / mauvaise borne,1608VC018A INVERSION DE BRANCHEMENT ENTRE LES BORNES BB
+216105468,MIP A350,CONTROLE FINAL,2026-01,Inversion branchement / mauvaise borne,411VC001A INVERSION DE BRANCHEMENT ENTRE LES BORNES 15
+216105468,MIP A350,CONTROLE FINAL,2026-01,Inversion branchement / mauvaise borne,3RN2A CABLE EN BORNE < R AU LIEU DE X.
+216105468,MIP A350,CONTROLE FINAL,2026-01,Borne déverrouillée,100VG301 UNE BORNE DEVERROUILLEE.
+216105468,MIP A350,CONTROLE FINAL,2026-01,Inversion branchement / mauvaise borne,1608VC075A INVERSION DE BRANCHEMENT ENTRE LES BORNES 13
+216105468,MIP A350,CONTROLE FINAL,2026-01,Inversion branchement / mauvaise borne,3RN2B CABLE EN BORNE < U AU LIEU DE U.
+216105468,MIP A350,CONTROLE FINAL,2026-01,Borne déverrouillée,1608VC067A BORNE 15 DEVERROUILLEE.
+216105468,MIP A350,CONTROLE FINAL,2026-01,Inversion branchement / mauvaise borne,1608VC067A INVERSION DE BRANCHEMENT ENTRE LES BORNES 40
+216105468,MIP A350,CONTROLE FINAL,2026-01,Inversion branchement / mauvaise borne,1608VC060A INVERSION DE BRANCHEMENT ENTRE LES BORNES
+216105468,MIP A350,CONTROLE FINAL,2026-01,Inversion branchement / mauvaise borne,1608VC067A INVERSION DE BRANCHEMENT ENTRE LES BORNES 1
+216105468,MIP A350,CONTROLE FINAL,2026-01,Borne déverrouillée,1608VC067A BORNE 52 DEVERROUILLEE.
+216105468,MIP A350,CONTROLE FINAL,2026-01,Inversion branchement / mauvaise borne,1608VC097A INVERSION DE BRANCHEMENT ENTRE LES BORNES
+216105468,MIP A350,CONTROLE FINAL,2026-01,Inversion branchement / mauvaise borne,3RN1A CABLE EN BORNE P AU LIEU DE < P.
+216099114,MDCD,CABLES,2026-01,Autre,"Cable MLB24 court 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la ligne A350 MDCD"
+216098505,PTVU,CONTROLE FINAL,2026-01,Autre,Mauvaise référence du connecteur 692VC.
+216095063,MIP A350,INTERNE,2026-01,Autre,"Retouches qualité contrôle final 
+Type of nonconformity : Electrical Assembly Installation
+* Merci d"
+216091729,MIP A350,CONTROLE FINAL,2026-01,Autre,411VC001 A Prise déterioréé a remplacer
+216088280,740VU,INTERNE,2026-01,Autre,"VIS ET FILETAGE SUR DECOUPLING UNIT H.S. 
+Type of nonconformity : Electrical Assembly Installation
+*"
+216088032,MIP A350,CABLES,2026-01,Autre,AD22 3422-0190 LONGUEUR 321 CM
+216087834,743VU,INTERNE,2026-01,Câble/pièce manquant(e),Q09-003 : Manque de bleu de metalisation sur la structutre de
+216085084,Other,FOURNISSEUR,2026-01,Autre,"Support mousse montage tuyauterie abimé 
+Type of nonconformity : Structural and Mechanical Assembly
+"
+216084911,740VU,CONTROLE FINAL,2026-01,Autre,"RETOUCHES CONTROLE FINAL 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la ligne A3"
+216083909,Other,Unknown,2026-01,Autre,"16n conformité taille trous 
+Type of nonconformity : Hole drilled undersize
+* Lors d el'exécution de"
+216083260,MIP A350,CONTROLE FINAL,2026-01,Inversion branchement / mauvaise borne,100VH400 INVERSION DE BRANCHEMENT ENTRE LES BORNES A ET
+216083260,MIP A350,CONTROLE FINAL,2026-01,Borne déverrouillée,300VG430 1BORNE DEVERROUILLEE.
+216083260,MIP A350,CONTROLE FINAL,2026-01,Inversion branchement / mauvaise borne,1610VC047 INVERSION DE BRANCHEMENT ENTRE LES BORNES 24
+216083260,MIP A350,CONTROLE FINAL,2026-01,Borne déverrouillée,1608VC043A BORNE 20 DEVERROUILLEE.
+216083260,MIP A350,CONTROLE FINAL,2026-01,Borne déverrouillée,1610VC045 BORNE 14 DEVERROUILLEE.
+216083260,MIP A350,CONTROLE FINAL,2026-01,Inversion branchement / mauvaise borne,302VMB INVERSION DE BRANCHEMENT ENTRE LES BORNES Z ET
+216083260,MIP A350,CONTROLE FINAL,2026-01,Câble/pièce manquant(e),3RN1A MANQUE SHUNT ENTRE LES BORNES N ET FF.
+216083260,MIP A350,CONTROLE FINAL,2026-01,Autre,3RN2B BORNE F NON CONNECTE.
+216083260,MIP A350,CONTROLE FINAL,2026-01,Autre,3RN2B BORNE GG NON CONNECTE.
+216083260,MIP A350,CONTROLE FINAL,2026-01,Inversion branchement / mauvaise borne,3CBB INVERSION DE BRANCHEMENT ENTRE LES BORNES 31 ET
+216083260,MIP A350,CONTROLE FINAL,2026-01,Borne déverrouillée,300VT101 BORNE 5A DEVERROUILLEE.
+216083260,MIP A350,CONTROLE FINAL,2026-01,Inversion branchement / mauvaise borne,311VC001A INVERSION DE BRANCHEMENT ENTRE LES BORNES 2
+216083260,MIP A350,CONTROLE FINAL,2026-01,Inversion branchement / mauvaise borne,300VT101 INVERSION DE BRANCHEMENT ENTRE LES BORNES 5A
+216079347,MIP A350,CABLES,2026-01,Câble/pièce manquant(e),"Câble manquant 
+Type of nonconformity : Missing Part/Component / Incomplete Kit
+* Sur le poste tête "
+216074163,PTVU,CONTROLE FINAL,2026-01,Câble/pièce manquant(e),Câble BF24 N° : 2351-0459 manquant entre 19RN 1 ET 18RN
+216074163,PTVU,CONTROLE FINAL,2026-01,Câble/pièce manquant(e),Câble BF24 N° : 2351-0458 manquant entre 19RN 2 ET 18RN
+216074010,PTVU,INTERNE,2026-01,Autre,Colerette de de l'indicateur controle signal 12CE1
+216071798,OHP,FOURNISSEUR,2026-01,Autre,PLATINE EQUIPEE non conforme
+216064950,MIP A350,CONTROLE FINAL,2026-01,Longueur câble (court/surlongueur),"1610VC047 BORNE 53 CABLE NON CONNECTE , TROP COURT A"
+216064223,MIP A350,CONTROLE FINAL,2026-01,Autre,1WK11A BORNE LL3 CABLE ENTAILLE VEUILLEZ LE CHANGER.
+216062695,MIP A350,CABLES,2026-01,Câble/pièce manquant(e),"3 Câbles manquants branch. 1608VC097A 
+Type of nonconformity : Electrical Assembly Installation
+* Su"
+216060610,Other,Unknown,2026-01,Autre,Cab*G*C17*L1/2*Prise 624VC non conforme
+216060124,740VU,INTERNE,2026-01,Câble coupé / abîmé / cassé,"SOCLE DE RACCORDEMENT ENDOMMAGE 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la l"
+216058462,PTVU,INTERNE,2026-01,Autre,Lampe de la reading light 24LE H.S.
+216055047,MIP A350,INTERNE,2026-01,Autre,"Retouches finales 
+Type of nonconformity : Electrical Assembly Installation
+* Merci de reprendre les"
+216052773,PTVU,INTERNE,2026-01,Câble/pièce manquant(e),"Relais 14MQ endommagé 
+Type of nonconformity : Impact
+* Lors de l'inspection du 295VU , nous conston"
+216050458,MIP A350,CONTROLE FINAL,2026-01,Inversion branchement / mauvaise borne,1608VC087A INVERSION DE BRANCHEMENT ENTRE LES BORNES AA
+216048991,MIP A350,CABLES,2026-01,Câble coupé / abîmé / cassé,"cables ADB24 endommagé 
+Type of nonconformity : Electrical Assembly Installation
+* Sur la ligne A350"
+216038266,Other,FOURNISSEUR,2026-01,Autre,"MOE montage tuyauterie ATA21 à reprendre 
+Type of nonconformity : Gap/Clearance between parts
+* Type"
+216037622,743VU,FOURNISSEUR,2026-01,Autre,"FILETAGE ECROU SUPPORT PRISE H.S. 
+Type of nonconformity : Structural and Mechanical Assembly
+* Sur "

@@ -1,0 +1,81 @@
+flowchart TD
+    Start([Technician opens\nNC Writing Tool]) --> CheckOpen{Open NC\nalready in\nprogress?}
+
+    CheckOpen -->|No| Header[HEADER SCREEN\nMSN, Produit, Détection, Station\nMSN/Station pre-filled from login]
+    CheckOpen -->|Yes| ResumeList[Show existing defect list\nfor this NC]
+
+    Header --> HeaderFilled{All 4 header\nfields filled?}
+    HeaderFilled -->|No| Header
+    HeaderFilled -->|Yes| LockNote[Produit + Détection will\nLOCK after first defect saved]
+    LockNote --> AddDefect
+
+    ResumeList --> AddDefect[ADD DEFECT SCREEN]
+
+    AddDefect --> StepFamily[Step 1: Pick FAMILY\n8 tiles: Branchement / Connexion /\nIntégrité / Manquant / Amont Fab. /\nInstallation / Identification / Autre]
+
+    StepFamily --> StepType[Step 2: Pick TYPE\n2-6 options shown, filtered by family]
+
+    StepType --> LoadFields[Step 3: Form re-renders\nfields specific to that TYPE\nsee Field-Set Table]
+
+    LoadFields --> FillFields[Technician fills fields]
+
+    FillFields --> Validate{Required fields\nfilled + valid?\ne.g. Borne A ≠ Borne B}
+
+    Validate -->|No, hard rule broken\ne.g. A = B| BlockSoft[Inline error shown\nCANNOT save yet]
+    BlockSoft --> FillFields
+
+    Validate -->|No, soft warning\ne.g. FIN format odd| WarnSoft[Warning shown\nCONFIRM ANYWAY available]
+    WarnSoft --> Override{Technician\nconfirms anyway?}
+    Override -->|Yes| LogOverride[Override logged\nfor weekly data-health review]
+    Override -->|No| FillFields
+    LogOverride --> SaveDefect
+
+    Validate -->|Yes, clean| SaveDefect[SAVE DEFECT\nAdded to running list\nDefect N: type + key field]
+
+    SaveDefect --> LockCheck{Is this the\nfirst defect\nsaved on this NC?}
+    LockCheck -->|Yes| LockHeader[Produit + Détection\nfields now LOCKED]
+    LockCheck -->|No| NextAction
+    LockHeader --> NextAction{What next?}
+
+    NextAction -->|Add another,\nsame type/location| Duplicate[DUPLICATE LAST\nPre-fills type + FIN\nclears specific values]
+    Duplicate --> FillFields
+
+    NextAction -->|Add another,\ndifferent type| AddDefect
+
+    NextAction -->|Need to log defect on\na DIFFERENT product or\ndifferent detection stage| BlockedProduct[TOOL REFUSES\nCannot add to this NC\nMust start a NEW NC]
+    BlockedProduct --> Start
+
+    NextAction -->|Edit a saved defect\nbefore submit| EditDefect[Reopen that defect's fields\nsame validation rules apply]
+    EditDefect --> FillFields
+
+    NextAction -->|Done adding defects| ReviewList[REVIEW SCREEN\nFull list of defects shown\nwith auto-generated text preview\nDEFAUTS v1 format]
+
+    ReviewList --> FinalCheck{At least\n1 defect\nsaved?}
+    FinalCheck -->|No| AddDefect
+    FinalCheck -->|Yes| Submit[SUBMIT NC]
+
+    Submit --> Generate[Auto-generate text block\n+ write to SAP long-text field\n+ send structured data to pipeline]
+    Generate --> Done([NC created.\nDone.])
+
+    %% ---- Post-creation: defect found later ----
+    Done -.-> LaterFound{Defect found\nlater during\nretouche?}
+    LaterFound -->|Yes, same MSN/produit| Reopen[Reopen NC\nAppend-only:\nnew defect gets next number\nheader unchanged]
+    Reopen --> AddDefect
+    LaterFound -->|Yes, different product| NewNC[Must be a NEW NC\nsee product-lock rule]
+    NewNC --> Start
+
+    %% ---- Escape hatch, reachable from every dropdown ----
+    StepFamily -.->|"Autre" family| Escape[ESCAPE HATCH\nFree text description required\nLocalisation still asked\nFIN / Zone / Not applicable]
+    StepType -.->|"Autre" type\nwithin any family| Escape
+    LoadFields -.->|Any single field's\n"Autre, préciser"| EscapeField[That ONE field becomes\nfree text, rest of form\nstays structured]
+    Escape --> FillFields
+    EscapeField --> FillFields
+
+    style Start fill:#00205B,color:#fff
+    style Done fill:#00205B,color:#fff
+    style BlockedProduct fill:#C0392B,color:#fff
+    style BlockSoft fill:#C0392B,color:#fff
+    style Escape fill:#E0A800,color:#000
+    style EscapeField fill:#E0A800,color:#000
+    style LockHeader fill:#E0A800,color:#000
+    style Submit fill:#1E8449,color:#fff

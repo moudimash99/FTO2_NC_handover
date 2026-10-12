@@ -1,0 +1,162 @@
+notification_number,issue,detail,description_short
+217602695,fault count mismatch,manual Ext_Nb_Defauts=11 vs parsed=1,RETOUCHES CONTROLE FINAL
+217509313,fault count mismatch,manual Ext_Nb_Defauts=1 vs parsed=5,CKPT*C7/8*L23/25*G*Insert prise mqt*SD@*
+217462243,fault count mismatch,manual Ext_Nb_Defauts=6 vs parsed=1,RETOUCHES CONTROLE FINAL
+217367333,fault count mismatch,manual Ext_Nb_Defauts=29 vs parsed=1,INSPECTION FINALE MIP MSN 841
+217163845,fault count mismatch,manual Ext_Nb_Defauts=4 vs parsed=1,RETOUCHES CONTROLE FINAL
+216969649,fault count mismatch,manual Ext_Nb_Defauts=26 vs parsed=1,INSPECTION FINALE MIP MSN 833
+216944789,fault count mismatch,manual Ext_Nb_Defauts=9 vs parsed=1,RETOUCHES CONTROLE FINAL
+216368810,fault count mismatch,manual Ext_Nb_Defauts=5 vs parsed=1,5ETOUCHES CONTROLE FINAL
+216309208,fault count mismatch,manual Ext_Nb_Defauts=23 vs parsed=1,INSPECTION FINALE MIP MSN 818
+216251578,fault count mismatch,manual Ext_Nb_Defauts=6 vs parsed=1,4ETOUCHES CONTROLE FINAL
+216194149,fault count mismatch,manual Ext_Nb_Defauts=8 vs parsed=1,RETOUCHES CONTROLE FINAL
+216149991,fault count mismatch,manual Ext_Nb_Defauts=33 vs parsed=42,Controle final MIP A350 MSN 811
+216120479,fault count mismatch,manual Ext_Nb_Defauts=10 vs parsed=2,Retouches finales 740VU MSN 2144
+217711033,type disagreement,auto=INTERNE vs GPS=CONTROLE FINAL,retouches finales qualité après test
+217669726,type disagreement,auto=INTERNE vs GPS=CONTROLE FINAL,Retouche QUAL 740VU MSN 2163
+217654866,type disagreement,auto=INTERNE vs GPS=CONTROLE FINAL,Retouche QUAL 743VU MSN 2163
+217614283,type disagreement,auto=INTERNE vs GPS=CONTROLE FINAL,retouches finales qualité après test
+217607114,type disagreement,auto=INTERNE vs GPS=CASSE INTERNE,Rampe cassée
+217577268,type disagreement,auto=FOURNISSEUR vs GPS=INTERNE,Ecrou autofreine endommagé
+217576132,type disagreement,auto=INTERNE vs GPS=CONTROLE FINAL,retoches finales qualité après test
+217533020,type disagreement,auto=INTERNE vs GPS=DAMAGES,Connecteur 9LB-A endommagé
+217524512,type disagreement,auto=INTERNE vs GPS=CONTROLE FINAL,Retouches finales
+217505992,type disagreement,auto=INTERNE vs GPS=CONTROLE FINAL,Retouches finales 740VU MSN 2161
+217471685,type disagreement,auto=INTERNE vs GPS=CONTROLE FINAL,Retouches finales
+217422901,type disagreement,auto=CONTROLE FINAL vs GPS=INTERNE,Harnais Tempest dégradé par opérateur
+217407652,type disagreement,auto=INTERNE vs GPS=CONTROLE FINAL,Retouches finales 740VU MSN 2159
+217334609,type disagreement,auto=INTERNE vs GPS=CONTROLE FINAL,Retouches finales
+217299080,type disagreement,auto=INTERNE vs GPS=CONTROLE FINAL,Retouches qualité contrôle final
+217253170,type disagreement,auto=INTERNE vs GPS=CONTROLE FINAL,Retouches qualité contrôle final
+217252994,type disagreement,auto=CONTROLE FINAL vs GPS=INTERNE,Rampe recu avec protection alodine
+217235886,type disagreement,auto=INTERNE vs GPS=CONTROLE FINAL,Retouches finales 740VU MSN 2155
+217231587,type disagreement,auto=INTERNE vs GPS=CONTROLE FINAL,Devérouillage Wire Bundle 451 VB
+217192676,type disagreement,auto=INTERNE vs GPS=FOURNISSEUR,MONTAGE TETE DE BRANCHEMENT INVERSE
+217162621,type disagreement,auto=FOURNISSEUR vs GPS=INTERNE,PAS DE VIS HS SUR SUPPORT PRISES
+217139918,type disagreement,auto=INTERNE vs GPS=CONTROLE FINAL,Contrôle final qualité après test
+217128024,type disagreement,auto=INTERNE vs GPS=FOURNISSEUR,NC TEST DEFAUT CONTINUITE
+217123359,type disagreement,auto=INTERNE vs GPS=CONTROLE FINAL,Fourreau 31WZ raiillé
+217113926,type disagreement,auto=INTERNE vs GPS=FOURNISSEUR,Retouche Test 221VU MSN 02154
+217100326,type disagreement,auto=CONTROLE FINAL vs GPS=INTERNE,Manque goupilles AA55487-4
+217087015,type disagreement,auto=INTERNE vs GPS=FOURNISSEUR,Modules VG non conformes
+217081687,type disagreement,auto=INTERNE vs GPS=FOURNISSEUR,MONTAGE TETE DE BRANCHEMENT INVERSE
+217075785,type disagreement,auto=INTERNE vs GPS=CONTROLE FINAL,Retouches finales
+217040142,type disagreement,auto=FOURNISSEUR vs GPS=CASSE,Colonnette de la structure du MIP cassée
+217037135,type disagreement,auto=INTERNE vs GPS=CONTROLE FINAL,Retouches finales
+217032579,type disagreement,auto=INTERNE vs GPS=CONTROLE FINAL,MESURE 590VN HORS TOLERANCE
+217013474,type disagreement,auto=INTERNE vs GPS=FOURNISSEUR,Platine équipée non conforme
+217010788,type disagreement,auto=INTERNE vs GPS=CONTROLE FINAL,Fourreau 13HL endommagé
+216996839,type disagreement,auto=INTERNE vs GPS=CONTROLE FINAL,Contrôle final qualité après test
+216969942,type disagreement,auto=INTERNE vs GPS=FOURNISSEUR,Indicateur HS
+216924343,type disagreement,auto=INTERNE vs GPS=CONTROLE FINAL,Retouches finales
+216899465,type disagreement,auto=FOURNISSEUR vs GPS=CASSE INTERNE,TOLE DE FOND ENDOMMAGEE
+216888776,type disagreement,auto=INTERNE vs GPS=CONTROLE FINAL,Retouches qualité contrôle final
+216872509,type disagreement,auto=INTERNE vs GPS=FOURNISSEUR,RAMPE EQUIPEE F9251059700400 ENDOMMAGEE
+216872258,type disagreement,auto=INTERNE vs GPS=CONTROLE FINAL,Retouches finales 740VU MSN 2151
+216860197,type disagreement,auto=INTERNE vs GPS=FOURNISSEUR,RAMPE F9251059700400 ABIMEE
+216849146,type disagreement,auto=INTERNE vs GPS=CONTROLE FINAL,Retouches finales 740VU MSN 2156
+216836886,type disagreement,auto=INTERNE vs GPS=FOURNISSEUR,BARRE: p/n non conforme
+216834851,type disagreement,auto=INTERNE vs GPS=CONTROLE FINAL,Retouches qualité contrôle final
+216820892,type disagreement,auto=CONTROLE FINAL vs GPS=INTERNE,3 détrompeurs montés fabriqués par ATM
+216801004,type disagreement,auto=INTERNE vs GPS=CONTROLE FINAL,Harnais 452VB court
+216777144,type disagreement,auto=CONTROLE FINAL vs GPS=INTERNE,Pince à sertir non conforme
+216777065,type disagreement,auto=CONTROLE FINAL vs GPS=INTERNE,Pince à sertir non conforme
+216776959,type disagreement,auto=CONTROLE FINAL vs GPS=INTERNE,Pince à sertir non conforme
+216776950,type disagreement,auto=CONTROLE FINAL vs GPS=INTERNE,Pince à sertir non conforme
+216776386,type disagreement,auto=CONTROLE FINAL vs GPS=INTERNE,Pince à sertir non conforme
+216774341,type disagreement,auto=CONTROLE FINAL vs GPS=INTERNE,Pince à sertir non conforme
+216774193,type disagreement,auto=CONTROLE FINAL vs GPS=INTERNE,Pince à sertir non conforme
+216773962,type disagreement,auto=CONTROLE FINAL vs GPS=INTERNE,Pince à sertir non conforme
+216773710,type disagreement,auto=CONTROLE FINAL vs GPS=INTERNE,Pince à sertir non conforme
+216773204,type disagreement,auto=CONTROLE FINAL vs GPS=INTERNE,Pince à sertir non conforme
+216773100,type disagreement,auto=CONTROLE FINAL vs GPS=INTERNE,Pince à sertir non conforme
+216772860,type disagreement,auto=CONTROLE FINAL vs GPS=INTERNE,Pince à sertir non conforme
+216772278,type disagreement,auto=CONTROLE FINAL vs GPS=INTERNE,Pince à sertir non conforme
+216771748,type disagreement,auto=INTERNE vs GPS=CONTROLE FINAL,Dévérouillage prise 9LB-A
+216764494,type disagreement,auto=CONTROLE FINAL vs GPS=INTERNE,Pince à sertir non conforme
+216764356,type disagreement,auto=CONTROLE FINAL vs GPS=INTERNE,Pince à sertir non conforme
+216763640,type disagreement,auto=CONTROLE FINAL vs GPS=INTERNE,Pince à sertir non conforme
+216745943,type disagreement,auto=CONTROLE FINAL vs GPS=INTERNE,INSPECTION FINALE MIP MSN 162
+216743090,type disagreement,auto=INTERNE vs GPS=FOURNISSEUR,Rampe recu non coudé
+216739491,type disagreement,auto=INTERNE vs GPS=CONTROLE FINAL,Retouches finales
+216704810,type disagreement,auto=INTERNE vs GPS=FOURNISSEUR,INTEGRALLY LIGHTED PLATE H.S.
+216701496,type disagreement,auto=INTERNE vs GPS=FOURNISSEUR,INDICATEUR CONTROLE-SIGNAL NON CONFORME
+216699966,type disagreement,auto=INTERNE vs GPS=CONTROLE FINAL,Contrôle final qualité après test
+216690173,type disagreement,auto=CONTROLE FINAL vs GPS=INTERNE,Taille collier non conforme
+216668449,type disagreement,auto=INTERNE vs GPS=CONTROLE FINAL,Retouches finales 740VU MSN 2147
+216653358,type disagreement,auto=FOURNISSEUR vs GPS=INTERNE,TOLE DE FOND ENDOMMAGEE
+216653500,type disagreement,auto=CONTROLE FINAL vs GPS=INTERNE,Déverouillage prise 9LB-A
+216606860,type disagreement,auto=INTERNE vs GPS=CONTROLE FINAL,Retouches finales
+216605359,type disagreement,auto=INTERNE vs GPS=CASSE INTERNE,Vis de fixation endommagée decoupling
+216602069,type disagreement,auto=INTERNE vs GPS=CASSE INTERNE,Socle de raccordement relais endommagé
+216588429,type disagreement,auto=INTERNE vs GPS=CONTROLE FINAL,Retouches qualité contrôle final 743 VU
+216570343,type disagreement,auto=INTERNE vs GPS=CONTROLE FINAL,Retouches finales
+216560642,type disagreement,auto=CONTROLE FINAL vs GPS=INTERNE,Prise VC MONTE A L'ENVERS +etiquette FIN
+216558741,type disagreement,auto=INTERNE vs GPS=CONTROLE FINAL,Retouches finales 740VU MSN 2152
+216558190,type disagreement,auto=INTERNE vs GPS=FOURNISSEUR,Rampe endommagée
+216499104,type disagreement,auto=INTERNE vs GPS=CONTROLE FINAL,1027537814
+216433296,type disagreement,auto=INTERNE vs GPS=CONTROLE FINAL,Retouches qualité contrôle final
+216431908,type disagreement,auto=INTERNE vs GPS=FOURNISSEUR,Manque misserie sur inverseur
+216418839,type disagreement,auto=INTERNE vs GPS=FOURNISSEUR,Platine Arinc endommagée
+216406175,type disagreement,auto=FOURNISSEUR vs GPS=INTERNE,DOUILLES AUTO-FREINE ENDOMMAGEES
+216397936,type disagreement,auto=INTERNE vs GPS=CONTROLE FINAL,Retouches finales
+216366914,type disagreement,auto=INTERNE vs GPS=FOURNISSEUR,314 VU STRUCTURE peinture cadre NC
+216354076,type disagreement,auto=INTERNE vs GPS=CONTROLE FINAL,Contrôle final qualité après test
+216307227,type disagreement,auto=FOURNISSEUR vs GPS=INTERNE,AXE A ANNEAU RABAT CASSE
+216288447,type disagreement,auto=INTERNE vs GPS=CONTROLE FINAL,Retouches finales
+216242374,type disagreement,auto=CONTROLE FINAL vs GPS=INTERNE,retouches 255VU
+216219894,type disagreement,auto=INTERNE vs GPS=CONTROLE FINAL,Retouches finales
+216198504,type disagreement,auto=FOURNISSEUR vs GPS=INTERNE,PLATINE EQUIPEE NON CONFORME
+216179045,type disagreement,auto=INTERNE vs GPS=CONTROLE FINAL,Retouches qualité contrôle final
+216177953,type disagreement,auto=FOURNISSEUR vs GPS=CASSE,Colonnette de la structure du MIP cassée
+216164096,type disagreement,auto=INTERNE vs GPS=CASSE,Numéro de serie effacé de la platine
+216135746,type disagreement,auto=CONTROLE FINAL vs GPS=INTERNE,RETOUCHE CONTROLE FINAL
+216120479,type disagreement,auto=INTERNE vs GPS=CONTROLE FINAL,Retouches finales 740VU MSN 2144
+216095063,type disagreement,auto=INTERNE vs GPS=CONTROLE FINAL,Retouches qualité contrôle final
+216087834,type disagreement,auto=INTERNE vs GPS=CONTROLE FINAL,inspection finale 743 VU MSN 2144
+216085084,type disagreement,auto=FOURNISSEUR vs GPS=DAMAGES,Support mousse montage tuyauterie abimé
+216055047,type disagreement,auto=INTERNE vs GPS=CONTROLE FINAL,Retouches finales
+216037622,type disagreement,auto=FOURNISSEUR vs GPS=INTERNE,FILETAGE ECROU SUPPORT PRISE H.S.
+217738262,"auto Unknown, GPS labeled",GPS=FOURNISSEUR,Prise 7LZ1 B FREINAGE NON CONFORME
+217687725,"auto Unknown, GPS labeled",GPS=INTERNE,Barrette non conforme
+217687721,"auto Unknown, GPS labeled",GPS=INTERNE,RAIL NON CONFORME
+217660228,"auto Unknown, GPS labeled",GPS=INTERNE,helicoil endommagé sur 740VU
+217642570,"auto Unknown, GPS labeled",GPS=INTERNE,Fibre 3161-0582 inversée et endommagée
+217542391,"auto Unknown, GPS labeled",GPS=CLIENT,EQPMT/_/MECA
+217509313,"auto Unknown, GPS labeled",GPS=CLIENT,CKPT*C7/8*L23/25*G*Insert prise mqt*SD@*
+217507424,"auto Unknown, GPS labeled",GPS=CLIENT,CKPT*C2/3*G*Orientation Backshell*FB*
+217494684,"auto Unknown, GPS labeled",GPS=CLIENT,Cock D&G  Manque 3 prises F/O (2220VB)
+217406743,"auto Unknown, GPS labeled",GPS=CABLES,Plaquettes 100VN220 à réimprimer
+217406539,"auto Unknown, GPS labeled",GPS=CLIENT,ATT*FB*C8/9*D*étiquettes VCs mqtes*BA@*
+217376581,"auto Unknown, GPS labeled",GPS=INTERNE,Etiquette fournie non conforme
+217369833,"auto Unknown, GPS labeled",GPS=INTERNE,ALEA OZ2027874 plaquettes MANQUANTES
+217368831,"auto Unknown, GPS labeled",GPS=INTERNE,ALEA OZ2027740 PLAQUETTES MANQUANTES
+217363914,"auto Unknown, GPS labeled",GPS=CLIENT,etiquette identification absenteSur536VU
+217192194,"auto Unknown, GPS labeled",GPS=INTERNE,Etiquettes non conformes 100VN220 BC2
+217134162,"auto Unknown, GPS labeled",GPS=FOURNISSEUR,Plaquettes de masse centrés
+216972425,"auto Unknown, GPS labeled",GPS=INTERNE,Erreur d'écriture sur plaquette 5CP B
+216971047,"auto Unknown, GPS labeled",GPS=FOURNISSEUR,Prise 7LZ1 B FREINAGE NON CONFORME
+216961691,"auto Unknown, GPS labeled",GPS=INTERNE,Plaquettes à refabriquer
+216958965,"auto Unknown, GPS labeled",GPS=INTERNE,"Plaquettes 7DG2 A, 8DG2 A, 7DG1 A, 8DG1A"
+216905770,"auto Unknown, GPS labeled",GPS=DEMANDE DE DQN,Traitement de surface non conforme
+216815252,"auto Unknown, GPS labeled",GPS=FOURNISSEUR,Suspicion lot de tyrap défectueux
+216785207,"auto Unknown, GPS labeled",GPS=FOURNISSEUR,INSERT ASNA2551A01 NON CONFORME
+216775453,"auto Unknown, GPS labeled",GPS=INTERNE,Plaquettes 7DG2 A et 8DG2 A à refabrique
+216733534,"auto Unknown, GPS labeled",GPS=DEMANDE DE DQN,Definition problem MDCD A350 5893VB
+216674962,"auto Unknown, GPS labeled",GPS=INTERNE,RAIL NON CONFORME
+216668677,"auto Unknown, GPS labeled",GPS=DAMAGES,CKPT*C9*L22*D*Détrompeur cassé*MV*
+216560177,"auto Unknown, GPS labeled",GPS=DAMAGES,Lot d'étiquette à recommander
+216514767,"auto Unknown, GPS labeled",GPS=FOURNISSEUR,Mauvaise position plaque sur rampe OHP
+216501197,"auto Unknown, GPS labeled",GPS=CLIENT,CKPT*C4/5*D*Orientation Backshel NC*SD@*
+216394948,"auto Unknown, GPS labeled",GPS=CLIENT,CKPT*C4/5*G*Montage x2 non conf MIP*RL*
+216377519,"auto Unknown, GPS labeled",GPS=FOURNISSEUR,S/N CNTOR non conforme
+216340381,"auto Unknown, GPS labeled",GPS=CLIENT,CKPT*C1/3*R0/1*D*Collier HS MIP*SD@*
+216267931,"auto Unknown, GPS labeled",GPS=FOURNISSEUR,Trous ovalisés hors tolérence
+216242498,"auto Unknown, GPS labeled",GPS=FOURNISSEUR,Rails barrettes tordues
+216180778,"auto Unknown, GPS labeled",GPS=INTERNE,rail barrette tordue
+216172114,"auto Unknown, GPS labeled",GPS=CLIENT,OHP-G Dérivation mal positionnée 2400VB
+216165997,"auto Unknown, GPS labeled",GPS=DAMAGES,ETEC 125VU ENDOMMAGE
+216164418,"auto Unknown, GPS labeled",GPS=FOURNISSEUR,rail barrette tordue
+216133847,"auto Unknown, GPS labeled",GPS=CASSE,Boots fibre optique 3161 0582 HS
+216064934,"auto Unknown, GPS labeled",GPS=DAMAGES,INTEGRALLY LIGHTED PLATE HS
+216060610,"auto Unknown, GPS labeled",GPS=CLIENT,Cab*G*C17*L1/2*Prise 624VC non conforme
