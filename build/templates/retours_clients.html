@@ -201,7 +201,7 @@ window.RC = __DATA__;
     fr: {
       unit: 'Qualité', title: 'Retours clients FTO2', period: 'NC créées du {from} au {to}',
       scopeLabel: 'Périmètre', scopeIn: 'FTO2 responsable', scopeAll: 'Ancien périmètre',
-      noteIn: 'NC émises hors FTO2 où FTO2 figure dans la responsabilité (liability). Les NC « DAMAGES » dont FTO2 n’est pas responsable sont exclues.',
+      noteIn: 'NC émises hors FTO2 où FTO2 figure dans la responsabilité (liability). Les NC « DAMAGES » dont FTO2 n’est pas responsable sont exclues. Mêmes NC que le tableau de bord ; {m} n’ont pas de ligne de défaut (texte vide).',
       noteAll: 'Ancien périmètre : toutes les NC émises hors FTO2, y compris {n} NC dont FTO2 n’est pas responsable (marquées « FTO2 non responsable »). Ces NC venaient de l’extraction par numéro, qui ne filtre pas la responsabilité.',
       fig1: 'NC retours clients', fig2: 'Défauts', fig3: 'Élément endommagé', fig4: 'Dommage physique',
       bTitle: 'Répartition', bSub: 'Cliquez sur une barre pour filtrer le tableau et les autres graphiques. Cliquez à nouveau pour retirer le filtre.',
@@ -222,7 +222,7 @@ window.RC = __DATA__;
     en: {
       unit: 'Quality', title: 'FTO2 Customer Returns', period: 'NCs created {from} to {to}',
       scopeLabel: 'Scope', scopeIn: 'FTO2 liable', scopeAll: 'Previous scope',
-      noteIn: 'NCs raised outside FTO2 with FTO2 in the liability field. “DAMAGES” NCs where FTO2 is not liable are excluded.',
+      noteIn: 'NCs raised outside FTO2 with FTO2 in the liability field. “DAMAGES” NCs where FTO2 is not liable are excluded. Same NCs as the dashboard; {m} have no defect line (empty text).',
       noteAll: 'Previous scope: every NC raised outside FTO2, including {n} NCs where FTO2 is not liable (marked “FTO2 not liable”). They came from the fetch by NC number, which does not filter on liability.',
       fig1: 'Customer-return NCs', fig2: 'Defects', fig3: 'Damaged item', fig4: 'Physical damage',
       bTitle: 'Breakdown', bSub: 'Click a bar to filter the table and the other charts. Click it again to remove the filter.',
@@ -400,7 +400,7 @@ window.RC = __DATA__;
   function renderFigs() {
     var rs = scoped(), ncs = {}, dmg = 0, phys = 0;
     rs.forEach(function (r) { ncs[r.nc] = 1; if (r.cat === 'Élément Endommagé') dmg++; if (r.nat === 'phys') phys++; });
-    document.getElementById('f1').textContent = num(Object.keys(ncs).length);
+    document.getElementById('f1').textContent = num(Object.keys(ncs).length + (state.scope === 'in' ? (D.meta.ncNoLine || 0) : 0));
     document.getElementById('f2').textContent = num(rs.length);
     document.getElementById('f3').textContent = pct(dmg / rs.length * 100);
     document.getElementById('f4').textContent = pct(phys / rs.length * 100);
@@ -412,7 +412,7 @@ window.RC = __DATA__;
     document.getElementById('period').textContent = S('period', { from: day(D.meta.from), to: day(D.meta.to) });
     var outN = {}; ALL.forEach(function (r) { if (!r.scope) outN[r.nc] = 1; });
     var note = document.getElementById('scopeNote');
-    note.textContent = state.scope === 'in' ? S('noteIn') : S('noteAll', { n: num(Object.keys(outN).length) });
+    note.textContent = state.scope === 'in' ? S('noteIn', { m: num(D.meta.ncNoLine || 0) }) : S('noteAll', { n: num(Object.keys(outN).length) });
     note.classList.toggle('warn', state.scope === 'all');
     document.getElementById('q').placeholder = S('search');
     document.getElementById('q').setAttribute('aria-label', S('search'));

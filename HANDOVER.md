@@ -49,8 +49,13 @@ the CNQ package's two checks. `build/build_report.json` records the counts. The 
 the parser v4.8 labels are kept next to them (they are what the Skywise pack produces). To refresh with a new export: drop the
 file in `06_input_data/`, run the script, label any `a_labelliser` lines (method in `07_scripts/llm_longtext/`), run again.
 
-Current run: 1,127 NCs (15 Dec 2025 – 28 Sep 2026), 3,098 defect lines, 2,768 in the FTO2 Pareto, 69 customer-return defects
-(65 NCs), CNQ 181,405 EUR on 856 NCs FTO2 is liable for, cables 23.6 % of it.
+Reporting scope, the same on every page (column `scope` in `fto2_nc.csv` / `fto2_defects.csv`): **Série** = raised at FTO2,
+FTO2 in `liability`, not deleted (727 NCs, 2,709 defects, 63 NCs without a defect line, all A400M with redacted text);
+**Retours clients** = raised elsewhere with FTO2 in `liability` (69 NCs, 69 defects). CNQ: Série 166,428 EUR + Retours 11,877 EUR;
+the model total 181,405 EUR also counts 59 deleted NCs (2,975 EUR) and 1 supplier NC (125 EUR), shown aside on the CNQ tab.
+The dashboard has four tabs: Pareto, weekly Pareto, CNQ, Causes (RCA). The RCA tab explains the hierarchy
+(123 official sub-codes → 42 sub-categories → 25 RCA → 9 categories); definitions are in `04_reference/rca_definitions.csv`
+(FR/EN, written 12 Oct from the code sheet, **to be checked by Mohammad**).
 
 ---
 

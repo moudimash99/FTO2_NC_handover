@@ -28,6 +28,20 @@
     "Retour client": 69,
     "Hors périmètre": 52
   },
+  "report_scope": {
+    "serie": {
+      "ncs": 727,
+      "ncs_without_defect_line": 63,
+      "defects": 2709,
+      "cnq": 166428.13
+    },
+    "client": {
+      "ncs": 69,
+      "ncs_without_defect_line": 4,
+      "defects": 69,
+      "cnq": 11876.64
+    }
+  },
   "defects_by_scope": {
     "FTO2": 2768,
     "Supprimée": 152,
@@ -48,10 +62,11 @@
     "level2_global_aec": 144264.77,
     "level3_detailed_aec": 181404.77
   },
+  "rca_without_definition": [],
   "customer_returns": {
     "in_scope_defects": 69,
     "in_scope_ncs": 65,
     "out_of_scope_ncs": 45
   },
-  "review_disagreements": 330
+  "review_disagreements": 301
 }

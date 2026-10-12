@@ -161,6 +161,13 @@ def main():
     nc_ref["nc_cable"] = nc_ref.notification_number.isin(set(d[d.defaut_cable].notification_number))
     nc_ref["nc_cable_llm"] = nc_ref.notification_number.isin(set(d[d.llm_defaut_cable].notification_number))
     nc_ref["long_text"] = nc_ref.notification_number.map(lt)
+    # the reporting scope used by every page, so all of them count the same NCs:
+    #   serie  = raised at FTO2, FTO2 in the liability, not deleted
+    #   client = customer return (raised elsewhere, FTO2 in the liability, not deleted)
+    liab_f = nc_ref["liability"].fillna("").astype(str).str.upper().str.contains("FTO2")
+    nc_ref["scope"] = np.select([(nc_ref.perimetre == "FTO2") & liab_f, nc_ref.perimetre == "Retour client"], ["serie", "client"], default="")
+    d["scope"] = d.notification_number.map(nc_ref.set_index("notification_number")["scope"]).fillna("")
+    d["phase"] = d.notification_number.map(nc_ref.set_index("notification_number")["phase"]).fillna("")
     d.to_csv(os.path.join(OUT, "fto2_defects.csv"), index=False, encoding="utf-8-sig")
     nc_ref.to_csv(os.path.join(OUT, "fto2_nc.csv"), index=False, encoding="utf-8-sig")
     nl_.to_csv(os.path.join(OUT, "fto2_nc_cnq.csv"), index=False)
@@ -178,6 +185,9 @@ def main():
                      "level2": round(float(aec.cnq_cost_global.sum()), 2), "level3": round(t3, 2), "cable_allocated": round(cab_alloc, 2),
                      "cable_share": round(cab_alloc / t3, 4), "level3_parser": round(t3p, 2), "cable_share_parser": round(cab_p / t3p, 4)}
     REPORT["scope"] = nc_ref.perimetre.value_counts().to_dict()
+    REPORT["report_scope"] = {k: {"ncs": int((nc_ref.scope == k).sum()), "ncs_without_defect_line": int(((nc_ref.scope == k) & (nc_ref.cnq_defect_lines == 0)).sum()),
+                                  "defects": int((d.scope == k).sum()), "cnq": round(float(nc_ref.loc[nc_ref.scope == k, "cnq_cost_total"].sum()), 2)}
+                              for k in ("serie", "client")}
     REPORT["defects_by_scope"] = d.perimetre.value_counts().to_dict()
 
     # ======================================================== 4a. CNQ package: same data, same totals
@@ -245,7 +255,7 @@ def build_dashboard(d, nc):
                      r.groupe, rca(r.rca_type), r.sous_groupe, int(bool(r.mineur)), int(bool(r.defaut_cable)),
                      r.llm_categorie, r.llm_rca_nom, r.llm_sous_categorie, int(bool(r.llm_mineur)), int(bool(r.llm_defaut_cable)),
                      round(float(r.cnq_cost_allocated), 2), round(float(r.cnq_cost_allocated_llm), 2), S_(r.text)[:220],
-                     S_(r.llm_raison).split(" | revue")[0][:160]])
+                     S_(r.llm_raison).split(" | revue")[0][:160], r.scope, S_(r.phase)])
     ncs = []
     for r in nc.itertuples():
         if not r.date_creation:
@@ -254,11 +264,40 @@ def build_dashboard(d, nc):
                     r.cnq_decision_label, r.cnq_where_found, round(r.cnq_cost_airbus, 2), round(r.cnq_cost_global, 2), round(r.cnq_cost_total_parser, 2),
                     round(r.cnq_cost_total, 2), round(r.cnq_cost_admin, 2), round(r.cnq_cost_work_parser, 2), round(r.cnq_cost_work, 2),
                     round(r.cnq_cost_material_parser, 2), round(r.cnq_cost_material, 2), round(r.cnq_cost_engineering, 2),
-                    int(r.nc_cable), int(r.nc_cable_llm), int(r.cnq_defect_lines), S_(r.description_short)[:80]])
+                    int(r.nc_cable), int(r.nc_cable_llm), int(r.cnq_defect_lines), S_(r.description_short)[:80], r.scope, S_(r.phase)])
     direct = {"%s|%d" % (r.notification_number, r.seq): [round(float(r.cnq_cost_direct), 2), round(float(r.cnq_cost_direct_llm), 2)]
               for r in d.itertuples() if r.cnq_cost_allocated or r.cnq_cost_allocated_llm}
-    data = {"defects": defs, "ncs": ncs, "direct": direct, "meta": {"from": "2026-01-01", "to": REPORT["created_to"]}}
+    aec = nc[nc.cnq_on_aec == 1]
+    aside = [[k, int((aec.cnq_rule == "DELETED").sum() if k == "deleted" else ((aec.scope == "") & (aec.cnq_rule != "DELETED")).sum()),
+              round(float(aec.loc[(aec.cnq_rule == "DELETED") if k == "deleted" else ((aec.scope == "") & (aec.cnq_rule != "DELETED")), "cnq_cost_total"].sum()), 2)]
+             for k in ("deleted", "other")]
+    data = {"defects": defs, "ncs": ncs, "direct": direct, "rca": rca_reference(d),
+            "meta": {"from": "2026-01-01", "to": REPORT["created_to"], "aside": aside, "modelTotal": round(float(aec.cnq_cost_total.sum()), 2)}}
     _page("dashboard.html", data, "FTO2_NC_Dashboard.html")
+
+
+def rca_reference(d):
+    """The RCA page: hierarchy official sub-code -> sub-category -> RCA -> category, definitions, real examples."""
+    ref = os.path.join(ROOT, "04_reference")
+    sc = pd.read_csv(os.path.join(ref, "sous_categories.csv"), encoding="utf-8-sig")
+    codes = pd.read_csv(os.path.join(ref, "reference_souscodes_pareto.csv"), encoding="utf-8-sig")
+    codes = codes[~codes.sous_code.astype(str).str.startswith("(")]
+    defs = pd.read_csv(os.path.join(ref, "rca_definitions.csv"), encoding="utf-8-sig").set_index("rca_nom")
+    pool = d[(d.scope != "") & (d.llm_status == "ok") & (d.llm_confiance == "high") & d.text.fillna("").str.len().between(30, 170)]
+    pool = pool.sort_values("date_creation", ascending=False)
+    out = []
+    for rca_nom, g in sc.groupby("rca_nom", sort=False):
+        subs = []
+        for s in g.itertuples():
+            cc = codes[codes.sous_categorie == s.sous_categorie]
+            subs.append({"name": s.sous_categorie, "minor": s.mineur == "oui", "note": S_(s.note),
+                         "codes": [[c.sous_code, c.object_desc] for c in cc.itertuples()]})
+        ex = pool[pool.llm_rca_nom == rca_nom].drop_duplicates("notification_number").head(3)
+        df_ = defs.loc[rca_nom] if rca_nom in defs.index else None
+        out.append({"rca": rca_nom, "cat": g.categorie.iloc[0], "fr": "" if df_ is None else df_.definition_fr, "en": "" if df_ is None else df_.definition_en,
+                    "subs": subs, "ex": [[e.notification_number, " ".join(str(e.text).split()).strip(" *:-")] for e in ex.itertuples()]})
+    REPORT["rca_without_definition"] = [o["rca"] for o in out if not o["fr"]]
+    return out
 
 
 def build_customer_returns(d, nc, lt):
@@ -289,7 +328,8 @@ def build_customer_returns(d, nc, lt):
     rows.sort(key=lambda z: (z["date"], z["nc"], z["seq"]), reverse=True)
     REPORT["customer_returns"] = {"in_scope_defects": sum(z["scope"] for z in rows), "in_scope_ncs": len({z["nc"] for z in rows if z["scope"]}),
                                   "out_of_scope_ncs": len({z["nc"] for z in rows if not z["scope"]})}
-    _page("retours_clients.html", {"rows": rows, "meta": {"from": "2026-01-01", "to": REPORT["created_to"]}}, "FTO2_Retours_clients.html")
+    no_line = int(((nc.scope == "client") & (nc.cnq_defect_lines == 0)).sum())
+    _page("retours_clients.html", {"rows": rows, "meta": {"from": "2026-01-01", "to": REPORT["created_to"], "ncNoLine": no_line}}, "FTO2_Retours_clients.html")
 
 
 # ============================================================ workbooks
@@ -320,20 +360,20 @@ def _style(path, wrap_sheet=None, widths=None):
 
 
 def build_review(d, lt):
-    f = d[(d.perimetre.isin(["FTO2", "Retour client"])) & (d.sous_groupe != d.llm_sous_categorie)].copy()
+    f = d[(d.scope != "") & (d.sous_groupe != d.llm_sous_categorie)].copy()
     f["long_text"] = f.notification_number.map(lambda n: lt.get(n, "")[:1500])
     f = f.sort_values(["nb_defauts_nc", "notification_number", "seq"])
-    dis = pd.DataFrame({"NC": f.notification_number, "Défaut #": f.seq, "Défauts dans la NC": f.nb_defauts_nc, "Périmètre": f.perimetre,
+    dis = pd.DataFrame({"NC": f.notification_number, "Défaut #": f.seq, "Défauts dans la NC": f.nb_defauts_nc, "Périmètre": f.scope.map({"serie": "Série", "client": "Retour client"}),
                         "Code écrit": f.code, "Extrait": f.text, "Texte complet": f.long_text,
                         "Parser – catégorie": f.groupe, "Parser – sous-catégorie": f.sous_groupe,
                         "Cause racine – catégorie": f.llm_categorie, "Cause racine – sous-catégorie": f.llm_sous_categorie,
                         "Symptôme": f.llm_symptome, "Raison": f.llm_raison, "Confiance": f.llm_confiance,
                         "Verdict (P = parser, L = cause racine, A = autre)": "", "Commentaire": ""})
-    fto2 = d[d.perimetre == "FTO2"]
+    fto2 = d[d.scope == "serie"]
     cats = pd.DataFrame({"Parser v4.8": fto2.groupe.value_counts(), "Cause racine (texte complet)": fto2.llm_categorie.value_counts()}).fillna(0).astype(int)
     cats["Écart"] = cats.iloc[:, 1] - cats.iloc[:, 0]
     readme = pd.DataFrame({"Read me": [
-        "Défauts où le classement par cause racine (modèle de langage, texte complet de la NC) diffère du parser v4.8. Périmètre FTO2 et retours clients (FTO2 responsable).",
+        "Défauts où le classement par cause racine (modèle de langage, texte complet de la NC) diffère du parser v4.8. Périmètre série et retours clients (mêmes NC que le tableau de bord).",
         "Remplir la colonne Verdict pour mesurer lequel des deux a raison. Défauts des NC à un seul défaut en premier.",
         "Régénéré par build/build_all.py à partir des exports Skywise de 06_input_data."]})
     path = os.path.join(OUT, "FTO2_llm_longtext_review.xlsx")
@@ -354,7 +394,7 @@ def build_detail(d, nc, x):
     kind = pd.cut(m.nb_defauts_nc, [0, 1, 10, 10 ** 6], labels=["Seul (1 défaut)", "Liste courte (2-10)", "Liste d'inspection (>10)"]).astype(str)
     out = pd.DataFrame({
         "NC": m.notification_number, "Défaut #": m.seq, "Défauts dans la NC": m.nb_defauts_nc, "Type de NC": kind,
-        "Périmètre": m.perimetre, "Statut": m.statut, "Créée": m.date_creation, "Semaine": m.semaine,
+        "Périmètre": m.perimetre, "Périmètre rapport": m.scope.map({"serie": "Série", "client": "Retour client"}).fillna(""), "Statut": m.statut, "Créée": m.date_creation, "Semaine": m.semaine,
         "Clôturée": pd.to_datetime(m.closure_time, errors="coerce", utc=True).dt.strftime("%Y-%m-%d"), "Ligne": m.ligne, "MSN": m.msn,
         "Phase": m.phase, "Type NC (pipeline)": m.type_nc_auto, "Produit": m.produit, "Site": m.plant, "Poste": m.station,
         "Description poste": m.station_description, "Décision": m.decision_label, "Responsabilité": m.liability, "Rédacteur": m.user_department,
@@ -366,14 +406,14 @@ def build_detail(d, nc, x):
         "CNQ réparti (EUR)": m.cnq_cost_allocated_llm.round(2), "Titre NC": m.description_short,
     }).sort_values(["Créée", "NC", "Défaut #"], ascending=[False, True, True])
     summ_rows = []
-    f = d[d.perimetre == "FTO2"]
+    f = d[d.scope == "serie"]
     for cat in ["MEO Câblage", "Erreur Branchement", "Élément Manquant", "Élément Endommagé", "Déverrouillage", "Grounding/Bonding", "Kitting Factory", "FOD", "Autre"]:
         p, l = f[f.groupe == cat], f[f.llm_categorie == cat]
         summ_rows.append([cat, len(p), len(l), int(l.llm_defaut_cable.sum()), int(l.llm_mineur.sum()), round(float(l.cnq_cost_allocated_llm.sum()))])
-    summ = pd.DataFrame(summ_rows, columns=["Catégorie", "Défauts FTO2 (parser)", "Défauts FTO2 (cause racine)", "dont câble", "dont mineurs", "CNQ réparti (EUR)"])
+    summ = pd.DataFrame(summ_rows, columns=["Catégorie", "Défauts série (parser)", "Défauts série (cause racine)", "dont câble", "dont mineurs", "CNQ réparti (EUR)"])
     readme = pd.DataFrame({"Read me": [
         "Une ligne par défaut, NC créées du %s au %s, exports Skywise de 06_input_data (le standard est limité aux 1 000 NC les plus récentes, complété par numéro)." % (REPORT["created_from"], REPORT["created_to"]),
-        "Périmètre : FTO2 = compté dans le Pareto ; Retour client = émise hors FTO2 avec FTO2 dans la responsabilité ; Hors périmètre = émise hors FTO2 sans FTO2 responsable ; Fournisseur ; Supprimée.",
+        "Périmètre rapport (celui du tableau de bord) : Série = émise à FTO2, FTO2 responsable, non supprimée ; Retour client = émise hors FTO2 avec FTO2 responsable. La colonne Périmètre garde le détail du pack (FTO2, Hors périmètre, Fournisseur, Supprimée).",
         "Deux classements : parser v4.8 (règles, comme dans Skywise) et cause racine (modèle de langage avec le texte complet, 12 oct. 2026, non vérifié à la main).",
         "CNQ réparti : coût de la NC (modèle cnq-2026.10, niveau 3) partagé entre ses défauts. Seules les NC dont FTO2 est responsable ont un coût.",
         "Régénéré par build/build_all.py."]})
