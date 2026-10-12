@@ -190,6 +190,20 @@ table.rcatab tbody tr:hover td { background: var(--track); }
 .ex { display: grid; gap: 4px; font-size: 13px; }
 .ex q { color: var(--ink-2); }
 .ex .nc { font-family: var(--font-data); font-size: 12px; color: var(--muted); }
+table.matrix { min-width: 0; width: 100%; font-variant-numeric: tabular-nums; }
+table.matrix th, table.matrix td { text-align: right; padding: 6px 8px; white-space: nowrap; }
+table.matrix th:first-child, table.matrix td:first-child { text-align: left; white-space: normal; min-width: 12em; }
+table.matrix th.cur { color: var(--ink); }
+table.matrix td.cell { position: relative; }
+table.matrix td.tot { font-weight: 600; border-left: 1px solid var(--grid); }
+table.matrix tbody tr { cursor: pointer; }
+table.matrix tbody tr:hover td { background: var(--track); }
+table.matrix tbody tr[aria-pressed="true"] td { background: var(--s1-soft); }
+table.matrix tbody tr[aria-pressed="true"] td:first-child { font-weight: 600; }
+table.matrix tbody tr.aside td { color: var(--ink-2); }
+table.matrix .heat { display: inline-block; min-width: 2.2em; padding: 1px 6px; border-radius: 4px; }
+table.matrix .z { color: var(--muted); }
+.col.out .stick { background: var(--dim); }
 footer { font-size: 12.5px; color: var(--muted); border-top: 1px solid var(--grid); padding-top: 14px; display: grid; gap: 4px; }
 footer p { max-width: none; }
 @media (max-width: 560px) {
@@ -236,8 +250,8 @@ footer p { max-width: none; }
     <div class="figs">
       <div class="fig"><b id="pf1"></b><span data-t="figDefects"></span></div>
       <div class="fig"><b id="pf2"></b><span data-t="figNcs"></span></div>
-      <div class="fig"><b id="pf3"></b><span id="pf3l"></span></div>
-      <div class="fig"><b id="pf4"></b><span data-t="figCable"></span></div>
+      <div class="fig"><b id="pf3"></b><span data-t="figPerNc"></span></div>
+      <div class="fig"><b id="pf4" class="word"></b><span data-t="figTopRca"></span><small id="pf4s"></small></div>
     </div>
     <div class="chips" id="pc"></div>
     <div class="grid" id="pg"></div>
@@ -257,19 +271,28 @@ footer p { max-width: none; }
         <button type="button" id="wPrev" data-ta="prevWeek">←</button>
         <select id="wSel" data-ta="weekLabel"></select>
         <button type="button" id="wNext" data-ta="nextWeek">→</button>
-        <span class="label" id="wRange"></span>
       </div>
+      <div class="ctl"><span class="label" id="wwLab" data-t="winLabel"></span>
+        <div class="seg" role="group" aria-labelledby="wwLab" id="wWin"></div></div>
       <div class="ctl"><span class="label" id="wlLab" data-t="lineLabel"></span>
         <div class="seg" role="group" aria-labelledby="wlLab" id="wLines"></div></div>
     </div>
+    <p class="sub" id="wRange"></p>
     <div class="figs">
-      <div class="fig"><b id="wf1"></b><span data-t="wDefects"></span><small id="wf1s"></small></div>
-      <div class="fig"><b id="wf2"></b><span data-t="wNcs"></span><small id="wf2s"></small></div>
-      <div class="fig"><b id="wf3" class="word"></b><span data-t="wTopCat"></span></div>
-      <div class="fig"><b id="wf4" class="word"></b><span data-t="wTopRca"></span></div>
+      <div class="fig"><b id="wf1"></b><span data-t="wDefects"></span></div>
+      <div class="fig"><b id="wf2"></b><span data-t="wNcs"></span></div>
+      <div class="fig"><b id="wf3"></b><span id="wf3l"></span></div>
+      <div class="fig"><b id="wf4" class="word"></b><span data-t="wTopRca"></span><small id="wf4s"></small></div>
     </div>
     <div class="card wide">
-      <div class="card-head"><h3 data-t="wTrend"></h3><span class="sub" data-t="wTrendSub"></span></div>
+      <div class="card-head"><h3 data-t="wMatrix"></h3>
+        <div class="seg" role="group" data-ta="wLevel" id="wLvl"></div></div>
+      <p class="sub" data-t="wMatrixSub"></p>
+      <div class="table-wrap"><table class="matrix" id="wMatrix"></table></div>
+    </div>
+    <div class="card wide">
+      <div class="card-head"><h3 id="wTrendTitle"></h3><button type="button" class="clear-one" id="wProbClear" hidden></button></div>
+      <p class="sub" data-t="wTrendSub"></p>
       <div class="cols-wrap"><div class="cols" id="wTrendCols"></div></div>
     </div>
     <div class="chips" id="wc"></div>
@@ -290,20 +313,12 @@ footer p { max-width: none; }
       <div class="fig"><b id="cf1"></b><span data-t="cTotal"></span></div>
       <div class="fig"><b id="cf2"></b><span data-t="cNcs"></span></div>
       <div class="fig"><b id="cf3"></b><span data-t="cPerNc"></span></div>
-      <div class="fig"><b id="cf4"></b><span data-t="cCable"></span></div>
+      <div class="fig"><b id="cf4"></b><span data-t="cCable"></span><small id="cf4s"></small></div>
     </div>
-    <div class="grid">
-      <div class="card">
-        <div class="card-head"><h3 data-t="cLevels"></h3></div>
-        <div class="levels" id="cLevels"></div>
-        <p class="sub" data-t="cLevelsSub"></p>
-      </div>
-      <div class="card">
-        <div class="card-head"><h3 data-t="cCableTitle"></h3></div>
-        <div class="big" id="cCableBig"></div>
-        <p class="sub" id="cCableTxt"></p>
-        <p class="sub" id="cCableRange"></p>
-      </div>
+    <div class="card">
+      <div class="card-head"><h3 data-t="cLevels"></h3></div>
+      <div class="levels" id="cLevels"></div>
+      <p class="sub" data-t="cLevelsSub"></p>
     </div>
     <div class="chips" id="cc"></div>
     <div class="grid" id="cg"></div>
@@ -369,31 +384,31 @@ window.DASH = __DATA__;
       minorLabel: 'Défauts mineurs', minorIn: 'Inclus', minorOut: 'Exclus',
       tabPareto: 'Pareto', tabWeek: 'Pareto hebdomadaire', tabCnq: 'Coût de non-qualité', tabClient: 'Retours clients', tabRca: 'Causes (RCA)',
       serieSub: 'NC émises à FTO2 sous responsabilité FTO2.',
-      paretoTitle: 'Pareto des défauts', weekTitle: 'Pareto de la semaine', cnqTitle: 'Coût de non-qualité', clientTitle: 'Retours clients',
+      paretoTitle: 'Pareto des défauts', weekTitle: 'Pareto hebdomadaire', cnqTitle: 'Coût de non-qualité', clientTitle: 'Retours clients',
       clientSub: 'NC émises hors de FTO2 (lignes d’assemblage, clients) sous responsabilité FTO2.',
       rcaTitle: 'Les causes des défauts (RCA)', rcaSub: 'Définition de chaque cause, sous-catégories et codes officiels, chiffres et exemples réels.',
-      figDefects: 'Défauts', figNcs: 'NC', figTop: '« {c} »', figCable: 'Défauts câble (câble à refaire ou à refournir)',
+      figDefects: 'Défauts', figNcs: 'NC', figPerNc: 'Défauts par NC (moyenne)', figTopRca: 'Première cause', topSub: '{n} défauts · {p}',
       dCat: 'Catégorie', dRca: 'Cause (RCA)', dLine: 'Ligne', dMonth: 'Mois de création', dWhere: 'Où la NC a été trouvée', dRule: 'Décision', dCable: 'Défaut câble', dPhase: 'Phase', dNat: 'Nature du dommage',
       natOnly: 'Défauts « Élément endommagé ».',
       paretoSub: 'Kitting Factory, FOD et Autre sont suivis à part.', aside: 'Suivi séparé',
-      keyMain: 'Semaine choisie', keyTick: 'Moyenne des 8 semaines précédentes',
       hint: 'Cliquez sur une barre pour filtrer les autres graphiques et le détail.', clearAll: 'Tout effacer', clear: 'Effacer',
-      tblDefects: 'Détail des défauts', tblWeek: 'Détail des défauts de la semaine', tblNc: 'Détail des NC et de leur coût', tblClient: 'Détail des retours clients',
+      tblDefects: 'Détail des défauts', tblWeek: 'Détail des défauts de la période', tblNc: 'Détail des NC et de leur coût', tblClient: 'Détail des retours clients',
       tblClientSub: 'Cliquez sur une ligne pour lire le texte de la NC.',
       search: 'Rechercher (NC, texte, FIN…)', shown: '{n} sur {t}', more: 'Afficher {n} de plus',
       cNc: 'NC', cDate: 'Date', cLine: 'Ligne', cCat: 'Catégorie', cRca: 'Cause (RCA)', cSub: 'Sous-catégorie', cText: 'Défaut', cWhy: 'Cause',
       lineLabel: 'Ligne', allLines: 'Toutes', weekLabel: 'Semaine', prevWeek: 'Semaine précédente', nextWeek: 'Semaine suivante',
-      weekRange: 'du {a} au {b}', partial: 'en cours',
-      wDefects: 'Défauts', wNcs: 'NC', wTopCat: 'Première catégorie', wTopRca: 'Première cause', vsAvg: '{d} par rapport à la moyenne (8 semaines)',
-      wTrend: 'Défauts par semaine', wTrendSub: 'Cliquez sur une semaine pour l’afficher.',
+      partial: 'en cours', winLabel: 'Période', win1: '1 semaine', win5: '5 semaines', win10: '10 semaines',
+      rangeOne: 'Semaine {w} : du {a} au {b}.', rangeMany: 'Semaines {w1} à {w2} : du {a} au {b}.',
+      wDefects: 'Défauts', wNcs: 'NC', wPerWeek: 'Défauts par semaine (moyenne hors fermeture)', wPerNc: 'Défauts par NC (moyenne)', wTopRca: 'Première cause',
+      wMatrix: 'Semaine par semaine', wLevel: 'Niveau', lvlCat: 'Catégories', lvlRca: 'Causes (RCA)', total: 'Total', problem: 'Problème',
+      wMatrixSub: 'Nombre de défauts par semaine. Cliquez sur une ligne pour suivre ce problème dans le temps.',
+      wTrendAll: 'Tous les défauts, par semaine', wTrendProb: '{p}, par semaine', probClear: 'Revenir à tous les défauts',
+      wTrendSub: 'En bleu, les semaines de la période choisie. Cliquez sur une semaine pour la choisir.',
       cnqSub: 'Estimation à partir des temps du processus AEC : alerte, rédaction, support technique, reprise et contrôle, chiffrés défaut par défaut.',
       stripTotal: 'Total FTO2', stripSerie: 'Série', stripClient: 'Retours clients',
-      cTotal: 'Coût de non-qualité, série', cNcs: 'NC', cPerNc: 'Coût moyen par NC', cCable: 'Part des défauts câble',
+      cTotal: 'Coût de non-qualité, série', cNcs: 'NC', cPerNc: 'Coût moyen par NC', cCable: 'Coût des défauts câble', cCableSub: '{p} du coût série',
       cLevels: 'Comparaison des méthodes de chiffrage', cLevelsSub: 'Standard Airbus : coût forfaitaire par décision. Moyenne AEC : temps moyens par NC. Détail par défaut : étapes AEC et reprise calculée pour chaque défaut (méthode retenue).',
       lvl1: 'Standard Airbus', lvl2: 'Moyenne AEC', lvl3: 'Détail par défaut',
-      cCableTitle: 'Part des câbles',
-      cCableTxt: 'Coût des défauts câble, chaque NC répartissant son coût entre ses défauts.',
-      cCableRange: 'Fourchette : {a} pour la seule reprise des câbles, {b} pour les NC complètes qui contiennent un défaut câble.',
       cByCat: 'Coût par catégorie de défaut', cByCatSub: 'Coût de chaque NC réparti entre ses défauts.', noLine: 'NC A400M (sans texte)',
       cable: 'Câble', notCable: 'Hors câble',
       kNc: 'NC', kDate: 'Date', kLine: 'Ligne', kWhere: 'Trouvée', kRule: 'Décision', kLines: 'Défauts', kCable: 'Câble', kC3: 'Coût', kTitle: 'Titre', yes: 'oui',
@@ -408,38 +423,38 @@ window.DASH = __DATA__;
       foot1: 'Source : extraction SAP Skywise, NC créées du {from} au {to}.',
       foot2: 'Série : NC émises à FTO2 sous responsabilité FTO2, hors NC supprimées. Retours clients : NC émises hors FTO2 sous responsabilité FTO2. Les défauts sont classés par cause à partir du texte complet de chaque NC.',
       foot3: 'Les {n} NC A400M sont comptées en NC et en coût mais pas en défauts : leur texte n’est pas disponible. Le modèle de coût compte aussi {d} NC supprimées ({de}) et {o} autre NC ({oe}), hors de ce tableau de bord.',
-      foot4: 'Défauts mineurs : tyrap, frette, ficelle, capuchon, cerise ou bouchon manquant. Coût : 50 €/h, temps du processus estimés par l’équipe ; la valeur des pièces rebutées n’est pas incluse. Semaines de fermeture (moins de 10 défauts) exclues des moyennes.'
+      foot4: 'Semaines de fermeture (moins de 10 défauts) exclues des moyennes hebdomadaires. Défauts mineurs : tyrap, frette, ficelle, capuchon, cerise ou bouchon manquant. Coût : 50 €/h, temps du processus estimés par l’équipe ; la valeur des pièces rebutées n’est pas incluse. Coût des défauts câble : coût des NC concernées ; quand une NC contient aussi d’autres défauts, son coût est partagé entre ses défauts.'
     },
     en: {
       unit: 'Quality', title: 'FTO2 Non-conformities', period: 'NCs created {from} to {to}',
       minorLabel: 'Minor defects', minorIn: 'Included', minorOut: 'Excluded',
       tabPareto: 'Pareto', tabWeek: 'Weekly Pareto', tabCnq: 'Cost of non-quality', tabClient: 'Customer returns', tabRca: 'Root causes (RCA)',
       serieSub: 'NCs raised at FTO2 that FTO2 is liable for.',
-      paretoTitle: 'Defect Pareto', weekTitle: 'Pareto of the week', cnqTitle: 'Cost of non-quality', clientTitle: 'Customer returns',
+      paretoTitle: 'Defect Pareto', weekTitle: 'Weekly Pareto', cnqTitle: 'Cost of non-quality', clientTitle: 'Customer returns',
       clientSub: 'NCs raised outside FTO2 (assembly lines, customers) that FTO2 is liable for.',
       rcaTitle: 'Root causes of defects (RCA)', rcaSub: 'Definition of each root cause, its sub-categories and official codes, figures and real examples.',
-      figDefects: 'Defects', figNcs: 'NCs', figTop: '“{c}”', figCable: 'Cable defects (cable to remake or resupply)',
+      figDefects: 'Defects', figNcs: 'NCs', figPerNc: 'Defects per NC (average)', figTopRca: 'Top root cause', topSub: '{n} defects · {p}',
       dCat: 'Category', dRca: 'Root cause (RCA)', dLine: 'Line', dMonth: 'Month created', dWhere: 'Where the NC was found', dRule: 'Decision', dCable: 'Cable defect', dPhase: 'Phase', dNat: 'Type of damage',
       natOnly: '“Damaged item” defects.',
       paretoSub: 'Kitting Factory, FOD and Other are tracked separately.', aside: 'Tracked separately',
-      keyMain: 'Selected week', keyTick: 'Average of the previous 8 weeks',
       hint: 'Click a bar to filter the other charts and the detail.', clearAll: 'Clear all', clear: 'Clear',
-      tblDefects: 'Defect detail', tblWeek: 'Defect detail for the week', tblNc: 'NC and cost detail', tblClient: 'Customer return detail',
+      tblDefects: 'Defect detail', tblWeek: 'Defect detail for the period', tblNc: 'NC and cost detail', tblClient: 'Customer return detail',
       tblClientSub: 'Click a row to read the NC text.',
       search: 'Search (NC, text, FIN…)', shown: '{n} of {t}', more: 'Show {n} more',
       cNc: 'NC', cDate: 'Date', cLine: 'Line', cCat: 'Category', cRca: 'Root cause (RCA)', cSub: 'Sub-category', cText: 'Defect', cWhy: 'Cause',
       lineLabel: 'Line', allLines: 'All', weekLabel: 'Week', prevWeek: 'Previous week', nextWeek: 'Next week',
-      weekRange: '{a} to {b}', partial: 'in progress',
-      wDefects: 'Defects', wNcs: 'NCs', wTopCat: 'Top category', wTopRca: 'Top root cause', vsAvg: '{d} against the average (8 weeks)',
-      wTrend: 'Defects per week', wTrendSub: 'Click a week to show it.',
+      partial: 'in progress', winLabel: 'Period', win1: '1 week', win5: '5 weeks', win10: '10 weeks',
+      rangeOne: 'Week {w}: {a} to {b}.', rangeMany: 'Weeks {w1} to {w2}: {a} to {b}.',
+      wDefects: 'Defects', wNcs: 'NCs', wPerWeek: 'Defects per week (average, shutdown excluded)', wPerNc: 'Defects per NC (average)', wTopRca: 'Top root cause',
+      wMatrix: 'Week by week', wLevel: 'Level', lvlCat: 'Categories', lvlRca: 'Root causes (RCA)', total: 'Total', problem: 'Problem',
+      wMatrixSub: 'Number of defects per week. Click a row to follow that problem over time.',
+      wTrendAll: 'All defects, per week', wTrendProb: '{p}, per week', probClear: 'Back to all defects',
+      wTrendSub: 'Weeks of the chosen period are in blue. Click a week to choose it.',
       cnqSub: 'Estimate from AEC process times: alert, writing, technical support, rework and check, costed defect by defect.',
       stripTotal: 'FTO2 total', stripSerie: 'Series', stripClient: 'Customer returns',
-      cTotal: 'Cost of non-quality, series', cNcs: 'NCs', cPerNc: 'Average cost per NC', cCable: 'Share of cable defects',
+      cTotal: 'Cost of non-quality, series', cNcs: 'NCs', cPerNc: 'Average cost per NC', cCable: 'Cost of cable defects', cCableSub: '{p} of the series cost',
       cLevels: 'Costing methods compared', cLevelsSub: 'Airbus standard: flat cost per decision. AEC average: average times per NC. Per defect: AEC steps with the rework built for each defect (method used).',
       lvl1: 'Airbus standard', lvl2: 'AEC average', lvl3: 'Per defect',
-      cCableTitle: 'Share of cables',
-      cCableTxt: 'Cost of cable defects, each NC sharing its cost among its defects.',
-      cCableRange: 'Range: {a} for the cable rework alone, {b} for the full NCs that contain a cable defect.',
       cByCat: 'Cost by defect category', cByCatSub: 'Each NC’s cost shared among its defects.', noLine: 'A400M NCs (no text)',
       cable: 'Cable', notCable: 'Not cable',
       kNc: 'NC', kDate: 'Date', kLine: 'Line', kWhere: 'Found', kRule: 'Decision', kLines: 'Defects', kCable: 'Cable', kC3: 'Cost', kTitle: 'Title', yes: 'yes',
@@ -454,7 +469,7 @@ window.DASH = __DATA__;
       foot1: 'Source: Skywise SAP extract, NCs created {from} to {to}.',
       foot2: 'Series: NCs raised at FTO2 that FTO2 is liable for, deleted NCs excluded. Customer returns: NCs raised outside FTO2 that FTO2 is liable for. Defects are classified by root cause from the full text of each NC. NC texts and sub-categories stay in French.',
       foot3: 'The {n} A400M NCs are counted as NCs and in the cost but not as defects: their text is not available. The cost model also counts {d} deleted NCs ({de}) and {o} other NC ({oe}), outside this dashboard.',
-      foot4: 'Minor defects: a missing tyrap, frette, ficelle, cap, cerise or plug. Cost: 50 €/h, process times estimated by the team; the value of scrapped parts is not included. Shutdown weeks (fewer than 10 defects) are left out of the averages.'
+      foot4: 'Shutdown weeks (fewer than 10 defects) are left out of weekly averages. Minor defects: a missing tyrap, frette, ficelle, cap, cerise or plug. Cost: 50 €/h, process times estimated by the team; the value of scrapped parts is not included. Cost of cable defects: cost of the NCs concerned; when an NC also has other defects, its cost is shared among its defects.'
     }
   };
   var EN = {
@@ -581,8 +596,6 @@ window.DASH = __DATA__;
       var max = Math.max.apply(null, vals.map(function (v) { return Math.max(m[v] || 0, ref ? ref[v] || 0 : 0); }).concat([1e-9]));
       var el = document.getElementById(o.grid + '-' + d.k), act = d.k in b.f, card = el.closest('.card');
       el.classList.toggle('active', act);
-      var keyEl = card.querySelector('[data-key]');
-      if (keyEl) keyEl.innerHTML = '<span><i></i>' + esc(S('keyMain')) + '</span><span><i class="t"></i>' + esc(S('keyTick')) + '</span>';
       if (!vals.length) { el.innerHTML = '<p class="empty">—</p>'; }
       else if (d.cols) {
         el.innerHTML = vals.map(function (v) {
@@ -645,76 +658,100 @@ window.DASH = __DATA__;
     ],
     text: defectText, head: defectHead, row: defectRow, sort: byDate,
     after: function (b) {
-      var rs = b.filtered(null), ncs = {}, cab = 0, m = {};
-      rs.forEach(function (r) { ncs[r[0]] = 1; if (dCable(r)) cab++; var c = dCat(r); if (!ASIDE[c]) m[c] = (m[c] || 0) + 1; });
-      var top = topOf(m), free = !Object.keys(b.f).length && !b.q;
+      var rs = b.filtered(null), ncs = {}, m = {};
+      rs.forEach(function (r) { ncs[r[0]] = 1; var a = dRca(r); m[a] = (m[a] || 0) + 1; });
+      var top = topOf(m), free = !Object.keys(b.f).length && !b.q, nWith = Object.keys(ncs).length;
       document.getElementById('pf1').textContent = num(rs.length);
-      document.getElementById('pf2').textContent = num(free ? SERIE_NC.length : Object.keys(ncs).length);
-      document.getElementById('pf3').textContent = top ? pct0(m[top] / rs.length * 100) : '—';
-      document.getElementById('pf3l').textContent = top ? S('figTop', { c: L(top) }) : '';
-      document.getElementById('pf4').textContent = rs.length ? pct0(cab / rs.length * 100) : '—';
+      document.getElementById('pf2').textContent = num(free ? SERIE_NC.length : nWith);
+      document.getElementById('pf3').textContent = nWith ? (Math.round(rs.length / nWith * 10) / 10).toLocaleString(loc()) : '—';
+      document.getElementById('pf4').textContent = top ? L(top) : '—';
+      document.getElementById('pf4s').textContent = top ? S('topSub', { n: num(m[top]), p: pct(m[top] / rs.length * 100) }) : '';
     }
   });
 
-  // ---------------------------------------------------------------- 2. Weekly Pareto (series)
+  // ---------------------------------------------------------------- 2. Weekly Pareto (series): running window of 1, 5 or 10 weeks
   var defaultWeek = (function () { for (var i = WEEKS.length - 1; i >= 0; i--) { if (!isPartial(WEEKS[i])) return WEEKS[i]; } return WEEKS[WEEKS.length - 1]; })();
-  var W = { week: defaultWeek, line: '' };
+  var W = { week: defaultWeek, line: '', win: 5, lvl: 'cat', prob: null };
   function wBase() { return D.defects.filter(function (r) { return r[20] === 'serie' && keepMinor(r) && (!W.line || r[4] === W.line); }); }
   function wNcs() { return SERIE_NC.filter(function (n) { return !W.line || n[3] === W.line; }); }
-  var WEEK_ALL = {}; D.defects.forEach(function (r) { if (r[20] === 'serie') WEEK_ALL[r[3]] = (WEEK_ALL[r[3]] || 0) + 1; });
-  function prevWeeks(wk, n) { var i = WEEKS.indexOf(wk), out = []; for (var j = i - 1; j >= 0 && out.length < n; j--) { if ((WEEK_ALL[WEEKS[j]] || 0) >= 10) out.push(WEEKS[j]); } return out; }
-  function avgRef(getKey) {
-    var pw = prevWeeks(W.week, 8), set = {}, m = {};
-    if (!pw.length) return null;
-    pw.forEach(function (w) { set[w] = 1; });
-    wBase().forEach(function (r) { if (set[r[3]]) { var k = getKey(r); m[k] = (m[k] || 0) + 1; } });
-    Object.keys(m).forEach(function (k) { m[k] = m[k] / pw.length; });
-    return m;
-  }
+  function winWeeks() { var i = WEEKS.indexOf(W.week); return WEEKS.slice(Math.max(0, i - W.win + 1), i + 1); }
+  function toSet(a) { var s = {}; a.forEach(function (x) { s[x] = 1; }); return s; }
+  function lvlGet(r) { return W.lvl === 'cat' ? dCat(r) : dRca(r); }
+  var WEEK_ALL = {}; D.defects.forEach(function (r) { if (r[20] === 'serie') WEEK_ALL[r[3]] = (WEEK_ALL[r[3]] || 0) + 1; });  // shutdown weeks: fewer than 10 defects
   var weekly = Board({
     grid: 'wg', chips: 'wc', search: 'wq', count: 'wn', thead: 'wth', tbody: 'wtb', more: 'wm',
-    rows: function () { return wBase().filter(function (r) { return r[3] === W.week; }); },
+    rows: function () { var set = toSet(winWeeks()); return wBase().filter(function (r) { return set[r[3]]; }); },
     dims: [
-      { k: 'cat', t: 'dCat', sub: 'paretoSub', key: true, wide: true, pareto: true, get: dCat, show: L, ref: function () { return avgRef(dCat); } },
-      { k: 'rca', t: 'dRca', top: 12, key: true, get: dRca, show: L, ref: function () { return avgRef(dRca); } },
+      { k: 'cat', t: 'dCat', sub: 'paretoSub', wide: true, pareto: true, get: dCat, show: L },
+      { k: 'rca', t: 'dRca', top: 12, get: dRca, show: L },
       { k: 'line', t: 'dLine', get: function (r) { return r[4]; }, show: function (v) { return v; }, order: lineOrder }
     ],
     text: defectText, head: defectHead, row: defectRow, sort: byDate,
-    after: function (b) {
-      var sel = document.getElementById('wSel');
-      sel.innerHTML = WEEKS.slice().reverse().map(function (w) { return '<option value="' + w + '"' + (w === W.week ? ' selected' : '') + '>' + esc(weekLong(w) + (isPartial(w) ? ' (' + S('partial') + ')' : '')) + '</option>'; }).join('');
-      var i = WEEKS.indexOf(W.week);
-      document.getElementById('wPrev').disabled = i <= 0; document.getElementById('wNext').disabled = i >= WEEKS.length - 1;
-      var mon = isoMonday(W.week), sun = new Date(mon); sun.setUTCDate(sun.getUTCDate() + 6);
-      document.getElementById('wRange').textContent = S('weekRange', { a: day(isoDay(mon), { day: 'numeric', month: 'short' }), b: day(isoDay(sun), { day: 'numeric', month: 'short', year: 'numeric' }) });
-      document.getElementById('wLines').innerHTML = [['', S('allLines')], ['A350', 'A350'], ['A330', 'A330'], ['A320', 'A320']].map(function (p) {
-        return '<button type="button" data-line="' + p[0] + '" aria-pressed="' + (W.line === p[0]) + '">' + esc(p[1]) + '</button>'; }).join('');
-      var rs = b.base(), cat = {}, rca = {};
-      rs.forEach(function (r) { var c = dCat(r); if (!ASIDE[c]) cat[c] = (cat[c] || 0) + 1; var a = dRca(r); rca[a] = (rca[a] || 0) + 1; });
-      var pw = prevWeeks(W.week, 8), set = {}, pd = 0, pn = 0; pw.forEach(function (w) { set[w] = 1; });
-      wBase().forEach(function (r) { if (set[r[3]]) pd++; });
-      var wn = wNcs(); wn.forEach(function (n) { if (set[n[2]]) pn++; });
-      var avgD = pw.length ? pd / pw.length : null, avgN = pw.length ? pn / pw.length : null, nN = wn.filter(function (n) { return n[2] === W.week; }).length;
-      function delta(el, v, a) { el.textContent = a ? S('vsAvg', { d: (v > a ? '+' : '') + pct0((v - a) / a * 100) }) : ''; el.className = 'delta ' + (a && v > a ? 'up' : 'down'); }
-      document.getElementById('wf1').textContent = num(rs.length); delta(document.getElementById('wf1s'), rs.length, avgD);
-      document.getElementById('wf2').textContent = num(nN); delta(document.getElementById('wf2s'), nN, avgN);
-      var tc = topOf(cat), tr = topOf(rca);
-      document.getElementById('wf3').textContent = tc ? L(tc) : '—';
-      document.getElementById('wf4').textContent = tr ? L(tr) : '—';
-      var per = {}; wBase().forEach(function (r) { per[r[3]] = (per[r[3]] || 0) + 1; });
-      var max = Math.max.apply(null, WEEKS.map(function (w) { return per[w] || 0; }).concat([1]));
-      var tc2 = document.getElementById('wTrendCols'); tc2.classList.add('active');
-      tc2.innerHTML = WEEKS.map(function (w) { var n = per[w] || 0;
-        return '<button type="button" class="col' + (isPartial(w) ? ' partial' : '') + '" data-week="' + w + '" aria-pressed="' + (w === W.week) + '" aria-label="' + esc(weekLong(w)) + ': ' + n + '"><span class="v">' + num(n) + '</span><span class="stick" style="height:' + (n / max * 100) + '%"></span><span class="m">' + weekShort(w) + '</span></button>'; }).join('');
-      var cur = tc2.querySelector('[aria-pressed="true"]'); if (cur && G.tab === 'hebdo') { var wrap = tc2.parentNode, x = cur.offsetLeft - wrap.clientWidth / 2; if (x > 0) wrap.scrollLeft = x; }
-    }
+    after: renderWeekly
   });
+  function segHtml(items, cur, attr) { return items.map(function (p) { return '<button type="button" ' + attr + '="' + p[0] + '" aria-pressed="' + (String(cur) === String(p[0])) + '">' + esc(p[1]) + '</button>'; }).join(''); }
+  function renderWeekly(b) {
+    var sel = document.getElementById('wSel');
+    sel.innerHTML = WEEKS.slice().reverse().map(function (w) { return '<option value="' + w + '"' + (w === W.week ? ' selected' : '') + '>' + esc(weekLong(w) + (isPartial(w) ? ' (' + S('partial') + ')' : '')) + '</option>'; }).join('');
+    var i = WEEKS.indexOf(W.week);
+    document.getElementById('wPrev').disabled = i <= 0; document.getElementById('wNext').disabled = i >= WEEKS.length - 1;
+    document.getElementById('wWin').innerHTML = segHtml([[1, S('win1')], [5, S('win5')], [10, S('win10')]], W.win, 'data-win');
+    document.getElementById('wLines').innerHTML = segHtml([['', S('allLines')], ['A350', 'A350'], ['A330', 'A330'], ['A320', 'A320']], W.line, 'data-line');
+    document.getElementById('wLvl').innerHTML = segHtml([['cat', S('lvlCat')], ['rca', S('lvlRca')]], W.lvl, 'data-lvl');
+    var ws = winWeeks(), set = toSet(ws), first = isoMonday(ws[0]), last = isoMonday(ws[ws.length - 1]); last.setUTCDate(last.getUTCDate() + 6);
+    var dA = day(isoDay(first), { day: 'numeric', month: 'long' }), dB = day(isoDay(last), { day: 'numeric', month: 'long', year: 'numeric' });
+    document.getElementById('wRange').textContent = ws.length === 1 ? S('rangeOne', { w: +ws[0].slice(6), a: dA, b: dB }) : S('rangeMany', { w1: +ws[0].slice(6), w2: +ws[ws.length - 1].slice(6), a: dA, b: dB });
+    // figures for the period
+    var rs = b.base(), rca = {}, ncD = {};
+    rs.forEach(function (r) { var a = dRca(r); rca[a] = (rca[a] || 0) + 1; ncD[r[0]] = 1; });
+    var nN = wNcs().filter(function (n) { return set[n[2]]; }).length, tr = topOf(rca);
+    document.getElementById('wf1').textContent = num(rs.length);
+    document.getElementById('wf2').textContent = num(nN);
+    var perW = {}; rs.forEach(function (r) { perW[r[3]] = (perW[r[3]] || 0) + 1; });
+    var open = ws.filter(function (w) { return (WEEK_ALL[w] || 0) >= 10; }), nOpen = open.reduce(function (s, w) { return s + (perW[w] || 0); }, 0);
+    if (ws.length > 1) { document.getElementById('wf3').textContent = open.length ? num(Math.round(nOpen / open.length)) : '—'; document.getElementById('wf3l').textContent = S('wPerWeek'); }
+    else { var nd = Object.keys(ncD).length; document.getElementById('wf3').textContent = nd ? (Math.round(rs.length / nd * 10) / 10).toLocaleString(loc()) : '—'; document.getElementById('wf3l').textContent = S('wPerNc'); }
+    document.getElementById('wf4').textContent = tr ? L(tr) : '—';
+    document.getElementById('wf4s').textContent = tr ? S('topSub', { n: num(rca[tr]), p: pct(rca[tr] / rs.length * 100) }) : '';
+    // week-by-week table: problems side by side
+    var cell = {}, tot = {}, maxCell = 1;
+    rs.forEach(function (r) { var k = lvlGet(r), c = cell[k] || (cell[k] = {}); c[r[3]] = (c[r[3]] || 0) + 1; tot[k] = (tot[k] || 0) + 1; });
+    Object.keys(cell).forEach(function (k) { ws.forEach(function (w) { maxCell = Math.max(maxCell, cell[k][w] || 0); }); });
+    var keys = Object.keys(tot).sort(function (x, y) { return tot[y] - tot[x]; });
+    if (W.lvl === 'cat') keys = keys.filter(function (k) { return !ASIDE[k]; }).concat(keys.filter(function (k) { return ASIDE[k]; }));
+    else keys = keys.slice(0, 15);
+    var head = '<thead><tr><th scope="col">' + esc(S('problem')) + '</th>' + ws.map(function (w, j) { return '<th scope="col"' + (j === ws.length - 1 ? ' class="cur"' : '') + '>' + weekShort(w) + '</th>'; }).join('') + (ws.length > 1 ? '<th scope="col">' + esc(S('total')) + '</th>' : '') + '</tr></thead>';
+    var body = keys.map(function (k) {
+      var on = W.prob && W.prob.lvl === W.lvl && W.prob.v === k;
+      return '<tr tabindex="0" data-prob="' + esc(k) + '" aria-pressed="' + !!on + '"' + (W.lvl === 'cat' && ASIDE[k] ? ' class="aside"' : '') + '><td>' + esc(L(k)) + '</td>' + ws.map(function (w) {
+        var n = (cell[k] || {})[w] || 0;
+        return '<td class="cell">' + (n ? '<span class="heat" style="background:color-mix(in srgb, var(--s1) ' + Math.round(8 + 52 * n / maxCell) + '%, transparent)">' + num(n) + '</span>' : '<span class="z">·</span>') + '</td>';
+      }).join('') + (ws.length > 1 ? '<td class="tot">' + num(tot[k]) + '</td>' : '') + '</tr>';
+    }).join('');
+    document.getElementById('wMatrix').innerHTML = head + '<tbody>' + (body || '<tr><td class="empty">—</td></tr>') + '</tbody>';
+    // trend for the chosen problem (or every defect) over all weeks
+    var per = {}, p = W.prob;
+    wBase().forEach(function (r) { if (!p || (p.lvl === 'cat' ? dCat(r) : dRca(r)) === p.v) per[r[3]] = (per[r[3]] || 0) + 1; });
+    var max = Math.max.apply(null, WEEKS.map(function (w) { return per[w] || 0; }).concat([1]));
+    document.getElementById('wTrendTitle').textContent = p ? S('wTrendProb', { p: L(p.v) }) : S('wTrendAll');
+    var pc = document.getElementById('wProbClear'); pc.hidden = !p; pc.textContent = S('probClear');
+    var tc = document.getElementById('wTrendCols');
+    tc.innerHTML = WEEKS.map(function (w) { var n = per[w] || 0;
+      return '<button type="button" class="col' + (set[w] ? '' : ' out') + (isPartial(w) ? ' partial' : '') + '" data-week="' + w + '" aria-pressed="' + (w === W.week) + '" aria-label="' + esc(weekLong(w)) + ': ' + n + '"><span class="v">' + (n ? num(n) : '') + '</span><span class="stick" style="height:' + (n / max * 100) + '%"></span><span class="m">' + weekShort(w) + '</span></button>'; }).join('');
+    var cur = tc.querySelector('[aria-pressed="true"]'); if (cur && G.tab === 'hebdo') { var wrap = tc.parentNode, x = cur.offsetLeft - wrap.clientWidth * 0.7; if (x > 0) wrap.scrollLeft = x; }
+  }
   function setWeek(w) { if (WEEKS.indexOf(w) < 0) return; W.week = w; weekly.f = {}; weekly.render(); }
   document.getElementById('wSel').addEventListener('change', function (e) { setWeek(e.target.value); });
   document.getElementById('wPrev').addEventListener('click', function () { setWeek(WEEKS[WEEKS.indexOf(W.week) - 1]); });
   document.getElementById('wNext').addEventListener('click', function () { setWeek(WEEKS[WEEKS.indexOf(W.week) + 1]); });
   document.getElementById('wTrendCols').addEventListener('click', function (e) { var c = e.target.closest('[data-week]'); if (c) setWeek(c.getAttribute('data-week')); });
   document.getElementById('wLines').addEventListener('click', function (e) { var c = e.target.closest('[data-line]'); if (c) { W.line = c.getAttribute('data-line'); weekly.f = {}; weekly.render(); } });
+  document.getElementById('wWin').addEventListener('click', function (e) { var c = e.target.closest('[data-win]'); if (c) { W.win = +c.getAttribute('data-win'); weekly.f = {}; weekly.render(); } });
+  document.getElementById('wLvl').addEventListener('click', function (e) { var c = e.target.closest('[data-lvl]'); if (c) { W.lvl = c.getAttribute('data-lvl'); weekly.render(); } });
+  function pickProb(tr) { var v = tr.getAttribute('data-prob'); W.prob = W.prob && W.prob.lvl === W.lvl && W.prob.v === v ? null : { lvl: W.lvl, v: v }; weekly.render(); }
+  document.getElementById('wMatrix').addEventListener('click', function (e) { var tr = e.target.closest('[data-prob]'); if (tr) pickProb(tr); });
+  document.getElementById('wMatrix').addEventListener('keydown', function (e) { var tr = e.target.closest('[data-prob]'); if (tr && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); pickProb(tr); } });
+  document.getElementById('wProbClear').addEventListener('click', function () { W.prob = null; weekly.render(); });
 
   // ---------------------------------------------------------------- 3. Cost of non-quality (series)
   // cost units: each defect line of a series NC (its share of the NC cost), plus each series NC with no defect line
@@ -747,19 +784,15 @@ window.DASH = __DATA__;
     after: function () {
       var t3 = sum(SERIE_NC, function (n) { return n[12]; }), t1 = sum(SERIE_NC, function (n) { return n[9]; }), t2 = sum(SERIE_NC, function (n) { return n[10]; });
       var tc = sum(CLIENT_NC, function (n) { return n[12]; });
-      var cabAlloc = 0, cabDirect = 0, cabSet = {};
-      UNITS.forEach(function (u) { if (u.d && dCable(u.d)) { cabAlloc += dAlloc(u.d); cabSet[u.n[0]] = 1; var v = D.direct[u.d[0] + '|' + u.d[1]]; if (v) cabDirect += v[1]; } });
-      var cabWhole = sum(SERIE_NC.filter(function (n) { return cabSet[n[0]]; }), function (n) { return n[12]; });
+      var cabAlloc = 0; UNITS.forEach(function (u) { if (u.d && dCable(u.d)) cabAlloc += dAlloc(u.d); });
       document.getElementById('cStrip').innerHTML = '<span>' + esc(S('stripTotal')) + ' <b>' + eur(t3 + tc) + '</b></span><span>' + esc(S('stripSerie')) + ' <b>' + eur(t3) + '</b> · ' + num(SERIE_NC.length) + ' NC</span><span>' + esc(S('stripClient')) + ' <b>' + eur(tc) + '</b> · ' + num(CLIENT_NC.length) + ' NC</span>';
       document.getElementById('cf1').textContent = eur(t3);
       document.getElementById('cf2').textContent = num(SERIE_NC.length);
       document.getElementById('cf3').textContent = eur(t3 / SERIE_NC.length);
-      document.getElementById('cf4').textContent = pct(cabAlloc / t3 * 100);
+      document.getElementById('cf4').textContent = eur(cabAlloc);
+      document.getElementById('cf4s').textContent = S('cCableSub', { p: pct(cabAlloc / t3 * 100) });
       var lv = [[S('lvl1'), t1, false], [S('lvl2'), t2, false], [S('lvl3'), t3, true]], mx = Math.max(t1, t2, t3);
       document.getElementById('cLevels').innerHTML = lv.map(function (l) { return '<div class="level' + (l[2] ? ' main' : '') + '"><span class="name">' + esc(l[0]) + '</span><span class="track"><span class="fill" style="width:' + (l[1] / mx * 100) + '%"></span></span><span class="val">' + eur(l[1]) + '</span></div>'; }).join('');
-      document.getElementById('cCableBig').textContent = pct(cabAlloc / t3 * 100) + ' · ' + eur(cabAlloc);
-      document.getElementById('cCableTxt').textContent = S('cCableTxt');
-      document.getElementById('cCableRange').textContent = S('cCableRange', { a: pct(cabDirect / t3 * 100), b: pct(cabWhole / t3 * 100) });
     }
   });
 
