@@ -286,11 +286,14 @@ def official_subcode(d):
     which have no sub-code of their own, the parent code (E1 = part of Q06-001; E2 = a Q11 component code)."""
     ref = pd.read_csv(os.path.join(ROOT, "04_reference", "reference_souscodes_pareto.csv"), encoding="utf-8-sig")
     ref = ref[~ref.sous_code.astype(str).str.startswith("(")]
-    CODE_DESC.update(dict(zip(ref.sous_code, ref.object_desc)))
+    fr = pd.read_csv(os.path.join(ROOT, "04_reference", "souscodes_fr.csv"), encoding="utf-8-sig").set_index("sous_code").description_fr
+    missing = sorted(set(ref.sous_code) - set(fr.index))
+    assert not missing, "French description missing in 04_reference/souscodes_fr.csv for: %s" % missing
+    CODE_DESC.update({c: [en, fr[c]] for c, en in zip(ref.sous_code, ref.object_desc)})
     first = ref.groupby("sous_categorie").sous_code.first()
     fallback = {"Câble à refaire (ligne)": "Q06-001", "Composant HS": "Q11 (composant)", "Composant – cause non écrite": "Q11 (composant)",
                 "Non classé": "Non codé"}
-    CODE_DESC.update({"Q11 (composant)": "Component (sub-code not specified)", "Non codé": "No code"})
+    CODE_DESC.update({"Q11 (composant)": ["Component (sub-code not specified)", "Composant (sous-code non précisé)"], "Non codé": ["No code", "Sans code"]})
     out = []
     for code, sub, status in zip(d.llm_sous_code.fillna("").astype(str).str.strip(), d.llm_sous_categorie, d.llm_status):
         if status == "ok" and code in CODE_DESC:
@@ -299,7 +302,7 @@ def official_subcode(d):
             out.append(fallback[sub])
         elif sub in first.index:
             head = first[sub][:3] + " (non précisé)"
-            CODE_DESC.setdefault(head, "Sub-code not specified")
+            CODE_DESC.setdefault(head, ["Sub-code not specified", "Sous-code non précisé"])
             out.append(head)
         else:
             out.append("Non codé")
@@ -323,7 +326,7 @@ def rca_reference(d):
         for s in g.itertuples():
             cc = codes[codes.sous_categorie == s.sous_categorie]
             subs.append({"name": s.sous_categorie, "minor": s.mineur == "oui", "note": S_(s.note),
-                         "codes": [[c.sous_code, c.object_desc] for c in cc.itertuples()]})
+                         "codes": [[c.sous_code, CODE_DESC.get(c.sous_code, [c.object_desc, c.object_desc])[0], CODE_DESC.get(c.sous_code, [c.object_desc, c.object_desc])[1]] for c in cc.itertuples()]})
         ex = pool[pool.llm_rca_nom == rca_nom].drop_duplicates("notification_number").head(3)
         df_ = defs.loc[rca_nom] if rca_nom in defs.index else None
         out.append({"rca": rca_nom, "cat": g.categorie.iloc[0], "fr": "" if df_ is None else df_.definition_fr, "en": "" if df_ is None else df_.definition_en,
@@ -428,7 +431,7 @@ def build_detail(d, nc, x):
         "Description poste": m.station_description, "Décision": m.decision_label, "Responsabilité": m.liability, "Rédacteur": m.user_department,
         "FIN": m.fin, "Défaut (extrait)": m.text, "Code écrit": m.code,
         "Parser – catégorie": m.groupe, "Parser – sous-catégorie": m.sous_groupe, "Parser – RCA": m.rca_nom,
-        "Cause racine – catégorie": m.llm_categorie, "Cause racine – sous-catégorie": m.llm_sous_categorie, "Cause racine – RCA": m.llm_rca_nom, "Sous-code officiel": m.sous_code_officiel,
+        "Cause racine – catégorie": m.llm_categorie, "Cause racine – sous-catégorie": m.llm_sous_categorie, "Cause racine – RCA": m.llm_rca_nom, "Sous-code officiel": m.sous_code_officiel, "Libellé du sous-code": m.sous_code_officiel.map(lambda c: CODE_DESC.get(c, ["", ""])[1]),
         "Symptôme": m.llm_symptome, "Confiance": m.llm_confiance, "Statut du label": m.llm_status,
         "Mineur": yn(m.mineur), "Défaut câble": yn(m.defaut_cable), "Provenance câble": m.provenance.where(m.defaut_cable, ""),
         "CNQ réparti (EUR)": m.cnq_cost_allocated_llm.round(2), "Titre NC": m.description_short,

@@ -394,7 +394,7 @@ window.DASH = __DATA__;
       clientSub: 'NC émises hors de FTO2 (lignes d’assemblage, clients) sous responsabilité FTO2.',
       rcaTitle: 'Les causes des défauts (RCA)', rcaSub: 'Définition de chaque cause, sous-catégories et codes officiels, chiffres et exemples réels.',
       figDefects: 'Défauts', figNcs: 'NC', figPerNc: 'Défauts par NC (moyenne)', figTopRca: 'Première cause', topSub: '{n} défauts · {p}',
-      dCat: 'Catégorie', dRca: 'Cause (RCA)', dLine: 'Ligne', dMonth: 'Mois de création', dWhere: 'Où la NC a été trouvée', dRule: 'Décision', dCable: 'Défaut câble', cableSub: 'Le câble lui-même doit être refait ou refourni.', keyCable: 'Défauts câble', keyOther: 'Autres défauts', cCab: 'Câble', ofWhichCable: '{n} dont {c} câble', dPhase: 'Phase', dNat: 'Nature du dommage', dCode: 'Sous-code officiel', codeSub: 'Sous-codes de la fiche de codes officielle.', lvlCode: 'Sous-codes', cCode: 'Sous-code',
+      dCat: 'Catégorie', dRca: 'Cause (RCA)', dLine: 'Ligne', dMonth: 'Mois de création', dWhere: 'Où la NC a été trouvée', dRule: 'Décision', dCable: 'Défaut câble', cableSub: 'Le câble lui-même doit être refait ou refourni.', keyCable: 'Défauts câble', keyOther: 'Autres défauts', cCab: 'Câble', ofWhichCable: '{n} dont {c} câble', dPhase: 'Phase', dNat: 'Nature du dommage', dCode: 'Sous-code officiel', codeSub: 'Sous-codes de la fiche de codes officielle de retouche.', lvlCode: 'Sous-codes', cCode: 'Sous-code',
       natOnly: 'Défauts « Élément endommagé ».',
       paretoSub: 'Kitting Factory, FOD et Autre sont suivis à part.', aside: 'Suivi séparé',
       hint: 'Cliquez sur une barre pour filtrer les autres graphiques et le détail.', clearAll: 'Tout effacer', clear: 'Effacer',
@@ -529,7 +529,8 @@ window.DASH = __DATA__;
   function dMinor(r) { return r[14]; } function dCable(r) { return r[15]; } function dAlloc(r) { return r[17]; }
   function keepMinor(r) { return G.minor || !dMinor(r); }
   function dCode(r) { return r[22] || ''; }
-  function codeName(c) { var x = D.codes[c]; return x ? c + ' · ' + x : c; }
+  function codeDesc(c) { var x = D.codes[c]; return x ? x[G.lang === 'fr' ? 1 : 0] : ''; }
+  function codeName(c) { var x = codeDesc(c); return x ? c + ' · ' + x : c; }
   var NC = {}; D.ncs.forEach(function (n) { NC[n[0]] = n; });
   var SERIE_NC = D.ncs.filter(function (n) { return n[23] === 'serie'; }), CLIENT_NC = D.ncs.filter(function (n) { return n[23] === 'client'; });
 
@@ -652,9 +653,9 @@ window.DASH = __DATA__;
 
   function defectHead() { return ['cNc', 'cDate', 'cLine', 'cCat', 'cRca', 'cSub', 'cCode', 'cCab', 'cText'].map(function (k) { return '<th scope="col">' + esc(S(k)) + '</th>'; }).join(''); }
   function defectRow(r) {
-    return '<tr><td class="nc">' + esc(r[0]) + (r[1] > 1 ? ' · ' + r[1] : '') + '</td><td class="num">' + esc(shortDay(r[2])) + '</td><td>' + esc(r[4]) + '</td><td>' + esc(L(dCat(r))) + '</td><td>' + esc(L(dRca(r))) + '</td><td>' + esc(dSub(r)) + '</td><td class="nc" title="' + esc(D.codes[dCode(r)] || '') + '">' + esc(dCode(r)) + '</td><td>' + (dCable(r) ? '<span class="tag">' + esc(S('yes')) + '</span>' : '') + '</td><td class="txt">' + esc(tidy(r[18])) + '</td></tr>';
+    return '<tr><td class="nc">' + esc(r[0]) + (r[1] > 1 ? ' · ' + r[1] : '') + '</td><td class="num">' + esc(shortDay(r[2])) + '</td><td>' + esc(r[4]) + '</td><td>' + esc(L(dCat(r))) + '</td><td>' + esc(L(dRca(r))) + '</td><td>' + esc(dSub(r)) + '</td><td class="nc" title="' + esc(codeDesc(dCode(r))) + '">' + esc(dCode(r)) + '</td><td>' + (dCable(r) ? '<span class="tag">' + esc(S('yes')) + '</span>' : '') + '</td><td class="txt">' + esc(tidy(r[18])) + '</td></tr>';
   }
-  function defectText(r) { return r[0] + ' ' + r[18] + ' ' + dCode(r) + ' ' + (D.codes[dCode(r)] || '') + ' ' + dSub(r) + ' ' + dRca(r) + ' ' + L(dRca(r)) + ' ' + dCat(r) + ' ' + L(dCat(r)); }
+  function defectText(r) { return r[0] + ' ' + r[18] + ' ' + dCode(r) + ' ' + codeDesc(dCode(r)) + ' ' + dSub(r) + ' ' + dRca(r) + ' ' + L(dRca(r)) + ' ' + dCat(r) + ' ' + L(dCat(r)); }
   function byDate(a, b2) { return a[2] < b2[2] ? 1 : a[2] > b2[2] ? -1 : (a[0] < b2[0] ? 1 : a[0] > b2[0] ? -1 : a[1] - b2[1]); }
   function topOf(m) { return Object.keys(m).sort(function (x, y) { return m[y] - m[x]; })[0]; }
 
@@ -873,7 +874,7 @@ window.DASH = __DATA__;
           '<div class="stats"><span><b>' + num(c.d) + '</b> ' + esc(S('rDef').toLowerCase()) + '</span><span><b>' + (st.tot ? pct(c.d / st.tot * 100) : '—') + '</b></span><span><b>' + num(Object.keys(c.nc).length) + '</b> NC</span><span><b>' + eur(c.c) + '</b></span><span><b>' + num(k.d) + '</b> ' + esc(S('rCli').toLowerCase()) + '</span></div>' +
           '<div class="subs"><h4>' + esc(S('subsTitle')) + '</h4>' + r.subs.map(function (s) {
             return '<details><summary>' + esc(s.name) + (s.minor ? ' <span class="tag">' + esc(S('minorTag')) + '</span>' : '') + (s.codes.length ? ' · <code>' + s.codes.map(function (x) { return esc(x[0]); }).join(' ') + '</code>' : '') + '</summary>' +
-              (s.codes.length ? '<ul>' + s.codes.map(function (x) { return '<li><code>' + esc(x[0]) + '</code> ' + esc(x[1]) + '</li>'; }).join('') + '</ul>' : '') + '</details>'; }).join('') + '</div>' +
+              (s.codes.length ? '<ul>' + s.codes.map(function (x) { return '<li><code>' + esc(x[0]) + '</code> ' + esc(G.lang === 'fr' ? x[2] : x[1]) + '</li>'; }).join('') + '</ul>' : '') + '</details>'; }).join('') + '</div>' +
           '<div class="ex"><h4>' + esc(S('exTitle')) + '</h4>' + (r.ex.length ? r.ex.map(function (e) { return '<div><q>' + esc(tidy(e[1])) + '</q> <span class="nc">NC ' + esc(e[0]) + '</span></div>'; }).join('') : '<p class="empty">' + esc(S('noEx')) + '</p>') + '</div></article>';
       });
       html += '</section>';
