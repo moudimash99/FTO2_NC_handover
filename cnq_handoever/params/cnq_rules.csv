@@ -1,0 +1,11 @@
+rule,alert,write,support,work,recheck,eng_hours,part,label,basis
+RWK,1,1,1,1,1,0.0,0,Rework to drawing,LOCAL - the process AEC described
+EXC,1,1,1,1,1,0.0,1,Exchange,"ASSUMED - same as rework, plus the swapped part"
+REJ,1,1,1,0,1,0.0,1,Rejection,"ASSUMED - no work, part value counted"
+SCR,1,1,1,0,1,0.0,1,Scrap,"ASSUMED - no work, part value counted"
+DQN,1,1,1,0,1,8.0,0,Request for design change,"Rule from AEC: carries the engineering study. 8 h is OFFICIAL, not an AEC figure"
+ACC,1,1,1,0,1,0.0,0,Accept as is,ASSUMED
+PNC,1,1,1,0,1,0.0,0,Potential non-conformity,ASSUMED
+NDC,1,1,0,0,0,0.0,0,No decision,ASSUMED - alert and writing only
+DELETED,1,1,0,0,0,0.0,0,Deleted NC,"Rule from AEC: should not have been filed, administrative cost only"
+UNKNOWN,1,1,0,0,0,0.0,0,Unknown decision code,ASSUMED - alert and writing only; shows up in the data-gap query

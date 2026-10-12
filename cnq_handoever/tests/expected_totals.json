@@ -1,0 +1,26 @@
+{
+  "nc_rows": 876,
+  "nc_on_aec": 595,
+  "nc_no_master_data": 150,
+  "cost_aec": 134205.99,
+  "cost_all": 149952.36,
+  "level1_airbus_aec": 280003.6,
+  "level2_global_aec": 102500.16,
+  "level3_detailed_aec": 134205.99,
+  "cost_admin_aec": 76400.0,
+  "cost_work_aec": 49505.83,
+  "cost_engineering_aec": 3126.4,
+  "cost_material_aec": 5173.76,
+  "defect_lines": 2740,
+  "defect_lines_costed": 2072,
+  "cost_direct_lines": 34654.59,
+  "by_rule_aec": {
+    "ACC": 125.0,
+    "DELETED": 2350.0,
+    "DQN": 3751.4,
+    "EXC": 3347.45,
+    "PNC": 125.0,
+    "REJ": 9875.0,
+    "RWK": 114632.14
+  }
+}
