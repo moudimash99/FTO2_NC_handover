@@ -1,0 +1,41 @@
+sous_groupe,minutes,material_eur,label_en,reference_code,basis
+Inversion,35,0.0,Swapped connection,T04,"BORROWED - 2021 BU1 study, no time in the team table"
+Erreur de branchement,35,0.0,Wrong connection,T02,"BORROWED - 2021 BU1 study, no time in the team table"
+Non connecté,35,0.0,Not connected,T05,"BORROWED - 2021 BU1 study, no time in the team table"
+Déverrouillage,10,0.0,Contact not locked,Q01-001,TEAM
+Cheminement – clash,1,0.0,Routing: clash,Q06-007,TEAM
+Cheminement – longueur / tension,2,7.2,Routing: length or tension,Q06-001,TEAM
+Câblage non terminé,2,63.77,Wiring not finished,Q06-012,"TEAM - material looks too high, check"
+Câble à refaire (ligne),60,0.0,Cable to remake (line),Q06-004,TEAM
+Frettage / colliers – pose,1,1.3,Ties and clamps: fitting,Q05-018,TEAM
+Mauvaise réf. – colliers / frettage,6,0.0,Wrong reference: clamp or tie,Q03-006,"TEAM RULE - 2 x ""Missing: clamps or ties"""
+Gainage / protection,5,3.58,Sleeving and protection,Q06-002,TEAM
+Identification – positionnement,2,45.2,Identification: position,Q06-014,"TEAM - material looks too high, check"
+Mauvaise réf. – identification,4,4.43,Wrong reference: identification,Q03-014,"TEAM RULE - 2 x ""Missing: identification"""
+Mauvaise réf. – mécanique,4,0.0,Wrong reference: mechanical part,Q03-003,"TEAM RULE - 2 x ""Missing: mechanical part or locking"""
+Mauvaise réf. – obturation / thermo,2,0.0,Wrong reference: plug or heat-shrink,Q03-001,"TEAM RULE - 2 x ""Missing: plugs or caps"""
+Mauvaise réf. – électrique / détrompage,30,0.18,Wrong reference: electrical or keying,Q03-004,"TEAM RULE - 2 x ""Missing: cable, shunt or part"""
+Serrage mécanique,3,0.52,Tightening: mechanical,Q05-002,TEAM
+Serrage électrique,3,0.0,Tightening: electrical,Q05-001,TEAM
+Sertissage,1,0.0,Crimping,Q07-002,TEAM
+Sertissage spécifique,10,0.0,Crimping: special contacts,Q08-001,TEAM
+Composant HS,30,0.0,Component out of order,Q03-004,"TEAM RULE - 2 x ""Missing: cable, shunt or part"""
+Composant – cause non écrite,30,0.0,Component: cause not written,Q03-004,"TEAM RULE - 2 x ""Missing: cable, shunt or part"""
+Dommage – composant cassé,30,0.0,Damage: broken component,Q03-004,"TEAM RULE - 2 x ""Missing: cable, shunt or part"""
+Dommage – câble,30,2.01,Damage: cable,Q03-004,"TEAM RULE - 2 x ""Missing: cable, shunt or part"""
+Dommage – habillage,2,0.0,Damage: sleeving or dressing,Q03-002,"TEAM RULE - 2 x ""Missing: sleeve or heat-shrink"""
+Dommage – identification,4,1.32,Damage: identification,Q03-014,"TEAM RULE - 2 x ""Missing: identification"""
+Dommage – structure,20,0.85,Damage: structure,Q10-001,TEAM - very mixed class (1 to 120 min in the table)
+Manquant – colliers,3,0.0,Missing: clamps or ties,Q03-006,TEAM
+Manquant – câble / shunt / élément,15,0.0,"Missing: cable, shunt or part",Q03-004,TEAM
+Manquant – gaine / thermo,1,0.0,Missing: sleeve or heat-shrink,Q03-002,TEAM
+Manquant – identification,2,0.0,Missing: identification,Q03-014,TEAM
+Manquant – mécanique / freinage,2,0.0,Missing: mechanical part or locking,Q03-003,TEAM
+Manquant – obturateurs / bouchons,1,0.0,Missing: plugs or caps,Q03-001,TEAM
+Dossier,2,0.0,Paperwork,Q13-004,TEAM
+FOD,5,0.0,FOD,Q16-004,TEAM
+Bleu mal appliqué / débordant,10,0.0,Bonding protection badly applied,Q09-002,TEAM
+Bleu non appliqué,2,0.0,Bonding protection not applied,Q09-001,TEAM
+Point de masse / mesure,5,0.0,Ground point or measurement,Q09-003,TEAM
+Amont · Câble,5,0.0,Upstream: cable,Q12-003,TEAM
+Amont · Identification / barrette VT,5,0.0,Upstream: identification or terminal block,Q12-006,TEAM

@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Coût de non-qualité - Airbus Electric Center</title>
+<style>
+:root {
+  box-sizing: border-box;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  --navy: #0c2340; --on-navy: #ffffff; --on-navy-muted: #b9c6d6;
+  --bg: #ffffff; --tint: #f4f6f9; --ink: #132238; --muted: #5d6d7e; --line: #e1e6ec; --track: #e9edf2;
+  --l1: #8a98a8; --l2: #1b8a94; --l3: #1d5fb0; --cr: #c2571a;
+  --s1: #1d5fb0; --s2: #123f7a; --s3: #c9a227; --s4: #7a5fb0; --s5: #c2571a;
+  --flag-bg: #fff4cc; --flag-ink: #6b4e00; --flag-line: #e6c24d; --changed: #fde9d6;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --navy: #0a1a30; --on-navy: #f2f5f9; --on-navy-muted: #a3b2c4;
+    --bg: #101820; --tint: #18222d; --ink: #e8edf3; --muted: #9aa9b8; --line: #2c3946; --track: #24303c;
+    --l1: #95a3b3; --l2: #3db4be; --l3: #6ea6ea; --cr: #e58a4e;
+    --s1: #6ea6ea; --s2: #2f6fc0; --s3: #d9b94a; --s4: #a08ad6; --s5: #e58a4e;
+    --flag-bg: #3d3210; --flag-ink: #f3d77a; --flag-line: #7a651d; --changed: #4a3320;
+  }
+}
+:root[data-theme="dark"] {
+  --navy: #0a1a30; --on-navy: #f2f5f9; --on-navy-muted: #a3b2c4;
+  --bg: #101820; --tint: #18222d; --ink: #e8edf3; --muted: #9aa9b8; --line: #2c3946; --track: #24303c;
+  --l1: #95a3b3; --l2: #3db4be; --l3: #6ea6ea; --cr: #e58a4e;
+  --s1: #6ea6ea; --s2: #2f6fc0; --s3: #d9b94a; --s4: #a08ad6; --s5: #e58a4e;
+  --flag-bg: #3d3210; --flag-ink: #f3d77a; --flag-line: #7a651d; --changed: #4a3320;
+}
+*, *::before, *::after { box-sizing: inherit; }
+html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+body {
+  margin: 0; background: var(--bg); color: var(--ink);
+  font-family: "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Roboto, Arial, sans-serif;
+  font-size: 16px; line-height: 1.55; font-variant-numeric: tabular-nums;
+}
+.wrap { max-width: 1080px; margin: 0 auto; padding: 0 28px; }
+
+/* header and jump bar */
+.top { background: var(--navy); color: var(--on-navy); }
+.top .wrap { display: flex; justify-content: space-between; align-items: flex-end; gap: 20px; padding-top: 26px; padding-bottom: 24px; flex-wrap: wrap; }
+.org { font-size: 14px; color: var(--on-navy-muted); margin-bottom: 2px; }
+h1 { font-size: 30px; line-height: 1.2; font-weight: 600; margin: 0; }
+.top .sub { color: var(--on-navy-muted); margin-top: 4px; font-size: 15px; }
+.lang { display: inline-flex; border: 1px solid rgba(255, 255, 255, .35); border-radius: 6px; overflow: hidden; }
+.lang button { background: transparent; color: var(--on-navy-muted); border: 0; padding: 6px 14px; font: inherit; font-weight: 600; cursor: pointer; }
+.lang button[aria-pressed="true"] { background: var(--on-navy); color: var(--navy); }
+.tabsbar { background: var(--bg); border-bottom: 1px solid var(--line); position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; }
+.tabs { display: flex; gap: 6px; overflow-x: auto; }
+.tabs button { background: none; border: 0; border-bottom: 3px solid transparent; padding: 14px 14px 11px; font: inherit; font-size: 15px; color: var(--muted); font-weight: 600; cursor: pointer; white-space: nowrap; }
+.tabs button[aria-current="true"] { color: var(--ink); border-bottom-color: var(--l3); }
+.tabs button:hover { color: var(--ink); }
+
+/* page rhythm */
+main { padding-bottom: 72px; }
+main > section { padding: 56px 0 8px; scroll-margin-top: 52px; }
+main > section + section { border-top: 1px solid var(--line); margin-top: 48px; }
+h2 { font-size: 28px; line-height: 1.2; font-weight: 600; margin: 0 0 8px; letter-spacing: -0.01em; }
+h3 { font-size: 17px; font-weight: 600; margin: 44px 0 14px; }
+p { margin: 0 0 10px; max-width: 70ch; }
+.lead { color: var(--muted); font-size: 18px; max-width: 62ch; margin-bottom: 0; }
+.muted { color: var(--muted); } .small { font-size: 14px; }
+.num { text-align: right; white-space: nowrap; }
+.soft { background: var(--tint); border-radius: 12px; padding: 24px 26px; margin-top: 18px; }
+.soft > h3:first-child { margin-top: 0; }
+.cols2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 56px; }
+@media (max-width: 860px) { .cols2 { grid-template-columns: minmax(0, 1fr); } }
+.scroll { overflow-x: auto; }
+
+/* hero */
+.hero { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); gap: 24px 64px; align-items: start; }
+@media (max-width: 860px) { .hero { grid-template-columns: minmax(0, 1fr); } }
+.hero-k { font-size: 16px; color: var(--muted); font-weight: 600; }
+.hero-v { font-size: 64px; line-height: 1.05; font-weight: 600; letter-spacing: -0.02em; margin: 6px 0 10px; white-space: nowrap; }
+.hero-s { font-size: 18px; }
+.hero-n { margin-top: 18px; font-size: 14px; color: var(--flag-ink); background: var(--flag-bg); border-left: 3px solid var(--flag-line); padding: 8px 12px; border-radius: 0 6px 6px 0; max-width: 46ch; }
+@media (max-width: 480px) { .hero-v { font-size: 46px; } }
+.level { padding: 14px 0; border-top: 1px solid var(--line); }
+.level:first-of-type { border-top: 0; padding-top: 0; }
+.level .row { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+.level .name { font-weight: 600; } .level .name i { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 9px; }
+.level .total { font-size: 22px; font-weight: 600; white-space: nowrap; }
+.level .how { color: var(--muted); font-size: 14px; margin: 1px 0 9px 19px; }
+.track { background: var(--track); border-radius: 4px; height: 10px; overflow: hidden; }
+.fill { height: 100%; border-radius: 4px; }
+.c1 { background: var(--l1); } .c2 { background: var(--l2); } .c3 { background: var(--l3); } .ccr { background: var(--cr); }
+
+/* composition */
+.stack { display: flex; height: 18px; border-radius: 5px; overflow: hidden; background: var(--track); }
+.stack div { height: 100%; }
+.legend { display: flex; flex-wrap: wrap; gap: 10px 36px; margin-top: 16px; }
+.legend .it { display: grid; grid-template-columns: 12px auto; gap: 0 9px; align-items: baseline; }
+.legend i { width: 11px; height: 11px; border-radius: 3px; display: block; align-self: center; }
+.legend .v { grid-column: 2; font-weight: 600; font-size: 18px; } .legend .v span { color: var(--muted); font-weight: 400; font-size: 14px; margin-left: 6px; }
+.legend .l { font-size: 14px; color: var(--muted); }
+
+/* the calculation chain: a real sequence, so it is numbered */
+.chain { list-style: none; margin: 26px 0 0; padding: 0; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 18px; counter-reset: st; }
+.chain li { counter-increment: st; border-top: 3px solid var(--l3); padding-top: 12px; }
+.chain li.var { border-top-color: var(--s2); }
+.chain li::before { content: counter(st); font-size: 13px; font-weight: 600; color: var(--muted); }
+.chain .cn { font-weight: 600; font-size: 15px; line-height: 1.3; min-height: 2.6em; }
+.chain .cv { font-size: 26px; font-weight: 600; white-space: nowrap; }
+.chain .cs { font-size: 13px; color: var(--muted); line-height: 1.35; margin-top: 2px; }
+@media (max-width: 900px) { .chain { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 480px) { .chain { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.formula { font-size: 18px; font-weight: 600; margin: 30px 0 6px; max-width: 64ch; }
+
+/* disclosure */
+details { border-top: 1px solid var(--line); margin-top: 26px; }
+details + details { margin-top: 0; }
+details:last-of-type { border-bottom: 1px solid var(--line); }
+summary { cursor: pointer; font-weight: 600; padding: 14px 0; color: var(--l3); list-style-position: inside; }
+details[open] > summary { color: var(--ink); }
+details > .in { padding: 4px 0 22px; }
+.soft details, .soft details:last-of-type { border-color: var(--line); }
+
+/* tables and bars */
+table { border-collapse: collapse; width: 100%; font-size: 15px; }
+th, td { padding: 9px 10px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+th { font-weight: 600; font-size: 13px; color: var(--muted); white-space: nowrap; }
+tr.total td { font-weight: 600; border-top: 2px solid var(--ink); border-bottom: 0; }
+tr.off td { color: var(--muted); }
+td.txt { min-width: 240px; } td.c, th.c { text-align: center; }
+.yes { font-weight: 700; color: var(--l3); } .no { color: var(--muted); }
+.bars { display: grid; grid-template-columns: minmax(110px, 200px) minmax(60px, 1fr) 88px; gap: 14px 14px; align-items: center; }
+.bars .v { text-align: right; white-space: nowrap; font-weight: 600; }
+.bars .sub { color: var(--muted); font-size: 13px; }
+svg.chart { width: 100%; height: auto; display: block; }
+svg.chart text { fill: var(--muted); font-size: 12px; font-family: inherit; }
+svg.chart text.val { fill: var(--ink); font-weight: 600; font-size: 13px; }
+svg.chart line { stroke: var(--line); stroke-width: 1; }
+svg.chart rect.b3 { fill: var(--l3); } svg.chart rect.bcr { fill: var(--cr); }
+
+/* figures in a row */
+.stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 20px 0; margin-top: 30px; }
+.stats > div { padding: 0 22px; border-left: 1px solid var(--line); }
+.stats > div:first-child { padding-left: 0; border-left: 0; }
+.stats .v { font-size: 30px; font-weight: 600; line-height: 1.2; white-space: nowrap; }
+.stats .k { font-size: 14px; color: var(--muted); }
+@media (max-width: 760px) { .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); } .stats > div:nth-child(odd) { padding-left: 0; border-left: 0; } }
+
+/* forms */
+input, select, button { font: inherit; color: inherit; }
+input[type="number"], input[type="text"] { background: var(--bg); border: 1px solid var(--line); border-radius: 6px; padding: 6px 8px; }
+input.p { width: 92px; text-align: right; }
+input.changed { background: var(--changed); }
+button.btn { background: var(--bg); border: 1px solid var(--line); border-radius: 6px; padding: 6px 12px; cursor: pointer; }
+button.btn:hover { border-color: var(--muted); }
+button.primary { background: var(--l3); border-color: var(--l3); color: #fff; }
+button.link { background: none; border: 0; padding: 0; color: var(--l3); cursor: pointer; text-decoration: underline; font-weight: 600; }
+:focus-visible { outline: 2px solid var(--l3); outline-offset: 2px; }
+.top :focus-visible { outline-color: #fff; }
+.picker { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.facts { display: flex; flex-wrap: wrap; gap: 4px 26px; margin: 22px 0 10px; font-size: 15px; }
+.tag { display: inline-block; font-size: 12.5px; padding: 1px 8px; border-radius: 4px; border: 1px solid var(--line); color: var(--muted); }
+.tag.flag { background: var(--flag-bg); color: var(--flag-ink); border-color: var(--flag-line); }
+.others { margin-top: 18px; display: grid; gap: 6px; }
+.others div { padding-left: 12px; border-left: 3px solid var(--l2); } .others div.k1 { border-left-color: var(--l1); }
+.params { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 360px), 1fr)); gap: 0 48px; }
+.prow { display: grid; grid-template-columns: minmax(0, 1fr) auto 62px; gap: 10px; align-items: center; padding: 9px 0; border-bottom: 1px solid var(--line); }
+.prow .u { color: var(--muted); font-size: 14px; }
+ul.plain { margin: 0; padding-left: 20px; } ul.plain li { margin-bottom: 12px; max-width: 70ch; }
+.rowhead { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+footer { margin-top: 56px; padding-top: 18px; border-top: 1px solid var(--line); color: var(--muted); font-size: 14px; }
+@media (prefers-reduced-motion: no-preference) { .fill, .stack div { transition: width .25s ease; } }
+@media print {
+  .tabsbar, .lang, .picker button, #reset, #clearamt { display: none !important; }
+  main > section { break-before: page; } main > section:first-of-type { break-before: auto; }
+}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <div>
+      <div class="org">Airbus Electric Center</div>
+      <h1 data-t="title"></h1>
+      <div class="sub" id="sub"></div>
+    </div>
+    <div class="lang" role="group" aria-label="Langue / Language">
+      <button type="button" data-lang="fr" aria-pressed="true">FR</button>
+      <button type="button" data-lang="en" aria-pressed="false">EN</button>
+    </div>
+  </div>
+</header>
+<div class="tabsbar"><div class="wrap"><nav class="tabs" id="tabs" aria-label="Sections"></nav></div></div>
+
+<main class="wrap">
+  <section id="tab-summary">
+    <div class="hero">
+      <div id="hero"></div>
+      <div><h3 style="margin-top:0" data-t="lv_title"></h3><div id="levels"></div></div>
+    </div>
+    <h3 data-t="comp_title"></h3>
+    <div class="stack" id="stack"></div>
+    <div class="legend" id="legend"></div>
+  </section>
+
+  <section id="tab-method">
+    <h2 data-t="m_title"></h2>
+    <p class="lead" data-t="m_lead"></p>
+    <ol class="chain" id="chain"></ol>
+    <p class="formula" id="chformula"></p>
+    <p class="muted" id="chexample"></p>
+    <details><summary data-t="d_rules"></summary><div class="in"><p class="small muted" data-t="mx_note"></p><div class="scroll" id="matrix"></div></div></details>
+    <div class="soft" style="margin-top:36px">
+      <h3 data-t="nc_title"></h3>
+      <div class="picker">
+        <label for="ncpick" data-t="nc_number"></label>
+        <input type="text" id="ncpick" list="nclist" inputmode="numeric" autocomplete="off" style="width:140px">
+        <datalist id="nclist"></datalist>
+        <button type="button" class="btn primary" id="ncgo" data-t="nc_show"></button>
+        <span id="examples" class="picker"></span>
+      </div>
+      <div id="ncout"></div>
+    </div>
+  </section>
+
+  <section id="tab-breakdown">
+    <h2 data-t="bd_title"></h2>
+    <p class="lead" data-t="bd_lead"></p>
+    <h3 data-t="month_title"></h3>
+    <div id="month"></div>
+    <div class="cols2">
+      <div><h3 data-t="found_title"></h3><div class="bars" id="found"></div></div>
+      <div><h3 data-t="cls_title"></h3><div class="bars" id="classes"></div></div>
+    </div>
+    <details><summary data-t="d_more"></summary><div class="in"><div class="scroll" id="decision"></div><p class="small muted" style="margin-top:22px" data-t="liab_note"></p><div class="scroll" id="liab"></div></div></details>
+  </section>
+
+  <section id="tab-returns">
+    <h2 data-t="cr_title"></h2>
+    <p class="lead" data-t="cr_lead"></p>
+    <div class="stats" id="crkpis"></div>
+    <div class="soft" style="margin-top:32px"><div class="prow" id="crparam" style="border-bottom:0;padding:0;grid-template-columns:minmax(0,1fr) auto auto"></div></div>
+    <details><summary id="crsum"></summary><div class="in">
+      <div class="rowhead"><p class="small muted" data-t="cr_store" style="margin:0"></p><button type="button" class="btn" id="clearamt" data-t="cr_clear"></button></div>
+      <div class="scroll" id="crtable" style="margin-top:12px"></div>
+    </div></details>
+  </section>
+
+  <section id="tab-params">
+    <h2 data-t="as_title"></h2>
+    <p class="lead" data-t="as_lead"></p>
+    <div class="rowhead" style="margin-top:36px"><h3 style="margin:0" data-t="pm_steps"></h3><button type="button" class="btn" id="reset" data-t="pm_reset"></button></div>
+    <div class="params" id="params" style="margin-top:10px"></div>
+    <details><summary id="clssum"></summary><div class="in"><p class="small muted" data-t="pm_classes_note"></p><div class="scroll" id="classtable"></div></div></details>
+    <details><summary data-t="pm_airbus"></summary><div class="in"><p class="small muted" data-t="pm_airbus_note"></p><div class="params" id="airbus"></div></div></details>
+    <h3 data-t="gp_title"></h3>
+    <ul class="plain" id="gaps"></ul>
+  </section>
+
+  <footer id="foot"></footer>
+</main>
+<script>
+/*__LOGIC__*/
+</script>
+<script>
+var DATA = /*__DATA__*/null;
+var DEFAULT_P = /*__P__*/null;
+var P = JSON.parse(JSON.stringify(DEFAULT_P));
+var AMT = {}, LANG = "fr", RES = null, CLS = [], currentNC = null, TAB = "summary";
+
+/* ------------------------------------------------------------------ texts */
+var I = {
+  title: ["Coût de non-qualité", "Cost of non-quality"],
+  sub: ["Tableau de bord de validation du calcul. NC créées du {a} au {b}.", "Calculation check sheet. NCs created {a} to {b}."],
+  notice: ["Estimation modélisée à partir de temps de processus : aucun temps n'est mesuré. Le jaune signale une valeur que l'équipe n'a pas encore confirmée.",
+           "Modelled estimate built from process times: nothing is measured. Yellow marks a value the team has not confirmed yet."],
+  tab_summary: ["Synthèse", "Summary"], tab_method: ["Méthode de calcul", "How it is calculated"], tab_breakdown: ["Répartition", "Breakdown"],
+  tab_returns: ["Retours client", "Customer returns"], tab_params: ["Temps et taux", "Times and rates"], tab_limits: ["Limites", "Limits"],
+  m_title: ["Comment une NC est chiffrée", "How one NC is costed"],
+  m_lead: ["Le niveau 3 suit le parcours réel d'une NC à AEC. Chaque étape a un temps ; le coût est la somme des minutes, convertie en euros au taux horaire, plus la matière.",
+           "Level 3 follows the real path of an NC at AEC. Each step has a time; the cost is the sum of the minutes, turned into euros at the hourly rate, plus material."],
+  ch_title: ["Une NC retouchée, étape par étape", "A reworked NC, step by step"],
+  ch_once: ["une fois par NC", "once per NC"], ch_final: ["{x} min au contrôle final", "{x} min at final inspection"],
+  ch_hands_v: ["Σ défauts", "Σ defects"], ch_hands: ["minutes de chaque défaut relevé", "minutes of each defect found"],
+  ch_formula: ["Coût = total des minutes ÷ 60 × {r} €/h + matière des défauts. Le travail (étapes 4 et 5) ne descend jamais sous {f} min.",
+               "Cost = total minutes ÷ 60 × {r} €/h + material of the defects. The work (steps 4 and 5) is never under {f} min."],
+  ch_example: ["Exemple : une NC détectée en cours de production avec un seul défaut de 10 min. {a} + {b} + {c} + {d} + 10 + {e} = {m} min, soit {c2}.",
+               "Example: an NC found in-process with a single 10-minute defect. {a} + {b} + {c} + {d} + 10 + {e} = {m} min, which is {c2}."],
+  f_title: ["Les trois niveaux en une ligne chacun", "The three levels in one line each"],
+  f1: ["Coût standard officiel Airbus de la décision, appliqué tel quel. Il ignore le nombre de défauts et n'ajoute pas de matière.", "The official Airbus standard cost for the decision, applied as it is. It ignores the number of defects and adds no material."],
+  f2: ["Les étapes d'AEC avec des temps moyens : {w} min de rédaction et {k} min de travail pour toute retouche, quels que soient ses défauts. Plus la matière.", "AEC's steps with average times: {w} min of writing and {k} min of work for every rework, whatever its defects. Plus material."],
+  f3: ["Les mêmes étapes, mais la rédaction dépend du lieu de détection et le travail est calculé défaut par défaut. Plus la matière. C'est le niveau de référence.", "The same steps, but writing depends on where the NC was found and the work is built defect by defect. Plus material. This is the reference level."],
+  mx_title: ["Ce qui est compté selon la décision", "What is charged for each decision"],
+  mx_note: ["Seul le processus de retouche a été décrit par l'équipe. Les lignes marquées en jaune sont des hypothèses à confirmer.", "Only the rework process was described by the team. Rows marked in yellow are assumptions to confirm."],
+  mx_alert: ["Aléa", "Alert"], mx_write: ["Rédaction", "Writing"], mx_support: ["Support", "Support"], mx_work: ["Travail et matière", "Work and material"],
+  mx_recheck: ["Recontrôle", "Re-check"], mx_eng: ["Ingénierie", "Engineering"], mx_part: ["Pièce", "Part"], mx_basis: ["Origine de la règle", "Where the rule comes from"],
+  rb_team: ["Processus décrit par l'équipe", "Process described by the team"], rb_rule: ["Règle de l'équipe", "Team rule"],
+  rb_dqn: ["Règle de l'équipe ; 8 h = chiffre officiel Airbus", "Team rule; 8 h is the official Airbus figure"], rb_assumed: ["Hypothèse", "Assumed"],
+  bd_title: ["Où va le coût", "Where the cost goes"], bd_lead: ["Niveau 3, NC imputées à AEC, sauf mention contraire.", "Level 3, AEC NCs, unless a column says otherwise."],
+  k_total: ["Coût de non-qualité AEC", "AEC cost of non-quality"], k_total_s: ["niveau 3, détail par défaut", "level 3, per defect"],
+  k_nc: ["NC imputées à AEC", "NCs on AEC"], k_nc_s: ["sur {n} NC dans le jeu de données", "of {n} NCs in the dataset"],
+  k_avg: ["Coût moyen par NC", "Average cost per NC"], k_avg_s: ["niveau 3", "level 3"],
+  k_cr: ["Retours client", "Customer returns"], k_cr_s: ["{n} NC, incluses dans le total", "{n} NCs, included in the total"],
+  lv_title: ["Trois façons de chiffrer les mêmes NC", "Three ways to count the same NCs"],
+  lv_lead: ["Seules les NC imputées à AEC sont comptées. Chaque niveau est plus détaillé que le précédent.", "Only NCs where AEC is liable are counted. Each level uses more detail than the one before."],
+  l1: ["Standard Airbus transnational", "Airbus transnational standard"], l2: ["Moyenne globale", "Global average"], l3: ["Détail par défaut", "Per defect"],
+  l1_how: ["Chaque NC au coût standard officiel Airbus de sa décision (542 € pour une retouche). Sans matière.", "Each NC at the official Airbus standard cost for its decision (542 € for a rework). No material."],
+  l2_how: ["Chaque NC aux temps moyens d'AEC : {w} min pour rédiger la NC, {k} min de travail pour une retouche. Plus la matière.", "Each NC at AEC's average times: {w} min to write the NC, {k} min of work for a rework. Plus material."],
+  l3_how: ["Les étapes d'AEC, avec un travail calculé à partir de chaque défaut relevé (jamais moins de {f} min). Plus la matière.", "AEC's steps, with the work built from each defect found (never under {f} min). Plus material."],
+  per_nc: ["{x} par NC", "{x} per NC"],
+  aside: ["Hors total : {n} NC imputées à un autre site ou à un fournisseur ({c} de traitement au niveau 3), et {m} NC sans statut ni date dans le jeu de données, impossibles à chiffrer.",
+          "Not in these totals: {n} NCs where another plant or a supplier is liable ({c} of handling at level 3), and {m} NCs with no status or date in the dataset, which cannot be costed."],
+  comp_title: ["De quoi est fait le coût (niveau 3)", "What the cost is made of (level 3)"],
+  c_alert: ["Aléa émis par l'opérateur", "Operator raises the alert"], c_writing: ["Rédaction de la NC", "Writing the NC"], c_support: ["Support technique", "Technical support"],
+  c_setup: ["Autour de l'intervention (badgeage, mise en place)", "Around the work (badging, setup)"], c_hands: ["Intervention sur les défauts", "Hands-on work"],
+  c_recheck: ["Recontrôle et clôture", "Re-check and closing"], c_eng: ["Étude d'ingénierie (DQN)", "Engineering study (design queries)"], c_mat: ["Matière", "Material"],
+  c_cr: ["Retours client : forfait ou montants réels", "Customer returns: extra or real amounts"],
+  month_title: ["Coût par mois (niveau 3)", "Cost per month (level 3)"], nc_short: ["{n} NC", "{n} NCs"],
+  found_title: ["Lieu de détection", "Where the NC was found"], found_sub: ["{n} NC, {c} par NC", "{n} NCs, {c} each"],
+  liab_title: ["Imputation", "Who is liable"],
+  liab_note: ["Seule la ligne AEC est du coût de non-qualité. Les autres lignes correspondent au traitement de défauts causés ailleurs.", "Only the AEC line is cost of non-quality. The others are handling of defects caused elsewhere."],
+  h_liable: ["Responsable", "Liable party"], h_nc: ["NC", "NCs"], h_l3cost: ["Coût niveau 3", "Level 3 cost"], h_counted: ["Compté ?", "Counted?"],
+  yes_cnq: ["Oui, coût de non-qualité", "Yes, cost of non-quality"], no_aside: ["Non, hors total", "No, shown aside"], no_cost: ["Impossible à chiffrer", "Cannot be costed"],
+  dec_title: ["Par décision, aux trois niveaux", "By decision, at the three levels"],
+  h_decision: ["Décision", "Decision"], h_l1: ["Niveau 1, Airbus", "Level 1, Airbus"], h_l2: ["Niveau 2, global", "Level 2, global"], h_l3: ["Niveau 3, par défaut", "Level 3, per defect"], h_l3nc: ["Niveau 3 par NC", "Level 3 per NC"], total: ["Total", "Total"],
+  cls_title: ["Classes de défauts : fréquence et coût", "Defect classes: how often against how much"],
+  cls_note: ["NC AEC retouchées. Le coût est le temps d'intervention et la matière du défaut lui-même ; le temps fixe par NC n'est pas réparti entre les défauts.", "Reworked AEC NCs. Cost is the hands-on time and material of the defect itself; the fixed time per NC is not split across defects."],
+  h_class: ["Classe", "Class"], h_lines: ["Lignes de défaut", "Defect lines"], h_direct: ["Coût direct", "Direct cost"],
+  cr_title: ["Retours client", "Customer returns"],
+  cr_lead: ["Les retours client imputés à AEC sont comptés dans le total. Leur coût est pour l'instant estimé comme celui d'une NC interne ; le montant réel peut être saisi ici dès qu'il est connu.",
+            "Customer returns on AEC are in the total. For now their cost is estimated like an internal NC; the real amount can be entered here as soon as it is known."],
+  crk_n: ["Retours client", "Customer returns"], crk_n_s: ["NC imputées à AEC", "NCs on AEC"],
+  crk_est: ["Coût estimé par le modèle", "Cost estimated by the model"], crk_est_s: ["traitement de la NC uniquement", "handling of the NC only"],
+  crk_known: ["Montants réels saisis", "Real amounts entered"], crk_known_v: ["{a} sur {b}", "{a} of {b}"], crk_known_s: ["les autres restent estimés", "the others stay estimated"],
+  crk_total: ["Coût retenu", "Cost retained"], crk_total_s: ["inclus dans le niveau 3", "included in level 3"],
+  cr_month: ["Retours client par mois (coût retenu)", "Customer returns per month (cost retained)"],
+  cr_param_title: ["Estimation complémentaire", "Additional estimate"],
+  cr_param: ["Forfait ajouté à chaque retour client (analyse, réponse au client, logistique)", "Flat amount added to each customer return (analysis, reply to the customer, logistics)"],
+  cr_param_tag: ["À définir par l'équipe", "To be set by the team"], cr_unit: ["€ / retour", "€ / return"],
+  cr_param_note: ["Le forfait s'ajoute à l'estimation de chaque retour sans montant réel. Il vaut 0 € tant que l'équipe n'a pas fixé de valeur.", "The flat amount is added to the estimate of each return with no real amount. It is 0 € until the team sets a value."],
+  cr_missing: ["Non inclus aujourd'hui : analyse des causes (8D), réponse au client, transport, pénalités.", "Not included today: root-cause analysis (8D), reply to the customer, transport, penalties."],
+  cr_table: ["Liste des retours client", "List of customer returns"], cr_clear: ["Effacer les montants saisis", "Clear the entered amounts"],
+  cr_store: ["Saisir le montant réel d'un retour remplace son estimation. Les montants saisis sont conservés dans ce navigateur uniquement ; pour les rendre permanents, renseigner la colonne customer_return_cost du jeu de données NC.",
+             "Entering the real amount of a return replaces its estimate. Entered amounts are kept in this browser only; to make them permanent, fill the customer_return_cost column of the NC dataset."],
+  h_what: ["Défaut relevé", "What was found"], h_month: ["Mois", "Month"], h_prog: ["Programme", "Programme"], h_prod: ["Produit", "Product"], h_defects: ["Défauts", "Defects"],
+  h_est: ["Coût estimé", "Estimated cost"], h_real: ["Montant réel (€)", "Real amount (€)"], h_kept: ["Coût retenu", "Cost retained"],
+  nc_title: ["Vérifier le calcul sur une NC réelle", "Check the calculation on a real NC"],
+  nc_lead: ["Choisir une NC et suivre son coût ligne par ligne à chaque niveau. C'est le moyen le plus rapide de vérifier qu'une règle est juste.", "Pick an NC and follow its cost line by line at each level. This is the quickest way to see whether a rule is right."],
+  nc_number: ["Numéro de NC", "NC number"], nc_show: ["Afficher", "Show"], nc_try: ["ou essayer :", "or try:"],
+  nc_none: ["Aucune NC ne porte ce numéro dans le jeu de données. Choisir un numéro dans la liste.", "No NC with that number in the dataset. Pick one from the list."],
+  f_decision: ["Décision", "Decision"], f_liab: ["Imputation", "Liability"], f_found: ["Détection", "Found"], f_status: ["Statut", "Status"], f_prog: ["Programme", "Programme"],
+  st_closed: ["clôturée", "closed"], st_open: ["ouverte", "open"], st_deleted: ["supprimée", "deleted"], st_unknown: ["inconnu", "unknown"],
+  not_aec: ["Non imputée à AEC", "Not on AEC"], not_aec_note: ["Chiffrée de la même façon, mais hors total.", "Costed the same way, but shown aside and left out of the totals."],
+  no_master: ["Cette NC n'a ni statut, ni décision, ni date dans le jeu de données : elle ne peut pas être chiffrée.", "This NC has no status, decision or date in the dataset, so it cannot be costed."],
+  x_l3: ["Niveau 3, détail par défaut", "Level 3, per defect"], x_l2: ["Niveau 2, moyenne globale", "Level 2, global average"], x_l1: ["Niveau 1, standard Airbus transnational", "Level 1, Airbus transnational standard"],
+  h_step: ["Étape", "Step"], h_how: ["Calcul", "How"], h_min: ["Minutes", "Minutes"], h_cost_at: ["Coût à {r} €/h", "Cost at {r} €/h"],
+  s_alert: ["L'opérateur émet l'aléa", "Operator raises the alert"], s_writing: ["L'inspecteur qualité rédige la NC", "Quality inspector writes the NC"],
+  s_support: ["Support technique : vérification, estimation, ordre de travail", "Technical support: check, estimate, work order"],
+  s_setup: ["Autour de l'intervention : badgeage, approvisionnement, mise en place", "Around the work: badging, fetching, setting up"],
+  s_hands: ["Intervention sur les défauts", "Hands-on work"], s_recheck: ["Recontrôle et clôture", "Re-check and closing"],
+  n_once: ["{x} min, une fois par NC", "{x} min, once per NC"], n_plain: ["{x} min", "{x} min"],
+  n_final: ["{x} min car détectée au contrôle final", "{x} min because it was found at final inspection"],
+  n_floor: ["relevé depuis {a} min pour que le travail atteigne le minimum de {f} min", "raised from {a} min so the work reaches the {f} min minimum"],
+  n_noline: ["aucune ligne de défaut : forfait de {x} min", "no defect line: flat {x} min"], n_lines: ["{n} ligne(s) de défaut, détaillées ci-dessous", "{n} defect line(s), listed below"],
+  n_off: ["non compté pour cette décision", "not charged for this decision"],
+  r_eng: ["Étude d'ingénierie", "Engineering study"], r_eng_how: ["{h} h à {r} €/h", "{h} h at {r} €/h"],
+  r_mat: ["Matière", "Material"], r_mat_how: ["somme de la matière des lignes de défaut", "sum of the material of the defect lines"],
+  r_part: ["Valeur de la pièce", "Value of the part"], r_part_tag: ["pas de prix dans les données", "no price in the data"], r_part_how: ["comptée 0 €", "counted as 0 €"],
+  r_total3: ["Total niveau 3", "Total, level 3"], r_model: ["Estimation du modèle", "Model estimate"],
+  r_extra: ["Forfait retour client", "Customer-return flat amount"], r_extra_how: ["ajouté à chaque retour client sans montant réel", "added to each customer return with no real amount"],
+  r_real: ["Montant réel saisi", "Real amount entered"], r_real_how: ["remplace l'estimation du modèle", "replaces the model estimate"],
+  w_alert: ["aléa", "alert"], w_writing: ["rédaction", "writing"], w_support: ["support", "support"], w_work: ["travail", "work"], w_recheck: ["recontrôle", "re-check"],
+  x2_a: ["À {r} €/h, soit {c}", "At {r} €/h that is {c}"], x2_eng: [", plus l'étude d'ingénierie {c}", ", plus the engineering study {c}"], x2_mat: [", plus la matière {c}", ", plus material {c}"],
+  x2_note: ["Identique pour toutes les NC ayant cette décision, quels que soient leurs défauts.", "The same for every NC with this decision, whatever its defects."],
+  x1_a: ["Coût standard officiel pour « {l} » : ", "Official standard cost for “{l}”: "],
+  x1_note: ["Pour une retouche, le chiffre officiel correspond à 6,5 heures à 66,25 €/h, +5 % sur l'étape de création et +25 % pour les NC renvoyées. Il ne tient pas compte du nombre de défauts et n'ajoute pas de matière.",
+            "For a rework the official figure is 6.5 hours at 66.25 €/h, +5% on the creation step and +25% for NCs sent back. It ignores how many defects the NC has and adds no material."],
+  dl_title: ["Lignes de défaut de cette NC", "Defect lines of this NC"], h_text: ["Texte saisi", "What was written"], h_material: ["Matière", "Material"],
+  dl_sum_on: ["Somme, reprise ci-dessus en intervention et matière", "Sum, used above as hands-on work and material"], dl_sum_off: ["Somme, non comptée : cette décision ne comporte pas de travail", "Sum, not charged: this decision has no work"],
+  pm_title: ["Temps et taux", "Times and rates"],
+  pm_lead: ["Modifier une valeur : toute la page se recalcule. Les modifications restent dans cette page ; le pipeline garde ses propres valeurs tant que son fichier de paramètres n'est pas modifié.",
+            "Change a value and the whole page recalculates. Changes stay on this page; the pipeline keeps its own values until its parameters file is edited."],
+  pm_steps: ["Étapes et taux", "Steps and rates"], pm_reset: ["Revenir aux valeurs du pipeline", "Reset to pipeline values"],
+  pm_classes: ["Minutes et matière par classe de défaut", "Minutes and material per defect class"],
+  pm_classes_note: ["Les classes sont celles produites par le parseur de défauts. Les classes « 2 × » suivent la règle de l'équipe : une pièce erronée ou endommagée demande deux fois le temps d'une pièce manquante.",
+                    "Classes are the ones written by the defect parser. “2 ×” classes follow the team rule: a wrong or damaged part takes twice the time of a missing one."],
+  h_costed: ["Lignes comptées", "Lines costed"], h_mat_eur: ["Matière (€)", "Material (€)"], h_origin: ["Origine du temps", "Where the time comes from"],
+  pm_airbus: ["Niveau 1 : coût standard Airbus par NC", "Level 1: Airbus standard cost per NC"],
+  pm_airbus_note: ["Issu du modèle de coût officiel (66,25 €/h, heures standard Airbus, +25 % pour les NC renvoyées). Sans matière.", "From the official cost model (66.25 €/h, Airbus standard hours, +25% for returned NCs). No material."],
+  u_per_nc: ["€ / NC", "€ / NC"], team_rule: ["Règle de l'équipe", "Team rule"],
+  b_local: ["Estimation AEC", "AEC estimate"], b_official: ["Officiel Airbus", "Official Airbus"],
+  b_rate: ["Taux officiel France ; taux AEC à obtenir de la Finance", "Official France rate; AEC rate to come from Finance"],
+  p_rate: ["Taux horaire : opérateur, inspecteur qualité, support technique", "Hourly rate: operator, inspector, technical support"], p_rateEng: ["Taux horaire : ingénierie", "Hourly rate: engineering"],
+  p_alert: ["L'opérateur émet l'aléa", "Operator raises the alert"], p_write: ["L'inspecteur qualité rédige la NC", "Quality inspector writes the NC"],
+  p_writeFinal: ["Rédaction de la NC au contrôle final", "Writes the NC, at final inspection"], p_support: ["Support technique", "Technical support"],
+  p_setup: ["Autour de l'intervention : badgeage, approvisionnement, mise en place", "Around the work: badging, fetching, setting up"],
+  p_floor: ["Travail minimum pour une NC retouchée", "Minimum work on a reworked NC"], p_recheck: ["Recontrôle et clôture", "Re-check and closing"],
+  p_noDefect: ["Temps d'intervention si la NC n'a aucune ligne de défaut", "Hands-on time when the NC has no defect line"],
+  p_writeGlobal: ["Niveau 2 : temps moyen de rédaction d'une NC", "Level 2: average time to write an NC"], p_workGlobal: ["Niveau 2 : travail moyen pour une NC retouchée", "Level 2: average work on a reworked NC"],
+  gp_title: ["Limites actuelles", "Current limits"],
+  g1: ["{n} NC AEC sont des rejets, rebuts ou échanges dont la pièce perdue est comptée 0 €, faute de prix dans les données. Le total réel est plus élevé.", "{n} AEC NCs are rejects, scraps or exchanges and the lost part counts as 0 €, because the data has no part price. The true total is higher."],
+  g2: ["{a} des {b} lignes de défaut chiffrées sont des erreurs de branchement, chiffrées avec un temps emprunté à une étude de 2021.", "{a} of the {b} costed defect lines are connection errors, timed at a figure borrowed from a 2021 study."],
+  g3: ["Les défauts de cheminement dépendent de l'accès. Un temps unique par classe ne peut pas le refléter : ces temps sont approximatifs.", "Routing defects depend on access. One time per class cannot capture that, so those times are rough."],
+  g4: ["Défauts d'impression (classes « Amont ») : le temps devrait être le temps d'impression, plus une retouche complète si elle est nécessaire. La question reste ouverte.", "Printing defects (the upstream classes): the time should be the printing time, plus a full rework if one is needed. That question is still open."],
+  g5: ["{n} NC AEC retouchées n'ont aucune ligne de défaut et utilisent le temps d'intervention forfaitaire.", "{n} reworked AEC NCs have no defect line and use the flat hands-on time."],
+  g6: ["{a} NC AEC sont encore ouvertes et chiffrées comme si elles allaient à leur terme. {b} sont supprimées et ne portent que l'aléa et la rédaction de la NC.", "{a} AEC NCs are still open and are costed as if they will run their full course. {b} are deleted and carry the alert and the writing of the NC only."],
+  g7: ["Le rejet, l'échange et la demande DQN suivent des étapes supposées : ces processus n'ont pas encore été décrits par l'équipe.", "Reject, exchange and design query follow assumed steps: nobody has described those processes yet."],
+  g8: ["Les NC sans aucune ligne de défaut sont absentes du jeu de données du pipeline (57 NC AEC dans l'export précédent) : leur coût de traitement n'apparaît pas ici.", "NCs with no defect line at all are missing from the pipeline dataset (57 AEC NCs in the earlier export), so their handling cost is not here."],
+  g9: ["Retours client : seul le traitement de la NC est estimé. L'analyse, la réponse au client, le transport et les pénalités ne sont pas inclus tant que les montants réels ne sont pas saisis.", "Customer returns: only the handling of the NC is estimated. Analysis, reply to the customer, transport and penalties are not included until real amounts are entered."],
+  foot: ["Modèle {v}. Données : {s}. Généré le {d}.", "Model {v}. Data: {s}. Built {d}."]
+};
+var WHERE_FR = { "Final inspection": "Contrôle final", "In-process (internal)": "En cours de production (interne)", "Cables": "Câbles", "Customer return": "Retour client",
+  "Design query request": "Demande de DQN", "Supplier": "Fournisseur", "Not recorded": "Non renseigné", "Breakage": "Casse", "Damage": "Dommage", "No master data": "Sans données de base" };
+var GROUP_FR = { "AEC": "AEC", "Other Airbus plant": "Autre site Airbus", "Supplier": "Fournisseur", "Other or blank": "Autre ou non renseigné", "No master data": "Sans données de base" };
+var FIRST = {}; DATA.lines.forEach(function (l) { if (FIRST[l[0]] == null) FIRST[l[0]] = l[3].length > 90 ? l[3].slice(0, 90) + "…" : l[3]; });
+
+/* ------------------------------------------------------------------ helpers */
+var $ = function (id) { return document.getElementById(id); };
+var esc = function (s) { return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); };
+function t(k, v) { var s = (I[k] || [k, k])[LANG === "fr" ? 0 : 1]; if (v) Object.keys(v).forEach(function (n) { s = s.split("{" + n + "}").join(v[n]); }); return s; }
+var loc = function () { return LANG === "fr" ? "fr-FR" : "en-GB"; };
+var eur = function (x) { return Math.round(x).toLocaleString(loc()) + "\u00a0€"; };
+var eur2 = function (x) { return x.toLocaleString(loc(), { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + "\u00a0€"; };
+var int = function (x) { return Math.round(x).toLocaleString(loc()); };
+var dec = function (x) { return (+x).toLocaleString(loc(), { maximumFractionDigits: 2 }); };
+var mn = function (x) { return (Math.round(x * 10) / 10).toLocaleString(loc()) + "\u00a0min"; };
+var pct = function (a, b) { return b ? Math.max(0, Math.min(100, a / b * 100)).toFixed(2) + "%" : "0%"; };
+var pc = function (a, b) { return b ? (a / b * 100).toLocaleString(loc(), { maximumFractionDigits: 0 }) + "\u00a0%" : "-"; };
+var bar = function (cls, a, b) { return '<div class="track"><div class="fill ' + cls + '" style="width:' + pct(a, b) + '"></div></div>'; };
+var isAec = function (r) { return r[NC.aec] === 1; };
+var tag = function (text, flag) { return '<span class="tag' + (flag ? " flag" : "") + '">' + esc(text) + "</span>"; };
+var lab = function (o) { return o ? o[LANG] : ""; };
+var whereL = function (w) { return LANG === "fr" ? (WHERE_FR[w] || w) : w; };
+var groupL = function (g) { return LANG === "fr" ? (GROUP_FR[g] || g) : g; };
+var ruleL = function (k) { return DATA.rules[k] ? lab(DATA.rules[k].label) : k; };
+var classL = function (c) { return LANG === "fr" ? c.k : c.en; };
+var classAlt = function (c) { return LANG === "fr" ? c.en : c.k; };
+function monthL(m, long) { var p = String(m).split("-"); return new Date(+p[0], +p[1] - 1, 1).toLocaleDateString(loc(), { month: long ? "long" : "short", year: long ? "numeric" : "2-digit" }); }
+function dateL(iso) { var p = iso.split("-"); return new Date(+p[0], +p[1] - 1, +p[2]).toLocaleDateString(loc(), { day: "numeric", month: "long", year: "numeric" }); }
+function aecRows() { return RES.rows.filter(function (x) { return isAec(DATA.nc[x.i]); }); }
+function tot(rows, k) { return rows.reduce(function (a, x) { return a + x[k]; }, 0); }
+function store(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* storage unavailable: keep in memory only */ } }
+function load(k, d) { try { var v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } }
+
+function colChart(items, cls, label, W, H) {
+  // items: [{x, sub, v}] -> SVG column chart with gridlines and value labels
+  W = W || 920; H = H || 270; var L = 56, R = 10, T = 22, B = 44, mx = Math.max.apply(null, items.map(function (d) { return d.v; }).concat([1]));
+  var mag = Math.pow(10, Math.floor(Math.log10(mx))), top = Math.ceil(mx / mag) * mag; if (top / mx > 1.6) top = Math.ceil(mx / (mag / 2)) * (mag / 2);
+  var ih = H - T - B, iw = W - L - R, n = items.length, slot = iw / Math.max(n, 1), bw = Math.min(64, slot * 0.6), s = "";
+  for (var g = 0; g <= 4; g++) { var y = T + ih - ih * g / 4; s += '<line x1="' + L + '" x2="' + (W - R) + '" y1="' + y + '" y2="' + y + '"/><text x="' + (L - 8) + '" y="' + (y + 4) + '" text-anchor="end">' + int(top * g / 4) + "</text>"; }
+  items.forEach(function (d, i) {
+    var h = top ? ih * d.v / top : 0, x = L + slot * i + (slot - bw) / 2, y = T + ih - h, cx = x + bw / 2;
+    s += '<rect class="' + cls + '" x="' + x.toFixed(1) + '" y="' + y.toFixed(1) + '" width="' + bw.toFixed(1) + '" height="' + Math.max(h, 0).toFixed(1) + '" rx="3"/>' +
+      '<text class="val" x="' + cx.toFixed(1) + '" y="' + (y - 6).toFixed(1) + '" text-anchor="middle">' + eur(d.v) + "</text>" +
+      '<text x="' + cx.toFixed(1) + '" y="' + (H - B + 17) + '" text-anchor="middle">' + esc(d.x) + '</text><text x="' + cx.toFixed(1) + '" y="' + (H - B + 33) + '" text-anchor="middle">' + esc(d.sub) + "</text>";
+  });
+  return '<svg class="chart" viewBox="0 0 ' + W + " " + H + '" role="img" aria-label="' + esc(label) + '">' + s + "</svg>";
+}
+function kpi(cls, k, v, s) { return '<div class="kpi ' + cls + '"><div class="k">' + k + '</div><div class="v">' + v + '</div><div class="s">' + s + "</div></div>"; }
+
+
+/* texts added or shortened for the lighter layout */
+Object.assign(I, {
+  tab_params: ["Hypothèses", "Assumptions"],
+  p_setup: ["Préparation : badgeage, approvisionnement, mise en place", "Setup: badging, fetching, setting up"],
+  p_alert: ["Aléa émis par l'opérateur", "Alert raised by the operator"], p_write: ["Rédaction de la NC par l'inspecteur qualité", "Writing of the NC by the quality inspector"],
+  p_floor: ["Minimum pour préparation + intervention", "Minimum for setup + hands-on work"],
+  hero_k: ["Coût de non-qualité AEC", "AEC cost of non-quality"],
+  hero_s: ["{n} NC imputées à AEC, soit {c} par NC", "{n} NCs on AEC, {c} per NC"],
+  hero_n: ["Estimation construite à partir de temps de processus. Rien n'est mesuré ; le jaune signale ce que l'équipe doit encore confirmer.",
+           "An estimate built from process times. Nothing is measured; yellow marks what the team still has to confirm."],
+  lv_title: ["Les mêmes NC, chiffrées de trois façons", "The same NCs, counted three ways"],
+  l1_how: ["Barème officiel Airbus, appliqué tel quel", "Official Airbus standard, applied as it is"],
+  l2_how: ["Temps moyens d'AEC : {k} min de travail par retouche", "AEC average times: {k} min of work per rework"],
+  l3_how: ["Étapes d'AEC, travail calculé défaut par défaut", "AEC steps, work built defect by defect"],
+  comp_title: ["De quoi est fait ce coût", "What this cost is made of"],
+  g_admin: ["Traitement de la NC : aléa, rédaction, support, recontrôle", "Handling the NC: alert, writing, support, re-check"],
+  g_work: ["Retouche : préparation et intervention", "Rework: setup and hands-on"], g_mat: ["Matière", "Material"],
+  g_eng: ["Étude d'ingénierie", "Engineering study"], g_cr: ["Retours client : forfait ou montants réels", "Customer returns: extra or real amounts"],
+  m_lead: ["Le calcul suit le parcours réel d'une NC à AEC : six étapes, chacune avec un temps.", "The calculation follows the real path of an NC at AEC: six steps, each with a time."],
+  cs_alert: ["Aléa", "Alert"], cs_writing: ["Rédaction de la NC", "Writing the NC"], cs_support: ["Support technique", "Technical support"],
+  cs_setup: ["Préparation", "Setup"], cs_hands: ["Intervention", "Hands-on work"], cs_recheck: ["Recontrôle et clôture", "Re-check and closing"],
+  cu_alert: ["l'opérateur signale le défaut", "the operator reports the defect"], cu_writing: ["{x} min au contrôle final", "{x} min at final inspection"],
+  cu_support: ["vérification, estimation, ordre de travail", "check, estimate, work order"], cu_setup: ["badgeage, approvisionnement, mise en place", "badging, fetching, setting up"],
+  cu_hands: ["minutes de chaque défaut relevé", "minutes of each defect found"], cu_recheck: ["contrôle de la retouche, puis clôture", "check of the rework, then closing"],
+  ch_formula: ["Coût = total des minutes ÷ 60 × {r} €/h + matière. Les étapes 4 et 5 ne descendent jamais sous {f} min.",
+               "Cost = total minutes ÷ 60 × {r} €/h + material. Steps 4 and 5 are never under {f} min."],
+  ch_example: ["Exemple, un seul défaut de 10 min : {a} + {b} + {c} + {d} + 10 + {e} = {m} min, soit {c2}.",
+               "Example, a single 10-minute defect: {a} + {b} + {c} + {d} + 10 + {e} = {m} min, which is {c2}."],
+  d_rules: ["Voir ce qui est compté pour les autres décisions (rejet, échange, DQN, NC supprimée)", "See what is charged for the other decisions (reject, exchange, design query, deleted NC)"],
+  nc_title: ["Vérifier sur une NC réelle", "Check on a real NC"],
+  d_lines: ["Voir les {n} lignes de défaut de cette NC", "Show the {n} defect lines of this NC"],
+  x2_line: ["Niveau 2, moyenne globale : {m} aux temps moyens, soit {c}.", "Level 2, global average: {m} at average times, which is {c}."],
+  x1_line: ["Niveau 1, standard Airbus : {c} pour une décision « {l} », quel que soit le nombre de défauts.", "Level 1, Airbus standard: {c} for a “{l}” decision, whatever the number of defects."],
+  bd_lead: ["Niveau 3, NC imputées à AEC.", "Level 3, AEC NCs."],
+  month_title: ["Par mois", "Per month"], found_title: ["Par lieu de détection", "By where the NC was found"],
+  cls_title: ["Défauts qui coûtent le plus", "Defects that cost the most"], cls_sub: ["{n} lignes de défaut", "{n} defect lines"],
+  d_more: ["Voir le détail par décision et par imputation", "See the detail by decision and by liable party"],
+  cr_lead: ["Ils sont comptés dans le total. Leur coût est estimé comme celui d'une NC interne, en attendant les montants réels.",
+            "They are in the total. Their cost is estimated like an internal NC, until the real amounts are known."],
+  d_crlist: ["Voir les {n} retours client et saisir les montants réels", "See the {n} customer returns and enter the real amounts"],
+  cr_store: ["Un montant saisi remplace l'estimation. Il reste dans ce navigateur ; pour le rendre permanent, renseigner la colonne customer_return_cost du jeu de données NC.",
+             "An entered amount replaces the estimate. It stays in this browser; to make it permanent, fill the customer_return_cost column of the NC dataset."],
+  as_title: ["Hypothèses à valider", "Assumptions to validate"],
+  as_lead: ["Modifier une valeur : toute la page se recalcule. Rien n'est enregistré dans le pipeline.", "Change a value and the whole page recalculates. Nothing is saved to the pipeline."],
+  d_classes: ["Voir les minutes et la matière des {n} classes de défaut", "See the minutes and material of the {n} defect classes"],
+  gp_title: ["Ce qui reste à confirmer", "What is still to confirm"],
+  g34: ["Cheminement et impression : le temps de cheminement dépend de l'accès, et pour l'impression il reste à décider si une retouche complète est nécessaire.",
+        "Routing and printing: routing time depends on access, and for printing it is still to be decided whether a full rework is needed."]
+});
+var TABS = ["summary", "method", "breakdown", "returns", "params"];
+var linesOpen = false;
+
+/* ------------------------------------------------------------------ rendering */
+function applyStatic() {
+  document.documentElement.lang = LANG;
+  document.title = t("title") + " - Airbus Electric Center";
+  document.querySelectorAll("[data-t]").forEach(function (el) { el.textContent = t(el.getAttribute("data-t")); });
+  document.querySelectorAll(".lang button").forEach(function (b) { b.setAttribute("aria-pressed", b.dataset.lang === LANG ? "true" : "false"); });
+  $("sub").textContent = t("sub", { a: dateL(DATA.meta.from), b: dateL(DATA.meta.to) });
+  $("tabs").innerHTML = TABS.map(function (k) { return '<button type="button" data-tab="' + k + '" aria-current="' + (k === TAB) + '">' + t("tab_" + k) + "</button>"; }).join("");
+  $("examples").innerHTML = DATA.examples.map(function (x) { return '<button type="button" class="btn" data-ex="' + x.i + '">' + esc(lab(x.label)) + "</button>"; }).join("");
+  $("foot").textContent = t("foot", { v: DATA.meta.version, s: lab(DATA.meta.source), d: dateL(DATA.meta.built) });
+}
+function markTab(k) { TAB = k; document.querySelectorAll("#tabs button").forEach(function (b) { b.setAttribute("aria-current", b.dataset.tab === k ? "true" : "false"); }); }
+function showTab(k) {
+  var calm = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  $("tab-" + k).scrollIntoView({ behavior: calm ? "auto" : "smooth", block: "start" }); markTab(k);
+}
+
+function renderSummary() {
+  var a = aecRows(), n = a.length, t1 = tot(a, "l1"), t2 = tot(a, "l2"), t3 = tot(a, "l3"), mx = Math.max(t1, t2, t3);
+  $("hero").innerHTML = '<div class="hero-k">' + t("hero_k") + '</div><div class="hero-v">' + eur(t3) + '</div><div class="hero-s">' + t("hero_s", { n: int(n), c: eur(n ? t3 / n : 0) }) +
+    '</div><div class="hero-n">' + t("hero_n") + "</div>";
+  var rows = [[3, t("l3"), t("l3_how"), t3], [2, t("l2"), t("l2_how", { k: P.workGlobal }), t2], [1, t("l1"), t("l1_how"), t1]];
+  $("levels").innerHTML = rows.map(function (r) {
+    return '<div class="level"><div class="row"><div class="name"><i class="c' + r[0] + '"></i>' + r[1] + '</div><div class="total">' + eur(r[3]) + '</div></div><div class="how">' + r[2] + "</div>" + bar("c" + r[0], r[3], mx) + "</div>";
+  }).join("");
+  var g = [["g_admin", 0], ["g_work", 0], ["g_mat", 0], ["g_eng", 0], ["g_cr", 0]];
+  a.forEach(function (x) {
+    g[0][1] += (x.steps.alert + x.steps.writing + x.steps.support + x.steps.recheck) / 60 * P.rate; g[1][1] += (x.steps.setup + x.steps.hands) / 60 * P.rate;
+    g[2][1] += x.material; g[3][1] += x.eng; g[4][1] += x.adjust;
+  });
+  var pos = g.map(function (c) { return Math.max(c[1], 0); }), sum = pos.reduce(function (p, q) { return p + q; }, 0);
+  $("stack").innerHTML = g.map(function (c, j) { return pos[j] > 0 ? '<div style="width:' + pct(pos[j], sum) + ";background:var(--s" + (j + 1) + ')" title="' + esc(t(c[0])) + '"></div>' : ""; }).join("");
+  $("legend").innerHTML = g.map(function (c, j) {
+    if (j === 4 && Math.abs(c[1]) < 0.005) return "";
+    return '<div class="it"><i style="background:var(--s' + (j + 1) + ')"></i><div class="l">' + t(c[0]) + '</div><div class="v">' + eur(c[1]) + "<span>" + pc(c[1], t3) + "</span></div></div>";
+  }).join("");
+}
+
+function renderMethod() {
+  var chain = [["alert", P.alert + " min", t("cu_alert"), ""], ["writing", P.write + " min", t("cu_writing", { x: P.writeFinal }), ""], ["support", P.support + " min", t("cu_support"), ""],
+    ["setup", P.setup + " min", t("cu_setup"), ""], ["hands", "Σ", t("cu_hands"), "var"], ["recheck", P.recheck + " min", t("cu_recheck"), ""]];
+  $("chain").innerHTML = chain.map(function (c) { return '<li class="' + c[3] + '"><div class="cn">' + t("cs_" + c[0]) + '</div><div class="cv">' + c[1] + '</div><div class="cs">' + c[2] + "</div></li>"; }).join("");
+  $("chformula").textContent = t("ch_formula", { r: dec(P.rate), f: P.floor });
+  var setup = Math.max(P.setup, P.floor - 10), m = P.alert + P.write + P.support + setup + 10 + P.recheck;
+  $("chexample").textContent = t("ch_example", { a: P.alert, b: P.write, c: P.support, d: setup, e: P.recheck, m: int(m), c2: eur2(m / 60 * P.rate) });
+  var basis = { RWK: ["rb_team", 0], DELETED: ["rb_rule", 0], DQN: ["rb_dqn", 1] };
+  var yn = function (v) { return v ? '<span class="yes">✓</span>' : '<span class="no">–</span>'; };
+  var h = "<table><thead><tr><th>" + t("h_decision") + '</th><th class="c">' + t("mx_alert") + '</th><th class="c">' + t("mx_write") + '</th><th class="c">' + t("mx_support") + '</th><th class="c">' + t("mx_work") + '</th><th class="c">' + t("mx_recheck") +
+    '</th><th class="c">' + t("mx_eng") + '</th><th class="c">' + t("mx_part") + "</th><th>" + t("mx_basis") + "</th></tr></thead><tbody>";
+  Object.keys(DATA.airbusBasis).forEach(function (k) {
+    var f = DATA.rules[k], bs = basis[k] || ["rb_assumed", 1];
+    h += "<tr><td>" + esc(ruleL(k)) + '</td><td class="c">' + yn(f.alert) + '</td><td class="c">' + yn(f.write) + '</td><td class="c">' + yn(f.support) + '</td><td class="c">' + yn(f.work) + '</td><td class="c">' + yn(f.recheck) +
+      '</td><td class="c">' + (f.eng ? dec(f.eng) + "\u00a0h" : '<span class="no">–</span>') + '</td><td class="c">' + yn(f.part) + "</td><td>" + tag(t(bs[0]), bs[1]) + "</td></tr>";
+  });
+  $("matrix").innerHTML = h + "</tbody></table>";
+}
+
+function renderBreakdown() {
+  var byM = sumBy(DATA, RES.rows, function (r) { return r[NC.month]; }, isAec), months = Object.keys(byM).sort();
+  $("month").innerHTML = colChart(months.map(function (m) { return { x: monthL(m), sub: t("nc_short", { n: int(byM[m].n) }), v: byM[m].l3 }; }), "b3", t("month_title"), 980, 250);
+
+  var byFound = sumBy(DATA, RES.rows, function (r) { return r[NC.where]; }, isAec);
+  var items = Object.keys(byFound).map(function (k) { return [k, byFound[k].l3, byFound[k].n]; }).sort(function (p, q) { return q[1] - p[1]; }).slice(0, 6);
+  var mx = Math.max.apply(null, items.map(function (x) { return x[1]; }).concat([1]));
+  $("found").innerHTML = items.map(function (x) {
+    return "<div>" + esc(whereL(x[0])) + '<div class="sub">' + t("nc_short", { n: int(x[2]) }) + "</div></div><div>" + bar(x[0] === "Customer return" ? "ccr" : "c3", x[1], mx) + '</div><div class="v">' + eur(x[1]) + "</div>";
+  }).join("");
+
+  CLS = DATA.classes.map(function (c, j) { return { j: j, n: 0, cost: 0 }; });
+  DATA.lines.forEach(function (l) {
+    var r = DATA.nc[l[0]], f = DATA.rules[r[NC.rule]];
+    if (!isAec(r) || !f || !f.work) return;
+    CLS[l[1]].n += l[2]; CLS[l[1]].cost += RES.classMin[l[1]] * l[2] / 60 * P.rate + P.classes[l[1]].mat * l[2];
+  });
+  var top = CLS.slice().sort(function (p, q) { return q.cost - p.cost; }).slice(0, 6), mc = Math.max.apply(null, top.map(function (c) { return c.cost; }).concat([1]));
+  $("classes").innerHTML = top.map(function (c) {
+    return "<div>" + esc(classL(DATA.classes[c.j])) + '<div class="sub">' + t("cls_sub", { n: int(c.n) }) + "</div></div><div>" + bar("c3", c.cost, mc) + '</div><div class="v">' + eur(c.cost) + "</div>";
+  }).join("");
+
+  var byDec = sumBy(DATA, RES.rows, function (r) { return r[NC.rule]; }, isAec), tt = { n: 0, l1: 0, l2: 0, l3: 0 };
+  var h = "<table><thead><tr><th>" + t("h_decision") + '</th><th class="num">' + t("h_nc") + '</th><th class="num">' + t("h_l1") + '</th><th class="num">' + t("h_l2") + '</th><th class="num">' + t("h_l3") + '</th><th class="num">' + t("h_l3nc") + "</th></tr></thead><tbody>";
+  Object.keys(byDec).sort(function (p, q) { return byDec[q].l3 - byDec[p].l3; }).forEach(function (k) {
+    var o = byDec[k]; tt.n += o.n; tt.l1 += o.l1; tt.l2 += o.l2; tt.l3 += o.l3;
+    h += "<tr><td>" + esc(ruleL(k)) + '</td><td class="num">' + int(o.n) + '</td><td class="num">' + eur(o.l1) + '</td><td class="num">' + eur(o.l2) + '</td><td class="num"><b>' + eur(o.l3) + '</b></td><td class="num">' + eur(o.l3 / o.n) + "</td></tr>";
+  });
+  $("decision").innerHTML = h + '<tr class="total"><td>' + t("total") + '</td><td class="num">' + int(tt.n) + '</td><td class="num">' + eur(tt.l1) + '</td><td class="num">' + eur(tt.l2) + '</td><td class="num">' + eur(tt.l3) + '</td><td class="num">' + eur(tt.n ? tt.l3 / tt.n : 0) + "</td></tr></tbody></table>";
+  var byL = sumBy(DATA, RES.rows, function (r) { return r[NC.group]; });
+  var lh = "<table><thead><tr><th>" + t("h_liable") + '</th><th class="num">' + t("h_nc") + '</th><th class="num">' + t("h_l3cost") + "</th><th>" + t("h_counted") + "</th></tr></thead><tbody>";
+  ["AEC", "Other Airbus plant", "Supplier", "Other or blank", "No master data"].forEach(function (k) {
+    var o = byL[k]; if (!o) return;
+    lh += "<tr><td>" + esc(groupL(k)) + '</td><td class="num">' + int(o.n) + '</td><td class="num">' + (k === "No master data" ? "-" : eur(o.l3)) + "</td><td>" + (k === "AEC" ? t("yes_cnq") : k === "No master data" ? t("no_cost") : t("no_aside")) + "</td></tr>";
+  });
+  $("liab").innerHTML = lh + "</tbody></table>";
+}
+
+function renderReturns() {
+  var cr = aecRows().filter(function (x) { return x.isReturn; }), known = cr.filter(function (x) { return x.real != null; }).length;
+  var stat = function (v, k) { return '<div><div class="v">' + v + '</div><div class="k">' + k + "</div></div>"; };
+  $("crkpis").innerHTML = stat(int(cr.length), t("crk_n")) + stat(eur(tot(cr, "model")), t("crk_est")) + stat(t("crk_known_v", { a: int(known), b: int(cr.length) }), t("crk_known")) + stat(eur(tot(cr, "l3")), t("crk_total"));
+  $("crparam").innerHTML = "<div>" + t("cr_param") + "<div>" + tag(t("cr_param_tag"), true) + "</div></div>" + inputHTML("crExtra", P.crExtra, DEFAULT_P.crExtra, 1) + '<div class="u">' + t("cr_unit") + "</div>";
+  $("crsum").textContent = t("d_crlist", { n: int(cr.length) });
+  var h = "<table><thead><tr><th>NC</th><th>" + t("h_month") + "</th><th>" + t("h_decision") + "</th><th>" + t("h_what") + '</th><th class="num">' + t("h_est") + '</th><th class="num">' + t("h_real") + '</th><th class="num">' + t("h_kept") + "</th></tr></thead><tbody>";
+  cr.slice().sort(function (p, q) { var a = DATA.nc[p.i], b = DATA.nc[q.i]; return a[NC.month] < b[NC.month] ? -1 : a[NC.month] > b[NC.month] ? 1 : a[NC.num] - b[NC.num]; }).forEach(function (x) {
+    var r = DATA.nc[x.i];
+    h += '<tr><td><button type="button" class="link" data-open="' + x.i + '">' + r[NC.num] + "</button></td><td>" + monthL(r[NC.month], true) + "</td><td>" + esc(ruleL(r[NC.rule])) + '</td><td class="txt small">' + esc(FIRST[x.i] || "-") +
+      '</td><td class="num">' + eur2(x.model + P.crExtra) + '</td><td class="num"><input class="p' + (x.real != null ? " changed" : "") + '" type="number" min="0" step="1" value="' + (x.real != null ? x.real : "") + '" data-amt="' + r[NC.num] + '" aria-label="' + t("h_real") + " " + r[NC.num] + '"></td><td class="num"><b>' + eur2(x.l3) + "</b></td></tr>";
+  });
+  h += '<tr class="total"><td>' + t("total") + '</td><td></td><td></td><td></td><td class="num">' + eur2(tot(cr, "model") + P.crExtra * cr.length) + '</td><td></td><td class="num">' + eur2(tot(cr, "l3")) + "</td></tr>";
+  $("crtable").innerHTML = h + "</tbody></table>";
+}
+
+var STEPS = [["alert", "alert"], ["writing", "write"], ["support", "support"], ["setup", "work"], ["hands", "work"], ["recheck", "recheck"]];
+function renderNC(i) {
+  currentNC = i;
+  var r = DATA.nc[i], x = RES.rows[i], f = x.f, rule = DATA.rules[r[NC.rule]], label = rule ? lab(rule.label) : groupL("No master data"), sep = LANG === "fr" ? " : " : ": ";
+  var h = '<div class="facts"><span>NC <b>' + r[NC.num] + "</b></span><span>" + t("f_decision") + sep + "<b>" + esc(label) + "</b></span><span>" + t("f_liab") + sep + "<b>" + esc(groupL(r[NC.group])) +
+    "</b></span><span>" + t("f_found") + sep + "<b>" + esc(whereL(r[NC.where])) + "</b></span><span>" + t("f_status") + sep + "<b>" + t("st_" + (r[NC.status] || "unknown")) + "</b></span></div>";
+  if (!rule) { $("ncout").innerHTML = h + '<p class="muted">' + t("no_master") + "</p>"; return; }
+  if (!isAec(r)) h += '<p class="small">' + tag(t("not_aec"), true) + " " + t("not_aec_note") + "</p>";
+  var notes = {
+    alert: t("n_once", { x: P.alert }), writing: r[NC.fin] ? t("n_final", { x: P.writeFinal }) : t("n_plain", { x: P.write }), support: t("n_once", { x: P.support }),
+    setup: x.steps.setup > P.setup ? t("n_floor", { a: P.setup, f: P.floor }) : t("n_once", { x: P.setup }),
+    hands: x.lines === 0 ? t("n_noline", { x: P.noDefect }) : t("n_lines", { n: int(x.lines) }), recheck: t("n_once", { x: P.recheck })
+  };
+  var tb = '<div class="scroll"><table><thead><tr><th>' + t("h_step") + "</th><th>" + t("h_how") + '</th><th class="num">' + t("h_min") + '</th><th class="num">' + t("h_cost_at", { r: dec(P.rate) }) + "</th></tr></thead><tbody>";
+  STEPS.forEach(function (s) {
+    var on = f[s[1]] === 1, m = x.steps[s[0]];
+    tb += '<tr class="' + (on ? "" : "off") + '"><td>' + t("cs_" + s[0]) + "</td><td>" + (on ? notes[s[0]] : t("n_off")) + '</td><td class="num">' + (on ? mn(m) : "-") + '</td><td class="num">' + (on ? eur2(m / 60 * P.rate) : "-") + "</td></tr>";
+  });
+  if (x.engH) tb += "<tr><td>" + t("r_eng") + "</td><td>" + t("r_eng_how", { h: dec(x.engH), r: dec(P.rateEng) }) + '</td><td class="num">-</td><td class="num">' + eur2(x.eng) + "</td></tr>";
+  if (f.work) tb += "<tr><td>" + t("r_mat") + "</td><td>" + t("r_mat_how") + '</td><td class="num">-</td><td class="num">' + eur2(x.material) + "</td></tr>";
+  if (f.part) tb += "<tr><td>" + t("r_part") + "</td><td>" + tag(t("r_part_tag"), true) + " " + t("r_part_how") + '</td><td class="num">-</td><td class="num">' + eur2(0) + "</td></tr>";
+  if (x.isReturn && (x.real != null || P.crExtra)) {
+    tb += "<tr><td>" + t("r_model") + '</td><td></td><td class="num">' + mn(x.minutes3) + '</td><td class="num">' + eur2(x.model) + "</td></tr>";
+    tb += x.real != null ? "<tr><td>" + t("r_real") + "</td><td>" + t("r_real_how") + '</td><td class="num">-</td><td class="num">' + eur2(x.real) + "</td></tr>"
+                         : "<tr><td>" + t("r_extra") + "</td><td>" + t("r_extra_how") + '</td><td class="num">-</td><td class="num">' + eur2(P.crExtra) + "</td></tr>";
+  }
+  tb += '<tr class="total"><td>' + t("r_total3") + '</td><td></td><td class="num">' + (x.real != null ? "-" : mn(x.minutes3)) + '</td><td class="num">' + eur2(x.l3) + "</td></tr></tbody></table></div>";
+  var others = '<div class="others"><div>' + t("x2_line", { m: mn(x.minutes2), c: "<b>" + eur2(x.l2) + "</b>" }) + '</div><div class="k1">' + t("x1_line", { c: "<b>" + eur2(x.l1) + "</b>", l: esc(label) }) + "</div></div>";
+  var d = "";
+  if (x.lines > 0) {
+    d = '<details id="nclines"' + (linesOpen ? " open" : "") + "><summary>" + t("d_lines", { n: int(x.lines) }) + '</summary><div class="in"><div class="scroll"><table><thead><tr><th>#</th><th>' + t("h_text") + "</th><th>" + t("h_class") + '</th><th class="num">' + t("h_min") + '</th><th class="num">' + t("h_material") + "</th></tr></thead><tbody>";
+    var k = 0, sm = 0, sa = 0;
+    DATA.lines.forEach(function (l) {
+      if (l[0] !== i) return; k++;
+      var c = DATA.classes[l[1]], m = RES.classMin[l[1]] * l[2], a = P.classes[l[1]].mat * l[2]; sm += m; sa += a;
+      d += "<tr><td>" + k + '</td><td class="txt">' + esc(l[3]) + "</td><td>" + esc(classL(c)) + '</td><td class="num">' + mn(m) + '</td><td class="num">' + eur2(a) + "</td></tr>";
+    });
+    d += '<tr class="total"><td></td><td>' + (f.work ? t("dl_sum_on") : t("dl_sum_off")) + '</td><td></td><td class="num">' + mn(sm) + '</td><td class="num">' + eur2(sa) + "</td></tr></tbody></table></div></div></details>";
+  }
+  $("ncout").innerHTML = h + tb + others + d;
+}
+
+var PARAM_DEFS = [["rate", "€/h", "b_rate", 1, 0.01], ["rateEng", "€/h", "b_official", 0, 0.01], ["alert", "min", "b_local", 0, 1], ["write", "min", "b_local", 0, 1], ["writeFinal", "min", "b_local", 0, 1],
+  ["support", "min", "b_local", 0, 1], ["setup", "min", "b_local", 0, 1], ["floor", "min", "b_local", 0, 1], ["recheck", "min", "b_local", 0, 1], ["noDefect", "min", "b_local", 0, 1],
+  ["writeGlobal", "min", "b_local", 0, 1], ["workGlobal", "min", "b_local", 0, 1]];
+function inputHTML(path, val, def, step) {
+  return '<input class="p' + (val !== def ? " changed" : "") + '" type="number" min="0" step="' + (step || 1) + '" value="' + val + '" data-path="' + path + '" aria-label="' + path + '">';
+}
+function renderParams() {
+  $("params").innerHTML = PARAM_DEFS.map(function (d) {
+    return '<div class="prow"><div>' + t("p_" + d[0]) + (d[3] ? "<div>" + tag(t(d[2]), 1) + "</div>" : "") + "</div>" + inputHTML(d[0], P[d[0]], DEFAULT_P[d[0]], d[4]) + '<div class="u">' + d[1] + "</div></div>";
+  }).join("");
+  $("clssum").textContent = t("d_classes", { n: DATA.classes.length });
+  var h = "<table><thead><tr><th>" + t("h_class") + '</th><th class="num">' + t("h_costed") + '</th><th class="num">' + t("h_min") + '</th><th class="num">' + t("h_mat_eur") + '</th><th class="num">' + t("h_direct") + "</th><th>" + t("h_origin") + "</th></tr></thead><tbody>";
+  DATA.classes.map(function (c, j) { return j; }).sort(function (p, q) { return (CLS[q] ? CLS[q].n : 0) - (CLS[p] ? CLS[p].n : 0); }).forEach(function (j) {
+    var c = DATA.classes[j], q = P.classes[j], dq = DEFAULT_P.classes[j];
+    h += "<tr><td>" + esc(classL(c)) + '</td><td class="num">' + int(CLS[j] ? CLS[j].n : 0) + '</td><td class="num">' +
+      (q.of == null ? inputHTML("classes." + j + ".min", q.min, dq.min) : dec(RES.classMin[j])) + '</td><td class="num">' + inputHTML("classes." + j + ".mat", q.mat, dq.mat, 0.01) + '</td><td class="num">' + eur(CLS[j] ? CLS[j].cost : 0) + "</td><td>" +
+      (q.of == null ? tag(lab(c.basis), c.basis.flag) : tag(t("team_rule"), 0) + ' <span class="small muted">' + q.factor + " × " + esc(classL(DATA.classes[q.of])) + "</span>") + "</td></tr>";
+  });
+  $("classtable").innerHTML = h + "</tbody></table>";
+  $("airbus").innerHTML = Object.keys(DATA.airbusBasis).map(function (k) {
+    return '<div class="prow"><div>' + esc(ruleL(k)) + (DATA.airbusBasis[k].flag ? "<div>" + tag(lab(DATA.airbusBasis[k]), 1) + "</div>" : "") + "</div>" + inputHTML("airbus." + k, P.airbus[k], DEFAULT_P.airbus[k], 0.01) + '<div class="u">' + t("u_per_nc") + "</div></div>";
+  }).join("");
+}
+function renderGaps() {
+  var a = aecRows(), part = 0, borrowed = 0, costed = 0;
+  a.forEach(function (x) { if (x.f.part) part++; });
+  CLS.forEach(function (k) { costed += k.n; if (/^T0/.test(DATA.classes[k.j].ref)) borrowed += k.n; });
+  $("gaps").innerHTML = [t("g1", { n: int(part) }), t("g9"), t("g2", { a: int(borrowed), b: int(costed) }), t("g7"), t("g34"), t("g8")].map(function (s) { return "<li>" + s + "</li>"; }).join("");
+}
+
+function renderAll() {
+  var act = document.activeElement, key = act && act.dataset ? (act.dataset.path ? '[data-path="' + act.dataset.path + '"]' : act.dataset.amt ? '[data-amt="' + act.dataset.amt + '"]' : null) : null;
+  RES = computeAll(DATA, P, AMT);
+  renderSummary(); renderMethod(); renderBreakdown(); renderReturns(); renderParams(); renderGaps();
+  if (currentNC != null) renderNC(currentNC);
+  if (key) { var el = document.querySelector(key); if (el) el.focus(); }
+}
+
+/* ------------------------------------------------------------------ events */
+document.addEventListener("change", function (e) {
+  var ds = e.target && e.target.dataset ? e.target.dataset : {};
+  if (ds.path) {
+    var v = parseFloat(e.target.value); if (!isFinite(v) || v < 0) v = 0;
+    var path = ds.path.split("."), o = P; for (var i = 0; i < path.length - 1; i++) o = o[path[i]];
+    o[path[path.length - 1]] = v; later();
+  } else if (ds.amt) {
+    var a = parseFloat(e.target.value);
+    if (e.target.value === "" || !isFinite(a) || a < 0) delete AMT[ds.amt]; else AMT[ds.amt] = a;
+    store("cnq.amounts.v1", AMT); later();
+  }
+});
+// re-render after the event has finished, so an input is never replaced while it is still handling its own change
+var pending = false;
+function later() { if (pending) return; pending = true; setTimeout(function () { pending = false; renderAll(); }, 0); }
+document.addEventListener("click", function (e) {
+  var ds = e.target && e.target.dataset ? e.target.dataset : {};
+  if (ds.lang) { LANG = ds.lang; store("cnq.lang", LANG); applyStatic(); renderAll(); }
+  else if (ds.tab) showTab(ds.tab);
+  else if (ds.ex != null) { $("ncpick").value = DATA.nc[+ds.ex][NC.num]; renderNC(+ds.ex); }
+  else if (ds.open != null) { $("ncpick").value = DATA.nc[+ds.open][NC.num]; renderNC(+ds.open); $("ncpick").scrollIntoView({ block: "center" }); markTab("method"); }
+});
+// remember whether the defect lines of the checked NC are unfolded, so a recalculation does not fold them back
+document.addEventListener("toggle", function (e) { if (e.target && e.target.id === "nclines") linesOpen = e.target.open; }, true);
+document.addEventListener("click", function (e) {
+});
+$("reset").addEventListener("click", function () { P = JSON.parse(JSON.stringify(DEFAULT_P)); renderAll(); });
+$("clearamt").addEventListener("click", function () { AMT = {}; store("cnq.amounts.v1", AMT); renderAll(); });
+function pick() {
+  var v = $("ncpick").value.trim(), i = DATA.nc.findIndex(function (r) { return String(r[NC.num]) === v; });
+  if (i < 0) { $("ncout").innerHTML = '<p class="muted" style="margin-top:14px">' + t("nc_none") + "</p>"; currentNC = null; return; }
+  renderNC(i);
+}
+$("ncgo").addEventListener("click", pick);
+$("ncpick").addEventListener("keydown", function (e) { if (e.key === "Enter") pick(); });
+$("nclist").innerHTML = DATA.nc.filter(function (r) { return r[NC.group] !== "No master data"; }).map(function (r) { return '<option value="' + r[NC.num] + '">'; }).join("");
+
+/* ------------------------------------------------------------------ start */
+LANG = load("cnq.lang", "fr") === "en" ? "en" : "fr";
+AMT = load("cnq.amounts.v1", {}) || {};
+applyStatic();
+currentNC = DATA.examples[1].i; $("ncpick").value = DATA.nc[currentNC][NC.num];
+renderAll();
+// keep the jump bar in step with the section on screen
+if ("IntersectionObserver" in window) {
+  var io = new IntersectionObserver(function (es) { es.forEach(function (e) { if (e.isIntersecting) markTab(e.target.id.replace("tab-", "")); }); }, { rootMargin: "-20% 0px -70% 0px" });
+  TABS.forEach(function (k) { io.observe($("tab-" + k)); });
+}
+</script>
+</body>
+</html>
