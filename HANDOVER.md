@@ -26,7 +26,7 @@ Read sections 1, 2 and 9 first. Everything else is reference. Every number below
 | Skywise dashboard pack v4.8 | Delivered, **install not confirmed**; MT → A400M and customer-return scope fixed 12 Oct; A400M chart still to drop | `02_dashboard_pack/`, handover doc (section 10) |
 | Real pipeline notebook | Running in Skywise today, uses an older parser; read-only context | `06_input_data/pipeline_notebook.py`, section 5 |
 | **One build for everything** | Done 12 Oct: `python3 build/build_all.py` rebuilds every table, page, workbook and the CNQ package from the raw exports | `build/`, section 2b |
-| NC dashboard for presentation, five tabs: Pareto · weekly Pareto · CNQ (series) · customer returns · root causes (RCA); FR/EN, root-cause classification | Done 12 Oct | `03_reports/FTO2_NC_Dashboard.html`, https://claude.ai/artifact/988FNWFkPFRB1aPiBU2Tg1 |
+| NC dashboard for presentation, six tabs: Pareto · cost Pareto · weekly Pareto · CNQ (series) · customer returns · root causes (RCA); FR/EN, root-cause classification | Done 12 Oct | `03_reports/FTO2_NC_Dashboard.html`, https://claude.ai/artifact/988FNWFkPFRB1aPiBU2Tg1 |
 | CNQ model (Mohammad's `cnq_handoever/`) | Refreshed on the same data: 181,405 EUR level 3, 856 NCs; cables 23.6 % | `cnq_handoever/README_handover.md` section 13 |
 | Cable defects analysis | Findings done, **decision pending** (options A–D) | section 6, Docs "FTO2 Cable Defects – Findings" |
 | REC tagging | Rule + regex proposed, **definition decision and precision check pending** | section 7, Docs "REC NC Tagging – Findings" |
@@ -52,7 +52,7 @@ Reporting scope, the same on every page (column `scope` in `fto2_nc.csv` / `fto2
 FTO2 in `liability`, not deleted (727 NCs, 2,709 defects, 63 NCs without a defect line, all A400M with redacted text);
 **Retours clients** = raised elsewhere with FTO2 in `liability` (69 NCs, 69 defects). CNQ: Série 166,428 EUR + Retours 11,877 EUR;
 the model total 181,405 EUR also counts 59 deleted NCs (2,975 EUR) and 1 supplier NC (125 EUR), shown aside on the CNQ tab.
-The dashboard is meant to be presented: five tabs (Pareto, weekly Pareto and CNQ on the series scope; customer returns; root causes), one classification (root cause), no working notes on the page; the parser labels stay in the files. The separate customer-returns page is retired (`03_reports/archive/`). The RCA tab explains the hierarchy
+The dashboard is meant to be presented: six tabs (Pareto, cost Pareto, weekly Pareto and CNQ on the series scope; customer returns; root causes), one classification (root cause), no working notes on the page; the parser labels stay in the files. The separate customer-returns page is retired (`03_reports/archive/`). The RCA tab explains the hierarchy
 (123 official sub-codes → 42 sub-categories → 25 RCA → 9 categories); definitions are in `04_reference/rca_definitions.csv`
 (FR/EN, written 12 Oct from the code sheet, **to be checked by Mohammad**).
 

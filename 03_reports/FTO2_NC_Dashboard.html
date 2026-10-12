@@ -249,6 +249,7 @@ footer p { max-width: none; }
 
   <div class="tabs" role="tablist" id="tabs">
     <button type="button" role="tab" id="tab-pareto" aria-controls="p-pareto" data-tab="pareto" data-t="tabPareto"></button>
+    <button type="button" role="tab" id="tab-cost" aria-controls="p-cost" data-tab="cost" data-t="tabCost"></button>
     <button type="button" role="tab" id="tab-hebdo" aria-controls="p-hebdo" data-tab="hebdo" data-t="tabWeek"></button>
     <button type="button" role="tab" id="tab-cnq" aria-controls="p-cnq" data-tab="cnq" data-t="tabCnq"></button>
     <span class="gap" aria-hidden="true"></span>
@@ -273,6 +274,25 @@ footer p { max-width: none; }
         <input type="search" id="pq" autocomplete="off">
         <div class="table-wrap"><table><thead><tr id="pth"></tr></thead><tbody id="ptb"></tbody></table></div>
         <button type="button" class="more" id="pm" hidden></button>
+      </div></details>
+  </div>
+
+  <!-- 1b. Cost Pareto (series) -->
+  <div class="panel" role="tabpanel" id="p-cost" aria-labelledby="tab-cost" hidden>
+    <div class="lead"><h2 data-t="costTitle"></h2><p class="sub" data-t="costSub"></p></div>
+    <div class="figs">
+      <div class="fig"><b id="kf1"></b><span data-t="kTotal"></span></div>
+      <div class="fig"><b id="kf2"></b><span data-t="figNcs"></span></div>
+      <div class="fig"><b id="kf3"></b><span data-t="kPerNc"></span></div>
+      <div class="fig"><b id="kf4" class="word"></b><span data-t="kTop"></span><small id="kf4s"></small></div>
+    </div>
+    <div class="chips" id="kc"></div>
+    <div class="grid" id="kg"></div>
+    <details class="detail"><summary><span data-t="tblCost"></span><span class="count" id="kn"></span></summary>
+      <div class="inner">
+        <input type="search" id="kq" autocomplete="off">
+        <div class="table-wrap"><table><thead><tr id="kth"></tr></thead><tbody id="ktb"></tbody></table></div>
+        <button type="button" class="more" id="km" hidden></button>
       </div></details>
   </div>
 
@@ -395,9 +415,12 @@ window.DASH = {"defects":[["216055047",1,"2026-01-06","2026-W02","A350","FTO2","
     fr: {
       unit: 'Qualité', title: 'Non-conformités FTO2', period: 'NC créées du {from} au {to}',
       minorLabel: 'Défauts mineurs', minorIn: 'Inclus', minorOut: 'Exclus',
-      tabPareto: 'Pareto', tabWeek: 'Pareto hebdomadaire', tabCnq: 'Coût de non-qualité', tabClient: 'Retours clients', tabRca: 'Causes (RCA)',
+      tabPareto: 'Pareto', tabCost: 'Pareto des coûts', tabWeek: 'Pareto hebdomadaire', tabCnq: 'Coût de non-qualité', tabClient: 'Retours clients', tabRca: 'Causes (RCA)',
       serieSub: 'NC émises à FTO2 sous responsabilité FTO2.',
-      paretoTitle: 'Pareto des défauts', weekTitle: 'Pareto hebdomadaire', cnqTitle: 'Coût de non-qualité', clientTitle: 'Retours clients',
+      paretoTitle: 'Pareto des défauts', costTitle: 'Pareto des coûts de non-qualité',
+      costSub: 'Même Pareto, en euros : le coût de chaque NC série est réparti entre ses défauts.',
+      kTotal: 'Coût de non-qualité, série', kPerNc: 'Coût moyen par NC', kTop: 'Première cause en coût', topCostSub: '{e} · {p}',
+      tblCost: 'Détail des défauts et de leur coût', cCost: 'Coût réparti', weekTitle: 'Pareto hebdomadaire', cnqTitle: 'Coût de non-qualité', clientTitle: 'Retours clients',
       clientSub: 'NC émises hors de FTO2 (lignes d’assemblage, clients) sous responsabilité FTO2.',
       rcaTitle: 'Les causes des défauts (RCA)', rcaSub: 'Définition de chaque cause, sous-catégories et codes officiels, chiffres et exemples réels.',
       figDefects: 'Défauts', figNcs: 'NC', figPerNc: 'Défauts par NC (moyenne)', figTopRca: 'Première cause', topSub: '{n} défauts · {p}',
@@ -441,9 +464,12 @@ window.DASH = {"defects":[["216055047",1,"2026-01-06","2026-W02","A350","FTO2","
     en: {
       unit: 'Quality', title: 'FTO2 Non-conformities', period: 'NCs created {from} to {to}',
       minorLabel: 'Minor defects', minorIn: 'Included', minorOut: 'Excluded',
-      tabPareto: 'Pareto', tabWeek: 'Weekly Pareto', tabCnq: 'Cost of non-quality', tabClient: 'Customer returns', tabRca: 'Root causes (RCA)',
+      tabPareto: 'Pareto', tabCost: 'Cost Pareto', tabWeek: 'Weekly Pareto', tabCnq: 'Cost of non-quality', tabClient: 'Customer returns', tabRca: 'Root causes (RCA)',
       serieSub: 'NCs raised at FTO2 that FTO2 is liable for.',
-      paretoTitle: 'Defect Pareto', weekTitle: 'Weekly Pareto', cnqTitle: 'Cost of non-quality', clientTitle: 'Customer returns',
+      paretoTitle: 'Defect Pareto', costTitle: 'Cost of non-quality Pareto',
+      costSub: 'Same Pareto, in euros: each series NC’s cost is shared among its defects.',
+      kTotal: 'Cost of non-quality, series', kPerNc: 'Average cost per NC', kTop: 'Top root cause by cost', topCostSub: '{e} · {p}',
+      tblCost: 'Defect and cost detail', cCost: 'Allocated cost', weekTitle: 'Weekly Pareto', cnqTitle: 'Cost of non-quality', clientTitle: 'Customer returns',
       clientSub: 'NCs raised outside FTO2 (assembly lines, customers) that FTO2 is liable for.',
       rcaTitle: 'Root causes of defects (RCA)', rcaSub: 'Definition of each root cause, its sub-categories and official codes, figures and real examples.',
       figDefects: 'Defects', figNcs: 'NCs', figPerNc: 'Defects per NC (average)', figTopRca: 'Top root cause', topSub: '{n} defects · {p}',
@@ -511,7 +537,7 @@ window.DASH = {"defects":[["216055047",1,"2026-01-06","2026-W02","A350","FTO2","
 
   var G = { lang: 'fr', minor: true, tab: 'pareto' };
   try { var s1 = localStorage.getItem('fto2-dash-lang'); if (s1 === 'fr' || s1 === 'en') G.lang = s1; } catch (e) {}
-  var TABS = ['pareto', 'hebdo', 'cnq', 'client', 'rca'];
+  var TABS = ['pareto', 'cost', 'hebdo', 'cnq', 'client', 'rca'];
   var h0 = (location.hash || '').replace('#', ''); if (TABS.indexOf(h0) >= 0) G.tab = h0;
 
   function S(k, v) { var s = STR[G.lang][k]; if (s == null) return k; Object.keys(v || {}).forEach(function (x) { s = s.split('{' + x + '}').join(v[x]); }); return s; }
@@ -689,6 +715,48 @@ window.DASH = {"defects":[["216055047",1,"2026-01-06","2026-W02","A350","FTO2","
       document.getElementById('pf3').textContent = nWith ? (Math.round(rs.length / nWith * 10) / 10).toLocaleString(loc()) : '—';
       document.getElementById('pf4').textContent = top ? L(top) : '—';
       document.getElementById('pf4s').textContent = top ? S('topSub', { n: num(m[top]), p: pct(m[top] / rs.length * 100) }) : '';
+    }
+  });
+
+  // ---------------------------------------------------------------- 1b. Cost Pareto (series): the Pareto measured in euros
+  // units: each series defect line (its share of the NC cost) and each series NC with no defect line (A400M)
+  var COST_UNITS = (function () {
+    var out = [], has = {};
+    D.defects.forEach(function (r) { if (r[20] === 'serie') { has[r[0]] = 1; out.push({ d: r, n: NC[r[0]] }); } });
+    SERIE_NC.forEach(function (n) { if (!has[n[0]]) out.push({ d: null, n: n }); });
+    return out;
+  })();
+  function kCost(u) { return u.d ? dAlloc(u.d) : u.n[12]; }
+  function kCab(u) { return !!(u.d && dCable(u.d)); }
+  var costPareto = Board({
+    grid: 'kg', chips: 'kc', search: 'kq', count: 'kn', thead: 'kth', tbody: 'ktb', more: 'km', money: true,
+    rows: function () { return COST_UNITS.filter(function (u) { return !u.d || keepMinor(u.d); }); }, measure: kCost,
+    dims: [
+      { k: 'cat', t: 'dCat', sub: 'paretoSub', wide: true, pareto: true, split: kCab, get: function (u) { return u.d ? dCat(u.d) : '__none'; }, show: function (v) { return v === '__none' ? S('noLine') : L(v); } },
+      { k: 'rca', t: 'dRca', top: 15, split: kCab, get: function (u) { return u.d ? dRca(u.d) : null; }, show: L },
+      { k: 'cable', t: 'dCable', sub: 'cableSub', split: kCab, nokey: true, get: function (u) { return kCab(u) ? 'c' : 'n'; }, show: function (v) { return v === 'c' ? S('cable') : S('notCable'); }, order: function () { return ['c', 'n']; } },
+      { k: 'line', t: 'dLine', get: function (u) { return u.n[3]; }, show: function (v) { return v; }, order: lineOrder },
+      { k: 'code', t: 'dCode', sub: 'codeSub', top: 15, wide: true, longName: true, split: kCab, nokey: true, get: function (u) { return u.d ? dCode(u.d) : null; }, show: codeName },
+      { k: 'phase', t: 'dPhase', get: function (u) { return u.n[24]; }, show: function (v) { return v; }, order: phaseOrder },
+      { k: 'month', t: 'dMonth', cols: true, get: function (u) { return u.n[1].slice(0, 7); }, show: monthName, order: function (v) { return v.sort(); } }
+    ],
+    text: function (u) { return u.n[0] + ' ' + u.n[22] + ' ' + (u.d ? defectText(u.d) : ''); },
+    sort: function (a, b2) { return kCost(b2) - kCost(a); },
+    head: function () { return [['cNc'], ['cDate'], ['cLine'], ['cCat'], ['cRca'], ['cCode'], ['cCab'], ['cCost', 'r'], ['cText']].map(function (p) { return '<th scope="col"' + (p[1] ? ' class="r"' : '') + '>' + esc(S(p[0])) + '</th>'; }).join(''); },
+    row: function (u) {
+      var r = u.d;
+      if (!r) return '<tr><td class="nc">' + esc(u.n[0]) + '</td><td class="num">' + esc(shortDay(u.n[1])) + '</td><td>' + esc(u.n[3]) + '</td><td colspan="4">' + esc(S('noLine')) + '</td><td class="num r">' + eur(kCost(u)) + '</td><td class="txt">' + esc(u.n[22]) + '</td></tr>';
+      return '<tr><td class="nc">' + esc(r[0]) + (r[1] > 1 ? ' · ' + r[1] : '') + '</td><td class="num">' + esc(shortDay(r[2])) + '</td><td>' + esc(r[4]) + '</td><td>' + esc(L(dCat(r))) + '</td><td>' + esc(L(dRca(r))) + '</td><td class="nc" title="' + esc(codeDesc(dCode(r))) + '">' + esc(dCode(r)) + '</td><td>' + (dCable(r) ? '<span class="tag">' + esc(S('yes')) + '</span>' : '') + '</td><td class="num r">' + eur(kCost(u)) + '</td><td class="txt">' + esc(tidy(r[18])) + '</td></tr>';
+    },
+    after: function (b) {
+      var rs = b.filtered(null), tot = 0, ncs = {}, m = {};
+      rs.forEach(function (u) { var c = kCost(u); tot += c; ncs[u.n[0]] = 1; if (u.d) { var a = dRca(u.d); m[a] = (m[a] || 0) + c; } });
+      var top = topOf(m), nN = Object.keys(ncs).length;
+      document.getElementById('kf1').textContent = eur(tot);
+      document.getElementById('kf2').textContent = num(nN);
+      document.getElementById('kf3').textContent = nN ? eur(tot / nN) : '—';
+      document.getElementById('kf4').textContent = top ? L(top) : '—';
+      document.getElementById('kf4s').textContent = top ? S('topCostSub', { e: eur(m[top]), p: pct(m[top] / tot * 100) }) : '';
     }
   });
 
@@ -902,7 +970,7 @@ window.DASH = {"defects":[["216055047",1,"2026-01-06","2026-W02","A350","FTO2","
     document.getElementById('period').textContent = S('period', dates);
     document.getElementById('foot1').textContent = S('foot1', dates);
     document.getElementById('foot3').textContent = S('foot3', { n: num(D.meta.noLine), d: num(A.deleted[0]), de: eur(A.deleted[1]), o: num(A.other[0]), oe: eur(A.other[1]) });
-    ['pq', 'wq', 'cq', 'rq'].forEach(function (id) { var q = document.getElementById(id); q.placeholder = S('search'); q.setAttribute('aria-label', S('search')); });
+    ['pq', 'kq', 'wq', 'cq', 'rq'].forEach(function (id) { var q = document.getElementById(id); q.placeholder = S('search'); q.setAttribute('aria-label', S('search')); });
     document.getElementById('lFr').setAttribute('aria-pressed', String(G.lang === 'fr'));
     document.getElementById('lEn').setAttribute('aria-pressed', String(G.lang === 'en'));
     document.getElementById('miIn').setAttribute('aria-pressed', String(G.minor));
@@ -916,7 +984,7 @@ window.DASH = {"defects":[["216055047",1,"2026-01-06","2026-W02","A350","FTO2","
       document.getElementById('p-' + t).hidden = G.tab !== t;
     });
   }
-  function renderAll() { applyText(); showTab(); pareto.render(); weekly.render(); cnq.render(); client.render(); renderRca(); }
+  function renderAll() { applyText(); showTab(); pareto.render(); costPareto.render(); weekly.render(); cnq.render(); client.render(); renderRca(); }
   function setTab(t) { G.tab = t; try { history.replaceState(null, '', '#' + t); } catch (x) {} applyText(); showTab(); if (t === 'hebdo') weekly.render(); }
   document.getElementById('tabs').addEventListener('click', function (e) { var t = e.target.closest('[data-tab]'); if (t) setTab(t.getAttribute('data-tab')); });
   document.getElementById('tabs').addEventListener('keydown', function (e) {
@@ -927,7 +995,7 @@ window.DASH = {"defects":[["216055047",1,"2026-01-06","2026-W02","A350","FTO2","
   function setLang(l) { G.lang = l; try { localStorage.setItem('fto2-dash-lang', l); } catch (e) {} renderAll(); }
   document.getElementById('lFr').addEventListener('click', function () { setLang('fr'); });
   document.getElementById('lEn').addEventListener('click', function () { setLang('en'); });
-  function setMinor(v) { G.minor = v; pareto.f = {}; weekly.f = {}; client.f = {}; renderAll(); }
+  function setMinor(v) { G.minor = v; pareto.f = {}; costPareto.f = {}; weekly.f = {}; client.f = {}; renderAll(); }
   document.getElementById('miIn').addEventListener('click', function () { setMinor(true); });
   document.getElementById('miOut').addEventListener('click', function () { setMinor(false); });
   renderAll();
