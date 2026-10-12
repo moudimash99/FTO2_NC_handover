@@ -4,8 +4,9 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
 <style>
 /* Layout: the FTO2 quality pages' system, for presentation. Header (unit, title, period, one switch for minor
-   defects, language), five tabs: Pareto, weekly Pareto, cost of non-quality, customer returns, root causes.
-   Each tab: headline figures, clickable breakdowns that filter each other, the detail kept folded below. */
+   defects, language), seven tabs: Pareto, cost Pareto, weekly Pareto, cost of non-quality, insights, customer
+   returns, root causes. Each tab: headline figures, clickable breakdowns that filter each other, the detail
+   kept folded below. Insights: six SVG charts, each titled with its finding and backed by a data table. */
 :root {
   --page: #f6f6f3;
   --surface: #fdfdfb;
@@ -23,6 +24,8 @@
   --up: #a33b2b;
   --down: #2c7a4b;
   --focus: #1f5fae;
+  --c1: #2a78d6; --c2: #1baf7a; --c3: #eda100; --c4: #e87ba4; --c5: #008300; --c6: #6250d6; --seq: #2a78d6;
+  --on0: #101418; --on1: #ffffff; --on2: #101418; --on3: #101418; --on4: #101418; --on5: #ffffff; --on6: #ffffff;
   --font-ui: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
   --font-data: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 }
@@ -32,6 +35,8 @@
     --grid: #2a2e32; --track: #23272b; --ring: rgba(255,255,255,0.10);
     --s1: #4d8fdc; --s1-soft: rgba(77,143,220,0.16); --s2: #f0a04b; --dim: #4e5359; --ref: #f2f3f4;
     --up: #e07a68; --down: #5cbf86; --focus: #4d8fdc;
+    --c1: #3987e5; --c2: #199e70; --c3: #c98500; --c4: #d55181; --c5: #008300; --c6: #9085e9; --seq: #3987e5;
+    --on0: #f2f3f4; --on1: #0e1012; --on2: #0e1012; --on3: #0e1012; --on4: #0e1012; --on5: #ffffff; --on6: #0e1012;
     color-scheme: dark;
   }
 }
@@ -40,14 +45,18 @@
   --grid: #2a2e32; --track: #23272b; --ring: rgba(255,255,255,0.10);
   --s1: #4d8fdc; --s1-soft: rgba(77,143,220,0.16); --s2: #f0a04b; --dim: #4e5359; --ref: #f2f3f4;
   --up: #e07a68; --down: #5cbf86; --focus: #4d8fdc;
+  --c1: #3987e5; --c2: #199e70; --c3: #c98500; --c4: #d55181; --c5: #008300; --c6: #9085e9; --seq: #3987e5;
+  --on0: #f2f3f4; --on1: #0e1012; --on2: #0e1012; --on3: #0e1012; --on4: #0e1012; --on5: #ffffff; --on6: #0e1012;
   color-scheme: dark;
 }
 * { box-sizing: border-box; }
 [hidden] { display: none !important; }
-body { margin: 0; background: var(--page); color: var(--ink); font-family: var(--font-ui); font-size: 15px; line-height: 1.5; }
+body { margin: 0; border-top: 4px solid var(--s1); background: var(--page); color: var(--ink); font-family: var(--font-ui); font-size: 15px; line-height: 1.5; }
 .wrap { max-width: 1180px; margin: 0 auto; padding-inline: 20px; padding-block: 24px 48px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 22px; }
 header { display: grid; gap: 12px; }
 .topbar { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+.asof { font-size: 12.5px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.topbar .right { display: flex; gap: 14px; align-items: center; }
 .unit { font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2); font-weight: 600; }
 .titles { display: grid; gap: 4px; }
 h1 { font-weight: 700; font-size: clamp(26px, 4.2vw, 34px); line-height: 1.12; margin: 0; letter-spacing: -0.01em; text-wrap: balance; }
@@ -66,7 +75,7 @@ p { margin: 0; max-width: 78ch; }
 .seg.lang button { padding: 4px 11px; font-size: 12px; letter-spacing: .05em; font-weight: 600; }
 button:focus-visible, input:focus-visible, select:focus-visible, [role="tab"]:focus-visible, summary:focus-visible, tr:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
 select { font: inherit; font-size: 13.5px; padding: 5px 10px; border: 1px solid var(--ring); border-radius: 6px; background: var(--surface); color: var(--ink); }
-.tabs { display: flex; gap: 2px; border-bottom: 1px solid var(--grid); overflow-x: auto; align-items: end; }
+.tabs { display: flex; gap: 2px; border-bottom: 1px solid var(--grid); overflow-x: auto; align-items: end; position: sticky; top: 0; z-index: 10; background: var(--page); }
 .tabs [role="tab"] { font: inherit; font-size: 15px; font-weight: 600; color: var(--ink-2); background: none; border: 0; border-bottom: 3px solid transparent; padding: 10px 14px 9px; cursor: pointer; white-space: nowrap; }
 .tabs [role="tab"][aria-selected="true"] { color: var(--ink); border-bottom-color: var(--s1); }
 .tabs [role="tab"]:hover { color: var(--ink); }
@@ -76,9 +85,10 @@ select { font: inherit; font-size: 13.5px; padding: 5px 10px; border: 1px solid 
 .lead h2 { font-size: 22px; }
 .figs { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr)); gap: 12px; }
 .fig { background: var(--surface); border: 1px solid var(--ring); border-radius: 8px; padding: 14px 16px; display: grid; gap: 2px; min-width: 0; align-content: start; }
+.fig { gap: 4px; }
+.fig > span { order: -1; font-size: 11.5px; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); }
 .fig b { font-weight: 700; font-size: 28px; line-height: 1.1; font-variant-numeric: tabular-nums; }
 .fig b.word { font-size: 20px; line-height: 1.25; }
-.fig span { font-size: 13px; color: var(--ink-2); }
 .fig small { font-size: 12px; color: var(--muted); }
 .delta.up { color: var(--up); } .delta.down { color: var(--down); }
 .strip { display: flex; flex-wrap: wrap; gap: 6px 22px; font-size: 13.5px; color: var(--ink-2); font-variant-numeric: tabular-nums; background: var(--surface); border: 1px solid var(--ring); border-radius: 8px; padding: 10px 16px; }
@@ -110,7 +120,7 @@ select { font: inherit; font-size: 13.5px; padding: 5px 10px; border: 1px solid 
 .bar:hover { background: var(--track); }
 .bar .name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .bar .track { position: relative; height: 13px; background: var(--track); border-radius: 2px; }
-.bar .fill { display: block; position: relative; overflow: hidden; height: 100%; background: var(--s1); border-radius: 2px; }
+.bar .fill { display: block; position: relative; overflow: hidden; height: 100%; background: var(--s1); border-radius: 0 4px 4px 0; }
 .bar .fill .cab { position: absolute; left: 0; top: 0; bottom: 0; background: var(--s2); }
 .bars.active .bar:not([aria-pressed="true"]) .fill .cab { opacity: .45; }
 .key i.c { background: var(--s2); }
@@ -133,7 +143,7 @@ select { font: inherit; font-size: 13.5px; padding: 5px 10px; border: 1px solid 
 .col { font: inherit; display: grid; grid-template-rows: auto 1fr auto; justify-items: center; gap: 3px; height: 100%; background: none; border: 0; border-radius: 4px; padding: 2px 0; cursor: pointer; color: var(--ink); min-width: 0; }
 .col:hover { background: var(--track); }
 .col .v { font-size: 11px; color: var(--ink-2); font-variant-numeric: tabular-nums; }
-.col .stick { width: 72%; align-self: end; background: var(--s1); border-radius: 2px 2px 0 0; min-height: 1px; }
+.col .stick { width: 72%; max-width: 24px; align-self: end; background: var(--s1); border-radius: 4px 4px 0 0; min-height: 1px; }
 .col.partial .stick { background: repeating-linear-gradient(135deg, var(--s1) 0 3px, transparent 3px 6px); border: 1px solid var(--s1); }
 .col .m { font-size: 10.5px; color: var(--ink-2); white-space: nowrap; }
 .cols.active .col .stick { background: var(--dim); border-color: var(--dim); }
@@ -220,6 +230,49 @@ table.matrix tbody tr.aside td { color: var(--ink-2); }
 table.matrix .heat { display: inline-block; min-width: 2.2em; padding: 1px 6px; border-radius: 4px; }
 table.matrix .z { color: var(--muted); }
 .col.out .stick { background: var(--dim); }
+.vgrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 500px), 1fr)); gap: 14px; }
+.vcard { gap: 12px; padding: 16px 18px 14px; }
+.vhead { display: grid; gap: 4px; }
+.kicker { font-size: 11.5px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--s1); }
+.vhead h3 { font-size: 17px; line-height: 1.3; font-weight: 600; text-wrap: balance; }
+.vbody { overflow-x: auto; min-width: 0; display: flex; flex-wrap: wrap; gap: 14px; align-items: flex-start; }
+.vbody svg { display: block; flex: none; }
+svg.viz text { font-family: var(--font-ui); font-size: 12px; fill: var(--ink-2); font-variant-numeric: tabular-nums; }
+svg.viz text { pointer-events: none; } svg.viz text[data-pin] { pointer-events: auto; }
+svg.viz .ink { fill: var(--ink); } svg.viz .b { font-weight: 600; } svg.viz .mu { fill: var(--muted); font-size: 11.5px; }
+svg.viz .halo { paint-order: stroke; stroke: var(--surface); stroke-width: 3.5px; stroke-linejoin: round; }
+svg.viz .gl { stroke: var(--grid); stroke-width: 1; }
+svg.viz .iso { stroke: var(--muted); stroke-width: 1; stroke-dasharray: 3 4; fill: none; opacity: .7; }
+svg.viz .guide { stroke: var(--muted); stroke-width: 1; stroke-dasharray: 2 3; }
+svg.viz .cross { stroke: var(--ink-2); stroke-width: 1; pointer-events: none; }
+svg.viz rect[data-tip]:hover { stroke: var(--ink); stroke-width: 1.5; }
+svg.viz .bub:hover .dot { fill-opacity: .55; }
+svg.viz [data-pin], svg.viz [data-aline] { cursor: pointer; }
+svg.viz .bline:not(.hl):hover path + path { stroke: var(--ink-2); }
+svg.flow .lnk { opacity: .42; transition: opacity .12s; }
+svg.flow.focus .lnk { opacity: .08; }
+svg.flow.focus .lnk.hl { opacity: .85; }
+.vlegend { display: flex; gap: 6px 16px; flex-wrap: wrap; font-size: 12.5px; color: var(--ink-2); align-items: center; }
+.vlegend > span { display: inline-flex; gap: 6px; align-items: center; }
+.vlegend .mu { color: var(--muted); }
+.vlegend .sw { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
+.vlegend .sw.ring { border: 1.5px solid; border-radius: 50%; }
+.vlegend .ln { width: 16px; height: 2px; display: inline-block; border-radius: 1px; }
+.vlegend .dash { width: 16px; height: 0; border-top: 1.5px dashed var(--muted); display: inline-block; }
+details.vdata > summary { cursor: pointer; font-size: 13px; color: var(--s1); justify-self: start; }
+details.vdata[open] > summary { margin-bottom: 8px; }
+table.mini { min-width: 0; font-variant-numeric: tabular-nums; }
+table.mini th, table.mini td { padding: 5px 10px; white-space: nowrap; }
+#tip { position: fixed; z-index: 50; pointer-events: none; background: var(--surface); color: var(--ink); border: 1px solid var(--ring); box-shadow: 0 6px 20px rgba(0,0,0,.14); border-radius: 6px; padding: 7px 10px; font-size: 12.5px; display: grid; gap: 1px; max-width: 300px; }
+#tip .th { color: var(--ink-2); font-size: 12px; }
+#tip b { font-weight: 600; font-variant-numeric: tabular-nums; }
+#tip span { color: var(--ink-2); }
+@media print {
+  body { background: #fff; border-top: 0; }
+  .tabs, .controls, .chips, details, .seg.lang, .clear-one, #tip { display: none !important; }
+  .wrap { max-width: none; padding: 0; }
+  .card, .fig, .strip { break-inside: avoid; box-shadow: none; }
+}
 footer { font-size: 12.5px; color: var(--muted); border-top: 1px solid var(--grid); padding-top: 14px; display: grid; gap: 4px; }
 footer p { max-width: none; }
 @media (max-width: 560px) {
@@ -241,10 +294,11 @@ footer p { max-width: none; }
   <header>
     <div class="topbar">
       <div class="unit">FTO2 · <span data-t="unit"></span></div>
+      <div class="right"><span class="asof" id="asof"></span>
       <div class="seg lang" role="group" aria-label="Langue / Language">
         <button type="button" id="lFr" aria-pressed="true">FR</button>
         <button type="button" id="lEn" aria-pressed="false">EN</button>
-      </div>
+      </div></div>
     </div>
     <div class="titles">
       <h1 data-t="title"></h1>
@@ -261,6 +315,7 @@ footer p { max-width: none; }
     <button type="button" role="tab" id="tab-cost" aria-controls="p-cost" data-tab="cost" data-t="tabCost"></button>
     <button type="button" role="tab" id="tab-hebdo" aria-controls="p-hebdo" data-tab="hebdo" data-t="tabWeek"></button>
     <button type="button" role="tab" id="tab-cnq" aria-controls="p-cnq" data-tab="cnq" data-t="tabCnq"></button>
+    <button type="button" role="tab" id="tab-ana" aria-controls="p-ana" data-tab="ana" data-t="tabAna"></button>
     <span class="gap" aria-hidden="true"></span>
     <button type="button" role="tab" id="tab-client" aria-controls="p-client" data-tab="client" data-t="tabClient"></button>
     <span class="gap" aria-hidden="true"></span>
@@ -372,6 +427,16 @@ footer p { max-width: none; }
       </div></details>
   </div>
 
+  <!-- 3b. Insights (series) -->
+  <div class="panel" role="tabpanel" id="p-ana" aria-labelledby="tab-ana" hidden>
+    <div class="lead"><h2 data-t="anaTitle"></h2><p class="sub" data-t="anaSub"></p></div>
+    <div class="controls">
+      <div class="ctl"><span class="label" id="aLab" data-t="lineLabel"></span>
+        <div class="seg" role="group" aria-labelledby="aLab" id="aLines"></div></div>
+    </div>
+    <div class="vgrid" id="ag"></div>
+  </div>
+
   <!-- 4. Customer returns -->
   <div class="panel" role="tabpanel" id="p-client" aria-labelledby="tab-client" hidden>
     <div class="lead"><h2 data-t="clientTitle"></h2><p class="sub" data-t="clientSub"></p></div>
@@ -405,6 +470,7 @@ footer p { max-width: none; }
     <div id="rcaCards" class="panel"></div>
   </div>
 
+  <div id="tip" role="tooltip" hidden></div>
   <footer><p id="foot1"></p><p data-t="foot2"></p><p id="foot3"></p><p data-t="foot4"></p></footer>
 </div>
 
@@ -422,6 +488,22 @@ window.DASH = __DATA__;
   var MONTHS_EN = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
   var STR = {
     fr: {
+      tabAna: 'Analyses', anaTitle: 'Six regards sur les défauts série', anaSub: 'Mêmes défauts que le Pareto, vus autrement. Survolez un élément pour le détail ; chaque graphique a sa table de données.',
+      asof: 'Données au {to}', asideGroup: 'Suivi séparé', dataView: 'Voir les données', hDay: 'Jour', hDays: 'Jours avec défauts', hPerDay: 'Défauts par jour', hFrom: 'De', hTo: 'Vers', hPerDef: 'Coût par défaut',
+      k_cal: 'Rythme', t_cal: 'Calendrier des défauts', s_cal: 'Défauts série par jour de création de la NC ; à droite, la part de chaque jour de la semaine. Case grise : aucun défaut ce jour-là (jour férié, fermeture).',
+      fCal: 'le {a} concentre {p} des défauts, le {b} seulement {q}.', calTip: '{n} défauts · {k} NC', calNone: 'Aucun défaut', calLeg: 'Défauts par jour', wdProfile: 'Part par jour de la semaine', wdTip: '{p} des défauts · {n}',
+      k_flow: 'Flux', t_flow: 'Du lieu de détection à la décision', s_flow: 'Défauts série : où la NC a été trouvée, catégorie du défaut, décision prise sur la NC. Épaisseur = nombre de défauts. Survolez un nœud pour isoler ses flux.',
+      fFlow: '{w} trouve {p} des défauts {c}. {r} des défauts finissent en retouche.', flowTip: '{n} défauts · {p} de « {c} »', nodeTip: '{n} défauts · {p}',
+      colWhere: 'Trouvé à', colCat: 'Catégorie', colDec: 'Décision',
+      w_fin: 'Contrôle final', w_test: 'Test', w_cab: 'Câbles', w_int: 'Interne (en cours)', w_oth: 'Autres', d_rw: 'Retouche', d_rej: 'Rebut / rejet', d_exc: 'Échange', d_oth: 'Autres décisions',
+      k_bub: 'Coût', t_bub: 'Volume ou coût unitaire', s_bub: 'Une bulle par cause (au moins 3 défauts). À droite : fréquente ; en haut : chère par défaut ; surface : coût total. Les pointillés relient les points de même coût total.',
+      fBub: 'Un défaut {a} coûte en moyenne {x} fois un défaut {b}.', bubTip: '{n} défauts · {c} au total · {a} par défaut', axDef: 'Nombre de défauts (échelle logarithmique)', axAvg: 'Coût moyen par défaut', bubLeg: 'Cause (surface = coût total)', isoLeg: 'Même coût total',
+      k_lor: 'Concentration', t_lor: 'Défauts et coût par NC', s_lor: 'NC triées de la plus lourde à la plus légère. À 10 % des NC, chaque courbe donne la part qu’elles portent. La diagonale serait une répartition égale.',
+      fLor: 'Les 10 % de NC les plus chargées portent {d} des défauts ; les 10 % les plus chères, {c} du coût.', lorD: 'Défauts', lorC: 'Coût', lorEq: 'Répartition égale', axNcShare: 'Part des NC', lorTipH: '{p} des NC ({n})',
+      k_mek: 'Structure', t_mek: 'Profil des défauts par ligne', s_mek: 'Largeur : volume de défauts de la ligne. Hauteur : part de chaque catégorie dans la ligne. Cliquez sur une ligne pour la choisir.',
+      fMek: '{c} pèse {a} des défauts sur {l1}, contre {b} sur {l2}.', mekTip: '{n} défauts · {p} de la ligne',
+      k_bump: 'Évolution', t_bump: 'Classement mensuel des causes', s_bump: 'Rang de chacune des 8 premières causes, mois par mois. Cliquez sur une courbe pour la suivre.',
+      fBump: '{a} est la première cause {k} mois sur {m}.', bumpTip: '{r} · {n} défauts', bumpNone: 'Aucun défaut ce mois-ci', lowVol: 'volume faible', lowTip: '{n} défauts : mois peu chargé, rangs moins fiables', beyond: '>10',
       unit: 'Qualité', title: 'Non-conformités FTO2', period: 'NC créées du {from} au {to}',
       minorLabel: 'Défauts mineurs', minorIn: 'Inclus', minorOut: 'Exclus',
       tabPareto: 'Pareto', tabCost: 'Pareto des coûts', tabWeek: 'Pareto hebdomadaire', tabCnq: 'Coût de non-qualité', tabClient: 'Retours clients', tabRca: 'Causes (RCA)',
@@ -471,6 +553,22 @@ window.DASH = __DATA__;
       foot4: 'Semaines de fermeture (moins de 10 défauts) exclues des moyennes hebdomadaires. Défauts mineurs : tyrap, frette, ficelle, capuchon, cerise ou bouchon manquant. Coût : 50 €/h, temps du processus estimés par l’équipe ; la valeur des pièces rebutées n’est pas incluse. Coût des défauts câble : coût des NC concernées ; quand une NC contient aussi d’autres défauts, son coût est partagé entre ses défauts.'
     },
     en: {
+      tabAna: 'Insights', anaTitle: 'Six views of series defects', anaSub: 'The same defects as the Pareto, seen differently. Hover any mark for detail; each chart has its data table.',
+      asof: 'Data as of {to}', asideGroup: 'Tracked separately', dataView: 'Show the data', hDay: 'Day', hDays: 'Days with defects', hPerDay: 'Defects per day', hFrom: 'From', hTo: 'To', hPerDef: 'Cost per defect',
+      k_cal: 'Rhythm', t_cal: 'Defect calendar', s_cal: 'Series defects by NC creation day; on the right, each weekday’s share. Grey cell: no defect that day (public holiday, shutdown).',
+      fCal: '{a}s carry {p} of defects, {b}s only {q}.', calTip: '{n} defects · {k} NCs', calNone: 'No defect', calLeg: 'Defects per day', wdProfile: 'Share by weekday', wdTip: '{p} of defects · {n}',
+      k_flow: 'Flow', t_flow: 'From where it is found to the decision', s_flow: 'Series defects: where the NC was found, defect category, decision taken on the NC. Width = number of defects. Hover a node to isolate its flows.',
+      fFlow: '{w} finds {p} of {c} defects. {r} of defects end in rework.', flowTip: '{n} defects · {p} of “{c}”', nodeTip: '{n} defects · {p}',
+      colWhere: 'Found at', colCat: 'Category', colDec: 'Decision',
+      w_fin: 'Final inspection', w_test: 'Test', w_cab: 'Cables', w_int: 'In-process', w_oth: 'Other', d_rw: 'Rework', d_rej: 'Scrap / rejection', d_exc: 'Exchange', d_oth: 'Other decisions',
+      k_bub: 'Cost', t_bub: 'Volume or unit cost', s_bub: 'One bubble per root cause (3 defects or more). Right: frequent; up: expensive per defect; area: total cost. Dotted curves join points of equal total cost.',
+      fBub: 'A {a} defect costs on average {x} times a {b} defect.', bubTip: '{n} defects · {c} in total · {a} per defect', axDef: 'Number of defects (log scale)', axAvg: 'Average cost per defect', bubLeg: 'Root cause (area = total cost)', isoLeg: 'Equal total cost',
+      k_lor: 'Concentration', t_lor: 'Defects and cost per NC', s_lor: 'NCs sorted from heaviest to lightest. At 10% of NCs, each curve gives the share they carry. The diagonal would be an equal spread.',
+      fLor: 'The 10% of NCs with the most defects carry {d} of defects; the 10% most expensive, {c} of the cost.', lorD: 'Defects', lorC: 'Cost', lorEq: 'Equal spread', axNcShare: 'Share of NCs', lorTipH: '{p} of NCs ({n})',
+      k_mek: 'Structure', t_mek: 'Defect mix by line', s_mek: 'Width: the line’s defect volume. Height: each category’s share within the line. Click a line to select it.',
+      fMek: '{c} is {a} of defects on {l1}, against {b} on {l2}.', mekTip: '{n} defects · {p} of the line',
+      k_bump: 'Trend', t_bump: 'Monthly ranking of root causes', s_bump: 'Rank of each of the top 8 root causes, month by month. Click a line to follow it.',
+      fBump: '{a} is the top root cause in {k} of {m} months.', bumpTip: '{r} · {n} defects', bumpNone: 'No defect this month', lowVol: 'low volume', lowTip: '{n} defects: light month, ranks less reliable', beyond: '>10',
       unit: 'Quality', title: 'FTO2 Non-conformities', period: 'NCs created {from} to {to}',
       minorLabel: 'Minor defects', minorIn: 'Included', minorOut: 'Excluded',
       tabPareto: 'Pareto', tabCost: 'Cost Pareto', tabWeek: 'Weekly Pareto', tabCnq: 'Cost of non-quality', tabClient: 'Customer returns', tabRca: 'Root causes (RCA)',
@@ -546,7 +644,7 @@ window.DASH = __DATA__;
 
   var G = { lang: 'fr', minor: true, tab: 'pareto' };
   try { var s1 = localStorage.getItem('fto2-dash-lang'); if (s1 === 'fr' || s1 === 'en') G.lang = s1; } catch (e) {}
-  var TABS = ['pareto', 'cost', 'hebdo', 'cnq', 'client', 'rca'];
+  var TABS = ['pareto', 'cost', 'hebdo', 'cnq', 'ana', 'client', 'rca'];
   var h0 = (location.hash || '').replace('#', ''); if (TABS.indexOf(h0) >= 0) G.tab = h0;
 
   function S(k, v) { var s = STR[G.lang][k]; if (s == null) return k; Object.keys(v || {}).forEach(function (x) { s = s.split('{' + x + '}').join(v[x]); }); return s; }
@@ -977,6 +1075,352 @@ window.DASH = __DATA__;
   document.getElementById('rtb').addEventListener('click', function (e) { var tr = e.target.closest('[data-go]'); if (tr) goRca(tr); });
   document.getElementById('rtb').addEventListener('keydown', function (e) { var tr = e.target.closest('[data-go]'); if (tr && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); goRca(tr); } });
 
+  // ---------------------------------------------------------------- 4. Insights (series): six less usual views of the same defects
+  // Category colours: validated categorical order (blue, aqua, yellow, magenta, green, violet); orange stays reserved for cable.
+  var A = { line: '', pin: null, top0: null, lor: null };
+  var CATC = { 'MEO Câblage': 1, 'Erreur Branchement': 2, 'Élément Manquant': 3, 'Élément Endommagé': 4, 'Déverrouillage': 5, 'Grounding/Bonding': 6 };
+  var MAIN_CATS = CAT_ORDER.filter(function (c) { return !ASIDE[c]; }).concat(['aside']);
+  function catKey(c) { return ASIDE[c] ? 'aside' : c; }
+  function catFill(c) { return CATC[c] ? 'var(--c' + CATC[c] + ')' : 'var(--dim)'; }
+  function catOn(c) { return CATC[c] ? 'var(--on' + CATC[c] + ')' : 'var(--on0)'; }
+  function catLabel(c) { return c === 'aside' ? S('asideGroup') : L(c); }
+  function aRows(all) { return D.defects.filter(function (r) { return r[20] === 'serie' && keepMinor(r) && (all || !A.line || r[4] === A.line); }); }
+  function aNcs() { return SERIE_NC.filter(function (n) { return !A.line || n[3] === A.line; }); }
+  function tip(head, lines) { return ' data-tip="' + esc([head].concat(lines || []).join('|')) + '"'; }
+  function tx(x, y, s, cls, anchor, extra) { return '<text x="' + r1(x) + '" y="' + r1(y) + '"' + (cls ? ' class="' + cls + '"' : '') + (anchor ? ' text-anchor="' + anchor + '"' : '') + (extra || '') + '>' + esc(s) + '</text>'; }
+  function r1(x) { return Math.round(x * 10) / 10; }
+  function f1(x) { return (Math.round(x * 10) / 10).toLocaleString(loc()); }
+  function svg(w, h, inner, label, cls) { return '<svg class="viz' + (cls ? ' ' + cls : '') + '" width="' + Math.round(w) + '" height="' + Math.round(h) + '" viewBox="0 0 ' + Math.round(w) + ' ' + Math.round(h) + '" role="img" aria-label="' + esc(label) + '">' + inner + '</svg>'; }
+  function ord(n) { return G.lang === 'fr' ? (n === 1 ? '1er' : n + 'e') : n + (n % 100 > 10 && n % 100 < 14 ? 'th' : ['th', 'st', 'nd', 'rd'][n % 10] || 'th'); }
+  function quote(s) { return G.lang === 'fr' ? '« ' + s + ' »' : '“' + s + '”'; }
+  function kEur(c) { return G.lang === 'fr' ? (c / 1000).toLocaleString('fr-FR') + ' k€' : (c / 1000).toLocaleString('en-GB') + 'k EUR'; }
+  // labels in a column must not overlap: push them apart, keeping their order
+  function spread(ys, gap, lo, hi) {
+    var o = ys.map(function (y, i) { return { y: y, i: i }; }).sort(function (a, b) { return a.y - b.y; });
+    for (var i = 1; i < o.length; i++) if (o[i].y < o[i - 1].y + gap) o[i].y = o[i - 1].y + gap;
+    if (o.length && o[o.length - 1].y > hi) { o[o.length - 1].y = hi; for (var j = o.length - 2; j >= 0; j--) if (o[j].y > o[j + 1].y - gap) o[j].y = o[j + 1].y - gap; }
+    if (o.length && o[0].y < lo) { o[0].y = lo; for (var k = 1; k < o.length; k++) if (o[k].y < o[k - 1].y + gap) o[k].y = o[k - 1].y + gap; }
+    var out = []; o.forEach(function (p) { out[p.i] = p.y; }); return out;
+  }
+  function vSet(k, html, finding, legend, table) {
+    document.getElementById('v-' + k + '-b').innerHTML = html;
+    document.getElementById('v-' + k + '-f').textContent = finding || S('t_' + k);
+    document.getElementById('v-' + k + '-l').innerHTML = legend || '';
+    document.getElementById('v-' + k + '-l').hidden = !legend;
+    document.getElementById('v-' + k + '-t').innerHTML = table || '';
+  }
+  function miniTable(head, rows, right) {
+    return '<thead><tr>' + head.map(function (h, i) { return '<th scope="col"' + (i >= right ? ' class="r"' : '') + '>' + esc(h) + '</th>'; }).join('') + '</tr></thead><tbody>' +
+      rows.map(function (r) { return '<tr>' + r.map(function (c, i) { return '<td' + (i >= right ? ' class="num r"' : '') + '>' + esc(c) + '</td>'; }).join('') + '</tr>'; }).join('') + '</tbody>';
+  }
+  function vWidth(k, min) { return Math.max(document.getElementById('v-' + k + '-b').clientWidth || 600, min || 0); }
+  var EMPTY = '<p class="empty">—</p>';
+
+  // 1. Calendar heatmap: defects per day, plus the weekday profile aligned on the rows
+  function vCal(rs) {
+    var W0 = vWidth('cal'), per = {}, pnc = {};
+    rs.forEach(function (r) { per[r[2]] = (per[r[2]] || 0) + 1; (pnc[r[2]] || (pnc[r[2]] = {}))[r[0]] = 1; });
+    var days = Object.keys(per);
+    if (!days.length) { vSet('cal', EMPTY); return; }
+    var wkend = days.some(function (d) { var g = new Date(d + 'T12:00:00Z').getUTCDay(); return g === 0 || g === 6; }), nR = wkend ? 7 : 5;
+    var weeks = [], m = isoMonday(isoWeekOf(new Date(D.meta.from + 'T00:00:00Z')));
+    for (; isoDay(m) <= D.meta.to; m.setUTCDate(m.getUTCDate() + 7)) weeks.push(new Date(m));
+    var vals = days.map(function (d) { return per[d]; }).sort(function (a, b) { return a - b; }), cuts = [];
+    [0.2, 0.4, 0.6, 0.8].forEach(function (p) { var t = vals[Math.min(vals.length - 1, Math.floor(p * vals.length))]; if (!cuts.length || t > cuts[cuts.length - 1]) cuts.push(t); });
+    if (cuts[cuts.length - 1] >= vals[vals.length - 1]) cuts.pop();
+    var nb = cuts.length + 1;
+    function bin(n) { var b = 0; cuts.forEach(function (c) { if (n > c) b++; }); return b; }
+    function shade(b) { return 'color-mix(in oklab, var(--seq) ' + Math.round(nb > 1 ? 18 + 82 * b / (nb - 1) : 100) + '%, var(--surface))'; }
+    var side = W0 >= 760 ? 230 : 0, lab = 36, top = 20;
+    var cell = Math.max(11, Math.min(22, Math.floor((W0 - side - lab) / weeks.length) - 2)), st = cell + 2;
+    var gw = lab + weeks.length * st, h = top + nR * st;
+    var mon0 = new Date(Date.UTC(2026, 0, 5)), wdName = [], wdLong = [];
+    for (var i = 0; i < 7; i++) { var dd = new Date(mon0); dd.setUTCDate(mon0.getUTCDate() + i); wdName.push(day(isoDay(dd), { weekday: 'short' })); wdLong.push(day(isoDay(dd), { weekday: 'long' })); }
+    var out = '', prevM = '', wdTot = [0, 0, 0, 0, 0, 0, 0], wdDays = [0, 0, 0, 0, 0, 0, 0];
+    for (var r = 0; r < nR; r++) out += tx(lab - 8, top + r * st + cell - 2, wdName[r], 'mu', 'end');
+    weeks.forEach(function (mon, j) {
+      var d7 = new Date(mon); d7.setUTCDate(mon.getUTCDate() + 6); var lm = j === 0 ? D.meta.from.slice(0, 7) : (isoDay(d7) > D.meta.to ? D.meta.to : isoDay(d7)).slice(0, 7);
+      if (lm !== prevM) { out += tx(lab + j * st, 12, monthName(lm), 'mu'); prevM = lm; }
+      for (var i2 = 0; i2 < nR; i2++) {
+        var dt = new Date(mon); dt.setUTCDate(mon.getUTCDate() + i2); var iso = isoDay(dt);
+        if (iso < D.meta.from || iso > D.meta.to) continue;
+        var n = per[iso] || 0, k = Object.keys(pnc[iso] || {}).length;
+        if (n) { wdTot[i2] += n; wdDays[i2]++; }
+        out += '<rect x="' + (lab + j * st) + '" y="' + (top + i2 * st) + '" width="' + cell + '" height="' + cell + '" rx="2" fill="' + (n ? shade(bin(n)) : 'var(--track)') + '"' +
+          tip(day(iso, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }), [n ? S('calTip', { n: num(n), k: num(k) }) : S('calNone')]) + '/>';
+      }
+    });
+    var T = rs.length, wmax = Math.max.apply(null, wdTot.slice(0, nR));
+    function profile(x0, y0, rowH, barH, width) {
+      var o = tx(x0, y0 - 8, S('wdProfile'), 'mu');
+      for (var i3 = 0; i3 < nR; i3++) {
+        var y = y0 + i3 * rowH, w = wmax ? wdTot[i3] / wmax * (width - 60) : 0;
+        if (!side) o += tx(x0 + 34, y + barH - 1, wdName[i3], 'mu', 'end');
+        var bx = x0 + (side ? 0 : 40);
+        o += '<rect x="' + bx + '" y="' + (y + (rowH - 2 - barH) / 2) + '" width="' + r1(w) + '" height="' + barH + '" rx="3" fill="var(--seq)"' + tip(wdLong[i3], [S('wdTip', { p: pct(T ? wdTot[i3] / T * 100 : 0), n: num(wdTot[i3]) })]) + '/>' +
+          tx(bx + w + 6, y + (rowH - 2) / 2 + 4, pct0(T ? wdTot[i3] / T * 100 : 0), 'ink');
+      }
+      return o;
+    }
+    var html;
+    if (side) html = svg(gw + side, h, out + profile(gw + 24, top, st, Math.max(8, cell - 6), side - 24), S('t_cal'));
+    else html = svg(gw, h, out, S('t_cal')) + svg(Math.min(W0, 360), 24 + nR * 20, profile(0, 24, 20, 12, Math.min(W0, 360) - 40), S('wdProfile'));
+    var order = [0, 1, 2, 3, 4, 5, 6].slice(0, nR).filter(function (i4) { return wdTot[i4]; }).sort(function (a, b) { return wdTot[b] - wdTot[a]; });
+    var f = order.length > 1 ? S('fCal', { a: wdLong[order[0]], p: pct0(wdTot[order[0]] / T * 100), b: wdLong[order[order.length - 1]], q: pct0(wdTot[order[order.length - 1]] / T * 100) }) : '';
+    if (f) f = f.charAt(0).toUpperCase() + f.slice(1);
+    var leg = '<span class="mu">' + esc(S('calLeg')) + '</span><span><i class="sw" style="background:var(--track)"></i>0</span>' + Array.apply(null, Array(nb)).map(function (_, b) {
+      var a = b === 0 ? 1 : cuts[b - 1] + 1, z = b < cuts.length ? cuts[b] : vals[vals.length - 1];
+      return '<span><i class="sw" style="background:' + shade(b) + '"></i>' + (a === z ? num(a) : num(a) + '–' + num(z)) + '</span>'; }).join('');
+    var rows = [0, 1, 2, 3, 4, 5, 6].slice(0, nR).map(function (i5) { return [wdLong[i5], num(wdTot[i5]), pct(T ? wdTot[i5] / T * 100 : 0), num(wdDays[i5]), wdDays[i5] ? f1(wdTot[i5] / wdDays[i5]) : '—']; });
+    vSet('cal', html, f, leg, miniTable([S('hDay'), S('hDef'), S('rShare'), S('hDays'), S('hPerDay')], rows, 1));
+  }
+
+  // 2. Flow (Sankey): where the NC was found -> defect category -> decision
+  function wGroup(w) { return w === 'Final inspection' ? 'fin' : w === 'TEST' ? 'test' : w === 'Cables' ? 'cab' : (w === 'In-process (internal)' || w === 'NC Interne') ? 'int' : 'oth'; }
+  function dGroup(r) { return r === 'Rework to drawing' ? 'rw' : (r === 'Rejection' || r === 'Scrap') ? 'rej' : r === 'Exchange' ? 'exc' : 'oth'; }
+  function vFlow(rs) {
+    var W0 = vWidth('flow', 640), H = 420, top = 30, pad = 12, nw = 10;
+    var lm = {}, mr = {}, tl = {}, tm = {}, tr = {}, T = 0;
+    rs.forEach(function (r) { var n = NC[r[0]]; if (!n) return; var a = wGroup(n[8]), b = catKey(dCat(r)), c = dGroup(n[7]);
+      lm[a + '|' + b] = (lm[a + '|' + b] || 0) + 1; mr[b + '|' + c] = (mr[b + '|' + c] || 0) + 1; tl[a] = (tl[a] || 0) + 1; tm[b] = (tm[b] || 0) + 1; tr[c] = (tr[c] || 0) + 1; T++; });
+    if (!T) { vSet('flow', EMPTY); return; }
+    var LN = ['fin', 'test', 'cab', 'int', 'oth'].filter(function (x) { return tl[x]; }), MN = MAIN_CATS.filter(function (x) { return tm[x]; }), RN = ['rw', 'rej', 'exc', 'oth'].filter(function (x) { return tr[x]; });
+    var maxN = Math.max(LN.length, MN.length, RN.length), k = (H - top - 6 - pad * (maxN - 1)) / T;
+    var narrow = W0 < 820, xL = narrow ? 130 : 180, xR = W0 - (narrow ? 150 : 200) - nw, xM = Math.round((xL + xR) / 2 - nw / 2);
+    function place(list, tot) { var hs = list.reduce(function (s, x) { return s + tot[x] * k; }, 0) + pad * (list.length - 1), y = top + (H - top - hs) / 2, pos = {};
+      list.forEach(function (x) { pos[x] = { y: y, h: tot[x] * k }; y += tot[x] * k + pad; }); return pos; }
+    var pL = place(LN, tl), pM = place(MN, tm), pR = place(RN, tr);
+    function band(x0, y0, x1, y1, h) { var xm = (x0 + x1) / 2; return 'M' + r1(x0) + ',' + r1(y0) + 'C' + r1(xm) + ',' + r1(y0) + ' ' + r1(xm) + ',' + r1(y1) + ' ' + r1(x1) + ',' + r1(y1) + 'L' + r1(x1) + ',' + r1(y1 + h) + 'C' + r1(xm) + ',' + r1(y1 + h) + ' ' + r1(xm) + ',' + r1(y0 + h) + ' ' + r1(x0) + ',' + r1(y0 + h) + 'Z'; }
+    var wName = function (x) { return S('w_' + x); }, rName = function (x) { return S('d_' + x); };
+    var links = '', oL = {}, iM = {}, oM = {}, iR = {};
+    LN.forEach(function (a) { MN.forEach(function (b) { var v = lm[a + '|' + b]; if (!v) return; var h = v * k, y0 = pL[a].y + (oL[a] || 0), y1 = pM[b].y + (iM[b] || 0); oL[a] = (oL[a] || 0) + h; iM[b] = (iM[b] || 0) + h;
+      links += '<path class="lnk" d="' + band(xL + nw, y0, xM, y1, Math.max(h, 0.6)) + '" fill="' + catFill(b) + '" data-a="L:' + a + '" data-b="M:' + b + '"' + tip(wName(a) + ' → ' + catLabel(b), [S('flowTip', { n: num(v), p: pct0(v / tm[b] * 100), c: catLabel(b) })]) + '/>'; }); });
+    MN.forEach(function (b) { RN.forEach(function (c) { var v = mr[b + '|' + c]; if (!v) return; var h = v * k, y0 = pM[b].y + (oM[b] || 0), y1 = pR[c].y + (iR[c] || 0); oM[b] = (oM[b] || 0) + h; iR[c] = (iR[c] || 0) + h;
+      links += '<path class="lnk" d="' + band(xM + nw, y0, xR, y1, Math.max(h, 0.6)) + '" fill="' + catFill(b) + '" data-a="M:' + b + '" data-b="R:' + c + '"' + tip(catLabel(b) + ' → ' + rName(c), [S('flowTip', { n: num(v), p: pct0(v / tm[b] * 100), c: catLabel(b) })]) + '/>'; }); });
+    var nodes = '', labels = '';
+    function col(list, pos, tot, x, fill, name, side) {
+      var ys = spread(list.map(function (q) { return pos[q].y + pos[q].h / 2 + 4; }), 15, top + 8, H - 2);
+      list.forEach(function (q, i) {
+        nodes += '<rect class="node" x="' + x + '" y="' + r1(pos[q].y) + '" width="' + nw + '" height="' + r1(Math.max(pos[q].h, 2)) + '" rx="2" fill="' + fill(q) + '" data-node="' + side + ':' + q + '"' + tip(name(q), [S('nodeTip', { n: num(tot[q]), p: pct0(tot[q] / T * 100) })]) + '/>';
+        var lx = side === 'L' ? x - 8 : x + nw + 8, an = side === 'L' ? 'end' : null;
+        labels += '<text class="halo" x="' + lx + '" y="' + r1(ys[i]) + '"' + (an ? ' text-anchor="end"' : '') + '><tspan class="ink">' + esc(name(q)) + '</tspan> <tspan class="mu">' + esc(num(tot[q])) + '</tspan></text>';
+      });
+    }
+    col(LN, pL, tl, xL, function () { return 'var(--ink-2)'; }, wName, 'L');
+    col(MN, pM, tm, xM, catFill, catLabel, 'M');
+    col(RN, pR, tr, xR, function () { return 'var(--ink-2)'; }, rName, 'R');
+    var heads = tx(xL + nw, 14, S('colWhere'), 'mu b', 'end') + tx(xM, 14, S('colCat'), 'mu b') + tx(xR, 14, S('colDec'), 'mu b');
+    var best = null;
+    MN.forEach(function (b) { if (b === 'aside' || tm[b] < 50) return; LN.forEach(function (a) { var v = lm[a + '|' + b] || 0, s = v / tm[b]; if (!best || s > best.s) best = { a: a, b: b, s: s }; }); });
+    var f = best ? S('fFlow', { w: quote(wName(best.a)), p: pct0(best.s * 100), c: quote(catLabel(best.b)), r: pct0((tr.rw || 0) / T * 100) }) : '';
+    var rows = [];
+    LN.forEach(function (a) { MN.forEach(function (b) { if (lm[a + '|' + b]) rows.push([wName(a), catLabel(b), num(lm[a + '|' + b])]); }); });
+    MN.forEach(function (b) { RN.forEach(function (c) { if (mr[b + '|' + c]) rows.push([catLabel(b), rName(c), num(mr[b + '|' + c])]); }); });
+    vSet('flow', svg(W0, H, heads + '<g class="links">' + links + '</g>' + nodes + labels, S('t_flow'), 'flow'), f, '', miniTable([S('hFrom'), S('hTo'), S('hDef')], rows, 2));
+  }
+
+  // 3. Volume x unit cost per root cause, with curves of equal total cost
+  function vBub(rs) {
+    var W0 = vWidth('bub', 300), H = W0 < 520 ? 320 : 380, ml = 60, mr = 16, mt = 12, mb = 46, pw = W0 - ml - mr, ph = H - mt - mb;
+    var st = {}; rs.forEach(function (r) { var a = dRca(r), s = st[a] || (st[a] = { n: 0, c: 0, cat: dCat(r) }); s.n++; s.c += dAlloc(r); });
+    var list = Object.keys(st).filter(function (x) { return st[x].n >= 3; }).map(function (x) { var s = st[x]; return { k: x, n: s.n, c: s.c, a: s.c / s.n, cat: s.cat }; });
+    if (list.length < 2) { vSet('bub', EMPTY); return; }
+    var nMin = Math.min.apply(null, list.map(function (s) { return s.n; })), nMax = Math.max.apply(null, list.map(function (s) { return s.n; }));
+    var lo = Math.log10(nMin / 1.5), hi = Math.log10(nMax * 1.5);
+    var aMax = Math.max.apply(null, list.map(function (s) { return s.a; })), step = aMax <= 60 ? 10 : aMax <= 120 ? 20 : aMax <= 300 ? 50 : 100, yMax = Math.ceil(aMax * 1.12 / step) * step;
+    var cMax = Math.max.apply(null, list.map(function (s) { return s.c; }));
+    function X(n) { return ml + (Math.log10(n) - lo) / (hi - lo) * pw; } function Y(a) { return mt + ph - a / yMax * ph; } function R(c) { return 3 + 21 * Math.sqrt(c / cMax); }
+    var g = '';
+    for (var y = 0; y <= yMax; y += step) g += '<line class="gl" x1="' + ml + '" x2="' + (ml + pw) + '" y1="' + r1(Y(y)) + '" y2="' + r1(Y(y)) + '"/>' + tx(ml - 8, Y(y) + 4, eur(y), 'mu', 'end');
+    [1, 2, 5, 10, 20, 50, 100, 200, 500, 1000, 2000, 5000].forEach(function (t) { if (Math.log10(t) < lo || Math.log10(t) > hi) return; g += '<line class="gl" y1="' + mt + '" y2="' + (mt + ph) + '" x1="' + r1(X(t)) + '" x2="' + r1(X(t)) + '"/>' + tx(X(t), mt + ph + 16, num(t), 'mu', 'middle'); });
+    g += tx(ml + pw / 2, H - 6, S('axDef'), 'mu', 'middle') + tx(14, mt + ph / 2, S('axAvg'), 'mu', 'middle', ' transform="rotate(-90 14 ' + r1(mt + ph / 2) + ')"');
+    var iso = '', nHi = Math.pow(10, hi), nLo = Math.pow(10, lo), isoBox = [];
+    [1000, 5000, 20000, 50000].forEach(function (C) {
+      if (C / nHi > yMax || C / nLo < yMax * 0.12) return;
+      var n0 = Math.max(nLo, C / yMax), pts = [];
+      for (var i = 0; i <= 40; i++) { var n = Math.pow(10, Math.log10(n0) + (hi - Math.log10(n0)) * i / 40); pts.push(r1(X(n)) + ',' + r1(Y(C / n))); }
+      iso += '<path class="iso" d="M' + pts.join('L') + '"/>';
+      var lx = n0 > nLo ? X(n0) + 4 : ml + 4, ly = n0 > nLo ? mt + 11 : Y(C / nLo) - 4;
+      iso += tx(lx, ly, kEur(C), 'mu halo'); isoBox.push([lx - 2, ly - 11, lx + 40, ly + 3]);
+    });
+    list.sort(function (a, b) { return b.c - a.c; });
+    var dots = list.map(function (s) { var x = X(s.n), yy = Y(s.a), r = R(s.c), gray = ASIDE[s.cat];
+      return '<g class="bub"' + tip(L(s.k), [S('bubTip', { n: num(s.n), c: eur(s.c), a: eur(s.a) }), L(s.cat)]) + '><circle cx="' + r1(x) + '" cy="' + r1(yy) + '" r="' + r1(Math.max(r, 12)) + '" fill="transparent"/>' +
+        '<circle class="dot" cx="' + r1(x) + '" cy="' + r1(yy) + '" r="' + r1(r) + '" fill="' + (gray ? 'var(--dim)' : 'var(--s1)') + '" fill-opacity=".28" stroke="' + (gray ? 'var(--muted)' : 'var(--s1)') + '" stroke-width="1.5"/></g>'; }).join('');
+    // direct labels: the most expensive causes first, skipped when they would collide
+    var placed = isoBox.slice(), labs = '';
+    function clear(b, p) { return b[2] < p[0] || b[0] > p[2] || b[3] < p[1] || b[1] > p[3]; }
+    function free(b, self) {
+      if (b[0] < ml || b[2] > ml + pw || b[1] < mt || b[3] > mt + ph) return false;
+      return placed.every(function (p) { return clear(b, p); }) && list.every(function (s) { if (s === self) return true; var r = R(s.c) * 0.7; return clear(b, [X(s.n) - r, Y(s.a) - r, X(s.n) + r, Y(s.a) + r]); });
+    }
+    var byAvg = list.filter(function (s) { return s.n >= 10; }).sort(function (a, b) { return b.a - a.a; })[0];
+    list.slice(0, 9).concat(byAvg && list.indexOf(byAvg) >= 9 ? [byAvg] : []).forEach(function (s) {
+      var x = X(s.n), yy = Y(s.a), r = R(s.c), t = L(s.k), w = t.length * 6.3 + 4;
+      var tries = [[x + r + 4, yy + 4, 'start', [x + r + 2, yy - 9, x + r + 6 + w, yy + 5]], [x - r - 4, yy + 4, 'end', [x - r - 6 - w, yy - 9, x - r - 2, yy + 5]],
+        [x, yy - r - 5, 'middle', [x - w / 2, yy - r - 18, x + w / 2, yy - r - 3]], [x, yy + r + 14, 'middle', [x - w / 2, yy + r + 2, x + w / 2, yy + r + 17]]];
+      for (var i = 0; i < tries.length; i++) { if (free(tries[i][3], s)) { placed.push(tries[i][3]); labs += tx(tries[i][0], tries[i][1], t, 'ink halo', tries[i][2] === 'start' ? null : tries[i][2]); break; } }
+    });
+    var vol = list.slice().sort(function (a, b) { return b.n - a.n; })[0];
+    var f = byAvg && vol && byAvg !== vol && byAvg.a / vol.a >= 1.5 ? S('fBub', { a: quote(L(byAvg.k)), x: f1(byAvg.a / vol.a), b: quote(L(vol.k)) }) : '';
+    var leg = '<span><i class="sw ring" style="background:color-mix(in srgb, var(--s1) 28%, transparent);border-color:var(--s1)"></i>' + esc(S('bubLeg')) + '</span><span><i class="sw ring" style="background:color-mix(in srgb, var(--dim) 28%, transparent);border-color:var(--muted)"></i>' + esc(S('aside')) + '</span><span><i class="dash"></i>' + esc(S('isoLeg')) + '</span>';
+    var rows = list.map(function (s) { return [L(s.k), L(s.cat), num(s.n), eur(s.c), eur(s.a)]; });
+    vSet('bub', svg(W0, H, g + iso + dots + labs, S('t_bub')), f, leg, miniTable([S('rRca'), S('rCat'), S('hDef'), S('hCost'), S('hPerDef')], rows, 2));
+  }
+
+  // 4. Concentration (Lorenz): share of defects and of cost carried by the heaviest NCs
+  function vLor(rs) {
+    var ncs = aNcs(), dc = {}; rs.forEach(function (r) { dc[r[0]] = (dc[r[0]] || 0) + 1; });
+    var N = ncs.length; if (N < 5) { vSet('lor', EMPTY); A.lor = null; return; }
+    function curve(vals) { vals.sort(function (a, b) { return b - a; }); var t = vals.reduce(function (s, v) { return s + v; }, 0) || 1, c = [0], s = 0; vals.forEach(function (v) { s += v; c.push(s / t); }); return c; }
+    var cd = curve(ncs.map(function (n) { return dc[n[0]] || 0; })), cc = curve(ncs.map(function (n) { return n[12]; }));
+    var W0 = vWidth('lor', 300), H = W0 < 520 ? 300 : 380, ml = 48, mr = 18, mt = 12, mb = 44, pw = W0 - ml - mr, ph = H - mt - mb;
+    function X(p) { return ml + p * pw; } function Y(p) { return mt + ph - p * ph; }
+    var g = '';
+    [0, 0.25, 0.5, 0.75, 1].forEach(function (p) { g += '<line class="gl" x1="' + ml + '" x2="' + (ml + pw) + '" y1="' + r1(Y(p)) + '" y2="' + r1(Y(p)) + '"/>' + tx(ml - 8, Y(p) + 4, pct0(p * 100), 'mu', 'end') + tx(X(p), mt + ph + 16, pct0(p * 100), 'mu', 'middle'); });
+    g += tx(ml + pw / 2, H - 6, S('axNcShare'), 'mu', 'middle') + '<line class="iso" x1="' + X(0) + '" y1="' + Y(0) + '" x2="' + X(1) + '" y2="' + Y(1) + '"/>';
+    function path(c) { var step = Math.max(1, Math.floor(N / 400)), pts = []; for (var i = 0; i <= N; i += step) pts.push(r1(X(i / N)) + ',' + r1(Y(c[i]))); pts.push(r1(X(1)) + ',' + r1(Y(1))); return 'M' + pts.join('L'); }
+    g += '<path d="' + path(cc) + '" fill="none" stroke="var(--s1)" stroke-width="2"/><path d="' + path(cd) + '" fill="none" stroke="var(--ink)" stroke-width="2"/>';
+    var i10 = Math.max(1, Math.round(N * 0.1)), p10 = i10 / N;
+    g += '<line class="guide" x1="' + r1(X(p10)) + '" x2="' + r1(X(p10)) + '" y1="' + mt + '" y2="' + (mt + ph) + '"/>';
+    [[cd, 'var(--ink)'], [cc, 'var(--s1)']].forEach(function (q) { g += '<circle cx="' + r1(X(p10)) + '" cy="' + r1(Y(q[0][i10])) + '" r="4.5" fill="' + q[1] + '" stroke="var(--surface)" stroke-width="2"/>' + tx(X(p10) + 9, Y(q[0][i10]) + 4, pct0(q[0][i10] * 100), 'ink b halo'); });
+    // direct labels along the curves
+    var pj = Math.round(N * 0.38), dHigh = cd[pj] >= cc[pj];
+    g += tx(X(pj / N) + 6, Y(cd[pj]) + (dHigh ? -9 : 17), S('lorD'), 'ink b halo') + tx(X(pj / N) + 6, Y(cc[pj]) + (dHigh ? 17 : -9), S('lorC'), 'b halo', null, ' style="fill:var(--s1)"');
+    g += tx(X(0.72), Y(0.72) + 16, S('lorEq'), 'mu halo', 'middle', ' transform="rotate(' + r1(-Math.atan2(ph, pw) * 180 / Math.PI) + ' ' + r1(X(0.72)) + ' ' + r1(Y(0.72) + 16) + ')"');
+    g += '<line id="lorX" class="cross" y1="' + mt + '" y2="' + (mt + ph) + '" x1="-10" x2="-10"/><rect data-lorenz="1" x="' + ml + '" y="' + mt + '" width="' + pw + '" height="' + ph + '" fill="transparent"/>';
+    A.lor = { N: N, cd: cd, cc: cc, ml: ml, pw: pw };
+    var f = S('fLor', { d: pct0(cd[i10] * 100), c: pct0(cc[i10] * 100) });
+    var leg = '<span><i class="ln" style="background:var(--ink)"></i>' + esc(S('lorD')) + '</span><span><i class="ln" style="background:var(--s1)"></i>' + esc(S('lorC')) + '</span><span><i class="dash"></i>' + esc(S('lorEq')) + '</span>';
+    var rows = [0.05, 0.1, 0.2, 0.3, 0.5].map(function (p) { var i = Math.max(1, Math.round(N * p)); return [pct0(p * 100) + ' (' + num(i) + ' NC)', pct(cd[i] * 100), pct(cc[i] * 100)]; });
+    vSet('lor', svg(W0, H, g, S('t_lor')), f, leg, miniTable([S('axNcShare'), S('lorD'), S('lorC')], rows, 1));
+  }
+
+  // 5. Marimekko: width = the line's defect volume, height = each category's share within the line
+  function vMek(rsAll) {
+    var W0 = vWidth('mek', 300), H = 340, mt = 4, mb = 56, gap = 2, ph = H - mt - mb;
+    var per = {}, tot = {}, T = 0;
+    rsAll.forEach(function (r) { var l = r[4], c = catKey(dCat(r)); (per[l] || (per[l] = {}))[c] = (per[l][c] || 0) + 1; tot[l] = (tot[l] || 0) + 1; T++; });
+    var lines = lineOrder(Object.keys(tot)).sort(function (a, b) { return tot[b] - tot[a]; });
+    if (!lines.length) { vSet('mek', EMPTY); return; }
+    var aw = W0 - gap * (lines.length - 1), x = 0, g = '';
+    lines.forEach(function (l, li) {
+      var w = aw * tot[l] / T, segs = MAIN_CATS.filter(function (c) { return per[l][c]; }), ah = ph - gap * (segs.length - 1), y = mt, dim = A.line && A.line !== l;
+      g += '<g' + (dim ? ' opacity=".32"' : '') + ' data-aline="' + esc(l) + '">';
+      segs.forEach(function (c) { var n = per[l][c], h = ah * n / tot[l];
+        g += '<rect x="' + r1(x) + '" y="' + r1(y) + '" width="' + r1(Math.max(w, 1)) + '" height="' + r1(h) + '" rx="2" fill="' + catFill(c) + '"' + tip(l + ' · ' + catLabel(c), [S('mekTip', { n: num(n), p: pct(n / tot[l] * 100) })]) + '/>';
+        if (w >= 40 && h >= 17) g += tx(x + w / 2, y + h / 2 + 4, pct0(n / tot[l] * 100), 'b', 'middle', ' style="fill:' + catOn(c) + '"');
+        y += h + gap; });
+      g += '</g>';
+      var cap = num(tot[l]) + ' · ' + pct0(tot[l] / T * 100);
+      if (w >= 80) g += tx(x + w / 2, H - mb + 18, l, 'ink b', 'middle') + tx(x + w / 2, H - mb + 34, cap, 'mu', 'middle');
+      else { var last = li === lines.length - 1; g += '<text x="' + r1(last ? x + w : x) + '" y="' + (H - mb + 50) + '"' + (last ? ' text-anchor="end"' : '') + '><tspan class="ink b">' + esc(l) + '</tspan> <tspan class="mu">' + esc(cap) + '</tspan></text>'; }
+      x += w + gap;
+    });
+    var f = '';
+    if (per.A350 && per.A330) {
+      var best = null; MAIN_CATS.forEach(function (c) { if (c === 'aside') return; var a = (per.A350[c] || 0) / tot.A350, b = (per.A330[c] || 0) / tot.A330; if (!best || Math.abs(a - b) > Math.abs(best.a - best.b)) best = { c: c, a: a, b: b }; });
+      if (best) f = S('fMek', { c: quote(catLabel(best.c)), a: pct0(best.a * 100), l1: 'A350', b: pct0(best.b * 100), l2: 'A330' });
+    }
+    var leg = MAIN_CATS.map(function (c) { return '<span><i class="sw" style="background:' + catFill(c) + '"></i>' + esc(catLabel(c)) + '</span>'; }).join('');
+    var rows = MAIN_CATS.map(function (c) { return [catLabel(c)].concat(lines.map(function (l) { var n = per[l][c] || 0; return num(n) + ' (' + pct0(n / tot[l] * 100) + ')'; })); });
+    vSet('mek', svg(W0, H, g, S('t_mek')), f, leg, miniTable([S('rCat')].concat(lines), rows, 1));
+  }
+
+  // 6. Bump chart: monthly rank of the top 8 root causes
+  function vBump(rs) {
+    var cnt = {}, tot = {}, vol = {};
+    rs.forEach(function (r) { var m = r[2].slice(0, 7), a = dRca(r); (cnt[m] || (cnt[m] = {}))[a] = (cnt[m][a] || 0) + 1; tot[a] = (tot[a] || 0) + 1; vol[m] = (vol[m] || 0) + 1; });
+    var months = Object.keys(cnt).sort();
+    if (months.length < 2) { vSet('bump', EMPTY); return; }
+    var top = Object.keys(tot).sort(function (a, b) { return tot[b] - tot[a] || (a < b ? -1 : 1); }).slice(0, 8), rank = {};
+    months.forEach(function (m) { Object.keys(cnt[m]).sort(function (a, b) { return cnt[m][b] - cnt[m][a] || (a < b ? -1 : 1); }).forEach(function (a, i) { (rank[m] || (rank[m] = {}))[a] = i + 1; }); });
+    A.top0 = top[0];
+    var pin = A.pin == null ? top[0] : A.pin, MAXR = 10;
+    var W0 = vWidth('bump', 520), right = W0 < 700 ? 160 : 210, left = 40, mt = 30, rowH = 25, H = mt + (MAXR + 1) * rowH + 8;
+    var sx = (W0 - left - right - 24) / (months.length - 1);
+    function X(j) { return left + 12 + j * sx; } function row(a, m) { var k = rank[m][a]; return k && k <= MAXR ? k : MAXR + 1; } function Y(rw) { return mt + (rw - 0.5) * rowH; }
+    var vs = months.map(function (m) { return vol[m]; }).sort(function (a, b) { return a - b; }), med = vs[Math.floor(vs.length / 2)], g = '';
+    months.forEach(function (m, j) {
+      if (vol[m] < med * 0.5) g += '<rect x="' + r1(X(j) - sx / 2) + '" y="' + (mt - 4) + '" width="' + r1(sx) + '" height="' + ((MAXR + 1) * rowH + 4) + '" fill="var(--track)"' + tip(monthName(m), [S('lowTip', { n: num(vol[m]) })]) + '/>' + tx(X(j), H - 2, S('lowVol'), 'mu', 'middle');
+      g += tx(X(j), 14, monthName(m), 'mu', 'middle');
+    });
+    for (var k = 1; k <= MAXR + 1; k++) g += tx(left - 8, Y(k) + 4, k <= MAXR ? String(k) : S('beyond'), 'mu', 'end');
+    var order = top.filter(function (a) { return a !== pin; }).concat(top.indexOf(pin) >= 0 ? [pin] : []), ends = [];
+    order.forEach(function (a) {
+      var hl = a === pin, col = hl ? 'var(--s1)' : 'var(--dim)', d = '';
+      months.forEach(function (m, j) { var x = X(j), y = Y(row(a, m)); if (!j) d = 'M' + r1(x) + ',' + r1(y); else { var x0 = X(j - 1), y0 = Y(row(a, months[j - 1])), xm = (x0 + x) / 2; d += 'C' + r1(xm) + ',' + r1(y0) + ' ' + r1(xm) + ',' + r1(y) + ' ' + r1(x) + ',' + r1(y); } });
+      g += '<g class="bline' + (hl ? ' hl' : '') + '" data-pin="' + esc(a) + '"><path d="' + d + '" fill="none" stroke="transparent" stroke-width="14"/><path d="' + d + '" fill="none" stroke="' + col + '" stroke-width="' + (hl ? 3 : 2) + '" stroke-linecap="round"/>';
+      months.forEach(function (m, j) { var rk = rank[m][a], n = cnt[m][a] || 0;
+        g += '<circle cx="' + r1(X(j)) + '" cy="' + r1(Y(row(a, m))) + '" r="10" fill="transparent"' + tip(L(a) + ' · ' + monthName(m), [rk ? S('bumpTip', { r: ord(rk), n: num(n) }) : S('bumpNone')]) + '/>' +
+          '<circle cx="' + r1(X(j)) + '" cy="' + r1(Y(row(a, m))) + '" r="' + (hl ? 5 : 4) + '" fill="' + col + '" stroke="var(--surface)" stroke-width="2" pointer-events="none"/>'; });
+      g += '</g>';
+      ends.push({ a: a, y: Y(row(a, months[months.length - 1])) + 4, hl: hl });
+    });
+    var ys = spread(ends.map(function (e) { return e.y; }), 14, mt, H - 4), xe = X(months.length - 1) + 12, maxCh = Math.floor((right - 16) / 6.6);
+    ends.forEach(function (e, i) { var t = L(e.a); if (t.length > maxCh) t = t.slice(0, maxCh - 1) + '…';
+      g += '<text class="halo' + (e.hl ? ' ink b' : '') + '" x="' + r1(xe) + '" y="' + r1(ys[i]) + '" data-pin="' + esc(e.a) + '">' + esc(t) + '</text>'; });
+    var first = months.filter(function (m) { return rank[m][top[0]] === 1; }).length;
+    var f = S('fBump', { a: quote(L(top[0])), k: num(first), m: num(months.length) });
+    var rows = top.map(function (a) { return [L(a)].concat(months.map(function (m) { return rank[m][a] ? ord(rank[m][a]) + ' (' + num(cnt[m][a]) + ')' : '—'; })); });
+    vSet('bump', svg(W0, H, g, S('t_bump')), f, '', miniTable([S('rRca')].concat(months.map(monthName)), rows, 1));
+  }
+
+  var VIZ = ['cal', 'flow', 'bub', 'lor', 'mek', 'bump'];
+  document.getElementById('ag').innerHTML = VIZ.map(function (k) {
+    return '<article class="card vcard' + (k === 'cal' || k === 'flow' ? ' wide' : '') + '" id="v-' + k + '"><div class="vhead"><span class="kicker"><span data-t="k_' + k + '"></span> · <span data-t="t_' + k + '"></span></span><h3 id="v-' + k + '-f"></h3><p class="sub" data-t="s_' + k + '"></p></div>' +
+      '<div class="vbody" id="v-' + k + '-b"></div><div class="vlegend" id="v-' + k + '-l"></div>' +
+      '<details class="vdata"><summary data-t="dataView"></summary><div class="table-wrap"><table class="mini" id="v-' + k + '-t"></table></div></details></article>';
+  }).join('');
+  function renderAna() {
+    if (G.tab !== 'ana') return;
+    document.getElementById('aLines').innerHTML = segHtml([['', S('allLines')], ['A350', 'A350'], ['A330', 'A330'], ['A320', 'A320']], A.line, 'data-aline');
+    var rs = aRows();
+    vCal(rs); vFlow(rs); vBub(rs); vLor(rs); vMek(aRows(true)); vBump(rs);
+  }
+  // one tooltip for every chart of the tab; flow highlighting; Lorenz crosshair
+  var TIP = document.getElementById('tip'), AP = document.getElementById('p-ana');
+  function hideTip() { TIP.hidden = true; }
+  function showTip(e, parts) {
+    TIP.textContent = '';
+    var h = document.createElement('span'); h.className = 'th'; h.textContent = parts[0]; TIP.appendChild(h);
+    parts.slice(1).forEach(function (p, i) { var s = document.createElement(i ? 'span' : 'b'); s.textContent = p; TIP.appendChild(s); });
+    TIP.hidden = false;
+    var w = TIP.offsetWidth, hh = TIP.offsetHeight, x = e.clientX + 14, y = e.clientY + 16;
+    if (x + w > innerWidth - 8) x = e.clientX - w - 14; if (y + hh > innerHeight - 8) y = e.clientY - hh - 12;
+    TIP.style.left = Math.max(8, x) + 'px'; TIP.style.top = Math.max(8, y) + 'px';
+  }
+  var flowKey = null;
+  function flowFocus(svgEl, key, link) {
+    if (!svgEl) return;
+    var on = !!(key || link); svgEl.classList.toggle('focus', on);
+    svgEl.querySelectorAll('.lnk').forEach(function (p) { p.classList.toggle('hl', !!(link ? p === link : key && (p.getAttribute('data-a') === key || p.getAttribute('data-b') === key))); });
+  }
+  AP.addEventListener('pointermove', function (e) {
+    var fl = e.target.closest && e.target.closest('svg.flow');
+    var nk = e.target.closest && e.target.closest('[data-node]'), lk = e.target.closest && e.target.closest('.lnk');
+    var key = nk ? nk.getAttribute('data-node') : lk ? lk : null;
+    if (key !== flowKey) { flowFocus(AP.querySelector('svg.flow'), nk ? key : null, lk); flowKey = key; }
+    var lr = e.target.getAttribute && e.target.getAttribute('data-lorenz'), cross = document.getElementById('lorX');
+    if (lr && A.lor) {
+      var box = e.target.ownerSVGElement.getBoundingClientRect(), p = Math.max(0, Math.min(1, (e.clientX - box.left - A.lor.ml) / A.lor.pw)), i = Math.round(p * A.lor.N), xx = r1(A.lor.ml + i / A.lor.N * A.lor.pw);
+      cross.setAttribute('x1', xx); cross.setAttribute('x2', xx);
+      showTip(e, [S('lorTipH', { p: pct0(i / A.lor.N * 100), n: num(i) }), S('lorD') + ' : ' + pct(A.lor.cd[i] * 100), S('lorC') + ' : ' + pct(A.lor.cc[i] * 100)]);
+      return;
+    }
+    if (cross) { cross.setAttribute('x1', -10); cross.setAttribute('x2', -10); }
+    var t = e.target.closest && e.target.closest('[data-tip]');
+    if (t) showTip(e, t.getAttribute('data-tip').split('|')); else hideTip();
+  });
+  AP.addEventListener('pointerleave', function () { hideTip(); flowFocus(AP.querySelector('svg.flow'), null, null); flowKey = null; });
+  AP.addEventListener('click', function (e) {
+    var s = e.target.closest('[data-aline]');
+    if (s) { var v = s.getAttribute('data-aline'); A.line = s.tagName === 'BUTTON' ? v : (A.line === v ? '' : v); hideTip(); renderAna(); return; }
+    var p = e.target.closest('[data-pin]');
+    if (p) { var a = p.getAttribute('data-pin'), cur = A.pin == null ? A.top0 : A.pin; A.pin = cur === a ? '' : a; renderAna(); }
+  });
+  var rzT; window.addEventListener('resize', function () { clearTimeout(rzT); rzT = setTimeout(renderAna, 150); });
+
   // ---------------------------------------------------------------- language, tabs, minor switch
   function applyText() {
     document.documentElement.lang = G.lang;
@@ -985,6 +1429,7 @@ window.DASH = __DATA__;
     document.querySelectorAll('[data-ta]').forEach(function (el) { el.setAttribute('aria-label', S(el.getAttribute('data-ta'))); });
     var dates = { from: day(D.meta.from), to: day(D.meta.to) }, A = D.meta.aside;
     document.getElementById('period').textContent = S('period', dates);
+    document.getElementById('asof').textContent = S('asof', { to: day(D.meta.to) });
     document.getElementById('foot1').textContent = S('foot1', dates);
     document.getElementById('foot3').textContent = S('foot3', { n: num(D.meta.noLine), d: num(A.deleted[0]), de: eur(A.deleted[1]), o: num(A.other[0]), oe: eur(A.other[1]) });
     ['pq', 'kq', 'wq', 'cq', 'rq'].forEach(function (id) { var q = document.getElementById(id); q.placeholder = S('search'); q.setAttribute('aria-label', S('search')); });
@@ -1001,8 +1446,8 @@ window.DASH = __DATA__;
       document.getElementById('p-' + t).hidden = G.tab !== t;
     });
   }
-  function renderAll() { applyText(); showTab(); pareto.render(); costPareto.render(); weekly.render(); cnq.render(); client.render(); renderRca(); }
-  function setTab(t) { G.tab = t; try { history.replaceState(null, '', '#' + t); } catch (x) {} applyText(); showTab(); if (t === 'hebdo') weekly.render(); }
+  function renderAll() { applyText(); showTab(); pareto.render(); costPareto.render(); weekly.render(); cnq.render(); client.render(); renderRca(); renderAna(); }
+  function setTab(t) { G.tab = t; try { history.replaceState(null, '', '#' + t); } catch (x) {} applyText(); showTab(); if (t === 'hebdo') weekly.render(); if (t === 'ana') renderAna(); else hideTip(); }
   document.getElementById('tabs').addEventListener('click', function (e) { var t = e.target.closest('[data-tab]'); if (t) setTab(t.getAttribute('data-tab')); });
   document.getElementById('tabs').addEventListener('keydown', function (e) {
     if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
