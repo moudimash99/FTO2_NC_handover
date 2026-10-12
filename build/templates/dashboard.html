@@ -17,6 +17,7 @@
   --ring: rgba(16,20,24,0.10);
   --s1: #1f5fae;
   --s1-soft: rgba(31,95,174,0.10);
+  --s2: #c2620c;
   --dim: #b9bab3;
   --ref: #101418;
   --up: #a33b2b;
@@ -29,7 +30,7 @@
   :root:not([data-theme="light"]) {
     --page: #0e1012; --surface: #171a1d; --ink: #f2f3f4; --ink-2: #b9bdc2; --muted: #80858b;
     --grid: #2a2e32; --track: #23272b; --ring: rgba(255,255,255,0.10);
-    --s1: #4d8fdc; --s1-soft: rgba(77,143,220,0.16); --dim: #4e5359; --ref: #f2f3f4;
+    --s1: #4d8fdc; --s1-soft: rgba(77,143,220,0.16); --s2: #f0a04b; --dim: #4e5359; --ref: #f2f3f4;
     --up: #e07a68; --down: #5cbf86; --focus: #4d8fdc;
     color-scheme: dark;
   }
@@ -37,7 +38,7 @@
 :root[data-theme="dark"] {
   --page: #0e1012; --surface: #171a1d; --ink: #f2f3f4; --ink-2: #b9bdc2; --muted: #80858b;
   --grid: #2a2e32; --track: #23272b; --ring: rgba(255,255,255,0.10);
-  --s1: #4d8fdc; --s1-soft: rgba(77,143,220,0.16); --dim: #4e5359; --ref: #f2f3f4;
+  --s1: #4d8fdc; --s1-soft: rgba(77,143,220,0.16); --s2: #f0a04b; --dim: #4e5359; --ref: #f2f3f4;
   --up: #e07a68; --down: #5cbf86; --focus: #4d8fdc;
   color-scheme: dark;
 }
@@ -97,7 +98,10 @@ select { font: inherit; font-size: 13.5px; padding: 5px 10px; border: 1px solid 
 .bar:hover { background: var(--track); }
 .bar .name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .bar .track { position: relative; height: 13px; background: var(--track); border-radius: 2px; }
-.bar .fill { display: block; height: 100%; background: var(--s1); border-radius: 2px; }
+.bar .fill { display: block; position: relative; overflow: hidden; height: 100%; background: var(--s1); border-radius: 2px; }
+.bar .fill .cab { position: absolute; left: 0; top: 0; bottom: 0; background: var(--s2); }
+.bars.active .bar:not([aria-pressed="true"]) .fill .cab { opacity: .45; }
+.key i.c { background: var(--s2); }
 .bar.aside .fill { background: var(--dim); }
 .bar .tick { position: absolute; top: -3px; bottom: -3px; width: 2px; background: var(--ref); border-radius: 1px; }
 .bar .val { text-align: right; font-variant-numeric: tabular-nums; color: var(--ink); }
@@ -388,7 +392,7 @@ window.DASH = __DATA__;
       clientSub: 'NC émises hors de FTO2 (lignes d’assemblage, clients) sous responsabilité FTO2.',
       rcaTitle: 'Les causes des défauts (RCA)', rcaSub: 'Définition de chaque cause, sous-catégories et codes officiels, chiffres et exemples réels.',
       figDefects: 'Défauts', figNcs: 'NC', figPerNc: 'Défauts par NC (moyenne)', figTopRca: 'Première cause', topSub: '{n} défauts · {p}',
-      dCat: 'Catégorie', dRca: 'Cause (RCA)', dLine: 'Ligne', dMonth: 'Mois de création', dWhere: 'Où la NC a été trouvée', dRule: 'Décision', dCable: 'Défaut câble', dPhase: 'Phase', dNat: 'Nature du dommage',
+      dCat: 'Catégorie', dRca: 'Cause (RCA)', dLine: 'Ligne', dMonth: 'Mois de création', dWhere: 'Où la NC a été trouvée', dRule: 'Décision', dCable: 'Défaut câble', cableSub: 'Le câble lui-même doit être refait ou refourni.', keyCable: 'Défauts câble', keyOther: 'Autres défauts', cCab: 'Câble', ofWhichCable: '{n} dont {c} câble', dPhase: 'Phase', dNat: 'Nature du dommage',
       natOnly: 'Défauts « Élément endommagé ».',
       paretoSub: 'Kitting Factory, FOD et Autre sont suivis à part.', aside: 'Suivi séparé',
       hint: 'Cliquez sur une barre pour filtrer les autres graphiques et le détail.', clearAll: 'Tout effacer', clear: 'Effacer',
@@ -434,7 +438,7 @@ window.DASH = __DATA__;
       clientSub: 'NCs raised outside FTO2 (assembly lines, customers) that FTO2 is liable for.',
       rcaTitle: 'Root causes of defects (RCA)', rcaSub: 'Definition of each root cause, its sub-categories and official codes, figures and real examples.',
       figDefects: 'Defects', figNcs: 'NCs', figPerNc: 'Defects per NC (average)', figTopRca: 'Top root cause', topSub: '{n} defects · {p}',
-      dCat: 'Category', dRca: 'Root cause (RCA)', dLine: 'Line', dMonth: 'Month created', dWhere: 'Where the NC was found', dRule: 'Decision', dCable: 'Cable defect', dPhase: 'Phase', dNat: 'Type of damage',
+      dCat: 'Category', dRca: 'Root cause (RCA)', dLine: 'Line', dMonth: 'Month created', dWhere: 'Where the NC was found', dRule: 'Decision', dCable: 'Cable defect', cableSub: 'The cable itself has to be remade or resupplied.', keyCable: 'Cable defects', keyOther: 'Other defects', cCab: 'Cable', ofWhichCable: '{n}, of which {c} cable', dPhase: 'Phase', dNat: 'Type of damage',
       natOnly: '“Damaged item” defects.',
       paretoSub: 'Kitting Factory, FOD and Other are tracked separately.', aside: 'Tracked separately',
       hint: 'Click a bar to filter the other charts and the detail.', clearAll: 'Clear all', clear: 'Clear',
@@ -548,7 +552,7 @@ window.DASH = __DATA__;
     o.dims.forEach(function (d) {
       var c = document.createElement('div'); c.className = 'card' + (d.wide ? ' wide' : '');
       c.innerHTML = '<div class="card-head"><h3 data-t="' + d.t + '"></h3><button type="button" class="clear-one" data-dim="' + d.k + '" hidden></button></div>' +
-        (d.sub ? '<p class="sub" data-t="' + d.sub + '"></p>' : '') + (d.key ? '<div class="key" data-key="1"></div>' : '') +
+        (d.sub ? '<p class="sub" data-t="' + d.sub + '"></p>' : '') + (d.split && !d.nokey ? '<div class="key" data-key="1"></div>' : '') +
         (d.cols ? '<div class="cols-wrap"><div class="cols" id="' + o.grid + '-' + d.k + '"></div></div>' :
           '<div class="bars' + (d.pareto ? ' pareto' : '') + (o.money ? ' money' : '') + '" id="' + o.grid + '-' + d.k + '"></div>');
       grid.appendChild(c);
@@ -587,7 +591,8 @@ window.DASH = __DATA__;
     b.renderDim = function (d) {
       var all = b.base(), rs = b.filtered(d.k), m = {}, base = {};
       all.forEach(function (r) { var v = d.get(r); if (v != null && v !== '') base[v] = 1; });
-      rs.forEach(function (r) { var v = d.get(r); if (v != null && v !== '') m[v] = (m[v] || 0) + measure(r); });
+      var m2 = {};
+      rs.forEach(function (r) { var v = d.get(r); if (v != null && v !== '') { m[v] = (m[v] || 0) + measure(r); if (d.split && d.split(r)) m2[v] = (m2[v] || 0) + measure(r); } });
       var vals = Object.keys(base);
       vals = d.order ? d.order(vals) : vals.sort(function (x, y) { return (m[y] || 0) - (m[x] || 0) || (x < y ? -1 : 1); });
       if (d.pareto) { var main = vals.filter(function (v) { return !ASIDE[v]; }).sort(function (x, y) { return (m[y] || 0) - (m[x] || 0); }), side = vals.filter(function (v) { return ASIDE[v]; }); vals = main.concat(side); }
@@ -596,6 +601,8 @@ window.DASH = __DATA__;
       var max = Math.max.apply(null, vals.map(function (v) { return Math.max(m[v] || 0, ref ? ref[v] || 0 : 0); }).concat([1e-9]));
       var el = document.getElementById(o.grid + '-' + d.k), act = d.k in b.f, card = el.closest('.card');
       el.classList.toggle('active', act);
+      var keyEl = card.querySelector('[data-key]');
+      if (keyEl) keyEl.innerHTML = '<span><i></i>' + esc(S('keyOther')) + '</span><span><i class="c"></i>' + esc(S('keyCable')) + '</span>';
       if (!vals.length) { el.innerHTML = '<p class="empty">—</p>'; }
       else if (d.cols) {
         el.innerHTML = vals.map(function (v) {
@@ -610,8 +617,10 @@ window.DASH = __DATA__;
           if (aside && !sepDone) { sepDone = true; head = '<div class="sep">' + esc(S('aside')) + '</div>'; }
           if (d.pareto && !aside) cum += n;
           var tick = ref && ref[v] != null ? '<span class="tick" style="left:calc(' + (ref[v] / max * 100) + '% - 1px)"></span>' : '';
-          return head + '<button type="button" class="bar' + (n ? '' : ' zero') + (aside ? ' aside' : '') + '" data-dim="' + d.k + '" data-v="' + esc(v) + '" aria-pressed="' + on + '" title="' + lab + '">' +
-            '<span class="name">' + lab + '</span><span class="track"><span class="fill" style="width:' + (n / max * 100) + '%"></span>' + tick + '</span><span class="val">' + fmt(n) + '</span>' +
+          var c2 = d.split ? m2[v] || 0 : 0, cab = c2 && n ? '<span class="cab" style="width:' + (c2 / n * 100) + '%"></span>' : '';
+          var tip = d.split ? lab + ' : ' + S('ofWhichCable', { n: fmt(n), c: fmt(c2) }) : lab;
+          return head + '<button type="button" class="bar' + (n ? '' : ' zero') + (aside ? ' aside' : '') + '" data-dim="' + d.k + '" data-v="' + esc(v) + '" aria-pressed="' + on + '" title="' + tip + '" aria-label="' + tip + '">' +
+            '<span class="name">' + lab + '</span><span class="track"><span class="fill" style="width:' + (n / max * 100) + '%">' + cab + '</span>' + tick + '</span><span class="val">' + fmt(n) + '</span>' +
             (d.pareto ? '<span class="cum">' + (aside || !totMain ? '' : pct0(cum / totMain * 100)) + '</span>' : '') + '</button>';
         }).join('');
       }
@@ -637,9 +646,9 @@ window.DASH = __DATA__;
     return b;
   }
 
-  function defectHead() { return ['cNc', 'cDate', 'cLine', 'cCat', 'cRca', 'cSub', 'cText'].map(function (k) { return '<th scope="col">' + esc(S(k)) + '</th>'; }).join(''); }
+  function defectHead() { return ['cNc', 'cDate', 'cLine', 'cCat', 'cRca', 'cSub', 'cCab', 'cText'].map(function (k) { return '<th scope="col">' + esc(S(k)) + '</th>'; }).join(''); }
   function defectRow(r) {
-    return '<tr><td class="nc">' + esc(r[0]) + (r[1] > 1 ? ' · ' + r[1] : '') + '</td><td class="num">' + esc(shortDay(r[2])) + '</td><td>' + esc(r[4]) + '</td><td>' + esc(L(dCat(r))) + '</td><td>' + esc(L(dRca(r))) + '</td><td>' + esc(dSub(r)) + '</td><td class="txt">' + esc(tidy(r[18])) + '</td></tr>';
+    return '<tr><td class="nc">' + esc(r[0]) + (r[1] > 1 ? ' · ' + r[1] : '') + '</td><td class="num">' + esc(shortDay(r[2])) + '</td><td>' + esc(r[4]) + '</td><td>' + esc(L(dCat(r))) + '</td><td>' + esc(L(dRca(r))) + '</td><td>' + esc(dSub(r)) + '</td><td>' + (dCable(r) ? '<span class="tag">' + esc(S('yes')) + '</span>' : '') + '</td><td class="txt">' + esc(tidy(r[18])) + '</td></tr>';
   }
   function defectText(r) { return r[0] + ' ' + r[18] + ' ' + r[19] + ' ' + dSub(r) + ' ' + dRca(r) + ' ' + L(dRca(r)) + ' ' + dCat(r) + ' ' + L(dCat(r)); }
   function byDate(a, b2) { return a[2] < b2[2] ? 1 : a[2] > b2[2] ? -1 : (a[0] < b2[0] ? 1 : a[0] > b2[0] ? -1 : a[1] - b2[1]); }
@@ -650,8 +659,9 @@ window.DASH = __DATA__;
     grid: 'pg', chips: 'pc', search: 'pq', count: 'pn', thead: 'pth', tbody: 'ptb', more: 'pm',
     rows: function () { return D.defects.filter(function (r) { return r[20] === 'serie' && keepMinor(r); }); },
     dims: [
-      { k: 'cat', t: 'dCat', sub: 'paretoSub', wide: true, pareto: true, get: dCat, show: L },
-      { k: 'rca', t: 'dRca', top: 15, get: dRca, show: L },
+      { k: 'cat', t: 'dCat', sub: 'paretoSub', wide: true, pareto: true, split: dCable, get: dCat, show: L },
+      { k: 'rca', t: 'dRca', top: 15, split: dCable, get: dRca, show: L },
+      { k: 'cable', t: 'dCable', sub: 'cableSub', split: dCable, nokey: true, get: function (r) { return dCable(r) ? 'c' : 'n'; }, show: function (v) { return v === 'c' ? S('cable') : S('notCable'); }, order: function () { return ['c', 'n']; } },
       { k: 'line', t: 'dLine', get: function (r) { return r[4]; }, show: function (v) { return v; }, order: lineOrder },
       { k: 'phase', t: 'dPhase', get: function (r) { return r[21]; }, show: function (v) { return v; }, order: phaseOrder },
       { k: 'month', t: 'dMonth', cols: true, get: function (r) { return r[2].slice(0, 7); }, show: monthName, order: function (v) { return v.sort(); } }
@@ -682,8 +692,9 @@ window.DASH = __DATA__;
     grid: 'wg', chips: 'wc', search: 'wq', count: 'wn', thead: 'wth', tbody: 'wtb', more: 'wm',
     rows: function () { var set = toSet(winWeeks()); return wBase().filter(function (r) { return set[r[3]]; }); },
     dims: [
-      { k: 'cat', t: 'dCat', sub: 'paretoSub', wide: true, pareto: true, get: dCat, show: L },
-      { k: 'rca', t: 'dRca', top: 12, get: dRca, show: L },
+      { k: 'cat', t: 'dCat', sub: 'paretoSub', wide: true, pareto: true, split: dCable, get: dCat, show: L },
+      { k: 'rca', t: 'dRca', top: 12, split: dCable, get: dRca, show: L },
+      { k: 'cable', t: 'dCable', sub: 'cableSub', split: dCable, nokey: true, get: function (r) { return dCable(r) ? 'c' : 'n'; }, show: function (v) { return v === 'c' ? S('cable') : S('notCable'); }, order: function () { return ['c', 'n']; } },
       { k: 'line', t: 'dLine', get: function (r) { return r[4]; }, show: function (v) { return v; }, order: lineOrder }
     ],
     text: defectText, head: defectHead, row: defectRow, sort: byDate,
