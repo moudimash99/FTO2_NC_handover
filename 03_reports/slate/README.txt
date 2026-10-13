@@ -1,7 +1,10 @@
 FTO2 NC dashboard in a Slate code box
 ======================================
 
-Three files, one per box of the Slate code widget:
+One file with everything: FTO2_NC_Dashboard_Slate.html. It opens as a normal page. It also holds the three
+parts for a Slate code widget, each between START / END marker lines (CSS, HTML, JS).
+
+The same three parts as separate files, one per box of the Slate code widget:
 
   fto2_slate.html  ->  HTML box
   fto2_slate.css   ->  CSS / style box

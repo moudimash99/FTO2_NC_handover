@@ -308,6 +308,21 @@ def slate_pack(data, template="dashboard.html"):
           "  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start); else start();\n"
           "})();\n") % (stamp, blob, main)
     open(os.path.join(out, "fto2_slate.js"), "w", encoding="utf-8").write(js)
+    # the same three parts in one file: it opens as a normal page, and each part sits between markers to copy into its box
+    one = ("<!doctype html>\n<html lang=\"fr\">\n<head>\n<meta charset=\"utf-8\">\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n"
+           "<title>FTO2 NC Dashboard</title>\n<!--\n  %s\n  One file, three parts. It opens as a page as it is. For a Slate code box, copy each part into its box:\n"
+           "    CSS box        = everything between the lines  CSS START  and  CSS END\n"
+           "    HTML box       = everything between the lines  HTML START  and  HTML END\n"
+           "    JavaScript box = everything between the lines  JS START  and  JS END\n"
+           "-->\n"
+           "<style>\n/* ===== CSS START ===== */\n%s/* ===== CSS END ===== */\n</style>\n</head>\n<body style=\"margin:0\">\n"
+           "<!-- ===== HTML START ===== -->\n%s<!-- ===== HTML END ===== -->\n"
+           "<script>\n/* ===== JS START ===== */\n%s/* ===== JS END ===== */\n</script>\n</body>\n</html>\n") % (
+        stamp,
+        open(os.path.join(out, "fto2_slate.css"), encoding="utf-8").read(),
+        open(os.path.join(out, "fto2_slate.html"), encoding="utf-8").read(),
+        js.replace("</script", "<\\/script"))
+    open(os.path.join(out, "FTO2_NC_Dashboard_Slate.html"), "w", encoding="utf-8").write(one)
     say("slate pack:", {f: os.path.getsize(os.path.join(out, f)) // 1024 for f in os.listdir(out)}, "KB")
 
 
