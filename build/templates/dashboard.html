@@ -490,7 +490,7 @@ window.DASH = __DATA__;
 <script>
 (function () {
   'use strict';
-  var D = window.DASH;
+  var D = window.DASH, EMBED = !!window.FTO2_EMBED;
   // defect row: [nc, seq, date, week, line, perimetre, catP, rcaP, subP, minorP, cableP, cat, rca, sub, minor, cable, allocP, alloc, snippet, (empty), scope, phase, officialSubCode]
   // NC row:     [nc, date, week, line, perimetre, onAEC, rule, ruleLabel, whereFound, c1, c2, c3P, c3, admin, workP, work, matP, mat, eng, cableP, cable, lines, title, scope, phase]
   // D.client:   { 'nc|seq': [damageType, detection, symptom, rootCauseText, plant, liability] }, D.lt: { nc: long text } (customer returns only)
@@ -699,7 +699,7 @@ window.DASH = __DATA__;
   var G = { lang: 'fr', minor: true, tab: 'pareto' };
   try { var s1 = localStorage.getItem('fto2-dash-lang'); if (s1 === 'fr' || s1 === 'en') G.lang = s1; } catch (e) {}
   var TABS = ['pareto', 'cost', 'hebdo', 'cnq', 'ana', 'client', 'rca'];
-  var h0 = (location.hash || '').replace('#', ''); if (TABS.indexOf(h0) >= 0) G.tab = h0;
+  var h0 = ''; try { h0 = EMBED ? '' : (location.hash || '').replace('#', ''); } catch (e) {} if (TABS.indexOf(h0) >= 0) G.tab = h0;
 
   function S(k, v) { var s = STR[G.lang][k]; if (s == null) return k; Object.keys(v || {}).forEach(function (x) { s = s.split('{' + x + '}').join(v[x]); }); return s; }
   function L(n) { return G.lang === 'en' && EN[n] ? EN[n] : n; }
@@ -712,6 +712,14 @@ window.DASH = __DATA__;
   function day(iso, opts) { return new Date(iso + 'T12:00:00Z').toLocaleDateString(loc(), Object.assign({ timeZone: 'UTC' }, opts || { day: 'numeric', month: 'long', year: 'numeric' })); }
   function shortDay(iso) { return day(iso, { day: '2-digit', month: '2-digit', year: '2-digit' }); }
   function monthName(m) { return (G.lang === 'fr' ? MONTHS_FR : MONTHS_EN)[Number(m.slice(5, 7)) - 1]; }
+  // a colour token blended with the card surface, as a plain rgb() any browser understands
+  function hexRgb(x) { x = String(x || '').trim(); return /^#[0-9a-f]{6}$/i.test(x) ? [1, 3, 5].map(function (i) { return parseInt(x.slice(i, i + 2), 16); }) : null; }
+  function tint(token, p) {
+    var cs = getComputedStyle(document.getElementById('tabs')), a = hexRgb(cs.getPropertyValue(token)), b = hexRgb(cs.getPropertyValue('--surface'));
+    if (!a || !b) return 'var(' + token + ')';
+    p = Math.max(0, Math.min(100, p)) / 100;
+    return 'rgb(' + [0, 1, 2].map(function (i) { return Math.round(a[i] * p + b[i] * (1 - p)); }).join(',') + ')';
+  }
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
   function tidy(s) { return String(s || '').replace(/\s*\*\s*/g, ' ').replace(/\s+([,.;:)])/g, '$1').replace(/\(\s+/g, '(').replace(/\s+/g, ' ').replace(/^[\s:–-]+/, '').trim(); }
   function whereName(w) { return G.lang === 'fr' ? (WHERE_FR[w] || w) : (WHERE_EN[w] || w); }
@@ -989,7 +997,7 @@ window.DASH = __DATA__;
       var on = W.prob && W.prob.lvl === W.lvl && W.prob.v === k;
       return '<tr tabindex="0" data-prob="' + esc(k) + '" aria-pressed="' + !!on + '"' + (W.lvl === 'cat' && ASIDE[k] ? ' class="aside"' : '') + '><td>' + esc(lvlName(W.lvl, k)) + '</td>' + ws.map(function (w) {
         var n = (cell[k] || {})[w] || 0;
-        return '<td class="cell">' + (n ? '<span class="heat" style="background:color-mix(in srgb, var(--s1) ' + Math.round(8 + 52 * n / maxCell) + '%, transparent)">' + num(n) + '</span>' : '<span class="z">·</span>') + '</td>';
+        return '<td class="cell">' + (n ? '<span class="heat" style="background:' + tint('--s1', Math.round(8 + 52 * n / maxCell)) + '">' + num(n) + '</span>' : '<span class="z">·</span>') + '</td>';
       }).join('') + (ws.length > 1 ? '<td class="tot">' + num(tot[k]) + '</td>' : '') + '</tr>';
     }).join('');
     document.getElementById('wMatrix').innerHTML = head + '<tbody>' + (body || '<tr><td class="empty">—</td></tr>') + '</tbody>';
@@ -1184,7 +1192,7 @@ window.DASH = __DATA__;
     if (cuts[cuts.length - 1] >= vals[vals.length - 1]) cuts.pop();
     var nb = cuts.length + 1;
     function bin(n) { var b = 0; cuts.forEach(function (c) { if (n > c) b++; }); return b; }
-    function shade(b) { return 'color-mix(in oklab, var(--seq) ' + Math.round(nb > 1 ? 18 + 82 * b / (nb - 1) : 100) + '%, var(--surface))'; }
+    function shade(b) { return tint('--seq', Math.round(nb > 1 ? 18 + 82 * b / (nb - 1) : 100)); }
     var side = W0 >= 760 ? 230 : 0, lab = 36, top = 20;
     var cell = Math.max(11, Math.min(22, Math.floor((W0 - side - lab) / weeks.length) - 2)), st = cell + 2;
     var gw = lab + weeks.length * st, h = top + nR * st;
@@ -1317,7 +1325,7 @@ window.DASH = __DATA__;
     });
     var vol = list.slice().sort(function (a, b) { return b.n - a.n; })[0];
     var f = byAvg && vol && byAvg !== vol && byAvg.a / vol.a >= 1.5 ? S('fBub', { a: quote(L(byAvg.k)), x: f1(byAvg.a / vol.a), b: quote(L(vol.k)) }) : '';
-    var leg = '<span><i class="sw ring" style="background:color-mix(in srgb, var(--s1) 28%, transparent);border-color:var(--s1)"></i>' + esc(S('bubLeg')) + '</span><span><i class="sw ring" style="background:color-mix(in srgb, var(--dim) 28%, transparent);border-color:var(--muted)"></i>' + esc(S('aside')) + '</span><span><i class="dash"></i>' + esc(S('isoLeg')) + '</span>';
+    var leg = '<span><i class="sw ring" style="background:' + tint('--s1', 28) + ';border-color:var(--s1)"></i>' + esc(S('bubLeg')) + '</span><span><i class="sw ring" style="background:' + tint('--dim', 28) + ';border-color:var(--muted)"></i>' + esc(S('aside')) + '</span><span><i class="dash"></i>' + esc(S('isoLeg')) + '</span>';
     var rows = list.map(function (s) { return [L(s.k), L(s.cat), num(s.n), eur(s.c), eur(s.a)]; });
     vSet('bub', svg(W0, H, g + iso + dots + labs, S('t_bub')), f, leg, miniTable([S('rRca'), S('rCat'), S('hDef'), S('hCost'), S('hPerDef')], rows, 2));
   }
@@ -1588,7 +1596,7 @@ window.DASH = __DATA__;
       var y = top + i * rh, nm = s.length > maxCh ? s.slice(0, maxCh - 1) + '…' : s;
       g += '<text x="' + r1(lab - 8) + '" y="' + (y + 16) + '" text-anchor="end" class="ink"><title>' + esc(s) + '</title>' + esc(nm) + '</text>';
       cats.forEach(function (k, j) { var v = per[s][k] || 0, x = lab + j * cw;
-        g += '<rect x="' + (x + 1) + '" y="' + (y + 1) + '" width="' + (cw - 2) + '" height="' + (rh - 2) + '" rx="3" fill="' + (v ? 'color-mix(in oklab, var(--seq) ' + Math.round(14 + 86 * v / mx) + '%, var(--surface))' : 'var(--track)') + '"' + tip(s + ' · ' + catLabel(k), [S('stTip', { n: num(v), p: pct0(v / tot[s] * 100) })]) + '/>';
+        g += '<rect x="' + (x + 1) + '" y="' + (y + 1) + '" width="' + (cw - 2) + '" height="' + (rh - 2) + '" rx="3" fill="' + (v ? tint('--seq', Math.round(14 + 86 * v / mx)) : 'var(--track)') + '"' + tip(s + ' · ' + catLabel(k), [S('stTip', { n: num(v), p: pct0(v / tot[s] * 100) })]) + '/>';
         if (v) g += tx(x + cw / 2, y + 16, num(v), v / mx > 0.55 ? 'b' : 'ink', 'middle', v / mx > 0.55 ? ' style="fill:var(--on1)"' : ''); });
       g += tx(lab + cats.length * cw + 48, y + 16, num(tot[s]), 'ink b', 'end');
     });
@@ -1708,8 +1716,7 @@ window.DASH = __DATA__;
 
   // ---------------------------------------------------------------- language, tabs, minor switch
   function applyText() {
-    document.documentElement.lang = G.lang;
-    document.title = S('title');
+    if (!EMBED) { document.documentElement.lang = G.lang; document.title = S('title'); }
     document.querySelectorAll('[data-t]').forEach(function (el) { el.textContent = S(el.getAttribute('data-t')); });
     document.querySelectorAll('[data-ta]').forEach(function (el) { el.setAttribute('aria-label', S(el.getAttribute('data-ta'))); });
     var dates = { from: day(D.meta.from), to: day(D.meta.to) }, A = D.meta.aside;
@@ -1732,7 +1739,7 @@ window.DASH = __DATA__;
     });
   }
   function renderAll() { applyText(); showTab(); pareto.render(); costPareto.render(); weekly.render(); cnq.render(); client.render(); renderRca(); renderAna(); }
-  function setTab(t) { G.tab = t; try { history.replaceState(null, '', '#' + t); } catch (x) {} applyText(); showTab(); if (t === 'hebdo') weekly.render(); if (t === 'ana') renderAna(); else hideTip(); }
+  function setTab(t) { G.tab = t; if (!EMBED) { try { history.replaceState(null, '', '#' + t); } catch (x) {} } applyText(); showTab(); if (t === 'hebdo') weekly.render(); if (t === 'ana') renderAna(); else hideTip(); }
   document.getElementById('tabs').addEventListener('click', function (e) { var t = e.target.closest('[data-tab]'); if (t) setTab(t.getAttribute('data-tab')); });
   document.getElementById('tabs').addEventListener('keydown', function (e) {
     if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
