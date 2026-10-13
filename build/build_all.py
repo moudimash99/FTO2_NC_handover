@@ -98,7 +98,7 @@ def main():
             "msn": "msn", "trigger": "trigger", "notification_type": "notification_type", "closure_time": "closure_time",
             "Type_NC_auto": "type_nc_auto", "GPS_Type_NC": "gps_type_nc", "Programme_auto": "phase", "Produit_auto": "produit",
             "Origin_auto": "origin_auto", "Ext_Source": "ext_source", "defect_code_description_en": "sap_defect_code",
-            "cause_group_description_en": "sap_cause_group", "_source": "source_file"}
+            "cause_group_description_en": "sap_cause_group", "creation_time": "creation_ts", "_source": "source_file"}
     ex = x[["notification_number"] + list(keep)].rename(columns=keep)
     ex["type_nc"] = ex["gps_type_nc"].where(ex["gps_type_nc"].notna(), ex["type_nc_auto"])
     nc = nc.merge(ex, on="notification_number", how="left")
@@ -263,7 +263,8 @@ def build_dashboard(d, nc, lt):
                     r.cnq_decision_label, r.cnq_where_found, round(r.cnq_cost_airbus, 2), round(r.cnq_cost_global, 2), round(r.cnq_cost_total_parser, 2),
                     round(r.cnq_cost_total, 2), round(r.cnq_cost_admin, 2), round(r.cnq_cost_work_parser, 2), round(r.cnq_cost_work, 2),
                     round(r.cnq_cost_material_parser, 2), round(r.cnq_cost_material, 2), round(r.cnq_cost_engineering, 2),
-                    int(r.nc_cable), int(r.nc_cable_llm), int(r.cnq_defect_lines), S_(r.description_short)[:80], r.scope, S_(r.phase)])
+                    int(r.nc_cable), int(r.nc_cable_llm), int(r.cnq_defect_lines), S_(r.description_short)[:80], r.scope, S_(r.phase)]
+                   + nc_extras(r))
     direct = {"%s|%d" % (r.notification_number, r.seq): [round(float(r.cnq_cost_direct), 2), round(float(r.cnq_cost_direct_llm), 2)]
               for r in d.itertuples() if r.cnq_cost_allocated or r.cnq_cost_allocated_llm}
     aec = nc[nc.cnq_on_aec == 1]
@@ -272,10 +273,61 @@ def build_dashboard(d, nc, lt):
              "other": [int(other.sum()), round(float(aec.loc[other, "cnq_cost_total"].sum()), 2)]}
     no_line = int(((nc.scope == "serie") & (nc.cnq_defect_lines == 0)).sum())
     client, lt_client = customer_return_extras(d, nc, lt)
-    data = {"defects": defs, "ncs": ncs, "direct": direct, "rca": rca_reference(d), "client": client, "lt": lt_client, "codes": CODE_DESC,
+    actions = mft_actions()
+    data = {"defects": defs, "ncs": ncs, "direct": direct, "rca": rca_reference(d), "client": client, "lt": lt_client, "codes": CODE_DESC, "actions": actions,
             "meta": {"from": "2026-01-01", "to": REPORT["created_to"], "aside": aside, "noLine": no_line,
                      "modelTotal": round(float(aec.cnq_cost_total.sum()), 2)}}
     _page("dashboard.html", data, "FTO2_NC_Dashboard.html")
+
+
+def nc_extras(r):
+    """NC fields for the aircraft, product, lead-time and time-of-day charts:
+    [msn, product family, station, creation hour (Paris), days to close (None while open), open, age in days if open]."""
+    msn = S_(r.msn)
+    msn = msn[:-2] if msn.endswith(".0") else msn
+    created = pd.to_datetime(r.creation_ts, errors="coerce", utc=True)
+    closed = pd.to_datetime(r.closure_time, errors="coerce", utc=True)
+    hour = int(created.tz_convert("Europe/Paris").hour) if pd.notna(created) else -1
+    is_open = int(r.statut == "open")
+    lead = round((closed - created).total_seconds() / 86400, 2) if pd.notna(created) and pd.notna(closed) and not is_open else None
+    end = pd.Timestamp(REPORT["created_to"] + "T23:59:59", tz="UTC")
+    age = round((end - created).total_seconds() / 86400, 1) if is_open and pd.notna(created) else None
+    return [msn, S_(r.produit) or "Other", S_(r.station_description).strip(), hour, lead, is_open, age]
+
+
+FR_MONTHS = {"janvier": 1, "fevrier": 2, "février": 2, "mars": 3, "avril": 4, "mai": 5, "juin": 6, "juillet": 7, "aout": 8, "août": 8,
+             "septembre": 9, "octobre": 10, "novembre": 11, "decembre": 12, "décembre": 12}
+
+
+def _month(s):
+    m = re.search(r"([A-Za-zÀ-ÿ]+)\s+(20\d\d)", str(s or ""))
+    if not m or m.group(1).lower() not in FR_MONTHS:
+        return ""
+    return "%s-%02d" % (m.group(2), FR_MONTHS[m.group(1).lower()])
+
+
+def mft_actions():
+    """Actions of the A330 and A350 MFT trackers, each tied to the problem it targets (04_reference/mft_actions_mapping.csv,
+    to be checked by the line quality team): [line, label fr, label en, level, values, analysis month, action month, status,
+    expected benefit month, defects text, root cause, action]."""
+    mp = pd.read_csv(os.path.join(ROOT, "04_reference", "mft_actions_mapping.csv"), encoding="utf-8-sig", dtype=str)
+    out = []
+    for prog in ("A330", "A350"):
+        t = pd.read_csv(os.path.join(ROOT, "06_input_data", "MFT_actions_%s.csv" % prog), skiprows=2, dtype=str).dropna(how="all")
+        st = "Statut.1" if "Statut.1" in t.columns else "Statut"
+        for _, a in t.iterrows():
+            cat, dft = S_(a.get("NC Category (Type)")).strip(), S_(a.get("Défauts")).strip()
+            m = mp[(mp.programme == prog) & (mp.nc_category.str.strip() == cat) & mp.defauts_debut.map(lambda p: dft.startswith(p))]
+            if m.empty:
+                say("MFT action not mapped:", prog, cat, dft[:40])
+                continue
+            m = m.iloc[0]
+            clean = lambda s: re.sub(r"\s+", " ", S_(s)).strip()[:400]
+            out.append([prog, m.libelle_fr, m.libelle_en, m.niveau, m.valeur.split("|"), _month(a.get("Début de l'analyse")),
+                        _month(a.get("Début de l'action")), clean(a.get(st)), _month(a.get("Quand (bénéfices estimés)")),
+                        clean(dft), clean(a.get("Analyse de cause racine")), clean(a.get("Action"))])
+    REPORT["mft_actions"] = len(out)
+    return out
 
 
 CODE_DESC = {}

@@ -18,6 +18,7 @@
   --ring: rgba(16,20,24,0.10);
   --s1: #1f5fae;
   --s1-soft: rgba(31,95,174,0.10);
+  --s1-ret: #8db0dc;
   --s2: #c2620c;
   --dim: #b9bab3;
   --ref: #101418;
@@ -33,7 +34,7 @@
   :root:not([data-theme="light"]) {
     --page: #0e1012; --surface: #171a1d; --ink: #f2f3f4; --ink-2: #b9bdc2; --muted: #80858b;
     --grid: #2a2e32; --track: #23272b; --ring: rgba(255,255,255,0.10);
-    --s1: #4d8fdc; --s1-soft: rgba(77,143,220,0.16); --s2: #f0a04b; --dim: #4e5359; --ref: #f2f3f4;
+    --s1: #4d8fdc; --s1-soft: rgba(77,143,220,0.16); --s1-ret: #2f5687; --s2: #f0a04b; --dim: #4e5359; --ref: #f2f3f4;
     --up: #e07a68; --down: #5cbf86; --focus: #4d8fdc;
     --c1: #3987e5; --c2: #199e70; --c3: #c98500; --c4: #d55181; --c5: #008300; --c6: #9085e9; --seq: #3987e5;
     --on0: #f2f3f4; --on1: #0e1012; --on2: #0e1012; --on3: #0e1012; --on4: #0e1012; --on5: #ffffff; --on6: #0e1012;
@@ -43,7 +44,7 @@
 :root[data-theme="dark"] {
   --page: #0e1012; --surface: #171a1d; --ink: #f2f3f4; --ink-2: #b9bdc2; --muted: #80858b;
   --grid: #2a2e32; --track: #23272b; --ring: rgba(255,255,255,0.10);
-  --s1: #4d8fdc; --s1-soft: rgba(77,143,220,0.16); --s2: #f0a04b; --dim: #4e5359; --ref: #f2f3f4;
+  --s1: #4d8fdc; --s1-soft: rgba(77,143,220,0.16); --s1-ret: #2f5687; --s2: #f0a04b; --dim: #4e5359; --ref: #f2f3f4;
   --up: #e07a68; --down: #5cbf86; --focus: #4d8fdc;
   --c1: #3987e5; --c2: #199e70; --c3: #c98500; --c4: #d55181; --c5: #008300; --c6: #9085e9; --seq: #3987e5;
   --on0: #f2f3f4; --on1: #0e1012; --on2: #0e1012; --on3: #0e1012; --on4: #0e1012; --on5: #ffffff; --on6: #0e1012;
@@ -259,6 +260,15 @@ svg.flow.focus .lnk.hl { opacity: .85; }
 .vlegend .sw.ring { border: 1.5px solid; border-radius: 50%; }
 .vlegend .ln { width: 16px; height: 2px; display: inline-block; border-radius: 1px; }
 .vlegend .dash { width: 16px; height: 0; border-top: 1.5px dashed var(--muted); display: inline-block; }
+.msnlist { display: grid; gap: 8px; width: 100%; }
+.msnlist h4 { margin: 0; font-size: 14px; font-weight: 600; }
+.actgrid { display: flex; flex-wrap: wrap; gap: 14px; width: 100%; }
+.actpanel { display: grid; gap: 4px; align-content: start; border: 1px solid var(--grid); border-radius: 8px; padding: 10px 10px 8px; }
+.actpanel svg { width: 100%; height: auto; }
+.acthead { display: flex; justify-content: space-between; gap: 8px; align-items: baseline; font-size: 13.5px; }
+.actmeta { font-size: 12px; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+#v-act-t td { white-space: normal; min-width: 9em; }
+svg.viz [data-msn] { cursor: pointer; }
 details.vdata > summary { cursor: pointer; font-size: 13px; color: var(--s1); justify-self: start; }
 details.vdata[open] > summary { margin-bottom: 8px; }
 table.mini { min-width: 0; font-variant-numeric: tabular-nums; }
@@ -488,7 +498,29 @@ window.DASH = __DATA__;
   var MONTHS_EN = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
   var STR = {
     fr: {
-      tabAna: 'Analyses', anaTitle: 'Six regards sur les défauts série', anaSub: 'Mêmes défauts que le Pareto, vus autrement. Survolez un élément pour le détail ; chaque graphique a sa table de données.',
+      noText: 'Pas de texte de NC pour l’A400M : pas de défauts à classer.', a320fam: 'A320 (famille)', legSerie: 'Série', legRet: 'Retours clients',
+      retNote: 'Retours clients : coût estimé par le modèle CNQ, factures réelles non disponibles.',
+      hProd: 'Famille de produit', hScope: 'Type', hProg: 'Programme', hPerMsn: 'Coût par MSN', hMaxMsn: 'MSN le plus cher', hNcs: 'NC',
+      k_msn: 'Avions', t_msn: 'Coût par avion (MSN)', s_msn: 'Une barre par MSN, dans l’ordre de sa première NC ; même échelle pour tous les programmes. Série et retours clients empilés. Hachuré : première NC il y a moins de 30 jours, l’avion peut encore en recevoir. Cliquez sur une barre pour la liste de ses NC.',
+      fMsn: 'Coût moyen par avion, premiers → derniers MSN : {t}.', msnTrend: '{l} {a} → {b}', msnCount: '{n} MSN', msnTip: '{n} NC · série {s} · retours {c}', msnFirst: 'première NC le {d}', msnRecent: 'récent',
+      msnRecentLeg: 'Première NC il y a moins de 30 jours', avgShort: 'moy. {v}', avgLeg: 'Moyenne du programme', msnClick: 'Cliquez sur une barre pour afficher les NC de cet avion.', msnHead: '{n} NC · {c}',
+      k_prod: 'Produits', t_prod: 'Coût par famille de produit', s_prod: 'Série et retours clients ; nombre de NC, d’avions (MSN) et coût moyen par avion. Les 10 familles les plus coûteuses, les autres regroupées.',
+      fProd: '{p} porte {s} du coût.', fProd2: 'Coût par avion le plus élevé : {p}, {v} par MSN.', fProd3: 'C’est aussi la famille la plus chère par avion : {v} par MSN.', sep: ' ; ', prodTip: 'série {s} · retours {c} · {n} NC · {k} MSN', prodUnknown: 'Non identifié', prodRest: '{n} autres familles',
+      k_lead: 'Délais', t_lead: 'Combien de temps une NC reste ouverte', s_lead: 'Part des NC série encore ouvertes N jours après leur création, par décision. Les NC encore ouvertes comptent jusqu’à aujourd’hui (méthode de Kaplan-Meier). Point : la moitié des NC sont closes.',
+      fLead: 'La moitié des NC série sont closes en {a} jours.', fLead2: 'Rebuts et rejets : {b} jours.', fLead3: '{n} NC encore ouvertes, la plus ancienne depuis {d} jours.',
+      g_rw: 'Retouche', g_rej: 'Rebut / rejet', g_oth: 'Autres décisions', axDays: 'Jours depuis la création de la NC', daysShort: '{n} j', medLeg: 'Médiane : 50 % closes',
+      hMedian: 'Médiane', hOpen7: 'Ouvertes à 7 j', hOpen30: 'Ouvertes à 30 j', hStillOpen: 'Encore ouvertes', kmTipH: 'Jour {d}', kmOpen: 'encore ouvertes',
+      k_clock: 'Horaires', t_clock: 'Heure de rédaction des NC', s_clock: 'NC série par heure de création, heure de Paris. Longueur : nombre de NC.',
+      fClock: 'Pic à {h} h ; {p} des NC sont écrites entre 8 h et 13 h, {q} après 18 h ou avant 6 h.', hourRange: '{a} h – {b} h', clockTip: '{n} NC · {p}', clockCenter: 'NC', hHour: 'Heure',
+      k_station: 'Postes', t_station: 'Défauts par poste et catégorie', s_station: 'Les 12 postes où les NC série portent le plus de défauts (poste de rédaction de la NC).',
+      fStation: 'Au poste {s}, {p} des défauts sont des {c}.', stTip: '{n} défauts · {p} du poste', noStation: 'Poste non renseigné', hStation: 'Poste',
+      k_act: 'Actions', t_act: 'Actions MFT et problème visé', s_act: 'Pour chaque action des fichiers de suivi MFT A330 et A350 : défauts du problème visé, mois par mois, sur la ligne concernée. En bleu, les mois depuis le début de l’action ; pointillé : début de l’analyse.',
+      fAct: '{n} actions suivies, dont {k} lancées il y a moins de 4 mois : trop tôt pour conclure.', fAct2: 'Plus forte baisse depuis le lancement : {a}, de {x} à {y} des défauts {l}.',
+      actTip: '{n} défauts · {p} des défauts de la ligne', actShare: 'Part des défauts de la ligne : {a} avant → {b} depuis ({k} mois)', actNoAfter: 'Pas encore de mois après le lancement.',
+      actDates: 'Analyse : {a} · Action : {b} · Statut : {s}', actNoStatus: 'non renseigné', actBefore: 'Avant l’action', actAfter: 'Depuis le début de l’action', actAnalysis: 'Début de l’analyse',
+      actNote: 'Lien action → problème proposé, à valider avec la qualité ligne.', actNone: 'Pas d’action MFT suivie pour cette ligne.',
+      hProblem: 'Problème visé', hAnalysis: 'Analyse', hAction: 'Action', hStatus: 'Statut', hRoot: 'Cause racine (fichier MFT)', hDoing: 'Action (fichier MFT)',
+      tabAna: 'Analyses', anaTitle: 'Analyses des NC série', anaSub: 'Défauts, avions, produits, délais, postes et actions. Survolez un élément pour le détail ; chaque graphique a sa table de données.',
       asof: 'Données au {to}', asideGroup: 'Suivi séparé', dataView: 'Voir les données', hDay: 'Jour', hDays: 'Jours avec défauts', hPerDay: 'Défauts par jour', hFrom: 'De', hTo: 'Vers', hPerDef: 'Coût par défaut',
       k_cal: 'Rythme', t_cal: 'Calendrier des défauts', s_cal: 'Défauts série par jour de création de la NC ; à droite, la part de chaque jour de la semaine. Case grise : aucun défaut ce jour-là (jour férié, fermeture).',
       fCal: 'le {a} concentre {p} des défauts, le {b} seulement {q}.', calTip: '{n} défauts · {k} NC', calNone: 'Aucun défaut', calLeg: 'Défauts par jour', wdProfile: 'Part par jour de la semaine', wdTip: '{p} des défauts · {n}',
@@ -553,7 +585,29 @@ window.DASH = __DATA__;
       foot4: 'Semaines de fermeture (moins de 10 défauts) exclues des moyennes hebdomadaires. Défauts mineurs : tyrap, frette, ficelle, capuchon, cerise ou bouchon manquant. Coût : 50 €/h, temps du processus estimés par l’équipe ; la valeur des pièces rebutées n’est pas incluse. Coût des défauts câble : coût des NC concernées ; quand une NC contient aussi d’autres défauts, son coût est partagé entre ses défauts.'
     },
     en: {
-      tabAna: 'Insights', anaTitle: 'Six views of series defects', anaSub: 'The same defects as the Pareto, seen differently. Hover any mark for detail; each chart has its data table.',
+      noText: 'No NC text for the A400M: no defects to classify.', a320fam: 'A320 family', legSerie: 'Series', legRet: 'Customer returns',
+      retNote: 'Customer returns: cost estimated by the CNQ model; actual invoices not available.',
+      hProd: 'Product family', hScope: 'Type', hProg: 'Programme', hPerMsn: 'Cost per MSN', hMaxMsn: 'Most expensive MSN', hNcs: 'NCs',
+      k_msn: 'Aircraft', t_msn: 'Cost per aircraft (MSN)', s_msn: 'One bar per MSN, in order of its first NC; same scale for every programme. Series and customer returns stacked. Hatched: first NC less than 30 days ago, the aircraft may still get more. Click a bar to list its NCs.',
+      fMsn: 'Average cost per aircraft, first → latest MSNs: {t}.', msnTrend: '{l} {a} → {b}', msnCount: '{n} MSNs', msnTip: '{n} NCs · series {s} · returns {c}', msnFirst: 'first NC {d}', msnRecent: 'recent',
+      msnRecentLeg: 'First NC less than 30 days ago', avgShort: 'avg {v}', avgLeg: 'Programme average', msnClick: 'Click a bar to list that aircraft’s NCs.', msnHead: '{n} NCs · {c}',
+      k_prod: 'Products', t_prod: 'Cost by product family', s_prod: 'Series and customer returns; number of NCs, aircraft (MSNs) and average cost per aircraft. The 10 costliest families, the rest grouped.',
+      fProd: '{p} carries {s} of the cost.', fProd2: 'Highest cost per aircraft: {p}, {v} per MSN.', fProd3: 'It is also the most expensive family per aircraft: {v} per MSN.', sep: '; ', prodTip: 'series {s} · returns {c} · {n} NCs · {k} MSNs', prodUnknown: 'Not identified', prodRest: '{n} other families',
+      k_lead: 'Lead time', t_lead: 'How long an NC stays open', s_lead: 'Share of series NCs still open N days after creation, by decision. NCs still open count until today (Kaplan-Meier). Dot: half of the NCs are closed.',
+      fLead: 'Half of series NCs are closed within {a} days.', fLead2: 'Scrap and rejections: {b} days.', fLead3: '{n} NCs still open, the oldest for {d} days.',
+      g_rw: 'Rework', g_rej: 'Scrap / rejection', g_oth: 'Other decisions', axDays: 'Days since the NC was created', daysShort: '{n} d', medLeg: 'Median: 50% closed',
+      hMedian: 'Median', hOpen7: 'Open at 7 d', hOpen30: 'Open at 30 d', hStillOpen: 'Still open', kmTipH: 'Day {d}', kmOpen: 'still open',
+      k_clock: 'Hours', t_clock: 'Time NCs are written', s_clock: 'Series NCs by creation hour, Paris time. Length: number of NCs.',
+      fClock: 'Peak at {h}:00; {p} of NCs are written between 8:00 and 13:00, {q} after 18:00 or before 6:00.', hourRange: '{a}:00–{b}:00', clockTip: '{n} NCs · {p}', clockCenter: 'NCs', hHour: 'Hour',
+      k_station: 'Stations', t_station: 'Defects by station and category', s_station: 'The 12 stations whose series NCs carry the most defects (station where the NC was written).',
+      fStation: 'At station {s}, {p} of defects are {c}.', stTip: '{n} defects · {p} of the station', noStation: 'Station not recorded', hStation: 'Station',
+      k_act: 'Actions', t_act: 'MFT actions and the problem they target', s_act: 'For each action in the A330 and A350 MFT trackers: defects of the targeted problem, month by month, on that line. Blue: months since the action started; dotted: start of the analysis.',
+      fAct: '{n} actions tracked, {k} of them started less than 4 months ago: too early to judge.', fAct2: 'Largest drop since launch: {a}, from {x} to {y} of {l} defects.',
+      actTip: '{n} defects · {p} of the line’s defects', actShare: 'Share of the line’s defects: {a} before → {b} since ({k} months)', actNoAfter: 'No month after launch yet.',
+      actDates: 'Analysis: {a} · Action: {b} · Status: {s}', actNoStatus: 'not recorded', actBefore: 'Before the action', actAfter: 'Since the action started', actAnalysis: 'Start of the analysis',
+      actNote: 'Action → problem link proposed, to be confirmed with line quality. Action texts stay in French.', actNone: 'No MFT action tracked for this line.',
+      hProblem: 'Targeted problem', hAnalysis: 'Analysis', hAction: 'Action', hStatus: 'Status', hRoot: 'Root cause (MFT file)', hDoing: 'Action (MFT file)',
+      tabAna: 'Insights', anaTitle: 'Series NC insights', anaSub: 'Defects, aircraft, products, lead times, stations and actions. Hover any mark for detail; each chart has its data table.',
       asof: 'Data as of {to}', asideGroup: 'Tracked separately', dataView: 'Show the data', hDay: 'Day', hDays: 'Days with defects', hPerDay: 'Defects per day', hFrom: 'From', hTo: 'To', hPerDef: 'Cost per defect',
       k_cal: 'Rhythm', t_cal: 'Defect calendar', s_cal: 'Series defects by NC creation day; on the right, each weekday’s share. Grey cell: no defect that day (public holiday, shutdown).',
       fCal: '{a}s carry {p} of defects, {b}s only {q}.', calTip: '{n} defects · {k} NCs', calNone: 'No defect', calLeg: 'Defects per day', wdProfile: 'Share by weekday', wdTip: '{p} of defects · {n}',
@@ -1077,7 +1131,7 @@ window.DASH = __DATA__;
 
   // ---------------------------------------------------------------- 4. Insights (series): six less usual views of the same defects
   // Category colours: validated categorical order (blue, aqua, yellow, magenta, green, violet); orange stays reserved for cable.
-  var A = { line: '', pin: null, top0: null, lor: null };
+  var A = { line: '', pin: null, top0: null, lor: null, km: null, msn: null };
   var CATC = { 'MEO Câblage': 1, 'Erreur Branchement': 2, 'Élément Manquant': 3, 'Élément Endommagé': 4, 'Déverrouillage': 5, 'Grounding/Bonding': 6 };
   var MAIN_CATS = CAT_ORDER.filter(function (c) { return !ASIDE[c]; }).concat(['aside']);
   function catKey(c) { return ASIDE[c] ? 'aside' : c; }
@@ -1271,7 +1325,7 @@ window.DASH = __DATA__;
   // 4. Concentration (Lorenz): share of defects and of cost carried by the heaviest NCs
   function vLor(rs) {
     var ncs = aNcs(), dc = {}; rs.forEach(function (r) { dc[r[0]] = (dc[r[0]] || 0) + 1; });
-    var N = ncs.length; if (N < 5) { vSet('lor', EMPTY); A.lor = null; return; }
+    var N = ncs.length; if (N < 5 || !rs.length) { vSet('lor', EMPTY); A.lor = null; return; }
     function curve(vals) { vals.sort(function (a, b) { return b - a; }); var t = vals.reduce(function (s, v) { return s + v; }, 0) || 1, c = [0], s = 0; vals.forEach(function (v) { s += v; c.push(s / t); }); return c; }
     var cd = curve(ncs.map(function (n) { return dc[n[0]] || 0; })), cc = curve(ncs.map(function (n) { return n[12]; }));
     var W0 = vWidth('lor', 300), H = W0 < 520 ? 300 : 380, ml = 48, mr = 18, mt = 12, mb = 44, pw = W0 - ml - mr, ph = H - mt - mb;
@@ -1366,17 +1420,236 @@ window.DASH = __DATA__;
     vSet('bump', svg(W0, H, g, S('t_bump')), f, '', miniTable([S('rRca')].concat(months.map(monthName)), rows, 1));
   }
 
-  var VIZ = ['cal', 'flow', 'bub', 'lor', 'mek', 'bump'];
+  // ---- NC-level charts: aircraft (MSN), product family, lead time, hour, station, MFT actions
+  // NC row extras: [25] msn, [26] product family, [27] station, [28] creation hour (Paris), [29] days to close, [30] open, [31] age if open
+  function aNcsAll() { return D.ncs.filter(function (n) { return (n[23] === 'serie' || n[23] === 'client') && (!A.line || n[3] === A.line); }); }
+  var PROGS = ['A350', 'A330', 'A320', 'A400M'];
+  function progName(l) { return l === 'A320' ? S('a320fam') : l; }
+
+  // 7. Cost per aircraft: one strip per programme, one bar per MSN in order of its first NC
+  function vMsn() {
+    var W0 = vWidth('msn', 520), per = {};
+    aNcsAll().forEach(function (n) { if (!n[25]) return; var k = n[3] + '|' + n[25], m = per[k] || (per[k] = { l: n[3], msn: n[25], first: n[1], s: 0, c: 0, ncs: [] });
+      if (n[1] < m.first) m.first = n[1]; if (n[23] === 'serie') m.s += n[12]; else m.c += n[12]; m.ncs.push(n); });
+    var rows = PROGS.filter(function (l) { return Object.keys(per).some(function (k) { return per[k].l === l; }); }).map(function (l) {
+      return { l: l, ms: Object.keys(per).filter(function (k) { return per[k].l === l; }).map(function (k) { return per[k]; }).sort(function (a, b) { return a.first < b.first ? -1 : a.first > b.first ? 1 : (+a.msn) - (+b.msn); }) }; });
+    if (!rows.length) { vSet('msn', EMPTY); return; }
+    var recent = isoDay(new Date(new Date(D.meta.to + 'T00:00:00Z').getTime() - 30 * 864e5));
+    var lab = 92, maxN = Math.max.apply(null, rows.map(function (r) { return r.ms.length; })), step = Math.max(5, Math.min(26, Math.floor((W0 - lab - 8) / maxN))), bw = Math.max(3, step - 2);
+    var maxC = Math.max.apply(null, rows.map(function (r) { return Math.max.apply(null, r.ms.map(function (m) { return m.s + m.c; })); }));
+    var tick = maxC > 2500 ? 1000 : maxC > 1200 ? 500 : 250, top = Math.ceil(maxC / tick) * tick, ph = 92, rh = ph + 34, H = rows.length * rh + 4, g = '', rowsTbl = [], parts = [];
+    rows.forEach(function (row, ri) {
+      var y0 = ri * rh + 8, base = y0 + ph, Y = function (v) { return base - v / top * ph; }, tot = 0, w = lab + row.ms.length * step;
+      g += tx(0, y0 + 14, progName(row.l), 'ink b') + tx(0, y0 + 30, S('msnCount', { n: num(row.ms.length) }), 'mu');
+      for (var t = tick; t <= top; t += tick) g += '<line class="gl" x1="' + lab + '" x2="' + (W0 - 4) + '" y1="' + r1(Y(t)) + '" y2="' + r1(Y(t)) + '"/>' + tx(lab - 6, Y(t) + 4, kEur(t), 'mu', 'end');
+      g += '<line class="ax" x1="' + lab + '" x2="' + (W0 - 4) + '" y1="' + base + '" y2="' + base + '" stroke="var(--grid)"/>';
+      row.ms.forEach(function (m, j) {
+        var x = lab + j * step + 1, sel = A.msn === row.l + '|' + m.msn, rec = m.first >= recent, hs = m.s / top * ph, hc = m.c / top * ph;
+        tot += m.s + m.c;
+        var t2 = tip('MSN ' + m.msn + ' · ' + progName(row.l), [eur(m.s + m.c), S('msnTip', { n: num(m.ncs.length), s: eur(m.s), c: eur(m.c) }), S('msnFirst', { d: shortDay(m.first) }) + (rec ? ' · ' + S('msnRecent') : '')]);
+        g += '<g data-msn="' + esc(row.l + '|' + m.msn) + '"' + t2 + (A.msn && !sel ? ' opacity=".45"' : '') + '><rect x="' + r1(x - 1) + '" y="' + y0 + '" width="' + step + '" height="' + ph + '" fill="transparent"/>' +
+          (hs ? '<rect x="' + r1(x) + '" y="' + r1(base - hs) + '" width="' + bw + '" height="' + r1(Math.max(hs, 1)) + '" rx="2" fill="' + (rec ? 'url(#hatchS1)' : 'var(--s1)') + '"' + (rec ? ' stroke="var(--s1)" stroke-width="1"' : '') + '/>' : '') +
+          (hc ? '<rect x="' + r1(x) + '" y="' + r1(base - hs - hc - (hs ? 2 : 0)) + '" width="' + bw + '" height="' + r1(Math.max(hc, 1)) + '" rx="2" fill="var(--s1-ret)"/>' : '') +
+          (sel ? '<rect x="' + r1(x - 2) + '" y="' + r1(base - hs - hc - 4) + '" width="' + (bw + 4) + '" height="' + r1(hs + hc + 6) + '" fill="none" stroke="var(--ink)" stroke-width="1.5" rx="3"/>' : '') + '</g>';
+      });
+      var avg = tot / row.ms.length;
+      g += '<line class="guide" x1="' + lab + '" x2="' + r1(w) + '" y1="' + r1(Y(avg)) + '" y2="' + r1(Y(avg)) + '"/>' + tx(Math.min(w + 4, W0 - 4), Y(avg) + 4, S('avgShort', { v: eur(avg) }), 'mu halo', w + 90 > W0 ? 'end' : null);
+      var placed = [];
+      row.ms.slice().sort(function (a, b) { return (b.s + b.c) - (a.s + a.c); }).slice(0, 3).forEach(function (m) {
+        var j = row.ms.indexOf(m), cx = lab + j * step + 1 + bw / 2;
+        if (placed.some(function (p) { return Math.abs(p - cx) < 30; })) return; placed.push(cx);
+        g += tx(cx, Y(m.s + m.c) - 5, m.msn, 'ink b halo', 'middle');
+      });
+      // trend: first third vs last third of the MSNs, recent ones left out
+      var done = row.ms.filter(function (m) { return m.first < recent; }), k3 = Math.floor(done.length / 3);
+      if (k3 >= 3) { var av = function (a) { return a.reduce(function (s, m) { return s + m.s + m.c; }, 0) / a.length; }; parts.push(S('msnTrend', { l: progName(row.l), a: eur(av(done.slice(0, k3))), b: eur(av(done.slice(-k3))) })); }
+      rowsTbl.push([progName(row.l), num(row.ms.length), eur(tot), eur(avg), (function () { var b = row.ms.slice().sort(function (a, c) { return (c.s + c.c) - (a.s + a.c); })[0]; return b.msn + ' (' + eur(b.s + b.c) + ')'; })()]);
+    });
+    var defs = '<defs><pattern id="hatchS1" width="4" height="4" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="4" height="4" fill="var(--s1-soft)"/><line x1="0" y1="0" x2="0" y2="4" stroke="var(--s1)" stroke-width="1.5"/></pattern></defs>';
+    var f = parts.length ? S('fMsn', { t: parts.join(S('sep')) }) : '';
+    var leg = '<span><i class="sw" style="background:var(--s1)"></i>' + esc(S('legSerie')) + '</span><span><i class="sw" style="background:var(--s1-ret)"></i>' + esc(S('legRet')) + '</span><span><i class="sw" style="background:repeating-linear-gradient(135deg,var(--s1) 0 2px,var(--s1-soft) 2px 4px)"></i>' + esc(S('msnRecentLeg')) + '</span><span><i class="dash"></i>' + esc(S('avgLeg')) + '</span>';
+    vSet('msn', svg(W0, H, defs + g, S('t_msn')) + '<div class="msnlist" id="msnList"></div>', f, leg + '<span class="mu">' + esc(S('retNote')) + '</span>', miniTable([S('hProg'), 'MSN', S('hCost'), S('hPerMsn'), S('hMaxMsn')], rowsTbl, 1));
+    renderMsnList(per);
+  }
+  function renderMsnList(per) {
+    var el = document.getElementById('msnList'), m = A.msn && per[A.msn];
+    if (!m) { el.innerHTML = '<p class="sub">' + esc(S('msnClick')) + '</p>'; return; }
+    var ncs = m.ncs.slice().sort(function (a, b) { return a[1] < b[1] ? -1 : 1; });
+    el.innerHTML = '<div class="card-head"><h4>MSN ' + esc(m.msn) + ' · ' + esc(progName(m.l)) + ' · ' + esc(S('msnHead', { n: num(ncs.length), c: eur(m.s + m.c) })) + '</h4><button type="button" class="clear-one" data-msnclose="1">' + esc(S('clear')) + '</button></div>' +
+      '<div class="table-wrap"><table class="mini"><thead><tr>' + ['kNc', 'kDate', 'hProd', 'kRule', 'hScope'].map(function (k) { return '<th scope="col">' + esc(S(k)) + '</th>'; }).join('') + '</tr></thead><tbody>' +
+      ncs.map(function (n) { return '<tr><td class="nc">' + esc(n[0]) + '</td><td class="num">' + esc(shortDay(n[1])) + '</td><td>' + esc(prodName(n[26])) + '</td><td>' + esc(ruleName(n[7])) + '</td><td>' + (n[23] === 'client' ? '<span class="tag">' + esc(S('legRet')) + '</span>' : esc(S('legSerie'))) + '</td></tr>'; }).join('') + '</tbody></table></div>';
+  }
+
+  // 8. Product families: cost (series + customer returns), NCs, MSNs, cost per MSN
+  function prodName(p) { return p === 'Other' ? S('prodUnknown') : p; }
+  function vProd() {
+    var W0 = vWidth('prod', 300), per = {}, T = 0;
+    aNcsAll().forEach(function (n) { var p = n[26] || 'Other', m = per[p] || (per[p] = { p: p, s: 0, c: 0, n: 0, msn: {} }); if (n[23] === 'serie') m.s += n[12]; else m.c += n[12]; m.n++; if (n[25]) m.msn[n[25]] = 1; T += n[12]; });
+    var list = Object.keys(per).map(function (k) { var m = per[k]; m.t = m.s + m.c; m.k = Object.keys(m.msn).length; return m; }).sort(function (a, b) { return b.t - a.t; });
+    if (!list.length) { vSet('prod', EMPTY); return; }
+    if (list.length > 11) { var rest = list.slice(10), o = { p: '__rest', s: 0, c: 0, n: 0, msn: {}, k: 0, t: 0, nf: rest.length };
+      rest.forEach(function (m) { o.s += m.s; o.c += m.c; o.n += m.n; o.t += m.t; Object.keys(m.msn).forEach(function (x) { o.msn[x] = 1; }); }); o.k = Object.keys(o.msn).length; list = list.slice(0, 10).concat([o]); }
+    var wide = W0 >= 480, name = wide ? 118 : 96, cols = wide ? [['hNcs', 44], ['MSN', 44], ['hPerMsn', 92]] : [['hNcs', 40], ['MSN', 40]], colW = cols.reduce(function (s, c) { return s + c[1]; }, 0);
+    var valW = 64, bx = name + 8, bwMax = W0 - bx - valW - colW - 8, rh = 26, top = 22, H = top + list.length * rh + 4, mx = list[0].p === '__rest' ? list[1].t : Math.max.apply(null, list.map(function (m) { return m.t; })), g = '';
+    var cx = W0 - colW; cols.forEach(function (c) { cx += c[1]; g += tx(cx - 4, 12, c[0] === 'MSN' ? 'MSN' : S(c[0]), 'mu', 'end'); });
+    list.forEach(function (m, i) {
+      var y = top + i * rh, ws = m.s / mx * bwMax, wc = m.c / mx * bwMax, lbl = m.p === '__rest' ? S('prodRest', { n: m.nf }) : prodName(m.p);
+      g += '<g' + tip(lbl, [eur(m.t), S('prodTip', { s: eur(m.s), c: eur(m.c), n: num(m.n), k: num(m.k) })]) + '><rect x="0" y="' + y + '" width="' + W0 + '" height="' + rh + '" fill="transparent"/>' +
+        tx(name, y + 17, lbl.length > (wide ? 18 : 14) ? lbl.slice(0, wide ? 17 : 13) + '…' : lbl, m.p === '__rest' ? 'mu' : 'ink', 'end') +
+        '<rect x="' + bx + '" y="' + (y + 6) + '" width="' + r1(Math.max(Math.min(ws, bwMax), 1)) + '" height="14" rx="2" fill="' + (m.p === '__rest' ? 'var(--dim)' : 'var(--s1)') + '"/>' +
+        (wc >= 1 ? '<rect x="' + r1(bx + Math.min(ws, bwMax) + 2) + '" y="' + (y + 6) + '" width="' + r1(Math.min(wc, bwMax)) + '" height="14" rx="2" fill="var(--s1-ret)"/>' : '') +
+        tx(bx + Math.min(ws + wc, bwMax) + (wc >= 1 ? 4 : 2) + 4, y + 17, eurK(m.t), 'ink') + '</g>';
+      var cx2 = W0 - colW, vals = [num(m.n), num(m.k), m.k ? eur(m.t / m.k) : '—'];
+      cols.forEach(function (c, ci) { cx2 += c[1]; g += tx(cx2 - 4, y + 17, vals[ci], 'mu', 'end'); });
+    });
+    var top1 = list[0], perMsn = list.filter(function (m) { return m.p !== '__rest' && m.p !== 'Other' && m.k >= 5; }).sort(function (a, b) { return b.t / b.k - a.t / a.k; })[0];
+    var f = S('fProd', { p: quote(prodName(top1.p)), s: pct0(top1.t / T * 100) }) + (perMsn ? ' ' + (perMsn === top1 ? S('fProd3', { v: eur(perMsn.t / perMsn.k) }) : S('fProd2', { p: quote(prodName(perMsn.p)), v: eur(perMsn.t / perMsn.k) })) : '');
+    var leg = '<span><i class="sw" style="background:var(--s1)"></i>' + esc(S('legSerie')) + '</span><span><i class="sw" style="background:var(--s1-ret)"></i>' + esc(S('legRet')) + '</span>';
+    var rows = list.map(function (m) { return [m.p === '__rest' ? S('prodRest', { n: m.nf }) : prodName(m.p), eur(m.s), eur(m.c), num(m.n), num(m.k), m.k ? eur(m.t / m.k) : '—']; });
+    vSet('prod', svg(W0, H, g, S('t_prod')), f, leg, miniTable([S('hProd'), S('legSerie'), S('legRet'), S('hNcs'), 'MSN', S('hPerMsn')], rows, 1));
+  }
+
+  // 9. Lead time: share of NCs still open N days after creation (Kaplan-Meier, open NCs counted until today)
+  function km(items) {
+    var ev = items.slice().sort(function (a, b) { return a.t - b.t; }), atRisk = ev.length, s = 1, pts = [[0, 1]], i = 0;
+    while (i < ev.length) { var t = ev[i].t, d = 0, c = 0; while (i < ev.length && ev[i].t === t) { if (ev[i].e) d++; else c++; i++; } if (d) { s *= 1 - d / atRisk; pts.push([t, s]); } atRisk -= d + c; }
+    return pts;
+  }
+  function kmAt(pts, t) { var s = 1; for (var i = 0; i < pts.length && pts[i][0] <= t; i++) s = pts[i][1]; return s; }
+  function kmMedian(pts) { for (var i = 0; i < pts.length; i++) if (pts[i][1] <= 0.5) return pts[i][0]; return null; }
+  function vLead() {
+    var ncs = aNcs().filter(function (n) { return n[29] != null || n[31] != null; });
+    if (ncs.length < 5) { vSet('lead', EMPTY); A.km = null; return; }
+    var grp = { rw: [], rej: [], oth: [] }, all = [], open = [];
+    ncs.forEach(function (n) { var it = n[29] != null ? { t: Math.round(n[29] * 10) / 10, e: 1 } : { t: Math.round(n[31] * 10) / 10, e: 0 }, gk = dGroup(n[7]);
+      (grp[gk === 'exc' ? 'oth' : gk] || grp.oth).push(it); all.push(it); if (n[30]) open.push(n); });
+    var keys = ['rw', 'rej', 'oth'].filter(function (k) { return grp[k].length >= 5; }), col = { rw: 'var(--ink)', rej: 'var(--s1)', oth: 'var(--muted)' };
+    var curves = {}; keys.forEach(function (k) { curves[k] = km(grp[k]); }); var cAll = km(all);
+    var W0 = vWidth('lead', 300), H = W0 < 520 ? 300 : 360, ml = 48, mr = 16, mt = 12, mb = 44, pw = W0 - ml - mr, ph = H - mt - mb, XM = 60;
+    function X(t) { return ml + Math.min(t, XM) / XM * pw; } function Y(p) { return mt + ph - p * ph; }
+    var g = '';
+    [0, 0.25, 0.5, 0.75, 1].forEach(function (p) { g += '<line class="gl" x1="' + ml + '" x2="' + (ml + pw) + '" y1="' + r1(Y(p)) + '" y2="' + r1(Y(p)) + '"/>' + tx(ml - 8, Y(p) + 4, pct0(p * 100), 'mu', 'end'); });
+    [0, 7, 14, 21, 30, 45, 60].forEach(function (t) { g += tx(X(t), mt + ph + 16, (t === 60 ? '≥ ' : '') + num(t), 'mu', 'middle'); });
+    g += tx(ml + pw / 2, H - 6, S('axDays'), 'mu', 'middle');
+    var endY = spread(keys.map(function (k) { return Y(kmAt(curves[k], XM)) - 6; }), 14, mt + 10, mt + ph - 4);
+    keys.forEach(function (k, ki) {
+      var pts = curves[k], d = 'M' + X(0) + ',' + Y(1), last = 1;
+      pts.slice(1).forEach(function (p) { if (p[0] > XM) return; d += 'H' + r1(X(p[0])) + 'V' + r1(Y(p[1])); last = p[1]; });
+      d += 'H' + r1(X(XM));
+      g += '<path d="' + d + '" fill="none" stroke="' + col[k] + '" stroke-width="2"/>';
+      var md = kmMedian(pts); if (md != null && md <= XM) g += '<circle cx="' + r1(X(md)) + '" cy="' + r1(Y(0.5)) + '" r="4.5" fill="' + col[k] + '" stroke="var(--surface)" stroke-width="2"/>';
+      g += tx(X(XM) - 2, endY[ki], S('g_' + k) + (md != null ? ' · ' + S('daysShort', { n: num(Math.round(md)) }) : ''), 'b halo', 'end', ' style="fill:' + col[k] + '"');
+    });
+    g += '<line class="guide" x1="' + ml + '" x2="' + (ml + pw) + '" y1="' + r1(Y(0.5)) + '" y2="' + r1(Y(0.5)) + '"/>';
+    g += '<line id="kmX" class="cross" y1="' + mt + '" y2="' + (mt + ph) + '" x1="-10" x2="-10"/><rect data-km="1" x="' + ml + '" y="' + mt + '" width="' + pw + '" height="' + ph + '" fill="transparent"/>';
+    A.km = { keys: keys, curves: curves, ml: ml, pw: pw, XM: XM };
+    var mAll = kmMedian(cAll), mRej = curves.rej ? kmMedian(curves.rej) : null, oldest = open.reduce(function (s, n) { return Math.max(s, n[31] || 0); }, 0);
+    var f = (mAll != null ? S('fLead', { a: num(Math.round(mAll)) }) : '') + (mRej != null ? ' ' + S('fLead2', { b: num(Math.round(mRej)) }) : '') + (open.length ? ' ' + S('fLead3', { n: num(open.length), d: num(Math.round(oldest)) }) : '');
+    var leg = keys.map(function (k) { return '<span><i class="ln" style="background:' + col[k] + '"></i>' + esc(S('g_' + k)) + ' (' + num(grp[k].length) + ')</span>'; }).join('') + '<span><i class="sw ring" style="background:var(--surface);border-color:var(--ink-2)"></i>' + esc(S('medLeg')) + '</span>';
+    var rows = keys.map(function (k) { var c = curves[k], md = kmMedian(c); return [S('g_' + k), num(grp[k].length), md != null ? S('daysShort', { n: num(Math.round(md)) }) : '—', pct0(kmAt(c, 7) * 100), pct0(kmAt(c, 30) * 100), num(grp[k].filter(function (x) { return !x.e; }).length)]; });
+    vSet('lead', svg(W0, H, g, S('t_lead')), f, leg, miniTable([S('kRule'), S('hNcs'), S('hMedian'), S('hOpen7'), S('hOpen30'), S('hStillOpen')], rows, 1));
+  }
+
+  // 10. Hour of day (radial clock): when series NCs are written, Paris time
+  function vClock() {
+    var ncs = aNcs().filter(function (n) { return n[28] >= 0; }), per = []; for (var h = 0; h < 24; h++) per.push(0);
+    ncs.forEach(function (n) { per[n[28]]++; });
+    var T = ncs.length; if (!T) { vSet('clock', EMPTY); return; }
+    var W0 = vWidth('clock', 280), size = Math.min(W0, 380), c = size / 2, r0 = size * 0.17, R = size / 2 - 26, mx = Math.max.apply(null, per), g = '';
+    function pt(r, a) { return r1(c + r * Math.cos(a)) + ',' + r1(c + r * Math.sin(a)); }
+    [0.5, 1].forEach(function (f) { var rr = Math.sqrt(r0 * r0 + (R * R - r0 * r0) * f); g += '<circle cx="' + c + '" cy="' + c + '" r="' + r1(rr) + '" fill="none" stroke="var(--grid)"/>'; });
+    g += '<circle cx="' + c + '" cy="' + c + '" r="' + r1(r0) + '" fill="none" stroke="var(--grid)"/>';
+    per.forEach(function (v, h2) {
+      var a0 = h2 / 24 * 2 * Math.PI - Math.PI / 2 + 0.012, a1 = (h2 + 1) / 24 * 2 * Math.PI - Math.PI / 2 - 0.012, r = Math.sqrt(r0 * r0 + (R * R - r0 * r0) * v / mx);
+      var lbl = S('hourRange', { a: h2, b: (h2 + 1) % 24 });
+      g += '<path d="M' + pt(r0, a0) + 'L' + pt(R, a0) + 'A' + r1(R) + ',' + r1(R) + ' 0 0 1 ' + pt(R, a1) + 'L' + pt(r0, a1) + 'A' + r1(r0) + ',' + r1(r0) + ' 0 0 0 ' + pt(r0, a0) + 'Z" fill="transparent"' + tip(lbl, [S('clockTip', { n: num(v), p: pct(v / T * 100) })]) + '/>';
+      if (v) g += '<path pointer-events="none" d="M' + pt(r0, a0) + 'L' + pt(r, a0) + 'A' + r1(r) + ',' + r1(r) + ' 0 0 1 ' + pt(r, a1) + 'L' + pt(r0, a1) + 'A' + r1(r0) + ',' + r1(r0) + ' 0 0 0 ' + pt(r0, a0) + 'Z" fill="var(--s1)"/>';
+    });
+    [0, 3, 6, 9, 12, 15, 18, 21].forEach(function (h3) { var a = h3 / 24 * 2 * Math.PI - Math.PI / 2, p = [c + (R + 14) * Math.cos(a), c + (R + 14) * Math.sin(a) + 4]; g += tx(p[0], p[1], h3 + (G.lang === 'fr' ? ' h' : ':00'), 'mu', 'middle'); });
+    g += tx(c, c - 2, num(T), 'ink b', 'middle', ' style="font-size:18px"') + tx(c, c + 14, S('clockCenter'), 'mu', 'middle');
+    var peak = per.indexOf(mx), morning = per.slice(8, 13).reduce(function (s, v) { return s + v; }, 0), late = per.slice(18).reduce(function (s, v) { return s + v; }, 0) + per.slice(0, 6).reduce(function (s, v) { return s + v; }, 0);
+    var f = S('fClock', { h: peak, p: pct0(morning / T * 100), q: pct0(late / T * 100) });
+    var rows = per.map(function (v, h4) { return [S('hourRange', { a: h4, b: (h4 + 1) % 24 }), num(v), pct(v / T * 100)]; });
+    vSet('clock', svg(size, size, g, S('t_clock')), f, '', miniTable([S('hHour'), S('hNcs'), S('rShare')], rows, 1));
+  }
+
+  // 11. Station x category heatmap (series defects)
+  function vStation(rs) {
+    var per = {}, tot = {};
+    rs.forEach(function (r) { var n = NC[r[0]], s = (n && n[27]) || S('noStation'), k = catKey(dCat(r)); (per[s] || (per[s] = {}))[k] = (per[s][k] || 0) + 1; tot[s] = (tot[s] || 0) + 1; });
+    var st = Object.keys(tot).sort(function (a, b) { return tot[b] - tot[a]; }).slice(0, 12);
+    if (!st.length) { vSet('station', EMPTY); return; }
+    var W0 = vWidth('station', 300), cats = MAIN_CATS, lab = Math.min(210, Math.max(120, W0 * 0.36)), cw = Math.max(26, Math.min(48, Math.floor((W0 - lab - 56) / cats.length))), rh = 24, top = 92, H = top + st.length * rh + 4, W = lab + cats.length * cw + 56;
+    var mx = 1; st.forEach(function (s) { cats.forEach(function (k) { mx = Math.max(mx, per[s][k] || 0); }); });
+    var g = '', maxCh = Math.floor((lab - 10) / 7.2);
+    cats.forEach(function (k, j) { var x = lab + j * cw + cw / 2; g += '<rect x="' + r1(x - 5) + '" y="' + (top - 14) + '" width="10" height="6" rx="2" fill="' + catFill(k) + '"/>' + tx(x + 2, top - 20, catLabel(k), 'mu', null, ' transform="rotate(-50 ' + r1(x + 2) + ' ' + (top - 20) + ')"'); });
+    g += tx(lab + cats.length * cw + 48, top - 10, S('total'), 'mu b', 'end');
+    st.forEach(function (s, i) {
+      var y = top + i * rh, nm = s.length > maxCh ? s.slice(0, maxCh - 1) + '…' : s;
+      g += '<text x="' + r1(lab - 8) + '" y="' + (y + 16) + '" text-anchor="end" class="ink"><title>' + esc(s) + '</title>' + esc(nm) + '</text>';
+      cats.forEach(function (k, j) { var v = per[s][k] || 0, x = lab + j * cw;
+        g += '<rect x="' + (x + 1) + '" y="' + (y + 1) + '" width="' + (cw - 2) + '" height="' + (rh - 2) + '" rx="3" fill="' + (v ? 'color-mix(in oklab, var(--seq) ' + Math.round(14 + 86 * v / mx) + '%, var(--surface))' : 'var(--track)') + '"' + tip(s + ' · ' + catLabel(k), [S('stTip', { n: num(v), p: pct0(v / tot[s] * 100) })]) + '/>';
+        if (v) g += tx(x + cw / 2, y + 16, num(v), v / mx > 0.55 ? 'b' : 'ink', 'middle', v / mx > 0.55 ? ' style="fill:var(--on1)"' : ''); });
+      g += tx(lab + cats.length * cw + 48, y + 16, num(tot[s]), 'ink b', 'end');
+    });
+    var best = null; st.forEach(function (s) { if (tot[s] < 30) return; cats.forEach(function (k) { if (k === 'aside') return; var sh = (per[s][k] || 0) / tot[s]; if (!best || sh > best.sh) best = { s: s, k: k, sh: sh }; }); });
+    var f = best ? S('fStation', { s: quote(best.s), p: pct0(best.sh * 100), c: quote(catLabel(best.k)) }) : '';
+    var rows = st.map(function (s) { return [s].concat(cats.map(function (k) { return num(per[s][k] || 0); })).concat([num(tot[s])]); });
+    vSet('station', svg(W, H, g, S('t_station')), f, '', miniTable([S('hStation')].concat(cats.map(catLabel)).concat([S('total')]), rows, 1));
+  }
+
+  // 12. MFT actions: the targeted problem month by month, before and since the action
+  function actMatch(a, r) {
+    if (r[4] !== a[0]) return false;
+    var v = a[4]; if (a[3] === 'cat') return v.indexOf(dCat(r)) >= 0; if (a[3] === 'rca') return v.indexOf(dRca(r)) >= 0; if (a[3] === 'sub') return v.indexOf(dSub(r)) >= 0;
+    if (a[3] === 'where') { var n = NC[r[0]]; return !!n && v.indexOf(n[8]) >= 0; } return false;
+  }
+  function vAct() {
+    var acts = (D.actions || []).filter(function (a) { return !A.line || A.line === a[0]; });
+    if (!acts.length) { vSet('act', '<p class="empty">' + esc(S('actNone')) + '</p>'); return; }
+    var all = D.defects.filter(function (r) { return r[20] === 'serie' && keepMinor(r); }), months = {};
+    all.forEach(function (r) { months[r[2].slice(0, 7)] = 1; }); months = Object.keys(months).sort();
+    var lineTot = {}; all.forEach(function (r) { var k = r[4] + '|' + r[2].slice(0, 7); lineTot[k] = (lineTot[k] || 0) + 1; });
+    var W0 = vWidth('act', 280), cols = Math.max(1, Math.min(3, Math.floor((W0 + 14) / 280))), pw = Math.floor((W0 - 14 * (cols - 1)) / cols), ch = 96, html = '', rows = [], best = null;
+    acts.forEach(function (a) {
+      var cnt = {}; all.forEach(function (r) { if (actMatch(a, r)) { var m = r[2].slice(0, 7); cnt[m] = (cnt[m] || 0) + 1; } });
+      var start = a[6] || a[5], mx = Math.max.apply(null, months.map(function (m) { return cnt[m] || 0; }).concat([1])), bw = (pw - 8) / months.length, g = '';
+      var bef = [0, 0], aft = [0, 0], nAft = 0;
+      months.forEach(function (m, j) { var v = cnt[m] || 0, lt = lineTot[a[0] + '|' + m] || 0, x = 4 + j * bw, h = v / mx * (ch - 30), after = start && m >= start;
+        if (start) { if (after) { aft[0] += v; aft[1] += lt; nAft++; } else { bef[0] += v; bef[1] += lt; } }
+        if (after) g += '<rect x="' + r1(x) + '" y="0" width="' + r1(bw) + '" height="' + (ch - 16) + '" fill="var(--s1-soft)"/>';
+        g += '<rect x="' + r1(x + 2) + '" y="' + r1(ch - 16 - h) + '" width="' + r1(Math.max(bw - 4, 2)) + '" height="' + r1(Math.max(h, v ? 1 : 0)) + '" rx="2" fill="' + (after ? 'var(--s1)' : 'var(--dim)') + '"' + tip(monthName(m) + ' · ' + a[0], [S('actTip', { n: num(v), p: lt ? pct0(v / lt * 100) : '—' })]) + '/>' +
+          (j % 2 === 0 || months.length < 7 ? tx(x + bw / 2, ch - 3, monthName(m).slice(0, 3), 'mu', 'middle', ' style="font-size:10px"') : '');
+        if (a[5] && m === a[5]) g += '<line x1="' + r1(x) + '" x2="' + r1(x) + '" y1="0" y2="' + (ch - 16) + '" stroke="var(--ink-2)" stroke-dasharray="2 3"/>';
+      });
+      var sb = bef[1] ? bef[0] / bef[1] : null, sa = aft[1] ? aft[0] / aft[1] : null;
+      var line = sb != null && sa != null ? S('actShare', { a: pct0(sb * 100), b: pct0(sa * 100), k: num(nAft) }) : S('actNoAfter');
+      if (sb != null && sa != null && a[6] && (!best || sa / Math.max(sb, 1e-9) < best.r)) best = { a: a, r: sa / Math.max(sb, 1e-9), sb: sb, sa: sa };
+      var lbl = G.lang === 'fr' ? a[1] : a[2], status = a[7] || S('actNoStatus');
+      html += '<div class="actpanel" style="width:' + pw + 'px"><div class="acthead"><b>' + esc(lbl) + '</b><span class="tag">' + esc(a[0]) + '</span></div>' +
+        '<div class="actmeta">' + esc(S('actDates', { a: a[5] ? monthName(a[5]) : '—', b: a[6] ? monthName(a[6]) : '—', s: status })) + '</div>' +
+        svg(pw, ch, g, lbl) + '<div class="actmeta">' + esc(line) + '</div></div>';
+      rows.push([a[0], lbl, a[5] ? monthName(a[5]) : '—', a[6] ? monthName(a[6]) : '—', status, a[10], a[11]]);
+    });
+    var cut = months[Math.max(0, months.length - 4)], k4 = acts.filter(function (a) { return a[6] && a[6] >= cut; }).length;
+    var f = S('fAct', { n: num(acts.length), k: num(k4) }) + (best && best.sa < best.sb ? ' ' + S('fAct2', { a: quote(G.lang === 'fr' ? best.a[1] : best.a[2]), x: pct0(best.sb * 100), y: pct0(best.sa * 100), l: best.a[0] }) : '');
+    var leg = '<span><i class="sw" style="background:var(--dim)"></i>' + esc(S('actBefore')) + '</span><span><i class="sw" style="background:var(--s1)"></i>' + esc(S('actAfter')) + '</span><span><i class="dash" style="border-top-color:var(--ink-2)"></i>' + esc(S('actAnalysis')) + '</span><span class="mu">' + esc(S('actNote')) + '</span>';
+    vSet('act', '<div class="actgrid">' + html + '</div>', f, leg, miniTable([S('hProg'), S('hProblem'), S('hAnalysis'), S('hAction'), S('hStatus'), S('hRoot'), S('hDoing')], rows, 99));
+  }
+
+  var VIZ = ['cal', 'flow', 'bub', 'lor', 'mek', 'bump', 'msn', 'prod', 'lead', 'clock', 'station', 'act'], VWIDE = { cal: 1, flow: 1, msn: 1, act: 1 };
   document.getElementById('ag').innerHTML = VIZ.map(function (k) {
-    return '<article class="card vcard' + (k === 'cal' || k === 'flow' ? ' wide' : '') + '" id="v-' + k + '"><div class="vhead"><span class="kicker"><span data-t="k_' + k + '"></span> · <span data-t="t_' + k + '"></span></span><h3 id="v-' + k + '-f"></h3><p class="sub" data-t="s_' + k + '"></p></div>' +
+    return '<article class="card vcard' + (VWIDE[k] ? ' wide' : '') + '" id="v-' + k + '"><div class="vhead"><span class="kicker"><span data-t="k_' + k + '"></span> · <span data-t="t_' + k + '"></span></span><h3 id="v-' + k + '-f"></h3><p class="sub" data-t="s_' + k + '"></p></div>' +
       '<div class="vbody" id="v-' + k + '-b"></div><div class="vlegend" id="v-' + k + '-l"></div>' +
       '<details class="vdata"><summary data-t="dataView"></summary><div class="table-wrap"><table class="mini" id="v-' + k + '-t"></table></div></details></article>';
   }).join('');
   function renderAna() {
     if (G.tab !== 'ana') return;
-    document.getElementById('aLines').innerHTML = segHtml([['', S('allLines')], ['A350', 'A350'], ['A330', 'A330'], ['A320', 'A320']], A.line, 'data-aline');
+    document.getElementById('aLines').innerHTML = segHtml([['', S('allLines')], ['A350', 'A350'], ['A330', 'A330'], ['A320', 'A320'], ['A400M', 'A400M']], A.line, 'data-aline');
+    EMPTY = '<p class="empty">' + esc(A.line === 'A400M' ? S('noText') : '—') + '</p>';
     var rs = aRows();
     vCal(rs); vFlow(rs); vBub(rs); vLor(rs); vMek(aRows(true)); vBump(rs);
+    vMsn(); vProd(); vLead(); vClock(); vStation(rs); vAct();
   }
   // one tooltip for every chart of the tab; flow highlighting; Lorenz crosshair
   var TIP = document.getElementById('tip'), AP = document.getElementById('p-ana');
@@ -1408,6 +1681,14 @@ window.DASH = __DATA__;
       showTip(e, [S('lorTipH', { p: pct0(i / A.lor.N * 100), n: num(i) }), S('lorD') + ' : ' + pct(A.lor.cd[i] * 100), S('lorC') + ' : ' + pct(A.lor.cc[i] * 100)]);
       return;
     }
+    var kr = e.target.getAttribute && e.target.getAttribute('data-km'), kx = document.getElementById('kmX');
+    if (kr && A.km) {
+      var kb = e.target.ownerSVGElement.getBoundingClientRect(), kp = Math.max(0, Math.min(1, (e.clientX - kb.left - A.km.ml) / A.km.pw)), day0 = Math.round(kp * A.km.XM), kxx = r1(A.km.ml + day0 / A.km.XM * A.km.pw);
+      kx.setAttribute('x1', kxx); kx.setAttribute('x2', kxx);
+      showTip(e, [S('kmTipH', { d: num(day0) })].concat(A.km.keys.map(function (k) { return S('g_' + k) + ' : ' + pct0(kmAt(A.km.curves[k], day0) * 100) + ' ' + S('kmOpen'); })));
+      return;
+    }
+    if (kx) { kx.setAttribute('x1', -10); kx.setAttribute('x2', -10); }
     if (cross) { cross.setAttribute('x1', -10); cross.setAttribute('x2', -10); }
     var t = e.target.closest && e.target.closest('[data-tip]');
     if (t) showTip(e, t.getAttribute('data-tip').split('|')); else hideTip();
@@ -1415,10 +1696,14 @@ window.DASH = __DATA__;
   AP.addEventListener('pointerleave', function () { hideTip(); flowFocus(AP.querySelector('svg.flow'), null, null); flowKey = null; });
   AP.addEventListener('click', function (e) {
     var s = e.target.closest('[data-aline]');
-    if (s) { var v = s.getAttribute('data-aline'); A.line = s.tagName === 'BUTTON' ? v : (A.line === v ? '' : v); hideTip(); renderAna(); return; }
+    if (s) { var v = s.getAttribute('data-aline'); A.line = s.tagName === 'BUTTON' ? v : (A.line === v ? '' : v); A.msn = null; hideTip(); renderAna(); return; }
+    var ms = e.target.closest('[data-msn]');
+    if (ms) { var mk = ms.getAttribute('data-msn'); A.msn = A.msn === mk ? null : mk; hideTip(); vMsn(); return; }
+    if (e.target.closest('[data-msnclose]')) { A.msn = null; vMsn(); return; }
     var p = e.target.closest('[data-pin]');
     if (p) { var a = p.getAttribute('data-pin'), cur = A.pin == null ? A.top0 : A.pin; A.pin = cur === a ? '' : a; renderAna(); }
   });
+  window.addEventListener('scroll', hideTip, { passive: true });
   var rzT; window.addEventListener('resize', function () { clearTimeout(rzT); rzT = setTimeout(renderAna, 150); });
 
   // ---------------------------------------------------------------- language, tabs, minor switch

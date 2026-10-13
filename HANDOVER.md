@@ -52,9 +52,14 @@ Reporting scope, the same on every page (column `scope` in `fto2_nc.csv` / `fto2
 FTO2 in `liability`, not deleted (727 NCs, 2,709 defects, 63 NCs without a defect line, all A400M with redacted text);
 **Retours clients** = raised elsewhere with FTO2 in `liability` (69 NCs, 69 defects). CNQ: Série 166,428 EUR + Retours 11,877 EUR;
 the model total 181,405 EUR also counts 59 deleted NCs (2,975 EUR) and 1 supplier NC (125 EUR), shown aside on the CNQ tab.
-The dashboard is meant to be presented: six tabs (Pareto, cost Pareto, weekly Pareto and CNQ on the series scope; customer returns; root causes), one classification (root cause), no working notes on the page; the parser labels stay in the files. The separate customer-returns page is retired (`03_reports/archive/`). The RCA tab explains the hierarchy
+The dashboard is meant to be presented: seven tabs (Pareto, cost Pareto, weekly Pareto, CNQ and Analyses on the series scope; customer returns; root causes), one classification (root cause), no working notes on the page; the parser labels stay in the files. The separate customer-returns page is retired (`03_reports/archive/`). The RCA tab explains the hierarchy
 (123 official sub-codes → 42 sub-categories → 25 RCA → 9 categories); definitions are in `04_reference/rca_definitions.csv`
 (FR/EN, written 12 Oct from the code sheet, **to be checked by Mohammad**).
+The Analyses tab has 12 charts: six on defects (calendar, flow, volume × unit cost, concentration, line mix, monthly ranking)
+and six on NC fields (cost per MSN with customer returns, product family, lead time, hour of creation, station × category,
+MFT actions). The MFT actions come from `06_input_data/MFT_actions_A330.csv` / `_A350.csv`; the link from each action to the
+problem it targets is in `04_reference/mft_actions_mapping.csv`, **a proposal to confirm with line quality**.
+Customer-return costs there are model estimates (no invoices).
 
 ---
 
