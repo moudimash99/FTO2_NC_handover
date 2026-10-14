@@ -22,6 +22,11 @@
       cost: nc.reduce(function (a, n) { return a + n[12]; }, 0), ret: D.ncs.filter(function (n) { return n[23] === 'client'; }).length,
       open: nc.filter(function (n) { return n[30]; }).length };
   }
+  // year(s) and number of months covered, read from the data
+  function period() {
+    var a = D.meta.from, b = D.meta.to, y1 = +a.slice(0, 4), y2 = +b.slice(0, 4);
+    return { years: y1 === y2 ? String(y1) : y1 + '–' + y2, months: (y2 - y1) * 12 + (+b.slice(5, 7)) - (+a.slice(5, 7)) + 1 };
+  }
   function finding(card) { var h = card.querySelector('.vhead h3'); return h ? h.textContent : ''; }
   function kicker(card) { var k = card.querySelector('.kicker'); return k ? k.textContent : ''; }
   function redraw() { var b = document.querySelector('.seg.lang [aria-pressed="true"]'); if (b) b.click(); outline(); }
@@ -70,8 +75,9 @@
       var hero = add(el('section', 'c-hero'), AP, AP.firstChild);
       this.relabel = function () {
         var s = stats();
-        hero.innerHTML = '<div class="eyebrow">' + esc(T('Analyses des NC série · 2026', 'Series NC insights · 2026')) + '</div>' +
-          '<h2>' + T('Ce que disent <em>' + fmt(s.def) + ' défauts</em> sur neuf mois', 'What <em>' + fmt(s.def) + ' defects</em> say about nine months') + '</h2>' +
+        var pr = period();
+        hero.innerHTML = '<div class="eyebrow">' + esc(T('Analyses des NC série · ', 'Series NC insights · ') + pr.years) + '</div>' +
+          '<h2>' + T('Ce que disent <em>' + fmt(s.def) + ' défauts</em> sur ' + pr.months + ' mois', 'What <em>' + fmt(s.def) + ' defects</em> say about ' + pr.months + ' months') + '</h2>' +
           '<div class="nums">' + [[fmt(s.nc), T('NC série', 'series NCs')], [keur(s.cost), T('coût de non-qualité', 'cost of non-quality')],
             [fmt(s.ret), T('retours clients', 'customer returns')], [fmt(s.open), T('NC encore ouvertes', 'NCs still open')]].map(function (p) {
             return '<div><b>' + esc(p[0]) + '</b><span>' + esc(p[1]) + '</span></div>'; }).join('') + '</div>';
@@ -94,7 +100,7 @@
       this.relabel = function () {
         var s = stats();
         bar.querySelector('.t').innerHTML = 'FTO2 <span>· ' + esc(T('Analyses des NC série', 'Series NC insights')) + '</span>';
-        cover.innerHTML = '<div class="k">FTO2 · ' + esc(T('Qualité', 'Quality')) + '</div><h2>' + esc(T('Non-conformités 2026', 'Non-conformities 2026')) + '</h2>' +
+        cover.innerHTML = '<div class="k">FTO2 · ' + esc(T('Qualité', 'Quality')) + '</div><h2>' + esc(T('Non-conformités ', 'Non-conformities ') + period().years) + '</h2>' +
           '<div class="nums">' + [[fmt(s.def), T('défauts série', 'series defects')], [fmt(s.nc), T('NC série', 'series NCs')], [keur(s.cost), T('coût de non-qualité', 'cost of non-quality')]].map(function (p) {
             return '<div><b>' + esc(p[0]) + '</b><span>' + esc(p[1]) + '</span></div>'; }).join('') + '</div>' +
           '<div class="hint">' + esc(T('Flèches ← → du clavier pour avancer.', 'Use the ← → keys to move.')) + '</div>';
@@ -116,7 +122,7 @@
       on(document, 'keydown', cardKeys);
       this.relabel = function () {
         var s = stats();
-        side.querySelector('.brand').innerHTML = 'FTO2 · ' + esc(T('Qualité', 'Quality')) + '<span>' + esc(T('Non-conformités 2026', 'Non-conformities 2026')) + '</span>';
+        side.querySelector('.brand').innerHTML = 'FTO2 · ' + esc(T('Qualité', 'Quality')) + '<span>' + esc(T('Non-conformités ', 'Non-conformities ') + period().years) + '</span>';
         side.querySelector('.g1').textContent = T('Pages', 'Pages'); side.querySelector('.g2').textContent = T('Affichage', 'Display');
         kpis.innerHTML = [[fmt(s.def), T('Défauts série', 'Series defects')], [fmt(s.nc), T('NC série', 'Series NCs')], [keur(s.cost), T('Coût de non-qualité', 'Cost of non-quality')],
           [fmt(s.ret), T('Retours clients', 'Customer returns')], [fmt(s.open), T('NC encore ouvertes', 'NCs still open')]].map(function (p) {

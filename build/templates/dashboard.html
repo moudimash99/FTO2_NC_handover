@@ -515,7 +515,7 @@ window.DASH = __DATA__;
       k_station: 'Postes', t_station: 'Défauts par poste et catégorie', s_station: 'Les 12 postes où les NC série portent le plus de défauts (poste de rédaction de la NC).',
       fStation: 'Au poste {s}, {p} des défauts sont des {c}.', stTip: '{n} défauts · {p} du poste', noStation: 'Poste non renseigné', hStation: 'Poste',
       k_act: 'Actions', t_act: 'Actions MFT et problème visé', s_act: 'Pour chaque action des fichiers de suivi MFT A330 et A350 : défauts du problème visé, mois par mois, sur la ligne concernée. En bleu, les mois depuis le début de l’action ; pointillé : début de l’analyse.',
-      fAct: '{n} actions suivies, dont {k} lancées il y a moins de 4 mois : trop tôt pour conclure.', fAct2: 'Plus forte baisse depuis le lancement : {a}, de {x} à {y} des défauts {l}.',
+      fAct: '{n} actions suivies, dont {k} lancées il y a moins de 4 mois : trop tôt pour conclure.', fActN: '{n} actions suivies, dont {k} lancées il y a moins de 4 mois.', fAct2: 'Plus forte baisse depuis le lancement : {a}, de {x} à {y} des défauts {l}.',
       actTip: '{n} défauts · {p} des défauts de la ligne', actShare: 'Part des défauts de la ligne : {a} avant → {b} depuis ({k} mois)', actNoAfter: 'Pas encore de mois après le lancement.',
       actDates: 'Analyse : {a} · Action : {b} · Statut : {s}', actNoStatus: 'non renseigné', actBefore: 'Avant l’action', actAfter: 'Depuis le début de l’action', actAnalysis: 'Début de l’analyse',
       actNote: 'Lien action → problème proposé, à valider avec la qualité ligne.', actNone: 'Pas d’action MFT suivie pour cette ligne.',
@@ -602,7 +602,7 @@ window.DASH = __DATA__;
       k_station: 'Stations', t_station: 'Defects by station and category', s_station: 'The 12 stations whose series NCs carry the most defects (station where the NC was written).',
       fStation: 'At station {s}, {p} of defects are {c}.', stTip: '{n} defects · {p} of the station', noStation: 'Station not recorded', hStation: 'Station',
       k_act: 'Actions', t_act: 'MFT actions and the problem they target', s_act: 'For each action in the A330 and A350 MFT trackers: defects of the targeted problem, month by month, on that line. Blue: months since the action started; dotted: start of the analysis.',
-      fAct: '{n} actions tracked, {k} of them started less than 4 months ago: too early to judge.', fAct2: 'Largest drop since launch: {a}, from {x} to {y} of {l} defects.',
+      fAct: '{n} actions tracked, {k} of them started less than 4 months ago: too early to judge.', fActN: '{n} actions tracked, {k} of them started less than 4 months ago.', fAct2: 'Largest drop since launch: {a}, from {x} to {y} of {l} defects.',
       actTip: '{n} defects · {p} of the line’s defects', actShare: 'Share of the line’s defects: {a} before → {b} since ({k} months)', actNoAfter: 'No month after launch yet.',
       actDates: 'Analysis: {a} · Action: {b} · Status: {s}', actNoStatus: 'not recorded', actBefore: 'Before the action', actAfter: 'Since the action started', actAnalysis: 'Start of the analysis',
       actNote: 'Action → problem link proposed, to be confirmed with line quality. Action texts stay in French.', actNone: 'No MFT action tracked for this line.',
@@ -1640,7 +1640,7 @@ window.DASH = __DATA__;
       rows.push([a[0], lbl, a[5] ? monthName(a[5]) : '—', a[6] ? monthName(a[6]) : '—', status, a[10], a[11]]);
     });
     var cut = months[Math.max(0, months.length - 4)], k4 = acts.filter(function (a) { return a[6] && a[6] >= cut; }).length;
-    var f = S('fAct', { n: num(acts.length), k: num(k4) }) + (best && best.sa < best.sb ? ' ' + S('fAct2', { a: quote(G.lang === 'fr' ? best.a[1] : best.a[2]), x: pct0(best.sb * 100), y: pct0(best.sa * 100), l: best.a[0] }) : '');
+    var f = S(k4 * 2 > acts.length ? 'fAct' : 'fActN', { n: num(acts.length), k: num(k4) }) + (best && best.sa < best.sb ? ' ' + S('fAct2', { a: quote(G.lang === 'fr' ? best.a[1] : best.a[2]), x: pct0(best.sb * 100), y: pct0(best.sa * 100), l: best.a[0] }) : '');
     var leg = '<span><i class="sw" style="background:var(--dim)"></i>' + esc(S('actBefore')) + '</span><span><i class="sw" style="background:var(--s1)"></i>' + esc(S('actAfter')) + '</span><span><i class="dash" style="border-top-color:var(--ink-2)"></i>' + esc(S('actAnalysis')) + '</span><span class="mu">' + esc(S('actNote')) + '</span>';
     vSet('act', '<div class="actgrid">' + html + '</div>', f, leg, miniTable([S('hProg'), S('hProblem'), S('hAnalysis'), S('hAction'), S('hStatus'), S('hRoot'), S('hDoing')], rows, 99));
   }
