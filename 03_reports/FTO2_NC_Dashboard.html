@@ -6,66 +6,70 @@
 <title>FTO2 NC Dashboard</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..600&family=Hanken+Grotesk:wght@400..700&display=swap">
 <style>
 /* Layout: the FTO2 quality pages' system, for presentation. Header (unit, title, period, one switch for minor
    defects, language), seven tabs: Pareto, cost Pareto, weekly Pareto, cost of non-quality, insights, customer
    returns, root causes. Each tab: headline figures, clickable breakdowns that filter each other, the detail
-   kept folded below. Insights: six SVG charts, each titled with its finding and backed by a data table. */
+   kept folded below. Insights: twelve SVG charts laid out as a scroll report (name and reading guide on the left,
+   chart on the right, alternating bands), each with its data table. Titles name the chart; the page writes no
+   conclusions of its own. Type: Newsreader for titles, Hanken Grotesk for text and figures. */
 :root {
-  --page: #f6f6f3;
-  --surface: #fdfdfb;
-  --ink: #101418;
-  --ink-2: #4c5157;
-  --muted: #7d8187;
-  --grid: #e3e3dd;
-  --track: #ecece6;
-  --ring: rgba(16,20,24,0.10);
-  --s1: #1f5fae;
-  --s1-soft: rgba(31,95,174,0.10);
-  --s1-ret: #8db0dc;
+  --page: #ffffff;
+  --surface: #ffffff;
+  --band: #f1f4f0;
+  --ink: #15171a;
+  --ink-2: #474c52;
+  --muted: #737980;
+  --grid: #e4e8e3;
+  --track: #eceeea;
+  --ring: rgba(21,23,26,0.12);
+  --s1: #1d6b52;
+  --s1-soft: rgba(29,107,82,0.10);
+  --s1-ret: #93c2b1;
   --s2: #c2620c;
-  --dim: #b9bab3;
-  --ref: #101418;
+  --dim: #c5cbc6;
+  --ref: #15171a;
   --up: #a33b2b;
-  --down: #2c7a4b;
-  --focus: #1f5fae;
-  --c1: #2a78d6; --c2: #1baf7a; --c3: #eda100; --c4: #e87ba4; --c5: #008300; --c6: #6250d6; --seq: #2a78d6;
-  --on0: #101418; --on1: #ffffff; --on2: #101418; --on3: #101418; --on4: #101418; --on5: #ffffff; --on6: #ffffff;
-  --font-ui: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
-  --font-data: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --down: #1d6b52;
+  --focus: #1d6b52;
+  --c1: #2a78d6; --c2: #1baf7a; --c3: #eda100; --c4: #e87ba4; --c5: #008300; --c6: #6250d6; --seq: #1d6b52;
+  --on0: #15171a; --on1: #ffffff; --on2: #15171a; --on3: #15171a; --on4: #15171a; --on5: #ffffff; --on6: #ffffff;
+  --font-ui: "Hanken Grotesk", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  --font-data: "Hanken Grotesk", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  --font-display: "Newsreader", Georgia, "Times New Roman", serif;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --page: #0e1012; --surface: #171a1d; --ink: #f2f3f4; --ink-2: #b9bdc2; --muted: #80858b;
-    --grid: #2a2e32; --track: #23272b; --ring: rgba(255,255,255,0.10);
-    --s1: #4d8fdc; --s1-soft: rgba(77,143,220,0.16); --s1-ret: #2f5687; --s2: #f0a04b; --dim: #4e5359; --ref: #f2f3f4;
-    --up: #e07a68; --down: #5cbf86; --focus: #4d8fdc;
-    --c1: #3987e5; --c2: #199e70; --c3: #c98500; --c4: #d55181; --c5: #008300; --c6: #9085e9; --seq: #3987e5;
-    --on0: #f2f3f4; --on1: #0e1012; --on2: #0e1012; --on3: #0e1012; --on4: #0e1012; --on5: #ffffff; --on6: #0e1012;
+    --page: #111413; --surface: #161a18; --band: #1b201d; --ink: #eef1ee; --ink-2: #b4bcb6; --muted: #858e88;
+    --grid: #29302c; --track: #222825; --ring: rgba(255,255,255,0.10);
+    --s1: #5cc29b; --s1-soft: rgba(92,194,155,0.14); --s1-ret: #2f6b55; --s2: #f0a04b; --dim: #4a524d; --ref: #eef1ee;
+    --up: #e07a68; --down: #5cc29b; --focus: #5cc29b;
+    --c1: #3987e5; --c2: #199e70; --c3: #c98500; --c4: #d55181; --c5: #008300; --c6: #9085e9; --seq: #5cc29b;
+    --on0: #eef1ee; --on1: #111413; --on2: #111413; --on3: #111413; --on4: #111413; --on5: #ffffff; --on6: #111413;
     color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
-  --page: #0e1012; --surface: #171a1d; --ink: #f2f3f4; --ink-2: #b9bdc2; --muted: #80858b;
-  --grid: #2a2e32; --track: #23272b; --ring: rgba(255,255,255,0.10);
-  --s1: #4d8fdc; --s1-soft: rgba(77,143,220,0.16); --s1-ret: #2f5687; --s2: #f0a04b; --dim: #4e5359; --ref: #f2f3f4;
-  --up: #e07a68; --down: #5cbf86; --focus: #4d8fdc;
-  --c1: #3987e5; --c2: #199e70; --c3: #c98500; --c4: #d55181; --c5: #008300; --c6: #9085e9; --seq: #3987e5;
-  --on0: #f2f3f4; --on1: #0e1012; --on2: #0e1012; --on3: #0e1012; --on4: #0e1012; --on5: #ffffff; --on6: #0e1012;
+  --page: #111413; --surface: #161a18; --band: #1b201d; --ink: #eef1ee; --ink-2: #b4bcb6; --muted: #858e88;
+  --grid: #29302c; --track: #222825; --ring: rgba(255,255,255,0.10);
+  --s1: #5cc29b; --s1-soft: rgba(92,194,155,0.14); --s1-ret: #2f6b55; --s2: #f0a04b; --dim: #4a524d; --ref: #eef1ee;
+  --up: #e07a68; --down: #5cc29b; --focus: #5cc29b;
+  --c1: #3987e5; --c2: #199e70; --c3: #c98500; --c4: #d55181; --c5: #008300; --c6: #9085e9; --seq: #5cc29b;
+  --on0: #eef1ee; --on1: #111413; --on2: #111413; --on3: #111413; --on4: #111413; --on5: #ffffff; --on6: #111413;
   color-scheme: dark;
 }
 * { box-sizing: border-box; }
 [hidden] { display: none !important; }
-body { margin: 0; border-top: 4px solid var(--s1); background: var(--page); color: var(--ink); font-family: var(--font-ui); font-size: 15px; line-height: 1.5; }
-.wrap { max-width: 1180px; margin: 0 auto; padding-inline: 20px; padding-block: 24px 48px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 22px; }
+body { margin: 0; background: var(--page); color: var(--ink); font-family: var(--font-ui); font-size: 15px; line-height: 1.5; }
+.wrap { max-width: 1240px; margin: 0 auto; padding-inline: 20px; padding-block: 24px 48px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 22px; }
 header { display: grid; gap: 12px; }
 .topbar { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
 .asof { font-size: 12.5px; color: var(--muted); font-variant-numeric: tabular-nums; }
 .topbar .right { display: flex; gap: 14px; align-items: center; }
 .unit { font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2); font-weight: 600; }
 .titles { display: grid; gap: 4px; }
-h1 { font-weight: 700; font-size: clamp(26px, 4.2vw, 34px); line-height: 1.12; margin: 0; letter-spacing: -0.01em; text-wrap: balance; }
+h1 { font-family: var(--font-display); font-weight: 500; font-size: clamp(28px, 4.2vw, 38px); line-height: 1.12; margin: 0; letter-spacing: -0.01em; text-wrap: balance; }
 h2 { font-weight: 600; font-size: 20px; line-height: 1.2; margin: 0; text-wrap: balance; }
 h3 { font-weight: 600; font-size: 14.5px; margin: 0; }
 p { margin: 0; max-width: 78ch; }
@@ -83,12 +87,12 @@ button:focus-visible, input:focus-visible, select:focus-visible, [role="tab"]:fo
 select { font: inherit; font-size: 13.5px; padding: 5px 10px; border: 1px solid var(--ring); border-radius: 6px; background: var(--surface); color: var(--ink); }
 .tabs { display: flex; gap: 2px; border-bottom: 1px solid var(--grid); overflow-x: auto; align-items: end; position: sticky; top: 0; z-index: 10; background: var(--page); }
 .tabs [role="tab"] { font: inherit; font-size: 15px; font-weight: 600; color: var(--ink-2); background: none; border: 0; border-bottom: 3px solid transparent; padding: 10px 14px 9px; cursor: pointer; white-space: nowrap; }
-.tabs [role="tab"][aria-selected="true"] { color: var(--ink); border-bottom-color: var(--s1); }
+.tabs [role="tab"][aria-selected="true"] { color: var(--ink); border-bottom-color: var(--ink); }
 .tabs [role="tab"]:hover { color: var(--ink); }
 .tabs .gap { width: 1px; align-self: stretch; margin: 10px 8px; background: var(--grid); flex: none; }
 .panel { display: grid; grid-template-columns: minmax(0, 1fr); gap: 18px; }
 .lead { display: grid; gap: 2px; }
-.lead h2 { font-size: 22px; }
+.lead h2 { font-family: var(--font-display); font-weight: 500; font-size: 26px; }
 .figs { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr)); gap: 12px; }
 .fig { background: var(--surface); border: 1px solid var(--ring); border-radius: 8px; padding: 14px 16px; display: grid; gap: 2px; min-width: 0; align-content: start; }
 .fig { gap: 4px; }
@@ -236,6 +240,33 @@ table.matrix tbody tr.aside td { color: var(--ink-2); }
 table.matrix .heat { display: inline-block; min-width: 2.2em; padding: 1px 6px; border-radius: 4px; }
 table.matrix .z { color: var(--muted); }
 .col.out .stick { background: var(--dim); }
+/* Analyses: a scroll report. Each chart is a full-width band: its name and reading guide on the left (they stay in
+   view while the chart scrolls), the chart, legend and data table on the right. Charts drawn with minimal ink. */
+.hero { display: grid; gap: 14px; padding-block: 18px 6px; }
+.hero h2 { font-family: var(--font-display); font-weight: 400; font-size: clamp(32px, 5vw, 54px); line-height: 1.05; letter-spacing: -0.01em; }
+.hero .nums { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 170px), 1fr)); gap: 18px; border-top: 1px solid var(--ink); padding-top: 16px; margin-top: 8px; }
+.hero .nums b { display: block; font-family: var(--font-display); font-weight: 500; font-size: 38px; line-height: 1; font-variant-numeric: lining-nums tabular-nums; }
+.hero .nums span { font-size: 13px; color: var(--ink-2); }
+#ag.vgrid { display: block; }
+#ag .vcard { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2.2fr); grid-template-areas: "head body" "head legend" "head data";
+  column-gap: 52px; row-gap: 14px; align-items: start; border: 0; border-radius: 0; background: transparent; padding: 60px 0; }
+#ag .vcard:nth-child(even) { background: var(--band); box-shadow: 0 0 0 100vmax var(--band); clip-path: inset(0 -100vmax); }
+#ag .vcard > .vhead { grid-area: head; position: sticky; top: 72px; gap: 10px; }
+#ag .vcard > .vbody { grid-area: body; }
+#ag .vcard > .vlegend { grid-area: legend; }
+#ag .vcard > details.vdata { grid-area: data; }
+#ag .vhead h3 { font-family: var(--font-display); font-weight: 400; font-size: clamp(26px, 2.8vw, 34px); line-height: 1.12; }
+#ag .vhead .sub { font-size: 14px; }
+#ag .kicker { letter-spacing: .12em; }
+#ag .actpanel { border-color: var(--grid); border-radius: 0; border-width: 0 0 0 2px; }
+svg.viz .gl { display: none; }
+svg.viz path[fill="none"] { stroke-width: 1.5px; }
+svg.viz rect { rx: 1px; }
+svg.flow .lnk { opacity: .3; }
+@media (max-width: 860px) {
+  #ag .vcard { grid-template-columns: minmax(0, 1fr); grid-template-areas: "head" "body" "legend" "data"; padding: 40px 0; }
+  #ag .vcard > .vhead { position: static; }
+}
 .vgrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 500px), 1fr)); gap: 14px; }
 .vcard { gap: 12px; padding: 16px 18px 14px; }
 .vhead { display: grid; gap: 4px; }
@@ -255,7 +286,7 @@ svg.viz rect[data-tip]:hover { stroke: var(--ink); stroke-width: 1.5; }
 svg.viz .bub:hover .dot { fill-opacity: .55; }
 svg.viz [data-pin], svg.viz [data-aline] { cursor: pointer; }
 svg.viz .bline:not(.hl):hover path + path { stroke: var(--ink-2); }
-svg.flow .lnk { opacity: .42; transition: opacity .12s; }
+svg.flow .lnk { transition: opacity .12s; }
 svg.flow.focus .lnk { opacity: .08; }
 svg.flow.focus .lnk.hl { opacity: .85; }
 .vlegend { display: flex; gap: 6px 16px; flex-wrap: wrap; font-size: 12.5px; color: var(--ink-2); align-items: center; }
@@ -446,7 +477,7 @@ footer p { max-width: none; }
 
   <!-- 3b. Insights (series) -->
   <div class="panel" role="tabpanel" id="p-ana" aria-labelledby="tab-ana" hidden>
-    <div class="lead"><h2 data-t="anaTitle"></h2><p class="sub" data-t="anaSub"></p></div>
+    <section class="hero"><h2 data-t="anaTitle"></h2><p class="sub" data-t="anaSub"></p><div class="nums" id="aNums"></div></section>
     <div class="controls">
       <div class="ctl"><span class="label" id="aLab" data-t="lineLabel"></span>
         <div class="seg" role="group" aria-labelledby="aLab" id="aLines"></div></div>
@@ -509,40 +540,41 @@ window.DASH = {"defects":[["216055047",1,"2026-01-06","2026-W02","A350","FTO2","
       retNote: 'Retours clients : coût estimé par le modèle CNQ, factures réelles non disponibles.',
       hProd: 'Famille de produit', hScope: 'Type', hProg: 'Programme', hPerMsn: 'Coût par MSN', hMaxMsn: 'MSN le plus cher', hNcs: 'NC',
       k_msn: 'Avions', t_msn: 'Coût par avion (MSN)', s_msn: 'Une barre par MSN, dans l’ordre de sa première NC ; même échelle pour tous les programmes. Série et retours clients empilés. Hachuré : première NC il y a moins de 30 jours, l’avion peut encore en recevoir. Cliquez sur une barre pour la liste de ses NC.',
-      fMsn: 'Coût moyen par avion, premiers → derniers MSN : {t}.', msnTrend: '{l} {a} → {b}', msnCount: '{n} MSN', msnTip: '{n} NC · série {s} · retours {c}', msnFirst: 'première NC le {d}', msnRecent: 'récent',
+      msnCount: '{n} MSN', msnTip: '{n} NC · série {s} · retours {c}', msnFirst: 'première NC le {d}', msnRecent: 'récent',
       msnRecentLeg: 'Première NC il y a moins de 30 jours', avgShort: 'moy. {v}', avgLeg: 'Moyenne du programme', msnClick: 'Cliquez sur une barre pour afficher les NC de cet avion.', msnHead: '{n} NC · {c}',
       k_prod: 'Produits', t_prod: 'Coût par famille de produit', s_prod: 'Série et retours clients ; nombre de NC, d’avions (MSN) et coût moyen par avion. Les 10 familles les plus coûteuses, les autres regroupées.',
-      fProd: '{p} porte {s} du coût.', fProd2: 'Coût par avion le plus élevé : {p}, {v} par MSN.', fProd3: 'C’est aussi la famille la plus chère par avion : {v} par MSN.', sep: ' ; ', prodTip: 'série {s} · retours {c} · {n} NC · {k} MSN', prodUnknown: 'Non identifié', prodRest: '{n} autres familles',
+      prodTip: 'série {s} · retours {c} · {n} NC · {k} MSN', prodUnknown: 'Non identifié', prodRest: '{n} autres familles',
       k_lead: 'Délais', t_lead: 'Combien de temps une NC reste ouverte', s_lead: 'Part des NC série encore ouvertes N jours après leur création, par décision. Les NC encore ouvertes comptent jusqu’à aujourd’hui (méthode de Kaplan-Meier). Point : la moitié des NC sont closes.',
-      fLead: 'La moitié des NC série sont closes en {a} jours.', fLead2: 'Rebuts et rejets : {b} jours.', fLead3: '{n} NC encore ouvertes, la plus ancienne depuis {d} jours.',
+     
       g_rw: 'Retouche', g_rej: 'Rebut / rejet', g_oth: 'Autres décisions', axDays: 'Jours depuis la création de la NC', daysShort: '{n} j', medLeg: 'Médiane : 50 % closes',
       hMedian: 'Médiane', hOpen7: 'Ouvertes à 7 j', hOpen30: 'Ouvertes à 30 j', hStillOpen: 'Encore ouvertes', kmTipH: 'Jour {d}', kmOpen: 'encore ouvertes',
       k_clock: 'Horaires', t_clock: 'Heure de rédaction des NC', s_clock: 'NC série par heure de création, heure de Paris. Longueur : nombre de NC.',
-      fClock: 'Pic à {h} h ; {p} des NC sont écrites entre 8 h et 13 h, {q} après 18 h ou avant 6 h.', hourRange: '{a} h – {b} h', clockTip: '{n} NC · {p}', clockCenter: 'NC', hHour: 'Heure',
+      hourRange: '{a} h – {b} h', clockTip: '{n} NC · {p}', clockCenter: 'NC', hHour: 'Heure',
       k_station: 'Postes', t_station: 'Défauts par poste et catégorie', s_station: 'Les 12 postes où les NC série portent le plus de défauts (poste de rédaction de la NC).',
-      fStation: 'Au poste {s}, {p} des défauts sont des {c}.', stTip: '{n} défauts · {p} du poste', noStation: 'Poste non renseigné', hStation: 'Poste',
+      stTip: '{n} défauts · {p} du poste', noStation: 'Poste non renseigné', hStation: 'Poste',
       k_act: 'Actions', t_act: 'Actions MFT et problème visé', s_act: 'Pour chaque action des fichiers de suivi MFT A330 et A350 : défauts du problème visé, mois par mois, sur la ligne concernée. En bleu, les mois depuis le début de l’action ; pointillé : début de l’analyse.',
-      fAct: '{n} actions suivies, dont {k} lancées il y a moins de 4 mois : trop tôt pour conclure.', fActN: '{n} actions suivies, dont {k} lancées il y a moins de 4 mois.', fAct2: 'Plus forte baisse depuis le lancement : {a}, de {x} à {y} des défauts {l}.',
+     
       actTip: '{n} défauts · {p} des défauts de la ligne', actShare: 'Part des défauts de la ligne : {a} avant → {b} depuis ({k} mois)', actNoAfter: 'Pas encore de mois après le lancement.',
       actDates: 'Analyse : {a} · Action : {b} · Statut : {s}', actNoStatus: 'non renseigné', actBefore: 'Avant l’action', actAfter: 'Depuis le début de l’action', actAnalysis: 'Début de l’analyse',
       actNote: 'Lien action → problème proposé, à valider avec la qualité ligne.', actNone: 'Pas d’action MFT suivie pour cette ligne.',
       hProblem: 'Problème visé', hAnalysis: 'Analyse', hAction: 'Action', hStatus: 'Statut', hRoot: 'Cause racine (fichier MFT)', hDoing: 'Action (fichier MFT)',
+      aK1: 'défauts série', aK2: 'NC série', aK3: 'coût de non-qualité série', aK4: 'retours clients', aK5: 'NC encore ouvertes',
       tabAna: 'Analyses', anaTitle: 'Analyses des NC série', anaSub: 'Défauts, avions, produits, délais, postes et actions. Survolez un élément pour le détail ; chaque graphique a sa table de données.',
       asof: 'Données au {to}', asideGroup: 'Suivi séparé', dataView: 'Voir les données', hDay: 'Jour', hDays: 'Jours avec défauts', hPerDay: 'Défauts par jour', hFrom: 'De', hTo: 'Vers', hPerDef: 'Coût par défaut',
       k_cal: 'Rythme', t_cal: 'Calendrier des défauts', s_cal: 'Défauts série par jour de création de la NC ; à droite, la part de chaque jour de la semaine. Case grise : aucun défaut ce jour-là (jour férié, fermeture).',
-      fCal: 'le {a} concentre {p} des défauts, le {b} seulement {q}.', calTip: '{n} défauts · {k} NC', calNone: 'Aucun défaut', calLeg: 'Défauts par jour', wdProfile: 'Part par jour de la semaine', wdTip: '{p} des défauts · {n}',
+      calTip: '{n} défauts · {k} NC', calNone: 'Aucun défaut', calLeg: 'Défauts par jour', wdProfile: 'Part par jour de la semaine', wdTip: '{p} des défauts · {n}',
       k_flow: 'Flux', t_flow: 'Du lieu de détection à la décision', s_flow: 'Défauts série : où la NC a été trouvée, catégorie du défaut, décision prise sur la NC. Épaisseur = nombre de défauts. Survolez un nœud pour isoler ses flux.',
-      fFlow: '{w} trouve {p} des défauts {c}. {r} des défauts finissent en retouche.', flowTip: '{n} défauts · {p} de « {c} »', nodeTip: '{n} défauts · {p}',
+      flowTip: '{n} défauts · {p} de « {c} »', nodeTip: '{n} défauts · {p}',
       colWhere: 'Trouvé à', colCat: 'Catégorie', colDec: 'Décision',
       w_fin: 'Contrôle final', w_test: 'Test', w_cab: 'Câbles', w_int: 'Interne (en cours)', w_oth: 'Autres', d_rw: 'Retouche', d_rej: 'Rebut / rejet', d_exc: 'Échange', d_oth: 'Autres décisions',
       k_bub: 'Coût', t_bub: 'Volume ou coût unitaire', s_bub: 'Une bulle par cause (au moins 3 défauts). À droite : fréquente ; en haut : chère par défaut ; surface : coût total. Les pointillés relient les points de même coût total.',
-      fBub: 'Un défaut {a} coûte en moyenne {x} fois un défaut {b}.', bubTip: '{n} défauts · {c} au total · {a} par défaut', axDef: 'Nombre de défauts (échelle logarithmique)', axAvg: 'Coût moyen par défaut', bubLeg: 'Cause (surface = coût total)', isoLeg: 'Même coût total',
+      bubTip: '{n} défauts · {c} au total · {a} par défaut', axDef: 'Nombre de défauts (échelle logarithmique)', axAvg: 'Coût moyen par défaut', bubLeg: 'Cause (surface = coût total)', isoLeg: 'Même coût total',
       k_lor: 'Concentration', t_lor: 'Défauts et coût par NC', s_lor: 'NC triées de la plus lourde à la plus légère. À 10 % des NC, chaque courbe donne la part qu’elles portent. La diagonale serait une répartition égale.',
-      fLor: 'Les 10 % de NC les plus chargées portent {d} des défauts ; les 10 % les plus chères, {c} du coût.', lorD: 'Défauts', lorC: 'Coût', lorEq: 'Répartition égale', axNcShare: 'Part des NC', lorTipH: '{p} des NC ({n})',
+      lorD: 'Défauts', lorC: 'Coût', lorEq: 'Répartition égale', axNcShare: 'Part des NC', lorTipH: '{p} des NC ({n})',
       k_mek: 'Structure', t_mek: 'Profil des défauts par ligne', s_mek: 'Largeur : volume de défauts de la ligne. Hauteur : part de chaque catégorie dans la ligne. Cliquez sur une ligne pour la choisir.',
-      fMek: '{c} pèse {a} des défauts sur {l1}, contre {b} sur {l2}.', mekTip: '{n} défauts · {p} de la ligne',
+      mekTip: '{n} défauts · {p} de la ligne',
       k_bump: 'Évolution', t_bump: 'Classement mensuel des causes', s_bump: 'Rang de chacune des 8 premières causes, mois par mois. Cliquez sur une courbe pour la suivre.',
-      fBump: '{a} est la première cause {k} mois sur {m}.', bumpTip: '{r} · {n} défauts', bumpNone: 'Aucun défaut ce mois-ci', lowVol: 'volume faible', lowTip: '{n} défauts : mois peu chargé, rangs moins fiables', beyond: '>10',
+      bumpTip: '{r} · {n} défauts', bumpNone: 'Aucun défaut ce mois-ci', lowVol: 'volume faible', lowTip: '{n} défauts : mois peu chargé, rangs moins fiables', beyond: '>10',
       unit: 'Qualité', title: 'Non-conformités FTO2', period: 'NC créées du {from} au {to}',
       minorLabel: 'Défauts mineurs', minorIn: 'Inclus', minorOut: 'Exclus',
       tabPareto: 'Pareto', tabCost: 'Pareto des coûts', tabWeek: 'Pareto hebdomadaire', tabCnq: 'Coût de non-qualité', tabClient: 'Retours clients', tabRca: 'Causes (RCA)',
@@ -596,40 +628,41 @@ window.DASH = {"defects":[["216055047",1,"2026-01-06","2026-W02","A350","FTO2","
       retNote: 'Customer returns: cost estimated by the CNQ model; actual invoices not available.',
       hProd: 'Product family', hScope: 'Type', hProg: 'Programme', hPerMsn: 'Cost per MSN', hMaxMsn: 'Most expensive MSN', hNcs: 'NCs',
       k_msn: 'Aircraft', t_msn: 'Cost per aircraft (MSN)', s_msn: 'One bar per MSN, in order of its first NC; same scale for every programme. Series and customer returns stacked. Hatched: first NC less than 30 days ago, the aircraft may still get more. Click a bar to list its NCs.',
-      fMsn: 'Average cost per aircraft, first → latest MSNs: {t}.', msnTrend: '{l} {a} → {b}', msnCount: '{n} MSNs', msnTip: '{n} NCs · series {s} · returns {c}', msnFirst: 'first NC {d}', msnRecent: 'recent',
+      msnCount: '{n} MSNs', msnTip: '{n} NCs · series {s} · returns {c}', msnFirst: 'first NC {d}', msnRecent: 'recent',
       msnRecentLeg: 'First NC less than 30 days ago', avgShort: 'avg {v}', avgLeg: 'Programme average', msnClick: 'Click a bar to list that aircraft’s NCs.', msnHead: '{n} NCs · {c}',
       k_prod: 'Products', t_prod: 'Cost by product family', s_prod: 'Series and customer returns; number of NCs, aircraft (MSNs) and average cost per aircraft. The 10 costliest families, the rest grouped.',
-      fProd: '{p} carries {s} of the cost.', fProd2: 'Highest cost per aircraft: {p}, {v} per MSN.', fProd3: 'It is also the most expensive family per aircraft: {v} per MSN.', sep: '; ', prodTip: 'series {s} · returns {c} · {n} NCs · {k} MSNs', prodUnknown: 'Not identified', prodRest: '{n} other families',
+      prodTip: 'series {s} · returns {c} · {n} NCs · {k} MSNs', prodUnknown: 'Not identified', prodRest: '{n} other families',
       k_lead: 'Lead time', t_lead: 'How long an NC stays open', s_lead: 'Share of series NCs still open N days after creation, by decision. NCs still open count until today (Kaplan-Meier). Dot: half of the NCs are closed.',
-      fLead: 'Half of series NCs are closed within {a} days.', fLead2: 'Scrap and rejections: {b} days.', fLead3: '{n} NCs still open, the oldest for {d} days.',
+     
       g_rw: 'Rework', g_rej: 'Scrap / rejection', g_oth: 'Other decisions', axDays: 'Days since the NC was created', daysShort: '{n} d', medLeg: 'Median: 50% closed',
       hMedian: 'Median', hOpen7: 'Open at 7 d', hOpen30: 'Open at 30 d', hStillOpen: 'Still open', kmTipH: 'Day {d}', kmOpen: 'still open',
       k_clock: 'Hours', t_clock: 'Time NCs are written', s_clock: 'Series NCs by creation hour, Paris time. Length: number of NCs.',
-      fClock: 'Peak at {h}:00; {p} of NCs are written between 8:00 and 13:00, {q} after 18:00 or before 6:00.', hourRange: '{a}:00–{b}:00', clockTip: '{n} NCs · {p}', clockCenter: 'NCs', hHour: 'Hour',
+      hourRange: '{a}:00–{b}:00', clockTip: '{n} NCs · {p}', clockCenter: 'NCs', hHour: 'Hour',
       k_station: 'Stations', t_station: 'Defects by station and category', s_station: 'The 12 stations whose series NCs carry the most defects (station where the NC was written).',
-      fStation: 'At station {s}, {p} of defects are {c}.', stTip: '{n} defects · {p} of the station', noStation: 'Station not recorded', hStation: 'Station',
+      stTip: '{n} defects · {p} of the station', noStation: 'Station not recorded', hStation: 'Station',
       k_act: 'Actions', t_act: 'MFT actions and the problem they target', s_act: 'For each action in the A330 and A350 MFT trackers: defects of the targeted problem, month by month, on that line. Blue: months since the action started; dotted: start of the analysis.',
-      fAct: '{n} actions tracked, {k} of them started less than 4 months ago: too early to judge.', fActN: '{n} actions tracked, {k} of them started less than 4 months ago.', fAct2: 'Largest drop since launch: {a}, from {x} to {y} of {l} defects.',
+     
       actTip: '{n} defects · {p} of the line’s defects', actShare: 'Share of the line’s defects: {a} before → {b} since ({k} months)', actNoAfter: 'No month after launch yet.',
       actDates: 'Analysis: {a} · Action: {b} · Status: {s}', actNoStatus: 'not recorded', actBefore: 'Before the action', actAfter: 'Since the action started', actAnalysis: 'Start of the analysis',
       actNote: 'Action → problem link proposed, to be confirmed with line quality. Action texts stay in French.', actNone: 'No MFT action tracked for this line.',
       hProblem: 'Targeted problem', hAnalysis: 'Analysis', hAction: 'Action', hStatus: 'Status', hRoot: 'Root cause (MFT file)', hDoing: 'Action (MFT file)',
+      aK1: 'series defects', aK2: 'series NCs', aK3: 'series cost of non-quality', aK4: 'customer returns', aK5: 'NCs still open',
       tabAna: 'Insights', anaTitle: 'Series NC insights', anaSub: 'Defects, aircraft, products, lead times, stations and actions. Hover any mark for detail; each chart has its data table.',
       asof: 'Data as of {to}', asideGroup: 'Tracked separately', dataView: 'Show the data', hDay: 'Day', hDays: 'Days with defects', hPerDay: 'Defects per day', hFrom: 'From', hTo: 'To', hPerDef: 'Cost per defect',
       k_cal: 'Rhythm', t_cal: 'Defect calendar', s_cal: 'Series defects by NC creation day; on the right, each weekday’s share. Grey cell: no defect that day (public holiday, shutdown).',
-      fCal: '{a}s carry {p} of defects, {b}s only {q}.', calTip: '{n} defects · {k} NCs', calNone: 'No defect', calLeg: 'Defects per day', wdProfile: 'Share by weekday', wdTip: '{p} of defects · {n}',
+      calTip: '{n} defects · {k} NCs', calNone: 'No defect', calLeg: 'Defects per day', wdProfile: 'Share by weekday', wdTip: '{p} of defects · {n}',
       k_flow: 'Flow', t_flow: 'From where it is found to the decision', s_flow: 'Series defects: where the NC was found, defect category, decision taken on the NC. Width = number of defects. Hover a node to isolate its flows.',
-      fFlow: '{w} finds {p} of {c} defects. {r} of defects end in rework.', flowTip: '{n} defects · {p} of “{c}”', nodeTip: '{n} defects · {p}',
+      flowTip: '{n} defects · {p} of “{c}”', nodeTip: '{n} defects · {p}',
       colWhere: 'Found at', colCat: 'Category', colDec: 'Decision',
       w_fin: 'Final inspection', w_test: 'Test', w_cab: 'Cables', w_int: 'In-process', w_oth: 'Other', d_rw: 'Rework', d_rej: 'Scrap / rejection', d_exc: 'Exchange', d_oth: 'Other decisions',
       k_bub: 'Cost', t_bub: 'Volume or unit cost', s_bub: 'One bubble per root cause (3 defects or more). Right: frequent; up: expensive per defect; area: total cost. Dotted curves join points of equal total cost.',
-      fBub: 'A {a} defect costs on average {x} times a {b} defect.', bubTip: '{n} defects · {c} in total · {a} per defect', axDef: 'Number of defects (log scale)', axAvg: 'Average cost per defect', bubLeg: 'Root cause (area = total cost)', isoLeg: 'Equal total cost',
+      bubTip: '{n} defects · {c} in total · {a} per defect', axDef: 'Number of defects (log scale)', axAvg: 'Average cost per defect', bubLeg: 'Root cause (area = total cost)', isoLeg: 'Equal total cost',
       k_lor: 'Concentration', t_lor: 'Defects and cost per NC', s_lor: 'NCs sorted from heaviest to lightest. At 10% of NCs, each curve gives the share they carry. The diagonal would be an equal spread.',
-      fLor: 'The 10% of NCs with the most defects carry {d} of defects; the 10% most expensive, {c} of the cost.', lorD: 'Defects', lorC: 'Cost', lorEq: 'Equal spread', axNcShare: 'Share of NCs', lorTipH: '{p} of NCs ({n})',
+      lorD: 'Defects', lorC: 'Cost', lorEq: 'Equal spread', axNcShare: 'Share of NCs', lorTipH: '{p} of NCs ({n})',
       k_mek: 'Structure', t_mek: 'Defect mix by line', s_mek: 'Width: the line’s defect volume. Height: each category’s share within the line. Click a line to select it.',
-      fMek: '{c} is {a} of defects on {l1}, against {b} on {l2}.', mekTip: '{n} defects · {p} of the line',
+      mekTip: '{n} defects · {p} of the line',
       k_bump: 'Trend', t_bump: 'Monthly ranking of root causes', s_bump: 'Rank of each of the top 8 root causes, month by month. Click a line to follow it.',
-      fBump: '{a} is the top root cause in {k} of {m} months.', bumpTip: '{r} · {n} defects', bumpNone: 'No defect this month', lowVol: 'low volume', lowTip: '{n} defects: light month, ranks less reliable', beyond: '>10',
+      bumpTip: '{r} · {n} defects', bumpNone: 'No defect this month', lowVol: 'low volume', lowTip: '{n} defects: light month, ranks less reliable', beyond: '>10',
       unit: 'Quality', title: 'FTO2 Non-conformities', period: 'NCs created {from} to {to}',
       minorLabel: 'Minor defects', minorIn: 'Included', minorOut: 'Excluded',
       tabPareto: 'Pareto', tabCost: 'Cost Pareto', tabWeek: 'Weekly Pareto', tabCnq: 'Cost of non-quality', tabClient: 'Customer returns', tabRca: 'Root causes (RCA)',
@@ -1161,7 +1194,6 @@ window.DASH = {"defects":[["216055047",1,"2026-01-06","2026-W02","A350","FTO2","
   function f1(x) { return (Math.round(x * 10) / 10).toLocaleString(loc()); }
   function svg(w, h, inner, label, cls) { return '<svg class="viz' + (cls ? ' ' + cls : '') + '" width="' + Math.round(w) + '" height="' + Math.round(h) + '" viewBox="0 0 ' + Math.round(w) + ' ' + Math.round(h) + '" role="img" aria-label="' + esc(label) + '">' + inner + '</svg>'; }
   function ord(n) { return G.lang === 'fr' ? (n === 1 ? '1er' : n + 'e') : n + (n % 100 > 10 && n % 100 < 14 ? 'th' : ['th', 'st', 'nd', 'rd'][n % 10] || 'th'); }
-  function quote(s) { return G.lang === 'fr' ? '« ' + s + ' »' : '“' + s + '”'; }
   function kEur(c) { return G.lang === 'fr' ? (c / 1000).toLocaleString('fr-FR') + ' k€' : (c / 1000).toLocaleString('en-GB') + 'k EUR'; }
   // labels in a column must not overlap: push them apart, keeping their order
   function spread(ys, gap, lo, hi) {
@@ -1171,9 +1203,8 @@ window.DASH = {"defects":[["216055047",1,"2026-01-06","2026-W02","A350","FTO2","
     if (o.length && o[0].y < lo) { o[0].y = lo; for (var k = 1; k < o.length; k++) if (o[k].y < o[k - 1].y + gap) o[k].y = o[k - 1].y + gap; }
     var out = []; o.forEach(function (p) { out[p.i] = p.y; }); return out;
   }
-  function vSet(k, html, finding, legend, table) {
+  function vSet(k, html, legend, table) {
     document.getElementById('v-' + k + '-b').innerHTML = html;
-    document.getElementById('v-' + k + '-f').textContent = finding || S('t_' + k);
     document.getElementById('v-' + k + '-l').innerHTML = legend || '';
     document.getElementById('v-' + k + '-l').hidden = !legend;
     document.getElementById('v-' + k + '-t').innerHTML = table || '';
@@ -1234,14 +1265,11 @@ window.DASH = {"defects":[["216055047",1,"2026-01-06","2026-W02","A350","FTO2","
     var html;
     if (side) html = svg(gw + side, h, out + profile(gw + 24, top, st, Math.max(8, cell - 6), side - 24), S('t_cal'));
     else html = svg(gw, h, out, S('t_cal')) + svg(Math.min(W0, 360), 24 + nR * 20, profile(0, 24, 20, 12, Math.min(W0, 360) - 40), S('wdProfile'));
-    var order = [0, 1, 2, 3, 4, 5, 6].slice(0, nR).filter(function (i4) { return wdTot[i4]; }).sort(function (a, b) { return wdTot[b] - wdTot[a]; });
-    var f = order.length > 1 ? S('fCal', { a: wdLong[order[0]], p: pct0(wdTot[order[0]] / T * 100), b: wdLong[order[order.length - 1]], q: pct0(wdTot[order[order.length - 1]] / T * 100) }) : '';
-    if (f) f = f.charAt(0).toUpperCase() + f.slice(1);
     var leg = '<span class="mu">' + esc(S('calLeg')) + '</span><span><i class="sw" style="background:var(--track)"></i>0</span>' + Array.apply(null, Array(nb)).map(function (_, b) {
       var a = b === 0 ? 1 : cuts[b - 1] + 1, z = b < cuts.length ? cuts[b] : vals[vals.length - 1];
       return '<span><i class="sw" style="background:' + shade(b) + '"></i>' + (a === z ? num(a) : num(a) + '–' + num(z)) + '</span>'; }).join('');
     var rows = [0, 1, 2, 3, 4, 5, 6].slice(0, nR).map(function (i5) { return [wdLong[i5], num(wdTot[i5]), pct(T ? wdTot[i5] / T * 100 : 0), num(wdDays[i5]), wdDays[i5] ? f1(wdTot[i5] / wdDays[i5]) : '—']; });
-    vSet('cal', html, f, leg, miniTable([S('hDay'), S('hDef'), S('rShare'), S('hDays'), S('hPerDay')], rows, 1));
+    vSet('cal', html, leg, miniTable([S('hDay'), S('hDef'), S('rShare'), S('hDays'), S('hPerDay')], rows, 1));
   }
 
   // 2. Flow (Sankey): where the NC was found -> defect category -> decision
@@ -1279,13 +1307,10 @@ window.DASH = {"defects":[["216055047",1,"2026-01-06","2026-W02","A350","FTO2","
     col(MN, pM, tm, xM, catFill, catLabel, 'M');
     col(RN, pR, tr, xR, function () { return 'var(--ink-2)'; }, rName, 'R');
     var heads = tx(xL + nw, 14, S('colWhere'), 'mu b', 'end') + tx(xM, 14, S('colCat'), 'mu b') + tx(xR, 14, S('colDec'), 'mu b');
-    var best = null;
-    MN.forEach(function (b) { if (b === 'aside' || tm[b] < 50) return; LN.forEach(function (a) { var v = lm[a + '|' + b] || 0, s = v / tm[b]; if (!best || s > best.s) best = { a: a, b: b, s: s }; }); });
-    var f = best ? S('fFlow', { w: quote(wName(best.a)), p: pct0(best.s * 100), c: quote(catLabel(best.b)), r: pct0((tr.rw || 0) / T * 100) }) : '';
     var rows = [];
     LN.forEach(function (a) { MN.forEach(function (b) { if (lm[a + '|' + b]) rows.push([wName(a), catLabel(b), num(lm[a + '|' + b])]); }); });
     MN.forEach(function (b) { RN.forEach(function (c) { if (mr[b + '|' + c]) rows.push([catLabel(b), rName(c), num(mr[b + '|' + c])]); }); });
-    vSet('flow', svg(W0, H, heads + '<g class="links">' + links + '</g>' + nodes + labels, S('t_flow'), 'flow'), f, '', miniTable([S('hFrom'), S('hTo'), S('hDef')], rows, 2));
+    vSet('flow', svg(W0, H, heads + '<g class="links">' + links + '</g>' + nodes + labels, S('t_flow'), 'flow'), '', miniTable([S('hFrom'), S('hTo'), S('hDef')], rows, 2));
   }
 
   // 3. Volume x unit cost per root cause, with curves of equal total cost
@@ -1330,11 +1355,9 @@ window.DASH = {"defects":[["216055047",1,"2026-01-06","2026-W02","A350","FTO2","
         [x, yy - r - 5, 'middle', [x - w / 2, yy - r - 18, x + w / 2, yy - r - 3]], [x, yy + r + 14, 'middle', [x - w / 2, yy + r + 2, x + w / 2, yy + r + 17]]];
       for (var i = 0; i < tries.length; i++) { if (free(tries[i][3], s)) { placed.push(tries[i][3]); labs += tx(tries[i][0], tries[i][1], t, 'ink halo', tries[i][2] === 'start' ? null : tries[i][2]); break; } }
     });
-    var vol = list.slice().sort(function (a, b) { return b.n - a.n; })[0];
-    var f = byAvg && vol && byAvg !== vol && byAvg.a / vol.a >= 1.5 ? S('fBub', { a: quote(L(byAvg.k)), x: f1(byAvg.a / vol.a), b: quote(L(vol.k)) }) : '';
     var leg = '<span><i class="sw ring" style="background:' + tint('--s1', 28) + ';border-color:var(--s1)"></i>' + esc(S('bubLeg')) + '</span><span><i class="sw ring" style="background:' + tint('--dim', 28) + ';border-color:var(--muted)"></i>' + esc(S('aside')) + '</span><span><i class="dash"></i>' + esc(S('isoLeg')) + '</span>';
     var rows = list.map(function (s) { return [L(s.k), L(s.cat), num(s.n), eur(s.c), eur(s.a)]; });
-    vSet('bub', svg(W0, H, g + iso + dots + labs, S('t_bub')), f, leg, miniTable([S('rRca'), S('rCat'), S('hDef'), S('hCost'), S('hPerDef')], rows, 2));
+    vSet('bub', svg(W0, H, g + iso + dots + labs, S('t_bub')), leg, miniTable([S('rRca'), S('rCat'), S('hDef'), S('hCost'), S('hPerDef')], rows, 2));
   }
 
   // 4. Concentration (Lorenz): share of defects and of cost carried by the heaviest NCs
@@ -1359,10 +1382,9 @@ window.DASH = {"defects":[["216055047",1,"2026-01-06","2026-W02","A350","FTO2","
     g += tx(X(0.72), Y(0.72) + 16, S('lorEq'), 'mu halo', 'middle', ' transform="rotate(' + r1(-Math.atan2(ph, pw) * 180 / Math.PI) + ' ' + r1(X(0.72)) + ' ' + r1(Y(0.72) + 16) + ')"');
     g += '<line id="lorX" class="cross" y1="' + mt + '" y2="' + (mt + ph) + '" x1="-10" x2="-10"/><rect data-lorenz="1" x="' + ml + '" y="' + mt + '" width="' + pw + '" height="' + ph + '" fill="transparent"/>';
     A.lor = { N: N, cd: cd, cc: cc, ml: ml, pw: pw };
-    var f = S('fLor', { d: pct0(cd[i10] * 100), c: pct0(cc[i10] * 100) });
     var leg = '<span><i class="ln" style="background:var(--ink)"></i>' + esc(S('lorD')) + '</span><span><i class="ln" style="background:var(--s1)"></i>' + esc(S('lorC')) + '</span><span><i class="dash"></i>' + esc(S('lorEq')) + '</span>';
     var rows = [0.05, 0.1, 0.2, 0.3, 0.5].map(function (p) { var i = Math.max(1, Math.round(N * p)); return [pct0(p * 100) + ' (' + num(i) + ' NC)', pct(cd[i] * 100), pct(cc[i] * 100)]; });
-    vSet('lor', svg(W0, H, g, S('t_lor')), f, leg, miniTable([S('axNcShare'), S('lorD'), S('lorC')], rows, 1));
+    vSet('lor', svg(W0, H, g, S('t_lor')), leg, miniTable([S('axNcShare'), S('lorD'), S('lorC')], rows, 1));
   }
 
   // 5. Marimekko: width = the line's defect volume, height = each category's share within the line
@@ -1386,14 +1408,9 @@ window.DASH = {"defects":[["216055047",1,"2026-01-06","2026-W02","A350","FTO2","
       else { var last = li === lines.length - 1; g += '<text x="' + r1(last ? x + w : x) + '" y="' + (H - mb + 50) + '"' + (last ? ' text-anchor="end"' : '') + '><tspan class="ink b">' + esc(l) + '</tspan> <tspan class="mu">' + esc(cap) + '</tspan></text>'; }
       x += w + gap;
     });
-    var f = '';
-    if (per.A350 && per.A330) {
-      var best = null; MAIN_CATS.forEach(function (c) { if (c === 'aside') return; var a = (per.A350[c] || 0) / tot.A350, b = (per.A330[c] || 0) / tot.A330; if (!best || Math.abs(a - b) > Math.abs(best.a - best.b)) best = { c: c, a: a, b: b }; });
-      if (best) f = S('fMek', { c: quote(catLabel(best.c)), a: pct0(best.a * 100), l1: 'A350', b: pct0(best.b * 100), l2: 'A330' });
-    }
     var leg = MAIN_CATS.map(function (c) { return '<span><i class="sw" style="background:' + catFill(c) + '"></i>' + esc(catLabel(c)) + '</span>'; }).join('');
     var rows = MAIN_CATS.map(function (c) { return [catLabel(c)].concat(lines.map(function (l) { var n = per[l][c] || 0; return num(n) + ' (' + pct0(n / tot[l] * 100) + ')'; })); });
-    vSet('mek', svg(W0, H, g, S('t_mek')), f, leg, miniTable([S('rCat')].concat(lines), rows, 1));
+    vSet('mek', svg(W0, H, g, S('t_mek')), leg, miniTable([S('rCat')].concat(lines), rows, 1));
   }
 
   // 6. Bump chart: monthly rank of the top 8 root causes
@@ -1429,10 +1446,8 @@ window.DASH = {"defects":[["216055047",1,"2026-01-06","2026-W02","A350","FTO2","
     var ys = spread(ends.map(function (e) { return e.y; }), 14, mt, H - 4), xe = X(months.length - 1) + 12, maxCh = Math.floor((right - 16) / 6.6);
     ends.forEach(function (e, i) { var t = L(e.a); if (t.length > maxCh) t = t.slice(0, maxCh - 1) + '…';
       g += '<text class="halo' + (e.hl ? ' ink b' : '') + '" x="' + r1(xe) + '" y="' + r1(ys[i]) + '" data-pin="' + esc(e.a) + '">' + esc(t) + '</text>'; });
-    var first = months.filter(function (m) { return rank[m][top[0]] === 1; }).length;
-    var f = S('fBump', { a: quote(L(top[0])), k: num(first), m: num(months.length) });
     var rows = top.map(function (a) { return [L(a)].concat(months.map(function (m) { return rank[m][a] ? ord(rank[m][a]) + ' (' + num(cnt[m][a]) + ')' : '—'; })); });
-    vSet('bump', svg(W0, H, g, S('t_bump')), f, '', miniTable([S('rRca')].concat(months.map(monthName)), rows, 1));
+    vSet('bump', svg(W0, H, g, S('t_bump')), '', miniTable([S('rRca')].concat(months.map(monthName)), rows, 1));
   }
 
   // ---- NC-level charts: aircraft (MSN), product family, lead time, hour, station, MFT actions
@@ -1452,7 +1467,7 @@ window.DASH = {"defects":[["216055047",1,"2026-01-06","2026-W02","A350","FTO2","
     var recent = isoDay(new Date(new Date(D.meta.to + 'T00:00:00Z').getTime() - 30 * 864e5));
     var lab = 112, maxN = Math.max.apply(null, rows.map(function (r) { return r.ms.length; })), step = Math.max(5, Math.min(26, Math.floor((W0 - lab - 8) / maxN))), bw = Math.max(3, step - 2);
     var maxC = Math.max.apply(null, rows.map(function (r) { return Math.max.apply(null, r.ms.map(function (m) { return m.s + m.c; })); }));
-    var tick = maxC > 2500 ? 1000 : maxC > 1200 ? 500 : 250, top = Math.ceil(maxC / tick) * tick, ph = 92, rh = ph + 34, H = rows.length * rh + 4, g = '', rowsTbl = [], parts = [];
+    var tick = maxC > 2500 ? 1000 : maxC > 1200 ? 500 : 250, top = Math.ceil(maxC / tick) * tick, ph = 92, rh = ph + 34, H = rows.length * rh + 4, g = '', rowsTbl = [];
     rows.forEach(function (row, ri) {
       var y0 = ri * rh + 8, base = y0 + ph, Y = function (v) { return base - v / top * ph; }, tot = 0, w = lab + row.ms.length * step;
       g += tx(0, y0 + 14, progName(row.l), 'ink b') + tx(0, y0 + 30, S('msnCount', { n: num(row.ms.length) }), 'mu');
@@ -1475,15 +1490,11 @@ window.DASH = {"defects":[["216055047",1,"2026-01-06","2026-W02","A350","FTO2","
         if (placed.some(function (p) { return Math.abs(p - cx) < 30; })) return; placed.push(cx);
         g += tx(cx, Y(m.s + m.c) - 5, m.msn, 'ink b halo', 'middle');
       });
-      // trend: first third vs last third of the MSNs, recent ones left out
-      var done = row.ms.filter(function (m) { return m.first < recent; }), k3 = Math.floor(done.length / 3);
-      if (k3 >= 3) { var av = function (a) { return a.reduce(function (s, m) { return s + m.s + m.c; }, 0) / a.length; }; parts.push(S('msnTrend', { l: progName(row.l), a: eur(av(done.slice(0, k3))), b: eur(av(done.slice(-k3))) })); }
       rowsTbl.push([progName(row.l), num(row.ms.length), eur(tot), eur(avg), (function () { var b = row.ms.slice().sort(function (a, c) { return (c.s + c.c) - (a.s + a.c); })[0]; return b.msn + ' (' + eur(b.s + b.c) + ')'; })()]);
     });
     var defs = '<defs><pattern id="hatchS1" width="4" height="4" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="4" height="4" fill="var(--s1-soft)"/><line x1="0" y1="0" x2="0" y2="4" stroke="var(--s1)" stroke-width="1.5"/></pattern></defs>';
-    var f = parts.length ? S('fMsn', { t: parts.join(S('sep')) }) : '';
     var leg = '<span><i class="sw" style="background:var(--s1)"></i>' + esc(S('legSerie')) + '</span><span><i class="sw" style="background:var(--s1-ret)"></i>' + esc(S('legRet')) + '</span><span><i class="sw" style="background:repeating-linear-gradient(135deg,var(--s1) 0 2px,var(--s1-soft) 2px 4px)"></i>' + esc(S('msnRecentLeg')) + '</span><span><i class="dash"></i>' + esc(S('avgLeg')) + '</span>';
-    vSet('msn', svg(W0, H, defs + g, S('t_msn')) + '<div class="msnlist" id="msnList"></div>', f, leg + '<span class="mu">' + esc(S('retNote')) + '</span>', miniTable([S('hProg'), 'MSN', S('hCost'), S('hPerMsn'), S('hMaxMsn')], rowsTbl, 1));
+    vSet('msn', svg(W0, H, defs + g, S('t_msn')) + '<div class="msnlist" id="msnList"></div>', leg + '<span class="mu">' + esc(S('retNote')) + '</span>', miniTable([S('hProg'), 'MSN', S('hCost'), S('hPerMsn'), S('hMaxMsn')], rowsTbl, 1));
     renderMsnList(per);
   }
   function renderMsnList(per) {
@@ -1517,11 +1528,9 @@ window.DASH = {"defects":[["216055047",1,"2026-01-06","2026-W02","A350","FTO2","
       var cx2 = W0 - colW, vals = [num(m.n), num(m.k), m.k ? eur(m.t / m.k) : '—'];
       cols.forEach(function (c, ci) { cx2 += c[1]; g += tx(cx2 - 4, y + 17, vals[ci], 'mu', 'end'); });
     });
-    var top1 = list[0], perMsn = list.filter(function (m) { return m.p !== '__rest' && m.p !== 'Other' && m.k >= 5; }).sort(function (a, b) { return b.t / b.k - a.t / a.k; })[0];
-    var f = S('fProd', { p: quote(prodName(top1.p)), s: pct0(top1.t / T * 100) }) + (perMsn ? ' ' + (perMsn === top1 ? S('fProd3', { v: eur(perMsn.t / perMsn.k) }) : S('fProd2', { p: quote(prodName(perMsn.p)), v: eur(perMsn.t / perMsn.k) })) : '');
     var leg = '<span><i class="sw" style="background:var(--s1)"></i>' + esc(S('legSerie')) + '</span><span><i class="sw" style="background:var(--s1-ret)"></i>' + esc(S('legRet')) + '</span>';
     var rows = list.map(function (m) { return [m.p === '__rest' ? S('prodRest', { n: m.nf }) : prodName(m.p), eur(m.s), eur(m.c), num(m.n), num(m.k), m.k ? eur(m.t / m.k) : '—']; });
-    vSet('prod', svg(W0, H, g, S('t_prod')), f, leg, miniTable([S('hProd'), S('legSerie'), S('legRet'), S('hNcs'), 'MSN', S('hPerMsn')], rows, 1));
+    vSet('prod', svg(W0, H, g, S('t_prod')), leg, miniTable([S('hProd'), S('legSerie'), S('legRet'), S('hNcs'), 'MSN', S('hPerMsn')], rows, 1));
   }
 
   // 9. Lead time: share of NCs still open N days after creation (Kaplan-Meier, open NCs counted until today)
@@ -1558,11 +1567,9 @@ window.DASH = {"defects":[["216055047",1,"2026-01-06","2026-W02","A350","FTO2","
     g += ends + '<line class="guide" x1="' + ml + '" x2="' + (ml + pw) + '" y1="' + r1(Y(0.5)) + '" y2="' + r1(Y(0.5)) + '"/>';
     g += '<line id="kmX" class="cross" y1="' + mt + '" y2="' + (mt + ph) + '" x1="-10" x2="-10"/><rect data-km="1" x="' + ml + '" y="' + mt + '" width="' + pw + '" height="' + ph + '" fill="transparent"/>';
     A.km = { keys: keys, curves: curves, ml: ml, pw: pw, XM: XM };
-    var mAll = kmMedian(cAll), mRej = curves.rej ? kmMedian(curves.rej) : null, oldest = open.reduce(function (s, n) { return Math.max(s, n[31] || 0); }, 0);
-    var f = (mAll != null ? S('fLead', { a: num(Math.round(mAll)) }) : '') + (mRej != null ? ' ' + S('fLead2', { b: num(Math.round(mRej)) }) : '') + (open.length ? ' ' + S('fLead3', { n: num(open.length), d: num(Math.round(oldest)) }) : '');
     var leg = keys.map(function (k) { return '<span><i class="ln" style="background:' + col[k] + '"></i>' + esc(S('g_' + k)) + ' (' + num(grp[k].length) + ')</span>'; }).join('') + '<span><i class="sw ring" style="background:var(--surface);border-color:var(--ink-2)"></i>' + esc(S('medLeg')) + '</span>';
     var rows = keys.map(function (k) { var c = curves[k], md = kmMedian(c); return [S('g_' + k), num(grp[k].length), md != null ? S('daysShort', { n: num(Math.round(md)) }) : '—', pct0(kmAt(c, 7) * 100), pct0(kmAt(c, 30) * 100), num(grp[k].filter(function (x) { return !x.e; }).length)]; });
-    vSet('lead', svg(W0, H, g, S('t_lead')), f, leg, miniTable([S('kRule'), S('hNcs'), S('hMedian'), S('hOpen7'), S('hOpen30'), S('hStillOpen')], rows, 1));
+    vSet('lead', svg(W0, H, g, S('t_lead')), leg, miniTable([S('kRule'), S('hNcs'), S('hMedian'), S('hOpen7'), S('hOpen30'), S('hStillOpen')], rows, 1));
   }
 
   // 10. Hour of day (radial clock): when series NCs are written, Paris time
@@ -1582,10 +1589,8 @@ window.DASH = {"defects":[["216055047",1,"2026-01-06","2026-W02","A350","FTO2","
     });
     [0, 3, 6, 9, 12, 15, 18, 21].forEach(function (h3) { var a = h3 / 24 * 2 * Math.PI - Math.PI / 2, p = [c + (R + 14) * Math.cos(a), c + (R + 14) * Math.sin(a) + 4]; g += tx(p[0], p[1], h3 + (G.lang === 'fr' ? ' h' : ':00'), 'mu', 'middle'); });
     g += tx(c, c - 2, num(T), 'ink b', 'middle', ' style="font-size:18px"') + tx(c, c + 14, S('clockCenter'), 'mu', 'middle');
-    var peak = per.indexOf(mx), morning = per.slice(8, 13).reduce(function (s, v) { return s + v; }, 0), late = per.slice(18).reduce(function (s, v) { return s + v; }, 0) + per.slice(0, 6).reduce(function (s, v) { return s + v; }, 0);
-    var f = S('fClock', { h: peak, p: pct0(morning / T * 100), q: pct0(late / T * 100) });
     var rows = per.map(function (v, h4) { return [S('hourRange', { a: h4, b: (h4 + 1) % 24 }), num(v), pct(v / T * 100)]; });
-    vSet('clock', svg(size, size, g, S('t_clock')), f, '', miniTable([S('hHour'), S('hNcs'), S('rShare')], rows, 1));
+    vSet('clock', svg(size, size, g, S('t_clock')), '', miniTable([S('hHour'), S('hNcs'), S('rShare')], rows, 1));
   }
 
   // 11. Station x category heatmap (series defects)
@@ -1607,10 +1612,8 @@ window.DASH = {"defects":[["216055047",1,"2026-01-06","2026-W02","A350","FTO2","
         if (v) g += tx(x + cw / 2, y + 16, num(v), v / mx > 0.55 ? 'b' : 'ink', 'middle', v / mx > 0.55 ? ' style="fill:var(--on1)"' : ''); });
       g += tx(lab + cats.length * cw + 48, y + 16, num(tot[s]), 'ink b', 'end');
     });
-    var best = null; st.forEach(function (s) { if (tot[s] < 30) return; cats.forEach(function (k) { if (k === 'aside') return; var sh = (per[s][k] || 0) / tot[s]; if (!best || sh > best.sh) best = { s: s, k: k, sh: sh }; }); });
-    var f = best ? S('fStation', { s: quote(best.s), p: pct0(best.sh * 100), c: quote(catLabel(best.k)) }) : '';
     var rows = st.map(function (s) { return [s].concat(cats.map(function (k) { return num(per[s][k] || 0); })).concat([num(tot[s])]); });
-    vSet('station', svg(W, H, g, S('t_station')), f, '', miniTable([S('hStation')].concat(cats.map(catLabel)).concat([S('total')]), rows, 1));
+    vSet('station', svg(W, H, g, S('t_station')), '', miniTable([S('hStation')].concat(cats.map(catLabel)).concat([S('total')]), rows, 1));
   }
 
   // 12. MFT actions: the targeted problem month by month, before and since the action
@@ -1625,7 +1628,7 @@ window.DASH = {"defects":[["216055047",1,"2026-01-06","2026-W02","A350","FTO2","
     var all = D.defects.filter(function (r) { return r[20] === 'serie' && keepMinor(r); }), months = {};
     all.forEach(function (r) { months[r[2].slice(0, 7)] = 1; }); months = Object.keys(months).sort();
     var lineTot = {}; all.forEach(function (r) { var k = r[4] + '|' + r[2].slice(0, 7); lineTot[k] = (lineTot[k] || 0) + 1; });
-    var W0 = vWidth('act', 280), cols = Math.max(1, Math.min(3, Math.floor((W0 + 14) / 280))), pw = Math.floor((W0 - 14 * (cols - 1)) / cols), ch = 96, html = '', rows = [], best = null;
+    var W0 = vWidth('act', 280), cols = Math.max(1, Math.min(3, Math.floor((W0 + 14) / 280))), pw = Math.floor((W0 - 14 * (cols - 1)) / cols), ch = 96, html = '', rows = [];
     acts.forEach(function (a) {
       var cnt = {}; all.forEach(function (r) { if (actMatch(a, r)) { var m = r[2].slice(0, 7); cnt[m] = (cnt[m] || 0) + 1; } });
       var start = a[6] || a[5], mx = Math.max.apply(null, months.map(function (m) { return cnt[m] || 0; }).concat([1])), bw = (pw - 8) / months.length, g = '';
@@ -1639,22 +1642,19 @@ window.DASH = {"defects":[["216055047",1,"2026-01-06","2026-W02","A350","FTO2","
       });
       var sb = bef[1] ? bef[0] / bef[1] : null, sa = aft[1] ? aft[0] / aft[1] : null;
       var line = sb != null && sa != null ? S('actShare', { a: pct0(sb * 100), b: pct0(sa * 100), k: num(nAft) }) : S('actNoAfter');
-      if (sb != null && sa != null && a[6] && (!best || sa / Math.max(sb, 1e-9) < best.r)) best = { a: a, r: sa / Math.max(sb, 1e-9), sb: sb, sa: sa };
       var lbl = G.lang === 'fr' ? a[1] : a[2], status = a[7] || S('actNoStatus');
       html += '<div class="actpanel" style="width:' + pw + 'px"><div class="acthead"><b>' + esc(lbl) + '</b><span class="tag">' + esc(a[0]) + '</span></div>' +
         '<div class="actmeta">' + esc(S('actDates', { a: a[5] ? monthName(a[5]) : '—', b: a[6] ? monthName(a[6]) : '—', s: status })) + '</div>' +
         svg(pw, ch, g, lbl) + '<div class="actmeta">' + esc(line) + '</div></div>';
       rows.push([a[0], lbl, a[5] ? monthName(a[5]) : '—', a[6] ? monthName(a[6]) : '—', status, a[10], a[11]]);
     });
-    var cut = months[Math.max(0, months.length - 4)], k4 = acts.filter(function (a) { return a[6] && a[6] >= cut; }).length;
-    var f = S(k4 * 2 > acts.length ? 'fAct' : 'fActN', { n: num(acts.length), k: num(k4) }) + (best && best.sa < best.sb ? ' ' + S('fAct2', { a: quote(G.lang === 'fr' ? best.a[1] : best.a[2]), x: pct0(best.sb * 100), y: pct0(best.sa * 100), l: best.a[0] }) : '');
     var leg = '<span><i class="sw" style="background:var(--dim)"></i>' + esc(S('actBefore')) + '</span><span><i class="sw" style="background:var(--s1)"></i>' + esc(S('actAfter')) + '</span><span><i class="dash" style="border-top-color:var(--ink-2)"></i>' + esc(S('actAnalysis')) + '</span><span class="mu">' + esc(S('actNote')) + '</span>';
-    vSet('act', '<div class="actgrid">' + html + '</div>', f, leg, miniTable([S('hProg'), S('hProblem'), S('hAnalysis'), S('hAction'), S('hStatus'), S('hRoot'), S('hDoing')], rows, 99));
+    vSet('act', '<div class="actgrid">' + html + '</div>', leg, miniTable([S('hProg'), S('hProblem'), S('hAnalysis'), S('hAction'), S('hStatus'), S('hRoot'), S('hDoing')], rows, 99));
   }
 
   var VIZ = ['cal', 'flow', 'bub', 'lor', 'mek', 'bump', 'msn', 'prod', 'lead', 'clock', 'station', 'act'], VWIDE = { cal: 1, flow: 1, msn: 1, act: 1 };
   document.getElementById('ag').innerHTML = VIZ.map(function (k) {
-    return '<article class="card vcard' + (VWIDE[k] ? ' wide' : '') + '" id="v-' + k + '"><div class="vhead"><span class="kicker"><span data-t="k_' + k + '"></span> · <span data-t="t_' + k + '"></span></span><h3 id="v-' + k + '-f"></h3><p class="sub" data-t="s_' + k + '"></p></div>' +
+    return '<article class="card vcard' + (VWIDE[k] ? ' wide' : '') + '" id="v-' + k + '"><div class="vhead"><span class="kicker" data-t="k_' + k + '"></span><h3 data-t="t_' + k + '"></h3><p class="sub" data-t="s_' + k + '"></p></div>' +
       '<div class="vbody" id="v-' + k + '-b"></div><div class="vlegend" id="v-' + k + '-l"></div>' +
       '<details class="vdata"><summary data-t="dataView"></summary><div class="table-wrap"><table class="mini" id="v-' + k + '-t"></table></div></details></article>';
   }).join('');
@@ -1662,7 +1662,9 @@ window.DASH = {"defects":[["216055047",1,"2026-01-06","2026-W02","A350","FTO2","
     if (G.tab !== 'ana') return;
     document.getElementById('aLines').innerHTML = segHtml([['', S('allLines')], ['A350', 'A350'], ['A330', 'A330'], ['A320', 'A320'], ['A400M', 'A400M']], A.line, 'data-aline');
     EMPTY = '<p class="empty">' + esc(A.line === 'A400M' ? S('noText') : '—') + '</p>';
-    var rs = aRows();
+    var rs = aRows(), ncs = aNcs(), cli = D.ncs.filter(function (n) { return n[23] === 'client' && (!A.line || n[3] === A.line); });
+    document.getElementById('aNums').innerHTML = [[num(rs.length), 'aK1'], [num(ncs.length), 'aK2'], [eurK(sum(ncs, function (n) { return n[12]; })), 'aK3'],
+      [num(cli.length), 'aK4'], [num(ncs.filter(function (n) { return n[30]; }).length), 'aK5']].map(function (p) { return '<div><b>' + esc(p[0]) + '</b><span>' + esc(S(p[1])) + '</span></div>'; }).join('');
     vCal(rs); vFlow(rs); vBub(rs); vLor(rs); vMek(aRows(true)); vBump(rs);
     vMsn(); vProd(); vLead(); vClock(); vStation(rs); vAct();
   }

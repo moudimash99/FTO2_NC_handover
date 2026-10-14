@@ -277,6 +277,7 @@ def slate_pack(data, template="dashboard.html"):
     No outside resources (fonts, libraries), styles scoped to .fto2, page title and address left alone, errors shown on the page."""
     t = open(os.path.join(ROOT, "build", "templates", template), encoding="utf-8").read()
     css = re.sub(r"/\*.*?\*/", "", t.split("<style>", 1)[1].split("</style>", 1)[0], flags=re.S)
+    fonts = re.search(r'<link rel="stylesheet" href="(https://fonts\.googleapis\.com/[^"]+)">', t)
     html = t[t.index('<div class="wrap">'):t.index("<script>")].strip()
     main = t[t.index("<script>\n(function ()") + len("<script>\n"):t.rindex("</script>")].strip()
     d = dict(data)
@@ -289,7 +290,7 @@ def slate_pack(data, template="dashboard.html"):
     open(os.path.join(out, "fto2_slate.html"), "w", encoding="utf-8").write(
         "<!-- %s -->\n<div class=\"fto2\">\n<div id=\"fto2-err\" class=\"fto2-err\" hidden></div>\n%s\n</div>\n" % (stamp, html))
     open(os.path.join(out, "fto2_slate.css"), "w", encoding="utf-8").write(
-        "/* %s */\n%s.fto2 .fto2-err { background: #fdecea; color: #8a1c12; border: 1px solid #f1b0a8; border-radius: 8px; padding: 10px 14px; font-size: 13px; margin: 12px 20px; }\n" % (stamp, _scope_css(css)))
+        "/* %s */\n%s%s.fto2 .fto2-err { background: #fdecea; color: #8a1c12; border: 1px solid #f1b0a8; border-radius: 8px; padding: 10px 14px; font-size: 13px; margin: 12px 20px; }\n" % (stamp, ('/* Fonts: if Slate blocks this address, the page falls back to Georgia and the system sans-serif. */\n@import url("%s");\n' % fonts.group(1)) if fonts else "", _scope_css(css)))
     js = ("/* %s */\n"
           "window.FTO2_EMBED = true;\n"
           "window.DASH = %s;\n"
