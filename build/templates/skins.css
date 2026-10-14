@@ -1,0 +1,163 @@
+/* Five graphic directions for the FTO2 dashboard, chosen with the switcher of FTO2_Design_Studies.html.
+   Each skin redefines the dashboard's tokens (colours, fonts) and restyles the frame: header, tabs, cards, chart text.
+   Charts, data and layout stay the same. Category colours keep the validated palette (light set, or dark set on Cockpit). */
+
+/* ---------------------------------------------------------------- 1. Cockpit: glass-cockpit display, B612 (the cockpit-display face) */
+html:root[data-skin="cockpit"] {
+  --page: #0a1119; --surface: #111b26; --ink: #e6edf3; --ink-2: #9fb0c0; --muted: #71839a; --grid: #1f2c3a; --track: #182431;
+  --ring: rgba(120,170,220,0.18); --s1: #3fc1d9; --s1-soft: rgba(63,193,217,0.14); --s1-ret: #1f6b7a; --s2: #f0a04b; --dim: #3b4a5a;
+  --ref: #e6edf3; --up: #ff7b6b; --down: #4fd68a; --focus: #3fc1d9;
+  --c1: #3987e5; --c2: #199e70; --c3: #c98500; --c4: #d55181; --c5: #008300; --c6: #9085e9; --seq: #3fc1d9;
+  --on0: #f2f3f4; --on1: #0a1119; --on2: #0a1119; --on3: #0a1119; --on4: #0a1119; --on5: #ffffff; --on6: #0a1119;
+  --font-ui: "B612", "Segoe UI", Roboto, Arial, sans-serif; --font-data: "B612 Mono", ui-monospace, Consolas, monospace;
+  color-scheme: dark;
+}
+[data-skin="cockpit"] body { border-top: 0; background: radial-gradient(1200px 600px at 50% -200px, #13243a 0%, var(--page) 60%); background-color: var(--page); }
+[data-skin="cockpit"] .unit { color: var(--s1); letter-spacing: .18em; }
+[data-skin="cockpit"] h1 { text-transform: uppercase; letter-spacing: .06em; font-size: clamp(22px, 3.2vw, 28px); }
+[data-skin="cockpit"] .lead h2 { text-transform: uppercase; letter-spacing: .05em; font-size: 18px; }
+[data-skin="cockpit"] .tabs { background: var(--page); border-bottom-color: var(--grid); }
+[data-skin="cockpit"] .tabs [role="tab"] { text-transform: uppercase; font-size: 12.5px; letter-spacing: .1em; }
+[data-skin="cockpit"] .tabs [role="tab"][aria-selected="true"] { color: var(--s1); border-bottom-color: var(--s1); text-shadow: 0 0 12px rgba(63,193,217,.45); }
+[data-skin="cockpit"] .card, [data-skin="cockpit"] .fig, [data-skin="cockpit"] .strip, [data-skin="cockpit"] details.detail { border-radius: 2px; border-color: rgba(63,193,217,.22); position: relative; }
+[data-skin="cockpit"] .card::before, [data-skin="cockpit"] .card::after { content: ""; position: absolute; width: 12px; height: 12px; border: 2px solid var(--s1); pointer-events: none; }
+[data-skin="cockpit"] .card::before { top: -1px; left: -1px; border-right: 0; border-bottom: 0; }
+[data-skin="cockpit"] .card::after { bottom: -1px; right: -1px; border-left: 0; border-top: 0; }
+[data-skin="cockpit"] .kicker { color: var(--s1); letter-spacing: .14em; }
+[data-skin="cockpit"] .vhead h3 { font-weight: 700; }
+[data-skin="cockpit"] .seg { border-color: rgba(63,193,217,.3); background: transparent; }
+[data-skin="cockpit"] .seg button[aria-pressed="true"] { background: var(--s1); color: var(--page); }
+[data-skin="cockpit"] svg.viz text { font-size: 11.5px; }
+[data-skin="cockpit"] .actpanel { border-color: rgba(63,193,217,.18); border-radius: 2px; }
+
+/* ---------------------------------------------------------------- 2. Calque: engineering drawing sheet, frame and title block */
+html:root[data-skin="calque"] {
+  --page: #e9edf2; --surface: #fbfcfd; --ink: #14213d; --ink-2: #3d4a63; --muted: #66728a; --grid: #dde3ec; --track: #e9edf3;
+  --ring: #14213d; --s1: #2246a8; --s1-soft: rgba(34,70,168,0.09); --s1-ret: #9fb1e0; --s2: #c2620c; --dim: #b8c0cc;
+  --ref: #14213d; --up: #a33b2b; --down: #2c7a4b; --focus: #2246a8;
+  --c1: #2a78d6; --c2: #1baf7a; --c3: #eda100; --c4: #e87ba4; --c5: #008300; --c6: #6250d6; --seq: #2246a8;
+  --on0: #14213d; --on1: #ffffff; --on2: #14213d; --on3: #14213d; --on4: #14213d; --on5: #ffffff; --on6: #ffffff;
+  --font-ui: "Barlow", "Segoe UI", Roboto, Arial, sans-serif; --font-data: "Barlow", "Segoe UI", Roboto, Arial, sans-serif;
+  --font-head: "Barlow Condensed", "Arial Narrow", "Segoe UI", sans-serif;
+  color-scheme: light;
+}
+[data-skin="calque"] body { border-top: 0; background-color: var(--page);
+  background-image: linear-gradient(rgba(34,70,168,.07) 1px, transparent 1px), linear-gradient(90deg, rgba(34,70,168,.07) 1px, transparent 1px),
+                    linear-gradient(rgba(34,70,168,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(34,70,168,.035) 1px, transparent 1px);
+  background-size: 48px 48px, 48px 48px, 12px 12px, 12px 12px; }
+[data-skin="calque"] header { border: 1.5px solid var(--ink); background: var(--surface); padding: 16px 20px; }
+[data-skin="calque"] h1, [data-skin="calque"] .lead h2, [data-skin="calque"] .vhead h3, [data-skin="calque"] .card-head h3 { font-family: var(--font-head); letter-spacing: .01em; }
+[data-skin="calque"] h1 { text-transform: uppercase; font-weight: 700; font-size: clamp(28px, 4.4vw, 40px); }
+[data-skin="calque"] .lead h2 { text-transform: uppercase; font-size: 24px; }
+[data-skin="calque"] .vhead h3 { font-size: 20px; font-weight: 600; }
+[data-skin="calque"] .tabs { background: var(--page); border-bottom: 1.5px solid var(--ink); gap: 4px; }
+[data-skin="calque"] .tabs [role="tab"] { font-family: var(--font-head); text-transform: uppercase; letter-spacing: .04em; font-size: 15px; border: 1.5px solid transparent; border-bottom: 0; margin-bottom: -1.5px; background: transparent; }
+[data-skin="calque"] .tabs [role="tab"][aria-selected="true"] { border-color: var(--ink); background: var(--surface); color: var(--ink); }
+[data-skin="calque"] .card, [data-skin="calque"] .fig, [data-skin="calque"] .strip, [data-skin="calque"] details.detail { border: 1.5px solid var(--ink); border-radius: 0; }
+[data-skin="calque"] .vgrid { counter-reset: sheet; }
+[data-skin="calque"] .vcard { counter-increment: sheet; position: relative; padding-bottom: 46px; }
+[data-skin="calque"] .vcard::after { content: "FTO2 · AN-" counter(sheet, decimal-leading-zero) "   ·   ÉCH. 1:1   ·   REV. A"; position: absolute; right: -1.5px; bottom: -1.5px;
+  border: 1.5px solid var(--ink); background: var(--surface); padding: 5px 12px; font: 600 11.5px/1 var(--font-head); letter-spacing: .08em; color: var(--ink); white-space: pre; }
+[data-skin="calque"] .kicker { display: inline-block; justify-self: start; border: 1px solid var(--ink); color: var(--ink); padding: 2px 7px; font-family: var(--font-head); font-size: 12px; letter-spacing: .1em; }
+[data-skin="calque"] .seg { border: 1.5px solid var(--ink); border-radius: 0; }
+[data-skin="calque"] .seg button + button { border-left: 1.5px solid var(--ink); }
+[data-skin="calque"] .seg button[aria-pressed="true"] { background: var(--ink); color: var(--surface); }
+[data-skin="calque"] .actpanel { border: 1px dashed var(--ink-2); border-radius: 0; }
+[data-skin="calque"] .table-wrap { border-radius: 0; border-color: var(--ink); }
+[data-skin="calque"] svg.viz text { font-size: 12.5px; }
+
+/* ---------------------------------------------------------------- 3. Suisse: international typographic style, white, black rules, big type */
+html:root[data-skin="suisse"] {
+  --page: #ffffff; --surface: #ffffff; --ink: #0d0d0d; --ink-2: #3a3a3a; --muted: #707070; --grid: #e6e6e6; --track: #f1f1f1;
+  --ring: #0d0d0d; --s1: #1a3ccf; --s1-soft: rgba(26,60,207,0.08); --s1-ret: #9fb0ee; --s2: #c2620c; --dim: #c4c4c4;
+  --ref: #0d0d0d; --up: #b3261e; --down: #1e7a3c; --focus: #1a3ccf;
+  --c1: #2a78d6; --c2: #1baf7a; --c3: #eda100; --c4: #e87ba4; --c5: #008300; --c6: #6250d6; --seq: #1a3ccf;
+  --on0: #0d0d0d; --on1: #ffffff; --on2: #0d0d0d; --on3: #0d0d0d; --on4: #0d0d0d; --on5: #ffffff; --on6: #ffffff;
+  --font-ui: "Archivo", "Helvetica Neue", Helvetica, Arial, sans-serif; --font-data: "Archivo", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  color-scheme: light;
+}
+[data-skin="suisse"] body { border-top: 0; }
+[data-skin="suisse"] .wrap { gap: 30px; }
+[data-skin="suisse"] .unit { color: var(--ink); font-weight: 800; letter-spacing: .02em; }
+[data-skin="suisse"] h1 { font-size: clamp(40px, 7.5vw, 84px); font-weight: 800; letter-spacing: -0.04em; line-height: .92; font-stretch: 85%; }
+[data-skin="suisse"] .lead h2 { font-size: clamp(26px, 4vw, 40px); font-weight: 800; letter-spacing: -0.03em; font-stretch: 85%; }
+[data-skin="suisse"] .tabs { border-bottom: 3px solid var(--ink); background: var(--page); gap: 0; }
+[data-skin="suisse"] .tabs [role="tab"] { font-weight: 700; color: var(--ink); border-bottom: 0; padding: 10px 14px; }
+[data-skin="suisse"] .tabs [role="tab"][aria-selected="true"] { background: var(--ink); color: var(--page); }
+[data-skin="suisse"] .tabs .gap { background: var(--ink); width: 3px; margin: 0; }
+[data-skin="suisse"] .card, [data-skin="suisse"] details.detail { border: 0; border-top: 4px solid var(--ink); border-radius: 0; padding: 14px 0 0; background: transparent; }
+[data-skin="suisse"] .fig, [data-skin="suisse"] .strip { border: 0; border-top: 1px solid var(--ink); border-radius: 0; padding: 12px 0 0; background: transparent; }
+[data-skin="suisse"] .fig b { font-size: 44px; font-weight: 800; letter-spacing: -0.03em; font-stretch: 85%; }
+[data-skin="suisse"] .vgrid { gap: 40px 32px; }
+[data-skin="suisse"] .kicker { color: var(--ink); font-weight: 800; letter-spacing: .04em; }
+[data-skin="suisse"] .vhead h3 { font-size: 24px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.15; font-stretch: 90%; }
+[data-skin="suisse"] .seg { border: 2px solid var(--ink); border-radius: 0; }
+[data-skin="suisse"] .seg button + button { border-left: 2px solid var(--ink); }
+[data-skin="suisse"] .seg button[aria-pressed="true"] { background: var(--ink); color: var(--page); }
+[data-skin="suisse"] .actpanel { border: 0; border-top: 2px solid var(--ink); border-radius: 0; padding: 10px 0 0; }
+[data-skin="suisse"] .table-wrap { border-radius: 0; border: 0; border-top: 2px solid var(--ink); }
+
+/* ---------------------------------------------------------------- 4. Calme: soft tablet-app surfaces, rounded, teal */
+html:root[data-skin="calme"] {
+  --page: #eef2f6; --surface: #ffffff; --ink: #1b2733; --ink-2: #4d5b69; --muted: #6b7884; --grid: #e7ecf1; --track: #eef2f6;
+  --ring: rgba(27,39,51,0.07); --s1: #0e7c86; --s1-soft: rgba(14,124,134,0.10); --s1-ret: #8cc5ca; --s2: #c2620c; --dim: #c3ccd5;
+  --ref: #1b2733; --up: #b3412e; --down: #1f7a4f; --focus: #0e7c86;
+  --c1: #2a78d6; --c2: #1baf7a; --c3: #eda100; --c4: #e87ba4; --c5: #008300; --c6: #6250d6; --seq: #0e7c86;
+  --on0: #1b2733; --on1: #ffffff; --on2: #1b2733; --on3: #1b2733; --on4: #1b2733; --on5: #ffffff; --on6: #ffffff;
+  --font-ui: "Manrope", "Segoe UI", Roboto, Arial, sans-serif; --font-data: "Manrope", "Segoe UI", Roboto, Arial, sans-serif;
+  color-scheme: light;
+}
+[data-skin="calme"] body { border-top: 0; }
+[data-skin="calme"] header { background: var(--surface); border-radius: 22px; padding: 20px 24px; box-shadow: 0 1px 2px rgba(27,39,51,.05), 0 10px 30px rgba(27,39,51,.06); }
+[data-skin="calme"] h1 { font-weight: 800; letter-spacing: -0.02em; }
+[data-skin="calme"] .unit { color: var(--s1); }
+[data-skin="calme"] .tabs { border: 0; background: var(--page); padding: 6px; gap: 4px; border-radius: 999px; box-shadow: inset 0 0 0 1px rgba(27,39,51,.06); }
+[data-skin="calme"] .tabs [role="tab"] { border: 0; border-radius: 999px; padding: 8px 16px; font-size: 14px; }
+[data-skin="calme"] .tabs [role="tab"][aria-selected="true"] { background: var(--surface); color: var(--ink); box-shadow: 0 1px 3px rgba(27,39,51,.12); }
+[data-skin="calme"] .tabs .gap { display: none; }
+[data-skin="calme"] .card, [data-skin="calme"] .fig, [data-skin="calme"] .strip, [data-skin="calme"] details.detail { border: 0; border-radius: 20px; box-shadow: 0 1px 2px rgba(27,39,51,.05), 0 8px 24px rgba(27,39,51,.06); }
+[data-skin="calme"] .vcard { padding: 20px 22px 18px; }
+[data-skin="calme"] .kicker { color: var(--s1); letter-spacing: .08em; }
+[data-skin="calme"] .vhead h3 { font-weight: 700; font-size: 18px; }
+[data-skin="calme"] .seg { border: 0; border-radius: 999px; background: var(--surface); box-shadow: inset 0 0 0 1px rgba(27,39,51,.10); padding: 3px; }
+[data-skin="calme"] .seg button { border-radius: 999px; }
+[data-skin="calme"] .seg button + button { border-left: 0; }
+[data-skin="calme"] .seg button[aria-pressed="true"] { background: var(--s1); color: #ffffff; }
+[data-skin="calme"] .actpanel { border: 0; background: var(--page); border-radius: 14px; }
+[data-skin="calme"] .table-wrap { border-radius: 14px; }
+[data-skin="calme"] .vlegend .sw { border-radius: 50%; }
+
+/* ---------------------------------------------------------------- 5. Atelier: shop-floor signage, black plates, stencil-like heads, RAL gentian blue */
+html:root[data-skin="atelier"] {
+  --page: #e3e1dc; --surface: #f4f3f0; --ink: #1c1c1a; --ink-2: #45443f; --muted: #6f6d65; --grid: #d9d6ce; --track: #e8e5de;
+  --ring: #1c1c1a; --s1: #0e4c92; --s1-soft: rgba(14,76,146,0.10); --s1-ret: #8ea9cc; --s2: #c2620c; --dim: #bdb9ae;
+  --ref: #1c1c1a; --up: #a33b2b; --down: #2c7a4b; --focus: #0e4c92;
+  --c1: #2a78d6; --c2: #1baf7a; --c3: #eda100; --c4: #e87ba4; --c5: #008300; --c6: #6250d6; --seq: #0e4c92;
+  --on0: #1c1c1a; --on1: #ffffff; --on2: #1c1c1a; --on3: #1c1c1a; --on4: #1c1c1a; --on5: #ffffff; --on6: #ffffff;
+  --font-ui: "Public Sans", "Segoe UI", Roboto, Arial, sans-serif; --font-data: "Public Sans", "Segoe UI", Roboto, Arial, sans-serif;
+  --font-head: "Big Shoulders Display", "Arial Narrow", Impact, sans-serif;
+  color-scheme: light;
+}
+[data-skin="atelier"] body { border-top: 0; }
+[data-skin="atelier"] header { background: var(--ink); color: var(--surface); padding: 18px 22px 26px; position: relative; }
+[data-skin="atelier"] header::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 10px;
+  background: repeating-linear-gradient(135deg, #f2c200 0 14px, var(--ink) 14px 28px); }
+[data-skin="atelier"] header .unit, [data-skin="atelier"] header .period, [data-skin="atelier"] header .label, [data-skin="atelier"] header .asof { color: #d9d6ce; }
+[data-skin="atelier"] h1, [data-skin="atelier"] .lead h2, [data-skin="atelier"] .vhead h3 { font-family: var(--font-head); text-transform: uppercase; letter-spacing: .01em; }
+[data-skin="atelier"] h1 { font-weight: 800; font-size: clamp(34px, 6vw, 60px); line-height: .95; }
+[data-skin="atelier"] .lead h2 { font-size: 30px; font-weight: 800; }
+[data-skin="atelier"] .tabs { background: var(--page); border-bottom: 3px solid var(--ink); gap: 3px; }
+[data-skin="atelier"] .tabs [role="tab"] { font-family: var(--font-head); font-weight: 800; text-transform: uppercase; font-size: 17px; letter-spacing: .03em; border-bottom: 0; background: #d3d0c8; color: var(--ink-2); }
+[data-skin="atelier"] .tabs [role="tab"][aria-selected="true"] { background: var(--ink); color: #f2c200; }
+[data-skin="atelier"] .card, [data-skin="atelier"] .fig, [data-skin="atelier"] .strip, [data-skin="atelier"] details.detail { border: 0; border-radius: 0; border-top: 6px solid var(--ink); }
+[data-skin="atelier"] .kicker { justify-self: start; background: var(--ink); color: #f2c200; padding: 3px 8px; letter-spacing: .1em; }
+[data-skin="atelier"] .vhead h3 { font-size: 26px; font-weight: 800; line-height: 1.05; }
+[data-skin="atelier"] .seg { border: 2px solid var(--ink); border-radius: 0; }
+[data-skin="atelier"] .seg button + button { border-left: 2px solid var(--ink); }
+[data-skin="atelier"] .seg button[aria-pressed="true"] { background: var(--ink); color: #f2c200; }
+[data-skin="atelier"] header .seg { border-color: #8a877e; background: transparent; }
+[data-skin="atelier"] header .seg button { color: #e8e5de; }
+[data-skin="atelier"] header .seg button + button { border-left-color: #8a877e; }
+[data-skin="atelier"] header .seg button[aria-pressed="true"] { background: #f2c200; color: var(--ink); }
+[data-skin="atelier"] .actpanel { border: 0; border-left: 4px solid var(--ink); border-radius: 0; background: var(--page); }
+[data-skin="atelier"] .table-wrap { border-radius: 0; }
