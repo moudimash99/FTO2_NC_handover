@@ -43,6 +43,7 @@
     <button type="button" role="tab" id="tab-rca" aria-controls="p-rca" data-tab="rca" data-t="tabRca"></button>
     <span class="gap" aria-hidden="true" data-gal="1"></span>
     <button type="button" role="tab" id="tab-gal" aria-controls="p-gal" data-tab="gal" data-t="tabGal"></button>
+    <button type="button" role="tab" id="tab-prod" aria-controls="p-prod" data-tab="prod" data-t="tabProd"></button>
     <button type="button" role="tab" id="tab-hebdo" aria-controls="p-hebdo" data-tab="hebdo" data-t="tabWeek"></button>
     <button type="button" role="tab" id="tab-mft" aria-controls="p-mft" data-tab="mft" data-t="tabMft"></button>
   </div>
@@ -225,6 +226,13 @@
     <section class="hero"><span class="fict" data-t="galBadge"></span><h2 data-t="galTitle"></h2><p class="sub" data-t="galSub"></p></section>
     <div class="gal-bar"><div class="seg" role="group" data-ta="galFilter" id="gFeas"></div><p class="gal-keep" id="gKeep"></p></div>
     <div class="ggrid" id="gg"></div>
+  </div>
+
+  <!-- 7. Production: the NCs against the volume built (local page only) -->
+  <div class="panel" role="tabpanel" id="p-prod" aria-labelledby="tab-prod" hidden>
+    <section class="hero"><span class="fict" id="pBadge"></span><h2 data-t="prodTitle"></h2><p class="sub" data-t="prodSub"></p><p class="sub" id="pCover"></p></section>
+    <div class="gal-bar"><div class="controls"><div class="seg" role="group" data-ta="prodData" id="pSrcSeg"></div><div class="seg" role="group" data-ta="prodVer" id="pVerSeg"></div></div><p class="gal-keep" id="pKeep"></p></div>
+    <div class="ggrid" id="pg2"></div>
   </div>
 
   <div id="tip" role="tooltip" hidden></div>

@@ -367,6 +367,7 @@
 .fto2 .fig, .fto2 .figs > .fig:first-child { border-left: 0; border-top: 1px solid var(--grid); padding-left: 0; }
 .fto2 .figs > .fig:first-child { border-top: 0; }
 }
+.fto2 .fict.real { color: var(--s1); }
 .fto2 .fict { justify-self: start; font-size: 11.5px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--up); border: 1.5px solid currentColor; border-radius: 4px; padding: 3px 9px; }
 .fto2 .gal-bar { display: flex; flex-wrap: wrap; gap: 10px 20px; align-items: center; justify-content: space-between; position: sticky; top: var(--tabs-h); z-index: 9; background: var(--page); padding-block: 10px; border-bottom: 1px solid var(--grid); }
 .fto2 .gal-bar .seg { max-width: 100%; overflow-x: auto; }

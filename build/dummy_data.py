@@ -71,6 +71,10 @@ def _poisson(R, lam):
         k += 1
 
 
+def isoMonday_(wk):
+    return dt.date.fromisocalendar(int(wk[:4]), int(wk[6:]), 1).isoformat()
+
+
 def _week_label(d):
     y, w, _ = d.isocalendar()
     return "%d-W%02d" % (y, w)
@@ -167,11 +171,29 @@ def make(root, seed=SEED):
     prev_year = [int(round(per_month.get("2026-%02d" % m, avg) * X.uniform(1.05, 1.35))) for m in range(1, 13)]
     units = len(aircraft) * 6
     shift_prod = {"m": int(units * 0.52), "a": int(units * 0.38), "n": int(units * 0.10)}
+    # Production tab: EqMSN per product and month, same layout as 06_input_data/EqMSN_2026.xlsx (October to December forecast)
+    Y = random.Random(seed + 2)
+    months = ["2026-%02d" % m for m in range(1, 13)]
+    std = {p[0]: [0.0] * 12 for p in PRODUCTS}
+    for wk, l, n in prod:
+        m = int(isoMonday_(wk)[5:7]) - 1
+        for p in PRODUCTS:
+            if p[1] == l:
+                std[p[0]][m] += n * p[2]
+    for p in std:
+        base = sum(std[p][6:9]) / 3.0
+        for m in range(9, 12):
+            std[p][m] = base * Y.uniform(0.9, 1.15)
+        std[p] = [round(v, 2) for v in std[p]]
+    adj = {p: [round(v * (1.6 if i == 0 else 1.15 if i < 5 else 1.0), 2) for i, v in enumerate(vals)] for p, vals in std.items()}
+    eqmsn = {"months": months, "forecastFrom": "2026-10", "std": std, "adj": adj, "line": {p[0]: p[1] for p in PRODUCTS},
+             "map": {p[0].upper(): p[0] for p in PRODUCTS}, "toConfirm": []}
     data = {"from": START.isoformat(), "to": (START + dt.timedelta(weeks=N_WEEKS, days=-1)).isoformat(), "seed": seed,
             "weeks": weeks, "lines": list(LINES), "prod": prod, "ncs": ncs, "defects": defects, "products": products,
             "stations": stations, "targets": {l: list(v) for l, v in TARGETS.items()}, "budget": BUDGET, "connTarget": CONN_TARGET,
             "firstMsn": {l: v[2] for l, v in LINES.items()}, "actions": actions,
-            "floor": floor, "fiveM": FIVE_M, "rework": rework, "suppliers": suppliers, "prevYear": prev_year, "shiftProd": shift_prod}
+            "floor": floor, "fiveM": FIVE_M, "rework": rework, "suppliers": suppliers, "prevYear": prev_year, "shiftProd": shift_prod,
+            "eqmsn": eqmsn}
     _save(root, data)
     return data
 
@@ -200,6 +222,7 @@ def _save(root, data):
     w("dummy_fournisseurs.csv", ["fournisseur", "pieces_livrees", "nc"], data["suppliers"])
     w("dummy_annee_precedente.csv", ["mois", "nc"], [[m + 1, v] for m, v in enumerate(data["prevYear"])])
     w("dummy_production_equipes.csv", ["equipe", "unites"], sorted(data["shiftProd"].items()))
+    w("dummy_eqmsn.csv", ["produit"] + data["eqmsn"]["months"], [[p] + v for p, v in data["eqmsn"]["std"].items()])
     open(os.path.join(out, "README.txt"), "w", encoding="utf-8").write(
         "DONNEES FICTIVES / DUMMY DATA\n\n"
         "Ces fichiers sont tires au hasard (graine %d) par build/dummy_data.py pour la galerie de graphiques.\n"

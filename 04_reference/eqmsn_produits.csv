@@ -1,0 +1,11 @@
+produit_nc,produit_eqmsn,a_confirmer,note
+MIP A350,MIP,non,
+MIP A400M,MIP(2),oui,MIP(2) supposé être le MIP de l'A400M (volume proche de la cadence A400M)
+PTVU,PTVU,non,
+740VU,740VU,non,
+300VU,300VU,non,
+E-RUDDER,e-Rudder,non,
+MFRL,MFRL,non,
+MDCD,MDCD,non,
+OHP,OHP,non,
+ISSF,ISSF,non,aucune NC sous ce nom dans l'extraction

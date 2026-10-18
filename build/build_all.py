@@ -364,10 +364,47 @@ def build_dashboard(d, nc, lt):
     # the local dashboard also carries the chart gallery, drawn on fictitious data (never in the Slate files)
     sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))   # -I leaves the script folder off the path
     import dummy_data
-    _page("dashboard.html", dict(data, dummy=dummy_data.make(ROOT)), "FTO2_NC_Dashboard.html")
+    _page("dashboard.html", dict(data, dummy=dummy_data.make(ROOT), eqmsn=eqmsn(nc)), "FTO2_NC_Dashboard.html")
     _page("dashboard.html", data, "FTO2_Suivi_Hebdo.html", page="suivi")
     slate_pack(data)
     slate_pack(data, page="suivi")
+
+
+def eqmsn(nc):
+    """Production volume for the Production tab: EqMSN per product and month of 2026 (06_input_data/EqMSN_2026.xlsx, both the
+    Standard and the Adjusted sheet), the NC product labels it matches (04_reference/eqmsn_produits.csv) and each product's line,
+    taken from the NCs. None if the file is missing."""
+    path = os.path.join(ROOT, "06_input_data", "EqMSN_2026.xlsx")
+    if not os.path.exists(path):
+        return None
+    import openpyxl
+    wb = openpyxl.load_workbook(path, read_only=True, data_only=True)
+    out = {"asof": "2026-10-07", "forecastFrom": "2026-10",   # export of 07/10/2026; the Notes sheet says October to December are forecast
+           "months": ["2026-%02d" % m for m in range(1, 13)]}
+    for sheet, key in (("Standard", "std"), ("Adjusted", "adj")):
+        rows, start = {}, False
+        for r in wb[sheet].iter_rows(values_only=True):
+            if r[0] == "Produit":
+                start = True
+                continue
+            if not start or r[0] in (None, "Total"):
+                if start and r[0] == "Total":
+                    break
+                continue
+            rows[str(r[0])] = [round(float(v or 0), 2) for v in r[1:13]]
+        out[key] = rows
+    ref = pd.read_csv(os.path.join(ROOT, "04_reference", "eqmsn_produits.csv"), encoding="utf-8")
+    out["map"] = {str(a).upper(): b for a, b in zip(ref.produit_nc, ref.produit_eqmsn)}
+    out["toConfirm"] = [b for b, c in zip(ref.produit_eqmsn, ref.a_confirmer) if c == "oui"]
+    lines = {}
+    for lab, line in zip(nc.produit.fillna("").astype(str).str.upper(), nc.ligne.fillna("").astype(str)):
+        p = out["map"].get(lab)
+        if p and line:
+            lines.setdefault(p, {}).setdefault(line, 0)
+            lines[p][line] += 1
+    out["line"] = {p: (max(lines[p], key=lines[p].get) if p in lines else "") for p in out["std"]}
+    REPORT["eqmsn"] = {"products": len(out["std"]), "total_std": round(sum(sum(v) for v in out["std"].values()), 2)}
+    return out
 
 
 def nc_extras(r):
