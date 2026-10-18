@@ -672,7 +672,7 @@ footer p { max-width: none; }
     <div class="ggrid" id="gg"></div>
   </div>
 
-  <!-- 7. Production: the NCs against the volume built (local page only) -->
+  <!-- 7. NC rates: NCs, defects and cost per unit of volume built (local page only) -->
   <div class="panel" role="tabpanel" id="p-prod" aria-labelledby="tab-prod" hidden>
     <section class="hero"><span class="fict" id="pBadge"></span><h2 data-t="prodTitle"></h2><p class="sub" data-t="prodSub"></p><p class="sub" id="pCover"></p></section>
     <div class="gal-bar"><div class="controls"><div class="seg" role="group" data-ta="prodData" id="pSrcSeg"></div><div class="seg" role="group" data-ta="prodVer" id="pVerSeg"></div></div><p class="gal-keep" id="pKeep"></p></div>
@@ -700,8 +700,8 @@ window.FTO2_PAGE = window.FTO2_PAGE || 'suivi';
   var STR = {
     fr: {
       kmNc: 'Compté en NC', kmDef: 'Compté en défauts', kmEur: 'En euros',
-      tabProd: 'Production', prodTitle: 'Production et NC', prodData: 'Données', prodVer: 'Calcul des EqMSN',
-      prodSub: 'Les NC rapportées au volume produit : EqMSN par produit et par mois. En données réelles, les filtres du haut s’appliquent ; octobre à décembre sont des prévisions.',
+      tabProd: 'Taux de NC', prodTitle: 'Les NC rapportées au volume', prodData: 'Données', prodVer: 'Calcul des EqMSN',
+      prodSub: 'Le volume produit (EqMSN par produit et par mois) sert seulement de dénominateur : chaque graphique montre des NC, des défauts ou leur coût pour un volume donné. En données réelles, les filtres du haut s’appliquent.',
       tabGal: 'Galerie (fictif)', galTitle: 'Galerie de graphiques', galBadge: 'Données fictives · aucun chiffre ne décrit FTO2', galFilter: 'Filtrer par faisabilité',
       galSub: 'Des idées de graphiques dessinées sur des données inventées, pour choisir ceux à construire. Sous chaque graphique : ce qu’il faut pour le faire avec les vraies données.',
       tabOv: 'Vue d’ensemble', tabMft: 'Actions MFT', titleSuivi: 'Suivi hebdomadaire FTO2', mftTitle: 'Actions MFT', mftSub: 'Actions des fichiers de suivi MFT A330 et A350, et le problème visé, mois par mois.',
@@ -813,8 +813,8 @@ window.FTO2_PAGE = window.FTO2_PAGE || 'suivi';
     },
     en: {
       kmNc: 'Counted in NCs', kmDef: 'Counted in defects', kmEur: 'In euros',
-      tabProd: 'Output', prodTitle: 'Output and NCs', prodData: 'Data', prodVer: 'EqMSN calculation',
-      prodSub: 'NCs against the volume built: EqMSN per product and month. With real data the filters at the top apply; October to December are forecast.',
+      tabProd: 'NC rates', prodTitle: 'NCs against volume', prodData: 'Data', prodVer: 'EqMSN calculation',
+      prodSub: 'The volume built (EqMSN per product and month) is only the denominator: each chart shows NCs, defects or their cost for a given volume. With real data the filters at the top apply.',
       tabGal: 'Gallery (dummy)', galTitle: 'Chart gallery', galBadge: 'Dummy data · no figure describes FTO2', galFilter: 'Filter by feasibility',
       galSub: 'Chart ideas drawn on made-up data, to choose which ones to build. Under each chart: what it takes to make it with the real data.',
       tabOv: 'Overview', tabMft: 'MFT actions', titleSuivi: 'FTO2 weekly follow-up', mftTitle: 'MFT actions', mftSub: 'Actions from the A330 and A350 MFT trackers, and the problem they target, month by month.',
@@ -3315,7 +3315,7 @@ window.FTO2_PAGE = window.FTO2_PAGE || 'suivi';
     GP.addEventListener('pointerleave', hideTip);
   }
 
-  // ---------------------------------------------------------------- 7. Production (local page): the NCs against the volume built, EqMSN per product and month
+  // ---------------------------------------------------------------- 7. NC rates (local page): NCs, defects and cost per unit of volume built (EqMSN, only a denominator)
   // real: 06_input_data/EqMSN_2026.xlsx (Standard and Adjusted sheets) with the NCs of the filter bar, matched on the product
   // family (04_reference/eqmsn_produits.csv); fictitious: the same layout from build/dummy_data.py
   Object.assign(GX.fr, { eqU: 'EqMSN', fcLeg: 'Prévision (oct. à déc.)', actLeg: 'Réalisé', totalEq: 'Total {v} EqMSN', eqTip: '{v} EqMSN', ncEq: '{n} NC · {e} EqMSN',
@@ -3325,7 +3325,7 @@ window.FTO2_PAGE = window.FTO2_PAGE || 'suivi';
     above3: 'Au-dessus (3σ)', below3: 'En dessous (3σ)', monthLoad: 'Production du mois (EqMSN)', medClose: 'Délai médian de clôture (j)', noData: 'Pas de production ou de NC rattachée pour ce choix.',
     pReal: 'Données réelles', pDummy: 'Données fictives', pStd: 'EqMSN standard', pAdj: 'EqMSN ajusté', badgeReal: 'Données réelles · production EqMSN (export du {d}) et NC de l’extraction',
     cover: '{n} NC sur {t} rattachées à un produit de la table de production ({p}). Non rattachées : {l}.', coverAll: 'Toutes les NC sont rattachées à un produit.', confirm: 'Correspondance à confirmer : {l}.',
-    fcShort: 'prév.', projTot: '{a} → {b}', ucl3: 'Limite 3σ', q1s: '1er trim.', q3s: '3e trim.', andMore: 'et {n} autres', rateLeg: 'NC par EqMSN', constRate: 'Taux constant', moreNc: 'Plus de NC que de production', lessNc: 'Moins de NC que de production' });
+    fcShort: 'prév.', projTot: '{a} → {b}', ucl3: 'Limite 3σ', q1s: '1er trim.', q3s: '3e trim.', rollTip: 'moyenne sur 3 mois : {v}', monthLeg: 'Mois', roll3: 'Moyenne glissante sur 3 mois', lateShare: '{p} des NC du produit', andMore: 'et {n} autres', rateLeg: 'NC par EqMSN', constRate: 'Taux constant', moreNc: 'Plus de NC que de production', lessNc: 'Moins de NC que de production' });
   Object.assign(GX.en, { eqU: 'EqMSN', fcLeg: 'Forecast (Oct to Dec)', actLeg: 'Actual', totalEq: 'Total {v} EqMSN', eqTip: '{v} EqMSN', ncEq: '{n} NCs · {e} EqMSN',
     perEq: '{v} per EqMSN', per10eq: '{v} per 10 EqMSN', per100eq: '{v} per 100 EqMSN', overall: 'All {v}', shareProd: 'Share of output', shareNc: 'Share of NCs',
     idxProd: 'Output', idxNc: 'NCs', obs: 'NCs observed', expd: 'NCs expected', volEff: 'Volume effect', rateEff: 'Rate effect', deltaTot: 'Total change',
@@ -3333,13 +3333,18 @@ window.FTO2_PAGE = window.FTO2_PAGE || 'suivi';
     above3: 'Above (3σ)', below3: 'Below (3σ)', monthLoad: 'Output of the month (EqMSN)', medClose: 'Median days to close', noData: 'No output or matched NC for this choice.',
     pReal: 'Real data', pDummy: 'Dummy data', pStd: 'Standard EqMSN', pAdj: 'Adjusted EqMSN', badgeReal: 'Real data · EqMSN output (export of {d}) and NCs from the extract',
     cover: '{n} of {t} NCs matched to a product of the output table ({p}). Not matched: {l}.', coverAll: 'Every NC is matched to a product.', confirm: 'Match to confirm: {l}.',
-    fcShort: 'fcst', projTot: '{a} → {b}', ucl3: '3σ limit', q1s: 'Q1', q3s: 'Q3', andMore: 'and {n} more', rateLeg: 'NCs per EqMSN', constRate: 'Constant rate', moreNc: 'More NCs than output', lessNc: 'Fewer NCs than output' });
+    fcShort: 'fcst', projTot: '{a} → {b}', ucl3: '3σ limit', q1s: 'Q1', q3s: 'Q3', rollTip: '3-month average: {v}', monthLeg: 'Month', roll3: '3-month rolling average', lateShare: '{p} of the product’s NCs', andMore: 'and {n} more', rateLeg: 'NCs per EqMSN', constRate: 'Constant rate', moreNc: 'More NCs than output', lessNc: 'Fewer NCs than output' });
   Object.assign(GSTR, {
-    '51': { fr: ['Production', 'Production mensuelle par produit', 'EqMSN par mois ; teinte claire : prévision.', 'production EqMSN'], en: ['Output', 'Monthly output by product', 'EqMSN per month; light shade: forecast.', 'EqMSN output'] },
-    '52': { fr: ['Cumul', 'Production cumulée, réalisée et prévue', 'Trait plein : réalisé ; pointillé : prévision jusqu’en décembre.', 'production EqMSN'], en: ['Cumulative', 'Cumulative output, actual and forecast', 'Solid: actual; dotted: forecast to December.', 'EqMSN output'] },
-    '53': { fr: ['Méthode', 'EqMSN standard ou ajusté', 'Les deux calculs du fichier : l’ajusté ajoute le travail 2025 des MSN livrés en 2026.', 'production EqMSN, deux onglets'], en: ['Method', 'Standard or adjusted EqMSN', 'The file’s two calculations: adjusted adds 2025 work on MSNs shipping in 2026.', 'EqMSN output, both sheets'] },
-    '54': { fr: ['Produits', 'Le rythme de chaque produit', 'EqMSN par mois ; chaque petit graphique a sa propre échelle.', 'production EqMSN'], en: ['Products', 'The rhythm of each product', 'EqMSN per month; each small chart has its own scale.', 'EqMSN output'] },
-    '55': { fr: ['Volume et taux', 'La production en surfaces, teintée par le taux de NC', 'Surface : EqMSN de la période ; teinte : NC par EqMSN.', 'production EqMSN · NC'], en: ['Volume and rate', 'Output as areas, shaded by NC rate', 'Area: EqMSN over the period; shade: NCs per EqMSN.', 'EqMSN output · NCs'] },
+    '51': { fr: ['Indicateur', 'NC par EqMSN, mois par mois', 'Tous les produits rattachés ; trait : moyenne de la période ; pointillé : moyenne glissante sur 3 mois.', 'NC · production EqMSN en dénominateur'],
+            en: ['Indicator', 'NCs per EqMSN, month by month', 'All matched products; line: period average; dotted: 3-month rolling average.', 'NCs · EqMSN output as denominator'] },
+    '52': { fr: ['Composition', 'Défauts pour 10 EqMSN, par catégorie', 'Mois par mois, tous les produits rattachés.', 'défauts · production EqMSN en dénominateur'],
+            en: ['Mix', 'Defects per 10 EqMSN, by category', 'Month by month, all matched products.', 'defects · EqMSN output as denominator'] },
+    '53': { fr: ['Causes', 'Les causes rapportées au volume', 'Défauts pour 10 EqMSN, 15 premières causes, tous les produits rattachés.', 'causes · production EqMSN en dénominateur'],
+            en: ['Root causes', 'Root causes against volume', 'Defects per 10 EqMSN, top 15 root causes, all matched products.', 'root causes · EqMSN output as denominator'] },
+    '54': { fr: ['Produits', 'Les trois premières causes de chaque produit', 'Défauts pour 10 EqMSN ; produits du plus touché au moins touché.', 'causes · production EqMSN en dénominateur'],
+            en: ['Products', 'The top three root causes of each product', 'Defects per 10 EqMSN; products from most to least affected.', 'root causes · EqMSN output as denominator'] },
+    '55': { fr: ['Carte', 'Catégories mois par mois, pour 10 EqMSN', 'Teinte : défauts pour 10 EqMSN, tous les produits rattachés.', 'défauts · production EqMSN en dénominateur'],
+            en: ['Map', 'Categories month by month, per 10 EqMSN', 'Shade: defects per 10 EqMSN, all matched products.', 'defects · EqMSN output as denominator'] },
     '56': { fr: ['Taux', 'NC par EqMSN, par produit', 'Trait vertical : taux de l’ensemble des produits.', 'production EqMSN · NC'], en: ['Rate', 'NCs per EqMSN, by product', 'Vertical line: rate of all products together.', 'EqMSN output · NCs'] },
     '57': { fr: ['Taux', 'Défauts par EqMSN, par produit', 'Trait vertical : ensemble des produits.', 'production EqMSN · défauts'], en: ['Rate', 'Defects per EqMSN, by product', 'Vertical line: all products together.', 'EqMSN output · defects'] },
     '58': { fr: ['Coût', 'Coût de non-qualité par EqMSN', 'Par produit ; trait vertical : ensemble des produits.', 'production EqMSN · coût CNQ'], en: ['Cost', 'Cost of non-quality per EqMSN', 'By product; vertical line: all products together.', 'EqMSN output · CNQ cost'] },
@@ -3349,20 +3354,24 @@ window.FTO2_PAGE = window.FTO2_PAGE || 'suivi';
     '62': { fr: ['Maîtrise statistique', 'Cartes u mensuelles par produit', 'NC par EqMSN, moyenne et limite à 3 sigmas, pour les quatre produits qui ont le plus de NC.', 'production EqMSN · NC'], en: ['Process control', 'Monthly u charts by product', 'NCs per EqMSN, mean and 3-sigma limit, for the four products with most NCs.', 'EqMSN output · NCs'] },
     '63': { fr: ['Entonnoir', 'Taux face au volume, avec ses limites', 'Chaque produit à son volume ; l’entonnoir montre l’écart que le hasard seul peut donner (2 et 3 sigmas).', 'production EqMSN · NC'], en: ['Funnel', 'Rate against volume, with its limits', 'Each product at its volume; the funnel shows the spread chance alone can give (2 and 3 sigmas).', 'EqMSN output · NCs'] },
     '64': { fr: ['Précision', 'Taux et intervalle de confiance à 95 %', 'Plus le volume est faible, plus l’intervalle est large ; échelle logarithmique.', 'production EqMSN · NC'], en: ['Precision', 'Rate and 95% confidence interval', 'The smaller the volume, the wider the interval; log scale.', 'EqMSN output · NCs'] },
-    '65': { fr: ['Proportion', 'NC du mois face à la production du mois', 'Un point par produit et par mois ; rayon : taux moyen du produit.', 'production EqMSN · NC'], en: ['Proportion', 'NCs of the month against output of the month', 'One dot per product and month; ray: the product’s average rate.', 'EqMSN output · NCs'] },
-    '66': { fr: ['Indices', 'Production et NC, base 100', 'Moyenne de la période = 100 pour chaque courbe.', 'production EqMSN · NC'], en: ['Indices', 'Output and NCs, base 100', 'Period average = 100 for each curve.', 'EqMSN output · NCs'] },
+    '65': { fr: ['Câble', 'Défauts câble pour 10 EqMSN, mois par mois', 'Tous les produits rattachés ; trait : moyenne de la période ; pointillé : moyenne glissante sur 3 mois.', 'défauts câble · production EqMSN en dénominateur'],
+            en: ['Cable', 'Cable defects per 10 EqMSN, month by month', 'All matched products; line: period average; dotted: 3-month rolling average.', 'cable defects · EqMSN output as denominator'] },
+    '66': { fr: ['Coût', 'Coût de non-qualité par EqMSN, mois par mois', 'Trait : moyenne de la période ; pointillé : moyenne glissante sur 3 mois.', 'coût CNQ · production EqMSN en dénominateur'],
+            en: ['Cost', 'Cost of non-quality per EqMSN, month by month', 'Line: period average; dotted: 3-month rolling average.', 'CNQ cost · EqMSN output as denominator'] },
     '67': { fr: ['Attendu', 'NC observées et NC attendues au vu du volume', 'Barre : NC du mois ; trait : NC attendues avec le taux moyen de chaque produit.', 'production EqMSN · NC'], en: ['Expected', 'NCs observed and NCs expected from volume', 'Bar: NCs of the month; tick: NCs expected at each product’s average rate.', 'EqMSN output · NCs'] },
     '68': { fr: ['Décomposition', 'D’un mois à l’autre : effet volume, effet taux', 'Variation des NC entre les deux derniers mois, séparée entre volume produit et taux.', 'production EqMSN · NC'], en: ['Decomposition', 'Month to month: volume effect, rate effect', 'Change in NCs between the last two months, split into output volume and rate.', 'EqMSN output · NCs'] },
     '69': { fr: ['Cumul', 'NC cumulées face à la production cumulée', 'Pente : taux ; pointillé : taux constant. Quatre produits, chacun à son échelle.', 'production EqMSN · NC'], en: ['Cumulative', 'Cumulative NCs against cumulative output', 'Slope: rate; dotted: constant rate. Four products, each at its own scale.', 'EqMSN output · NCs'] },
     '70': { fr: ['Fiabilité', 'Croissance de fiabilité (Duane)', 'Taux cumulé face à la production cumulée, échelles logarithmiques.', 'production EqMSN · NC'], en: ['Reliability', 'Reliability growth (Duane)', 'Cumulative rate against cumulative output, log scales.', 'EqMSN output · NCs'] },
     '71': { fr: ['Projection', 'NC attendues d’ici décembre', 'Réalisé, puis prévision : taux de la période × production prévue.', 'production EqMSN prévue · NC'], en: ['Projection', 'NCs expected by December', 'Actual, then forecast: period rate × planned output.', 'planned EqMSN output · NCs'] },
     '72': { fr: ['Projection', 'Coût de non-qualité attendu d’ici décembre', 'Cumul réalisé, puis coût par EqMSN × production prévue.', 'production EqMSN prévue · coût CNQ'], en: ['Projection', 'Cost of non-quality expected by December', 'Actual cumulative, then cost per EqMSN × planned output.', 'planned EqMSN output · CNQ cost'] },
-    '73': { fr: ['Structure', 'Production et profil de défauts', 'Largeur : EqMSN du produit ; hauteur : part de chaque catégorie dans ses défauts.', 'production EqMSN · défauts'], en: ['Structure', 'Output and defect profile', 'Width: the product’s EqMSN; height: each category’s share of its defects.', 'EqMSN output · defects'] },
+    '73': { fr: ['Détection', 'NC trouvées au contrôle final ou au test, pour 10 EqMSN', 'Par produit : NC arrêtées en fin de parcours plutôt qu’au poste ; trait vertical : ensemble des produits.', 'lieu de détection · production EqMSN en dénominateur'],
+            en: ['Detection', 'NCs found at final inspection or test, per 10 EqMSN', 'By product: NCs stopped at the end of the flow rather than at the station; vertical line: all products.', 'where found · EqMSN output as denominator'] },
     '74': { fr: ['Carte', 'Défauts pour 10 EqMSN, produit × catégorie', 'Teinte : défauts pour 10 EqMSN.', 'production EqMSN · défauts'], en: ['Map', 'Defects per 10 EqMSN, product × category', 'Shade: defects per 10 EqMSN.', 'EqMSN output · defects'] },
     '75': { fr: ['Câble', 'Défauts câble pour 10 EqMSN', 'Par produit ; trait vertical : ensemble des produits.', 'production EqMSN · défauts câble'], en: ['Cable', 'Cable defects per 10 EqMSN', 'By product; vertical line: all products together.', 'EqMSN output · cable defects'] },
     '76': { fr: ['Branchement', 'Erreurs de branchement pour 10 EqMSN', 'Par produit, par cause : inversion, mauvaise borne, non connecté.', 'production EqMSN · défauts'], en: ['Connection', 'Connection errors per 10 EqMSN', 'By product and cause: swapped, wrong terminal, not connected.', 'EqMSN output · defects'] },
     '77': { fr: ['Échappements', 'Retours clients pour 100 EqMSN', 'NC retours clients rapportées à la production du produit.', 'production EqMSN · retours clients'], en: ['Escapes', 'Customer returns per 100 EqMSN', 'Customer-return NCs against the product’s output.', 'EqMSN output · customer returns'] },
-    '78': { fr: ['Charge', 'Charge du mois et délai de clôture', 'Un point par mois, reliés dans l’ordre : production du mois et délai médian de clôture des NC créées ce mois-là.', 'production EqMSN · délais'], en: ['Load', 'Monthly load and time to close', 'One dot per month, joined in order: output of the month and median days to close of the NCs created that month.', 'EqMSN output · lead times'] },
+    '78': { fr: ['Branchement', 'Erreurs de branchement pour 10 EqMSN, mois par mois', 'Inversions, mauvaises bornes, non connectés ; trait : moyenne de la période ; pointillé : moyenne glissante sur 3 mois.', 'défauts · production EqMSN en dénominateur'],
+            en: ['Connection', 'Connection errors per 10 EqMSN, month by month', 'Swapped wires, wrong terminals, not connected; line: period average; dotted: 3-month rolling average.', 'defects · EqMSN output as denominator'] },
     '79': { fr: ['Avant / après', 'Taux par produit : 1er et 3e trimestres', 'NC par EqMSN ; échelle logarithmique.', 'production EqMSN · NC'], en: ['Before / after', 'Rate by product: Q1 and Q3', 'NCs per EqMSN; log scale.', 'EqMSN output · NCs'] },
     '80': { fr: ['Classement', 'Rang mensuel des produits par taux', 'Rang 1 : taux le plus élevé du mois ; produits avec au moins 0,5 EqMSN dans le mois.', 'production EqMSN · NC'], en: ['Ranking', 'Monthly rank of products by rate', 'Rank 1: highest rate of the month; products with at least 0.5 EqMSN that month.', 'EqMSN output · NCs'] }
   });
@@ -3384,23 +3393,23 @@ window.FTO2_PAGE = window.FTO2_PAGE || 'suivi';
       SEL_NC.forEach(function (n) {
         P.total++; var p = E.map[String(n[26] || '').toUpperCase()], m = month(n[1]);
         if (!p || P.prods.indexOf(p) < 0) { var lb = n[26] || '—'; P.miss[lb] = (P.miss[lb] || 0) + 1; return; }
-        if (m < 0) return; P.idx[n[0]] = P.ncs.length; P.ncs.push({ id: n[0], m: m, p: p, cost: n[12], days: n[29] });
+        if (m < 0) return; P.idx[n[0]] = P.ncs.length; P.ncs.push({ id: n[0], m: m, p: p, cost: n[12], days: n[29], late: n[8] === 'Final inspection' || n[8] === 'TEST' });
       });
       D.defects.forEach(function (r) { var i = P.idx[r[0]]; if (i != null && keepMinor(r)) P.defs.push({ n: i, cat: dCat(r), rca: dRca(r), cost: dAlloc(r), cable: !!dCable(r) }); });
       CLI_NC.forEach(function (n) { var p = E.map[String(n[26] || '').toUpperCase()], m = month(n[1]); if (p && P.prods.indexOf(p) >= 0 && m >= 0) P.cli.push({ p: p, m: m }); });
     } else {
-      GN.forEach(function (n, i) { P.total++; var m = month(n[1]); if (m < 0) return; P.idx[i] = P.ncs.length; P.ncs.push({ id: n[0], m: m, p: n[5], cost: gCost(n), days: n[8] }); if (n[9] === 'client') P.cli.push({ p: n[5], m: m }); });
+      GN.forEach(function (n, i) { P.total++; var m = month(n[1]); if (m < 0) return; P.idx[i] = P.ncs.length; P.ncs.push({ id: n[0], m: m, p: n[5], cost: gCost(n), days: n[8], late: n[9] === 'cf' || n[9] === 'test' }); if (n[9] === 'client') P.cli.push({ p: n[5], m: m }); });
       GD.forEach(function (d, j) { var i = P.idx[d[0]]; if (i != null) P.defs.push({ n: i, cat: d[1], rca: d[2], cost: GALLOC[j], cable: !!CABLE_RCA[d[2]] }); });
     }
     return P;
   }
   function pAgg(P) {
     var z = function () { return P.months.map(function () { return 0; }); }, a = {};
-    P.prods.forEach(function (p) { a[p] = { p: p, line: P.line[p] || '', eqm: P.prod[p].map(function (v, i) { return P.mask[i] ? v : 0; }), nc: z(), def: z(), cost: z(), cab: z(), cli: z(), conn: {}, cats: {}, days: [] }; });
-    P.ncs.forEach(function (x) { var o = a[x.p]; o.nc[x.m]++; o.cost[x.m] += x.cost; if (x.days != null) o.days.push(x.days); });
-    P.defs.forEach(function (d) { var x = P.ncs[d.n], o = a[x.p]; o.def[x.m]++; if (d.cable) o.cab[x.m]++; if (d.cat === 'Erreur Branchement') o.conn[d.rca] = (o.conn[d.rca] || 0) + 1; var c = catKey(d.cat); o.cats[c] = (o.cats[c] || 0) + 1; });
+    P.prods.forEach(function (p) { a[p] = { p: p, line: P.line[p] || '', eqm: P.prod[p].map(function (v, i) { return P.mask[i] ? v : 0; }), nc: z(), def: z(), cost: z(), cab: z(), cli: z(), late: z(), connm: z(), conn: {}, cats: {}, catm: {}, rcas: {}, days: [] }; });
+    P.ncs.forEach(function (x) { var o = a[x.p]; o.nc[x.m]++; o.cost[x.m] += x.cost; if (x.late) o.late[x.m]++; if (x.days != null) o.days.push(x.days); });
+    P.defs.forEach(function (d) { var x = P.ncs[d.n], o = a[x.p]; o.def[x.m]++; if (d.cable) o.cab[x.m]++; if (d.cat === 'Erreur Branchement') { o.conn[d.rca] = (o.conn[d.rca] || 0) + 1; o.connm[x.m]++; } var c = catKey(d.cat); o.cats[c] = (o.cats[c] || 0) + 1; (o.catm[c] || (o.catm[c] = z()))[x.m]++; o.rcas[d.rca] = (o.rcas[d.rca] || 0) + 1; });
     P.cli.forEach(function (x) { a[x.p].cli[x.m]++; });
-    P.prods.forEach(function (p) { var o = a[p]; o.EQ = sumA(o.eqm); o.NC = sumA(o.nc); o.DEF = sumA(o.def); o.COST = sumA(o.cost); o.CAB = sumA(o.cab); o.CLI = sumA(o.cli); o.r = o.EQ ? o.NC / o.EQ : null;
+    P.prods.forEach(function (p) { var o = a[p]; o.EQ = sumA(o.eqm); o.NC = sumA(o.nc); o.DEF = sumA(o.def); o.COST = sumA(o.cost); o.CAB = sumA(o.cab); o.CLI = sumA(o.cli); o.LATE = sumA(o.late); o.r = o.EQ ? o.NC / o.EQ : null;
       o.FC = sumA(P.prod[p].slice(P.fc)); });
     return a;
   }
@@ -3428,76 +3437,80 @@ window.FTO2_PAGE = window.FTO2_PAGE || 'suivi';
   }
   function pMonthAxis(X, y, idx) { return idx.map(function (i) { return tx(X(i), y, monthName(PD.months[i]), i >= PD.fc ? 'mu' : 'mu', 'middle'); }).join(''); }
 
-  // 51. monthly output by product, stacked; forecast months lighter
-  function g51(k) {
-    var W0 = gWd(k), ms = PD.months, ml = 44, mt = 22, h = 210, H = mt + h + 26, pw = W0 - ml - 6, bw = pw / 12, g = '';
-    var tot = ms.map(function (m, i) { return sumA(PD.prods.map(function (p) { return PD.prod[p][i]; })); }), nt = pNice(Math.max.apply(null, tot));
+  // monthly totals over the products of the selection (the volume is only the denominator)
+  function pMonthly(f) { return pAct().map(function (i) { var e = sumA(P_().map(function (o) { return o.eqm[i]; })); return { i: i, e: e, v: sumA(P_().map(function (o) { return f(o, i); })) }; }).filter(function (x) { return x.e >= 0.5; }); }
+  function pTrend(k, rows, fmt, unitTip, col) {
+    col = col || 'var(--s1)';
+    if (rows.length < 2) { pEmpty(k); return; }
+    var W0 = gWd(k), ml = 46, mr = 92, mt = 16, h = 220, H = mt + h + 26, pw = W0 - ml - mr, r = rows.map(function (x) { return x.v / x.e; }), mean = sumA(rows.map(function (x) { return x.v; })) / sumA(rows.map(function (x) { return x.e; })), nt = pNice(Math.max.apply(null, r) * 1.1), g = '';
+    function X(j) { return ml + j / (rows.length - 1) * pw; } function Y(v) { return mt + h - v / nt.top * h; }
+    var roll = r.map(function (v, j) { var a = r.slice(Math.max(0, j - 2), j + 1); return sumA(a) / a.length; });
+    g += pGridY(ml, pw, Y, nt, fmt) + '<line x1="' + ml + '" x2="' + (ml + pw) + '" y1="' + r1(Y(mean)) + '" y2="' + r1(Y(mean)) + '" stroke="var(--ink-2)"/>';
+    g += '<path d="' + roll.map(function (v, j) { return (j ? 'L' : 'M') + r1(X(j)) + ',' + r1(Y(v)); }).join('') + '" fill="none" stroke="var(--ink-2)" stroke-width="1.5" stroke-dasharray="4 3"/>';
+    g += '<path d="' + r.map(function (v, j) { return (j ? 'L' : 'M') + r1(X(j)) + ',' + r1(Y(v)); }).join('') + '" fill="none" stroke="' + col + '" stroke-width="2.2"/>';
+    rows.forEach(function (x, j) { g += '<circle cx="' + r1(X(j)) + '" cy="' + r1(Y(r[j])) + '" r="4" fill="' + col + '" stroke="var(--surface)" stroke-width="1.5"' + tip(monthName(PD.months[x.i]), [unitTip(r[j]), gx('rollTip', { v: fmt(roll[j]) }), gx('eqTip', { v: f1(x.e) })]) + '/>' + tx(X(j), H - 6, monthName(PD.months[x.i]), 'mu', 'middle'); });
+    g += tx(ml + pw + 8, Y(mean) + 4, gx('mean') + ' ' + fmt(mean), 'mu');
+    gSet(k, svg(W0, H, g, gT(k)), swl(col, gx('monthLeg')) + swl('var(--ink-2)', gx('mean')) + swl('var(--ink-2)', gx('roll3'), true));
+  }
+
+  // 51. NCs per EqMSN, month by month, all products of the selection
+  function g51(k) { pTrend(k, pMonthly(function (o, i) { return o.nc[i]; }), f2, function (v) { return gx('perEq', { v: f2(v) }); }); }
+
+  // 52. defects per 10 EqMSN by category, month by month (stacked)
+  function g52(k) {
+    var rows = pMonthly(function (o, i) { return o.def[i]; });
+    if (!rows.length) { pEmpty(k); return; }
+    var W0 = gWd(k), ml = 40, mt = 20, h = 210, H = mt + h + 26, pw = W0 - ml - 6, bw = pw / rows.length, per = rows.map(function (x) { var m = {}; MAIN_CATS.forEach(function (c) { m[c] = sumA(P_().map(function (o) { return (o.catm[c] || [])[x.i] || 0; })) / x.e * 10; }); return m; });
+    var tots = per.map(function (m) { return sumA(MAIN_CATS.map(function (c) { return m[c]; })); }), nt = pNice(Math.max.apply(null, tots.concat([1e-9]))), g = '';
     function Y(v) { return mt + h - v / nt.top * h; }
     g += pGridY(ml, pw, Y, nt);
-    ms.forEach(function (m, i) {
-      var x = ml + i * bw + bw * 0.16, w = bw * 0.68, acc = 0, fc = i >= PD.fc;
-      PD.prods.forEach(function (p) { var v = PD.prod[p][i]; if (v <= 0) return;
-        g += '<rect x="' + r1(x) + '" y="' + r1(Y(acc + v)) + '" width="' + r1(w) + '" height="' + r1(Math.max(0.6, v / nt.top * h - 1.5)) + '" fill="' + PCOL[p] + '"' + (fc ? ' fill-opacity=".38"' : '') + tip(monthName(m) + ' · ' + p, [gx('eqTip', { v: f1(v) }) + (fc ? ' · ' + gx('fcShort') : '')]) + '/>'; acc += v; });
-      g += tx(x + w / 2, Y(tot[i]) - 6, num(Math.round(tot[i])), fc ? 'mu' : 'ink', 'middle') + tx(x + w / 2, H - 6, monthName(m), 'mu', 'middle');
-    });
-    gSet(k, svg(W0, H, g, gT(k)), pProdLeg(PD.prods) + sw('var(--dim)', gx('fcLeg')).replace('background:var(--dim)', 'background:var(--dim);opacity:.45'));
+    rows.forEach(function (x, j) { var x0 = ml + j * bw + bw * 0.18, w = bw * 0.64, acc = 0;
+      MAIN_CATS.forEach(function (c) { var v = per[j][c]; if (v <= 0) return; g += '<rect x="' + r1(x0) + '" y="' + r1(Y(acc + v)) + '" width="' + r1(w) + '" height="' + r1(Math.max(0.6, v / nt.top * h - 1.5)) + '" fill="' + catFill(c) + '"' + tip(monthName(PD.months[x.i]) + ' · ' + catLabel(c), [gx('per10eq', { v: f1(v) })]) + '/>'; acc += v; });
+      g += tx(x0 + w / 2, Y(tots[j]) - 6, f1(tots[j]), 'ink', 'middle') + tx(x0 + w / 2, H - 6, monthName(PD.months[x.i]), 'mu', 'middle'); });
+    gSet(k, svg(W0, H, g, gT(k)), MAIN_CATS.map(function (c) { return sw(catFill(c), catLabel(c)); }).join(''));
   }
 
-  // 52. cumulative output, actual then forecast
-  function g52(k) {
-    var W0 = gWd(k), ms = PD.months, ml = 46, mr = 90, mt = 16, h = 210, H = mt + h + 26, pw = W0 - ml - mr, acc = 0, g = '';
-    var cum = ms.map(function (m, i) { acc += sumA(PD.prods.map(function (p) { return PD.prod[p][i]; })); return acc; }), nt = pNice(acc);
-    function X(i) { return ml + (i + 0.5) / 12 * pw; } function Y(v) { return mt + h - v / nt.top * h; }
-    g += pGridY(ml, pw, Y, nt);
-    var a = cum.slice(0, PD.fc), last = PD.fc - 1;
-    g += '<path d="M' + r1(X(0)) + ',' + r1(Y(0)) + a.map(function (v, i) { return 'L' + r1(X(i)) + ',' + r1(Y(v)); }).join('') + 'L' + r1(X(last)) + ',' + r1(Y(0)) + 'Z" fill="' + tint('--s1', 14) + '"/>';
-    g += '<path d="' + a.map(function (v, i) { return (i ? 'L' : 'M') + r1(X(i)) + ',' + r1(Y(v)); }).join('') + '" fill="none" stroke="var(--s1)" stroke-width="2.2"/>';
-    g += '<path d="' + cum.slice(last).map(function (v, j) { return (j ? 'L' : 'M') + r1(X(last + j)) + ',' + r1(Y(v)); }).join('') + '" fill="none" stroke="var(--s1)" stroke-width="2.2" stroke-dasharray="2 4" stroke-linecap="round"/>';
-    cum.forEach(function (v, i) { g += '<circle cx="' + r1(X(i)) + '" cy="' + r1(Y(v)) + '" r="3.2" fill="' + (i < PD.fc ? 'var(--s1)' : 'var(--surface)') + '" stroke="var(--s1)" stroke-width="1.5"' + tip(monthName(ms[i]), [gx('eqTip', { v: f1(v) }) + (i >= PD.fc ? ' · ' + gx('fcShort') : '')]) + '/>' + tx(X(i), H - 6, monthName(ms[i]), 'mu', 'middle'); });
-    g += tx(X(11) + 10, Y(cum[11]) + 4, gx('totalEq', { v: num(Math.round(cum[11])) }), 'ink b') + tx(X(last) + 8, Y(cum[last]) + 16, num(Math.round(cum[last])), 'ink');
-    gSet(k, svg(W0, H, g, gT(k)), swl('var(--s1)', gx('actLeg')) + swl('var(--s1)', gx('fcLeg'), true));
-  }
-
-  // 53. standard against adjusted EqMSN
+  // 53. root causes per 10 EqMSN, all products of the selection
   function g53(k) {
-    var W0 = gWd(k), E = PD.E, ms = PD.months, ml = 40, mr = 124, mt = 14, h = 200, H = mt + h + 26, pw = W0 - ml - mr, g = '';
-    var s = ms.map(function (m, i) { return sumA(PD.prods.map(function (p) { return (E.std[p] || [])[i] || 0; })); }), a = ms.map(function (m, i) { return sumA(PD.prods.map(function (p) { return (E.adj[p] || [])[i] || 0; })); });
-    var nt = pNice(Math.max.apply(null, s.concat(a)));
-    function X(i) { return ml + i / 11 * pw; } function Y(v) { return mt + h - v / nt.top * h; }
-    g += pGridY(ml, pw, Y, nt);
-    [[a, 'var(--ink-2)', ' stroke-dasharray="5 4"', 'pAdj'], [s, 'var(--s1)', '', 'pStd']].forEach(function (q) {
-      g += '<path d="' + q[0].map(function (v, i) { return (i ? 'L' : 'M') + r1(X(i)) + ',' + r1(Y(v)); }).join('') + '" fill="none" stroke="' + q[1] + '" stroke-width="2"' + q[2] + '/>';
-      q[0].forEach(function (v, i) { g += '<circle cx="' + r1(X(i)) + '" cy="' + r1(Y(v)) + '" r="3" fill="' + q[1] + '"' + tip(monthName(ms[i]), [gx('pStd') + ' : ' + f1(s[i]), gx('pAdj') + ' : ' + f1(a[i])]) + '/>'; });
-    });
-    var ly = spread([Y(a[11]), Y(s[11])], 15, mt, mt + h);
-    g += tx(X(11) + 8, ly[0] + 4, gx('pAdj'), 'mu') + tx(X(11) + 8, ly[1] + 4, gx('pStd'), 'ink b');
-    ms.forEach(function (m, i) { g += tx(X(i), H - 6, monthName(m), 'mu', 'middle'); });
-    gSet(k, svg(W0, H, g, gT(k)), swl('var(--s1)', gx('pStd')) + swl('var(--ink-2)', gx('pAdj'), true));
+    var E0 = pTot(function (o) { return o.EQ; }); if (!E0) { pEmpty(k); return; }
+    var c = {}, cat = {}; PD.defs.forEach(function (d) { c[d.rca] = (c[d.rca] || 0) + 1; cat[d.rca] = catKey(d.cat); });
+    var rows = Object.keys(c).sort(function (a, b) { return c[b] - c[a]; }).slice(0, 15);
+    if (!rows.length) { pEmpty(k); return; }
+    var W0 = gWd(k), lab = 196, mr = 56, rh = 24, H = rows.length * rh + 6, mx = c[rows[0]] / E0 * 10, pw = W0 - lab - mr, g = '';
+    rows.forEach(function (r, i) { var y = i * rh + 4, v = c[r] / E0 * 10, w = v / mx * pw;
+      g += tx(lab - 10, y + 13, trunc(L(r), lab - 14), 'ink', 'end') + '<rect x="' + lab + '" y="' + (y + 3) + '" width="' + r1(Math.max(1.5, w)) + '" height="14" rx="2" fill="' + catFill(cat[r]) + '"' + tip(L(r), [gx('per10eq', { v: f2(v) }), gx('defN', { n: num(c[r]) }), catLabel(cat[r])]) + '/>' + tx(lab + w + 6, y + 14, f1(v), 'ink'); });
+    gSet(k, svg(W0, H, g, gT(k)), MAIN_CATS.filter(function (cc) { return rows.some(function (r) { return cat[r] === cc; }); }).map(function (cc) { return sw(catFill(cc), catLabel(cc)); }).join(''));
   }
 
-  // 54. small multiples: output of each product
+  // 54. top three causes of each product, per 10 EqMSN
   function g54(k) {
-    var W0 = gWd(k), ps = PD.prods.filter(function (p) { return sumA(PD.prod[p]) > 0; }), cols = W0 >= 480 ? 3 : 2, gap = 18, pw = (W0 - gap * (cols - 1)) / cols, ph = 44, cellH = 86, H = Math.ceil(ps.length / cols) * cellH, g = '';
-    ps.forEach(function (p, i) {
-      var x0 = (i % cols) * (pw + gap), y0 = Math.floor(i / cols) * cellH, a = PD.prod[p], mx = Math.max.apply(null, a.concat([1e-9])), bw = pw / 12;
-      g += tx(x0, y0 + 12, p, 'ink b') + tx(x0 + pw, y0 + 12, num(Math.round(sumA(a))), 'mu', 'end');
-      a.forEach(function (v, j) { var hh = v / mx * ph; g += '<rect x="' + r1(x0 + j * bw + 1) + '" y="' + r1(y0 + 20 + ph - hh) + '" width="' + r1(Math.max(1, bw - 2)) + '" height="' + r1(Math.max(0.5, hh)) + '" rx="1" fill="' + PCOL[p] + '"' + (j >= PD.fc ? ' fill-opacity=".38"' : '') + tip(p + ' · ' + monthName(PD.months[j]), [gx('eqTip', { v: f1(v) })]) + '/>'; });
-      g += tx(x0, y0 + 20 + ph + 14, monthName(PD.months[0]), 'mu') + tx(x0 + pw, y0 + 20 + ph + 14, monthName(PD.months[11]), 'mu', 'end');
+    var os = pOk().filter(function (o) { return o.DEF; }).sort(function (a, b) { return b.DEF / b.EQ - a.DEF / a.EQ; });
+    if (!os.length) { pEmpty(k); return; }
+    var W0 = gWd(k), cols = W0 >= 480 ? 2 : 1, gap = 26, pw = (W0 - gap * (cols - 1)) / cols, cellH = 100, H = Math.ceil(os.length / cols) * cellH, cat = {}, g = '';
+    PD.defs.forEach(function (d) { cat[d.rca] = catKey(d.cat); });
+    var mx = Math.max.apply(null, os.map(function (o) { return Math.max.apply(null, Object.keys(o.rcas).map(function (r) { return o.rcas[r] / o.EQ * 10; })); }));
+    os.forEach(function (o, n) {
+      var x0 = (n % cols) * (pw + gap), y0 = Math.floor(n / cols) * cellH, top = Object.keys(o.rcas).sort(function (a, b) { return o.rcas[b] - o.rcas[a]; }).slice(0, 3), lw = Math.min(150, pw * 0.48);
+      g += tx(x0, y0 + 14, o.p, 'ink b') + tx(x0 + pw, y0 + 14, gx('per10eq', { v: f1(o.DEF / o.EQ * 10) }), 'mu', 'end');
+      top.forEach(function (r, j) { var y = y0 + 24 + j * 22, v = o.rcas[r] / o.EQ * 10, w = v / mx * (pw - lw - 40);
+        g += tx(x0 + lw - 6, y + 12, trunc(L(r), lw - 8), 'ink', 'end', ' style="font-size:11.5px"') + '<rect x="' + r1(x0 + lw) + '" y="' + (y + 3) + '" width="' + r1(Math.max(1.5, w)) + '" height="12" rx="2" fill="' + catFill(cat[r]) + '"' + tip(o.p + ' · ' + L(r), [gx('per10eq', { v: f2(v) }), gx('defN', { n: num(o.rcas[r]) })]) + '/>' + tx(x0 + lw + w + 5, y + 13, f1(v), 'mu', null, ' style="font-size:11px"'); });
     });
-    gSet(k, svg(W0, H, g, gT(k)), sw('var(--dim)', gx('fcLeg')).replace('background:var(--dim)', 'background:var(--dim);opacity:.45'));
+    gSet(k, svg(W0, H, g, gT(k)));
   }
 
-  // 55. treemap of output, shaded by NC rate
+  // 55. heatmap category × month, defects per 10 EqMSN
   function g55(k) {
-    var W0 = gWd(k), H = 300, os = P_().filter(function (o) { return o.EQ > 0; }).map(function (o) { return { v: o.EQ, o: o }; }).sort(function (a, b) { return b.v - a.v; });
-    if (!os.length) { pEmpty(k); return; }
-    var mxR = Math.max.apply(null, os.map(function (x) { return x.o.r || 0; }).concat([1e-9])), g = '';
-    squarify(os, 0, 0, W0, H).forEach(function (r) {
-      var o = r.it.o, t = Math.round(12 + 88 * Math.sqrt((o.r || 0) / mxR)), dark = t > 55;
-      g += '<rect x="' + r1(r.x + 1) + '" y="' + r1(r.y + 1) + '" width="' + r1(Math.max(0, r.w - 2)) + '" height="' + r1(Math.max(0, r.h - 2)) + '" rx="2" fill="' + tint('--seq', t) + '"' + tip(o.p, [gx('eqTip', { v: f1(o.EQ) }), gx('perEq', { v: f2(o.r || 0) })]) + '/>';
-      if (r.w > 64 && r.h > 34) g += tx(r.x + 8, r.y + 18, o.p, dark ? 'gk b' : 'ink b') + tx(r.x + 8, r.y + 33, gx('perEq', { v: f2(o.r || 0) }), dark ? 'gk' : 'ink');
-    });
-    gSet(k, svg(W0, H, g, gT(k)), sw(tint('--seq', 12), gx('perEq', { v: '0' })) + sw('var(--seq)', gx('perEq', { v: f2(mxR) })));
+    var rows = pMonthly(function (o, i) { return o.def[i]; });
+    if (!rows.length) { pEmpty(k); return; }
+    var W0 = gWd(k), lab = 130, top = 18, rh = 28, cw = (W0 - lab - 4) / rows.length, H = top + MAIN_CATS.length * rh + 4, vals = [], g = '';
+    var v = MAIN_CATS.map(function (c) { return rows.map(function (x) { var s = sumA(P_().map(function (o) { return (o.catm[c] || [])[x.i] || 0; })) / x.e * 10; vals.push(s); return s; }); });
+    var cap = quant(vals.slice().sort(function (a, b) { return a - b; }), 0.9) || 1;
+    rows.forEach(function (x, j) { g += tx(lab + (j + 0.5) * cw, 12, monthName(PD.months[x.i]), 'mu', 'middle'); });
+    MAIN_CATS.forEach(function (c, r) { var y = top + r * rh; g += tx(lab - 8, y + 18, catLabel(c), 'ink', 'end');
+      rows.forEach(function (x, j) { var val = v[r][j], t = Math.round(6 + 94 * Math.min(1, val / cap)), xx = lab + j * cw;
+        g += '<rect x="' + r1(xx + 1) + '" y="' + (y + 1) + '" width="' + r1(cw - 2) + '" height="' + (rh - 2) + '" rx="2" fill="' + (val ? tint('--seq', t) : 'var(--track)') + '"' + tip(catLabel(c) + ' · ' + monthName(PD.months[x.i]), [gx('per10eq', { v: f2(val) })]) + '/>';
+        if (cw > 34) g += tx(xx + cw / 2, y + 18, val ? f1(val) : '·', t > 55 ? 'gk' : 'mu', 'middle', ' style="font-size:10.5px"'); }); });
+    gSet(k, svg(W0, H, g, gT(k)));
   }
 
   // 56-58. rates by product
@@ -3615,44 +3628,11 @@ window.FTO2_PAGE = window.FTO2_PAGE || 'suivi';
     gSet(k, svg(W0, H, g, gT(k)));
   }
 
-  // 65. NCs of the month against output of the month, with each product's average rate as a ray
-  function g65(k) {
-    var W0 = gWd(k), idx = pAct(), os = pOk().filter(function (o) { return o.NC; }), pts = [];
-    os.forEach(function (o) { idx.forEach(function (i) { if (o.eqm[i] > 0) pts.push({ o: o, i: i, x: o.eqm[i], y: o.nc[i] }); }); });
-    if (!pts.length) { pEmpty(k); return; }
-    var ml = 40, mr = 70, mt = 12, h = 250, H = mt + h + 30, pw = W0 - ml - mr, nx = pNice(Math.max.apply(null, pts.map(function (p) { return p.x; }))), ny = pNice(Math.max.apply(null, pts.map(function (p) { return p.y; }))), g = '';
-    function X(v) { return ml + v / nx.top * pw; } function Y(v) { return mt + h - v / ny.top * h; }
-    g += pGridY(ml, pw, Y, ny);
-    for (var t = 0; t <= nx.top + 1e-9; t += nx.step) g += tx(X(t), mt + h + 16, num(t), 'mu', 'middle');
-    g += tx(ml + pw, H - 2, gx('eqU'), 'mu', 'end');
-    var ends = [];
-    os.forEach(function (o) { var xe = Math.min(nx.top, ny.top / o.r), ye = o.r * xe;
-      g += '<line x1="' + r1(X(0)) + '" y1="' + r1(Y(0)) + '" x2="' + r1(X(xe)) + '" y2="' + r1(Y(ye)) + '" stroke="' + PCOL[o.p] + '" stroke-dasharray="4 3" stroke-opacity=".8"/>'; ends.push({ p: o.p, x: X(xe), y: Y(ye) }); });
-    pts.forEach(function (p) { g += '<circle cx="' + r1(X(p.x)) + '" cy="' + r1(Y(p.y)) + '" r="4" fill="' + PCOL[p.o.p] + '" fill-opacity=".85" stroke="var(--surface)" stroke-width="1.2"' + tip(p.o.p + ' · ' + monthName(PD.months[p.i]), [gx('ncEq', { n: num(p.y), e: f1(p.x) })]) + '/>'; });
-    var topE = ends.filter(function (e) { return e.y <= mt + 12; }).sort(function (a, b) { return a.x - b.x; }), sideE = ends.filter(function (e) { return e.y > mt + 12; });
-    for (var q = 1; q < topE.length; q++) if (topE[q].x < topE[q - 1].x + topE[q - 1].p.length * 6.4 + 8) topE[q].x = topE[q - 1].x + topE[q - 1].p.length * 6.4 + 8;
-    topE.forEach(function (e) { g += tx(e.x + 4, mt + 10, e.p, 'ink halo', null, ' style="font-size:11px"'); });
-    var sy = spread(sideE.map(function (e) { return e.y + 4; }), 13, mt + 14, mt + h); sideE.forEach(function (e, j) { g += tx(ml + pw + 6, sy[j], e.p, 'ink', null, ' style="font-size:11px"'); });
-    gSet(k, svg(W0, H, g, gT(k)), pProdLeg(os.map(function (o) { return o.p; })));
-  }
+  // 65. cable defects per 10 EqMSN, month by month
+  function g65(k) { pTrend(k, pMonthly(function (o, i) { return o.cab[i] * 10; }), f1, function (v) { return gx('per10eq', { v: f1(v) }); }, 'var(--s2)'); }
 
-  // 66. indices, output and NCs, period average = 100
-  function g66(k) {
-    var W0 = gWd(k), idx = pAct();
-    if (idx.length < 2) { pEmpty(k); return; }
-    var pr = idx.map(function (i) { return sumA(P_().map(function (o) { return o.eqm[i]; })); }), nc = idx.map(function (i) { return sumA(P_().map(function (o) { return o.nc[i]; })); });
-    var mp = avgOf(pr) || 1, mn = avgOf(nc) || 1, ip = pr.map(function (v) { return v / mp * 100; }), inc = nc.map(function (v) { return v / mn * 100; });
-    var ml = 40, mr = 86, mt = 14, h = 220, H = mt + h + 26, pw = W0 - ml - mr, nt = pNice(Math.max.apply(null, ip.concat(inc))), g = '';
-    function X(j) { return ml + j / (idx.length - 1) * pw; } function Y(v) { return mt + h - v / nt.top * h; }
-    g += pGridY(ml, pw, Y, nt) + '<line x1="' + ml + '" x2="' + (ml + pw) + '" y1="' + r1(Y(100)) + '" y2="' + r1(Y(100)) + '" stroke="var(--ink-2)"/>';
-    [[ip, 'var(--ink-2)', 'idxProd', ' stroke-dasharray="5 4"'], [inc, 'var(--s1)', 'idxNc', '']].forEach(function (q) {
-      g += '<path d="' + q[0].map(function (v, j) { return (j ? 'L' : 'M') + r1(X(j)) + ',' + r1(Y(v)); }).join('') + '" fill="none" stroke="' + q[1] + '" stroke-width="2.2"' + q[3] + '/>';
-      q[0].forEach(function (v, j) { g += '<circle cx="' + r1(X(j)) + '" cy="' + r1(Y(v)) + '" r="3" fill="' + q[1] + '"' + tip(monthName(PD.months[idx[j]]), [gx('idxProd') + ' : ' + num(Math.round(ip[j])) + ' (' + f1(pr[j]) + ' EqMSN)', gx('idxNc') + ' : ' + num(Math.round(inc[j])) + ' (' + num(nc[j]) + ' NC)']) + '/>'; });
-    });
-    var ly = spread([Y(ip[ip.length - 1]), Y(inc[inc.length - 1])], 15, mt, mt + h);
-    g += tx(ml + pw + 8, ly[0] + 4, gx('idxProd'), 'mu') + tx(ml + pw + 8, ly[1] + 4, gx('idxNc'), 'ink b') + idx.map(function (i, j) { return tx(X(j), H - 6, monthName(PD.months[i]), 'mu', 'middle'); }).join('');
-    gSet(k, svg(W0, H, g, gT(k)), swl('var(--ink-2)', gx('idxProd'), true) + swl('var(--s1)', gx('idxNc')));
-  }
+  // 66. cost of non-quality per EqMSN, month by month
+  function g66(k) { pTrend(k, pMonthly(function (o, i) { return o.cost[i]; }), function (v) { return eur(v); }, function (v) { return gx('perEq', { v: eur(v) }); }); }
 
   // 67. observed against expected from volume
   function g67(k) {
@@ -3757,21 +3737,8 @@ window.FTO2_PAGE = window.FTO2_PAGE || 'suivi';
     gSet(k, svg(W0, H, g, gT(k)), swl('var(--s1)', gx('actLeg')) + swl('var(--s1)', gx('fcLeg'), true) + '<span class="mu">' + esc(gx('perEq', { v: eur(cpe) })) + '</span>');
   }
 
-  // 73. marimekko: width = output, height = defect mix
-  function g73(k) {
-    var W0 = gWd(k), os = P_().filter(function (o) { return o.EQ > 0; }).sort(function (a, b) { return b.EQ - a.EQ; });
-    if (!os.length) { pEmpty(k); return; }
-    var T = sumA(os.map(function (o) { return o.EQ; })), H = 280, ph = 240, gap = 3, aw = W0 - gap * (os.length - 1), x = 0, g = '';
-    os.forEach(function (o) {
-      var w = aw * o.EQ / T, segs = MAIN_CATS.filter(function (c) { return o.cats[c]; }), y = 0, tot = sumA(segs.map(function (c) { return o.cats[c]; }));
-      if (!tot) g += '<rect x="' + r1(x) + '" y="0" width="' + r1(w) + '" height="' + ph + '" fill="var(--track)"' + tip(o.p, [gx('eqTip', { v: f1(o.EQ) }), gx('defN', { n: '0' })]) + '/>';
-      segs.forEach(function (c) { var hh = o.cats[c] / tot * (ph - 2 * (segs.length - 1));
-        g += '<rect x="' + r1(x) + '" y="' + r1(y) + '" width="' + r1(Math.max(0.5, w)) + '" height="' + r1(hh) + '" fill="' + catFill(c) + '"' + tip(o.p + ' · ' + catLabel(c), [gx('defN', { n: num(o.cats[c]) }) + ' · ' + pct0(o.cats[c] / tot * 100), gx('eqTip', { v: f1(o.EQ) })]) + '/>'; y += hh + 2; });
-      if (w > 42) g += tx(x + w / 2, H - 22, trunc(o.p, w - 4), 'ink b', 'middle', ' style="font-size:11px"') + tx(x + w / 2, H - 8, f1(o.EQ), 'mu', 'middle', ' style="font-size:10.5px"');
-      x += w + gap;
-    });
-    gSet(k, svg(W0, H, g, gT(k)), MAIN_CATS.map(function (c) { return sw(catFill(c), catLabel(c)); }).join(''));
-  }
+  // 73. NCs found late in the plant (final inspection, test) per 10 EqMSN
+  function g73(k) { var f = function (o) { return o.LATE / o.EQ * 10; }; pBars(k, pOk().map(function (o) { return { lab: o.p, sub: gx('ncEq', { n: num(o.LATE), e: f1(o.EQ) }), v: f(o), tip: [gx('per10eq', { v: f1(f(o)) }), gx('lateShare', { p: o.NC ? pct0(o.LATE / o.NC * 100) : '—' })] }; }).sort(function (a, b) { return b.v - a.v; }), f1, pTot(function (o) { return o.LATE; }) / pTot(function (o) { return o.EQ; }) * 10); }
 
   // 74. heatmap product × category, defects per 10 EqMSN
   function g74(k) {
@@ -3807,21 +3774,8 @@ window.FTO2_PAGE = window.FTO2_PAGE || 'suivi';
   // 77. customer returns per 100 EqMSN
   function g77(k) { var f = function (o) { return o.CLI / o.EQ * 100; }; pBars(k, pOk().map(function (o) { return { lab: o.p, sub: gx('ncEq', { n: num(o.CLI), e: f1(o.EQ) }), v: f(o), tip: [gx('per100eq', { v: f1(f(o)) }), gx('ncEq', { n: num(o.CLI), e: f1(o.EQ) })] }; }).sort(function (a, b) { return b.v - a.v; }), f1, pTot(function (o) { return o.CLI; }) / pTot(function (o) { return o.EQ; }) * 100); }
 
-  // 78. connected scatter: monthly output against median days to close
-  function g78(k) {
-    var W0 = gWd(k), idx = pAct(), pts = idx.map(function (i) {
-      var ds = PD.ncs.filter(function (x) { return x.m === i && x.days != null; }).map(function (x) { return x.days; }).sort(function (a, b) { return a - b; });
-      return { i: i, x: sumA(P_().map(function (o) { return o.eqm[i]; })), y: ds.length ? quant(ds, 0.5) : null, n: ds.length }; }).filter(function (p) { return p.y != null; });
-    if (pts.length < 2) { pEmpty(k); return; }
-    var ml = 40, mr = 16, mt = 14, h = 240, H = mt + h + 30, pw = W0 - ml - mr, x0 = Math.min.apply(null, pts.map(function (p) { return p.x; })) * 0.9, x1 = Math.max.apply(null, pts.map(function (p) { return p.x; })) * 1.05, ny = pNice(Math.max.apply(null, pts.map(function (p) { return p.y; })) * 1.1), g = '';
-    function X(v) { return ml + (v - x0) / (x1 - x0) * pw; } function Y(v) { return mt + h - v / ny.top * h; }
-    g += pGridY(ml, pw, Y, ny) + tx(ml + pw, H - 2, gx('monthLoad'), 'mu', 'end') + tx(ml, mt - 2, gx('medClose'), 'mu');
-    var nx = pNice(x1 - x0); for (var t = Math.ceil(x0 / nx.step) * nx.step; t <= x1; t += nx.step) g += tx(X(t), mt + h + 16, num(Math.round(t)), 'mu', 'middle');
-    g += '<path d="' + pts.map(function (p, j) { return (j ? 'L' : 'M') + r1(X(p.x)) + ',' + r1(Y(p.y)); }).join('') + '" fill="none" stroke="var(--ink-2)" stroke-width="1.2" stroke-dasharray="3 3"/>';
-    pts.forEach(function (p, j) { var t2 = Math.round(25 + 75 * j / (pts.length - 1));
-      g += '<circle cx="' + r1(X(p.x)) + '" cy="' + r1(Y(p.y)) + '" r="6" fill="' + tint('--s1', t2) + '" stroke="var(--surface)" stroke-width="1.5"' + tip(monthName(PD.months[p.i]), [gx('monthLoad') + ' : ' + f1(p.x), gx('medClose') + ' : ' + f1(p.y), gx('ncCount', { n: num(p.n) })]) + '/>' + tx(X(p.x) + 9, Y(p.y) + 4, monthName(PD.months[p.i]), 'ink halo', null, ' style="font-size:11px"'); });
-    gSet(k, svg(W0, H, g, gT(k)), sw(tint('--s1', 25), monthName(PD.months[pts[0].i]), true) + sw('var(--s1)', monthName(PD.months[pts[pts.length - 1].i]), true));
-  }
+  // 78. connection errors per 10 EqMSN, month by month
+  function g78(k) { pTrend(k, pMonthly(function (o, i) { return o.connm[i] * 10; }), f1, function (v) { return gx('per10eq', { v: f1(v) }); }, tint('--c2', 100)); }
 
   // 79. slope chart: Q1 against Q3 rate per product, log scale
   function g79(k) {

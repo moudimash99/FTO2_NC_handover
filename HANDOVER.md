@@ -68,7 +68,8 @@ now (35), partly (8: budget, close dates of actions, list of aircraft built, clo
 output per shift) or needs data to collect (7: production volumes, insertions per product, units per station, targets,
 station layout, MES rework time, supplier deliveries).
 "Garder" marks the ones to build (kept in the viewer's browser only). Remove the tab by dropping `dummy=` in `build_dashboard`.
-**Production** tab, local page only: 30 charts (51–80) of NCs against the volume built. Input `06_input_data/EqMSN_2026.xlsx`
+**Taux de NC** tab, local page only: 30 quality charts (51–80): NCs, defects and cost per unit of volume built. The volume is
+only a denominator (the quality team asked for no production charts as such). Input `06_input_data/EqMSN_2026.xlsx`
 (EqMSN per product and month, Standard and Adjusted sheets, export Avances/Retards of 07/10/2026; October–December are forecast).
 NC product family → EqMSN product in `04_reference/eqmsn_produits.csv`: ~90% of NCs match; 742VU, 743VU, 1211VB and "Other" have
 no production row; **MIP A400M ↔ MIP(2) is an assumption to confirm**. Real data follows the filter bar; a switch shows the same
