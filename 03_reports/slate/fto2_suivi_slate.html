@@ -15,10 +15,21 @@
       <h1 data-t="title"></h1>
       <p class="period" id="period"></p>
     </div>
-    <div class="controls" id="minorCtl">
-      <div class="ctl"><span class="label" id="miLab" data-t="minorLabel"></span>
-        <div class="seg" role="group" aria-labelledby="miLab"><button type="button" id="miIn" data-t="minorIn"></button><button type="button" id="miOut" data-t="minorOut"></button></div></div>
-    </div>
+    <section class="fbar" aria-labelledby="fbLab">
+      <h2 class="fb-title" id="fbLab" data-t="fbTitle"></h2>
+      <div class="fb-row">
+        <div class="fb"><label for="gSrc" data-t="fSrc"></label><select id="gSrc"></select></div>
+        <div class="fb" id="gPlantBox"><span id="gPlantLab" data-t="fPlant"></span><button type="button" role="switch" class="switch" id="gPlant" aria-labelledby="gPlantLab"><i aria-hidden="true"></i><b id="gPlantTxt"></b></button><small class="fb-note" id="gPlantNote" hidden></small></div>
+        <div class="fb"><span id="gPhLab" data-t="fPhase"></span><div class="seg" role="radiogroup" aria-labelledby="gPhLab" id="gPhase"></div></div>
+        <div class="fb"><label for="gLine" data-t="fLine"></label><select id="gLine"></select></div>
+        <div class="fb" id="gDateBox"><label for="gPreset" data-t="fPeriod"></label>
+          <div class="fb-dates"><select id="gPreset"></select><input type="date" id="gFrom" data-ta="fFrom"><span class="mu" aria-hidden="true">→</span><input type="date" id="gTo" data-ta="fTo"></div></div>
+        <div class="fb" id="minorCtl"><span id="miLab" data-t="minorLabel"></span>
+          <div class="seg" role="group" aria-labelledby="miLab"><button type="button" id="miIn" data-t="minorIn"></button><button type="button" id="miOut" data-t="minorOut"></button></div></div>
+        <button type="button" class="fb-reset" id="gReset" data-t="fReset" hidden></button>
+      </div>
+      <p class="fb-sum" id="fbSum" aria-live="polite"></p>
+    </section>
   </header>
 
   <div class="tabs" role="tablist" id="tabs">
@@ -37,10 +48,6 @@
   <!-- 1. Overview: headline figures and every chart counted in NCs -->
   <div class="panel" role="tabpanel" id="p-ov" aria-labelledby="tab-ov" hidden>
     <div class="lead"><h2 data-t="ncTitle"></h2><p class="sub" data-t="ncSub"></p></div>
-    <div class="controls">
-      <div class="ctl"><span class="label" id="nsLab" data-t="scopeLabel"></span>
-        <div class="seg" role="group" aria-labelledby="nsLab" id="nScope"></div></div>
-    </div>
     <div class="figs">
       <div class="fig"><b id="nf1"></b><span data-t="nK1"></span></div>
       <div class="fig"><b id="nfD"></b><span data-t="nKD"></span></div>
@@ -112,8 +119,6 @@
       </div>
       <div class="ctl"><span class="label" id="wwLab" data-t="winLabel"></span>
         <div class="seg" role="group" aria-labelledby="wwLab" id="wWin"></div></div>
-      <div class="ctl"><span class="label" id="wlLab" data-t="lineLabel"></span>
-        <div class="seg" role="group" aria-labelledby="wlLab" id="wLines"></div></div>
     </div>
     <p class="sub" id="wRange"></p>
     <div class="figs">
@@ -171,10 +176,6 @@
   <!-- 3b. Insights (series) -->
   <div class="panel" role="tabpanel" id="p-ana" aria-labelledby="tab-ana" hidden>
     <section class="hero"><h2 data-t="anaTitle"></h2><p class="sub" data-t="anaSub"></p></section>
-    <div class="controls">
-      <div class="ctl"><span class="label" id="aLab" data-t="lineLabel"></span>
-        <div class="seg" role="group" aria-labelledby="aLab" id="aLines"></div></div>
-    </div>
     <div class="vgrid" id="ag"></div>
   </div>
 
@@ -218,6 +219,6 @@
   </div>
 
   <div id="tip" role="tooltip" hidden></div>
-  <footer><p id="foot1"></p><p data-t="foot2"></p><p id="foot3"></p><p data-t="foot4"></p></footer>
+  <footer><p id="foot1"></p><p data-t="foot2"></p><p id="foot3"></p><p data-t="foot4"></p><p data-t="foot5"></p></footer>
 </div>
 </div>

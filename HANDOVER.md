@@ -52,7 +52,14 @@ Reporting scope, the same on every page (column `scope` in `fto2_nc.csv` / `fto2
 FTO2 in `liability`, not deleted (727 NCs, 2,709 defects, 63 NCs without a defect line, all A400M with redacted text);
 **Retours clients** = raised elsewhere with FTO2 in `liability` (69 NCs, 69 defects). CNQ: Série 166,428 EUR + Retours 11,877 EUR;
 the model total 181,405 EUR also counts 59 deleted NCs (2,975 EUR) and 1 supplier NC (125 EUR), shown aside on the CNQ tab.
-The dashboard is meant to be presented: Vue d'ensemble (headline figures and NC charts, series / customer returns / all-NCs switch), Pareto (volume or cost toggle), Analyses, Coût de non-qualité, customer returns, root causes. The weekly Pareto and the MFT actions are a separate page from the same template (03_reports/FTO2_Suivi_Hebdo.html, Slate file FTO2_Suivi_Hebdo_Slate.html), one classification (root cause), no working notes on the page; the parser labels stay in the files. The separate customer-returns page is retired (`03_reports/archive/`). The RCA tab explains the hierarchy
+On the pages, the scope "Série" is called **FTO2** so it does not clash with the production type "Série".
+**Filter bar** (top of both pages, applies to every tab): data source (all / Skywise only = `Ext_Source` "Not in external lists" /
+manual lists = GPS or Test / GPS / Test), FTO2 plant only (yes = FTO2 scope; no = FTO2 + customer returns; no effect on the
+customer-returns and RCA tabs, which show both apart), production type (all / Série / REC / FTI = `phase`), aircraft (line),
+period (year to date, last 1/3/6/12 months, all dates, or two typed dates; presets end on the last NC of the extract; hidden on
+the follow-up page, which has its own week picker), minor defects. Defaults: all data, FTO2 yes, Série, all aircraft, year to
+date (722 NCs, 2,704 defects on the 28 Sep extract). NC row field [39] carries the data source.
+The dashboard is meant to be presented: Vue d'ensemble (headline figures and NC charts), Pareto (volume or cost toggle), Analyses, Coût de non-qualité, customer returns, root causes. The weekly Pareto and the MFT actions are a separate page from the same template (03_reports/FTO2_Suivi_Hebdo.html, Slate file FTO2_Suivi_Hebdo_Slate.html), one classification (root cause), no working notes on the page; the parser labels stay in the files. The separate customer-returns page is retired (`03_reports/archive/`). The RCA tab explains the hierarchy
 (123 official sub-codes → 42 sub-categories → 25 RCA → 9 categories); definitions are in `04_reference/rca_definitions.csv`
 (FR/EN, written 12 Oct from the code sheet, **to be checked by Mohammad**).
 The Analyses tab has 12 charts: six on defects (calendar, flow, volume × unit cost, concentration, line mix, monthly ranking)

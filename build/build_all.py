@@ -370,7 +370,8 @@ def build_dashboard(d, nc, lt):
 def nc_extras(r):
     """NC fields for the aircraft, product, lead-time, time-of-day and NC charts: [msn, product family, station, creation hour (Paris),
     days to close (None while open), open, age in days if open, closure date, NC type, liability, SAP defect code, SAP cause group,
-    SAP cause, status]. SAP labels lose their brackets."""
+    SAP cause, status, data source]. SAP labels lose their brackets. Data source: every NC comes from Skywise; Ext_Source says whether it
+    is also in a manual list (gps = GPS register, test = Test list) or only in Skywise (sky)."""
     msn = S_(r.msn)
     msn = msn[:-2] if msn.endswith(".0") else msn
     created = pd.to_datetime(r.creation_ts, errors="coerce", utc=True)
@@ -383,7 +384,7 @@ def nc_extras(r):
     sap = lambda v: S_(v).strip().strip("[]").strip()
     return [msn, S_(r.produit) or "Other", S_(r.station_description).strip(), hour, lead, is_open, age,
             closed.strftime("%Y-%m-%d") if pd.notna(closed) else "", S_(r.type_nc).strip(), sap(r.liability), sap(r.sap_defect_code),
-            sap(r.sap_cause_group), sap(r.sap_cause_code), S_(r.statut)]
+            sap(r.sap_cause_group), sap(r.sap_cause_code), S_(r.statut), {"GPS": "gps", "Test": "test"}.get(S_(r.ext_source).strip(), "sky")]
 
 
 FR_MONTHS = {"janvier": 1, "fevrier": 2, "février": 2, "mars": 3, "avril": 4, "mai": 5, "juin": 6, "juillet": 7, "aout": 8, "août": 8,
