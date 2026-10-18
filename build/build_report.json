@@ -78,5 +78,9 @@
   },
   "mft_actions": 9,
   "rca_without_definition": [],
+  "eqmsn": {
+    "products": 10,
+    "total_std": 640.46
+  },
   "review_disagreements": 301
 }
