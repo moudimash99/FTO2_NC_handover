@@ -4,8 +4,8 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..600&family=Hanken+Grotesk:wght@400..700&display=swap">
 <style>
 /* Layout: the FTO2 quality pages' system, for presentation. Header (unit, title, period, one switch for minor
-   defects, language), seven tabs: Pareto, cost Pareto, weekly Pareto, cost of non-quality, insights, customer
-   returns, root causes. Each tab: headline figures, clickable breakdowns that filter each other, the detail
+   defects, language), eight tabs: NCs, Pareto, cost Pareto, weekly Pareto, cost of non-quality, insights,
+   customer returns, root causes. Each tab: headline figures, clickable breakdowns that filter each other, the detail
    kept folded below. Insights: twelve SVG charts laid out as a scroll report (name and reading guide on the left,
    chart on the right, alternating bands), each with its data table. Titles name the chart; the page writes no
    conclusions of its own. Type: Newsreader for titles, Hanken Grotesk for text and figures. */
@@ -314,6 +314,22 @@ table.mini th, table.mini td { padding: 5px 10px; white-space: nowrap; }
   .wrap { max-width: none; padding: 0; }
   .card, .fig, .strip { break-inside: avoid; box-shadow: none; }
 }
+.custom { min-width: 0; overflow-x: auto; display: grid; gap: 8px; }
+.piewrap { display: flex; gap: 18px; align-items: center; flex-wrap: wrap; }
+.piewrap svg { flex: none; }
+.piewrap svg [data-v] { cursor: pointer; }
+.pielegend { display: grid; gap: 2px; flex: 1 1 190px; min-width: 0; }
+.pleg { display: grid; grid-template-columns: 12px minmax(0, 1fr) auto 3.4em; gap: 8px; align-items: center; font: inherit; font-size: 13px; color: var(--ink);
+  background: none; border: 0; border-radius: 4px; padding: 3px 4px; text-align: left; cursor: pointer; }
+.pleg:hover { background: var(--track); }
+.pleg[aria-pressed="true"] { background: var(--s1-soft); font-weight: 600; }
+.pleg i { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
+.pleg .name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pleg .val, .pleg .cum { text-align: right; font-variant-numeric: tabular-nums; }
+.pleg .cum { color: var(--muted); font-size: 12px; }
+.bar .fill .cab.alt, .key i.c.alt { background: var(--c6); }
+.key i.ln { width: 16px; height: 2px; border-radius: 1px; }
+.key i.ln.dash { background: none; height: 0; border-top: 2px dashed var(--ink-2); }
 footer { font-size: 12.5px; color: var(--muted); border-top: 1px solid var(--grid); padding-top: 14px; display: grid; gap: 4px; }
 footer p { max-width: none; }
 @media (max-width: 560px) {
@@ -352,6 +368,7 @@ footer p { max-width: none; }
   </header>
 
   <div class="tabs" role="tablist" id="tabs">
+    <button type="button" role="tab" id="tab-nc" aria-controls="p-nc" data-tab="nc" data-t="tabNc"></button>
     <button type="button" role="tab" id="tab-pareto" aria-controls="p-pareto" data-tab="pareto" data-t="tabPareto"></button>
     <button type="button" role="tab" id="tab-cost" aria-controls="p-cost" data-tab="cost" data-t="tabCost"></button>
     <button type="button" role="tab" id="tab-hebdo" aria-controls="p-hebdo" data-tab="hebdo" data-t="tabWeek"></button>
@@ -363,8 +380,31 @@ footer p { max-width: none; }
     <button type="button" role="tab" id="tab-rca" aria-controls="p-rca" data-tab="rca" data-t="tabRca"></button>
   </div>
 
+  <!-- 0. NCs: every chart counts NCs -->
+  <div class="panel" role="tabpanel" id="p-nc" aria-labelledby="tab-nc" hidden>
+    <div class="lead"><h2 data-t="ncTitle"></h2><p class="sub" data-t="ncSub"></p></div>
+    <div class="controls">
+      <div class="ctl"><span class="label" id="nsLab" data-t="scopeLabel"></span>
+        <div class="seg" role="group" aria-labelledby="nsLab" id="nScope"></div></div>
+    </div>
+    <div class="figs">
+      <div class="fig"><b id="nf1"></b><span data-t="nK1"></span></div>
+      <div class="fig"><b id="nf2"></b><span data-t="nK2"></span></div>
+      <div class="fig"><b id="nf3"></b><span data-t="nK3"></span><small data-t="nK3s"></small></div>
+      <div class="fig"><b id="nf4"></b><span data-t="nK4"></span><small data-t="nK4s"></small></div>
+    </div>
+    <div class="chips" id="ncChips"></div>
+    <div class="grid" id="ng"></div>
+    <details class="detail"><summary><span data-t="tblNcs"></span><span class="count" id="nn"></span></summary>
+      <div class="inner">
+        <input type="search" id="nq" autocomplete="off">
+        <div class="table-wrap"><table><thead><tr id="nth"></tr></thead><tbody id="ntb"></tbody></table></div>
+        <button type="button" class="more" id="nm" hidden></button>
+      </div></details>
+  </div>
+
   <!-- 1. Pareto (series) -->
-  <div class="panel" role="tabpanel" id="p-pareto" aria-labelledby="tab-pareto">
+  <div class="panel" role="tabpanel" id="p-pareto" aria-labelledby="tab-pareto" hidden>
     <div class="lead"><h2 data-t="paretoTitle"></h2><p class="sub" data-t="serieSub"></p></div>
     <div class="figs">
       <div class="fig"><b id="pf1"></b><span data-t="figDefects"></span></div>
@@ -529,6 +569,17 @@ window.DASH = __DATA__;
   var MONTHS_EN = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
   var STR = {
     fr: {
+      tabNc: 'NC', ncTitle: 'Non-conformités', ncSub: 'Chaque NC compte une fois, quel que soit son nombre de défauts.',
+      scopeLabel: 'Périmètre', scSerie: 'Série', scClient: 'Retours clients', scAll: 'Toutes les NC de l’extraction',
+      nK1: 'NC', nK2: 'NC encore ouvertes', nK3: 'Délai médian de clôture', nK3s: 'NC closes, en jours', nK4: 'Couverture du parsage', nK4s: 'NC avec au moins un défaut lu',
+      dProg: 'NC par programme', dProd: 'NC par produit', dProdSub: '15 premiers produits.', dStatus: 'Décision et statut', keyClosed: 'Closes', keyOpen: 'Ouvertes', ofWhichOpen: '{n} dont {c} ouvertes',
+      dMonthNc: 'NC ouvertes et closes par mois', monthNcSub: 'Ouvertes : mois de création. Closes : mois de clôture. Cliquez sur un mois pour garder les NC créées ce mois-là.', lnOpened: 'Ouvertes', lnClosed: 'Closes',
+      dType: 'Type de NC', typeSub: 'Type enregistré pour la NC (registre ou règle du pipeline).', dLiab: 'Responsabilité', liabSub: '15 premières responsabilités (champ « liability » de SAP).',
+      dSapDef: 'Code défaut SAP', sapDefSub: '10 premiers codes. Libellés SAP en anglais.', dSapCause: 'Cause SAP', sapCauseSub: '20 premières causes. Libellés SAP en anglais.',
+      tblNcs: 'Détail des NC', nType: 'Type', nStatus: 'Statut', st_open: 'Ouverte', st_closed: 'Close', st_deleted: 'Supprimée',
+      dFin: 'FIN (repère)', finSub: '20 repères les plus cités. Les défauts sans FIN écrit n’apparaissent pas.', cFin: 'FIN',
+      ty_CABLES: 'Câbles', ty_TEST: 'Test', ty_INTERNE: 'Interne', 'ty_CONTROLE FINAL': 'Contrôle final', ty_FOURNISSEUR: 'Fournisseur', 'ty_CASSE INTERNE': 'Casse interne',
+      'ty_DEMANDE DE DQN': 'Demande de DQN', ty_DAMAGES: 'Dommages', ty_CASSE: 'Casse', 'ty_RETOUR CLIENT': 'Retour client',
       noText: 'Pas de texte de NC pour l’A400M : pas de défauts à classer.', a320fam: 'A320 (famille)', legSerie: 'Série', legRet: 'Retours clients',
       retNote: 'Retours clients : coût estimé par le modèle CNQ, factures réelles non disponibles.',
       hProd: 'Famille de produit', hScope: 'Type', hProg: 'Programme', hPerMsn: 'Coût par MSN', hMaxMsn: 'MSN le plus cher', hNcs: 'NC',
@@ -617,6 +668,17 @@ window.DASH = __DATA__;
       foot4: 'Semaines de fermeture (moins de 10 défauts) exclues des moyennes hebdomadaires. Défauts mineurs : tyrap, frette, ficelle, capuchon, cerise ou bouchon manquant. Coût : 50 €/h, temps du processus estimés par l’équipe ; la valeur des pièces rebutées n’est pas incluse. Coût des défauts câble : coût des NC concernées ; quand une NC contient aussi d’autres défauts, son coût est partagé entre ses défauts.'
     },
     en: {
+      tabNc: 'NCs', ncTitle: 'Non-conformities', ncSub: 'Each NC counts once, whatever its number of defects.',
+      scopeLabel: 'Scope', scSerie: 'Series', scClient: 'Customer returns', scAll: 'All NCs in the extract',
+      nK1: 'NCs', nK2: 'NCs still open', nK3: 'Median time to close', nK3s: 'closed NCs, in days', nK4: 'Parsing coverage', nK4s: 'NCs with at least one defect read',
+      dProg: 'NCs by programme', dProd: 'NCs by product', dProdSub: 'Top 15 products.', dStatus: 'Decision and status', keyClosed: 'Closed', keyOpen: 'Open', ofWhichOpen: '{n}, of which {c} open',
+      dMonthNc: 'NCs opened and closed per month', monthNcSub: 'Opened: month created. Closed: month closed. Click a month to keep the NCs created that month.', lnOpened: 'Opened', lnClosed: 'Closed',
+      dType: 'NC type', typeSub: 'Type recorded for the NC (register or pipeline rule).', dLiab: 'Liability', liabSub: 'Top 15 liabilities (SAP “liability” field).',
+      dSapDef: 'SAP defect code', sapDefSub: 'Top 10 codes.', dSapCause: 'SAP cause', sapCauseSub: 'Top 20 causes.',
+      tblNcs: 'NC detail', nType: 'Type', nStatus: 'Status', st_open: 'Open', st_closed: 'Closed', st_deleted: 'Deleted',
+      dFin: 'FIN (reference)', finSub: 'Top 20 references. Defects with no FIN written are left out.', cFin: 'FIN',
+      ty_CABLES: 'Cables', ty_TEST: 'Test', ty_INTERNE: 'In-process', 'ty_CONTROLE FINAL': 'Final inspection', ty_FOURNISSEUR: 'Supplier', 'ty_CASSE INTERNE': 'Internal breakage',
+      'ty_DEMANDE DE DQN': 'DQN request', ty_DAMAGES: 'Damage', ty_CASSE: 'Breakage', 'ty_RETOUR CLIENT': 'Customer return',
       noText: 'No NC text for the A400M: no defects to classify.', a320fam: 'A320 family', legSerie: 'Series', legRet: 'Customer returns',
       retNote: 'Customer returns: cost estimated by the CNQ model; actual invoices not available.',
       hProd: 'Product family', hScope: 'Type', hProg: 'Programme', hPerMsn: 'Cost per MSN', hMaxMsn: 'Most expensive MSN', hNcs: 'NCs',
@@ -729,9 +791,9 @@ window.DASH = __DATA__;
   var CAT_ORDER = ['MEO Câblage', 'Erreur Branchement', 'Élément Manquant', 'Élément Endommagé', 'Déverrouillage', 'Grounding/Bonding', 'Kitting Factory', 'FOD', 'Autre', 'Non classé'];
   var ASIDE = { 'Kitting Factory': 1, 'FOD': 1, 'Autre': 1, 'Non classé': 1, '__none': 1 };
 
-  var G = { lang: 'fr', minor: true, tab: 'pareto' };
+  var G = { lang: 'fr', minor: true, tab: 'nc' };
   try { var s1 = localStorage.getItem('fto2-dash-lang'); if (s1 === 'fr' || s1 === 'en') G.lang = s1; } catch (e) {}
-  var TABS = ['pareto', 'cost', 'hebdo', 'cnq', 'ana', 'client', 'rca'];
+  var TABS = ['nc', 'pareto', 'cost', 'hebdo', 'cnq', 'ana', 'client', 'rca'];
   var h0 = ''; try { h0 = EMBED ? '' : (location.hash || '').replace('#', ''); } catch (e) {} if (TABS.indexOf(h0) >= 0) G.tab = h0;
 
   function S(k, v) { var s = STR[G.lang][k]; if (s == null) return k; Object.keys(v || {}).forEach(function (x) { s = s.split('{' + x + '}').join(v[x]); }); return s; }
@@ -764,6 +826,7 @@ window.DASH = __DATA__;
   function dMinor(r) { return r[14]; } function dCable(r) { return r[15]; } function dAlloc(r) { return r[17]; }
   function keepMinor(r) { return G.minor || !dMinor(r); }
   function dCode(r) { return r[22] || ''; }
+  function dFin(r) { return r[23] || ''; }
   function codeDesc(c) { var x = D.codes[c]; return x ? x[G.lang === 'fr' ? 1 : 0] : ''; }
   function codeName(c) { var x = codeDesc(c); return x ? c + ' · ' + x : c; }
   var NC = {}; D.ncs.forEach(function (n) { NC[n[0]] = n; });
@@ -793,7 +856,7 @@ window.DASH = __DATA__;
       var c = document.createElement('div'); c.className = 'card' + (d.wide ? ' wide' : '');
       c.innerHTML = '<div class="card-head"><h3 data-t="' + d.t + '"></h3><button type="button" class="clear-one" data-dim="' + d.k + '" hidden></button></div>' +
         (d.sub ? '<p class="sub" data-t="' + d.sub + '"></p>' : '') + (d.split && !d.nokey ? '<div class="key" data-key="1"></div>' : '') +
-        (d.cols ? '<div class="cols-wrap"><div class="cols" id="' + o.grid + '-' + d.k + '"></div></div>' :
+        (d.cols ? '<div class="cols-wrap"><div class="cols" id="' + o.grid + '-' + d.k + '"></div></div>' : d.custom ? '<div class="custom" id="' + o.grid + '-' + d.k + '"></div>' :
           '<div class="bars' + (d.pareto ? ' pareto' : '') + (d.longName ? ' longname' : '') + (o.money ? ' money' : '') + (o.extras ? ' x2' : '') + '" id="' + o.grid + '-' + d.k + '"></div>');
       grid.appendChild(c);
     });
@@ -843,8 +906,10 @@ window.DASH = __DATA__;
       var el = document.getElementById(o.grid + '-' + d.k), act = d.k in b.f, card = el.closest('.card');
       el.classList.toggle('active', act);
       var keyEl = card.querySelector('[data-key]');
-      if (keyEl) keyEl.innerHTML = '<span><i></i>' + esc(S('keyOther')) + '</span><span><i class="c"></i>' + esc(S('keyCable')) + '</span>';
+      var kk = d.keys || ['keyOther', 'keyCable'], sc = d.splitCls ? ' ' + d.splitCls : '';
+      if (keyEl) keyEl.innerHTML = '<span><i></i>' + esc(S(kk[0])) + '</span><span><i class="c' + sc + '"></i>' + esc(S(kk[1])) + '</span>';
       if (!vals.length) { el.innerHTML = '<p class="empty">—</p>'; }
+      else if (d.custom) { el.innerHTML = d.custom(vals, m, rs, b, el); }
       else if (d.cols) {
         el.innerHTML = vals.map(function (v) {
           var n = m[v] || 0, on = b.f[d.k] === v, lab = esc(d.show(v));
@@ -859,8 +924,8 @@ window.DASH = __DATA__;
           if (aside && !sepDone) { sepDone = true; head = '<div class="sep">' + esc(S('aside')) + '</div>'; }
           if (d.pareto && !aside) cum += n;
           var tick = ref && ref[v] != null ? '<span class="tick" style="left:calc(' + (ref[v] / max * 100) + '% - 1px)"></span>' : '';
-          var c2 = d.split ? m2[v] || 0 : 0, cab = c2 && n ? '<span class="cab" style="width:' + (c2 / n * 100) + '%"></span>' : '';
-          var tip = d.split ? lab + ' : ' + S('ofWhichCable', { n: fmt(n), c: fmt(c2) }) : lab;
+          var c2 = d.split ? m2[v] || 0 : 0, cab = c2 && n ? '<span class="cab' + sc + '" style="width:' + (c2 / n * 100) + '%"></span>' : '';
+          var tip = d.split ? lab + ' : ' + S(d.splitTip || 'ofWhichCable', { n: fmt(n), c: fmt(c2) }) : lab;
           return head + '<button type="button" class="bar' + (n ? '' : ' zero') + (aside ? ' aside' : '') + '" data-dim="' + d.k + '" data-v="' + esc(v) + '" aria-pressed="' + on + '" title="' + tip + '" aria-label="' + tip + '">' +
             '<span class="name">' + lab + '</span><span class="track"><span class="fill" style="width:' + (n / max * 100) + '%">' + cab + '</span>' + tick + '</span><span class="val">' + fmt(n) + '</span>' +
             (o.extras || []).map(function (x, i) { return '<span class="ext">' + x.fmt(ex[i][v] || 0) + '</span>'; }).join('') +
@@ -889,13 +954,95 @@ window.DASH = __DATA__;
     return b;
   }
 
-  function defectHead() { return ['cNc', 'cDate', 'cLine', 'cCat', 'cRca', 'cSub', 'cCode', 'cCab', 'cText'].map(function (k) { return '<th scope="col">' + esc(S(k)) + '</th>'; }).join(''); }
+  function defectHead() { return ['cNc', 'cDate', 'cLine', 'cCat', 'cRca', 'cSub', 'cCode', 'cFin', 'cCab', 'cText'].map(function (k) { return '<th scope="col">' + esc(S(k)) + '</th>'; }).join(''); }
   function defectRow(r) {
-    return '<tr><td class="nc">' + esc(r[0]) + (r[1] > 1 ? ' · ' + r[1] : '') + '</td><td class="num">' + esc(shortDay(r[2])) + '</td><td>' + esc(r[4]) + '</td><td>' + esc(L(dCat(r))) + '</td><td>' + esc(L(dRca(r))) + '</td><td>' + esc(dSub(r)) + '</td><td class="nc" title="' + esc(codeDesc(dCode(r))) + '">' + esc(dCode(r)) + '</td><td>' + (dCable(r) ? '<span class="tag">' + esc(S('yes')) + '</span>' : '') + '</td><td class="txt">' + esc(tidy(r[18])) + '</td></tr>';
+    return '<tr><td class="nc">' + esc(r[0]) + (r[1] > 1 ? ' · ' + r[1] : '') + '</td><td class="num">' + esc(shortDay(r[2])) + '</td><td>' + esc(r[4]) + '</td><td>' + esc(L(dCat(r))) + '</td><td>' + esc(L(dRca(r))) + '</td><td>' + esc(dSub(r)) + '</td><td class="nc" title="' + esc(codeDesc(dCode(r))) + '">' + esc(dCode(r)) + '</td><td class="nc">' + esc(dFin(r)) + '</td><td>' + (dCable(r) ? '<span class="tag">' + esc(S('yes')) + '</span>' : '') + '</td><td class="txt">' + esc(tidy(r[18])) + '</td></tr>';
   }
-  function defectText(r) { return r[0] + ' ' + r[18] + ' ' + dCode(r) + ' ' + codeDesc(dCode(r)) + ' ' + dSub(r) + ' ' + dRca(r) + ' ' + L(dRca(r)) + ' ' + dCat(r) + ' ' + L(dCat(r)); }
+  function defectText(r) { return r[0] + ' ' + r[18] + ' ' + dFin(r) + ' ' + dCode(r) + ' ' + codeDesc(dCode(r)) + ' ' + dSub(r) + ' ' + dRca(r) + ' ' + L(dRca(r)) + ' ' + dCat(r) + ' ' + L(dCat(r)); }
   function byDate(a, b2) { return a[2] < b2[2] ? 1 : a[2] > b2[2] ? -1 : (a[0] < b2[0] ? 1 : a[0] > b2[0] ? -1 : a[1] - b2[1]); }
   function topOf(m) { return Object.keys(m).sort(function (x, y) { return m[y] - m[x]; })[0]; }
+
+  // ---------------------------------------------------------------- 0. NCs: each chart counts NCs; scope series, customer returns or every NC of the extract
+  // NC row extras: [32] closure date, [33] NC type, [34] liability, [35] SAP defect code, [36] SAP cause group, [37] SAP cause, [38] status
+  var NSC = 'serie';
+  var PROG_COL = { A350: 'var(--c1)', A330: 'var(--c2)', A320: 'var(--c3)', A400M: 'var(--c4)' };
+  var TYPE_ALIAS = { 'NC Interne': 'INTERNE', 'NC Retour client': 'RETOUR CLIENT', 'CLIENT': 'RETOUR CLIENT' };
+  function ncType(n) { var t = String(n[33] || '').trim(); return TYPE_ALIAS[t] || t; }
+  function typeName(t) { return STR[G.lang]['ty_' + t] || t; }
+  function stName(s) { return STR[G.lang]['st_' + s] || s || '—'; }
+  function median(a) { if (!a.length) return null; a = a.slice().sort(function (x, y) { return x - y; }); var i = Math.floor(a.length / 2); return a.length % 2 ? a[i] : (a[i - 1] + a[i]) / 2; }
+  // donut with a legend; slices and legend rows filter like bars
+  function pie(vals, m, rs, b) {
+    var d = this, tot = 0; vals.forEach(function (v) { tot += m[v] || 0; });
+    if (!tot) return '<p class="empty">—</p>';
+    var R = 84, r0 = 52, a = -Math.PI / 2, act = d.k in b.f, shapes = '', leg = '';
+    function pt(r, t) { return (90 + r * Math.cos(t)).toFixed(1) + ',' + (90 + r * Math.sin(t)).toFixed(1); }
+    vals.forEach(function (v, i) {
+      var n = m[v] || 0, on = b.f[d.k] === v, col = d.color(v, i), fade = act && !on ? ' opacity=".3"' : '', lab = d.show(v), tip = lab + ' : ' + num(n) + ' (' + pct0(n / tot * 100) + ')';
+      var attrs = ' data-dim="' + d.k + '" data-v="' + esc(v) + '"' + fade + '><title>' + esc(tip) + '</title>';
+      if (n === tot) shapes += '<circle cx="90" cy="90" r="' + (R + r0) / 2 + '" fill="none" stroke="' + col + '" stroke-width="' + (R - r0) + '"' + attrs + '</circle>';
+      else if (n) { var a1 = a + n / tot * 2 * Math.PI, big = a1 - a > Math.PI ? 1 : 0;
+        shapes += '<path d="M' + pt(R, a) + 'A' + R + ',' + R + ' 0 ' + big + ' 1 ' + pt(R, a1) + 'L' + pt(r0, a1) + 'A' + r0 + ',' + r0 + ' 0 ' + big + ' 0 ' + pt(r0, a) + 'Z" fill="' + col + '" stroke="var(--surface)" stroke-width="2"' + attrs + '</path>';
+        a = a1; }
+      leg += '<button type="button" class="pleg" data-dim="' + d.k + '" data-v="' + esc(v) + '" aria-pressed="' + on + '"><i style="background:' + col + '"></i><span class="name">' + esc(lab) + '</span><span class="val">' + num(n) + '</span><span class="cum">' + pct0(n / tot * 100) + '</span></button>';
+    });
+    return '<div class="piewrap"><svg class="viz" viewBox="0 0 180 180" width="180" height="180" role="img" aria-label="' + esc(S(d.t)) + '">' + shapes +
+      '<text x="90" y="92" text-anchor="middle" class="ink b" style="font-size:20px">' + num(tot) + '</text><text x="90" y="110" text-anchor="middle" class="mu">' + esc(S('nK1')) + '</text></svg><div class="pielegend">' + leg + '</div></div>';
+  }
+  // two lines per month: NCs created, NCs closed; a month click keeps the NCs created that month
+  function ncMonthLines(vals, m, rs, b, el) {
+    var d = this, op = {}, cl = {}, all = {};
+    b.base().forEach(function (n) { all[n[1].slice(0, 7)] = 1; if (n[32]) all[n[32].slice(0, 7)] = 1; });
+    rs.forEach(function (n) { var k = n[1].slice(0, 7); op[k] = (op[k] || 0) + 1; if (n[32]) { var c2 = n[32].slice(0, 7); cl[c2] = (cl[c2] || 0) + 1; } });
+    var months = Object.keys(all).sort();
+    if (!months.length) return '<p class="empty">—</p>';
+    var W = Math.max(el.clientWidth || 0, 340), H = 230, ml = 40, mr = 18, mt = 16, mb = 28, pw = W - ml - mr, ph = H - mt - mb, mx = 1;
+    months.forEach(function (k) { mx = Math.max(mx, op[k] || 0, cl[k] || 0); });
+    var step = mx > 200 ? 100 : mx > 80 ? 50 : mx > 30 ? 20 : mx > 10 ? 5 : 2, top = Math.ceil(mx / step) * step, sx = months.length > 1 ? pw / (months.length - 1) : 0, hw = Math.max(sx, 22);
+    function X(i) { return ml + (months.length > 1 ? i * sx : pw / 2); } function Y(v) { return mt + ph - v / top * ph; }
+    var g = '<line x1="' + ml + '" x2="' + (ml + pw) + '" y1="' + Y(0) + '" y2="' + Y(0) + '" stroke="var(--grid)"/>';
+    [0, top / 2, top].forEach(function (t) { g += '<text x="' + (ml - 8) + '" y="' + (Y(t) + 4).toFixed(1) + '" text-anchor="end" class="mu">' + num(t) + '</text>'; });
+    months.forEach(function (k, i) { var on = b.f[d.k] === k;
+      g += '<rect x="' + (X(i) - hw / 2).toFixed(1) + '" y="' + mt + '" width="' + hw.toFixed(1) + '" height="' + ph + '" fill="' + (on ? 'var(--s1-soft)' : 'transparent') + '" data-dim="' + d.k + '" data-v="' + k + '" style="cursor:pointer"><title>' +
+        esc(monthName(k) + ' ' + k.slice(0, 4) + ' · ' + S('lnOpened') + ' ' + num(op[k] || 0) + ' · ' + S('lnClosed') + ' ' + num(cl[k] || 0)) + '</title></rect>';
+      if (months.length <= 14 || i % 2 === 0) g += '<text x="' + X(i).toFixed(1) + '" y="' + (H - 8) + '" text-anchor="middle" class="mu">' + esc(monthName(k)) + '</text>'; });
+    [[op, 'var(--s1)', ''], [cl, 'var(--ink-2)', ' stroke-dasharray="5 4"']].forEach(function (s) {
+      g += '<path d="' + months.map(function (k, i) { return (i ? 'L' : 'M') + X(i).toFixed(1) + ',' + Y(s[0][k] || 0).toFixed(1); }).join('') + '" fill="none" stroke="' + s[1] + '" stroke-width="2"' + s[2] + ' pointer-events="none"/>';
+      months.forEach(function (k, i) { g += '<circle cx="' + X(i).toFixed(1) + '" cy="' + Y(s[0][k] || 0).toFixed(1) + '" r="3.5" fill="' + s[1] + '" stroke="var(--surface)" stroke-width="2" pointer-events="none"/>'; });
+    });
+    return '<div class="key"><span><i class="ln" style="background:var(--s1)"></i>' + esc(S('lnOpened')) + '</span><span><i class="ln dash"></i>' + esc(S('lnClosed')) + '</span></div>' +
+      '<svg class="viz" width="' + W + '" height="' + H + '" viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="' + esc(S(d.t)) + '">' + g + '</svg>';
+  }
+  var ncBoard = Board({
+    grid: 'ng', chips: 'ncChips', search: 'nq', count: 'nn', thead: 'nth', tbody: 'ntb', more: 'nm',
+    rows: function () { return D.ncs.filter(function (n) { return NSC === 'all' || n[23] === NSC; }); },
+    dims: [
+      { k: 'prog', t: 'dProg', custom: pie, color: function (v) { return PROG_COL[v] || 'var(--dim)'; }, get: function (n) { return n[3] || 'Autre'; }, show: function (v) { return v === 'Autre' ? L('Autre') : v; } },
+      { k: 'prod', t: 'dProd', sub: 'dProdSub', top: 15, get: function (n) { return n[26] || 'Other'; }, show: prodName },
+      { k: 'status', t: 'dStatus', split: function (n) { return n[38] === 'open'; }, splitCls: 'alt', keys: ['keyClosed', 'keyOpen'], splitTip: 'ofWhichOpen', get: function (n) { return n[7]; }, show: ruleName },
+      { k: 'type', t: 'dType', sub: 'typeSub', get: function (n) { return ncType(n) || null; }, show: typeName },
+      { k: 'liab', t: 'dLiab', sub: 'liabSub', top: 15, get: function (n) { return n[34] || null; }, show: function (v) { return v; } },
+      { k: 'sapdef', t: 'dSapDef', sub: 'sapDefSub', top: 10, get: function (n) { return n[35] || null; }, show: function (v) { return v; } },
+      { k: 'month', t: 'dMonthNc', sub: 'monthNcSub', wide: true, custom: ncMonthLines, get: function (n) { return n[1].slice(0, 7); }, show: function (v) { return monthName(v) + ' ' + v.slice(0, 4); }, order: function (v) { return v.sort(); } },
+      { k: 'sapcause', t: 'dSapCause', sub: 'sapCauseSub', top: 20, wide: true, longName: true, get: function (n) { return n[37] || null; }, show: function (v) { return v; } }
+    ],
+    text: function (n) { return [n[0], n[22], n[26], n[27], n[3], ncType(n), typeName(ncType(n)), n[35], n[37]].join(' '); },
+    sort: function (a, b2) { return a[1] < b2[1] ? 1 : a[1] > b2[1] ? -1 : 0; },
+    head: function () { return ['cNc', 'cDate', 'cLine', 'hProd', 'nType', 'kRule', 'nStatus', 'hStation', 'kTitle'].map(function (k) { return '<th scope="col">' + esc(S(k)) + '</th>'; }).join(''); },
+    row: function (n) {
+      return '<tr><td class="nc">' + esc(n[0]) + '</td><td class="num">' + esc(shortDay(n[1])) + '</td><td>' + esc(n[3]) + '</td><td>' + esc(prodName(n[26])) + '</td><td>' + esc(typeName(ncType(n))) +
+        '</td><td>' + esc(ruleName(n[7])) + '</td><td>' + esc(stName(n[38])) + '</td><td>' + esc(n[27]) + '</td><td class="txt">' + esc(n[22]) + '</td></tr>';
+    },
+    after: function (b) {
+      document.getElementById('nScope').innerHTML = segHtml([['serie', S('scSerie')], ['client', S('scClient')], ['all', S('scAll')]], NSC, 'data-nsc');
+      var rs = b.filtered(null), md = median(rs.map(function (n) { return n[29]; }).filter(function (v) { return v != null; }));
+      document.getElementById('nf1').textContent = num(rs.length);
+      document.getElementById('nf2').textContent = num(rs.filter(function (n) { return n[38] === 'open'; }).length);
+      document.getElementById('nf3').textContent = md == null ? '—' : (Math.round(md * 10) / 10).toLocaleString(loc());
+      document.getElementById('nf4').textContent = rs.length ? pct(rs.filter(function (n) { return NLINES[n[0]]; }).length / rs.length * 100) : '—';
+    }
+  });
+  document.getElementById('nScope').addEventListener('click', function (e) { var c = e.target.closest('[data-nsc]'); if (c) { NSC = c.getAttribute('data-nsc'); ncBoard.f = {}; ncBoard.limit = 100; ncBoard.render(); } });
 
   // ---------------------------------------------------------------- 1. Pareto (series)
   var pareto = Board({
@@ -907,6 +1054,7 @@ window.DASH = __DATA__;
       { k: 'cable', t: 'dCable', sub: 'cableSub', split: dCable, nokey: true, get: function (r) { return dCable(r) ? 'c' : 'n'; }, show: function (v) { return v === 'c' ? S('cable') : S('notCable'); }, order: function () { return ['c', 'n']; } },
       { k: 'line', t: 'dLine', get: function (r) { return r[4]; }, show: function (v) { return v; }, order: lineOrder },
       { k: 'code', t: 'dCode', sub: 'codeSub', top: 15, wide: true, longName: true, split: dCable, nokey: true, get: dCode, show: codeName },
+      { k: 'fin', t: 'dFin', sub: 'finSub', top: 20, split: dCable, nokey: true, get: function (r) { return dFin(r) || null; }, show: function (v) { return v; } },
       { k: 'phase', t: 'dPhase', get: function (r) { return r[21]; }, show: function (v) { return v; }, order: phaseOrder },
       { k: 'month', t: 'dMonth', cols: true, get: function (r) { return r[2].slice(0, 7); }, show: monthName, order: function (v) { return v.sort(); } }
     ],
@@ -947,6 +1095,7 @@ window.DASH = __DATA__;
       { k: 'cable', t: 'dCable', sub: 'cableSub', split: kCab, nokey: true, get: function (u) { return kCab(u) ? 'c' : 'n'; }, show: function (v) { return v === 'c' ? S('cable') : S('notCable'); }, order: function () { return ['c', 'n']; } },
       { k: 'line', t: 'dLine', get: function (u) { return u.n[3]; }, show: function (v) { return v; }, order: lineOrder },
       { k: 'code', t: 'dCode', sub: 'codeSub', top: 15, wide: true, longName: true, split: kCab, nokey: true, get: function (u) { return u.d ? dCode(u.d) : null; }, show: codeName },
+      { k: 'fin', t: 'dFin', sub: 'finSub', top: 20, split: kCab, nokey: true, get: function (u) { return u.d ? dFin(u.d) || null : null; }, show: function (v) { return v; } },
       { k: 'phase', t: 'dPhase', get: function (u) { return u.n[24]; }, show: function (v) { return v; }, order: phaseOrder },
       { k: 'month', t: 'dMonth', cols: true, get: function (u) { return u.n[1].slice(0, 7); }, show: monthName, order: function (v) { return v.sort(); } }
     ],
@@ -1726,12 +1875,12 @@ window.DASH = __DATA__;
     document.getElementById('asof').textContent = S('asof', { to: day(D.meta.to) });
     document.getElementById('foot1').textContent = S('foot1', dates);
     document.getElementById('foot3').textContent = S('foot3', { n: num(D.meta.noLine), d: num(A.deleted[0]), de: eur(A.deleted[1]), o: num(A.other[0]), oe: eur(A.other[1]) });
-    ['pq', 'kq', 'wq', 'cq', 'rq'].forEach(function (id) { var q = document.getElementById(id); q.placeholder = S('search'); q.setAttribute('aria-label', S('search')); });
+    ['nq', 'pq', 'kq', 'wq', 'cq', 'rq'].forEach(function (id) { var q = document.getElementById(id); q.placeholder = S('search'); q.setAttribute('aria-label', S('search')); });
     document.getElementById('lFr').setAttribute('aria-pressed', String(G.lang === 'fr'));
     document.getElementById('lEn').setAttribute('aria-pressed', String(G.lang === 'en'));
     document.getElementById('miIn').setAttribute('aria-pressed', String(G.minor));
     document.getElementById('miOut').setAttribute('aria-pressed', String(!G.minor));
-    document.getElementById('minorCtl').hidden = G.tab === 'cnq';
+    document.getElementById('minorCtl').hidden = G.tab === 'cnq' || G.tab === 'nc';
   }
   function showTab() {
     TABS.forEach(function (t) {
@@ -1740,8 +1889,8 @@ window.DASH = __DATA__;
       document.getElementById('p-' + t).hidden = G.tab !== t;
     });
   }
-  function renderAll() { applyText(); showTab(); pareto.render(); costPareto.render(); weekly.render(); cnq.render(); client.render(); renderRca(); renderAna(); }
-  function setTab(t) { G.tab = t; if (!EMBED) { try { history.replaceState(null, '', '#' + t); } catch (x) {} } applyText(); showTab(); if (t === 'hebdo') weekly.render(); if (t === 'ana') renderAna(); else hideTip(); }
+  function renderAll() { applyText(); showTab(); ncBoard.render(); pareto.render(); costPareto.render(); weekly.render(); cnq.render(); client.render(); renderRca(); renderAna(); }
+  function setTab(t) { G.tab = t; if (!EMBED) { try { history.replaceState(null, '', '#' + t); } catch (x) {} } applyText(); showTab(); if (t === 'hebdo') weekly.render(); if (t === 'nc') ncBoard.render(); if (t === 'ana') renderAna(); else hideTip(); }
   document.getElementById('tabs').addEventListener('click', function (e) { var t = e.target.closest('[data-tab]'); if (t) setTab(t.getAttribute('data-tab')); });
   document.getElementById('tabs').addEventListener('keydown', function (e) {
     if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;

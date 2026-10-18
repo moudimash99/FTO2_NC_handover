@@ -288,6 +288,22 @@
 .fto2 .wrap { max-width: none; padding: 0; }
 .fto2 .card, .fto2 .fig, .fto2 .strip { break-inside: avoid; box-shadow: none; }
 }
+.fto2 .custom { min-width: 0; overflow-x: auto; display: grid; gap: 8px; }
+.fto2 .piewrap { display: flex; gap: 18px; align-items: center; flex-wrap: wrap; }
+.fto2 .piewrap svg { flex: none; }
+.fto2 .piewrap svg [data-v] { cursor: pointer; }
+.fto2 .pielegend { display: grid; gap: 2px; flex: 1 1 190px; min-width: 0; }
+.fto2 .pleg { display: grid; grid-template-columns: 12px minmax(0, 1fr) auto 3.4em; gap: 8px; align-items: center; font: inherit; font-size: 13px; color: var(--ink);
+  background: none; border: 0; border-radius: 4px; padding: 3px 4px; text-align: left; cursor: pointer; }
+.fto2 .pleg:hover { background: var(--track); }
+.fto2 .pleg[aria-pressed="true"] { background: var(--s1-soft); font-weight: 600; }
+.fto2 .pleg i { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
+.fto2 .pleg .name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.fto2 .pleg .val, .fto2 .pleg .cum { text-align: right; font-variant-numeric: tabular-nums; }
+.fto2 .pleg .cum { color: var(--muted); font-size: 12px; }
+.fto2 .bar .fill .cab.alt, .fto2 .key i.c.alt { background: var(--c6); }
+.fto2 .key i.ln { width: 16px; height: 2px; border-radius: 1px; }
+.fto2 .key i.ln.dash { background: none; height: 0; border-top: 2px dashed var(--ink-2); }
 .fto2 footer { font-size: 12.5px; color: var(--muted); border-top: 1px solid var(--grid); padding-top: 14px; display: grid; gap: 4px; }
 .fto2 footer p { max-width: none; }
 @media (max-width: 560px) {

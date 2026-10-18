@@ -22,6 +22,7 @@
   </header>
 
   <div class="tabs" role="tablist" id="tabs">
+    <button type="button" role="tab" id="tab-nc" aria-controls="p-nc" data-tab="nc" data-t="tabNc"></button>
     <button type="button" role="tab" id="tab-pareto" aria-controls="p-pareto" data-tab="pareto" data-t="tabPareto"></button>
     <button type="button" role="tab" id="tab-cost" aria-controls="p-cost" data-tab="cost" data-t="tabCost"></button>
     <button type="button" role="tab" id="tab-hebdo" aria-controls="p-hebdo" data-tab="hebdo" data-t="tabWeek"></button>
@@ -33,8 +34,31 @@
     <button type="button" role="tab" id="tab-rca" aria-controls="p-rca" data-tab="rca" data-t="tabRca"></button>
   </div>
 
+  <!-- 0. NCs: every chart counts NCs -->
+  <div class="panel" role="tabpanel" id="p-nc" aria-labelledby="tab-nc" hidden>
+    <div class="lead"><h2 data-t="ncTitle"></h2><p class="sub" data-t="ncSub"></p></div>
+    <div class="controls">
+      <div class="ctl"><span class="label" id="nsLab" data-t="scopeLabel"></span>
+        <div class="seg" role="group" aria-labelledby="nsLab" id="nScope"></div></div>
+    </div>
+    <div class="figs">
+      <div class="fig"><b id="nf1"></b><span data-t="nK1"></span></div>
+      <div class="fig"><b id="nf2"></b><span data-t="nK2"></span></div>
+      <div class="fig"><b id="nf3"></b><span data-t="nK3"></span><small data-t="nK3s"></small></div>
+      <div class="fig"><b id="nf4"></b><span data-t="nK4"></span><small data-t="nK4s"></small></div>
+    </div>
+    <div class="chips" id="ncChips"></div>
+    <div class="grid" id="ng"></div>
+    <details class="detail"><summary><span data-t="tblNcs"></span><span class="count" id="nn"></span></summary>
+      <div class="inner">
+        <input type="search" id="nq" autocomplete="off">
+        <div class="table-wrap"><table><thead><tr id="nth"></tr></thead><tbody id="ntb"></tbody></table></div>
+        <button type="button" class="more" id="nm" hidden></button>
+      </div></details>
+  </div>
+
   <!-- 1. Pareto (series) -->
-  <div class="panel" role="tabpanel" id="p-pareto" aria-labelledby="tab-pareto">
+  <div class="panel" role="tabpanel" id="p-pareto" aria-labelledby="tab-pareto" hidden>
     <div class="lead"><h2 data-t="paretoTitle"></h2><p class="sub" data-t="serieSub"></p></div>
     <div class="figs">
       <div class="fig"><b id="pf1"></b><span data-t="figDefects"></span></div>

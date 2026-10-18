@@ -98,7 +98,7 @@ def main():
             "msn": "msn", "trigger": "trigger", "notification_type": "notification_type", "closure_time": "closure_time",
             "Type_NC_auto": "type_nc_auto", "GPS_Type_NC": "gps_type_nc", "Programme_auto": "phase", "Produit_auto": "produit",
             "Origin_auto": "origin_auto", "Ext_Source": "ext_source", "defect_code_description_en": "sap_defect_code",
-            "cause_group_description_en": "sap_cause_group", "creation_time": "creation_ts", "_source": "source_file"}
+            "cause_group_description_en": "sap_cause_group", "cause_code_description_en": "sap_cause_code", "creation_time": "creation_ts", "_source": "source_file"}
     ex = x[["notification_number"] + list(keep)].rename(columns=keep)
     ex["type_nc"] = ex["gps_type_nc"].where(ex["gps_type_nc"].notna(), ex["type_nc_auto"])
     nc = nc.merge(ex, on="notification_number", how="left")
@@ -336,7 +336,7 @@ def build_dashboard(d, nc, lt):
                      r.groupe, rca(r.rca_type), r.sous_groupe, int(bool(r.mineur)), int(bool(r.defaut_cable)),
                      r.llm_categorie, r.llm_rca_nom, r.llm_sous_categorie, int(bool(r.llm_mineur)), int(bool(r.llm_defaut_cable)),
                      round(float(r.cnq_cost_allocated), 2), round(float(r.cnq_cost_allocated_llm), 2), S_(r.text)[:220],
-                     "", r.scope, S_(r.phase), r.sous_code_officiel])   # [19] kept empty: the labelling notes are working notes, not for the page
+                     "", r.scope, S_(r.phase), r.sous_code_officiel, S_(r.fin)])   # [19] kept empty: the labelling notes are working notes, not for the page
     ncs = []
     for r in nc.itertuples():
         if not r.date_creation:
@@ -364,8 +364,9 @@ def build_dashboard(d, nc, lt):
 
 
 def nc_extras(r):
-    """NC fields for the aircraft, product, lead-time and time-of-day charts:
-    [msn, product family, station, creation hour (Paris), days to close (None while open), open, age in days if open]."""
+    """NC fields for the aircraft, product, lead-time, time-of-day and NC charts: [msn, product family, station, creation hour (Paris),
+    days to close (None while open), open, age in days if open, closure date, NC type, liability, SAP defect code, SAP cause group,
+    SAP cause, status]. SAP labels lose their brackets."""
     msn = S_(r.msn)
     msn = msn[:-2] if msn.endswith(".0") else msn
     created = pd.to_datetime(r.creation_ts, errors="coerce", utc=True)
@@ -375,7 +376,10 @@ def nc_extras(r):
     lead = round((closed - created).total_seconds() / 86400, 2) if pd.notna(created) and pd.notna(closed) and not is_open else None
     end = pd.Timestamp(REPORT["created_to"] + "T23:59:59", tz="UTC")
     age = round((end - created).total_seconds() / 86400, 1) if is_open and pd.notna(created) else None
-    return [msn, S_(r.produit) or "Other", S_(r.station_description).strip(), hour, lead, is_open, age]
+    sap = lambda v: S_(v).strip().strip("[]").strip()
+    return [msn, S_(r.produit) or "Other", S_(r.station_description).strip(), hour, lead, is_open, age,
+            closed.strftime("%Y-%m-%d") if pd.notna(closed) else "", S_(r.type_nc).strip(), sap(r.liability), sap(r.sap_defect_code),
+            sap(r.sap_cause_group), sap(r.sap_cause_code), S_(r.statut)]
 
 
 FR_MONTHS = {"janvier": 1, "fevrier": 2, "février": 2, "mars": 3, "avril": 4, "mai": 5, "juin": 6, "juillet": 7, "aout": 8, "août": 8,
