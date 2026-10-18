@@ -41,6 +41,8 @@
     <button type="button" role="tab" id="tab-client" aria-controls="p-client" data-tab="client" data-t="tabClient"></button>
     <span class="gap" aria-hidden="true"></span>
     <button type="button" role="tab" id="tab-rca" aria-controls="p-rca" data-tab="rca" data-t="tabRca"></button>
+    <span class="gap" aria-hidden="true" data-gal="1"></span>
+    <button type="button" role="tab" id="tab-gal" aria-controls="p-gal" data-tab="gal" data-t="tabGal"></button>
     <button type="button" role="tab" id="tab-hebdo" aria-controls="p-hebdo" data-tab="hebdo" data-t="tabWeek"></button>
     <button type="button" role="tab" id="tab-mft" aria-controls="p-mft" data-tab="mft" data-t="tabMft"></button>
   </div>
@@ -216,6 +218,13 @@
     </div>
     <div class="table-wrap"><table class="rcatab"><thead><tr id="rth"></tr></thead><tbody id="rtb"></tbody></table></div>
     <div id="rcaCards" class="panel"></div>
+  </div>
+
+  <!-- 6. Gallery: chart ideas on fictitious data (local page only) -->
+  <div class="panel" role="tabpanel" id="p-gal" aria-labelledby="tab-gal" hidden>
+    <section class="hero"><span class="fict" data-t="galBadge"></span><h2 data-t="galTitle"></h2><p class="sub" data-t="galSub"></p></section>
+    <div class="gal-bar"><div class="seg" role="group" data-ta="galFilter" id="gFeas"></div><p class="gal-keep" id="gKeep"></p></div>
+    <div class="ggrid" id="gg"></div>
   </div>
 
   <div id="tip" role="tooltip" hidden></div>

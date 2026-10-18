@@ -348,6 +348,61 @@
 .fto2 .bar .fill .cab.alt, .fto2 .key i.c.alt { background: var(--c6); }
 .fto2 .key i.ln { width: 16px; height: 2px; border-radius: 1px; }
 .fto2 .key i.ln.dash { background: none; height: 0; border-top: 2px dashed var(--ink-2); }
+.fto2 { --tabs-h: 46px; }
+.fto2 .lead { gap: 10px; padding-block: 18px 6px; }
+.fto2 .lead h2, .fto2 .hero h2 { font-family: var(--font-display); font-weight: 400; font-size: clamp(32px, 5vw, 54px); line-height: 1.05; letter-spacing: -0.01em; }
+.fto2 .figs { gap: 0; border-top: 1px solid var(--ink); border-bottom: 1px solid var(--grid); }
+.fto2 .fig { background: transparent; border: 0; border-left: 1px solid var(--grid); border-radius: 0; padding: 16px 20px 18px; }
+.fto2 .figs > .fig:first-child { border-left: 0; padding-left: 0; }
+.fto2 .fig b { font-family: var(--font-display); font-weight: 400; font-size: 40px; line-height: 1.05; }
+.fto2 .fig b.word { font-family: var(--font-display); font-size: 26px; line-height: 1.15; }
+.fto2 .strip { background: transparent; border: 0; border-left: 3px solid var(--s1); border-radius: 0; padding: 4px 14px; }
+.fto2 .panel > .chips { position: sticky; top: var(--tabs-h); z-index: 9; background: var(--page); padding-block: 8px; margin-block: -8px; border-bottom: 1px solid var(--grid); box-shadow: 0 0 0 100vmax var(--page); clip-path: inset(0 -100vmax); }
+.fto2 .tabs { box-shadow: 0 0 0 100vmax var(--page); clip-path: inset(0 -100vmax); }
+.fto2 #p-ov .fig b { font-size: 34px; white-space: nowrap; }
+.fto2 .grid { display: block; }
+.fto2 .grid > .card { grid-template-columns: minmax(0, 1fr) minmax(0, 2.2fr); column-gap: 52px; row-gap: 10px; align-items: start;
+  border: 0; border-radius: 0; background: transparent; padding: 52px 0; }
+.fto2 .grid > .card:nth-child(even) { background: var(--band); box-shadow: 0 0 0 100vmax var(--band); clip-path: inset(0 -100vmax); }
+.fto2 .grid > .card > .bhead { grid-column: 1; display: grid; gap: 10px; align-content: start; position: sticky; top: calc(var(--tabs-h) + 64px); }
+.fto2 .grid > .card > .bars, .fto2 .grid > .card > .cols-wrap, .fto2 .grid > .card > .custom { grid-column: 2; grid-row: 1; }
+.fto2 .bhead h3 { font-family: var(--font-display); font-weight: 400; font-size: clamp(24px, 2.6vw, 32px); line-height: 1.12; text-wrap: balance; }
+.fto2 .bhead .sub { font-size: 14px; }
+.fto2 .bhead .kicker { letter-spacing: .12em; }
+.fto2 .panel > .card, .fto2 .rcacard { border: 0; border-top: 1px solid var(--ink); border-radius: 0; background: transparent; padding: 26px 0 8px; }
+.fto2 .panel > .card h3, .fto2 .rcacard h3 { font-family: var(--font-display); font-weight: 400; font-size: clamp(22px, 2.4vw, 28px); line-height: 1.15; }
+.fto2 .rcagroup > h2 { font-family: var(--font-display); font-weight: 400; font-size: clamp(26px, 3vw, 36px); padding-top: 18px; }
+.fto2 details.detail { border-radius: 0; border-width: 1px 0; background: transparent; }
+.fto2 details.detail > summary { padding-inline: 0; }
+.fto2 details.detail .inner { padding-inline: 0; }
+@media (max-width: 860px) {
+.fto2 .grid > .card { grid-template-columns: minmax(0, 1fr); padding: 34px 0; }
+.fto2 .grid > .card > .bhead { position: static; }
+.fto2 .grid > .card > .bars, .fto2 .grid > .card > .cols-wrap, .fto2 .grid > .card > .custom { grid-column: 1; grid-row: auto; }
+.fto2 .fig, .fto2 .figs > .fig:first-child { border-left: 0; border-top: 1px solid var(--grid); padding-left: 0; }
+.fto2 .figs > .fig:first-child { border-top: 0; }
+}
+.fto2 .fict { justify-self: start; font-size: 11.5px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--up); border: 1.5px solid currentColor; border-radius: 4px; padding: 3px 9px; }
+.fto2 .gal-bar { display: flex; flex-wrap: wrap; gap: 10px 20px; align-items: center; justify-content: space-between; position: sticky; top: var(--tabs-h); z-index: 9; background: var(--page); padding-block: 10px; border-bottom: 1px solid var(--grid); }
+.fto2 .gal-bar .seg { max-width: 100%; overflow-x: auto; }
+.fto2 .gal-keep { font-size: 13px; color: var(--ink-2); max-width: none; }
+.fto2 .gal-keep b { color: var(--ink); }
+.fto2 .ggrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 520px), 1fr)); column-gap: 52px; }
+.fto2 .gcard { display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; align-content: start; padding: 30px 0 40px; border-top: 1px solid var(--ink); min-width: 0; }
+.fto2 .ghead { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 14px; align-items: start; }
+.fto2 .ghead > div { display: grid; gap: 6px; min-width: 0; }
+.fto2 .gnum { font-family: var(--font-display); font-size: 46px; line-height: .9; color: var(--muted); font-variant-numeric: tabular-nums; }
+.fto2 .ghead h3 { font-family: var(--font-display); font-weight: 400; font-size: 26px; line-height: 1.12; text-wrap: balance; }
+.fto2 .keep { font: inherit; font-size: 12.5px; border: 1px solid var(--ring); background: var(--surface); color: var(--ink); border-radius: 999px; padding: 4px 12px; cursor: pointer; white-space: nowrap; }
+.fto2 .keep[aria-pressed="true"] { background: var(--ink); color: var(--surface); border-color: var(--ink); font-weight: 600; }
+.fto2 .feas { font-size: 12.5px; color: var(--ink-2); max-width: none; }
+.fto2 .feas i { font-style: normal; font-weight: 700; margin-right: 4px; }
+.fto2 .feas.ok i { color: var(--down); }
+.fto2 .feas.part i { color: var(--c3); }
+.fto2 .feas.need i { color: var(--up); }
+.fto2 .gcard .vbody { min-height: 120px; }
+.fto2 svg.viz .gk { fill: var(--surface); }
+.fto2 svg.viz rect[fill="transparent"][data-tip]:hover { stroke: none; fill: var(--s1-soft); }
 .fto2 footer { font-size: 12.5px; color: var(--muted); border-top: 1px solid var(--grid); padding-top: 14px; display: grid; gap: 4px; }
 .fto2 footer p { max-width: none; }
 @media (max-width: 560px) {
@@ -419,6 +474,8 @@
     <button type="button" role="tab" id="tab-client" aria-controls="p-client" data-tab="client" data-t="tabClient"></button>
     <span class="gap" aria-hidden="true"></span>
     <button type="button" role="tab" id="tab-rca" aria-controls="p-rca" data-tab="rca" data-t="tabRca"></button>
+    <span class="gap" aria-hidden="true" data-gal="1"></span>
+    <button type="button" role="tab" id="tab-gal" aria-controls="p-gal" data-tab="gal" data-t="tabGal"></button>
     <button type="button" role="tab" id="tab-hebdo" aria-controls="p-hebdo" data-tab="hebdo" data-t="tabWeek"></button>
     <button type="button" role="tab" id="tab-mft" aria-controls="p-mft" data-tab="mft" data-t="tabMft"></button>
   </div>
@@ -596,6 +653,13 @@
     <div id="rcaCards" class="panel"></div>
   </div>
 
+  <!-- 6. Gallery: chart ideas on fictitious data (local page only) -->
+  <div class="panel" role="tabpanel" id="p-gal" aria-labelledby="tab-gal" hidden>
+    <section class="hero"><span class="fict" data-t="galBadge"></span><h2 data-t="galTitle"></h2><p class="sub" data-t="galSub"></p></section>
+    <div class="gal-bar"><div class="seg" role="group" data-ta="galFilter" id="gFeas"></div><p class="gal-keep" id="gKeep"></p></div>
+    <div class="ggrid" id="gg"></div>
+  </div>
+
   <div id="tip" role="tooltip" hidden></div>
   <footer><p id="foot1"></p><p data-t="foot2"></p><p id="foot3"></p><p data-t="foot4"></p><p data-t="foot5"></p></footer>
 </div>
@@ -626,6 +690,9 @@ window.DASH = {"defects":[["216055047",1,"2026-01-06","2026-W02","A350","FTO2",0
   var MONTHS_EN = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
   var STR = {
     fr: {
+      kmNc: 'Compté en NC', kmDef: 'Compté en défauts', kmEur: 'En euros',
+      tabGal: 'Galerie (fictif)', galTitle: 'Galerie de graphiques', galBadge: 'Données fictives · aucun chiffre ne décrit FTO2', galFilter: 'Filtrer par faisabilité',
+      galSub: 'Des idées de graphiques dessinées sur des données inventées, pour choisir ceux à construire. Sous chaque graphique : ce qu’il faut pour le faire avec les vraies données.',
       tabOv: 'Vue d’ensemble', tabMft: 'Actions MFT', titleSuivi: 'Suivi hebdomadaire FTO2', mftTitle: 'Actions MFT', mftSub: 'Actions des fichiers de suivi MFT A330 et A350, et le problème visé, mois par mois.',
       nKD: 'Défauts', nKDP: 'Défauts par NC', nKDPs: 'NC avec au moins un défaut lu', nKC: 'Coût de non-qualité', stTip: '{c} closes · {o} ouvertes',
       measureLabel: 'Mesure', mVol: 'Volume (défauts)', mCost: 'Coût de non-qualité', figTopCat: 'Première catégorie', figCableShare: 'Part des défauts câble', cabSub: '{n} défauts câble',
@@ -734,6 +801,9 @@ window.DASH = {"defects":[["216055047",1,"2026-01-06","2026-W02","A350","FTO2",0
       foot4: 'Semaines de fermeture (moins de 10 défauts) exclues des moyennes hebdomadaires. Défauts mineurs : tyrap, frette, ficelle, capuchon, cerise ou bouchon manquant. Coût : 50 €/h, temps du processus estimés par l’équipe ; la valeur des pièces rebutées n’est pas incluse. Coût des défauts câble : coût des NC concernées ; quand une NC contient aussi d’autres défauts, son coût est partagé entre ses défauts.'
     },
     en: {
+      kmNc: 'Counted in NCs', kmDef: 'Counted in defects', kmEur: 'In euros',
+      tabGal: 'Gallery (dummy)', galTitle: 'Chart gallery', galBadge: 'Dummy data · no figure describes FTO2', galFilter: 'Filter by feasibility',
+      galSub: 'Chart ideas drawn on made-up data, to choose which ones to build. Under each chart: what it takes to make it with the real data.',
       tabOv: 'Overview', tabMft: 'MFT actions', titleSuivi: 'FTO2 weekly follow-up', mftTitle: 'MFT actions', mftSub: 'Actions from the A330 and A350 MFT trackers, and the problem they target, month by month.',
       nKD: 'Defects', nKDP: 'Defects per NC', nKDPs: 'NCs with at least one defect read', nKC: 'Cost of non-quality', stTip: '{c} closed · {o} open',
       measureLabel: 'Measure', mVol: 'Volume (defects)', mCost: 'Cost of non-quality', figTopCat: 'Top category', figCableShare: 'Share of cable defects', cabSub: '{n} cable defects',
@@ -868,11 +938,12 @@ window.DASH = {"defects":[["216055047",1,"2026-01-06","2026-W02","A350","FTO2",0
 
   // two pages from one file: the dashboard, and the weekly follow-up (weekly Pareto, MFT actions)
   var PAGE = window.FTO2_PAGE === 'suivi' ? 'suivi' : 'main';
-  var TABS = PAGE === 'suivi' ? ['hebdo', 'mft'] : ['ov', 'pareto', 'ana', 'cnq', 'client', 'rca'];
+  var TABS = PAGE === 'suivi' ? ['hebdo', 'mft'] : ['ov', 'pareto', 'ana', 'cnq', 'client', 'rca'].concat(D.dummy ? ['gal'] : []);
   var G = { lang: 'fr', minor: true, tab: TABS[0] };
   try { var s1 = localStorage.getItem('fto2-dash-lang'); if (s1 === 'fr' || s1 === 'en') G.lang = s1; } catch (e) {}
   var h0 = ''; try { h0 = EMBED ? '' : (location.hash || '').replace('#', ''); } catch (e) {} if (TABS.indexOf(h0) >= 0) G.tab = h0;
   document.querySelectorAll('#tabs [role="tab"]').forEach(function (b) { b.hidden = TABS.indexOf(b.getAttribute('data-tab')) < 0; });
+  if (TABS.indexOf('gal') < 0) document.querySelectorAll('#tabs .gap[data-gal]').forEach(function (g) { g.hidden = true; });
   if (PAGE === 'suivi') {
     document.querySelectorAll('#tabs .gap').forEach(function (g) { g.hidden = true; });
     var h1 = document.querySelector('h1[data-t="title"]'); if (h1) h1.setAttribute('data-t', 'titleSuivi');
@@ -953,7 +1024,7 @@ window.DASH = {"defects":[["216055047",1,"2026-01-06","2026-W02","A350","FTO2",0
   // ---------------------------------------------------------------- weeks
   function isoMonday(wk) { var y = +wk.slice(0, 4), w = +wk.slice(6), j4 = new Date(Date.UTC(y, 0, 4)), dow = (j4.getUTCDay() + 6) % 7, mon = new Date(j4); mon.setUTCDate(j4.getUTCDate() - dow + (w - 1) * 7); return mon; }
   function isoDay(dt) { return dt.toISOString().slice(0, 10); }
-  function isoWeekOf(dt) { var th = new Date(dt); th.setUTCDate(th.getUTCDate() + 3); var y = th.getUTCFullYear(), j4 = new Date(Date.UTC(y, 0, 4)), dow = (j4.getUTCDay() + 6) % 7, m1 = new Date(j4); m1.setUTCDate(j4.getUTCDate() - dow); return y + '-W' + String(Math.round((dt - m1) / 604800000) + 1).padStart(2, '0'); }
+  function isoWeekOf(dt) { var th = new Date(dt); th.setUTCDate(th.getUTCDate() + 3); var y = th.getUTCFullYear(), j4 = new Date(Date.UTC(y, 0, 4)), dow = (j4.getUTCDay() + 6) % 7, m1 = new Date(j4); m1.setUTCDate(j4.getUTCDate() - dow); return y + '-W' + String(Math.floor((dt - m1) / 604800000) + 1).padStart(2, '0'); }
   var WEEKS = (function () {
     var ws = REP.filter(function (n) { return n[23] === 'serie'; }).map(function (n) { return n[2]; }).filter(function (w) { return w >= D.meta.from.slice(0, 4); }).sort(), out = [];
     if (!ws.length) return out;
@@ -971,9 +1042,11 @@ window.DASH = {"defects":[["216055047",1,"2026-01-06","2026-W02","A350","FTO2",0
     var b = { o: o, f: {}, q: '', limit: 100, open: {} };
     var grid = document.getElementById(o.grid);
     o.dims.forEach(function (d) {
-      var c = document.createElement('div'); c.className = 'card' + (d.wide ? ' wide' : '');
-      c.innerHTML = '<div class="card-head"><h3 data-t="' + d.t + '"></h3><button type="button" class="clear-one" data-dim="' + d.k + '" hidden></button></div>' +
-        (d.sub ? '<p class="sub" data-t="' + d.sub + '"></p>' : '') + (d.split && !d.nokey ? '<div class="key" data-key="1"></div>' : '') +
+      // one band per breakdown: name, reading guide and legend on the left, the chart on the right
+      var c = document.createElement('div'); c.className = 'card wide';
+      c.innerHTML = '<div class="bhead">' + (o.kicker ? '<span class="kicker" data-t="' + o.kicker + '"></span>' : '') +
+        '<div class="card-head"><h3 data-t="' + d.t + '"></h3><button type="button" class="clear-one" data-dim="' + d.k + '" hidden></button></div>' +
+        (d.sub ? '<p class="sub" data-t="' + d.sub + '"></p>' : '') + (d.split && !d.nokey ? '<div class="key" data-key="1"></div>' : '') + '</div>' +
         (d.cols ? '<div class="cols-wrap"><div class="cols" id="' + o.grid + '-' + d.k + '"></div></div>' : d.custom ? '<div class="custom" id="' + o.grid + '-' + d.k + '"></div>' :
           '<div class="bars' + (d.pareto ? ' pareto' : '') + (d.longName ? ' longname' : '') + (o.money ? ' money' : '') + (o.extras ? ' x' + o.extras.length : '') + '" id="' + o.grid + '-' + d.k + '"></div>');
       grid.appendChild(c);
@@ -1142,7 +1215,7 @@ window.DASH = {"defects":[["216055047",1,"2026-01-06","2026-W02","A350","FTO2",0
     }).join('') + '</div>';
   }
   var ncBoard = Board({
-    grid: 'ng', chips: 'ncChips', search: 'nq', count: 'nn', thead: 'nth', tbody: 'ntb', more: 'nm',
+    grid: 'ng', chips: 'ncChips', search: 'nq', count: 'nn', thead: 'nth', tbody: 'ntb', more: 'nm', kicker: 'kmNc',
     rows: function () { return SEL_NC; },
     dims: [
       { k: 'prog', t: 'dProg', custom: pie, color: function (v) { return PROG_COL[v] || 'var(--dim)'; }, get: function (n) { return n[3] || 'Autre'; }, show: function (v) { return v === 'Autre' ? L('Autre') : v; } },
@@ -1177,7 +1250,7 @@ window.DASH = {"defects":[["216055047",1,"2026-01-06","2026-W02","A350","FTO2",0
   // ---------------------------------------------------------------- 2. Pareto (selection)
   function ncShareFmt(n) { return (Math.round(n * 10) / 10).toLocaleString(loc(), { minimumFractionDigits: n > 0 && n < 100 ? 1 : 0, maximumFractionDigits: 1 }); }
   var pareto = Board({
-    grid: 'pg', chips: 'pc', search: 'pq', count: 'pn', thead: 'pth', tbody: 'ptb', more: 'pm', valueHead: 'hDef',
+    grid: 'pg', chips: 'pc', search: 'pq', count: 'pn', thead: 'pth', tbody: 'ptb', more: 'pm', valueHead: 'hDef', kicker: 'kmDef',
     rows: function () { return D.defects.filter(function (r) { return SEL[r[0]] && keepMinor(r); }); },
     extras: [{ t: 'hNc', f: function (r) { return 1 / NLINES[r[0]]; }, fmt: ncShareFmt }],
     dims: [
@@ -1216,7 +1289,7 @@ window.DASH = {"defects":[["216055047",1,"2026-01-06","2026-W02","A350","FTO2",0
   var NLINES = {}; D.defects.forEach(function (r) { NLINES[r[0]] = (NLINES[r[0]] || 0) + 1; });
   function kShare(u) { return u.d ? 1 / NLINES[u.d[0]] : 1; }
   var costPareto = Board({
-    grid: 'kg', chips: 'kc', search: 'kq', count: 'kn', thead: 'kth', tbody: 'ktb', more: 'km', money: true,
+    grid: 'kg', chips: 'kc', search: 'kq', count: 'kn', thead: 'kth', tbody: 'ktb', more: 'km', money: true, kicker: 'kmEur',
     rows: function () { return UNITS.filter(function (u) { return SEL[u.n[0]] && (!u.d || keepMinor(u.d)); }); }, measure: kCost,
     extras: [{ t: 'hDef', f: function (u) { return u.d ? 1 : 0; }, fmt: function (n) { return num(n); } },
              { t: 'hNc', f: kShare, fmt: ncShareFmt }],
@@ -1272,7 +1345,7 @@ window.DASH = {"defects":[["216055047",1,"2026-01-06","2026-W02","A350","FTO2",0
   function lvlName(lvl, v) { return lvl === 'code' ? codeName(v) : L(v); }
   var WEEK_ALL = {}; D.defects.forEach(function (r) { if (r[20] === 'serie') WEEK_ALL[r[3]] = (WEEK_ALL[r[3]] || 0) + 1; });  // shutdown weeks: fewer than 10 defects
   var weekly = Board({
-    grid: 'wg', chips: 'wc', search: 'wq', count: 'wn', thead: 'wth', tbody: 'wtb', more: 'wm',
+    grid: 'wg', chips: 'wc', search: 'wq', count: 'wn', thead: 'wth', tbody: 'wtb', more: 'wm', kicker: 'kmDef',
     rows: function () { var set = toSet(winWeeks()); return wBase().filter(function (r) { return set[r[3]]; }); },
     dims: [
       { k: 'cat', t: 'dCat', sub: 'paretoSub', wide: true, pareto: true, split: dCable, get: dCat, show: L },
@@ -1351,7 +1424,7 @@ window.DASH = {"defects":[["216055047",1,"2026-01-06","2026-W02","A350","FTO2",0
   function uCat(u) { return u.d ? dCat(u.d) : '__none'; }
   function sum(arr, f) { return arr.reduce(function (s, x) { return s + f(x); }, 0); }
   var cnq = Board({
-    grid: 'cg', chips: 'cc', search: 'cq', count: 'cn', thead: 'cth', tbody: 'ctb', more: 'cm', money: true,
+    grid: 'cg', chips: 'cc', search: 'cq', count: 'cn', thead: 'cth', tbody: 'ctb', more: 'cm', money: true, kicker: 'kmEur',
     rows: selUnits, measure: uCost,
     dims: [
       { k: 'cable', t: 'dCable', get: function (u) { return u.d && dCable(u.d) ? 'c' : 'n'; }, show: function (v) { return v === 'c' ? S('cable') : S('notCable'); }, order: function () { return ['c', 'n']; } },
@@ -1384,7 +1457,7 @@ window.DASH = {"defects":[["216055047",1,"2026-01-06","2026-W02","A350","FTO2",0
   // ---------------------------------------------------------------- 4. Customer returns
   function cx(r) { return D.client[r[0] + '|' + r[1]] || ['', '', '', '', '', '']; }
   var client = Board({
-    grid: 'rg', chips: 'rc', search: 'rq', count: 'rn', thead: 'rth2', tbody: 'rtb2', more: 'rm', expand: true,
+    grid: 'rg', chips: 'rc', search: 'rq', count: 'rn', thead: 'rth2', tbody: 'rtb2', more: 'rm', expand: true, kicker: 'kmDef',
     rows: function () { return D.defects.filter(function (r) { return CLI[r[0]] && keepMinor(r); }); },
     dims: [
       { k: 'cat', t: 'dCat', wide: true, pareto: true, get: dCat, show: L },
@@ -1998,7 +2071,699 @@ window.DASH = {"defects":[["216055047",1,"2026-01-06","2026-W02","A350","FTO2",0
   var MP = document.getElementById('p-mft');
   MP.addEventListener('pointermove', function (e) { var t = e.target.closest && e.target.closest('[data-tip]'); if (t) showTip(e, t.getAttribute('data-tip').split('|')); else hideTip(); });
   MP.addEventListener('pointerleave', hideTip);
-  var rzT; window.addEventListener('resize', function () { clearTimeout(rzT); rzT = setTimeout(renderAna, 150); });
+  var rzT; window.addEventListener('resize', function () { clearTimeout(rzT); rzT = setTimeout(function () { renderAna(); renderGal(); }, 150); });
+
+  // ---------------------------------------------------------------- 6. Gallery (local page only): chart ideas drawn on FICTITIOUS data
+  // build/dummy_data.py draws the data at random; only the category / root cause / sub-category names are real (taxonomy).
+  // dummy NC row: [id, date, line, msn, station, product, hour, decision, days to close (null if open), found at,
+  //                alert, writing, support, rework, check, material, engineering]   dummy defect row: [NC index, category, root cause, sub-category, FIN, cost]
+  var DM = D.dummy || null, GN = DM ? DM.ncs : [], GD = DM ? DM.defects : [];
+  var GX = {
+    fr: { mean: 'Moyenne', ucl: 'Limite haute (3σ)', outLim: 'Hors limite', uLeg: 'NC par avion', uTip: '{u} NC par avion ({c} NC, {n} avions)', uclTip: 'limite haute {v}',
+      st_poste: 'Au poste', st_cf: 'Contrôle final', st_test: 'Test', st_client: 'Client', reachTip: '{n} défauts arrivent à cette étape', caughtTip: '{n} arrêtés ici ({p})',
+      caught: '{n} arrêtés ici', caughtP: '{p} de ce qui arrive', passOn: '{p} continuent', defN: '{n} défauts', defects: 'défauts', coTip: '{n} NC contiennent les deux',
+      coNode: '{n} associations', single: 'NC à une seule catégorie, non tracées : {n}', target: 'Cible {v}', rateTip: '{e} erreurs · {i} insertions · {u} unités',
+      above: 'Au-dessus de la cible', below: 'Sous la cible', kNc: 'NC par avion', kCost: 'Coût par avion', kDays: 'Délai médian de clôture (jours)', objShort: 'obj. {v}',
+      objBand: 'Zone sous l’objectif', objective: 'Objectif', worse: 'Au-dessus de l’objectif', cum: 'Coût cumulé', budget: 'Budget au prorata', proj: 'Projection au rythme actuel',
+      budgetEnd: 'Budget {v}', projEnd: 'Projection {v}', dataEnd: 'Fin des données', increase: 'Hausse', decrease: 'Baisse', totalM: 'Total du mois', q1: '1er trimestre', q2: '2e trimestre',
+      perMonth: '{v} par mois', median: 'Médiane', ncCount: '{n} NC', rollMean: 'Moyenne glissante sur 9 avions', rankAx: 'Rang de l’avion dans sa ligne', perAc: 'Défauts par avion',
+      b0: 'Aucun défaut', b1: '1 à 5 défauts', b2: '6 à 15', b3: 'Plus de 15', acTip: 'MSN {m} · {n} défauts', fpyTip: '{n} NC pour {u} unités passées', punchTip: '{n} NC',
+      done: 'Terminée', open: 'En cours', late: 'En retard', planned: 'Planifiée', targetRca: 'Cause visée : {r}', finCount: '{n} avions', finTip: 'FIN {f} · MSN {m}',
+      comp_g: 'Gestion de la NC', comp_r: 'Reprise', comp_m: 'Matière', comp_e: 'Ingénierie', boxTip: 'médiane {m} j · moitié centrale entre {a} et {b} j', boxN: 'n = {n}', dShort: '{v} j',
+      heatTip: '{n} défauts', one: '1 défaut sur cet avion', twoPlus: '2 défauts ou plus', all: 'Tous', fOk: 'Faisables', fPart: 'En partie', fNeed: 'À collecter', f_ok: 'Faisable avec les données actuelles', f_part: 'En partie',
+      f_need: 'Données à collecter', keep: '☆ Garder', kept: '★ Gardé', keptList: 'Gardés :', keepHint: 'Cliquez sur « Garder » sous les graphiques à construire : la liste s’affiche ici.',
+      share: 'Part', costTip: '{c} · {n} défauts', perCent: '1 case = 1 % des défauts', weekTip: 'Semaine {w}' },
+    en: { mean: 'Mean', ucl: 'Upper limit (3σ)', outLim: 'Beyond the limit', uLeg: 'NCs per aircraft', uTip: '{u} NCs per aircraft ({c} NCs, {n} aircraft)', uclTip: 'upper limit {v}',
+      st_poste: 'At the station', st_cf: 'Final inspection', st_test: 'Test', st_client: 'Customer', reachTip: '{n} defects reach this step', caughtTip: '{n} stopped here ({p})',
+      caught: '{n} stopped here', caughtP: '{p} of what arrives', passOn: '{p} go on', defN: '{n} defects', defects: 'defects', coTip: '{n} NCs contain both',
+      coNode: '{n} pairings', single: 'NCs with a single category, not drawn: {n}', target: 'Target {v}', rateTip: '{e} errors · {i} insertions · {u} units',
+      above: 'Above target', below: 'At or below target', kNc: 'NCs per aircraft', kCost: 'Cost per aircraft', kDays: 'Median days to close', objShort: 'target {v}',
+      objBand: 'Zone within target', objective: 'Target', worse: 'Above target', cum: 'Cumulative cost', budget: 'Pro-rata budget', proj: 'Projection at the current pace',
+      budgetEnd: 'Budget {v}', projEnd: 'Projection {v}', dataEnd: 'End of data', increase: 'Increase', decrease: 'Decrease', totalM: 'Month total', q1: 'Q1', q2: 'Q2',
+      perMonth: '{v} a month', median: 'Median', ncCount: '{n} NCs', rollMean: 'Rolling mean over 9 aircraft', rankAx: 'Aircraft build rank in its line', perAc: 'Defects per aircraft',
+      b0: 'No defect', b1: '1 to 5 defects', b2: '6 to 15', b3: 'More than 15', acTip: 'MSN {m} · {n} defects', fpyTip: '{n} NCs for {u} units through', punchTip: '{n} NCs',
+      done: 'Done', open: 'In progress', late: 'Late', planned: 'Planned', targetRca: 'Targeted cause: {r}', finCount: '{n} aircraft', finTip: 'FIN {f} · MSN {m}',
+      comp_g: 'NC handling', comp_r: 'Rework', comp_m: 'Material', comp_e: 'Engineering', boxTip: 'median {m} d · middle half between {a} and {b} d', boxN: 'n = {n}', dShort: '{v} d',
+      heatTip: '{n} defects', one: '1 defect on this aircraft', twoPlus: '2 defects or more', all: 'All', fOk: 'Feasible', fPart: 'Partly', fNeed: 'Data to collect', f_ok: 'Feasible with current data', f_part: 'Partly feasible',
+      f_need: 'Data to collect', keep: '☆ Keep', kept: '★ Kept', keptList: 'Kept:', keepHint: 'Click “Keep” on the charts worth building: the list shows here.',
+      share: 'Share', costTip: '{c} · {n} defects', perCent: '1 square = 1% of defects', weekTip: 'Week {w}' }
+  };
+  function gx(k, v) { var s = GX[G.lang][k]; if (s == null) return k; Object.keys(v || {}).forEach(function (x) { s = s.split('{' + x + '}').join(v[x]); }); return s; }
+  // per chart: kicker, title, one line on how to read it, the data it needs (fields if feasible now, what is missing otherwise)
+  var GSTR = {
+    '01': { fr: ['Maîtrise statistique', 'Carte de contrôle : NC par avion', 'NC par avion produit, semaine par semaine, avec la moyenne et la limite haute à 3 sigmas (carte u).', 'avions (ou harnais) produits par semaine et par ligne'],
+            en: ['Process control', 'Control chart: NCs per aircraft', 'NCs per aircraft built, week by week, with the mean and the 3-sigma upper limit (u chart).', 'aircraft (or harnesses) built per week and line'] },
+    '02': { fr: ['Détection', 'Où les défauts sont arrêtés', 'Défauts qui arrivent à chaque étape et part arrêtée à cette étape.', 'lieu de détection de chaque NC'],
+            en: ['Detection', 'Where defects are stopped', 'Defects reaching each step and the share stopped there.', 'where each NC was found'] },
+    '03': { fr: ['Coût', 'Le coût de non-qualité en surfaces', 'Surface : coût. Blocs : catégories, avec leurs causes à l’intérieur.', 'coût réparti par défaut, cause'],
+            en: ['Cost', 'Cost of non-quality as areas', 'Area: cost. Blocks: categories, with their root causes inside.', 'cost shared per defect, root cause'] },
+    '04': { fr: ['Associations', 'Catégories qui apparaissent dans la même NC', 'Ruban : nombre de NC qui contiennent les deux catégories.', 'catégorie de chaque défaut, numéro de NC'],
+            en: ['Co-occurrence', 'Categories found in the same NC', 'Ribbon: number of NCs that contain both categories.', 'category of each defect, NC number'] },
+    '05': { fr: ['Taux d’erreur', 'Erreurs de branchement pour 10 000 insertions', 'Par produit, rapporté au nombre de contacts insérés ; trait vertical : cible.', 'insertions par produit (gamme), unités produites, cible'],
+            en: ['Error rate', 'Connection errors per 10,000 insertions', 'Per product, against the number of contacts inserted; vertical line: target.', 'insertions per product (routing), units built, target'] },
+    '06': { fr: ['Hiérarchie', 'Des catégories aux sous-catégories', 'Anneaux : catégorie, cause, sous-catégorie. Angle : nombre de défauts.', 'classification de chaque défaut'],
+            en: ['Hierarchy', 'From categories to sub-categories', 'Rings: category, root cause, sub-category. Angle: number of defects.', 'classification of each defect'] },
+    '07': { fr: ['Rythme', 'Une crête par catégorie, semaine par semaine', 'Hauteur : défauts de la semaine, moyenne glissante sur 3 semaines.', 'date, catégorie'],
+            en: ['Rhythm', 'One ridge per category, week by week', 'Height: defects of the week, 3-week rolling mean.', 'date, category'] },
+    '08': { fr: ['Flux', 'Le volume et sa composition, semaine par semaine', 'Épaisseur totale : défauts de la semaine ; couches : catégories.', 'date, catégorie'],
+            en: ['Flow', 'Volume and its mix, week by week', 'Total thickness: defects of the week; layers: categories.', 'date, category'] },
+    '09': { fr: ['Objectifs', 'Chaque ligne face à ses objectifs', 'Barre : valeur sur la période ; trait : objectif ; zone claire : sous l’objectif.', 'objectifs par ligne, avions produits'],
+            en: ['Targets', 'Each line against its targets', 'Bar: value over the period; tick: target; light zone: within target.', 'targets per line, aircraft built'] },
+    '10': { fr: ['Budget', 'Coût cumulé face au budget annuel', 'Trait plein : coût cumulé ; pointillés : budget au prorata et projection au rythme actuel.', 'coût cumulé disponible, budget annuel à fixer'],
+            en: ['Budget', 'Cumulative cost against the annual budget', 'Solid: cumulative cost; dotted: pro-rata budget and projection at the current pace.', 'cumulative cost available, annual budget to set'] },
+    '11': { fr: ['Écarts', 'D’un mois au suivant, catégorie par catégorie', 'Variation du coût entre deux mois consécutifs (les derniers hors fermeture).', 'coût réparti par défaut, catégorie, date'],
+            en: ['Variance', 'From one month to the next, category by category', 'Change in cost between two consecutive months (the latest outside shutdown).', 'cost shared per defect, category, date'] },
+    '12': { fr: ['Avant / après', 'Causes : premier trimestre contre deuxième', 'Défauts par mois en moyenne, pour les 10 premières causes.', 'date, cause'],
+            en: ['Before / after', 'Root causes: first quarter against second', 'Defects per month on average, for the top 10 root causes.', 'date, root cause'] },
+    '13': { fr: ['Dispersion', 'Le coût de chaque NC', 'Un point par NC, par ligne ; échelle logarithmique ; trait : médiane.', 'coût par NC, ligne'],
+            en: ['Spread', 'The cost of every NC', 'One dot per NC, by line; log scale; tick: median.', 'cost per NC, line'] },
+    '14': { fr: ['Apprentissage', 'Défauts par avion selon son rang de production', 'Points : avions ; courbes : moyenne glissante sur 9 avions.', 'MSN connus ; manque la liste des avions produits (les avions sans NC)'],
+            en: ['Learning', 'Defects per aircraft by build rank', 'Dots: aircraft; curves: rolling mean over 9 aircraft.', 'MSNs known; the list of aircraft built is missing (aircraft with no NC)'] },
+    '15': { fr: ['Parc', 'Chaque avion, un pictogramme', 'Avions dans l’ordre de production, teinte selon le nombre de défauts.', 'MSN connus ; manque la liste des avions produits (les avions sans NC)'],
+            en: ['Fleet', 'Every aircraft, one pictogram', 'Aircraft in build order, shaded by number of defects.', 'MSNs known; the list of aircraft built is missing (aircraft with no NC)'] },
+    '16': { fr: ['Rendement', 'Rendement au premier passage par poste', 'Part des unités qui passent le poste sans NC.', 'unités passées à chaque poste'],
+            en: ['Yield', 'First-pass yield by station', 'Share of units that pass the station without an NC.', 'units through each station'] },
+    '17': { fr: ['Horaires', 'Jour et heure de création des NC', 'Surface du point : nombre de NC.', 'date et heure de création'],
+            en: ['Hours', 'Day and hour NCs are created', 'Dot area: number of NCs.', 'creation date and time'] },
+    '18': { fr: ['Tendances', 'Une petite courbe par cause', 'Défauts par mois pour les 12 premières causes ; chaque courbe a sa propre échelle.', 'date, cause'],
+            en: ['Trends', 'One small curve per root cause', 'Defects per month for the top 12 root causes; each curve has its own scale.', 'date, root cause'] },
+    '19': { fr: ['Actions', 'Calendrier des actions qualité', 'Une barre par action, de son lancement à sa clôture ; trait vertical : fin des données.', 'fichiers MFT (date de lancement) ; manquent les dates de clôture'],
+            en: ['Actions', 'Quality action timeline', 'One bar per action, from launch to close; vertical line: end of data.', 'MFT trackers (launch date); close dates missing'] },
+    '20': { fr: ['Récurrence', 'Les repères qui reviennent d’un avion à l’autre', 'A350 : une colonne par avion, une ligne par FIN ; carré : défaut sur ce FIN.', 'FIN lu dans le texte, MSN'],
+            en: ['Recurrence', 'References that come back aircraft after aircraft', 'A350: one column per aircraft, one row per FIN; square: a defect on that FIN.', 'FIN read in the text, MSN'] },
+    '21': { fr: ['Profil', 'Profil de défauts de chaque ligne', 'Part de chaque catégorie dans les défauts de la ligne.', 'catégorie, ligne'],
+            en: ['Profile', 'Defect profile of each line', 'Share of each category in the line’s defects.', 'category, line'] },
+    '22': { fr: ['Répartition', 'Cent défauts', 'Chaque case : 1 % des défauts.', 'catégorie'],
+            en: ['Breakdown', 'A hundred defects', 'Each square: 1% of defects.', 'category'] },
+    '23': { fr: ['Composantes', 'De quoi est fait le coût, mois par mois', 'Gestion de la NC (alerte, rédaction, support, contrôle), reprise, matière, ingénierie.', 'détail du modèle CNQ'],
+            en: ['Components', 'What the cost is made of, month by month', 'NC handling (alert, writing, support, check), rework, material, engineering.', 'CNQ model detail'] },
+    '24': { fr: ['Délais', 'Délai de clôture par décision', 'Boîte : moitié centrale des NC ; trait : médiane ; moustaches : 10 % et 90 %.', 'dates de création et de clôture, décision'],
+            en: ['Lead time', 'Time to close by decision', 'Box: middle half of NCs; line: median; whiskers: 10% and 90%.', 'creation and close dates, decision'] },
+    '25': { fr: ['Postes', 'Défauts par poste et par semaine', 'Teinte : nombre de défauts.', 'poste, date'],
+            en: ['Stations', 'Defects by station and week', 'Shade: number of defects.', 'station, date'] }
+  };
+  var GSPEC = [['01', 'need', g01], ['02', 'ok', g02], ['03', 'ok', g03], ['04', 'ok', g04], ['05', 'need', g05], ['06', 'ok', g06], ['07', 'ok', g07], ['08', 'ok', g08],
+    ['09', 'need', g09], ['10', 'part', g10], ['11', 'ok', g11], ['12', 'ok', g12], ['13', 'ok', g13], ['14', 'part', g14], ['15', 'part', g15], ['16', 'need', g16],
+    ['17', 'ok', g17], ['18', 'ok', g18], ['19', 'part', g19], ['20', 'ok', g20], ['21', 'ok', g21], ['22', 'ok', g22], ['23', 'ok', g23], ['24', 'ok', g24], ['25', 'ok', g25]];
+  var GAL = { feas: '', keep: {} };
+  try { if (!EMBED) GAL.keep = JSON.parse(localStorage.getItem('fto2-gal-keep') || '{}') || {}; } catch (e) {}
+
+  // shared helpers
+  function gB(k) { return document.getElementById('g-' + k + '-b'); }
+  function gWd(k, min) { return Math.max(gB(k).clientWidth || 520, min || 300); }
+  function gSet(k, html, leg) { gB(k).innerHTML = html; var l = document.getElementById('g-' + k + '-l'); l.innerHTML = leg || ''; l.hidden = !leg; }
+  function gT(k) { return GSTR[k][G.lang][1]; }
+  function sw(c, lab, round) { return '<span><i class="sw" style="background:' + c + (round ? ';border-radius:50%' : '') + '"></i>' + esc(lab) + '</span>'; }
+  function swl(c, lab, dash) { return '<span><i class="' + (dash ? 'dash' : 'ln') + '" style="' + (dash ? 'border-top-color:' : 'background:') + c + '"></i>' + esc(lab) + '</span>'; }
+  function gCost(n) { return n[10] + n[11] + n[12] + n[13] + n[14] + n[15] + n[16]; }
+  function gWk(date) { var d = new Date(date + 'T00:00:00Z'); d.setUTCDate(d.getUTCDate() - (d.getUTCDay() + 6) % 7); return isoWeekOf(d); }
+  function gMonths(X, y) { var g = '', prev = ''; DM.weeks.forEach(function (w, i) { var m = isoDay(isoMonday(w)).slice(0, 7); if (m !== prev) { g += tx(X(i), y, monthName(m), 'mu', X(i) < 24 ? 'start' : 'middle'); prev = m; } }); return g; }
+  function f2(x) { return (Math.round(x * 100) / 100).toLocaleString(loc(), { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+  function kE(v) { return Math.round(v / 1000).toLocaleString(loc()) + (G.lang === 'fr' ? ' k€' : 'k EUR'); }
+  function catTok(c) { return CATC[c] ? '--c' + CATC[c] : '--dim'; }
+  function quant(a, p) { if (!a.length) return 0; var i = (a.length - 1) * p, lo = Math.floor(i), hi = Math.ceil(i); return a[lo] + (a[hi] - a[lo]) * (i - lo); }
+  // smooth line through points (Catmull-Rom as cubic Béziers)
+  function crPath(pts, first) {
+    var d = (first || 'M') + r1(pts[0][0]) + ',' + r1(pts[0][1]);
+    for (var i = 0; i < pts.length - 1; i++) {
+      var p0 = pts[i - 1] || pts[i], p1 = pts[i], p2 = pts[i + 1], p3 = pts[i + 2] || p2;
+      d += 'C' + r1(p1[0] + (p2[0] - p0[0]) / 6) + ',' + r1(p1[1] + (p2[1] - p0[1]) / 6) + ' ' + r1(p2[0] - (p3[0] - p1[0]) / 6) + ',' + r1(p2[1] - (p3[1] - p1[1]) / 6) + ' ' + r1(p2[0]) + ',' + r1(p2[1]);
+    }
+    return d;
+  }
+  function squarify(items, x, y, w, h) {
+    var out = [], tot = items.reduce(function (s, i) { return s + i.v; }, 0); if (!tot || w <= 0 || h <= 0) return out;
+    var rest = items.map(function (i) { return { it: i, a: i.v * w * h / tot }; });
+    while (rest.length) {
+      var short = Math.min(w, h), row = [], best = Infinity;
+      while (rest.length) {
+        var cand = row.concat([rest[0]]), s = 0, mx = 0, mn = Infinity;
+        cand.forEach(function (c) { s += c.a; mx = Math.max(mx, c.a); mn = Math.min(mn, c.a); });
+        var worst = Math.max(short * short * mx / (s * s), s * s / (short * short * mn));
+        if (worst <= best) { row = cand; best = worst; rest.shift(); } else break;
+      }
+      var sum0 = row.reduce(function (s2, r) { return s2 + r.a; }, 0), th = sum0 / short, off = 0;
+      row.forEach(function (r) { var len = r.a / th; out.push(w >= h ? { it: r.it, x: x, y: y + off, w: th, h: len } : { it: r.it, x: x + off, y: y, w: len, h: th }); off += len; });
+      if (w >= h) { x += th; w -= th; } else { y += th; h -= th; }
+    }
+    return out;
+  }
+  // each defect's share of its NC's whole cost (alert, writing... spread over the defects in proportion to their rework)
+  var GALLOC = (function () {
+    var rw = {}; GD.forEach(function (d) { rw[d[0]] = (rw[d[0]] || 0) + d[5]; });
+    return GD.map(function (d) { return rw[d[0]] ? d[5] / rw[d[0]] * gCost(GN[d[0]]) : 0; });
+  })();
+  function gMonthsList() { var m = {}; GN.forEach(function (n) { m[n[1].slice(0, 7)] = 1; }); return Object.keys(m).sort(); }
+  function aircraftBuilt(l) { return DM.prod.reduce(function (s, p) { return s + (p[1] === l ? p[2] : 0); }, 0); }
+
+  // 01. u chart, one panel per line
+  function g01(k) {
+    var W0 = gWd(k), lines = ['A350', 'A330'], ph = 116, gap = 46, ml = 36, mr = 86, mt = 24, nW = DM.weeks.length, pw = W0 - ml - mr, st = pw / nW;
+    var H = mt + lines.length * (ph + gap) - gap + 26, g = '', prod = {}, cnt = {};
+    function X(i) { return ml + (i + 0.5) * st; }
+    DM.prod.forEach(function (p) { prod[p[1] + '|' + p[0]] = p[2]; });
+    GN.forEach(function (n) { var key = n[2] + '|' + gWk(n[1]); cnt[key] = (cnt[key] || 0) + 1; });
+    lines.forEach(function (l, li) {
+      var y0 = mt + li * (ph + gap), pts = [], sc = 0, sn = 0;
+      DM.weeks.forEach(function (w, i) { var n = prod[l + '|' + w] || 0, c = cnt[l + '|' + w] || 0; if (n) { pts.push({ i: i, n: n, c: c, u: c / n, w: w }); sc += c; sn += n; } });
+      if (!pts.length) return;
+      var ub = sc / sn; pts.forEach(function (p) { p.ucl = ub + 3 * Math.sqrt(ub / p.n); });
+      var mx = Math.max.apply(null, pts.map(function (p) { return Math.max(p.u, p.ucl); })), stp = mx > 20 ? 10 : mx > 8 ? 4 : 2, top = Math.ceil(mx / stp) * stp;
+      function Y(v) { return y0 + ph - v / top * ph; }
+      g += tx(0, y0 - 10, progName(l), 'ink b');
+      [0, top / 2, top].forEach(function (t) { g += tx(ml - 6, Y(t) + 4, num(t), 'mu', 'end'); });
+      g += '<line x1="' + ml + '" x2="' + (W0 - mr) + '" y1="' + r1(Y(0)) + '" y2="' + r1(Y(0)) + '" stroke="var(--grid)"/>';
+      g += '<path d="' + pts.map(function (p) { return 'M' + r1(X(p.i) - st / 2) + ',' + r1(Y(p.ucl)) + 'H' + r1(X(p.i) + st / 2); }).join('') + '" stroke="var(--up)" stroke-width="1.5" stroke-dasharray="3 2" fill="none"/>';
+      g += '<line x1="' + ml + '" x2="' + (W0 - mr) + '" y1="' + r1(Y(ub)) + '" y2="' + r1(Y(ub)) + '" stroke="var(--ink-2)"/>' + tx(W0 - mr + 8, Y(ub) + 4, gx('mean') + ' ' + f1(ub), 'mu');
+      g += '<path d="' + pts.map(function (p, j) { return (j ? 'L' : 'M') + r1(X(p.i)) + ',' + r1(Y(p.u)); }).join('') + '" fill="none" stroke="var(--s1)" stroke-width="1.5"/>';
+      pts.forEach(function (p) {
+        var out = p.u > p.ucl;
+        g += '<circle cx="' + r1(X(p.i)) + '" cy="' + r1(Y(p.u)) + '" r="' + (out ? 5 : 3.5) + '" fill="' + (out ? 'var(--up)' : 'var(--s1)') + '" stroke="var(--surface)" stroke-width="2"' +
+          tip(weekLong(p.w) + ' · ' + l, [gx('uTip', { u: f1(p.u), c: num(p.c), n: num(p.n) }), gx('uclTip', { v: f1(p.ucl) }) + (out ? ' · ' + gx('outLim') : '')]) + '/>';
+      });
+    });
+    g += gMonths(X, H - 6);
+    gSet(k, svg(W0, H, g, gT(k)), swl('var(--s1)', gx('uLeg')) + swl('var(--ink-2)', gx('mean')) + swl('var(--up)', gx('ucl'), true) + sw('var(--up)', gx('outLim'), true));
+  }
+
+  // 02. detection funnel
+  function g02(k) {
+    var W0 = gWd(k), st = ['poste', 'cf', 'test', 'client'], c = { poste: 0, cf: 0, test: 0, client: 0 }, reach = [], acc = 0;
+    GD.forEach(function (d) { c[GN[d[0]][9]]++; });
+    for (var i = st.length - 1; i >= 0; i--) { acc += c[st[i]]; reach[i] = acc; }
+    var maxW = Math.max(160, W0 - 200), bh = 42, gap = 30, H = st.length * (bh + gap) - gap + 4, g = '';
+    st.forEach(function (s, i) {
+      var w = Math.max(8, reach[i] / reach[0] * maxW), x = (maxW - w) / 2, y = i * (bh + gap), p = reach[i] ? c[s] / reach[i] : 0, dark = i < 2 && w > 170;
+      g += '<rect x="' + r1(x) + '" y="' + y + '" width="' + r1(w) + '" height="' + bh + '" rx="3" fill="' + tint('--s1', 100 - i * 24) + '"' + tip(gx('st_' + s), [gx('reachTip', { n: num(reach[i]) }), gx('caughtTip', { n: num(c[s]), p: pct0(p * 100) })]) + '/>';
+      g += tx(maxW / 2, y + bh / 2 + 5, gx('st_' + s) + ' · ' + num(reach[i]), dark ? 'gk b' : 'ink b', 'middle');
+      g += tx(maxW + 18, y + bh / 2 - 3, gx('caught', { n: num(c[s]) }), 'ink b') + tx(maxW + 18, y + bh / 2 + 13, gx('caughtP', { p: pct0(p * 100) }), 'mu');
+      if (i < st.length - 1) g += tx(maxW / 2, y + bh + gap / 2 + 4, '↓ ' + gx('passOn', { p: pct0(reach[i + 1] / reach[i] * 100) }), 'mu', 'middle');
+    });
+    gSet(k, svg(W0, H, g, gT(k)));
+  }
+
+  // 03. treemap: categories, root causes inside, by cost
+  function g03(k) {
+    var W0 = gWd(k), H = 340, by = {}, cats = {}, tot = 0, g = '';
+    GD.forEach(function (d, i) { var c = catKey(d[1]), key = c + '|' + d[2]; by[key] = (by[key] || 0) + GALLOC[i]; cats[c] = (cats[c] || 0) + GALLOC[i]; tot += GALLOC[i]; });
+    var top = Object.keys(cats).map(function (c) { return { v: cats[c], c: c }; }).sort(function (a, b) { return b.v - a.v; });
+    squarify(top, 0, 0, W0, H).forEach(function (o) {
+      var c = o.it.c, tok = catTok(c), kids = Object.keys(by).filter(function (x) { return x.split('|')[0] === c; }).map(function (x) { return { v: by[x], r: x.split('|')[1] }; }).sort(function (a, b) { return b.v - a.v; });
+      var mx = kids.length ? kids[0].v : 1;
+      squarify(kids, o.x + 2, o.y + 2, o.w - 4, o.h - 4).forEach(function (r) {
+        var nm = L(r.it.r);
+        g += '<rect x="' + r1(r.x + 1) + '" y="' + r1(r.y + 1) + '" width="' + r1(Math.max(0, r.w - 2)) + '" height="' + r1(Math.max(0, r.h - 2)) + '" fill="' + tint(tok, 28 + 50 * r.it.v / mx) + '"' + tip(nm, [catLabel(c), eur(r.it.v) + ' · ' + pct(r.it.v / tot * 100)]) + '/>';
+        if (r.w > 78 && r.h > 36) { var mc = Math.floor((r.w - 14) / 6.6); if (nm.length > mc) nm = nm.slice(0, mc - 1) + '…'; g += tx(r.x + 8, r.y + 18, nm, 'ink b') + tx(r.x + 8, r.y + 33, eurK(r.it.v), 'ink'); }
+      });
+    });
+    gSet(k, svg(W0, H, g, gT(k)), top.map(function (o) { return sw(catFill(o.c), catLabel(o.c) + ' · ' + pct0(o.v / tot * 100)); }).join(''));
+  }
+
+  // 04. chord: categories found together in an NC
+  function g04(k) {
+    var W0 = gWd(k), keys = MAIN_CATS.slice(), n = keys.length, M = keys.map(function () { return keys.map(function () { return 0; }); }), per = {}, single = 0;
+    GD.forEach(function (d) { (per[d[0]] || (per[d[0]] = {}))[catKey(d[1])] = 1; });
+    Object.keys(per).forEach(function (i) { var cs = Object.keys(per[i]); if (cs.length < 2) { single++; return; } cs.forEach(function (a) { cs.forEach(function (b) { if (a !== b) M[keys.indexOf(a)][keys.indexOf(b)]++; }); }); });
+    var tot = M.map(function (r) { return r.reduce(function (s, v) { return s + v; }, 0); }), T = tot.reduce(function (s, v) { return s + v; }, 0);
+    var R = Math.max(80, Math.min(W0 / 2 - 118, 160)), R0 = R - 12, cx = W0 / 2, cy = R + 40, H = 2 * R + 80, gapA = 0.04, avail = 2 * Math.PI - gapA * n, a = 0, ang = [], g = '';
+    function P(r, t) { return r1(cx + r * Math.sin(t)) + ',' + r1(cy - r * Math.cos(t)); }
+    keys.forEach(function (c, i) { var span = T ? tot[i] / T * avail : 0, sub = [], b = a; keys.forEach(function (c2, j) { var w = tot[i] ? M[i][j] / tot[i] * span : 0; sub[j] = [b, b + w]; b += w; }); ang[i] = { a0: a, a1: a + span, sub: sub }; a += span + gapA; });
+    for (var i = 0; i < n; i++) for (var j = i + 1; j < n; j++) {
+      if (!M[i][j]) continue;
+      var s1 = ang[i].sub[j], s2 = ang[j].sub[i];
+      g += '<path d="M' + P(R0, s1[0]) + 'A' + R0 + ',' + R0 + ' 0 0 1 ' + P(R0, s1[1]) + 'Q' + cx + ',' + cy + ' ' + P(R0, s2[0]) + 'A' + R0 + ',' + R0 + ' 0 0 1 ' + P(R0, s2[1]) + 'Q' + cx + ',' + cy + ' ' + P(R0, s1[0]) + 'Z" fill="' +
+        catFill(tot[i] >= tot[j] ? keys[i] : keys[j]) + '" fill-opacity=".45" stroke="var(--surface)" stroke-width=".6"' + tip(catLabel(keys[i]) + ' + ' + catLabel(keys[j]), [gx('coTip', { n: num(M[i][j]) })]) + '/>';
+    }
+    keys.forEach(function (c, i) {
+      var o = ang[i]; if (o.a1 - o.a0 <= 0.001) return;
+      var big = o.a1 - o.a0 > Math.PI ? 1 : 0, m = (o.a0 + o.a1) / 2, sx = Math.sin(m);
+      g += '<path d="M' + P(R + 4, o.a0) + 'A' + (R + 4) + ',' + (R + 4) + ' 0 ' + big + ' 1 ' + P(R + 4, o.a1) + 'L' + P(R - 6, o.a1) + 'A' + (R - 6) + ',' + (R - 6) + ' 0 ' + big + ' 0 ' + P(R - 6, o.a0) + 'Z" fill="' + catFill(c) + '"' + tip(catLabel(c), [gx('coNode', { n: num(tot[i]) })]) + '/>';
+      if (o.a1 - o.a0 > 0.1) g += tx(cx + (R + 14) * sx, cy - (R + 14) * Math.cos(m) + 4, catLabel(c), 'ink', sx > 0.15 ? 'start' : sx < -0.15 ? 'end' : 'middle');
+    });
+    gSet(k, svg(W0, H, g, gT(k)), '<span class="mu">' + esc(gx('single', { n: num(single) })) + '</span>');
+  }
+
+  // 05. connection errors per 10,000 insertions, by product, against a target
+  function g05(k) {
+    var W0 = gWd(k), er = {}, T = DM.connTarget;
+    GD.forEach(function (d) { if (d[1] === 'Erreur Branchement') { var p = GN[d[0]][5]; er[p] = (er[p] || 0) + 1; } });
+    var rows = DM.products.map(function (p) { var ins = p[2] * p[3]; return { p: p[0], l: p[1], e: er[p[0]] || 0, u: p[2], ins: ins, r: ins ? (er[p[0]] || 0) / ins * 1e4 : 0 }; })
+      .filter(function (r) { return r.ins; }).sort(function (a, b) { return b.r - a.r; });
+    var lab = 132, mr = 70, rh = 27, top = 26, H = top + rows.length * rh + 6, mx = Math.max.apply(null, rows.map(function (r) { return r.r; }).concat([T * 1.3])), pw = W0 - lab - mr, g = '';
+    function X(v) { return lab + v / mx * pw; }
+    g += '<line x1="' + r1(X(T)) + '" x2="' + r1(X(T)) + '" y1="16" y2="' + (H - 2) + '" stroke="var(--ink)" stroke-width="1.5" stroke-dasharray="4 3"/>' + tx(X(T), 11, gx('target', { v: f1(T) }), 'ink b', 'middle');
+    rows.forEach(function (r, i) {
+      var y = top + i * rh + rh / 2, over = r.r > T, col = over ? 'var(--up)' : 'var(--s1)';
+      g += tx(0, y + 4, r.p, 'ink') + tx(lab - 12, y + 4, r.l, 'mu', 'end');
+      g += '<line x1="' + lab + '" x2="' + r1(X(r.r)) + '" y1="' + y + '" y2="' + y + '" stroke="' + col + '" stroke-width="2"/>';
+      g += '<circle cx="' + r1(X(r.r)) + '" cy="' + y + '" r="5.5" fill="' + col + '" stroke="var(--surface)" stroke-width="2"/>';
+      g += '<circle cx="' + r1(X(r.r)) + '" cy="' + y + '" r="13" fill="transparent"' + tip(r.p + ' · ' + r.l, [f2(r.r) + ' ' + (G.lang === 'fr' ? 'pour 10 000' : 'per 10,000'), gx('rateTip', { e: num(r.e), i: num(r.ins), u: num(r.u) })]) + '/>';
+      g += tx(X(r.r) + 12, y + 4, f2(r.r), over ? 'ink b' : 'ink');
+    });
+    gSet(k, svg(W0, H, g, gT(k)), sw('var(--s1)', gx('below'), true) + sw('var(--up)', gx('above'), true) + swl('var(--ink)', gx('target', { v: f1(T) }), true));
+  }
+
+  // 06. sunburst: category, root cause, sub-category
+  function g06(k) {
+    var W0 = gWd(k), S = Math.min(W0, 380), cx = W0 / 2, cy = S / 2, r0 = 44, w = (S / 2 - 6 - r0) / 3, tree = {}, tot = 0, g = '', a = 0;
+    GD.forEach(function (d) { var c = catKey(d[1]), t = tree[c] || (tree[c] = { v: 0, k: {} }), r = t.k[d[2]] || (t.k[d[2]] = { v: 0, k: {} }); t.v++; r.v++; r.k[d[3]] = (r.k[d[3]] || 0) + 1; tot++; });
+    function arcP(ra, rb, a0, a1) {
+      var big = a1 - a0 > Math.PI ? 1 : 0, P = function (r, t) { return r1(cx + r * Math.sin(t)) + ',' + r1(cy - r * Math.cos(t)); };
+      return 'M' + P(rb, a0) + 'A' + rb + ',' + rb + ' 0 ' + big + ' 1 ' + P(rb, a1) + 'L' + P(ra, a1) + 'A' + ra + ',' + ra + ' 0 ' + big + ' 0 ' + P(ra, a0) + 'Z';
+    }
+    function desc(o) { return Object.keys(o).sort(function (x, y) { return (o[y].v || o[y]) - (o[x].v || o[x]); }); }
+    MAIN_CATS.filter(function (c) { return tree[c]; }).forEach(function (c) {
+      var t = tree[c], tok = catTok(c), span = t.v / tot * 2 * Math.PI, b = a;
+      g += '<path d="' + arcP(r0, r0 + w, a, a + span) + '" fill="' + tint(tok, 100) + '" stroke="var(--surface)" stroke-width="1.5"' + tip(catLabel(c), [gx('defN', { n: num(t.v) }) + ' · ' + pct(t.v / tot * 100)]) + '/>';
+      desc(t.k).forEach(function (r) {
+        var rr = t.k[r], s2 = rr.v / tot * 2 * Math.PI, c2 = b;
+        g += '<path d="' + arcP(r0 + w, r0 + 2 * w, b, b + s2) + '" fill="' + tint(tok, 60) + '" stroke="var(--surface)" stroke-width="1.2"' + tip(L(r), [catLabel(c), gx('defN', { n: num(rr.v) })]) + '/>';
+        desc(rr.k).forEach(function (s) { var s3 = rr.k[s] / tot * 2 * Math.PI;
+          g += '<path d="' + arcP(r0 + 2 * w, r0 + 3 * w, c2, c2 + s3) + '" fill="' + tint(tok, 30) + '" stroke="var(--surface)" stroke-width="1"' + tip(s, [L(r), gx('defN', { n: num(rr.k[s]) })]) + '/>'; c2 += s3; });
+        b += s2;
+      });
+      a += span;
+    });
+    g += tx(cx, cy + 3, num(tot), 'ink b', 'middle', ' style="font-size:20px"') + tx(cx, cy + 20, gx('defects'), 'mu', 'middle');
+    gSet(k, svg(W0, S, g, gT(k)), MAIN_CATS.filter(function (c) { return tree[c]; }).map(function (c) { return sw(catFill(c), catLabel(c)); }).join(''));
+  }
+
+  // weekly counts per category, smoothed over 3 weeks
+  function gWeekly() {
+    var per = {}, nW = DM.weeks.length;
+    MAIN_CATS.forEach(function (c) { per[c] = DM.weeks.map(function () { return 0; }); });
+    GD.forEach(function (d) { var i = DM.weeks.indexOf(gWk(GN[d[0]][1])); if (i >= 0) per[catKey(d[1])][i]++; });
+    var sm = {}; MAIN_CATS.forEach(function (c) { var a = per[c]; sm[c] = a.map(function (v, i) { var p = i ? a[i - 1] : v, q = i < nW - 1 ? a[i + 1] : v; return (p + v + q) / 3; }); });
+    return { raw: per, sm: sm };
+  }
+  function weekCols(X, st, y0, h, per) {
+    return DM.weeks.map(function (w, i) {
+      var lines = MAIN_CATS.filter(function (c) { return per[c][i]; }).map(function (c) { return catLabel(c) + ' : ' + num(per[c][i]); });
+      return '<rect x="' + r1(X(i) - st / 2) + '" y="' + y0 + '" width="' + r1(st) + '" height="' + h + '" fill="transparent"' + tip(weekLong(w), lines.length ? lines : ['—']) + '/>';
+    }).join('');
+  }
+
+  // 07. ridgeline
+  function g07(k) {
+    var W0 = gWd(k), wk = gWeekly(), keys = MAIN_CATS, nW = DM.weeks.length, ml = 130, mr = 10, rowH = 32, amp = 58, mt = amp - rowH + 12, H = mt + keys.length * rowH + 26, pw = W0 - ml - mr, mx = 1, g = '';
+    keys.forEach(function (c) { mx = Math.max.apply(null, [mx].concat(wk.sm[c])); });
+    function X(i) { return ml + i / (nW - 1) * pw; }
+    keys.forEach(function (c, r) {
+      var base = mt + (r + 1) * rowH, pts = wk.sm[c].map(function (v, i) { return [X(i), base - v / mx * amp]; });
+      g += '<path d="' + crPath(pts) + 'L' + r1(X(nW - 1)) + ',' + base + 'L' + r1(X(0)) + ',' + base + 'Z" fill="' + catFill(c) + '" fill-opacity=".78" stroke="var(--surface)" stroke-width="1.5"/>';
+      g += tx(ml - 10, base - 3, catLabel(c), 'ink', 'end');
+    });
+    g += weekCols(X, pw / (nW - 1), 0, H - 22, wk.raw) + gMonths(X, H - 6);
+    gSet(k, svg(W0, H, g, gT(k)));
+  }
+
+  // 08. streamgraph, centred
+  function g08(k) {
+    var W0 = gWd(k), wk = gWeekly(), keys = MAIN_CATS, nW = DM.weeks.length, ml = 8, mr = 8, H = 300, mid = 140, pw = W0 - ml - mr, g = '', mx = 1;
+    var tot = DM.weeks.map(function (w, i) { return keys.reduce(function (s, c) { return s + wk.sm[c][i]; }, 0); });
+    mx = Math.max.apply(null, tot.concat([1]));
+    function X(i) { return ml + i / (nW - 1) * pw; }
+    var sc = 250 / mx, base = tot.map(function (t) { return mid - t * sc / 2; }), labs = [];
+    keys.forEach(function (c) {
+      var top = base.map(function (b, i) { return [X(i), b]; }), bot = base.map(function (b, i) { return [X(i), b + wk.sm[c][i] * sc]; });
+      g += '<path d="' + crPath(top) + crPath(bot.slice().reverse(), 'L') + 'Z" fill="' + catFill(c) + '" stroke="var(--surface)" stroke-width="1"/>';
+      var bi = 0; wk.sm[c].forEach(function (v, i) { if (v > wk.sm[c][bi] && i > 2 && i < nW - 3) bi = i; });
+      var th = wk.sm[c][bi] * sc, tw = catLabel(c).length * 6.8 + 8, lx = Math.max(tw / 2 + 2, Math.min(W0 - tw / 2 - 2, X(bi)));
+      if (th > 20) labs.push({ x: lx, y: base[bi] + th / 2 + 4, w: tw, c: c });
+      base = base.map(function (b, i) { return b + wk.sm[c][i] * sc; });
+    });
+    // labels drawn last, inside their layer, and only where they do not run into one another
+    var put = [];
+    labs.forEach(function (b) { if (put.some(function (p) { return Math.abs(p.x - b.x) < (p.w + b.w) / 2 && Math.abs(p.y - b.y) < 16; })) return; put.push(b);
+      g += '<text x="' + r1(b.x) + '" y="' + r1(b.y) + '" text-anchor="middle" style="fill:' + catOn(b.c) + ';font-weight:600">' + esc(catLabel(b.c)) + '</text>'; });
+    g += weekCols(X, pw / (nW - 1), 0, H - 22, wk.raw) + gMonths(X, H - 6);
+    gSet(k, svg(W0, H, g, gT(k)), keys.map(function (c) { return sw(catFill(c), catLabel(c)); }).join(''));
+  }
+
+  // 09. bullet charts: three measures per line against targets
+  function g09(k) {
+    var W0 = gWd(k), lines = DM.lines, labW = 70, colW = (W0 - labW) / 3, rh = 56, top = 26, H = top + lines.length * rh, g = '';
+    var act = lines.map(function (l) {
+      var ns = GN.filter(function (n) { return n[2] === l; }), ac = aircraftBuilt(l), ds = ns.map(function (n) { return n[8]; }).filter(function (v) { return v != null; }).sort(function (a, b) { return a - b; });
+      return [ac ? ns.length / ac : 0, ac ? ns.reduce(function (s, n) { return s + gCost(n); }, 0) / ac : 0, quant(ds, 0.5)];
+    });
+    var heads = ['kNc', 'kCost', 'kDays'], fmt = [f1, function (v) { return eur(v); }, f1];
+    heads.forEach(function (h, j) {
+      var x0 = labW + j * colW, bw = colW - 22, mx = Math.max.apply(null, lines.map(function (l, i) { return Math.max(act[i][j], DM.targets[l][j]); })) * 1.15;
+      g += tx(x0, 12, gx(h), 'ink b');
+      lines.forEach(function (l, i) {
+        var y = top + i * rh, v = act[i][j], t = DM.targets[l][j], X = function (q) { return x0 + q / mx * bw; }, over = v > t;
+        g += '<rect x="' + r1(x0) + '" y="' + (y + 6) + '" width="' + r1(bw) + '" height="20" fill="var(--track)"/>';
+        g += '<rect x="' + r1(x0) + '" y="' + (y + 6) + '" width="' + r1(X(t) - x0) + '" height="20" fill="' + tint('--s1', 16) + '"/>';
+        g += '<rect x="' + r1(x0) + '" y="' + (y + 12) + '" width="' + r1(Math.max(1, X(v) - x0)) + '" height="8" fill="' + (over ? 'var(--up)' : 'var(--s1)') + '"' + tip(l + ' · ' + gx(h), [fmt[j](v), gx('objShort', { v: fmt[j](t) })]) + '/>';
+        g += '<rect x="' + r1(X(t) - 1) + '" y="' + (y + 2) + '" width="2.5" height="28" fill="var(--ink)"/>';
+        g += tx(x0, y + 44, fmt[j](v) + (over ? ' ▲' : ''), over ? 'ink b' : 'ink') + tx(x0 + bw, y + 44, gx('objShort', { v: fmt[j](t) }), 'mu', 'end');
+      });
+    });
+    lines.forEach(function (l, i) { g += tx(0, top + i * rh + 21, l, 'ink b'); });
+    gSet(k, svg(W0, H, g, gT(k)), sw('var(--s1)', gx('below')) + sw('var(--up)', gx('worse')) + sw(tint('--s1', 16), gx('objBand')) + '<span><i class="sw" style="width:3px;background:var(--ink)"></i>' + esc(gx('objective')) + '</span>');
+  }
+
+  // 10. burn-up against the annual budget
+  function g10(k) {
+    var W0 = gWd(k), ml = 52, mr = 118, mt = 14, mb = 26, H = 260, pw = W0 - ml - mr, ph = H - mt - mb, perW = {}, g = '';
+    GN.forEach(function (n) { var w = +gWk(n[1]).slice(6); perW[w] = (perW[w] || 0) + gCost(n); });
+    var lastW = +DM.weeks[DM.weeks.length - 1].slice(6), cum = [], c = 0;
+    for (var w = 1; w <= lastW; w++) { c += perW[w] || 0; cum.push([w, c]); }
+    var proj = c / lastW * 52, mx = Math.max(DM.budget, proj) * 1.08, stp = mx > 150000 ? 50000 : 25000;
+    function X(v) { return ml + v / 52 * pw; } function Y(v) { return mt + ph - v / mx * ph; }
+    for (var t = 0; t <= mx; t += stp) g += '<line x1="' + ml + '" x2="' + (ml + pw) + '" y1="' + r1(Y(t)) + '" y2="' + r1(Y(t)) + '" stroke="var(--grid)"/>' + tx(ml - 8, Y(t) + 4, kE(t), 'mu', 'end');
+    for (var m = 0; m < 12; m++) { var wm = m * 52 / 12; g += tx(X(wm + 2.2), H - 8, monthName('2026-' + String(m + 1).padStart(2, '0')), 'mu', 'middle'); }
+    g += '<path d="M' + X(0) + ',' + Y(0) + cum.map(function (p) { return 'L' + r1(X(p[0])) + ',' + r1(Y(p[1])); }).join('') + 'L' + r1(X(lastW)) + ',' + r1(Y(0)) + 'Z" fill="' + tint('--s1', 14) + '"/>';
+    g += '<path d="M' + X(0) + ',' + Y(0) + cum.map(function (p) { return 'L' + r1(X(p[0])) + ',' + r1(Y(p[1])); }).join('') + '" fill="none" stroke="var(--s1)" stroke-width="2"/>';
+    g += '<line x1="' + X(0) + '" y1="' + Y(0) + '" x2="' + r1(X(52)) + '" y2="' + r1(Y(DM.budget)) + '" stroke="var(--ink-2)" stroke-width="1.5" stroke-dasharray="5 4"/>';
+    g += '<line x1="' + r1(X(lastW)) + '" y1="' + r1(Y(c)) + '" x2="' + r1(X(52)) + '" y2="' + r1(Y(proj)) + '" stroke="' + (proj > DM.budget ? 'var(--up)' : 'var(--s1)') + '" stroke-width="2" stroke-dasharray="2 4" stroke-linecap="round"/>';
+    g += '<line x1="' + r1(X(lastW)) + '" x2="' + r1(X(lastW)) + '" y1="' + mt + '" y2="' + (mt + ph) + '" stroke="var(--ink-2)" stroke-dasharray="2 3"/>' + tx(X(lastW) - 6, mt + 10, gx('dataEnd'), 'mu', 'end');
+    var ly = spread([Y(DM.budget), Y(proj)], 30, mt + 8, mt + ph);
+    g += tx(X(52) + 8, ly[0], gx('budgetEnd', { v: kE(DM.budget) }), 'ink b') + tx(X(52) + 8, ly[1], gx('projEnd', { v: kE(proj) }), proj > DM.budget ? 'ink b' : 'ink');
+    g += '<circle cx="' + r1(X(lastW)) + '" cy="' + r1(Y(c)) + '" r="4" fill="var(--s1)" stroke="var(--surface)" stroke-width="2"' + tip(gx('cum'), [eur(c)]) + '/>' + tx(X(lastW) + 8, Y(c) + 16, kE(c), 'ink b');
+    gSet(k, svg(W0, H, g, gT(k)), swl('var(--s1)', gx('cum')) + swl('var(--ink-2)', gx('budget'), true) + swl('var(--up)', gx('proj'), true));
+  }
+
+  // 11. waterfall, horizontal: last two months, change by category
+  function g11(k) {
+    var W0 = gWd(k), ms = gMonthsList(), mt = {}, va = {}, vb = {}, ta = 0, tb = 0;
+    GN.forEach(function (n) { var m = n[1].slice(0, 7); mt[m] = (mt[m] || 0) + gCost(n); });
+    var med = quant(ms.map(function (m) { return mt[m]; }).sort(function (a, b) { return a - b; }), 0.5), j0 = ms.length - 1;
+    while (j0 > 1 && (mt[ms[j0]] < 0.6 * med || mt[ms[j0 - 1]] < 0.6 * med)) j0--;
+    var mA = ms[j0 - 1], mB = ms[j0];
+    GD.forEach(function (d, i) { var m = GN[d[0]][1].slice(0, 7), c = catKey(d[1]); if (m === mA) { va[c] = (va[c] || 0) + GALLOC[i]; ta += GALLOC[i]; } if (m === mB) { vb[c] = (vb[c] || 0) + GALLOC[i]; tb += GALLOC[i]; } });
+    var rows = [{ lab: monthName(mA) + ' ' + mA.slice(0, 4), t: 'tot', v: ta }].concat(MAIN_CATS.map(function (c) { return { lab: catLabel(c), t: 'd', v: (vb[c] || 0) - (va[c] || 0), c: c }; })).concat([{ lab: monthName(mB) + ' ' + mB.slice(0, 4), t: 'tot', v: tb }]);
+    var lab = 136, mr = 76, rh = 30, H = rows.length * rh + 8, run = 0, hi = 0;
+    rows.forEach(function (r) { if (r.t === 'tot') { hi = Math.max(hi, r.v); run = r.v; } else { run += r.v; hi = Math.max(hi, run); } });
+    var pw = W0 - lab - mr, g = '', cur = 0;
+    function X(v) { return lab + v / hi * pw; }
+    rows.forEach(function (r, i) {
+      var y = i * rh + 4, a, b, col, txt;
+      if (r.t === 'tot') { a = 0; b = r.v; cur = r.v; col = 'var(--ink-2)'; txt = eurK(r.v); }
+      else { a = cur; b = cur + r.v; cur = b; col = r.v > 0 ? 'var(--up)' : 'var(--down)'; txt = (r.v > 0 ? '+' : '−') + eurK(Math.abs(r.v)); }
+      var x1 = Math.min(X(a), X(b)), x2 = Math.max(X(a), X(b));
+      g += tx(lab - 12, y + rh / 2 + 3, r.lab, r.t === 'tot' ? 'ink b' : 'ink', 'end');
+      g += '<rect x="' + r1(x1) + '" y="' + (y + 5) + '" width="' + r1(Math.max(2, x2 - x1)) + '" height="' + (rh - 12) + '" rx="2" fill="' + col + '"' + tip(r.lab, [txt]) + '/>' + tx(x2 + 8, y + rh / 2 + 3, txt, r.t === 'tot' ? 'ink b' : 'ink');
+      if (i < rows.length - 1) g += '<line x1="' + r1(X(cur)) + '" x2="' + r1(X(cur)) + '" y1="' + (y + rh - 7) + '" y2="' + (y + rh + 5) + '" stroke="var(--muted)" stroke-dasharray="2 2"/>';
+    });
+    gSet(k, svg(W0, H, g, gT(k)), sw('var(--ink-2)', gx('totalM')) + sw('var(--up)', gx('increase')) + sw('var(--down)', gx('decrease')));
+  }
+
+  // 12. slope chart: Q1 against Q3, defects per month, top 10 root causes
+  function g12(k) {
+    var W0 = gWd(k), a = {}, b = {}, tot = {};
+    GD.forEach(function (d) { var m = +GN[d[0]][1].slice(5, 7), r = d[2]; tot[r] = (tot[r] || 0) + 1; if (m <= 3) a[r] = (a[r] || 0) + 1 / 3; if (m >= 4 && m <= 6) b[r] = (b[r] || 0) + 1 / 3; });
+    var top = Object.keys(tot).sort(function (x, y) { return tot[y] - tot[x]; }).slice(0, 10), mx = 1;
+    top.forEach(function (r) { mx = Math.max(mx, a[r] || 0, b[r] || 0); });
+    var H = 330, mt = 30, ph = H - mt - 14, xa = Math.min(220, W0 * 0.45), xb = W0 - 80, g = '';
+    function Y(v) { return mt + ph - v / mx * ph; }
+    g += tx(xa, 14, gx('q1'), 'ink b', 'middle') + tx(xb, 14, gx('q2'), 'ink b', 'middle');
+    g += '<line x1="' + xa + '" x2="' + xa + '" y1="' + mt + '" y2="' + (mt + ph) + '" stroke="var(--grid)"/><line x1="' + xb + '" x2="' + xb + '" y1="' + mt + '" y2="' + (mt + ph) + '" stroke="var(--grid)"/>';
+    var la = spread(top.map(function (r) { return Y(a[r] || 0) + 4; }), 15, mt, mt + ph + 4), lb = spread(top.map(function (r) { return Y(b[r] || 0) + 4; }), 15, mt, mt + ph + 4);
+    top.forEach(function (r, i) {
+      var va = a[r] || 0, vb = b[r] || 0, col = vb > va * 1.1 ? 'var(--up)' : vb < va * 0.9 ? 'var(--down)' : 'var(--dim)', nm = L(r), mc = Math.floor((xa - 48) / 6.4);
+      if (nm.length > mc) nm = nm.slice(0, mc - 1) + '…';
+      g += '<line x1="' + xa + '" y1="' + r1(Y(va)) + '" x2="' + xb + '" y2="' + r1(Y(vb)) + '" stroke="' + col + '" stroke-width="2.2"' + tip(L(r), [gx('q1') + ' : ' + gx('perMonth', { v: f1(va) }), gx('q2') + ' : ' + gx('perMonth', { v: f1(vb) })]) + '/>';
+      g += '<circle cx="' + xa + '" cy="' + r1(Y(va)) + '" r="3.5" fill="' + col + '"/><circle cx="' + xb + '" cy="' + r1(Y(vb)) + '" r="3.5" fill="' + col + '"/>';
+      g += tx(xa - 10, la[i], nm + '  ' + f1(va), 'ink', 'end') + tx(xb + 10, lb[i], f1(vb), 'ink');
+    });
+    gSet(k, svg(W0, H, g, gT(k)), swl('var(--up)', gx('increase')) + swl('var(--down)', gx('decrease')));
+  }
+
+  // 13. beeswarm: cost of each NC, by line, log scale
+  function g13(k) {
+    var W0 = gWd(k), lines = DM.lines, ml = 108, mr = 14, rowH = 78, H = lines.length * rowH + 28, pw = W0 - ml - mr, lo = Math.log10(20), hi = Math.log10(3000), rd = 3, g = '';
+    function X(v) { return ml + (Math.log10(Math.max(20, Math.min(3000, v))) - lo) / (hi - lo) * pw; }
+    [20, 50, 100, 200, 500, 1000, 2000].forEach(function (t) { g += '<line x1="' + r1(X(t)) + '" x2="' + r1(X(t)) + '" y1="0" y2="' + (H - 22) + '" stroke="var(--grid)"/>' + tx(X(t), H - 6, num(t) + (G.lang === 'fr' ? ' €' : ''), 'mu', 'middle'); });
+    lines.forEach(function (l, li) {
+      var cy = li * rowH + rowH / 2, ns = GN.filter(function (n) { return n[2] === l; }).map(function (n) { return { n: n, c: gCost(n), x: X(gCost(n)) }; }).sort(function (a, b) { return a.x - b.x; }), placed = [];
+      ns.forEach(function (p) {
+        var best = 0;
+        for (var t = 0; t < 40; t++) {
+          var off = (t % 2 ? 1 : -1) * Math.ceil(t / 2) * (rd * 2 + 0.6), ok = true;
+          for (var q = placed.length - 1; q >= 0 && p.x - placed[q].x < rd * 2 + 0.6; q--) { var dx = p.x - placed[q].x, dy = off - placed[q].y; if (dx * dx + dy * dy < (rd * 2 + 0.4) * (rd * 2 + 0.4)) { ok = false; break; } }
+          if (ok) { best = off; break; }
+        }
+        p.y = Math.max(-rowH / 2 + 6, Math.min(rowH / 2 - 6, best)); placed.push(p);
+      });
+      var cs = ns.map(function (p) { return p.c; }), med = quant(cs, 0.5);
+      g += tx(0, cy - 2, progName(l), 'ink b') + tx(0, cy + 14, gx('ncCount', { n: num(ns.length) }), 'mu');
+      placed.forEach(function (p) { g += '<circle cx="' + r1(p.x) + '" cy="' + r1(cy + p.y) + '" r="' + rd + '" fill="' + (PROG_COL[l] || 'var(--dim)') + '"' + tip(p.n[0] + ' · ' + l, [eur(p.c), shortDay(p.n[1])]) + '/>'; });
+      g += '<line x1="' + r1(X(med)) + '" x2="' + r1(X(med)) + '" y1="' + (cy - rowH / 2 + 4) + '" y2="' + (cy + rowH / 2 - 4) + '" stroke="var(--ink)" stroke-width="2"' + '/>' + tx(X(med) + 5, cy - rowH / 2 + 12, gx('median') + ' ' + eur(med), 'ink halo');
+    });
+    gSet(k, svg(W0, H, g, gT(k)), lines.map(function (l) { return sw(PROG_COL[l], progName(l), true); }).join('') + swl('var(--ink)', gx('median')));
+  }
+
+  // defects per aircraft (every aircraft built, in MSN order)
+  function perAircraft(l) {
+    var n = aircraftBuilt(l), f = DM.firstMsn[l], c = []; for (var i = 0; i < n; i++) c.push(0);
+    GD.forEach(function (d) { var x = GN[d[0]]; if (x[2] === l) { var i2 = +x[3] - f; if (i2 >= 0 && i2 < n) c[i2]++; } });
+    return c;
+  }
+  // 14. learning curve
+  function g14(k) {
+    var W0 = gWd(k), ml = 40, mr = 14, mt = 12, mb = 34, H = 280, pw = W0 - ml - mr, ph = H - mt - mb, data = {}, mxN = 1, mxY = 1, g = '';
+    DM.lines.forEach(function (l) { data[l] = perAircraft(l); mxN = Math.max(mxN, data[l].length); mxY = Math.max(mxY, quant(data[l].slice().sort(function (a, b) { return a - b; }), 0.97)); });
+    var top = Math.ceil(mxY / 5) * 5;
+    function X(i) { return ml + i / (mxN - 1) * pw; } function Y(v) { return mt + ph - Math.min(v, top) / top * ph; }
+    [0, top / 2, top].forEach(function (t) { g += '<line x1="' + ml + '" x2="' + (ml + pw) + '" y1="' + r1(Y(t)) + '" y2="' + r1(Y(t)) + '" stroke="var(--grid)"/>' + tx(ml - 6, Y(t) + 4, num(t), 'mu', 'end'); });
+    [1, 25, 50, 75, 100, 125].filter(function (t) { return t <= mxN; }).forEach(function (t) { g += tx(X(t - 1), mt + ph + 16, num(t), 'mu', 'middle'); });
+    g += tx(ml + pw, H - 4, gx('rankAx'), 'mu', 'end');
+    DM.lines.forEach(function (l) {
+      var c = data[l], col = PROG_COL[l];
+      c.forEach(function (v, i) { g += '<circle cx="' + r1(X(i)) + '" cy="' + r1(Y(v)) + '" r="2.6" fill="' + col + '" fill-opacity=".35"' + tip('MSN ' + (DM.firstMsn[l] + i) + ' · ' + l, [gx('defN', { n: num(v) })]) + '/>'; });
+      if (c.length >= 9) {
+        var pts = c.map(function (v, i) { var a = Math.max(0, i - 4), b = Math.min(c.length - 1, i + 4), s = 0; for (var j = a; j <= b; j++) s += c[j]; return [X(i), Y(s / (b - a + 1))]; });
+        g += '<path d="' + crPath(pts) + '" fill="none" stroke="' + col + '" stroke-width="2.4"/>';
+      }
+    });
+    gSet(k, svg(W0, H, g, gT(k)), DM.lines.map(function (l) { return swl(PROG_COL[l], progName(l)); }).join('') + '<span class="mu">' + esc(gx('rollMean')) + '</span>');
+  }
+
+  // 15. isotype: every aircraft built, shaded by its number of defects
+  var PLANE = 'M8 .6C8.8 .6 9.2 1.6 9.2 3V6L15.4 9.5V11L9.2 9.3 9 13 11 14.5V15.4L8 14.7 5 15.4V14.5L7 13 6.8 9.3.6 11V9.5L6.8 6V3C6.8 1.6 7.2 .6 8 .6Z';
+  function g15(k) {
+    var W0 = gWd(k), lab = 70, cell = 20, cols = Math.max(8, Math.floor((W0 - lab) / cell)), y = 0, g = '';
+    function shade(v) { return v === 0 ? 'var(--track)' : v <= 5 ? tint('--seq', 30) : v <= 15 ? tint('--seq', 62) : 'var(--seq)'; }
+    DM.lines.forEach(function (l) {
+      var c = perAircraft(l), rows = Math.ceil(c.length / cols);
+      g += tx(0, y + 14, l, 'ink b') + tx(0, y + 30, num(c.length), 'mu');
+      c.forEach(function (v, i) { var cx = lab + (i % cols) * cell, cy = y + Math.floor(i / cols) * cell;
+        g += '<g transform="translate(' + cx + ',' + cy + ')"' + tip(l, [gx('acTip', { m: DM.firstMsn[l] + i, n: num(v) })]) + '><rect width="' + cell + '" height="' + cell + '" fill="transparent"/><path d="' + PLANE + '" fill="' + shade(v) + '"' + (v === 0 ? ' stroke="var(--dim)" stroke-width=".8"' : '') + '/></g>'; });
+      y += Math.max(rows * cell, 36) + 16;
+    });
+    gSet(k, svg(W0, y, g, gT(k)), sw('var(--track)', gx('b0')) + sw(tint('--seq', 30), gx('b1')) + sw(tint('--seq', 62), gx('b2')) + sw('var(--seq)', gx('b3')));
+  }
+
+  // 16. first-pass yield by station
+  function g16(k) {
+    var W0 = gWd(k), cnt = {};
+    GN.forEach(function (n) { if (n[9] === 'poste') cnt[n[4]] = (cnt[n[4]] || 0) + 1; });
+    var rows = DM.stations.map(function (s) { return { s: s[0], u: s[1], n: cnt[s[0]] || 0, y: s[1] ? 1 - (cnt[s[0]] || 0) / s[1] : 1 }; }).sort(function (a, b) { return a.y - b.y; });
+    var lo = Math.floor(Math.min.apply(null, rows.map(function (r) { return r.y; })) * 100 - 1) / 100, lab = 80, mr = 60, rh = 22, top = 8, H = top + rows.length * rh + 24, pw = W0 - lab - mr, g = '';
+    function X(v) { return lab + (v - lo) / (1 - lo) * pw; }
+    for (var t = Math.ceil(lo * 100); t <= 100; t += (100 - lo * 100) > 10 ? 2 : 1) g += '<line x1="' + r1(X(t / 100)) + '" x2="' + r1(X(t / 100)) + '" y1="' + top + '" y2="' + (H - 20) + '" stroke="var(--grid)"/>' + tx(X(t / 100), H - 6, pct0(t), 'mu', 'middle');
+    rows.forEach(function (r, i) {
+      var y = top + i * rh + rh / 2;
+      g += tx(lab - 10, y + 4, r.s, 'ink', 'end') + '<line x1="' + lab + '" x2="' + r1(X(r.y)) + '" y1="' + y + '" y2="' + y + '" stroke="var(--track)" stroke-width="6" stroke-linecap="round"/>';
+      g += '<circle cx="' + r1(X(r.y)) + '" cy="' + y + '" r="5.5" fill="var(--s1)" stroke="var(--surface)" stroke-width="2"' + tip(r.s, [pct(r.y * 100), gx('fpyTip', { n: num(r.n), u: num(r.u) })]) + '/>' + tx(X(r.y) + 12, y + 4, pct(r.y * 100), 'ink');
+    });
+    gSet(k, svg(W0, H, g, gT(k)));
+  }
+
+  // 17. punch card: weekday × hour
+  function g17(k) {
+    var W0 = gWd(k), h0 = 5, h1 = 23, nh = h1 - h0 + 1, days = 6, lab = 46, rh = 32, cw = (W0 - lab - 6) / nh, H = days * rh + 26, c = {}, mx = 1, g = '';
+    GN.forEach(function (n) { var dw = (new Date(n[1] + 'T12:00:00Z').getUTCDay() + 6) % 7, key = dw + '|' + n[6]; if (dw < days) { c[key] = (c[key] || 0) + 1; mx = Math.max(mx, c[key]); } });
+    var mon0 = new Date(Date.UTC(2026, 0, 5)), rmax = Math.min(cw, rh) / 2 - 1.5;
+    for (var d = 0; d < days; d++) {
+      var dd = new Date(mon0); dd.setUTCDate(mon0.getUTCDate() + d);
+      g += tx(lab - 10, d * rh + rh / 2 + 4, day(isoDay(dd), { weekday: 'short' }), 'mu', 'end');
+      for (var h = h0; h <= h1; h++) { var v = c[d + '|' + h] || 0, cx = lab + (h - h0 + 0.5) * cw, cy = d * rh + rh / 2;
+        g += '<circle cx="' + r1(cx) + '" cy="' + r1(cy) + '" r="' + r1(v ? Math.max(1.5, Math.sqrt(v / mx) * rmax) : 1) + '" fill="' + (v ? 'var(--s1)' : 'var(--grid)') + '"/>';
+        if (v) g += '<rect x="' + r1(cx - cw / 2) + '" y="' + (d * rh) + '" width="' + r1(cw) + '" height="' + rh + '" fill="transparent"' + tip(day(isoDay(dd), { weekday: 'long' }) + ' · ' + h + (G.lang === 'fr' ? ' h' : ':00'), [gx('punchTip', { n: num(v) })]) + '/>'; }
+    }
+    for (var h2 = h0; h2 <= h1; h2 += 2) g += tx(lab + (h2 - h0 + 0.5) * cw, H - 6, h2 + (G.lang === 'fr' ? ' h' : ':00'), 'mu', 'middle');
+    gSet(k, svg(W0, H, g, gT(k)));
+  }
+
+  // 18. small multiples: one sparkline per root cause
+  function g18(k) {
+    var W0 = gWd(k), ms = gMonthsList(), tot = {}, per = {};
+    GD.forEach(function (d) { var r = d[2], i = ms.indexOf(GN[d[0]][1].slice(0, 7)); tot[r] = (tot[r] || 0) + 1; (per[r] || (per[r] = ms.map(function () { return 0; })))[i]++; });
+    var top = Object.keys(tot).sort(function (x, y) { return tot[y] - tot[x]; }).slice(0, 12), cols = W0 >= 480 ? 3 : 2, gap = 18, pw = (W0 - gap * (cols - 1)) / cols, ph = 46, cellH = 92, H = Math.ceil(top.length / cols) * cellH, g = '';
+    top.forEach(function (r, i) {
+      var x0 = (i % cols) * (pw + gap), y0 = Math.floor(i / cols) * cellH, a = per[r], mx = Math.max.apply(null, a.concat([1])), nm = L(r), mc = Math.floor((pw - 36) / 6.4);
+      if (nm.length > mc) nm = nm.slice(0, mc - 1) + '…';
+      function X(j) { return x0 + j / (ms.length - 1) * pw; } function Y(v) { return y0 + 22 + ph - v / mx * ph; }
+      var pts = a.map(function (v, j) { return [X(j), Y(v)]; });
+      g += tx(x0, y0 + 12, nm, 'ink b') + tx(x0 + pw, y0 + 12, num(tot[r]), 'mu', 'end');
+      g += '<path d="' + crPath(pts) + 'L' + r1(X(ms.length - 1)) + ',' + r1(Y(0)) + 'L' + r1(X(0)) + ',' + r1(Y(0)) + 'Z" fill="' + tint('--s1', 16) + '"/>';
+      g += '<path d="' + crPath(pts) + '" fill="none" stroke="var(--s1)" stroke-width="1.6"/>';
+      g += '<circle cx="' + r1(X(ms.length - 1)) + '" cy="' + r1(Y(a[a.length - 1])) + '" r="3" fill="var(--s1)"/>';
+      g += '<rect x="' + r1(x0) + '" y="' + y0 + '" width="' + r1(pw) + '" height="' + (cellH - 12) + '" fill="transparent"' + tip(L(r), a.map(function (v, j) { return monthName(ms[j]) + ' : ' + num(v); })) + '/>';
+      g += tx(x0, y0 + 22 + ph + 14, monthName(ms[0]), 'mu') + tx(x0 + pw, y0 + 22 + ph + 14, monthName(ms[ms.length - 1]), 'mu', 'end');
+    });
+    gSet(k, svg(W0, H, g, gT(k)));
+  }
+
+  // 19. Gantt of quality actions
+  function g19(k) {
+    var W0 = gWd(k), acts = DM.actions.slice().sort(function (a, b) { return a[5] < b[5] ? -1 : 1; }), ml = 4, mr = 84, rh = 42, top = 22, H = top + acts.length * rh + 6, pw = W0 - ml - mr, g = '';
+    var t0 = Date.UTC(2026, 0, 1), t1 = Date.UTC(2027, 0, 1), end = DM.to;
+    function X(iso) { return ml + (Date.parse(iso + 'T00:00:00Z') - t0) / (t1 - t0) * pw; }
+    var col = { done: 'var(--s1)', open: 'var(--c1)', late: 'var(--up)', planned: 'none' };
+    for (var m = 0; m < 12; m++) { var iso = '2026-' + String(m + 1).padStart(2, '0') + '-01'; g += '<line x1="' + r1(X(iso)) + '" x2="' + r1(X(iso)) + '" y1="' + (top - 4) + '" y2="' + (H - 4) + '" stroke="var(--grid)"/>' + tx(X(iso) + 3, 12, monthName(iso.slice(0, 7)).slice(0, 4), 'mu'); }
+    g += '<line x1="' + r1(X(end)) + '" x2="' + r1(X(end)) + '" y1="' + (top - 6) + '" y2="' + (H - 2) + '" stroke="var(--ink)" stroke-width="1.5" stroke-dasharray="3 3"/>';
+    acts.forEach(function (a, i) {
+      var y = top + i * rh, s = a[7], fin = a[6] || (s === 'planned' ? '' : end), x1 = X(a[5]), x2 = fin ? X(fin) : x1 + 40, lbl = G.lang === 'fr' ? a[2] : a[3];
+      g += tx(Math.max(4, Math.min(x1, W0 - 300)), y + 12, lbl + ' · ' + a[1], 'ink');
+      g += '<rect x="' + r1(x1) + '" y="' + (y + 18) + '" width="' + r1(Math.max(4, x2 - x1)) + '" height="12" rx="2" fill="' + col[s] + '"' + (s === 'planned' ? ' stroke="var(--ink-2)" stroke-width="1.2" stroke-dasharray="3 2"' : '') +
+        tip(lbl, [gx(s) + ' · ' + a[1], gx('targetRca', { r: L(a[4]) }), shortDay(a[5]) + (a[6] ? ' → ' + shortDay(a[6]) : '')]) + '/>';
+      g += tx(Math.max(x2, x1 + 4) + 8, y + 28, gx(s), s === 'late' ? 'ink b' : 'mu');
+    });
+    gSet(k, svg(W0, H, g, gT(k)), sw('var(--s1)', gx('done')) + sw('var(--c1)', gx('open')) + sw('var(--up)', gx('late')) + '<span><i class="sw" style="background:none;border:1.2px dashed var(--ink-2)"></i>' + esc(gx('planned')) + '</span>' + swl('var(--ink)', gx('dataEnd'), true));
+  }
+
+  // 20. FIN × aircraft recurrence matrix (A350)
+  function g20(k) {
+    var W0 = gWd(k), l = 'A350', n = aircraftBuilt(l), f = DM.firstMsn[l], has = {}, fc = {};
+    GD.forEach(function (d) { var x = GN[d[0]]; if (x[2] !== l || !d[4]) return; var key = d[4] + '|' + x[3]; if (!has[key]) { has[key] = 0; fc[d[4]] = (fc[d[4]] || 0) + 1; } has[key]++; });
+    var fins = Object.keys(fc).sort(function (a, b) { return fc[b] - fc[a]; }).slice(0, 15), lab = 52, mr = 74, cw = Math.max(3, (W0 - lab - mr) / n), rh = 16, H = fins.length * rh + 22, g = '';
+    fins.forEach(function (fin, i) {
+      var y = i * rh;
+      g += tx(lab - 8, y + 12, fin, 'ink', 'end') + '<line x1="' + lab + '" x2="' + r1(lab + n * cw) + '" y1="' + (y + 8) + '" y2="' + (y + 8) + '" stroke="var(--grid)"/>';
+      for (var m = 0; m < n; m++) { var v = has[fin + '|' + (f + m)]; if (v) g += '<rect x="' + r1(lab + m * cw + 0.5) + '" y="' + (y + 2) + '" width="' + r1(Math.max(2, cw - 1)) + '" height="12" fill="' + (v > 1 ? 'var(--seq)' : tint('--seq', 55)) + '"' + tip(gx('finTip', { f: fin, m: f + m }), [gx('defN', { n: num(v) })]) + '/>'; }
+      g += tx(lab + n * cw + 8, y + 12, gx('finCount', { n: num(fc[fin]) }), 'mu');
+    });
+    g += tx(lab, H - 4, 'MSN ' + f, 'mu') + tx(lab + n * cw, H - 4, 'MSN ' + (f + n - 1), 'mu', 'end');
+    gSet(k, svg(W0, H, g, gT(k)), sw(tint('--seq', 55), gx('one')) + sw('var(--seq)', gx('twoPlus')));
+  }
+
+  // 21. radar: category profile per line
+  function g21(k) {
+    var W0 = gWd(k), keys = MAIN_CATS.filter(function (c) { return c !== 'aside'; }), sh = {}, mx = 0;
+    DM.lines.forEach(function (l) { var c = {}, t = 0; GD.forEach(function (d) { if (GN[d[0]][2] !== l || !CATC[d[1]]) return; c[d[1]] = (c[d[1]] || 0) + 1; t++; }); sh[l] = keys.map(function (k2) { return t ? (c[k2] || 0) / t : 0; }); mx = Math.max.apply(null, [mx].concat(sh[l])); });
+    var top = Math.ceil(mx * 10) / 10, R = Math.max(70, Math.min(W0 / 2 - 120, 130)), cx = W0 / 2, cy = R + 30, H = 2 * R + 60, g = '';
+    function P(i, v) { var t = i / keys.length * 2 * Math.PI; return [cx + v / top * R * Math.sin(t), cy - v / top * R * Math.cos(t)]; }
+    for (var q = 0.1; q <= top + 1e-9; q += 0.1) g += '<polygon points="' + keys.map(function (c, i) { var p = P(i, q); return r1(p[0]) + ',' + r1(p[1]); }).join(' ') + '" fill="none" stroke="var(--grid)"/>' + tx(cx + q / top * R * Math.sin(2.6), cy - q / top * R * Math.cos(2.6) + 4, pct0(q * 100), 'mu halo', 'middle');
+    keys.forEach(function (c, i) { var p = P(i, top), t = i / keys.length * 2 * Math.PI, sx = Math.sin(t);
+      g += '<line x1="' + cx + '" y1="' + cy + '" x2="' + r1(p[0]) + '" y2="' + r1(p[1]) + '" stroke="var(--grid)"/>' + tx(cx + (R + 12) * sx, cy - (R + 12) * Math.cos(t) + 4, catLabel(c), 'ink', sx > 0.2 ? 'start' : sx < -0.2 ? 'end' : 'middle'); });
+    DM.lines.forEach(function (l) {
+      var pts = sh[l].map(function (v, i) { return P(i, v); }), col = PROG_COL[l];
+      g += '<polygon points="' + pts.map(function (p) { return r1(p[0]) + ',' + r1(p[1]); }).join(' ') + '" fill="' + col + '" fill-opacity=".07" stroke="' + col + '" stroke-width="2"/>';
+      pts.forEach(function (p, i) { g += '<circle cx="' + r1(p[0]) + '" cy="' + r1(p[1]) + '" r="3.5" fill="' + col + '" stroke="var(--surface)" stroke-width="1.5"' + tip(progName(l) + ' · ' + catLabel(keys[i]), [pct(sh[l][i] * 100)]) + '/>'; });
+    });
+    gSet(k, svg(W0, H, g, gT(k)), DM.lines.map(function (l) { return swl(PROG_COL[l], progName(l)); }).join(''));
+  }
+
+  // 22. waffle: 100 squares
+  function g22(k) {
+    var W0 = gWd(k), cnt = {}, tot = GD.length;
+    GD.forEach(function (d) { var c = catKey(d[1]); cnt[c] = (cnt[c] || 0) + 1; });
+    var keys = MAIN_CATS.filter(function (c) { return cnt[c]; }), raw = keys.map(function (c) { return cnt[c] / tot * 100; }), cells = raw.map(Math.floor), left = 100 - cells.reduce(function (s, v) { return s + v; }, 0);
+    raw.map(function (v, i) { return [v - Math.floor(v), i]; }).sort(function (a, b) { return b[0] - a[0]; }).slice(0, left).forEach(function (p) { cells[p[1]]++; });
+    var cs = 24, gp = 3, side = W0 >= 470, g = '', idx = 0;
+    keys.forEach(function (c, i) { for (var j = 0; j < cells[i]; j++, idx++) { var col = idx % 10, row = Math.floor(idx / 10);
+      g += '<rect x="' + col * (cs + gp) + '" y="' + row * (cs + gp) + '" width="' + cs + '" height="' + cs + '" rx="3" fill="' + catFill(c) + '"' + tip(catLabel(c), [pct(raw[i]) + ' · ' + gx('defN', { n: num(cnt[c]) })]) + '/>'; } });
+    var gw = 10 * (cs + gp);
+    if (side) keys.forEach(function (c, i) { var y = 16 + i * 30; g += '<rect x="' + (gw + 26) + '" y="' + (y - 11) + '" width="12" height="12" rx="3" fill="' + catFill(c) + '"/>' + tx(gw + 46, y, catLabel(c), 'ink') + tx(W0 - 4, y, pct0(raw[i]), 'ink b', 'end'); });
+    gSet(k, svg(side ? W0 : gw, gw, g, gT(k)), side ? '<span class="mu">' + esc(gx('perCent')) + '</span>' : keys.map(function (c, i) { return sw(catFill(c), catLabel(c) + ' · ' + pct0(raw[i])); }).join(''));
+  }
+
+  // 23. cost components per month, stacked
+  function g23(k) {
+    var W0 = gWd(k), ms = gMonthsList(), comps = [['comp_r', function (n) { return n[13]; }, 'var(--c1)'], ['comp_g', function (n) { return n[10] + n[11] + n[12] + n[14]; }, 'var(--c2)'], ['comp_m', function (n) { return n[15]; }, 'var(--c3)'], ['comp_e', function (n) { return n[16]; }, 'var(--c4)']];
+    var v = ms.map(function () { return comps.map(function () { return 0; }); });
+    GN.forEach(function (n) { var i = ms.indexOf(n[1].slice(0, 7)); comps.forEach(function (c, j) { v[i][j] += c[1](n); }); });
+    var tots = v.map(function (r) { return r.reduce(function (s, x) { return s + x; }, 0); }), mx = Math.max.apply(null, tots), ml = 46, mt = 22, mb = 24, H = 260, ph = H - mt - mb, pw = W0 - ml - 6, bw = pw / ms.length, g = '';
+    var stp = mx > 30000 ? 10000 : mx > 12000 ? 5000 : 2000, top = Math.ceil(mx / stp) * stp;
+    function Y(x) { return mt + ph - x / top * ph; }
+    for (var t = 0; t <= top; t += stp) g += '<line x1="' + ml + '" x2="' + (ml + pw) + '" y1="' + r1(Y(t)) + '" y2="' + r1(Y(t)) + '" stroke="var(--grid)"/>' + tx(ml - 8, Y(t) + 4, kE(t), 'mu', 'end');
+    ms.forEach(function (m, i) {
+      var x = ml + i * bw + bw * 0.18, w = bw * 0.64, acc = 0;
+      comps.forEach(function (c, j) { var h = v[i][j] / top * ph; if (h > 0.5) g += '<rect x="' + r1(x) + '" y="' + r1(Y(acc + v[i][j])) + '" width="' + r1(w) + '" height="' + r1(Math.max(1, h - 2)) + '" fill="' + c[2] + '"' + tip(monthName(m) + ' · ' + gx(c[0]), [eur(v[i][j]) + ' · ' + pct0(v[i][j] / tots[i] * 100)]) + '/>'; acc += v[i][j]; });
+      g += tx(x + w / 2, Y(tots[i]) - 6, kE(tots[i]), 'ink', 'middle') + tx(x + w / 2, H - 6, monthName(m), 'mu', 'middle');
+    });
+    gSet(k, svg(W0, H, g, gT(k)), comps.map(function (c) { return sw(c[2], gx(c[0])); }).join(''));
+  }
+
+  // 24. box plots: days to close by decision
+  var DEC_EN = { 'Retouche': 'Rework', 'Rebut / rejet': 'Scrap / rejection', 'Échange': 'Exchange', 'Demande de DQN': 'Design query request' };
+  function decName(d) { return G.lang === 'fr' ? d : DEC_EN[d] || d; }
+  function g24(k) {
+    var W0 = gWd(k), decs = ['Retouche', 'Échange', 'Rebut / rejet', 'Demande de DQN'], lab = 130, mr = 120, rh = 54, H = decs.length * rh + 26, pw = W0 - lab - mr, data = {}, mx = 0, g = '';
+    decs.forEach(function (d) { data[d] = GN.filter(function (n) { return n[7] === d && n[8] != null; }).map(function (n) { return n[8]; }).sort(function (a, b) { return a - b; }); mx = Math.max(mx, quant(data[d], 0.95)); });
+    var top = Math.ceil(mx / 10) * 10;
+    function X(v) { return lab + Math.min(v, top) / top * pw; }
+    for (var t = 0; t <= top; t += 10) g += '<line x1="' + r1(X(t)) + '" x2="' + r1(X(t)) + '" y1="0" y2="' + (H - 20) + '" stroke="var(--grid)"/>' + tx(X(t), H - 6, gx('dShort', { v: t }), 'mu', 'middle');
+    decs.forEach(function (d, i) {
+      var a = data[d], cy = i * rh + rh / 2, p10 = quant(a, .1), p25 = quant(a, .25), p50 = quant(a, .5), p75 = quant(a, .75), p90 = quant(a, .9);
+      g += tx(lab - 12, cy + 4, decName(d), 'ink', 'end');
+      if (!a.length) return;
+      a.forEach(function (v, j) { if (v > p90) g += '<circle cx="' + r1(X(v)) + '" cy="' + r1(cy + ((j * 37) % 13) - 6) + '" r="2" fill="var(--muted)" fill-opacity=".6"/>'; });
+      g += '<line x1="' + r1(X(p10)) + '" x2="' + r1(X(p90)) + '" y1="' + cy + '" y2="' + cy + '" stroke="var(--ink-2)" stroke-width="1.5"/>';
+      g += '<line x1="' + r1(X(p10)) + '" x2="' + r1(X(p10)) + '" y1="' + (cy - 6) + '" y2="' + (cy + 6) + '" stroke="var(--ink-2)" stroke-width="1.5"/><line x1="' + r1(X(p90)) + '" x2="' + r1(X(p90)) + '" y1="' + (cy - 6) + '" y2="' + (cy + 6) + '" stroke="var(--ink-2)" stroke-width="1.5"/>';
+      g += '<rect x="' + r1(X(p25)) + '" y="' + (cy - 12) + '" width="' + r1(Math.max(2, X(p75) - X(p25))) + '" height="24" rx="2" fill="' + tint('--s1', 24) + '" stroke="var(--s1)" stroke-width="1.2"' + tip(decName(d), [gx('boxTip', { m: f1(p50), a: f1(p25), b: f1(p75) }), gx('boxN', { n: num(a.length) })]) + '/>';
+      g += '<line x1="' + r1(X(p50)) + '" x2="' + r1(X(p50)) + '" y1="' + (cy - 12) + '" y2="' + (cy + 12) + '" stroke="var(--ink)" stroke-width="2.5"/>';
+      g += tx(lab + pw + 14, cy, gx('median') + ' ' + gx('dShort', { v: f1(p50) }), 'ink b') + tx(lab + pw + 14, cy + 15, gx('boxN', { n: num(a.length) }), 'mu');
+    });
+    gSet(k, svg(W0, H, g, gT(k)));
+  }
+
+  // 25. heatmap: station × week
+  function g25(k) {
+    var W0 = gWd(k), nW = DM.weeks.length, c = {}, tot = {}, mx = 1, lab = 66, mr = 40, rh = 20, H = DM.stations.length * rh + 24, cw = (W0 - lab - mr) / nW, g = '';
+    GD.forEach(function (d) { var n = GN[d[0]], key = n[4] + '|' + gWk(n[1]); c[key] = (c[key] || 0) + 1; mx = Math.max(mx, c[key]); tot[n[4]] = (tot[n[4]] || 0) + 1; });
+    DM.stations.forEach(function (s, i) {
+      var y = i * rh;
+      g += tx(lab - 8, y + 14, s[0], 'ink', 'end');
+      DM.weeks.forEach(function (w, j) { var v = c[s[0] + '|' + w] || 0;
+        g += '<rect x="' + r1(lab + j * cw + 0.5) + '" y="' + (y + 1) + '" width="' + r1(Math.max(1, cw - 1.5)) + '" height="' + (rh - 3) + '" rx="1.5" fill="' + (v ? tint('--seq', Math.round(14 + 86 * v / mx)) : 'var(--track)') + '"' + tip(s[0] + ' · ' + weekLong(w), [gx('heatTip', { n: num(v) })]) + '/>'; });
+      g += tx(W0 - 4, y + 14, num(tot[s[0]] || 0), 'ink', 'end');
+    });
+    g += gMonths(function (j) { return lab + (j + 0.5) * cw; }, H - 6);
+    gSet(k, svg(W0, H, g, gT(k)), sw(tint('--seq', 14), '1') + sw(tint('--seq', 57), num(Math.round(mx / 2))) + sw('var(--seq)', num(mx)));
+  }
+
+  // gallery page: cards, feasibility filter, the charts kept
+  function gCard(sp) {
+    var id = sp[0];
+    return '<article class="gcard" id="g-' + id + '"><div class="ghead"><span class="gnum">' + id + '</span><div><span class="kicker" id="g-' + id + '-k"></span><h3 id="g-' + id + '-h"></h3></div>' +
+      '<button type="button" class="keep" data-keep="' + id + '" aria-pressed="false"></button></div><p class="sub" id="g-' + id + '-s"></p><p class="feas ' + sp[1] + '" id="g-' + id + '-f"></p>' +
+      '<div class="vbody" id="g-' + id + '-b"></div><div class="vlegend" id="g-' + id + '-l" hidden></div></article>';
+  }
+  if (DM) document.getElementById('gg').innerHTML = GSPEC.map(gCard).join('');
+  function renderGal() {
+    if (G.tab !== 'gal' || !DM) return;
+    var cnt = { ok: 0, part: 0, need: 0 }; GSPEC.forEach(function (sp) { cnt[sp[1]]++; });
+    document.getElementById('gFeas').innerHTML = segHtml([['', gx('all') + ' · ' + GSPEC.length], ['ok', gx('fOk') + ' · ' + cnt.ok], ['part', gx('fPart') + ' · ' + cnt.part], ['need', gx('fNeed') + ' · ' + cnt.need]], GAL.feas, 'data-feas');
+    var kept = GSPEC.filter(function (sp) { return GAL.keep[sp[0]]; }).map(function (sp) { return sp[0]; });
+    document.getElementById('gKeep').innerHTML = kept.length ? esc(gx('keptList')) + ' <b>' + kept.join(', ') + '</b>' : esc(gx('keepHint'));
+    GSPEC.forEach(function (sp) {
+      var id = sp[0], card = document.getElementById('g-' + id), t = GSTR[id][G.lang];
+      card.hidden = !!GAL.feas && GAL.feas !== sp[1];
+      document.getElementById('g-' + id + '-k').textContent = t[0];
+      document.getElementById('g-' + id + '-h').textContent = t[1];
+      document.getElementById('g-' + id + '-s').textContent = t[2];
+      document.getElementById('g-' + id + '-f').innerHTML = '<i aria-hidden="true">' + { ok: '✓', part: '◐', need: '○' }[sp[1]] + '</i>' + esc(gx('f_' + sp[1]) + ' · ' + t[3]);
+      var kb = card.querySelector('.keep'); kb.setAttribute('aria-pressed', String(!!GAL.keep[id])); kb.textContent = gx(GAL.keep[id] ? 'kept' : 'keep');
+      if (!card.hidden) sp[2](id);
+    });
+  }
+  if (DM) {
+    document.getElementById('gFeas').addEventListener('click', function (e) { var c = e.target.closest('[data-feas]'); if (c) { GAL.feas = c.getAttribute('data-feas'); renderGal(); } });
+    document.getElementById('gg').addEventListener('click', function (e) {
+      var b = e.target.closest('[data-keep]'); if (!b) return;
+      var id = b.getAttribute('data-keep'); if (GAL.keep[id]) delete GAL.keep[id]; else GAL.keep[id] = 1;
+      try { if (!EMBED) localStorage.setItem('fto2-gal-keep', JSON.stringify(GAL.keep)); } catch (x) {}
+      renderGal();
+    });
+    var GP = document.getElementById('p-gal');
+    GP.addEventListener('pointermove', function (e) { var t = e.target.closest && e.target.closest('[data-tip]'); if (t) showTip(e, t.getAttribute('data-tip').split('|')); else hideTip(); });
+    GP.addEventListener('pointerleave', hideTip);
+  }
 
   // ---------------------------------------------------------------- filter bar
   function opts(el, items, cur) { el.innerHTML = items.map(function (p) { return '<option value="' + esc(p[0]) + '"' + (p[0] === cur ? ' selected' : '') + '>' + esc(p[1]) + '</option>'; }).join(''); }
@@ -2060,6 +2825,7 @@ window.DASH = {"defects":[["216055047",1,"2026-01-06","2026-W02","A350","FTO2",0
     document.getElementById('miIn').setAttribute('aria-pressed', String(G.minor));
     document.getElementById('miOut').setAttribute('aria-pressed', String(!G.minor));
     document.getElementById('minorCtl').hidden = G.tab === 'cnq' || G.tab === 'ov' || G.tab === 'mft';
+    document.querySelector('.fbar').hidden = G.tab === 'gal';
     renderBar();
   }
   function showTab() {
@@ -2069,8 +2835,8 @@ window.DASH = {"defects":[["216055047",1,"2026-01-06","2026-W02","A350","FTO2",0
       document.getElementById('p-' + t).hidden = G.tab !== t;
     });
   }
-  function renderAll() { applyText(); showTab(); renderPMode(); ncBoard.render(); pareto.render(); costPareto.render(); weekly.render(); cnq.render(); client.render(); renderRca(); renderAna(); renderMft(); }
-  function setTab(t) { G.tab = t; if (!EMBED) { try { history.replaceState(null, '', '#' + t); } catch (x) {} } applyText(); showTab(); if (t === 'hebdo') weekly.render(); if (t === 'ov') ncBoard.render(); if (t === 'ana') renderAna(); if (t === 'mft') renderMft(); if (t !== 'ana' && t !== 'mft') hideTip(); }
+  function renderAll() { applyText(); showTab(); renderPMode(); ncBoard.render(); pareto.render(); costPareto.render(); weekly.render(); cnq.render(); client.render(); renderRca(); renderAna(); renderMft(); renderGal(); }
+  function setTab(t) { G.tab = t; if (!EMBED) { try { history.replaceState(null, '', '#' + t); } catch (x) {} } applyText(); showTab(); if (t === 'hebdo') weekly.render(); if (t === 'ov') ncBoard.render(); if (t === 'ana') renderAna(); if (t === 'mft') renderMft(); if (t === 'gal') renderGal(); if (t !== 'ana' && t !== 'mft') hideTip(); }
   document.getElementById('tabs').addEventListener('click', function (e) { var t = e.target.closest('[data-tab]'); if (t) setTab(t.getAttribute('data-tab')); });
   document.getElementById('tabs').addEventListener('keydown', function (e) {
     if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;

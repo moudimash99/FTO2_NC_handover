@@ -1,0 +1,10 @@
+﻿action,ligne,libelle_fr,libelle_en,rca_visee,debut,fin,statut
+A01,A350,Détrompeurs sur borniers jumeaux,Mistake-proofing on twin terminal blocks,Inversion,2026-03-16,2026-05-18,done
+A02,A330,Gabarit de frettage au poste 40,Lacing jig at station 40,Frettage Incorrect,2026-04-13,2026-07-06,done
+A03,A350,Contrôle de verrouillage par traction,Pull test for contact locking,Déverrouillage,2026-05-11,,late
+A04,A320,Kit d'obturateurs pré-compté,Pre-counted blanking-plug kit,Obturateur Manquant,2026-03-30,2026-05-11,done
+A05,A330,Protection des câbles en zone de stockage,Cable protection in the storage area,Câble Endommagé,2026-05-25,,open
+A06,A350,Étiquettes d'identification pré-imprimées,Pre-printed identification labels,Identification Manquante,2026-06-22,,open
+A07,A330,Outil de sertissage à contrôle d'effort,Force-monitored crimping tool,Défaut de Sertissage sur câble standard,2026-07-13,,planned
+A08,A400M,Revue du cheminement avec le BE,Routing review with design office,Mauvais Cheminement,2026-03-02,2026-06-08,done
+A09,A350,Couple de serrage affiché au poste,Torque value shown at the station,Serrage Incorrect,2026-08-03,,planned

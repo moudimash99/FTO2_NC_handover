@@ -59,6 +59,13 @@ customer-returns and RCA tabs, which show both apart), production type (all / S�
 period (year to date, last 1/3/6/12 months, all dates, or two typed dates; presets end on the last NC of the extract; hidden on
 the follow-up page, which has its own week picker), minor defects. Defaults: all data, FTO2 yes, Série, all aircraft, year to
 date (722 NCs, 2,704 defects on the 28 Sep extract). NC row field [39] carries the data source.
+**Look:** every tab uses the Analyses design (Newsreader titles, figures as an editorial row, each breakdown a full-width
+band with its name on the left and the chart on the right; the active filters stay under the tabs).
+**Galerie (fictif)** tab, local page only (never in the Slate files): 25 chart ideas drawn on **fictitious data** from
+`build/dummy_data.py` (seed 7, saved to `05_outputs/dummy/*.csv` with a README). Only the category / RCA / sub-category names
+are real. Each chart says whether the real data can feed it now (17), partly (4: budget, close dates of actions, list of
+aircraft built) or needs data to collect (4: production volumes, insertions per product, units per station, targets).
+"Garder" marks the ones to build (kept in the viewer's browser only). Remove the tab by dropping `dummy=` in `build_dashboard`.
 The dashboard is meant to be presented: Vue d'ensemble (headline figures and NC charts), Pareto (volume or cost toggle), Analyses, Coût de non-qualité, customer returns, root causes. The weekly Pareto and the MFT actions are a separate page from the same template (03_reports/FTO2_Suivi_Hebdo.html, Slate file FTO2_Suivi_Hebdo_Slate.html), one classification (root cause), no working notes on the page; the parser labels stay in the files. The separate customer-returns page is retired (`03_reports/archive/`). The RCA tab explains the hierarchy
 (123 official sub-codes → 42 sub-categories → 25 RCA → 9 categories); definitions are in `04_reference/rca_definitions.csv`
 (FR/EN, written 12 Oct from the code sheet, **to be checked by Mohammad**).

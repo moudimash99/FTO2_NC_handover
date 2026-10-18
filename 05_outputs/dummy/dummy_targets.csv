@@ -1,0 +1,5 @@
+﻿ligne,nc_par_avion,cout_par_avion,jours_cloture,erreurs_pour_10000_insertions,budget_cnq_annuel
+A350,3.2,600,7,0.6,130000
+A330,2.8,750,5,0.6,130000
+A320,0.9,220,6,0.6,130000
+A400M,5.0,1100,7,0.6,130000

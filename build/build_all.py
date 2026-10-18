@@ -361,7 +361,10 @@ def build_dashboard(d, nc, lt):
     data = {"defects": defs, "ncs": ncs, "direct": direct, "rca": rca_reference(d), "client": client, "lt": lt_client, "codes": CODE_DESC, "actions": actions,
             "meta": {"from": "2026-01-01", "to": REPORT["created_to"], "aside": aside, "noLine": no_line,
                      "modelTotal": round(float(aec.cnq_cost_total.sum()), 2)}}
-    _page("dashboard.html", data, "FTO2_NC_Dashboard.html")
+    # the local dashboard also carries the chart gallery, drawn on fictitious data (never in the Slate files)
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))   # -I leaves the script folder off the path
+    import dummy_data
+    _page("dashboard.html", dict(data, dummy=dummy_data.make(ROOT)), "FTO2_NC_Dashboard.html")
     _page("dashboard.html", data, "FTO2_Suivi_Hebdo.html", page="suivi")
     slate_pack(data)
     slate_pack(data, page="suivi")
