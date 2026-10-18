@@ -20,6 +20,7 @@ TREND = {"Élément Endommagé": 0.9, "Grounding/Bonding": 1.0, "Déverrouillage
 CAT_COST = {"MEO Câblage": 24, "Erreur Branchement": 58, "Élément Manquant": 38, "Élément Endommagé": 85,
             "Déverrouillage": 19, "Grounding/Bonding": 17, "Kitting Factory": 14, "FOD": 12, "Autre": 15}
 WHERE = [("poste", 40), ("cf", 31), ("test", 24), ("client", 5)]
+STAGE_COST = {"poste": 1.0, "cf": 1.5, "test": 2.4, "client": 7.0}   # a defect found later costs more (the 1-10-100 idea)
 DECISION = [("Retouche", 78), ("Rebut / rejet", 12), ("Échange", 7), ("Demande de DQN", 3)]
 STATIONS = ["Poste %d" % (10 * i) for i in range(1, 13)]
 PRODUCTS = [  # name, line, units per aircraft, insertions per unit
@@ -39,6 +40,15 @@ ACTIONS = [  # line, label FR, label EN, targeted RCA, start week index, duratio
     ("A330", "Outil de sertissage à contrôle d'effort", "Force-monitored crimping tool", "Défaut de Sertissage sur câble standard", 27, 0, "planned"),
     ("A400M", "Revue du cheminement avec le BE", "Routing review with design office", "Mauvais Cheminement", 8, 14, "done"),
     ("A350", "Couple de serrage affiché au poste", "Torque value shown at the station", "Serrage Incorrect", 30, 0, "planned")]
+
+
+# Ishikawa (5M) for each root cause: a working proposal to discuss with the team, not a finding
+FIVE_M = {"Inversion": "man", "Mauvaise Borne": "man", "Non Connecté": "man", "Serrage Incorrect": "man", "Finition Inachevée": "man",
+          "Déverrouillage": "man", "Mauvais Cheminement": "meth", "Frettage Incorrect": "meth", "MEO Gainage": "meth",
+          "Erreur Fixation ou Protection": "meth", "Erreur Composant Électrique": "meth", "Erreur Dossier": "meth", "Identification Manquante": "meth",
+          "Câble ou Élément Manquant": "mat", "Fixation ou Protection Manquante": "mat", "Obturateur Manquant": "mat", "Défaut d'Impression": "mat",
+          "Composant Endommagé": "mat", "Défaut de Sertissage sur câble standard": "mach", "Défaut de Sertissage sur câble spécifique": "mach",
+          "Défaut de Métallisation": "mach", "Câble Endommagé": "env", "Protection Endommagée": "env", "Structure Endommagée": "env", "FOD": "env"}
 
 
 def _pick(R, pairs):
@@ -122,7 +132,7 @@ def make(root, seed=SEED):
                     r = _pick(R, rca_w[c])
                 sub = R.choice(rcas[c][r])
                 fin = fins[l][min(59, int(_pick(R, list(enumerate(fin_w)))))] if R.random() < 0.8 else ""
-                cost = round(CAT_COST[c] * math.exp(R.gauss(0, 0.45)), 2)
+                cost = round(CAT_COST[c] * STAGE_COST[where] * math.exp(R.gauss(0, 0.45)), 2)
                 rework += cost
                 defects.append([idx, c, r, sub, fin, cost])
             mat = round(R.uniform(60, 420), 2) if dec in ("Rebut / rejet", "Échange") else 0.0
@@ -141,10 +151,27 @@ def make(root, seed=SEED):
         s = START + dt.timedelta(weeks=a[4])
         e = (s + dt.timedelta(weeks=a[5])).isoformat() if a[5] else ""
         actions.append(["A%02d" % (i + 1), a[0], a[1], a[2], a[3], s.isoformat(), e, a[6]])
+    # second batch of charts: drawn from their own generator so the first batch keeps its numbers
+    X = random.Random(seed + 1)
+    floor = [[st, i % 4, i // 4] for i, st in enumerate(STATIONS)]                       # station layout, routing in order
+    rework = []                                                                          # actual rework hours (MES) vs the estimate
+    for i, n in enumerate(ncs):
+        if X.random() < 0.6 and n[13] > 0:
+            est = round(n[13] / 50.0, 2)
+            rework.append([i, est, round(est * math.exp(X.gauss(0.25, 0.5)), 2)])
+    suppliers = [["Fournisseur %d" % (i + 1), X.randint(5, 60) * 1000, X.randint(1, 14)] for i in range(8)]
+    per_month = {}
+    for n in ncs:
+        per_month[n[1][:7]] = per_month.get(n[1][:7], 0) + 1
+    avg = sum(per_month.values()) / max(1, len(per_month))
+    prev_year = [int(round(per_month.get("2026-%02d" % m, avg) * X.uniform(1.05, 1.35))) for m in range(1, 13)]
+    units = len(aircraft) * 6
+    shift_prod = {"m": int(units * 0.52), "a": int(units * 0.38), "n": int(units * 0.10)}
     data = {"from": START.isoformat(), "to": (START + dt.timedelta(weeks=N_WEEKS, days=-1)).isoformat(), "seed": seed,
             "weeks": weeks, "lines": list(LINES), "prod": prod, "ncs": ncs, "defects": defects, "products": products,
             "stations": stations, "targets": {l: list(v) for l, v in TARGETS.items()}, "budget": BUDGET, "connTarget": CONN_TARGET,
-            "firstMsn": {l: v[2] for l, v in LINES.items()}, "actions": actions}
+            "firstMsn": {l: v[2] for l, v in LINES.items()}, "actions": actions,
+            "floor": floor, "fiveM": FIVE_M, "rework": rework, "suppliers": suppliers, "prevYear": prev_year, "shiftProd": shift_prod}
     _save(root, data)
     return data
 
@@ -167,6 +194,12 @@ def _save(root, data):
     w("dummy_actions.csv", ["action", "ligne", "libelle_fr", "libelle_en", "rca_visee", "debut", "fin", "statut"], data["actions"])
     w("dummy_targets.csv", ["ligne", "nc_par_avion", "cout_par_avion", "jours_cloture", "erreurs_pour_10000_insertions", "budget_cnq_annuel"],
       [[l] + v + [data["connTarget"], data["budget"]] for l, v in data["targets"].items()])
+    w("dummy_atelier.csv", ["poste", "colonne", "rang"], data["floor"])
+    w("dummy_5m.csv", ["rca", "branche_5m"], sorted(data["fiveM"].items()))
+    w("dummy_retouche_mes.csv", ["nc", "heures_estimees", "heures_reelles"], [[data["ncs"][r[0]][0], r[1], r[2]] for r in data["rework"]])
+    w("dummy_fournisseurs.csv", ["fournisseur", "pieces_livrees", "nc"], data["suppliers"])
+    w("dummy_annee_precedente.csv", ["mois", "nc"], [[m + 1, v] for m, v in enumerate(data["prevYear"])])
+    w("dummy_production_equipes.csv", ["equipe", "unites"], sorted(data["shiftProd"].items()))
     open(os.path.join(out, "README.txt"), "w", encoding="utf-8").write(
         "DONNEES FICTIVES / DUMMY DATA\n\n"
         "Ces fichiers sont tires au hasard (graine %d) par build/dummy_data.py pour la galerie de graphiques.\n"

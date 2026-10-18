@@ -1,0 +1,26 @@
+﻿rca,branche_5m
+Composant Endommagé,mat
+Câble Endommagé,env
+Câble ou Élément Manquant,mat
+Défaut d'Impression,mat
+Défaut de Métallisation,mach
+Défaut de Sertissage sur câble spécifique,mach
+Défaut de Sertissage sur câble standard,mach
+Déverrouillage,man
+Erreur Composant Électrique,meth
+Erreur Dossier,meth
+Erreur Fixation ou Protection,meth
+FOD,env
+Finition Inachevée,man
+Fixation ou Protection Manquante,mat
+Frettage Incorrect,meth
+Identification Manquante,meth
+Inversion,man
+MEO Gainage,meth
+Mauvais Cheminement,meth
+Mauvaise Borne,man
+Non Connecté,man
+Obturateur Manquant,mat
+Protection Endommagée,env
+Serrage Incorrect,man
+Structure Endommagée,env
