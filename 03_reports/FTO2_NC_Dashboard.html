@@ -579,7 +579,8 @@ body.mk-on .wrap { padding-bottom: 90px; }
 #p-ov[data-lay="3"] .v2stats { display: grid; gap: 4px; } #p-ov[data-lay="3"] .v2stats b { font-size: 20px; }
 #p-ov[data-lay="4"] { grid-template-columns: minmax(0, 300px) minmax(0, 1fr); grid-template-areas: "lead lead" "figs trend" "tgt cost" "tgt delay" "tgt ctl" "more more" "table table"; }
 #p-ov[data-lay="4"] [data-v2="VT"] { align-self: start; position: sticky; top: calc(var(--tabs-h) + 12px); }
-#p-ov[data-lay="5"] { grid-template-columns: repeat(3, minmax(0, 1fr)); grid-template-areas: "lead lead lead" "figs figs figs" "trend trend tgt" "cost delay delay" "ctl ctl ctl" "more more more" "table table table"; }
+#p-ov[data-lay="5"] { grid-template-columns: repeat(3, minmax(0, 1fr)); grid-template-areas: "lead lead lead" "figs figs figs" "trend trend tgt" "cost delay delay" "ctl ctl ctl" "more more more" "table table table"; align-items: stretch; }
+#p-ov[data-lay="5"] .v2ov > .card { align-content: start; }   /* cards side by side share one height; their content stays at the top */
 @media (max-width: 900px) {
   #p-ov[data-lay] { grid-template-columns: minmax(0, 1fr) !important; grid-template-areas: none !important; }
   #p-ov[data-lay] > *, #p-ov[data-lay] .v2ov > .card { grid-area: auto !important; position: static !important; }
@@ -4838,7 +4839,7 @@ window.FTO2_PAGE = window.FTO2_PAGE || 'main';
     if (V2B) return; V2B = true;
     var ov = document.getElementById('p-ov'), figs = ov.querySelector('.figs');
     var og = v2Grid(V2L.ov.top); og.classList.add('v2ov'); ov.insertBefore(og, figs.nextSibling);
-    if (PAGE === 'layouts') v2LayBar();
+    if (PAGE === 'layouts') v2LayBar(); else ov.setAttribute('data-lay', '5');   // Magazine, chosen by Mohammad on 19 Oct
     var inner = document.querySelector('#ngxBox .inner'); inner.insertBefore(document.getElementById('ncChips'), inner.firstChild);   // the breakdown lists and their filter chips fold together
     var ngx = v2Wire(document.getElementById('ngx'));
     V2L.ov.fold.forEach(function (k) { var b = v2Band(k); if (b) ngx.appendChild(b); });

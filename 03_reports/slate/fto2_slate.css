@@ -562,7 +562,8 @@
 .fto2 #p-ov[data-lay="3"] .v2stats b { font-size: 20px; }
 .fto2 #p-ov[data-lay="4"] { grid-template-columns: minmax(0, 300px) minmax(0, 1fr); grid-template-areas: "lead lead" "figs trend" "tgt cost" "tgt delay" "tgt ctl" "more more" "table table"; }
 .fto2 #p-ov[data-lay="4"] [data-v2="VT"] { align-self: start; position: sticky; top: calc(var(--tabs-h) + 12px); }
-.fto2 #p-ov[data-lay="5"] { grid-template-columns: repeat(3, minmax(0, 1fr)); grid-template-areas: "lead lead lead" "figs figs figs" "trend trend tgt" "cost delay delay" "ctl ctl ctl" "more more more" "table table table"; }
+.fto2 #p-ov[data-lay="5"] { grid-template-columns: repeat(3, minmax(0, 1fr)); grid-template-areas: "lead lead lead" "figs figs figs" "trend trend tgt" "cost delay delay" "ctl ctl ctl" "more more more" "table table table"; align-items: stretch; }
+.fto2 #p-ov[data-lay="5"] .v2ov > .card { align-content: start; }
 @media (max-width: 900px) {
 .fto2 #p-ov[data-lay] { grid-template-columns: minmax(0, 1fr) !important; grid-template-areas: none !important; }
 .fto2 #p-ov[data-lay] > *, .fto2 #p-ov[data-lay] .v2ov > .card { grid-area: auto !important; position: static !important; }

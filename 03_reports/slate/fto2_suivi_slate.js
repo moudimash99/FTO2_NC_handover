@@ -3924,7 +3924,7 @@ window.DASH = {"defects":[["216055047",1,"2026-01-06","2026-W02","A350","FTO2",0
     if (V2B) return; V2B = true;
     var ov = document.getElementById('p-ov'), figs = ov.querySelector('.figs');
     var og = v2Grid(V2L.ov.top); og.classList.add('v2ov'); ov.insertBefore(og, figs.nextSibling);
-    if (PAGE === 'layouts') v2LayBar();
+    if (PAGE === 'layouts') v2LayBar(); else ov.setAttribute('data-lay', '5');   // Magazine, chosen by Mohammad on 19 Oct
     var inner = document.querySelector('#ngxBox .inner'); inner.insertBefore(document.getElementById('ncChips'), inner.firstChild);   // the breakdown lists and their filter chips fold together
     var ngx = v2Wire(document.getElementById('ngx'));
     V2L.ov.fold.forEach(function (k) { var b = v2Band(k); if (b) ngx.appendChild(b); });
