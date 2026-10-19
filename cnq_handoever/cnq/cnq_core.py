@@ -15,9 +15,11 @@ How one NC is costed
 --------------------
   rule          = "DELETED" if the NC is deleted, else its decision code (RWK, EXC, REJ, ...)
   admin minutes = alert + writing the NC (longer at final inspection) + technical support + re-check/close
-                  (each charged or not, according to the rule)
+                  (each charged or not, according to the rule; the alert only when an operator raises one,
+                  i.e. not for NCs found at test, at final inspection or by the customer)
   work minutes  = if the rule includes work: fixed setup + sum of minutes of its defect lines
-                  (flat figure when the NC has no defect line)
+                  (flat figure when the NC has no defect line); the first connection error of an NC takes its
+                  class time, each following one MIN_CONNECTION_NEXT; internal NCs x INTERNAL_WORK_FACTOR
   engineering   = hours from the rule (design queries)
   material      = sum of material of its defect lines, if the rule includes work
   part value    = `part_value` column if present and the rule counts the part (else 0)
@@ -99,15 +101,27 @@ def compute_cnq(nc, defects, params=P):
     nc["cnq_where_found"] = np.where(nc["cnq_customer_return"] == 1, "Customer return",
                              np.where(nc["cnq_final_inspection"] == 1, "Final inspection", labelled))
     nc.loc[~has_master, "cnq_where_found"] = "No master data"
+    type_up = type_nc.str.upper()
+    no_alert = type_up.isin([t.upper() for t in params.NO_ALERT_TYPES]).fillna(False) | (nc["cnq_customer_return"] == 1)
+    nc["cnq_alert_raised"] = (~no_alert).astype(int)
+    internal = type_up.isin([t.upper() for t in params.INTERNAL_TYPES]).fillna(False)
+    nc["cnq_work_factor"] = np.where(internal, params.INTERNAL_WORK_FACTOR, 1.0)
 
     # ------------------------------------------------------------ defect lines: minutes and material
     known = d["sous_groupe"].isin(times.index)
-    qty = pd.to_numeric(d["qty"], errors="coerce").fillna(1) if "qty" in d.columns else 1
+    qty = pd.to_numeric(d["qty"], errors="coerce").fillna(1) if "qty" in d.columns else pd.Series(1.0, index=d.index)
     d["cnq_time_known"] = known.astype(int)
     d["cnq_label_en"] = d["sous_groupe"].map(times["label_en"]).fillna("Unknown class")
     d["cnq_min_per_defect"] = d["sous_groupe"].map(times["minutes"]).fillna(params.MIN_DEFAULT_DEFECT).astype(float)
     d["cnq_mat_per_defect"] = d["sous_groupe"].map(times["material_eur"]).fillna(0.0).astype(float)
-    d["_min"] = d["cnq_min_per_defect"] * qty
+    # connection errors: only the first one of the NC (in line order) takes the class time
+    conn_qty = qty.where(d["sous_groupe"].isin(params.CONNECTION_CLASSES), 0.0)
+    order = d.assign(_seq=pd.to_numeric(d["seq"], errors="coerce") if "seq" in d.columns else 0.0).sort_values(
+        ["notification_number", "_seq"], kind="mergesort").index
+    before = (conn_qty.loc[order].groupby(d.loc[order, "notification_number"], dropna=False).cumsum() - conn_qty.loc[order]).reindex(d.index).fillna(0.0)
+    first = np.minimum(conn_qty, (1 - before).clip(lower=0))
+    d["cnq_conn_next"] = conn_qty - first
+    d["_min"] = d["cnq_min_per_defect"] * (qty - d["cnq_conn_next"]) + d["cnq_conn_next"] * params.MIN_CONNECTION_NEXT
     d["_mat"] = d["cnq_mat_per_defect"] * qty
     d["_n"] = qty
     agg = d.groupby("notification_number").agg(_lines=("_n", "sum"), _min=("_min", "sum"), _mat=("_mat", "sum"))
@@ -119,13 +133,14 @@ def compute_cnq(nc, defects, params=P):
     flag = lambda f: nc["cnq_rule"].map(rules[f]).fillna(0).astype(float)
     work = flag("work")
     nc["cnq_defect_lines"] = nc["_lines"].astype(int)
-    nc["cnq_min_alert"] = flag("alert") * params.MIN_ALERT
+    alert = flag("alert") * nc["cnq_alert_raised"]
+    nc["cnq_min_alert"] = alert * params.MIN_ALERT
     nc["cnq_min_writing"] = flag("write") * np.where(nc["cnq_final_inspection"] == 1, params.MIN_WRITE_NC_FINAL, params.MIN_WRITE_NC)
     nc["cnq_min_support"] = flag("support") * params.MIN_SUPPORT
     hands = np.where(nc["_lines"] == 0, params.MIN_HANDS_ON_NO_DEFECT, nc["_min"])
-    nc["cnq_min_hands_on"] = work * hands
+    nc["cnq_min_hands_on"] = work * nc["cnq_work_factor"] * hands
     # time around the job: the fixed setup, or more if needed so that the work is never under the floor (1 hour)
-    nc["cnq_min_setup"] = work * np.maximum(params.MIN_SETUP, params.MIN_WORK_FLOOR - hands)
+    nc["cnq_min_setup"] = work * nc["cnq_work_factor"] * np.maximum(params.MIN_SETUP, params.MIN_WORK_FLOOR - hands)
     nc["cnq_min_recheck"] = flag("recheck") * params.MIN_RECHECK_CLOSE
     nc["cnq_hours_engineering"] = flag("eng_hours")
 
@@ -151,7 +166,7 @@ def compute_cnq(nc, defects, params=P):
     nc["cnq_customer_amount_known"] = (is_return & real.notna()).astype(int)
     nc["cnq_cost_total"] = final
     # ---- comparison level 2 "Global": average times for every NC, same material
-    global_min = (flag("alert") * params.MIN_ALERT + flag("write") * params.MIN_WRITE_NC_GLOBAL + flag("support") * params.MIN_SUPPORT
+    global_min = (alert * params.MIN_ALERT + flag("write") * params.MIN_WRITE_NC_GLOBAL + flag("support") * params.MIN_SUPPORT
                   + work * params.MIN_WORK_GLOBAL + flag("recheck") * params.MIN_RECHECK_CLOSE)
     nc["cnq_cost_global"] = global_min / 60.0 * r + nc["cnq_cost_engineering"] + nc["cnq_cost_material"] + nc["cnq_cost_part"]
     # ---- comparison level 1 "Airbus transnational": official standard cost per NC, no material
@@ -203,6 +218,7 @@ def parameters_as_tables(params=P):
         ("MIN_WRITE_NC_FINAL", params.MIN_WRITE_NC_FINAL, "minutes", "LOCAL"), ("MIN_SUPPORT", params.MIN_SUPPORT, "minutes", "LOCAL"),
         ("MIN_SETUP", params.MIN_SETUP, "minutes", "LOCAL"), ("MIN_RECHECK_CLOSE", params.MIN_RECHECK_CLOSE, "minutes", "LOCAL"),
         ("MIN_HANDS_ON_NO_DEFECT", params.MIN_HANDS_ON_NO_DEFECT, "minutes", "LOCAL"), ("MIN_DEFAULT_DEFECT", params.MIN_DEFAULT_DEFECT, "minutes", "ASSUMED"),
+        ("MIN_CONNECTION_NEXT", params.MIN_CONNECTION_NEXT, "minutes", "WO"), ("INTERNAL_WORK_FACTOR", params.INTERNAL_WORK_FACTOR, "factor", "WO"),
     ], columns=["parameter", "value", "unit", "basis"])
     rules = pd.DataFrame.from_dict(params.RULES, orient="index", columns=list(params.RULE_FIELDS)).rename_axis("rule").reset_index()
     times = pd.DataFrame.from_dict(params.DEFECT_TIMES, orient="index", columns=list(params.DEFECT_FIELDS)).rename_axis("sous_groupe").reset_index()

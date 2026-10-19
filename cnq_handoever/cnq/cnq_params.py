@@ -10,11 +10,12 @@ Every value carries a "basis" so a reader knows how far to trust it:
   TEAM      = the team's code table from the old Excel tool (estimates, never timed)
   OFFICIAL  = Airbus cost model MC.QU.02 (UG2600252, issue 1)
   BORROWED  = taken from another study because AEC has no figure
+  WO        = planned time on FTO2's rework orders (SAP order type S03, September 2026); to confirm on a full year
   ASSUMED   = an assumption nobody at AEC has confirmed yet
 Nothing in this file is a measured time.
 """
 
-MODEL_VERSION = "cnq-2026.10"
+MODEL_VERSION = "cnq-2026.10.19"
 
 # ---------------------------------------------------------------- who is "us"
 AEC_PLANT_CODE = "FTO2"            # liability == this code -> the NC is AEC non-quality
@@ -41,6 +42,20 @@ MIN_WORK_FLOOR = 60         # the work on a reworked NC is never under 1 hour.  
 MIN_RECHECK_CLOSE = 30      # re-check and closing the NC.                          LOCAL
 MIN_HANDS_ON_NO_DEFECT = 10 # hands-on time when a reworked NC has no defect line.  LOCAL ("a 10 minute job")
 MIN_DEFAULT_DEFECT = 10     # hands-on time for a defect class missing from DEFECT_TIMES. ASSUMED
+
+# ---------------------------------------------------------------- rules set from the rework orders (19 Oct 2026)
+# The operator alert is charged only when an operator raises one. NCs found at test, at final inspection or by the
+# customer start without an operator alert (0 of 52 test NCs and 4 of 23 final-inspection NCs had a disruption,
+# Jul-Sep 2026). Customer returns (perimetre) never get it. Values of the NC type, both vocabularies (GPS and pipeline):
+NO_ALERT_TYPES = ["TEST", "CONTROLE FINAL", "CLIENT", "NC RETOUR CLIENT"]                                    # WO
+# Connection errors: the first one in an NC takes its class time, each following one takes MIN_CONNECTION_NEXT.
+# Rework orders of test NCs plan about 77 min + 15 min per connection error (11 NCs, Sept 2026).
+CONNECTION_CLASSES = ["Inversion", "Erreur de branchement", "Non connecté"]
+MIN_CONNECTION_NEXT = 15    # each connection error after the first one in the same NC.                     WO
+# Internal NCs: the rework orders plan twice the model's work (setup + hands-on): 1,896 min against 951 on the
+# 11 complete Sept 2026 orders, per-NC median ratio 2.0. The work of these NCs is multiplied by this factor.
+INTERNAL_TYPES = ["INTERNE", "NC INTERNE"]
+INTERNAL_WORK_FACTOR = 2.0  #                                                                               WO
 
 # ---------------------------------------------------------------- the two comparison levels shown next to the detailed cost
 # Level 2 "Global": every NC gets the average times, whatever its defects.

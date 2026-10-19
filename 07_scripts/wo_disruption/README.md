@@ -104,3 +104,13 @@ python3 -I outlier.py $P             # the two largest planned rework orders (NC
 ```
 
 - All six changes together: 2026 Feb–Sep 151,093 -> 136,417 EUR (217 -> 196 EUR per NC); 2025 without ERMA 178,170 -> 161,761 EUR. Customer returns 2026: 11,975 -> 13,670 EUR.
+
+CNQ model changes applied on 19 Oct 2026 (approved: alert only when an operator raises one; connection errors 35 then 15 min; internal NCs x 2):
+
+```
+python3 -I internal_size.py $P            # planned vs model on internal NCs -> factor 2.0
+python3 -I rerun_real.py $P <repo>        # 2026 Feb-Sep and 2025 (no ERMA) before / after, with the updated cnq_core
+python3 check_dash.py <repo>/cnq_handoever/dashboard/cnq_dashboard.html   # headless check of the dashboard (needs playwright)
+```
+
+- Pack data (v4.7, 5 Jan-6 Jul 2026): level 3 134,206 -> 121,503 EUR. 2026 Feb-Sep: 151,093 -> 142,151 EUR. 2025 without ERMA: 178,170 -> 168,633 EUR.

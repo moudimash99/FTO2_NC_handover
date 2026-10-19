@@ -325,8 +325,8 @@ var I = {
   cls_note: ["NC AEC retouchées. Le coût est le temps d'intervention et la matière du défaut lui-même ; le temps fixe par NC n'est pas réparti entre les défauts.", "Reworked AEC NCs. Cost is the hands-on time and material of the defect itself; the fixed time per NC is not split across defects."],
   h_class: ["Classe", "Class"], h_lines: ["Lignes de défaut", "Defect lines"], h_direct: ["Coût direct", "Direct cost"],
   cr_title: ["Retours client", "Customer returns"],
-  cr_lead: ["Les retours client imputés à AEC sont comptés dans le total. Leur coût est pour l'instant estimé comme celui d'une NC interne ; le montant réel peut être saisi ici dès qu'il est connu.",
-            "Customer returns on AEC are in the total. For now their cost is estimated like an internal NC; the real amount can be entered here as soon as it is known."],
+  cr_lead: ["Les retours client imputés à AEC sont comptés dans le total. Leur coût est pour l'instant estimé comme celui d'une NC traitée à AEC, sans aléa opérateur ; le montant réel peut être saisi ici dès qu'il est connu.",
+            "Customer returns on AEC are in the total. For now their cost is estimated like an NC handled at AEC, without an operator alert; the real amount can be entered here as soon as it is known."],
   crk_n: ["Retours client", "Customer returns"], crk_n_s: ["NC imputées à AEC", "NCs on AEC"],
   crk_est: ["Coût estimé par le modèle", "Cost estimated by the model"], crk_est_s: ["traitement de la NC uniquement", "handling of the NC only"],
   crk_known: ["Montants réels saisis", "Real amounts entered"], crk_known_v: ["{a} sur {b}", "{a} of {b}"], crk_known_s: ["les autres restent estimés", "the others stay estimated"],
@@ -478,11 +478,20 @@ Object.assign(I, {
   m_lead: ["Le calcul suit le parcours réel d'une NC à AEC : six étapes, chacune avec un temps.", "The calculation follows the real path of an NC at AEC: six steps, each with a time."],
   cs_alert: ["Aléa", "Alert"], cs_writing: ["Rédaction de la NC", "Writing the NC"], cs_support: ["Support technique", "Technical support"],
   cs_setup: ["Préparation", "Setup"], cs_hands: ["Intervention", "Hands-on work"], cs_recheck: ["Recontrôle et clôture", "Re-check and closing"],
-  cu_alert: ["l'opérateur signale le défaut", "the operator reports the defect"], cu_writing: ["{x} min au contrôle final", "{x} min at final inspection"],
+  cu_alert: ["l'opérateur signale le défaut ; pas d'aléa pour les NC trouvées au test, au contrôle final ou chez le client", "the operator reports the defect; no alert for NCs found at test, at final inspection or by the customer"],
+  cu_writing: ["{x} min au contrôle final", "{x} min at final inspection"],
   cu_support: ["vérification, estimation, ordre de travail", "check, estimate, work order"], cu_setup: ["badgeage, approvisionnement, mise en place", "badging, fetching, setting up"],
   cu_hands: ["minutes de chaque défaut relevé", "minutes of each defect found"], cu_recheck: ["contrôle de la retouche, puis clôture", "check of the rework, then closing"],
-  ch_formula: ["Coût = total des minutes ÷ 60 × {r} €/h + matière. Les étapes 4 et 5 ne descendent jamais sous {f} min.",
-               "Cost = total minutes ÷ 60 × {r} €/h + material. Steps 4 and 5 are never under {f} min."],
+  ch_formula: ["Coût = total des minutes ÷ 60 × {r} €/h + matière. Les étapes 4 et 5 ne descendent jamais sous {f} min. Erreurs de branchement : la première de la NC prend le temps de sa classe, chacune des suivantes {c} min. NC internes : étapes 4 et 5 × {k}.",
+               "Cost = total minutes ÷ 60 × {r} €/h + material. Steps 4 and 5 are never under {f} min. Connection errors: the first one of the NC takes its class time, each following one {c} min. Internal NCs: steps 4 and 5 × {k}."],
+  n_noalert: ["pas d'aléa opérateur : NC trouvée au test, au contrôle final ou chez le client", "no operator alert: NC found at test, at final inspection or by the customer"],
+  n_internal: ["× {k} : NC interne, temps calé sur les ordres de retouche", "× {k}: internal NC, time set from the rework orders"],
+  n_conn_next: ["dont {n} erreur(s) de branchement suivante(s) à {x} min", "of which {n} further connection error(s) at {x} min"],
+  p_connNext: ["Chaque erreur de branchement suivante dans la même NC", "Each further connection error in the same NC"],
+  p_internalFactor: ["NC internes : multiplicateur du temps de retouche (étapes 4 et 5)", "Internal NCs: rework time multiplier (steps 4 and 5)"],
+  b_wo: ["Ordres de retouche SAP (sept. 2026), à confirmer sur une année", "SAP rework orders (Sept 2026), to confirm on a full year"],
+  g2: ["{a} des {b} lignes de défaut chiffrées sont des erreurs de branchement. La première de chaque NC est chiffrée avec un temps emprunté à une étude de 2021, les suivantes avec le temps prévu sur les ordres de retouche de septembre 2026.",
+       "{a} of the {b} costed defect lines are connection errors. The first one of each NC is timed at a figure borrowed from a 2021 study, the following ones at the time planned on the September 2026 rework orders."],
   ch_example: ["Exemple, un seul défaut de 10 min : {a} + {b} + {c} + {d} + 10 + {e} = {m} min, soit {c2}.",
                "Example, a single 10-minute defect: {a} + {b} + {c} + {d} + 10 + {e} = {m} min, which is {c2}."],
   d_rules: ["Voir ce qui est compté pour les autres décisions (rejet, échange, DQN, NC supprimée)", "See what is charged for the other decisions (reject, exchange, design query, deleted NC)"],
@@ -494,8 +503,8 @@ Object.assign(I, {
   month_title: ["Par mois", "Per month"], found_title: ["Par lieu de détection", "By where the NC was found"],
   cls_title: ["Défauts qui coûtent le plus", "Defects that cost the most"], cls_sub: ["{n} lignes de défaut", "{n} defect lines"],
   d_more: ["Voir le détail par décision et par imputation", "See the detail by decision and by liable party"],
-  cr_lead: ["Ils sont comptés dans le total. Leur coût est estimé comme celui d'une NC interne, en attendant les montants réels.",
-            "They are in the total. Their cost is estimated like an internal NC, until the real amounts are known."],
+  cr_lead: ["Ils sont comptés dans le total. Leur coût est estimé comme celui d'une NC traitée à AEC, sans aléa opérateur, en attendant les montants réels.",
+            "They are in the total. Their cost is estimated like an NC handled at AEC, without an operator alert, until the real amounts are known."],
   d_crlist: ["Voir les {n} retours client et saisir les montants réels", "See the {n} customer returns and enter the real amounts"],
   cr_store: ["Un montant saisi remplace l'estimation. Il reste dans ce navigateur ; pour le rendre permanent, renseigner la colonne customer_return_cost du jeu de données NC.",
              "An entered amount replaces the estimate. It stays in this browser; to make it permanent, fill the customer_return_cost column of the NC dataset."],
@@ -551,7 +560,7 @@ function renderMethod() {
   var chain = [["alert", P.alert + " min", t("cu_alert"), ""], ["writing", P.write + " min", t("cu_writing", { x: P.writeFinal }), ""], ["support", P.support + " min", t("cu_support"), ""],
     ["setup", P.setup + " min", t("cu_setup"), ""], ["hands", "Σ", t("cu_hands"), "var"], ["recheck", P.recheck + " min", t("cu_recheck"), ""]];
   $("chain").innerHTML = chain.map(function (c) { return '<li class="' + c[3] + '"><div class="cn">' + t("cs_" + c[0]) + '</div><div class="cv">' + c[1] + '</div><div class="cs">' + c[2] + "</div></li>"; }).join("");
-  $("chformula").textContent = t("ch_formula", { r: dec(P.rate), f: P.floor });
+  $("chformula").textContent = t("ch_formula", { r: dec(P.rate), f: P.floor, c: P.connNext, k: dec(P.internalFactor) });
   var setup = Math.max(P.setup, P.floor - 10), m = P.alert + P.write + P.support + setup + 10 + P.recheck;
   $("chexample").textContent = t("ch_example", { a: P.alert, b: P.write, c: P.support, d: setup, e: P.recheck, m: int(m), c2: eur2(m / 60 * P.rate) });
   var basis = { RWK: ["rb_team", 0], DELETED: ["rb_rule", 0], DQN: ["rb_dqn", 1] };
@@ -578,10 +587,10 @@ function renderBreakdown() {
   }).join("");
 
   CLS = DATA.classes.map(function (c, j) { return { j: j, n: 0, cost: 0 }; });
-  DATA.lines.forEach(function (l) {
+  DATA.lines.forEach(function (l, k) {
     var r = DATA.nc[l[0]], f = DATA.rules[r[NC.rule]];
     if (!isAec(r) || !f || !f.work) return;
-    CLS[l[1]].n += l[2]; CLS[l[1]].cost += RES.classMin[l[1]] * l[2] / 60 * P.rate + P.classes[l[1]].mat * l[2];
+    CLS[l[1]].n += l[2]; CLS[l[1]].cost += RES.lines[k].min / 60 * P.rate + P.classes[l[1]].mat * l[2];
   });
   var top = CLS.slice().sort(function (p, q) { return q.cost - p.cost; }).slice(0, 6), mc = Math.max.apply(null, top.map(function (c) { return c.cost; }).concat([1]));
   $("classes").innerHTML = top.map(function (c) {
@@ -628,15 +637,17 @@ function renderNC(i) {
     "</b></span><span>" + t("f_found") + sep + "<b>" + esc(whereL(r[NC.where])) + "</b></span><span>" + t("f_status") + sep + "<b>" + t("st_" + (r[NC.status] || "unknown")) + "</b></span></div>";
   if (!rule) { $("ncout").innerHTML = h + '<p class="muted">' + t("no_master") + "</p>"; return; }
   if (!isAec(r)) h += '<p class="small">' + tag(t("not_aec"), true) + " " + t("not_aec_note") + "</p>";
+  var wf = r[NC.internal] ? P.internalFactor : 1, wnote = wf !== 1 ? " · " + t("n_internal", { k: dec(wf) }) : "";
   var notes = {
     alert: t("n_once", { x: P.alert }), writing: r[NC.fin] ? t("n_final", { x: P.writeFinal }) : t("n_plain", { x: P.write }), support: t("n_once", { x: P.support }),
-    setup: x.steps.setup > P.setup ? t("n_floor", { a: P.setup, f: P.floor }) : t("n_once", { x: P.setup }),
-    hands: x.lines === 0 ? t("n_noline", { x: P.noDefect }) : t("n_lines", { n: int(x.lines) }), recheck: t("n_once", { x: P.recheck })
+    setup: (x.steps.setup > P.setup * wf ? t("n_floor", { a: P.setup, f: P.floor }) : t("n_once", { x: P.setup })) + wnote,
+    hands: (x.lines === 0 ? t("n_noline", { x: P.noDefect }) : t("n_lines", { n: int(x.lines) })) + wnote, recheck: t("n_once", { x: P.recheck })
   };
   var tb = '<div class="scroll"><table><thead><tr><th>' + t("h_step") + "</th><th>" + t("h_how") + '</th><th class="num">' + t("h_min") + '</th><th class="num">' + t("h_cost_at", { r: dec(P.rate) }) + "</th></tr></thead><tbody>";
   STEPS.forEach(function (s) {
-    var on = f[s[1]] === 1, m = x.steps[s[0]];
-    tb += '<tr class="' + (on ? "" : "off") + '"><td>' + t("cs_" + s[0]) + "</td><td>" + (on ? notes[s[0]] : t("n_off")) + '</td><td class="num">' + (on ? mn(m) : "-") + '</td><td class="num">' + (on ? eur2(m / 60 * P.rate) : "-") + "</td></tr>";
+    var noAlert = s[0] === "alert" && f.alert === 1 && !r[NC.alertOn];
+    var on = f[s[1]] === 1 && !noAlert, m = x.steps[s[0]];
+    tb += '<tr class="' + (on ? "" : "off") + '"><td>' + t("cs_" + s[0]) + "</td><td>" + (on ? notes[s[0]] : noAlert ? t("n_noalert") : t("n_off")) + '</td><td class="num">' + (on ? mn(m) : "-") + '</td><td class="num">' + (on ? eur2(m / 60 * P.rate) : "-") + "</td></tr>";
   });
   if (x.engH) tb += "<tr><td>" + t("r_eng") + "</td><td>" + t("r_eng_how", { h: dec(x.engH), r: dec(P.rateEng) }) + '</td><td class="num">-</td><td class="num">' + eur2(x.eng) + "</td></tr>";
   if (f.work) tb += "<tr><td>" + t("r_mat") + "</td><td>" + t("r_mat_how") + '</td><td class="num">-</td><td class="num">' + eur2(x.material) + "</td></tr>";
@@ -652,10 +663,11 @@ function renderNC(i) {
   if (x.lines > 0) {
     d = '<details id="nclines"' + (linesOpen ? " open" : "") + "><summary>" + t("d_lines", { n: int(x.lines) }) + '</summary><div class="in"><div class="scroll"><table><thead><tr><th>#</th><th>' + t("h_text") + "</th><th>" + t("h_class") + '</th><th class="num">' + t("h_min") + '</th><th class="num">' + t("h_material") + "</th></tr></thead><tbody>";
     var k = 0, sm = 0, sa = 0;
-    DATA.lines.forEach(function (l) {
+    DATA.lines.forEach(function (l, j) {
       if (l[0] !== i) return; k++;
-      var c = DATA.classes[l[1]], m = RES.classMin[l[1]] * l[2], a = P.classes[l[1]].mat * l[2]; sm += m; sa += a;
-      d += "<tr><td>" + k + '</td><td class="txt">' + esc(l[3]) + "</td><td>" + esc(classL(c)) + '</td><td class="num">' + mn(m) + '</td><td class="num">' + eur2(a) + "</td></tr>";
+      var c = DATA.classes[l[1]], ln = RES.lines[j], m = ln.min, a = P.classes[l[1]].mat * l[2]; sm += m; sa += a;
+      var cn = ln.next ? ' <span class="small muted">' + t("n_conn_next", { n: int(ln.next), x: P.connNext }) + "</span>" : "";
+      d += "<tr><td>" + k + '</td><td class="txt">' + esc(l[3]) + "</td><td>" + esc(classL(c)) + cn + '</td><td class="num">' + mn(m) + '</td><td class="num">' + eur2(a) + "</td></tr>";
     });
     d += '<tr class="total"><td></td><td>' + (f.work ? t("dl_sum_on") : t("dl_sum_off")) + '</td><td></td><td class="num">' + mn(sm) + '</td><td class="num">' + eur2(sa) + "</td></tr></tbody></table></div></div></details>";
   }
@@ -664,7 +676,7 @@ function renderNC(i) {
 
 var PARAM_DEFS = [["rate", "€/h", "b_rate", 1, 0.01], ["rateEng", "€/h", "b_official", 0, 0.01], ["alert", "min", "b_local", 0, 1], ["write", "min", "b_local", 0, 1], ["writeFinal", "min", "b_local", 0, 1],
   ["support", "min", "b_local", 0, 1], ["setup", "min", "b_local", 0, 1], ["floor", "min", "b_local", 0, 1], ["recheck", "min", "b_local", 0, 1], ["noDefect", "min", "b_local", 0, 1],
-  ["writeGlobal", "min", "b_local", 0, 1], ["workGlobal", "min", "b_local", 0, 1]];
+  ["connNext", "min", "b_wo", 1, 1], ["internalFactor", "×", "b_wo", 1, 0.1], ["writeGlobal", "min", "b_local", 0, 1], ["workGlobal", "min", "b_local", 0, 1]];
 function inputHTML(path, val, def, step) {
   return '<input class="p' + (val !== def ? " changed" : "") + '" type="number" min="0" step="' + (step || 1) + '" value="' + val + '" data-path="' + path + '" aria-label="' + path + '">';
 }

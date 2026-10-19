@@ -1,6 +1,6 @@
 # Cost of non-quality (CNQ) for Airbus Electric Center - handover
 
-Version `cnq-2026.10`, updated 7 October 2026.
+Version `cnq-2026.10.19`, updated 19 October 2026.
 
 ## 1. What this is
 
@@ -33,12 +33,14 @@ Only NCs where AEC is liable are counted (595 NCs, 5 Jan to 6 Jul 2026, parser v
 | Level | What it does | Total | Per NC | Column |
 |---|---|---|---|---|
 | 1. Airbus transnational | Each NC at the official Airbus standard cost for its decision. No material. | 280,004 EUR | 471 EUR | `cnq_cost_airbus` |
-| 2. Global average | Each NC at AEC's average times: 30 min to write the NC, 1 hour of work for a rework. Plus material. | 102,500 EUR | 172 EUR | `cnq_cost_global` |
-| 3. Per defect | AEC's steps, with the work built from each defect found. Plus material. | 134,206 EUR | 226 EUR | `cnq_cost_total` |
+| 2. Global average | Each NC at AEC's average times: 30 min to write the NC, 1 hour of work for a rework. Plus material. | 95,975 EUR | 161 EUR | `cnq_cost_global` |
+| 3. Per defect | AEC's steps, with the work built from each defect found. Plus material. | 121,503 EUR | 204 EUR | `cnq_cost_total` |
 
 Level 3 is the reference. Levels 1 and 2 are there to compare: what the general Airbus model would
-say, and what a flat average would say. NCs on other plants or suppliers (131 NCs, 15,746 EUR of
+say, and what a flat average would say. NCs on other plants or suppliers (131 NCs, 15,721 EUR of
 handling at level 3) are shown aside and are in none of the totals.
+
+Before the changes of 19 October 2026 (section 4), level 3 was 134,206 EUR and level 2 102,500 EUR.
 
 ## 3. How one NC is costed, with examples
 
@@ -48,49 +50,52 @@ For a reworked NC:
 
 | Step | Time | Charged |
 |---|---|---|
-| Operator raises the alert | 30 min | once per NC |
+| Operator raises the alert | 30 min | once per NC, only when an operator raises one: not for NCs found at test, at final inspection or by the customer |
 | Quality inspector writes the NC | 30 min, 60 at final inspection | once per NC |
 | Technical support checks, estimates, creates the work order | 60 min | once per NC |
 | Around the work: badging, fetching, setting up | 50 min | once per NC |
-| Hands-on work | minutes of each defect line | per defect |
-| Re-check and closing | 30 min | once per NC |
+| Hands-on work | minutes of each defect line; connection errors: the first one of the NC at its class time (35 min), each following one 15 min | per defect |
+| Re-check and closing (quality line service) | 30 min | once per NC |
+
+For internal NCs, the work (around the job + hands-on) is multiplied by 2.
 
 Cost = total minutes / 60 x 50 EUR, plus the material of each defect line.
 
 The work (around the job + hands-on) is never under 1 hour. If the defects add up to less than
 10 minutes, the time around the job is raised so the work reaches 60 minutes.
 
-**Example A - one defect, found in-process (NC 216135746).** One defect, "bonding protection badly
-applied", 10 minutes.
-30 + 30 + 60 + 50 + 10 + 30 = 210 minutes. 210 / 60 x 50 = **175.00 EUR**. No material.
+**Example A - one defect, found in-process, internal NC (NC 216135746).** One defect, "bonding
+protection badly applied", 10 minutes. Work (50 + 10) x 2 = 120 minutes.
+30 + 30 + 60 + 120 + 30 = 270 minutes. 270 / 60 x 50 = **225.00 EUR**. No material.
 
-**Example B - nine defects, found at final inspection (NC 216224176).**
-Hands-on: 6 connection errors x 35 min + 2 wrong electrical references x 30 min + 1 component out
-of order x 30 min = 300 minutes.
-30 + 60 (final inspection) + 60 + 50 + 300 + 30 = 530 minutes. 530 / 60 x 50 = 441.67 EUR, plus
-0.36 EUR of material = **442.03 EUR**.
+**Example B - nine defects, found at final inspection (NC 216224176).** No operator alert.
+Hands-on: 6 connection errors (35 + 5 x 15 = 110 min) + 2 wrong electrical references x 30 min +
+1 component out of order x 30 min = 200 minutes.
+60 (final inspection) + 60 + 50 + 200 + 30 = 400 minutes. 400 / 60 x 50 = 333.33 EUR, plus
+0.36 EUR of material = **333.69 EUR**.
 
-**Example C - a one-minute defect.** Hands-on 1 minute. 50 + 1 = 51 minutes of work is under the
-minimum, so the time around the job becomes 59 minutes. The NC costs the same 175.00 EUR as
-example A. This applies to 130 AEC NCs.
+**Example C - a one-minute defect, cable NC.** Hands-on 1 minute. 50 + 1 = 51 minutes of work is
+under the minimum, so the time around the job becomes 59 minutes.
+30 + 30 + 60 + 59 + 1 + 30 = 210 minutes = **175.00 EUR**. This applies to 128 AEC NCs.
 
 Other decisions:
 
 | Decision | What is charged | Example |
 |---|---|---|
-| Rejection, scrap | Alert, writing, technical support, closing. No work. Plus the value of the part. | NC 16995857: 30 + 30 + 60 + 30 = 150 min = **125.00 EUR**. Part: 0 EUR, no price in the data. |
+| Rejection, scrap | Alert, writing, technical support, closing. No work. Plus the value of the part. | NC 16995857 (a customer return, so no alert): 30 + 60 + 30 = 120 min = **100.00 EUR**. Part: 0 EUR, no price in the data. |
 | Deleted (any decision) | Alert and writing only | NC 216123618: 30 + 30 = 60 min = **50.00 EUR** |
 | Design query | Alert, writing, technical support, closing, plus 8 h of engineering at 78.16 EUR/h | NC 216733534: 125.00 + 625.28 = **750.28 EUR** |
 | Exchange | Same as rework, plus the value of the swapped part | |
-| Accept as is, potential NC | Alert, writing, technical support, closing | 125.00 EUR |
+| Accept as is, potential NC | Alert, writing, technical support, closing | 125.00 EUR (100.00 EUR without alert) |
 | No decision | Alert and writing | 50.00 EUR |
 
 Only the rework process was described by the team. The other rows are assumptions.
 
 ### Customer returns
 
-A customer return on AEC (45 NCs, 8,089 EUR) is in the total and is costed like any NC of its
-decision: only the handling of the NC is estimated. Two ways to go further, both already built:
+A customer return on AEC (45 NCs, 6,964 EUR) is in the total and is costed like any NC of its
+decision, without the operator alert: only the handling of the NC is estimated. Two ways to go
+further, both already built:
 
 - `CUSTOMER_RETURN_EXTRA` in `cnq_params.py`: a flat amount added to every customer return
   (analysis, reply to the customer, logistics). It is 0 EUR until the team sets a figure.
@@ -104,11 +109,13 @@ real amount. Amounts typed there stay in that browser only; to make them permane
 ### Level 2, global average
 
 The same steps, but every NC gets the average times whatever its defects: 30 minutes to write the
-NC and 1 hour of work for a rework. Material is added as in level 3.
+NC and 1 hour of work for a rework. Material is added as in level 3. The alert follows the same
+rule as level 3.
 
-- Example A: 30 + 30 + 60 + 60 + 30 = 210 min = 175.00 EUR. Same as level 3.
-- Example B: 210 min = 175.00 EUR + 0.36 EUR material = **175.36 EUR**, against 442.03 EUR at level 3.
-  This is what the flat average hides: an NC with nine defects costs the same as one with one.
+- Example A: 30 + 30 + 60 + 60 + 30 = 210 min = 175.00 EUR, against 225.00 EUR at level 3.
+- Example B: 30 + 60 + 60 + 30 = 180 min = 150.00 EUR + 0.36 EUR material = **150.36 EUR**, against
+  333.69 EUR at level 3. This is what the flat average hides: an NC with nine defects costs no more
+  than one with one.
 
 ### Level 1, Airbus transnational
 
@@ -145,6 +152,23 @@ the "2 x" classes follow. One line of the notes, "SO3", could not be read; nothi
 
 Effect to be aware of: a damaged cable is now 30 min (2 x missing cable or part, 15 min). The old
 code table said 60 min.
+
+### Changes of 19 October 2026, from the SAP rework orders
+
+The rework orders technical support creates for each NC (SAP order type S03, linked from the NC's
+`linked_document` field) carry a planned time per operation. Compared with the model on the
+September 2026 orders (unit IM = 1/100 hour), three rules were changed, approved by Mohammad:
+
+| Change | Evidence | Parameter |
+|---|---|---|
+| The operator alert is charged only when an operator raises one: not for NCs found at test, at final inspection or by the customer | Jul-Sep 2026: 0 of 52 test NCs and 4 of 23 final-inspection NCs started with an MES disruption; 42 of 49 cable NCs did | `NO_ALERT_TYPES` |
+| Connection errors: the first one of an NC takes its class time (35 min), each following one 15 min | Rework orders of test NCs plan about 77 min + 15 min per connection error (11 NCs). Before, the model was 79% above the planned time on test NCs. | `CONNECTION_CLASSES`, `MIN_CONNECTION_NEXT` |
+| Internal NCs: work (around the job + hands-on) x 2 | 11 complete rework orders of internal NCs: 1,896 planned minutes against 951 in the model; per-NC median ratio 2.0 | `INTERNAL_TYPES`, `INTERNAL_WORK_FACTOR` |
+
+Effect on level 3: 134,206 -> 121,503 EUR on this package's data; 151,093 -> 142,151 EUR on 2026
+Feb-Sep (parser v4.8, plant FTO2); 178,170 -> 168,633 EUR on 2025 (plant FTO2, without ERMA).
+These three figures come from one month of rework orders; they are marked WO and should be
+re-checked on a full year of orders.
 
 ## 5. What is in the package
 
@@ -221,6 +245,7 @@ The defects dataset needs `notification_number`, `sous_groupe` and, if present, 
 | TEAM RULE | A link between classes set by the team (2 x missing) |
 | OFFICIAL | Airbus cost model MC.QU.02 |
 | BORROWED | From a 2021 time study, because AEC has no figure |
+| WO | Planned time on FTO2's SAP rework orders (order type S03), September 2026 only. Planned, not measured; to re-check on a full year |
 | ASSUMED | Not confirmed by anyone at AEC |
 
 Nothing is measured. Two research reports looked for published benchmarks and found none that
@@ -234,8 +259,10 @@ confirms or rejects any of these times. The only way to firm them up is to time 
 2. **Customer returns are under-estimated.** Only the handling of the NC is counted. Analysis,
    reply to the customer, transport and penalties are not, until the flat extra or the real
    amounts are filled in (section 3).
-3. **Connection errors rest on a borrowed time.** Swapped and wrong connections are the two most
-   frequent defects and cost 18,375 EUR of hands-on work, all at 35 minutes from a 2021 study.
+3. **Connection errors rest partly on a borrowed time.** Swapped and wrong connections are the two
+   most frequent defects (639 costed lines, 9,554 EUR of hands-on work). The first one of each NC
+   (94) is at 35 minutes from a 2021 study; the 545 following ones are at 15 minutes from the
+   September 2026 rework orders (11 NCs).
 4. **57 AEC NCs are missing from the NC dataset.** They are in the Skywise export but not in the
    v4.7 NC dataset, most likely because the parser found no defect line for them. They still cost
    handling time. To fix: keep NCs with zero defect lines in the NC dataset.
@@ -256,6 +283,13 @@ confirms or rejects any of these times. The only way to firm them up is to time 
 12. **The Foundry wrapper has not been run.** The calculation is tested on CSV files; the
     transform file is a template. Spark cannot guess the type of an all-empty column (such as
     `sub_code` in v4.7), so the wrapper drops those.
+13. **The WO rules come from one month.** The 15 minutes per following connection error and the
+    x 2 on internal NCs come from the September 2026 rework orders (11 NCs each). Re-check them on
+    a full year of rework orders.
+14. **Exceptional NCs are not visible.** One NC line can cover many items. NC 218233692 ("Câbles
+    non lasérisés", Sept 2026) is one defect line in the model (about 1 hour) but its rework order
+    plans 34 hours of reprinting cables for six routes. Only the planned time of the rework order
+    can show this; the model cannot.
 
 ## 10. Recommended next step: time the work
 
@@ -267,8 +301,9 @@ work separately from the hands-on part.
 
 ## 11. Why level 3 differs from the Excel workbook
 
-The workbook `CNQ_model_AEC_2026.xlsx` gave 148,200 EUR on the earlier export. Level 3 gives
-134,206 EUR. The differences:
+The workbook `CNQ_model_AEC_2026.xlsx` gave 148,200 EUR on the earlier export. Level 3 gave
+134,206 EUR before the changes of 19 October 2026 (121,503 EUR after them). The differences, before
+those changes:
 
 | Difference | Effect |
 |---|---|
