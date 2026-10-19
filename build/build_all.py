@@ -362,11 +362,12 @@ def build_dashboard(d, nc, lt):
             "cnqp": cnq_explain(d),
             "meta": {"from": "2026-01-01", "to": REPORT["created_to"], "aside": aside, "noLine": no_line,
                      "modelTotal": round(float(aec.cnq_cost_total.sum()), 2)}}
-    # the local dashboard also carries the chart gallery, drawn on fictitious data (never in the Slate files)
+    # every page carries the production file (rates per MSN); only the review pages carry the made-up gallery data (never in the Slate files)
     sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))   # -I leaves the script folder off the path
     import dummy_data
-    local = dict(data, dummy=dummy_data.make(ROOT), eqmsn=eqmsn(nc))
-    _page("dashboard.html", local, "FTO2_NC_Dashboard.html")
+    data["eqmsn"] = eqmsn(nc)
+    local = dict(data, dummy=dummy_data.make(ROOT))
+    _page("dashboard.html", data, "FTO2_NC_Dashboard.html")
     # the proposed final layout, chart by chart, with the choices to make (review page, local only)
     _page("dashboard.html", local, "FTO2_Revue_Proposition.html", page="review")
     # the same layout as a mock-up of the final dashboard, every chart scored a to e at its side (local only)

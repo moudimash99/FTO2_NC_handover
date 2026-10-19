@@ -496,6 +496,14 @@
 @media (max-width: 560px) {
 .fto2 .mk-bar { left: 8px; right: 8px; transform: none; bottom: 8px; }
 }
+.fto2 table.v2sc { min-width: 640px; font-variant-numeric: tabular-nums; }
+.fto2 table.v2sc th[scope="row"] { font-size: 14px; font-weight: 600; color: var(--ink); vertical-align: middle; }
+.fto2 table.v2sc td { vertical-align: middle; }
+.fto2 table.v2sc td b { font-family: var(--font-display); font-weight: 400; font-size: 22px; }
+.fto2 table.v2sc th.r, .fto2 table.v2sc td.r { text-align: right; }
+.fto2 table.v2sc small { font-size: 11.5px; font-weight: 600; margin-left: 4px; }
+.fto2 .v2u { color: var(--up); }
+.fto2 .v2d { color: var(--down); }
 .fto2 .fict.real { color: var(--s1); }
 .fto2 .fict { justify-self: start; font-size: 11.5px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--up); border: 1.5px solid currentColor; border-radius: 4px; padding: 3px 9px; }
 .fto2 .gal-bar { display: flex; flex-wrap: wrap; gap: 10px 20px; align-items: center; justify-content: space-between; position: sticky; top: var(--tabs-h); z-index: 9; background: var(--page); padding-block: 10px; border-bottom: 1px solid var(--grid); }
