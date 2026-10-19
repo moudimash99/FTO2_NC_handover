@@ -85,7 +85,12 @@ p { margin: 0; max-width: 78ch; }
 .seg.lang button { padding: 4px 11px; font-size: 12px; letter-spacing: .05em; font-weight: 600; }
 button:focus-visible, input:focus-visible, select:focus-visible, [role="tab"]:focus-visible, summary:focus-visible, tr:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
 select { font: inherit; font-size: 13.5px; padding: 5px 10px; border: 1px solid var(--ring); border-radius: 6px; background: var(--surface); color: var(--ink); }
-.fbar { display: grid; gap: 8px; background: var(--band); border: 1px solid var(--ring); border-radius: 8px; padding: 12px 16px 10px; }
+.fbar { display: grid; gap: 6px; border-top: 1px solid var(--grid); border-bottom: 1px solid var(--grid); padding: 10px 0 8px; margin-top: 4px; }
+.fbar .fb-title { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.fbar .fb { grid-auto-flow: column; align-items: center; gap: 8px; }
+.fbar .fb > label, .fbar .fb > span:first-child { font-size: 11px; letter-spacing: .07em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+.fbar .fb-row { gap: 8px 26px; align-items: center; }
+.fbar .fb-sum { font-size: 12px; color: var(--muted); }
 .fb-title { font-family: var(--font-ui); font-size: 11.5px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2); }
 .fb-row { display: flex; flex-wrap: wrap; gap: 12px 22px; align-items: end; }
 .fb { display: grid; gap: 4px; justify-items: start; min-width: 0; }
@@ -307,6 +312,7 @@ svg.flow.focus .lnk.hl { opacity: .85; }
 .vlegend { display: flex; gap: 6px 16px; flex-wrap: wrap; font-size: 12.5px; color: var(--ink-2); align-items: center; }
 .vlegend > span { display: inline-flex; gap: 6px; align-items: center; }
 .vlegend .mu { color: var(--muted); }
+.vlegend b { font-weight: 600; }
 .vlegend .sw { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
 .vlegend .sw.ring { border: 1.5px solid; border-radius: 50%; }
 .vlegend .ln { width: 16px; height: 2px; display: inline-block; border-radius: 1px; }
@@ -521,9 +527,9 @@ body.mk-on .wrap { padding-bottom: 90px; }
 /* Dashboard v2: key numbers in the left column of a band, the target strip, sparklines under the headline figures */
 .v2stats { display: grid; gap: 16px; margin-top: 8px; }
 .v2stats:empty { display: none; }
-.v2stats div { display: grid; gap: 2px; padding-left: 12px; border-left: 2px solid var(--s1); }
-.v2stats div.ph { border-left-color: var(--grid); }
-.v2stats b { font-family: var(--font-display); font-weight: 400; font-size: 32px; line-height: 1.05; font-variant-numeric: tabular-nums; }
+.v2stats { gap: 10px; margin-top: 14px; }
+.v2stats div { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.v2stats b { font-family: var(--font-display); font-weight: 400; font-size: 28px; line-height: 1.1; font-variant-numeric: tabular-nums; min-width: 3.2em; }
 .v2stats div.ph b { color: var(--ink-2); }
 .v2stats span { font-size: 12.5px; color: var(--ink-2); }
 .v2objbox { padding: 18px 0 6px; }
@@ -1529,7 +1535,7 @@ window.FTO2_PAGE = window.FTO2_PAGE || 'main';
     grid: 'ng', fold: 'ngx', chips: 'ncChips', search: 'nq', count: 'nn', thead: 'nth', tbody: 'ntb', more: 'nm', kicker: 'kmNc',
     rows: function () { return SEL_NC; },
     dims: [
-      { k: 'prog', t: 'dProg', custom: pie, color: function (v) { return PROG_COL[v] || 'var(--dim)'; }, get: function (n) { return n[3] || 'Autre'; }, show: function (v) { return v === 'Autre' ? L('Autre') : v; } },
+      { fold: true, k: 'prog', t: 'dProg', custom: pie, color: function (v) { return PROG_COL[v] || 'var(--dim)'; }, get: function (n) { return n[3] || 'Autre'; }, show: function (v) { return v === 'Autre' ? L('Autre') : v; } },
       { fold: true, k: 'prod', t: 'dProd', sub: 'dProdSub', top: 15, get: function (n) { return n[26] || 'Other'; }, show: prodName },
       { fold: true, k: 'status', t: 'dStatus', custom: statusBars, get: function (n) { return n[7]; }, show: ruleName },
       { fold: true, k: 'month', t: 'dMonthNc', sub: 'monthNcSub', wide: true, custom: ncMonthLines, get: function (n) { return n[1].slice(0, 7); }, show: function (v) { return monthName(v) + ' ' + v.slice(0, 4); }, order: function (v) { return v.sort(); } },
@@ -4736,17 +4742,17 @@ window.FTO2_PAGE = window.FTO2_PAGE || 'main';
   // target = 2025 - 25 %, budget = forecast - 25 %.
   var V2 = PAGE === 'main', V2B = false, V2CUT = 0.75, V2BAND = {};
   var V2L = {
-    ov: { top: ['VN'], mid: ['VB', 'a:lead', 'VX'], fold: ['a:cal'] },
+    ov: { top: ['VT', 'VN', 'VB', 'a:lead', 'VX'], fold: ['a:cal'] },
     pareto: { inboard: ['a:bub', 'a:flow'], more: ['54', '65', 'a:bump', 'VW', 'VQ'], fold: ['53', '78', '76'] },
     where: { top: ['VP', '61', '64', '71', 'VF', 'a:msn', 'a:prod', 'a:station'], fold: ['VI'] },
     cnq: { more: ['VC', 'VE'] }
   };
   var V2F = { VT: v2Target, VN: v2Trend, VB: v2Budget, VS: v2Score, VX: v2Xmr, VW: v2Waffle, VQ: v2Quarters, VP: v2Prod, VF: v2Fins, VI: v2Icons, VC: v2Comp, VE: v2Each };
   Object.assign(GSTR, {
-    VT: { fr: ['Objectif', 'Chaque ligne face à son objectif', 'NC par MSN depuis le début de la période ; trait noir : objectif. Objectif fictif pour l’instant : taux 2026 moins 25 %.', 'production MSN · NC'],
-          en: ['Target', 'Each line against its target', 'NCs per MSN since the start of the period; black line: target. Placeholder target for now: 2026 rate minus 25%.', 'MSN output · NCs'] },
-    VN: { fr: ['Tendance', 'NC par mois', 'Clair : prévision, au taux de la période × production prévue.', 'NC · production MSN prévue'],
-          en: ['Trend', 'NCs per month', 'Light: forecast, at the period rate × planned output.', 'NCs · planned MSN output'] },
+    VT: { fr: ['Objectif', 'Chaque ligne face à son objectif', 'NC par MSN produit ; trait : objectif. Objectifs fictifs en attendant 2025 : taux 2026 moins 25 %.', 'production MSN · NC'],
+          en: ['Target', 'Each line against its target', 'NCs per MSN built; tick: target. Placeholder targets until 2025: 2026 rate minus 25%.', 'MSN output · NCs'] },
+    VN: { fr: ['Tendance', 'NC par mois et par programme', 'Clair : prévision au taux de la période × production prévue. Cliquez un programme pour filtrer.', 'NC · production MSN prévue'],
+          en: ['Trend', 'NCs per month and programme', 'Light: forecast at the period rate × planned output. Click a programme to filter.', 'NCs · planned MSN output'] },
     VB: { fr: ['Coût', 'Coût de non-qualité cumulé', 'Pointillé : prévision ; tirets : budget au prorata.', 'coût CNQ · production MSN prévue'],
           en: ['Cost', 'Cumulative cost of non-quality', 'Dotted: forecast; dashed: pro-rata budget.', 'CNQ cost · planned MSN output'] },
     VS: { fr: ['Volumes et taux', 'NC, défauts et coût : le volume, puis par MSN', 'Chaque ligne : le volume mois par mois, puis le même rapporté au nombre de MSN produits.', 'NC · défauts · coût · production MSN'],
@@ -4793,11 +4799,9 @@ window.FTO2_PAGE = window.FTO2_PAGE || 'main';
   }
   function v2Build() {
     if (V2B) return; V2B = true;
-    var ov = document.getElementById('p-ov'), figs = ov.querySelector('.figs'), ob = document.createElement('section');
-    ob.className = 'v2objbox'; ob.innerHTML = '<p class="v2objh" id="v2ObjH"></p><div class="v2obj" id="v2Obj"></div><p class="v2objcap" id="v2ObjC"></p>';
-    ov.insertBefore(ob, figs.nextSibling);
-    ov.insertBefore(v2Grid(V2L.ov.top), ob.nextSibling);
-    ov.insertBefore(v2Grid(V2L.ov.mid), document.getElementById('ngxBox'));
+    var ov = document.getElementById('p-ov'), figs = ov.querySelector('.figs');
+    ov.insertBefore(v2Grid(V2L.ov.top), figs.nextSibling);
+    var inner = document.querySelector('#ngxBox .inner'); inner.insertBefore(document.getElementById('ncChips'), inner.firstChild);   // the breakdown lists and their filter chips fold together
     var ngx = v2Wire(document.getElementById('ngx'));
     V2L.ov.fold.forEach(function (k) { var b = v2Band(k); if (b) ngx.appendChild(b); });
     document.getElementById('ngxBox').addEventListener('toggle', function (e) { if (e.target.open) v2Render(); });
@@ -4822,7 +4826,7 @@ window.FTO2_PAGE = window.FTO2_PAGE || 'main';
     v2Build();
     PD = pSrc() ? pData() : null; PA = PD ? pAgg(PD) : null;
     var L2 = V2L[G.tab]; if (!L2) return;
-    if (G.tab === 'ov') { v2Obj(); v2Kpis(); }
+    if (G.tab === 'ov') v2Kpis();
     if (G.tab === 'pareto') { var gid = PMODE === 'vol' ? 'pg' : 'kg', anchor = document.getElementById(gid + '-rca'), card = anchor && anchor.closest('.card');
       if (card) L2.inboard.slice().reverse().forEach(function (k) { var b2 = V2BAND[k]; if (b2 && b2.previousSibling !== card) card.parentNode.insertBefore(b2, card.nextSibling); }); }
     ['top', 'inboard', 'mid', 'more', 'fold'].forEach(function (s2) {
@@ -4882,8 +4886,7 @@ window.FTO2_PAGE = window.FTO2_PAGE || 'main';
     }
     var put = function (id, html, sub) {
       var b = document.getElementById(id); if (!b) return; var f = b.closest('.fig'), sp = f.querySelector('.v2spark'), sm = f.querySelector('.v2per');
-      if (!sp) { sp = document.createElement('span'); sp.className = 'v2spark'; f.appendChild(sp); }
-      sp.innerHTML = html;
+      if (sp) sp.remove();
       if (sub != null) { if (!sm) { sm = document.createElement('small'); sm.className = 'v2per'; b.insertAdjacentElement('afterend', sm); } sm.textContent = sub; }
     };
     var pn = tot(rN), pdf = tot(rD), pc = tot(rC);
@@ -4898,34 +4901,37 @@ window.FTO2_PAGE = window.FTO2_PAGE || 'main';
     if (!rows.length) { pEmpty(k); return; }
     if (rows.length > 1) rows.unshift({ l: S('allLines'), nc: sumA(rows.map(function (r) { return r.nc; })), eq: sumA(rows.map(function (r) { return r.eq; })), all: true });
     rows.forEach(function (r) { r.v = r.nc / r.eq; r.t = r.v * V2CUT; });   // placeholder: 2025 not in the data, taken = 2026
-    var W0 = gWd(k), lab = 118, mr = 168, rh = 42, H = rows.length * rh + 6, mx = Math.max.apply(null, rows.map(function (r) { return r.v; }).concat([1e-9])) * 1.08, pw = W0 - lab - mr, g = '';
-    function X(v) { return lab + v / mx * pw; }
+    var W0 = gWd(k), lab = 104, mr = 214, rh = 36, H = rows.length * rh + 6, pw = W0 - lab - mr, g = '';
     rows.forEach(function (r, i) {
-      var y = i * rh + 4, gap = r.v / r.t - 1, over = r.v > r.t;
-      g += tx(lab - 10, y + 15, r.l, r.all ? 'ink b' : 'ink', 'end') + tx(lab - 10, y + 30, gx('ncEq', { n: num(r.nc), e: f1(r.eq) }), 'mu', 'end', ' style="font-size:11px"');
-      g += '<rect x="' + lab + '" y="' + (y + 4) + '" width="' + r1(pw) + '" height="20" rx="2" fill="var(--track)"/>';
-      g += '<rect x="' + lab + '" y="' + (y + 4) + '" width="' + r1(Math.max(1.5, X(r.v) - lab)) + '" height="20" rx="2" fill="' + (over ? 'var(--up)' : 'var(--s1)') + '"' + (r.all ? '' : ' fill-opacity=".85"') + tip(r.l, [gx('perEq', { v: f2(r.v) }), S('v2Tgt') + ' : ' + f2(r.t)]) + '/>';
-      g += '<line x1="' + r1(X(r.t)) + '" x2="' + r1(X(r.t)) + '" y1="' + y + '" y2="' + (y + 28) + '" stroke="var(--ink)" stroke-width="2.5"/>';
-      g += tx(lab + pw + 10, y + 19, f2(r.v), 'ink b') + tx(lab + pw + 54, y + 19, (gap > 0 ? '+' : '') + pct0(gap * 100) + ' ' + S('v2VsTgt'), over ? '' : 'mu', null, over ? v2Up() : '');
+      var y = i * rh + 8, mx = Math.max(r.v, r.t) * 1.18 || 1, X = function (v) { return lab + v / mx * pw; }, gap = r.v / r.t - 1;
+      g += tx(lab - 12, y + 10, r.l, r.all ? 'ink b' : 'ink', 'end');
+      g += '<rect x="' + lab + '" y="' + (y + 2) + '" width="' + r1(pw) + '" height="8" rx="4" fill="var(--track)"/>';
+      g += '<rect x="' + lab + '" y="' + (y + 2) + '" width="' + r1(Math.max(2, X(r.v) - lab)) + '" height="8" rx="4" fill="' + (r.all ? 'var(--ink)' : 'var(--ink-2)') + '"' + tip(r.l, [gx('perEq', { v: f2(r.v) }), S('v2Tgt') + ' : ' + f2(r.t), gx('ncEq', { n: num(r.nc), e: f1(r.eq) })]) + '/>';
+      g += '<line x1="' + r1(X(r.t)) + '" x2="' + r1(X(r.t)) + '" y1="' + (y - 3) + '" y2="' + (y + 15) + '" stroke="var(--ink)" stroke-width="2"/>';
+      g += tx(lab + pw + 14, y + 10, f2(r.v), 'ink b') + tx(lab + pw + 58, y + 10, S('v2Tgt').toLowerCase() + ' ' + f2(r.t), 'mu') + tx(W0 - 2, y + 10, (gap > 0 ? '+' : '') + pct0(gap * 100), 'b', 'end', ' style="fill:' + (gap > 0 ? 'var(--up)' : 'var(--down)') + '"');
     });
-    gSet(k, svg(W0, H, g, gT(k)), sw('var(--up)', S('v2Above')) + sw('var(--s1)', S('v2Below')) + swl('var(--ink)', S('v2TgtPh')));
+    gSet(k, svg(W0, H, g, gT(k)), sw('var(--ink-2)', S('nKR')) + '<span><i class="ln" style="width:2px;height:12px;background:var(--ink)"></i>' + esc(S('v2TgtPh')) + '</span>');
   }
 
   function v2Trend(k) {
     var S2 = v2Series(function () { return 1; }), all = S2.act.concat(S2.fc); if (!S2.act.length) { pEmpty(k); return; }
     var year = S2.tot + S2.ftot, tgt = year * V2CUT, mtg = tgt / 12;   // placeholders until the 2025 total comes: 2025 = this year, target = 2025 - 25 %
+    var byL = {}, tl = {}; SEL_NC.forEach(function (n) { var m = n[1].slice(0, 7), l = PROG_COL[n[3]] ? n[3] : 'Autre'; (byL[m] || (byL[m] = {}))[l] = (byL[m][l] || 0) + 1; tl[l] = (tl[l] || 0) + 1; });
+    var lines = lineOrder(Object.keys(tl)), col = function (l) { return PROG_COL[l] || 'var(--dim)'; };
     v2Stats(k, [[num(S2.tot), S('v2StNow')], [num(Math.round(year)), S('v2StFc')], [num(Math.round(tgt)), S('v2StTgt'), true]]);
-    var W0 = gWd(k, 420), ml = 34, mr = 8, mt = 22, mb = 26, H = 280, pw = W0 - ml - mr, ph = H - mt - mb, nt = pNice(Math.max(mtg, Math.max.apply(null, all.map(function (x) { return x.v; })), 1) * 1.12), bw = pw / all.length, g = '';
+    var W0 = gWd(k, 420), ml = 30, mr = 6, mt = 20, mb = 24, H = 290, pw = W0 - ml - mr, ph = H - mt - mb, nt = pNice(Math.max(mtg, Math.max.apply(null, all.map(function (x) { return x.v; })), 1) * 1.1), bw = pw / all.length, g = '';
     function Y(v) { return mt + ph - v / nt.top * ph; }
     g += pGridY(ml, pw, Y, nt);
     all.forEach(function (x, i) {
-      var x0 = ml + i * bw + bw * 0.2, w = bw * 0.6, last = !x.f && i === S2.act.length - 1;
-      g += '<rect x="' + r1(x0) + '" y="' + r1(Y(x.v)) + '" width="' + r1(w) + '" height="' + r1(Math.max(0.6, mt + ph - Y(x.v))) + '" rx="3" fill="' + (x.f ? tint('--s1', 26) : 'var(--s1)') + '"' +
-        tip(monthName(x.m) + ' ' + x.m.slice(0, 4), [(x.f ? gx('fcLeg') : gx('actLeg')) + ' : ' + num(Math.round(x.v))]) + '/>' + tx(x0 + w / 2, H - 8, monthName(x.m).slice(0, 4), 'mu', 'middle');
-      if (bw > 30) g += tx(x0 + w / 2, Y(x.v) - 6, num(Math.round(x.v)), x.f || !last ? 'mu' : 'ink b', 'middle', ' style="font-size:11px"');
+      var x0 = ml + i * bw + bw * 0.22, w = bw * 0.56, acc = 0;
+      if (x.f) g += '<rect x="' + r1(x0) + '" y="' + r1(Y(x.v)) + '" width="' + r1(w) + '" height="' + r1(Math.max(0.6, mt + ph - Y(x.v))) + '" rx="2" fill="' + tint('--ink-2', 14) + '" stroke="var(--ink-2)" stroke-opacity=".45" stroke-dasharray="3 3"' + tip(monthName(x.m) + ' ' + x.m.slice(0, 4), [gx('fcLeg') + ' : ' + num(Math.round(x.v))]) + '/>';
+      else lines.forEach(function (l) { var v = (byL[x.m] || {})[l] || 0; if (!v) return; var y1 = Y(acc + v), h = Y(acc) - y1; acc += v;
+        g += '<rect x="' + r1(x0) + '" y="' + r1(y1) + '" width="' + r1(w) + '" height="' + r1(Math.max(0.6, h - 1)) + '" fill="' + col(l) + '" data-aline="' + esc(l) + '" style="cursor:pointer"' + tip(monthName(x.m) + ' · ' + progName(l), [gx('ncCount', { n: num(v) })]) + '/>'; });
+      g += tx(x0 + w / 2, Y(x.v) - 6, num(Math.round(x.v)), x.f ? 'mu' : 'ink', 'middle', ' style="font-size:11px"') + tx(x0 + w / 2, H - 6, monthName(x.m).slice(0, 4), 'mu', 'middle');
     });
-    g += '<line x1="' + ml + '" x2="' + r1(ml + pw) + '" y1="' + r1(Y(mtg)) + '" y2="' + r1(Y(mtg)) + '" stroke="var(--ink)" stroke-width="1.4" stroke-dasharray="5 4"/>';
-    gSet(k, svg(W0, H, g, gT(k)), sw('var(--s1)', gx('actLeg')) + sw(tint('--s1', 26), gx('fcLeg')) + swl('var(--ink)', S('v2MTgt', { v: num(Math.round(mtg)) }), true));
+    g += '<line x1="' + ml + '" x2="' + r1(ml + pw) + '" y1="' + r1(Y(mtg)) + '" y2="' + r1(Y(mtg)) + '" stroke="var(--ink)" stroke-width="1.2" stroke-dasharray="5 4"/>';
+    gSet(k, svg(W0, H, g, gT(k)), lines.map(function (l) { return '<span data-aline="' + esc(l) + '" style="cursor:pointer"><i class="sw" style="background:' + col(l) + '"></i>' + esc(progName(l)) + ' <b>' + esc(num(tl[l])) + '</b> <span class="mu">' + esc(pct0(tl[l] / S2.tot * 100)) + '</span></span>'; }).join('') +
+      '<span><i class="sw" style="background:' + tint('--ink-2', 14) + ';border:1px dashed var(--ink-2)"></i>' + esc(gx('fcLeg')) + '</span>' + swl('var(--ink)', S('v2MTgt', { v: num(Math.round(mtg)) }), true));
   }
 
   function v2Budget(k) {
@@ -4933,16 +4939,18 @@ window.FTO2_PAGE = window.FTO2_PAGE || 'main';
     var all = S2.act.concat(S2.fc), year = S2.tot + S2.ftot, bud = year * V2CUT, cum = [0], c = 0;   // placeholder budget: forecast - 25 %
     all.forEach(function (x) { c += x.v; cum.push(c); });
     v2Stats(k, [[kE(S2.tot), S('v2StCost')], [kE(year), S('v2StFc')], [kE(bud), S('v2StBud'), true]]);
-    var na = S2.act.length, n = all.length, W0 = gWd(k, 420), ml = 52, mr = 10, mt = 14, mb = 26, H = 280, pw = W0 - ml - mr, ph = H - mt - mb, nt = pNice(Math.max(year, bud) * 1.06), g = '';
+    var na = S2.act.length, n = all.length, W0 = gWd(k, 420), ml = 52, mr = 104, mt = 14, mb = 26, H = 280, pw = W0 - ml - mr, ph = H - mt - mb, nt = pNice(Math.max(year, bud) * 1.06), g = '';
     function X(i) { return ml + i / n * pw; } function Y(v) { return mt + ph - v / nt.top * ph; }
     g += pGridY(ml, pw, Y, nt, function (v) { return kE(v); });
     all.forEach(function (x, i) { g += tx(X(i + 0.5), H - 8, monthName(x.m).slice(0, 4), 'mu', 'middle'); });
     var act = cum.slice(0, na + 1).map(function (v, i) { return r1(X(i)) + ',' + r1(Y(v)); });
     g += '<line x1="' + r1(X(0)) + '" y1="' + r1(Y(0)) + '" x2="' + r1(X(n)) + '" y2="' + r1(Y(bud)) + '" stroke="var(--ink-2)" stroke-width="1.4" stroke-dasharray="5 4"/>';
-    g += '<path d="M' + r1(X(0)) + ',' + r1(Y(0)) + 'L' + act.join('L') + 'L' + r1(X(na)) + ',' + r1(Y(0)) + 'Z" fill="' + tint('--s1', 12) + '"/><path d="M' + act.join('L') + '" fill="none" stroke="var(--s1)" stroke-width="2.2"/>';
+    g += '<path d="M' + r1(X(0)) + ',' + r1(Y(0)) + 'L' + act.join('L') + 'L' + r1(X(na)) + ',' + r1(Y(0)) + 'Z" fill="' + tint('--s1', 10) + '"/><path d="M' + act.join('L') + '" fill="none" stroke="var(--s1)" stroke-width="1.8"/>';
     if (n > na) g += '<path d="M' + cum.slice(na).map(function (v, i) { return r1(X(na + i)) + ',' + r1(Y(v)); }).join('L') + '" fill="none" stroke="var(--s1)" stroke-width="2.2" stroke-dasharray="1 5" stroke-linecap="round"/>';
     g += '<circle cx="' + r1(X(na)) + '" cy="' + r1(Y(cum[na])) + '" r="4.5" fill="var(--s1)" stroke="var(--surface)" stroke-width="2"' + tip(gx('cum'), [eur(cum[na])]) + '/>';
     g += '<circle cx="' + r1(X(n)) + '" cy="' + r1(Y(year)) + '" r="3.5" fill="var(--surface)" stroke="var(--s1)" stroke-width="2"' + tip(gx('proj'), [eur(year)]) + '/>';
+    var ly = spread([Y(year) + 4, Y(bud) + 4], 16, mt + 6, mt + ph);
+    g += tx(X(n) + 8, ly[0], kE(year), 'ink b') + tx(X(n) + 8, ly[1], kE(bud) + ' ' + S('v2Ph'), 'mu') + tx(X(na) - 8, Y(cum[na]) - 10, kE(cum[na]), 'ink b', 'end');
     gSet(k, svg(W0, H, g, gT(k)), swl('var(--s1)', gx('cum')) + '<span><i class="dash" style="border-top:2px dotted var(--s1)"></i>' + esc(gx('fcLeg')) + '</span>' + swl('var(--ink-2)', S('v2BudPh'), true));
   }
 
