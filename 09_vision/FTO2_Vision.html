@@ -85,7 +85,7 @@ button { font: inherit; color: inherit; }
 .hero { padding-block: 34px 10px; display: grid; gap: 22px; }
 .eyebrow { font-size: 11.5px; letter-spacing: .09em; text-transform: uppercase; color: var(--accent); font-weight: 700; }
 .hero h1 { font-family: var(--font-display); font-weight: 450; font-size: clamp(30px, 4vw, 50px); line-height: 1.1; letter-spacing: -0.015em; margin: 0; max-width: 31ch; text-wrap: balance; }
-.hero h1 em { font-style: normal; color: var(--accent); }
+.hero h1 em { font-style: italic; }
 .hero h1 .bad { color: var(--escape); } .hero h1 .good { color: var(--accent); }
 .hero .lede { font-size: 15.5px; color: var(--ink-2); max-width: 70ch; margin: 0; }
 .tiles { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); border-top: 2px solid var(--ink); border-bottom: 1px solid var(--rule); }
@@ -111,8 +111,8 @@ button { font: inherit; color: inherit; }
 .rail .d { font-size: 12.5px; color: var(--muted); }
 .chap-body { display: grid; gap: 18px; min-width: 0; }
 .chap h2 { font-family: var(--font-display); font-weight: 450; font-size: clamp(24px, 2.6vw, 33px); line-height: 1.15; letter-spacing: -0.01em; margin: 0; max-width: 30ch; text-wrap: balance; }
-.chap h2 em { font-style: normal; color: var(--accent); }
-.chap h2 .bad { color: var(--escape); }
+.chap h2 em { font-style: italic; }
+.chap h2 .bad { color: var(--escape); } .chap h2 .good { color: var(--accent); }
 .chap h2 .cab { color: var(--cable); }
 .sub2 { font-size: 14.5px; color: var(--ink-2); margin: 0; max-width: 72ch; }
 .grid2 { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: 18px; align-items: start; }
@@ -147,7 +147,7 @@ svg .base { stroke: var(--rule); stroke-width: 1; }
 /* signals */
 .signals { display: grid; gap: 0; background: var(--band); border-radius: 10px; padding: 16px 16px 6px; align-self: stretch; align-content: start; }
 .signals h3 { font-size: 11.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2); font-weight: 700; margin: 0 0 6px; }
-.sig { display: grid; grid-template-columns: auto minmax(0, 1fr) 84px; gap: 4px 12px; align-items: center; padding: 11px 0; border-top: 1px solid var(--rule); cursor: pointer; text-align: left; background: none; border-left: 0; border-right: 0; border-bottom: 0; width: 100%; }
+.sig { display: grid; grid-template-columns: auto minmax(0, 1fr) 84px 10px; gap: 4px 12px; align-items: center; padding: 11px 0; border-top: 1px solid var(--rule); cursor: pointer; text-align: left; background: none; border-left: 0; border-right: 0; border-bottom: 0; width: 100%; }
 .sig:hover { background: var(--accent-soft); }
 .sig { padding-inline: 4px; border-radius: 0; }
 .sig .ic { width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; font-size: 13px; font-weight: 700; border: 1.5px solid currentColor; }
@@ -382,19 +382,19 @@ body.presenting .wrap { max-width: 1440px; }
       endNote: 'Fin d’année : {a} à {b} {u} si octobre–décembre suivent {y0} au rythme récent ou au rythme de l’année.',
       unitNc: 'NC', unitDef: 'Défauts', lg25: '{y0}', lg26: '{y}', lgProj: 'Projection ({y0} × rythme récent)',
       hero1: '{n} NC depuis janvier, <span class="{c}">{d}</span> par rapport à {y0} à la même date.',
-      heroClose: ' Depuis {m}, l’écart n’est plus que de <em>{r}</em>.', heroWide: ' Depuis {m}, l’écart se creuse : <span class="bad">{r}</span>.', heroSame: ' Depuis {m}, l’écart reste du même ordre ({r}).', heroBetter: ' Depuis {m}, FTO2 fait mieux que {y0} : <em>{r}</em>.',
+      heroClose: ' Depuis {m}, l’écart n’est plus que de <span class="good">{r}</span>.', heroWide: ' Depuis {m}, l’écart se creuse : <span class="bad">{r}</span>.', heroSame: ' Depuis {m}, l’écart reste du même ordre ({r}).', heroBetter: ' Depuis {m}, FTO2 fait mieux que {y0} : <span class="good">{r}</span>.',
       lede: '{y0} : export Skywise de l’archive du 19 octobre, même périmètre que {y} (FTO2 responsable, NC non supprimées, sans ERMA).',
       sigTitle: 'À regarder', sigNone: 'Rien d’anormal sur les quatre dernières semaines.',
-      sigUp: '<b>{r}</b> : {o} en 4 semaines, ~{e} attendus', sigUpS: 'au rythme du reste de l’année ({p}) · cliquer pour voir la cause',
-      sigDown: '<b>{r}</b> en baisse : {o} en 4 semaines, ~{e} attendus', sigFin: '<b>{f}</b> sur {k} avions différents en 4 semaines', sigFinS: '{r} · cliquer pour voir ces avions',
+      sigUp: '<b>{r}</b> : {o} en 4 semaines, ~{e} attendus', sigUpS: 'rythme du reste de l’année · {p}',
+      sigDown: '<b>{r}</b> en baisse : {o} en 4 semaines, ~{e} attendus', sigFin: '<b>{f}</b> sur {k} avions différents en 4 semaines', sigFinS: '{r}',
       sigOpen: '<b>{n} NC ouvertes</b> depuis plus de 30 jours', sigOpen1: '<b>1 NC ouverte</b> depuis plus de 30 jours', sigOpenS: 'la plus ancienne : {d} jours', sigCli: '<b>{n} retours clients</b> en 4 semaines', sigCliS: '{a} par mois en moyenne avant',
       r1n: 'Ce qui a grandi', r1d: 'Les causes, {y0} → {y}, même date.',
       h1: '<em>{c}</em> pèse {p} de la hausse des défauts depuis {y0}.', h1down: 'Moins de défauts qu’en {y0} à la même date ({d}).',
       h1s: 'Les défauts câble : <b>{cd}</b>, contre <b>{ad}</b> pour l’ensemble des défauts.',
       c1aT: 'Défauts par cause, {y0} → {y}', c1aN: 'Jusqu’au {d} chaque année. Classement du parseur v4.8 sur les deux années (le seul disponible pour {y0}).',
-      c1bT: 'Défauts câble face au reste', c1bN: 'Indice 100 = {y0} à la même date.', idxAll: 'Tous les défauts', idxCable: 'Défauts câble', idxOther: 'Hors câble',
+      c1bT: 'Défauts câble face au reste', c1bN: 'Indice 100 = {y0} à la même date.', cableShare: 'Part des défauts câble : {a} en {y0} → {b} en {y}', idxAll: 'Tous les défauts', idxCable: 'Défauts câble', idxOther: 'Hors câble',
       r2n: 'Qui attrape quoi', r2d: 'Où chaque défaut a été trouvé, jusqu’au client.',
-      h2: 'Le test attrape <em>{p}</em> des erreurs de branchement.', h2b: ' <span class="bad">{c}</span> atteint le plus le client : {e} de ces défauts.',
+      h2: 'Le test attrape <span class="good">{p}</span> des erreurs de branchement.', h2b: ' <span class="bad">{c}</span> atteint le plus le client : {e} de ces défauts.',
       h2none: ' Aucun défaut de la sélection n’a atteint le client.', h2alt: '{s} trouve {p} des défauts.',
       h2s: 'Chaque fil va d’une cause au poste qui l’a trouvée. En rouge, ce qui est sorti de l’usine.',
       c2aT: 'De la cause au poste qui la trouve', c2aN: 'Défauts FTO2 et défauts des retours clients de la sélection.',
@@ -419,7 +419,7 @@ body.presenting .wrap { max-width: 1440px; }
       c4bT: 'Quelles broches sont inversées', c4bN: 'Connecteurs avec le plus d’inversions dont les deux broches sont écrites. Au-dessus : {y} ; en dessous : {y0}. Épaisseur : nombre d’avions.',
       pinTip: 'Broches {a} ↔ {b}', planes: '{n} avions', plane1: '1 avion',
       r5n: 'Un avion, toute son histoire', r5d: 'Chaque NC d’un MSN, du premier poste au client.',
-      h5: 'MSN {m} : {n} NC et {c}, <em>{x}</em> la médiane de la ligne.', h5low: 'MSN {m} : {n} NC et {c}, sous la médiane de la ligne.',
+      h5: 'MSN {m} : {n} NC et {c}, <span class="bad">{x}</span> la médiane de la ligne.', h5low: 'MSN {m} : {n} NC et {c}, sous la médiane de la ligne.',
       c5aT: 'Tous les avions de la sélection', c5aN: 'Une colonne par MSN, dans l’ordre des numéros. Point rouge : retour client. Cliquer pour ouvrir son passeport.',
       mCost: 'Coût', mNc: 'NC',
       pNc: 'NC', pDef: 'Défauts', pCost: 'Coût', pCli: 'Retours clients', pMed: 'médiane ligne {v}', pTimes: '{v} × la médiane',
@@ -445,19 +445,19 @@ body.presenting .wrap { max-width: 1440px; }
       endNote: 'Year end: {a} to {b} {u} if October–December follow {y0} at the recent pace or at the year’s pace.',
       unitNc: 'NCs', unitDef: 'Defects', lg25: '{y0}', lg26: '{y}', lgProj: 'Projection ({y0} × recent pace)',
       hero1: '{n} NCs since January, <span class="{c}">{d}</span> on {y0} at the same date.',
-      heroClose: ' Since {m} the gap is down to <em>{r}</em>.', heroWide: ' Since {m} the gap is widening: <span class="bad">{r}</span>.', heroSame: ' Since {m} the gap is about the same ({r}).', heroBetter: ' Since {m} FTO2 is doing better than {y0}: <em>{r}</em>.',
+      heroClose: ' Since {m} the gap is down to <span class="good">{r}</span>.', heroWide: ' Since {m} the gap is widening: <span class="bad">{r}</span>.', heroSame: ' Since {m} the gap is about the same ({r}).', heroBetter: ' Since {m} FTO2 is doing better than {y0}: <span class="good">{r}</span>.',
       lede: '{y0}: Skywise export from the 19 October archive, same scope as {y} (FTO2 liable, NCs not deleted, no ERMA).',
       sigTitle: 'To look at', sigNone: 'Nothing unusual over the last four weeks.',
-      sigUp: '<b>{r}</b>: {o} in 4 weeks, ~{e} expected', sigUpS: 'at the pace of the rest of the year ({p}) · click to see the cause',
-      sigDown: '<b>{r}</b> going down: {o} in 4 weeks, ~{e} expected', sigFin: '<b>{f}</b> on {k} different aircraft in 4 weeks', sigFinS: '{r} · click to see these aircraft',
+      sigUp: '<b>{r}</b>: {o} in 4 weeks, ~{e} expected', sigUpS: 'pace of the rest of the year · {p}',
+      sigDown: '<b>{r}</b> going down: {o} in 4 weeks, ~{e} expected', sigFin: '<b>{f}</b> on {k} different aircraft in 4 weeks', sigFinS: '{r}',
       sigOpen: '<b>{n} NCs open</b> for more than 30 days', sigOpen1: '<b>1 NC open</b> for more than 30 days', sigOpenS: 'oldest: {d} days', sigCli: '<b>{n} customer returns</b> in 4 weeks', sigCliS: '{a} per month on average before',
       r1n: 'What grew', r1d: 'Causes, {y0} → {y}, same date.',
       h1: '<em>{c}</em> accounts for {p} of the rise in defects since {y0}.', h1down: 'Fewer defects than in {y0} at the same date ({d}).',
       h1s: 'Cable defects: <b>{cd}</b>, against <b>{ad}</b> for all defects.',
       c1aT: 'Defects by cause, {y0} → {y}', c1aN: 'Up to the {d} each year. Parser v4.8 classification for both years (the only one available for {y0}).',
-      c1bT: 'Cable defects against the rest', c1bN: 'Index 100 = {y0} at the same date.', idxAll: 'All defects', idxCable: 'Cable defects', idxOther: 'Other defects',
+      c1bT: 'Cable defects against the rest', c1bN: 'Index 100 = {y0} at the same date.', cableShare: 'Share of cable defects: {a} in {y0} → {b} in {y}', idxAll: 'All defects', idxCable: 'Cable defects', idxOther: 'Other defects',
       r2n: 'Who catches what', r2d: 'Where each defect was found, up to the customer.',
-      h2: 'The test bench catches <em>{p}</em> of connection errors.', h2b: ' <span class="bad">{c}</span> defects reach the customer most often: {e} of them.',
+      h2: 'The test bench catches <span class="good">{p}</span> of connection errors.', h2b: ' <span class="bad">{c}</span> defects reach the customer most often: {e} of them.',
       h2none: ' No defect in the selection reached the customer.', h2alt: '{s} finds {p} of defects.',
       h2s: 'Each thread runs from a cause to the station that found it. In red, what left the plant.',
       c2aT: 'From the cause to the station that finds it', c2aN: 'FTO2 defects and customer-return defects in the selection.',
@@ -482,7 +482,7 @@ body.presenting .wrap { max-width: 1440px; }
       c4bT: 'Which pins get swapped', c4bN: 'Connectors with the most swaps where both pins are written. Above: {y}; below: {y0}. Thickness: number of aircraft.',
       pinTip: 'Pins {a} ↔ {b}', planes: '{n} aircraft', plane1: '1 aircraft',
       r5n: 'One aircraft, its whole story', r5d: 'Every NC of one MSN, from the first station to the customer.',
-      h5: 'MSN {m}: {n} NCs and {c}, <em>{x}</em> the line median.', h5low: 'MSN {m}: {n} NCs and {c}, below the line median.',
+      h5: 'MSN {m}: {n} NCs and {c}, <span class="bad">{x}</span> the line median.', h5low: 'MSN {m}: {n} NCs and {c}, below the line median.',
       c5aT: 'Every aircraft in the selection', c5aN: 'One column per MSN, in number order. Red dot: customer return. Click to open its passport.',
       mCost: 'Cost', mNc: 'NCs',
       pNc: 'NCs', pDef: 'Defects', pCost: 'Cost', pCli: 'Customer returns', pMed: 'line median {v}', pTimes: '{v} × the median',
@@ -850,6 +850,7 @@ body.presenting .wrap { max-width: 1440px; }
       if (sg.kind === 'open') { main = fill(sg.n === 1 ? L().sigOpen1 : L().sigOpen, { n: num(sg.n) }); small = fill(L().sigOpenS, { d: num(sg.d) }); }
       b.innerHTML = '<span class="ic" aria-hidden="true">' + icon + '</span><span class="tx">' + main + '<small>' + esc(small) + '</small></span>';
       if (sg.series) { var sv = el('svg', { viewBox: '0 0 84 28', preserveAspectRatio: 'none' }); spark(sv, sg.series, 84, 28); b.appendChild(sv); } else b.appendChild(document.createElement('span'));
+      var arrow = document.createElement('span'); arrow.textContent = '›'; arrow.setAttribute('aria-hidden', 'true'); arrow.style.color = 'var(--muted)'; arrow.style.fontSize = '18px'; b.appendChild(arrow);
       b.addEventListener('click', function () {
         if (sg.kind === 'up' || sg.kind === 'down') { S.focusCat = DICT.rcaCat[sg.r]; render(); go('s2'); }
         else if (sg.kind === 'fin') { S.focusFin = sg.f; S.msn = null; render(); go('s5'); }
@@ -910,11 +911,13 @@ body.presenting .wrap { max-width: 1440px; }
     // index chart: cable vs other, 100 = Y0
     txt('c1bT', t('c1bT')); txt('c1bN', t('c1bN'));
     var b2 = $('cableChart'), w2 = width(b2), items = [{ k: t('idxAll'), a: all25, b: all26, c: 'var(--ink-2)' }, { k: t('idxOther'), a: all25 - pc25, b: all26 - pc26, c: 'var(--prior)' }, { k: t('idxCable'), a: pc25, b: pc26, c: 'var(--cable)' }];
-    var h2 = 64 + items.length * 52, svg2 = svgIn(b2, w2, h2), m2 = { l: 8, r: 70, t: 10 };
+    var h2 = 64 + items.length * 52 + 40, svg2 = svgIn(b2, w2, h2), m2 = { l: 8, r: 70, t: 10 };
     var vals = items.map(function (it) { return it.a ? 100 * it.b / it.a : 0; }), mx2 = niceMax(Math.max.apply(null, vals.concat([120])));
     var x2 = function (v) { return m2.l + v / mx2 * (w2 - m2.l - m2.r); };
-    el('line', { x1: x2(100), x2: x2(100), y1: m2.t, y2: h2 - 22, stroke: 'var(--ink-2)', 'stroke-width': 1, 'stroke-dasharray': '3 3' }, svg2);
-    el('text', { x: x2(100), y: h2 - 6, 'text-anchor': 'middle', class: 'tick' }, svg2, '100 = ' + Y0);
+    el('line', { x1: x2(100), x2: x2(100), y1: m2.t, y2: h2 - 62, stroke: 'var(--ink-2)', 'stroke-width': 1, 'stroke-dasharray': '3 3' }, svg2);
+    el('text', { x: x2(100), y: h2 - 46, 'text-anchor': 'middle', class: 'tick' }, svg2, '100 = ' + Y0);
+    el('line', { x1: 0, x2: w2, y1: h2 - 32, y2: h2 - 32, class: 'gridline' }, svg2);
+    el('text', { x: 0, y: h2 - 10, class: 'lab' }, svg2, t('cableShare', { a: pct(all25 ? pc25 / all25 : 0, 1), b: pct(all26 ? pc26 / all26 : 0, 1) }));
     items.forEach(function (it, k) {
       var yy = m2.t + 8 + k * 52, v = it.a ? 100 * it.b / it.a : 0;
       el('text', { x: m2.l, y: yy + 2, class: 'lab-b' }, svg2, it.k);

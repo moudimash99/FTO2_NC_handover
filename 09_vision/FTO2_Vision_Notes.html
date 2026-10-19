@@ -1,0 +1,577 @@
+<title>FTO2 Dashboard Vision</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..600&family=Hanken+Grotesk:wght@400..700&display=swap">
+<style>
+/* Layout: a working note in the FTO2 pages' type and colours. One reading column for the argument, wider figures
+   for the evidence (current dashboard against the prototype), five numbered findings, a roadmap whose rows carry
+   the choice buttons. Red only marks what reaches the customer or a problem; green marks FTO2 and what works. */
+:root {
+  --page: #ffffff;
+  --surface: #ffffff;
+  --band: #f3f5f2;
+  --ink: #15171a;
+  --ink-2: #474c52;
+  --muted: #6f767c;
+  --rule: #dde3dd;
+  --ring: rgba(21,23,26,0.12);
+  --accent: #1d6b52;
+  --accent-soft: rgba(29,107,82,0.10);
+  --escape: #d0453a;
+  --cable: #c2620c;
+  --warn: #a8660a;
+  --on-accent: #ffffff;
+  --font-display: "Newsreader", Georgia, "Times New Roman", serif;
+  --font-ui: "Hanken Grotesk", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --page: #101312; --surface: #161a18; --band: #1a1f1c; --ink: #eef1ee; --ink-2: #b9c1bb; --muted: #8b948e;
+    --rule: #2b322e; --ring: rgba(255,255,255,0.12); --accent: #5cc29b; --accent-soft: rgba(92,194,155,0.14);
+    --escape: #f07a6a; --cable: #f0a04b; --warn: #e8b04f; --on-accent: #101312; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --page: #101312; --surface: #161a18; --band: #1a1f1c; --ink: #eef1ee; --ink-2: #b9c1bb; --muted: #8b948e;
+  --rule: #2b322e; --ring: rgba(255,255,255,0.12); --accent: #5cc29b; --accent-soft: rgba(92,194,155,0.14);
+  --escape: #f07a6a; --cable: #f0a04b; --warn: #e8b04f; --on-accent: #101312; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body { margin: 0; background: var(--page); color: var(--ink); font-family: var(--font-ui); font-size: 16px; line-height: 1.6; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 3px; }
+.page { max-width: 1120px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 44px 80px; display: grid; gap: 64px; }
+.col { max-width: 720px; display: grid; gap: 16px; }
+h1, h2, h3 { text-wrap: balance; margin: 0; }
+h1 { font-family: var(--font-display); font-weight: 450; font-size: clamp(36px, 5.4vw, 60px); line-height: 1.05; letter-spacing: -0.02em; max-width: 18ch; }
+h2 { font-family: var(--font-display); font-weight: 450; font-size: clamp(26px, 3.2vw, 36px); line-height: 1.15; letter-spacing: -0.01em; }
+h3 { font-size: 17px; font-weight: 650; line-height: 1.35; }
+p { margin: 0; }
+.eyebrow { font-size: 12px; letter-spacing: .09em; text-transform: uppercase; color: var(--accent); font-weight: 700; }
+.lede { font-size: 19px; color: var(--ink-2); line-height: 1.55; max-width: 64ch; }
+.muted { color: var(--muted); font-size: 14px; }
+a { color: var(--accent); text-underline-offset: 3px; }
+.actions { display: flex; gap: 10px; flex-wrap: wrap; }
+.btn { display: inline-flex; align-items: center; gap: 8px; font: inherit; font-size: 14.5px; font-weight: 650; padding: 10px 16px; border-radius: 8px; background: var(--ink); color: var(--surface); text-decoration: none; border: 1px solid var(--ink); cursor: pointer; }
+.btn.ghost { background: transparent; color: var(--ink); border-color: var(--ring); }
+.btn:hover { filter: brightness(1.12); }
+code { font-size: .88em; background: var(--band); padding: 1px 6px; border-radius: 4px; overflow-wrap: anywhere; }
+section { display: grid; gap: 22px; scroll-margin-top: 20px; }
+
+/* summary */
+.summary { display: grid; gap: 0; border-top: 2px solid var(--ink); }
+.summary li { list-style: none; display: grid; grid-template-columns: 150px minmax(0, 1fr); gap: 18px; padding: 14px 0; border-bottom: 1px solid var(--rule); align-items: baseline; }
+.summary { padding: 0; margin: 0; }
+.summary b.n { white-space: nowrap; font-size: 30px; font-weight: 600; letter-spacing: -0.02em; line-height: 1; font-variant-numeric: lining-nums; }
+.summary b.n.bad { color: var(--escape); } .summary b.n.good { color: var(--accent); } .summary b.n.cab { color: var(--cable); }
+
+/* findings */
+.finding { display: grid; grid-template-columns: 64px minmax(0, 1fr); gap: 8px 24px; padding-top: 26px; border-top: 1px solid var(--rule); }
+.finding .k { font-family: var(--font-display); font-size: 40px; line-height: 1; color: var(--accent); }
+.finding .body { display: grid; gap: 12px; max-width: 760px; min-width: 0; }
+.finding .big { font-size: 46px; font-weight: 600; letter-spacing: -0.02em; line-height: 1; }
+.finding .where, .finding .data { font-size: 14px; color: var(--ink-2); padding-left: 14px; border-left: 2px solid var(--rule); }
+.finding .where b, .finding .data b { color: var(--ink); }
+
+/* figures */
+figure { margin: 0; display: grid; gap: 8px; }
+figure img { width: 100%; height: auto; border: 1px solid var(--rule); border-radius: 10px; background: #fff; display: block; }
+figcaption { font-size: 13.5px; color: var(--muted); max-width: 80ch; }
+.pair { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 22px; align-items: start; }
+.pair.narrow-left { grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); }
+.tagline { font-size: 12px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; }
+.tagline.before { color: var(--muted); } .tagline.after { color: var(--accent); }
+
+/* lists */
+.keep { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px 28px; padding: 0; margin: 0; }
+.keep li { list-style: none; padding-left: 22px; position: relative; font-size: 15px; }
+.keep li::before { content: "✓"; position: absolute; left: 0; color: var(--accent); font-weight: 700; }
+.issue { display: grid; gap: 14px; padding-top: 22px; border-top: 1px solid var(--rule); }
+.issue h3 { display: flex; gap: 10px; align-items: baseline; }
+.issue h3 i { font-style: normal; font-family: var(--font-display); font-size: 22px; color: var(--escape); font-weight: 450; }
+.fix { font-size: 15px; padding: 10px 14px; background: var(--accent-soft); border-radius: 8px; max-width: 760px; }
+.fix b { color: var(--accent); }
+
+/* diagram */
+.diagram { color: var(--ink); background: var(--band); border-radius: 12px; padding: 18px; overflow-x: auto; }
+.diagram svg { display: block; min-width: 900px; width: 100%; height: auto; }
+.diagram text { font-family: var(--font-ui); }
+
+/* roadmap with choices */
+.road { width: 100%; border-collapse: collapse; font-size: 14.5px; }
+.road th { text-align: left; font-size: 11.5px; letter-spacing: .07em; text-transform: uppercase; color: var(--muted); font-weight: 700; padding: 8px 10px 8px 0; border-bottom: 2px solid var(--ink); }
+.road td { padding: 12px 10px 12px 0; border-bottom: 1px solid var(--rule); vertical-align: top; }
+.road td.stage { white-space: nowrap; font-weight: 650; }
+.road .what b { display: block; font-weight: 650; }
+.road .what span { color: var(--ink-2); font-size: 13.5px; }
+.road .eff { white-space: nowrap; color: var(--ink-2); font-size: 13.5px; }
+.road tr.group td { padding-top: 22px; font-family: var(--font-display); font-size: 21px; border-bottom: 0; }
+.road .ready { font-size: 12px; font-weight: 700; padding: 2px 8px; border-radius: 999px; white-space: nowrap; }
+.ready.yes { background: var(--accent-soft); color: var(--accent); } .ready.part { background: rgba(168,102,10,.12); color: var(--warn); } .ready.no { background: var(--band); color: var(--muted); }
+.choice { display: inline-flex; border: 1px solid var(--ring); border-radius: 7px; overflow: hidden; background: var(--surface); }
+.choice button { font: inherit; font-size: 12.5px; padding: 5px 9px; border: 0; background: transparent; color: var(--ink); cursor: pointer; white-space: nowrap; }
+.choice button + button { border-left: 1px solid var(--ring); }
+.choice button[aria-pressed="true"][data-v="now"] { background: var(--accent); color: var(--on-accent); font-weight: 650; }
+.choice button[aria-pressed="true"][data-v="later"] { background: var(--warn); color: var(--on-accent); font-weight: 650; }
+.choice button[aria-pressed="true"][data-v="no"] { background: var(--ink-2); color: var(--surface); font-weight: 650; }
+.note-in { margin-top: 8px; width: 100%; font: inherit; font-size: 13px; padding: 6px 8px; border: 1px solid var(--ring); border-radius: 6px; background: var(--surface); color: var(--ink); }
+.save-state { font-size: 13px; color: var(--muted); }
+.road-wrap { overflow-x: auto; }
+
+.asks { display: grid; gap: 10px; padding: 0; margin: 0; }
+.asks li { list-style: none; display: grid; grid-template-columns: 190px minmax(0, 1fr); gap: 16px; padding: 10px 0; border-bottom: 1px solid var(--rule); font-size: 15px; }
+.asks li b { font-weight: 650; }
+.limits { display: grid; gap: 8px; padding-left: 18px; margin: 0; font-size: 15px; color: var(--ink-2); max-width: 760px; }
+footer { border-top: 1px solid var(--rule); padding-top: 22px; color: var(--muted); font-size: 13px; display: grid; gap: 6px; }
+
+@media (max-width: 820px) {
+  .pair, .pair.narrow-left, .keep { grid-template-columns: minmax(0, 1fr); }
+  .finding { grid-template-columns: minmax(0, 1fr); }
+  .summary li { grid-template-columns: 90px minmax(0, 1fr); }
+  .asks li { grid-template-columns: minmax(0, 1fr); gap: 2px; }
+  .road .eff, .road th.eff-h { display: none; }
+}
+</style>
+
+<div class="page">
+
+  <header class="col" style="max-width:860px">
+    <div class="eyebrow">FTO2 quality · notes for Mohammad · night of 19 to 20 October 2026</div>
+    <h1>From a set of charts to the life of a defect</h1>
+    <p class="lede">I read the commit history of both branches, opened every tab of the current dashboard and went back to the data to look for what connects the pages. This note is what I found: what the data says that the dashboard does not show yet, what I would change in the look, and a working prototype that does it on your real data.</p>
+    <div class="actions">
+      <a class="btn" href="https://claude.ai/artifact/KmELL2B43ksMwXPcEGdFov" target="_blank" rel="noopener">Open the prototype ↗</a>
+      <a class="btn ghost" href="#choices">Go to your choices ↓</a>
+    </div>
+    <p class="muted">Everything is on a new branch, <code>claude/vision-wow</code>, in the folder <code>09_vision</code>. Your dashboard branch and the CNQ work on main are untouched.</p>
+  </header>
+
+  <section aria-labelledby="t-min">
+    <div class="col">
+      <div class="eyebrow" id="t-min">In one minute</div>
+      <h2>Five numbers the dashboard does not show today</h2>
+    </div>
+    <ul class="summary">
+      <li><b class="n good">+11%</b><span>2026 is 39% above 2025 at the same date, but the gap fell from about +50% in the first half to +11% since July. A real 2025 was already in the repo, in the archive you uploaded on 19 October.</span></li>
+      <li><b class="n good">805 / 813</b><span>The test bench catches almost every connection error, and none reached a customer this year in Série. What reaches the customer is damage, missing items and workmanship.</span></li>
+      <li><b class="n">4 h 22</b><span>An NC takes 4 h 22 of work in the cost model, of which 1 h 04 is the repair. The cost of non-quality is mostly the handling around each NC.</span></li>
+      <li><b class="n bad">20 / 68</b><span>Half of the defects that name a location sit on 113 locations hit on five aircraft or more. 300VT101 was on 4 of 50 A350 in 2025 and is on 20 of 68 this year.</span></li>
+      <li><b class="n cab">+9%</b><span>Cable defects grew 9% from 2025 to 2026 while all defects grew 46%. Same parser, same scope, both years. Their share fell from 12% to 9%.</span></li>
+    </ul>
+  </section>
+
+  <section aria-labelledby="t-find">
+    <div class="col">
+      <div class="eyebrow" id="t-find">Findings</div>
+      <h2>What the data says, in detail</h2>
+      <p>Each finding gives the numbers, where it belongs in the dashboard and where the data comes from. Every figure below is computed by the prototype from the same rows, so you can change the filters there and see it move.</p>
+    </div>
+
+    <article class="finding">
+      <div class="k">1</div>
+      <div class="body">
+        <span class="big" style="color:var(--accent)">+11%</span>
+        <h3>The gap with 2025 closed in the third quarter</h3>
+        <p>2026 counts 722 NCs against 518 at the same date in 2025, +39%. Quarter by quarter, the gap was +50% and +55% in Q1 and Q2, then +11% in Q3. In defects it is +72%, +57%, then +6%. The MFT actions on the A330 and A350 lines started in July.</p>
+        <p>That is a coincidence in time, not a proof. The A350 line had more aircraft with an NC this year (68 against 50 at the same date), so part of its rise is volume: 4.5 NCs per aircraft in 2025, 5.0 in 2026. The A330 got worse per aircraft, 7.0 to 8.8.</p>
+        <p class="where"><b>Where it goes:</b> the overview. It replaces the placeholder 2025 bar, the fictitious target and the budget line with the real year, and gives every headline figure a comparison.</p>
+        <p class="data"><b>Data:</b> the 2025 Skywise export in <code>06_input_data/work_orders_disruptions_nc2025.rar</code> on main, counted like 2026: FTO2 liable, not deleted, no ERMA, the same phase rule, cut at the same calendar date. Check: January 2026 is in both files, and 83 of the 86 January NCs of the 2025 file are in your extract.</p>
+      </div>
+    </article>
+
+    <article class="finding">
+      <div class="k">2</div>
+      <div class="body">
+        <span class="big" style="color:var(--accent)">805 / 813</span>
+        <h3>The test bench is a near-perfect net for connection errors</h3>
+        <p>805 of the 813 swapped wires, wrong terminals and unconnected wires were found at test, and none reached a customer this year in Série. What reaches the customer is damage (9 of 263 damaged-item defects, 3.4%), missing items (5 of 305, 1.6%) and wiring workmanship (16 of 1,007, 1.6%).</p>
+        <p class="where"><b>Where it goes:</b> the customer returns tab. Today it is a separate page in the older band layout. Drawn as the end of one flow, from cause to the station that found it to the customer, it shows which barrier each cause slips through, and the customer returns stop being a list apart.</p>
+        <p class="data"><b>Data:</b> ready. The station comes from <code>cnq_where_found</code>, already in <code>fto2_nc.csv</code>. Customer-return numbers are small (32 defects in Série), so the chart shows counts next to every rate.</p>
+      </div>
+    </article>
+
+    <article class="finding">
+      <div class="k">3</div>
+      <div class="body">
+        <span class="big">4 h 22</span>
+        <h3>An NC is mostly handling, not repair</h3>
+        <p>In the cost model, an NC takes 4 h 22 of work: alert 30 min, writing 35, technical support 60, setup 44, repair 64, re-check 30. Over the year that is 3,149 hours, 765 of them hands-on. A one-defect NC costs 181 € per defect; a defect inside an inspection list costs 25 €. The Airbus standard method puts the same NCs at 363.6 k€, 2.2 times the per-defect detail you use.</p>
+        <p class="where"><b>Where it goes:</b> the cost tab, in place of the bubble timeline and the unlabeled month chart. One bar that shows where the four hours go explains the cost model better than the folded explanation does.</p>
+        <p class="data"><b>Data:</b> ready, from the <code>cnq_min_*</code> columns. These are model figures. The model on main (cnq-2026.10.19) moves time from test NCs to internal NCs; the chart follows whatever model the build uses.</p>
+      </div>
+    </article>
+
+    <article class="finding">
+      <div class="k">4</div>
+      <div class="body">
+        <span class="big" style="color:var(--escape)">20 / 68</span>
+        <h3>The same places fail, aircraft after aircraft</h3>
+        <p>113 locations (FIN) were hit on five aircraft or more this year, and they carry 1,128 of the 2,221 defects that name a location, 51%. Some are new: 300VT101 was hit on 4 of 50 A350 at this date in 2025, and on 20 of 68 this year. Some are chronic: 9KS and 115VM were hit on 15 and 16 of 50 A350 at this date in 2025, and on 18 of 68 this year.</p>
+        <p>The swapped wires say more. Where both pins are written, 44% of swaps are between two pins that follow each other, and 34 pin pairs came back on several aircraft (411VC001A pins 6 and 15 on four). The MFT action on swapped wires is tutoring. The pairs that repeat point to a second lever next to it: mark or key those pins on the connector.</p>
+        <p class="where"><b>Where it goes:</b> the "Où" tab, next to the FIN recurrence matrix you already have: one line per location with its 2025 and 2026 share of aircraft, tagged new or chronic. Clicking a location shows its aircraft.</p>
+        <p class="data"><b>Data:</b> ready. FIN from the parser, both years. The pins are read from the text (<code>09_vision/pins.py</code>): 390 of 479 swapped-wire defects name both pins. Without connector drawings, "follow each other" means consecutive numbers, not physical neighbours.</p>
+      </div>
+    </article>
+
+    <article class="finding">
+      <div class="k">5</div>
+      <div class="body">
+        <span class="big" style="color:var(--cable)">+9%</span>
+        <h3>Cable defects grew far less than the rest</h3>
+        <p>From 2025 to 2026 at the same date, cable defects went from 223 to 243, +9%, while all defects went from 1,855 to 2,704, +46%. Their share fell from 12.0% to 9.0%. Same parser and same scope on both years.</p>
+        <p class="where"><b>Where it goes:</b> the cable discussion first. It needs no change to the categories, so it holds whichever option (A to D) you choose. In the dashboard it is one small index chart beside the year comparison.</p>
+        <p class="data"><b>Data:</b> ready. The cable flag of parser v4.8 on both years (243 in 2026; the root-cause labels give 237).</p>
+      </div>
+    </article>
+  </section>
+
+  <section aria-labelledby="t-proto">
+    <div class="col">
+      <div class="eyebrow" id="t-proto">The prototype</div>
+      <h2>One page that reads like a story, on your real data</h2>
+      <p>The prototype keeps your fonts, your green and your cable orange, and reads top to bottom from the plant to one aircraft. Every sentence that states a finding is computed from the filtered rows, which keeps your rule of no hand-written facts. A switch turns the titles back into plain chart names.</p>
+    </div>
+    <figure>
+      <img src="img/proto_hero.jpg" alt="Prototype first screen: a sentence comparing 2026 with 2025, five headline figures with their change and a sparkline, the months of 2026 against 2025, and a list of alerts." width="1100" height="877">
+      <figcaption>The first screen: the sentence, five figures against 2025, the year month by month with the projection to December, and what to look at this week.</figcaption>
+    </figure>
+    <div class="pair">
+      <figure>
+        <img src="img/proto_net.jpg" alt="Flow from the nine defect categories to the stations that found them, with thin red threads reaching the customer." width="1010" height="611">
+        <figcaption>Chapter 02: each thread goes from a cause to the station that found it; red threads left the plant.</figcaption>
+      </figure>
+      <figure>
+        <img src="img/proto_cost.jpg" alt="The 4 h 22 of an average NC split into six steps, cost per defect by NC size, and the three costing methods." width="1010" height="707">
+        <figcaption>Chapter 03: where the 4 h 22 go, cost per defect by NC size, three methods side by side.</figcaption>
+      </figure>
+    </div>
+    <figure>
+      <img src="img/proto_pins.jpg" alt="Arc diagrams for six connectors: arcs above the line join pins swapped in 2026, arcs below join pins swapped in 2025." width="1010" height="478">
+      <figcaption>Chapter 04: for the connectors with the most swaps, which pins get swapped. Arcs above are 2026, below 2025; a thicker arc came back on more aircraft.</figcaption>
+    </figure>
+    <div class="col">
+      <h3>What to try on it</h3>
+      <ul class="limits">
+        <li>Change the line, production type or "Câble" filter: every sentence, figure and chart recomputes.</li>
+        <li>Click a cause in chapter 01 or 02: it stays highlighted in both. Click a location in chapter 04: its aircraft light up in chapter 05.</li>
+        <li>Click an aircraft in chapter 05 to open its passport: every NC on a timeline by station, its cost against the line median, its locations that come back elsewhere.</li>
+        <li>"Présenter" turns the page into eight slides (arrow keys, Esc). "Copier le résumé" gives the findings as text for an email or Teams.</li>
+        <li>FR / EN, and a dark theme if your device is set to dark.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section aria-labelledby="t-keep">
+    <div class="col">
+      <div class="eyebrow" id="t-keep">Keep</div>
+      <h2>What already works and should stay</h2>
+    </div>
+    <ul class="keep">
+      <li>The editorial look: Newsreader titles, Hanken Grotesk figures, the FTO2 green. It reads as a quality report, not a BI tool.</li>
+      <li>One filter bar that every tab follows, with the defaults written under it.</li>
+      <li>The Pareto as a grid of cards (category, sub-code, cause, cable, line, FIN), clickable to filter.</li>
+      <li>"Où" in chapters, with the FIN recurrence matrix: the seed of finding 4.</li>
+      <li>Time to close as survival curves, and the control chart with shutdown weeks left out.</li>
+      <li>The rule that no fact on the page is typed by hand, and FR / EN everywhere.</li>
+    </ul>
+  </section>
+
+  <section aria-labelledby="t-issues">
+    <div class="col">
+      <div class="eyebrow" id="t-issues">Change</div>
+      <h2>What holds the current dashboard back</h2>
+      <p>Six things, from the screenshots of the 19 October version. None of them is a bug; each one costs the reader attention or trust.</p>
+    </div>
+
+    <div class="issue">
+      <h3><i>1</i>Placeholders that look like results</h3>
+      <div class="pair narrow-left">
+        <figure>
+          <img style="max-width:360px" src="img/objective.jpg" alt="Current overview card: every line shows +33% against its target." width="400" height="517">
+          <figcaption>Every line reads +33%, because the target is this year's rate minus 25% by construction.</figcaption>
+        </figure>
+        <div class="col" style="gap:12px">
+          <p>The card says "fictitious", but a reader sees five red "+33%" and remembers them. The same goes for the "2025 fictif (= 2026)" bar in the trend and the budget line drawn at forecast minus 25%. In a meeting, the first person to notice that all lines are exactly +33% stops trusting the rest of the page.</p>
+          <p class="fix"><b>Change:</b> use the real 2025 from the archive now, and show a target or a budget only once someone gives the figure. The prototype does the first part.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="issue">
+      <h3><i>2</i>Two colour systems on one dashboard</h3>
+      <div class="pair">
+        <figure>
+          <img src="img/cnq_components.jpg" alt="Current cost tab: monthly cost components in blue, green, yellow and pink beside an unlabeled month chart." width="1000" height="356">
+          <figcaption>Cost tab: blue, green, yellow and pink for four cost parts.</figcaption>
+        </figure>
+        <figure>
+          <img src="img/where_products.jpg" alt="Current Où tab: products in bright blue, teal, orange and pink bars." width="977" height="495">
+          <figcaption>Où tab: products in bright categorical colours.</figcaption>
+        </figure>
+      </div>
+      <p class="fix" style="max-width:none"><b>Change:</b> one rule for colour on every tab. Green is FTO2, orange is cable and nothing else, red is what reaches the customer and alerts, grey is context and last year. Parts of a whole get shades of one hue. Products need no colour of their own, since their names are written beside the bars.</p>
+    </div>
+
+    <div class="issue">
+      <h3><i>3</i>Charts that do not earn their space</h3>
+      <div class="pair narrow-left">
+        <figure>
+          <img style="max-width:360px" src="img/cable_card.jpg" alt="Current Pareto card for cable defects: two rows inside a tall, mostly empty card." width="393" height="410">
+          <figcaption>Two rows in a tall card.</figcaption>
+        </figure>
+        <figure>
+          <img src="img/cnq_bubbles.jpg" alt="Current cost tab: one bubble per NC on a time axis; the A350 row is a solid band of overlapping circles." width="1000" height="411">
+          <figcaption>340 A350 circles merge into one band; the five named NCs are the only readable marks.</figcaption>
+        </figure>
+      </div>
+      <p>The "Mois de création" chart on the cost tab has no axis and no values. The cable card has two rows in a card sized for twenty. The bubble timeline shows that there are many NCs, which the figure above it already says.</p>
+      <p class="fix" style="max-width:none"><b>Change:</b> drop them, or give each one a question. The NC anatomy (finding 3) can take the bubble chart's place; the cable split can live inside the category card as the orange share it already is.</p>
+    </div>
+
+    <div class="issue">
+      <h3><i>4</i>Figures with nothing to compare to</h3>
+      <p class="col">"722 NC" alone says nothing about whether 722 is good. Each headline figure needs a reference next to it: the change against 2025 at the same date, and a small weekly trend that ends on the last four weeks.</p>
+    </div>
+
+    <div class="issue">
+      <h3><i>5</i>Pages that do not talk to each other</h3>
+      <p class="col">The customer returns tab is in the older band layout and does not connect to where the same causes are caught inside FTO2. The RCA tab is about 11,000 pixels of reference text: definitions belong in a panel that opens from any cause name, wherever it appears. The FIN matrix does not lead to the aircraft, and an aircraft does not lead back to its NCs.</p>
+    </div>
+
+    <div class="issue">
+      <h3><i>6</i>Titles that make the reader find the point</h3>
+      <p class="col">Titles name the chart ("Coût par famille de produit"), so the point of each chart is left to the presenter. A title computed from the data ("Le test attrape 99% des erreurs de branchement") does the first reading for the audience, and still respects the rule that nothing is typed by hand. The switch back to names keeps your current choice one click away.</p>
+    </div>
+  </section>
+
+  <section aria-labelledby="t-links">
+    <div class="col">
+      <div class="eyebrow" id="t-links">Connections</div>
+      <h2>How the pieces connect</h2>
+      <p>The dashboard shows each piece on its own tab. The wow is in the links between them. Solid links are in the dashboard or the prototype now; dashed ones exist in the analysis on main but not in the dashboard; dotted ones need data you do not have yet.</p>
+    </div>
+    <figure class="diagram">
+      <svg viewBox="0 0 1100 380" role="img" aria-label="The chain of a defect: a line disruption leads to an NC, the NC lists defects with a cause, a location and pins, each defect is found at a station or by the customer; the NC carries a cost and a rework order; causes lead to MFT actions and their effect; the aircraft (MSN) ties NCs and customer returns together; 2025 is compared through the same parser.">
+        <defs>
+          <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="currentColor"/></marker>
+          <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d0453a"/></marker>
+        </defs>
+        <g fill="none" stroke="currentColor" stroke-width="1.5">
+          <rect x="20" y="150" width="140" height="62" rx="8" stroke-dasharray="5 4"/>
+          <rect x="240" y="150" width="120" height="62" rx="8"/>
+          <rect x="440" y="150" width="180" height="62" rx="8"/>
+          <rect x="700" y="150" width="160" height="62" rx="8"/>
+          <rect x="940" y="150" width="140" height="62" rx="8" stroke="#d0453a"/>
+          <rect x="20" y="300" width="140" height="58" rx="8" stroke-dasharray="5 4"/>
+          <rect x="240" y="300" width="120" height="58" rx="8"/>
+          <rect x="440" y="300" width="180" height="58" rx="8"/>
+          <rect x="700" y="300" width="160" height="58" rx="8"/>
+          <rect x="940" y="300" width="140" height="58" rx="8" stroke-dasharray="2 4"/>
+          <rect x="440" y="20" width="180" height="58" rx="8"/>
+          <rect x="700" y="20" width="160" height="58" rx="8"/>
+          <line x1="160" y1="181" x2="238" y2="181" stroke-dasharray="5 4" marker-end="url(#ar)"/>
+          <line x1="360" y1="181" x2="438" y2="181" marker-end="url(#ar)"/>
+          <line x1="620" y1="181" x2="698" y2="181" marker-end="url(#ar)"/>
+          <line x1="860" y1="181" x2="938" y2="181" stroke="#d0453a" marker-end="url(#arr)"/>
+          <line x1="620" y1="329" x2="698" y2="329" marker-end="url(#ar)"/>
+          <line x1="620" y1="49" x2="698" y2="49" marker-end="url(#ar)"/>
+          <line x1="240" y1="329" x2="162" y2="329" stroke-dasharray="5 4" marker-end="url(#ar)"/>
+          <line x1="300" y1="212" x2="300" y2="298" marker-end="url(#ar)"/>
+          <line x1="530" y1="212" x2="530" y2="298" marker-end="url(#ar)"/>
+          <line x1="530" y1="150" x2="530" y2="80" marker-end="url(#ar)"/>
+          <path d="M780,212 C780,262 1010,248 1010,298" stroke-dasharray="2 4" marker-end="url(#ar)"/>
+          <path d="M300,150 C300,116 950,116 1010,148" opacity=".7" marker-end="url(#ar)"/>
+        </g>
+        <g fill="currentColor" font-size="13" text-anchor="middle">
+          <text x="90" y="178" font-weight="650">Line disruption</text><text x="90" y="195" font-size="11.5" opacity=".75">aléa, MES</text>
+          <text x="300" y="178" font-weight="650">NC</text><text x="300" y="195" font-size="11.5" opacity=".75">one per alert</text>
+          <text x="530" y="178" font-weight="650">Defect</text><text x="530" y="195" font-size="11.5" opacity=".75">cause · FIN · pins</text>
+          <text x="780" y="178" font-weight="650">Station that finds it</text><text x="780" y="195" font-size="11.5" opacity=".75">line · cables · final · test</text>
+          <text x="1010" y="178" font-weight="650" fill="#d0453a">Customer</text><text x="1010" y="195" font-size="11.5" fill="#d0453a">customer return</text>
+          <text x="90" y="326" font-weight="650">Rework order</text><text x="90" y="343" font-size="11.5" opacity=".75">S03, planned time</text>
+          <text x="300" y="326" font-weight="650">Cost</text><text x="300" y="343" font-size="11.5" opacity=".75">six steps, 4 h 22</text>
+          <text x="530" y="326" font-weight="650">MFT action</text><text x="530" y="343" font-size="11.5" opacity=".75">on a cause, a line</text>
+          <text x="780" y="326" font-weight="650">Effect</text><text x="780" y="343" font-size="11.5" opacity=".75">the months after</text>
+          <text x="1010" y="326" font-weight="650">Connector drawing</text><text x="1010" y="343" font-size="11.5" opacity=".75">physical neighbours</text>
+          <text x="530" y="46" font-weight="650">Same place again</text><text x="530" y="63" font-size="11.5" opacity=".75">FIN on many aircraft</text>
+          <text x="780" y="46" font-weight="650">2025</text><text x="780" y="63" font-size="11.5" opacity=".75">same parser, same date</text>
+        </g>
+        <g fill="currentColor" font-size="11.5" opacity=".85">
+          <text x="199" y="173" text-anchor="middle">72 h</text>
+          <text x="399" y="173" text-anchor="middle">text</text>
+          <text x="659" y="173" text-anchor="middle">found at</text>
+          <text x="899" y="173" text-anchor="middle" fill="#d0453a">escapes</text>
+          <text x="659" y="321" text-anchor="middle">before / after</text>
+          <text x="659" y="41" text-anchor="middle">compared</text>
+          <text x="201" y="321" text-anchor="middle">linked</text>
+          <text x="308" y="259">model</text>
+          <text x="538" y="259">targets</text>
+          <text x="538" y="100">repeats</text>
+          <text x="935" y="257">pin layout</text>
+          <text x="895" y="120" text-anchor="middle">same aircraft (MSN)</text>
+        </g>
+      </svg>
+      <figcaption>Read left to right: a disruption on the line leads to an NC, the NC lists defects, each defect is found at a station or by the customer. The aircraft ties NCs and customer returns together. Solid: in the dashboard or the prototype. Dashed: analysed on main, not in the dashboard. Dotted: needs data.</figcaption>
+    </figure>
+    <div class="col">
+      <p>Two of the dashed links already have numbers in your CNQ work on main: 214 of 322 quality disruptions are followed by an NC on the same work order within 72 hours, and 96 to 97% of reworked NCs have a rework order. Bringing them in would show the full cost of a defect, from the line stop to the re-check.</p>
+    </div>
+  </section>
+
+  <section aria-labelledby="t-road" id="choices">
+    <div class="col">
+      <div class="eyebrow" id="t-road">Roadmap and your choices</div>
+      <h2>What to build, in which order</h2>
+      <p>Each line says where it goes in the current dashboard and whether the data is ready. Mark each one: <b>Now</b>, <b>Later</b> or <b>No</b>, with a note if you like. Your choices are saved with this page, so the next session can read them and start from there.</p>
+      <p class="save-state" id="saveState">Loading your saved choices…</p>
+    </div>
+    <div class="road-wrap">
+      <table class="road" id="road">
+        <thead><tr><th>Where</th><th>What</th><th class="eff-h">Data</th><th>Your choice</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <div class="actions"><button type="button" class="btn ghost" id="copyChoices">Copy my choices as text</button><span class="save-state" id="copyState"></span></div>
+  </section>
+
+  <section aria-labelledby="t-ask">
+    <div class="col">
+      <div class="eyebrow" id="t-ask">Data to ask for</div>
+      <h2>Five requests that unlock the rest</h2>
+    </div>
+    <ul class="asks">
+      <li><b>Pipeline team</b><span>The 2025 NCs in the dashboard dataset, with the same query as 2026 (dates from 1 January 2025). The archive copy works for the prototype; the dashboard needs it in Skywise.</span></li>
+      <li><b>Pipeline team</b><span>The disruption → NC link (same work order, NC created within 72 hours) and the NC → rework order link, as columns in <code>fto2_nc</code>. Both rules are already written in <code>07_scripts/wo_disruption</code> on main.</span></li>
+      <li><b>Production planning</b><span>The Avances / Retards export per MSN, with dates. It allows "are late aircraft worse?", and NCs per aircraft built instead of per aircraft that had an NC.</span></li>
+      <li><b>Line quality / methods</b><span>Insert drawings for the ten connectors with the most swaps (300VT101, 1608VC020A, 115VMA, 1608VC097A, 1609VC002, 10FC1A and the next four). Then "neighbouring pins" means physical neighbours.</span></li>
+      <li><b>Emmanuelle</b><span>A real yearly target and budget, or the decision to show none. Until then the page shows 2025 as the only reference.</span></li>
+    </ul>
+  </section>
+
+  <section aria-labelledby="t-limits">
+    <div class="col">
+      <div class="eyebrow" id="t-limits">Limits</div>
+      <h2>What to keep in mind</h2>
+    </div>
+    <ul class="limits">
+      <li>2025 has only the parser's labels. The year comparisons by cause use parser v4.8 on both years, so their 2026 values differ slightly from the root-cause labels used everywhere else (for example 243 cable defects against 237).</li>
+      <li>The Q3 closing of the gap coincides with the July actions. It does not prove they worked; the MFT follow-up page already tracks each action against its own cause.</li>
+      <li>Customer-return rates rest on 32 defects in Série (69 with REC and FTI). They show where to look, not a measured escape rate.</li>
+      <li>"Aircraft" in the per-aircraft figures means aircraft with at least one NC; the per-MSN production plan would give a true rate.</li>
+      <li>Pins are read from the text for 390 of 479 swapped-wire defects. Consecutive numbers are not always physical neighbours.</li>
+      <li>Alerts use a Poisson test against the rest of the year, at 5% (amber) and 1% (red). With 25 causes, expect about one amber alert by chance on a quiet month.</li>
+      <li>The prototype is a separate page. Moving its parts into the dashboard goes through <code>build/build_all.py</code> and the template, tab by tab, as in the roadmap.</li>
+    </ul>
+  </section>
+
+  <footer>
+    <p>Prototype: <a href="https://claude.ai/artifact/KmELL2B43ksMwXPcEGdFov" target="_blank" rel="noopener">FTO2 NC Vision</a>. Source: branch <code>claude/vision-wow</code>, folder <code>09_vision</code> (<code>build_vision.py</code>, <code>template.html</code>, <code>check_vision.js</code>, <code>prep_2025.py</code>).</p>
+    <p>Figures: the 28 September 2026 extract (<code>05_outputs/fto2_nc.csv</code>, <code>fto2_defects.csv</code>) and the 2025 export from the 19 October archive. Default view: all lines, Série, all defects.</p>
+  </footer>
+</div>
+
+<script>
+(function () {
+  'use strict';
+  // the roadmap: id, stage, where, what, detail, data readiness
+  var ROAD = [
+    ['Now', [
+      ['r01', 'Overview', 'Real 2025 instead of the placeholders', 'Trend, headline figures with their change against 2025, quarter gaps. Drop the fictitious target and budget.', 'yes', '½ day'],
+      ['r02', 'Customer returns', 'Cause → station → customer flow', 'The chapter 02 chart, plus the share of each cause found at the customer.', 'yes', '1 day'],
+      ['r03', 'Cost', 'Anatomy of an NC', 'Where the 4 h 22 go, cost per defect by NC size, the three methods. Replaces the bubble timeline and the month chart.', 'yes', '½ day'],
+      ['r04', 'All tabs', 'One colour rule', 'Green FTO2, orange cable, red customer and alerts, grey context. Cost parts in shades of one hue.', 'yes', '½ day']
+    ]],
+    ['Next', [
+      ['r05', 'Où', 'Locations new or chronic', '2025 and 2026 share of aircraft per FIN, tagged; click to see the aircraft.', 'yes', '1 day'],
+      ['r06', 'Où', 'Which pins get swapped', 'Arc diagrams for the connectors with the most swaps, both years.', 'yes', '1 day'],
+      ['r07', 'Overview', 'Alerts: what to look at this week', 'Causes above their usual rate, a location on three aircraft in four weeks, customer returns, NCs open over 30 days.', 'yes', '1 day'],
+      ['r08', 'New tab', 'Aircraft passport', 'Every NC of one MSN on a timeline by station, its cost against the line, its shared locations, its customer returns.', 'yes', '1–2 days'],
+      ['r09', 'All tabs', 'Titles computed from the data', 'Finding sentences with the switch back to names.', 'yes', '1 day'],
+      ['r10', 'All tabs', 'Presentation mode and copy summary', 'Eight slides from the same page; the findings as text for an email.', 'yes', '½ day']
+    ]],
+    ['Later', [
+      ['r11', 'Cost', 'From line stop to re-check', 'Disruption → NC → rework order, with time lost and planned rework time.', 'part', 'pipeline'],
+      ['r12', 'Où', 'Late aircraft against NCs', 'NCs per aircraft built, and whether aircraft behind schedule get more NCs.', 'no', 'planning data'],
+      ['r13', 'Customer returns', 'Real cost of a customer return', 'Repair at the customer, analysis, transport (check H3), instead of the model estimate.', 'no', 'check H3']
+    ]]
+  ];
+  var READY = { yes: 'Ready', part: 'On main', no: 'To collect' };
+  var state = {}, db = null, store = 'none', saveTimer = {};
+  var tbody = document.querySelector('#road tbody');
+  function $(id) { return document.getElementById(id); }
+  function draw() {
+    tbody.textContent = '';
+    ROAD.forEach(function (grp) {
+      var g = document.createElement('tr'); g.className = 'group';
+      var td = document.createElement('td'); td.colSpan = 4; td.textContent = grp[0]; g.appendChild(td); tbody.appendChild(g);
+      grp[1].forEach(function (r) {
+        var tr = document.createElement('tr');
+        var a = document.createElement('td'); a.className = 'stage'; a.textContent = r[1];
+        var b = document.createElement('td'); b.className = 'what';
+        var bb = document.createElement('b'); bb.textContent = r[2]; var bs = document.createElement('span'); bs.textContent = r[3];
+        b.appendChild(bb); b.appendChild(bs);
+        var c = document.createElement('td'); c.className = 'eff';
+        var rd = document.createElement('span'); rd.className = 'ready ' + r[4]; rd.textContent = READY[r[4]];
+        c.appendChild(rd); c.appendChild(document.createElement('br')); c.appendChild(document.createTextNode(r[5]));
+        var d = document.createElement('td');
+        var seg = document.createElement('div'); seg.className = 'choice'; seg.setAttribute('role', 'group'); seg.setAttribute('aria-label', r[2]);
+        [['now', 'Now'], ['later', 'Later'], ['no', 'No']].forEach(function (o) {
+          var btn = document.createElement('button'); btn.type = 'button'; btn.textContent = o[1]; btn.setAttribute('data-v', o[0]);
+          btn.setAttribute('aria-pressed', String((state[r[0]] || {}).choice === o[0]));
+          btn.addEventListener('click', function () { var cur = (state[r[0]] || {}).choice; choose(r[0], cur === o[0] ? '' : o[0]); });
+          seg.appendChild(btn);
+        });
+        var note = document.createElement('input'); note.type = 'text'; note.className = 'note-in'; note.id = 'note-' + r[0]; note.placeholder = 'Note (optional)';
+        note.value = (state[r[0]] || {}).note || '';
+        note.addEventListener('input', function () { clearTimeout(saveTimer[r[0]]); saveTimer[r[0]] = setTimeout(function () { save(r[0], { note: note.value }); }, 700); });
+        d.appendChild(seg); d.appendChild(note);
+        tr.appendChild(a); tr.appendChild(b); tr.appendChild(c); tr.appendChild(d);
+        tbody.appendChild(tr);
+      });
+    });
+  }
+  function choose(id, v) { save(id, { choice: v }); }
+  function save(id, patch) {
+    var doc = Object.assign({}, state[id] || {}, patch, { at: new Date().toISOString() });
+    state[id] = doc;
+    if (store === 'db') {
+      db.collection('choices').doc(id).set(doc).then(function () { $('saveState').textContent = 'Saved with this page.'; }, function (e) {
+        $('saveState').textContent = e && e.code === 'invalid_argument' ? 'You can read this page but not save choices on it; use "Copy my choices".' : 'Could not save just now; your choice shows here and you can copy it as text.';
+      });
+    } else {
+      try { localStorage.setItem('fto2-vision-choices', JSON.stringify(state)); } catch (e) {}
+    }
+    if (patch.choice !== undefined) draw();
+  }
+  function local() { try { state = JSON.parse(localStorage.getItem('fto2-vision-choices') || '{}') || {}; } catch (e) { state = {}; } }
+  local(); draw();
+  $('saveState').textContent = 'Choices are kept in this browser until the page store answers.';
+  // the page's own store, when the viewer serves it
+  if (window.claude && typeof window.claude.use === 'function') {
+    window.claude.use('db').then(function (d) {
+      if (!d) { store = 'local'; $('saveState').textContent = 'Choices are kept in this browser only; use "Copy my choices" to send them.'; return; }
+      db = d; store = 'db';
+      db.collection('choices').onSnapshot(function (snap) {
+        var next = {};
+        snap.docs.forEach(function (doc) { if (doc.exists) next[doc.id] = doc.data(); });
+        var ae = document.activeElement, focused = ae && ae.classList && ae.classList.contains('note-in') ? ae.id : null, typed = focused ? ae.value : null;
+        Object.keys(state).forEach(function (k) { if (!next[k] && state[k]) next[k] = state[k]; });
+        state = next; draw();
+        if (focused && $(focused)) { var el = $(focused); el.value = typed; el.focus(); }
+        $('saveState').textContent = snap.size ? 'Your choices are saved with this page.' : 'Nothing chosen yet. Your choices are saved with this page.';
+      }, function () { store = 'local'; $('saveState').textContent = 'Choices are kept in this browser only; use "Copy my choices" to send them.'; });
+    }, function () { store = 'local'; });
+  } else {
+    store = 'local'; $('saveState').textContent = 'Choices are kept in this browser only; use "Copy my choices" to send them.';
+  }
+  $('copyChoices').addEventListener('click', function () {
+    var lines = ['FTO2 dashboard vision: my choices', ''];
+    ROAD.forEach(function (grp) { grp[1].forEach(function (r) { var s = state[r[0]] || {}; lines.push((s.choice ? s.choice.toUpperCase() : '—') + '  ' + r[1] + ': ' + r[2] + (s.note ? '  (' + s.note + ')' : '')); }); });
+    var text = lines.join('\n');
+    function done(msg) { $('copyState').textContent = msg; setTimeout(function () { $('copyState').textContent = ''; }, 2500); }
+    function fallback() { var ta = document.createElement('textarea'); ta.value = text; ta.style.position = 'fixed'; ta.style.left = '-9999px'; document.body.appendChild(ta); ta.select(); var ok = false; try { ok = document.execCommand('copy'); } catch (e) {} document.body.removeChild(ta); done(ok ? 'Copied.' : 'Select and copy did not work here.'); }
+    try { navigator.clipboard.writeText(text).then(function () { done('Copied.'); }, fallback); } catch (e) { fallback(); }
+  });
+})();
+</script>

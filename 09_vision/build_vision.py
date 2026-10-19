@@ -189,11 +189,11 @@ def main():
            "allPhases": expected(F, phase=None)}
     with open(os.path.join(HERE, "expected.json"), "w", encoding="utf-8") as f:
         json.dump(exp, f, ensure_ascii=False, indent=1)
-    p = F["pins26"].dropna()
+    inv = F["d"].llm_rca_nom == "Inversion"
+    p = F["pins26"][inv].dropna()
     print("page:", out, round(os.path.getsize(out) / 1024), "KB | data", round(len(data) / 1024), "KB")
     print("default:", {k: v for k, v in exp["default"].items() if not isinstance(v, dict)})
-    print("pins: %d of %d inversion-type defects named two pins, %d consecutive" % (
-        len(p), int((d.llm_rca_nom == "Inversion").sum()), sum(consecutive(*x) for x in p)))
+    print("pins: %d of %d swapped-wire defects name both pins, %d consecutive" % (len(p), int(inv.sum()), sum(consecutive(*x) for x in p)))
 
 
 if __name__ == "__main__":
