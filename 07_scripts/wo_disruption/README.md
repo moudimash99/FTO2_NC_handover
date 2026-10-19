@@ -69,3 +69,17 @@ python3 -I ds_rest.py $P                            # quality disruptions with n
 - With the 30-min quality re-check left out (it is done by the quality line service, not planned on the order): planned 9,685 min vs model setup + defects 10,812 min (+12%; +4% without customer returns).
 - Sept S03 by family: REC 274 orders / 746 h, IEVB (MSN 700/701) 74 / 217 h, régul 8 / 200 h, A400M 9 / 58 h, FTO2 shop floor 249 / 394 h (144 orders / 213 h traced to an NC).
 - Disruptions Jan–Sep 2026 (all FTO2 shop floor): 1,346 h lost. Work order / definition 516 h, missing parts 330 h, line 261 h, quality 238 h.
+
+Fourth round:
+
+```
+python3 -I quality_wo.py $P                         # quality work centres; the two NC-management orders in full
+python3 -I cable_cut.py $P <repo>/06_input_data     # 37 S03 cable-cutting orders (A330 print room 4FEM0E14)
+python3 -I cable_cut2.py $P; python3 -I cable_cut3.py $P   # related NCs and BF24 disruptions
+python3 -I ds_cap.py $P $X/disrup.csv; python3 -I ds_cap2.py $P $X/disrup.csv   # export window and 2,500-row question
+python3 -I ds_quality.py $P                         # quality-related disruptions across all kinds
+python3 -I cr_sept.py $P                            # customer-return NCs per month
+```
+
+- Quality-related disruptions Jan–Sep 2026: 322 declared quality (238 h) + 93 other kinds followed by an NC (68 h) + 107 other kinds with quality wording (91 h) = 522, 398 h. Groups 2 and 3 are keyword / time-window matches and need a read.
+- Disruption export: 5 Jan 2026 08:57 (plant restart; no NCs 29 Dec–2 Jan) to 30 Sep 2026 23:31, sorted newest first, exactly 2,500 rows.

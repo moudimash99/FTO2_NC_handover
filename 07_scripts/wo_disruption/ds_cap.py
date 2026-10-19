@@ -1,0 +1,32 @@
+import sys, pandas as pd, numpy as np
+pd.set_option("display.width", 250)
+D = sys.argv[1]
+raw = pd.read_csv(sys.argv[2], dtype=str, encoding="utf-8-sig", keep_default_na=False, na_values=[""])
+ds = pd.read_pickle(D+"/ds2.pkl")
+ot = pd.to_datetime(raw.open_date_time)
+print("rows:", len(raw), "| unique ids:", raw.disruption_id.nunique())
+print("first open:", ot.min(), "| last open:", ot.max())
+print("file order: first row", raw.open_date_time.iloc[0], "| last row", raw.open_date_time.iloc[-1], "| sorted newest first:", ot.is_monotonic_decreasing)
+d = ot.dt.date.value_counts().sort_index()
+print("first 8 days:", {str(k): v for k, v in d.head(8).items()})
+print("last 5 days:", {str(k): v for k, v in d.tail(5).items()})
+wk = ot.dt.to_period("W").value_counts().sort_index()
+print("first weeks:", {str(k)[:10]: v for k, v in wk.head(4).items()}, "| median week:", int(wk.median()))
+first_day = ot.dt.date.min(); fd = raw[ot.dt.date == first_day]
+print("first day rows:", len(fd), "earliest time", ot[ot.dt.date==first_day].min().time(), "| typical Monday count:", int(d[[pd.Timestamp(x).dayofweek==0 for x in d.index]].median()))
+mon = ot.dt.dayofweek==0
+print("Mondays first-open-of-day median time:", ot[mon].groupby(ot[mon].dt.date).min().dt.time.astype(str).value_counts().head(3).to_dict())
+print("closure dates range:", pd.to_datetime(raw.closure_date_time).min(), "->", pd.to_datetime(raw.closure_date_time).max())
+print("status:", raw.status.value_counts().to_dict())
+# time fields
+o = pd.to_datetime(raw.open_date_time); a = pd.to_datetime(raw.date_answer_time); c = pd.to_datetime(raw.closure_date_time)
+ack = pd.to_numeric(raw.time_to_get_ack); fix = pd.to_numeric(raw.time_to_get_fix)
+start = a - pd.to_timedelta(ack, unit="m")
+day = o.dt.hour.between(6, 20)
+m = day & a.notna() & (ack > 0)
+print("daytime disruptions: answer - time_to_get_ack == open time (±2 min):", ((start[m]-o[m]).abs() <= pd.Timedelta(minutes=2)).mean().round(2), "of", m.sum())
+n = ~day & a.notna() & (ack > 0)
+print("night disruptions: implied start time of count:", start[n].dt.time.astype(str).str[:5].value_counts().head(5).to_dict())
+fs = c - pd.to_timedelta(fix, unit="m"); mm = day & c.notna() & (fix > 0)
+print("daytime: closure - time_to_get_fix == open (±2 min):", ((fs[mm]-o[mm]).abs() <= pd.Timedelta(minutes=2)).mean().round(2), "| == answer:", ((fs[mm]-a[mm]).abs() <= pd.Timedelta(minutes=2)).mean().round(2))
+print("time_to_get_fix == 0 share:", (fix==0).mean().round(2), "| time_lost == 0 share:", (pd.to_numeric(raw.time_lost)==0).mean().round(2))
