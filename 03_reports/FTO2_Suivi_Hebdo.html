@@ -558,14 +558,14 @@ body.mk-on .wrap { padding-bottom: 90px; }
 #p-ov[data-lay] [data-v2="VT"] { grid-area: tgt; } #p-ov[data-lay] [data-v2="VN"] { grid-area: trend; } #p-ov[data-lay] [data-v2="VB"] { grid-area: cost; }
 #p-ov[data-lay] [data-v2="a:lead"] { grid-area: delay; } #p-ov[data-lay] [data-v2="VX"] { grid-area: ctl; }
 #p-ov[data-lay] > #ngxBox { grid-area: more; } #p-ov[data-lay] > details:not(#ngxBox) { grid-area: table; }
-#p-ov[data-lay] .v2ov > .card, #p-where .v2mag > .card { grid-template-columns: minmax(0, 1fr); background: var(--surface); border: 1px solid var(--ring); border-radius: 10px; padding: 18px 20px 16px; box-shadow: none; clip-path: none; row-gap: 10px; }
-#p-ov[data-lay] .v2ov > .card > .bhead, #p-where .v2mag > .card > .bhead { position: static; grid-column: 1; gap: 6px; }
-#p-ov[data-lay] .v2ov > .card > .custom, #p-where .v2mag > .card > .custom { grid-column: 1; grid-row: auto; }
+#p-ov[data-lay] .v2ov > .card, #p-where .v2mag .v2-band { grid-template-columns: minmax(0, 1fr); background: var(--surface); border: 1px solid var(--ring); border-radius: 10px; padding: 18px 20px 16px; box-shadow: none; clip-path: none; row-gap: 10px; }
+#p-ov[data-lay] .v2ov > .card > .bhead, #p-where .v2mag .v2-band > .bhead { position: static; grid-column: 1; gap: 6px; }
+#p-ov[data-lay] .v2ov > .card > .custom, #p-where .v2mag .v2-band > .custom { grid-column: 1; grid-row: auto; }
 #p-ov[data-lay] .v2ov .bhead h3, #p-where .v2mag .bhead h3 { font-size: clamp(20px, 2vw, 24px); }
 /* Où, half magazine: cards in pairs where a chart reads at half width, full width where it needs the room */
 #p-where .v2mag { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; align-items: stretch; margin: 4px 0 28px;
   grid-template-areas: "rate rate" "month month" "ci proj" "fin fin" "msn msn" "prod station"; }
-#p-where .v2mag > .card { align-content: start; min-width: 0; }
+#p-where .v2mag .v2-band { align-content: start; min-width: 0; }
 #p-where .v2mag > [data-v2="VP"] { grid-area: rate; } #p-where .v2mag > [data-v2="61"] { grid-area: month; } #p-where .v2mag > [data-v2="64"] { grid-area: ci; }
 #p-where .v2mag > [data-v2="71"] { grid-area: proj; } #p-where .v2mag > [data-v2="VF"] { grid-area: fin; } #p-where .v2mag > [data-v2="a:msn"] { grid-area: msn; }
 #p-where .v2mag > [data-v2="a:prod"] { grid-area: prod; } #p-where .v2mag > [data-v2="a:station"] { grid-area: station; }
@@ -580,30 +580,66 @@ body.mk-on .wrap { padding-bottom: 90px; }
 #pg > [data-card="cat"], #kg > [data-card="cat"] { grid-area: cat; } #pg > [data-card="rca"], #kg > [data-card="rca"] { grid-area: rca; }
 #pg > [data-card="cable"], #kg > [data-card="cable"] { grid-area: cable; } #pg > [data-card="line"], #kg > [data-card="line"] { grid-area: line; }
 #pg > [data-card="code"], #kg > [data-card="code"] { grid-area: code; } #pg > [data-card="fin"], #kg > [data-card="fin"] { grid-area: fin; }
-@media (max-width: 900px) { #pg, #kg, #p-where .v2mag { grid-template-columns: minmax(0, 1fr); grid-template-areas: none; } #pg > .card, #kg > .card, #p-where .v2mag > .card { grid-area: auto; } }
+/* CNQ, Magazine: cost components beside the line and the costing methods, every NC across, the folds under the cards */
+#p-cnq { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; align-items: stretch;
+  grid-template-areas: "lead lead lead" "strip strip strip" "figs figs figs" "chips chips chips" "comp comp line" "comp comp meth" "each each each" "cx cx cx" "more more more" "table table table"; }
+#p-cnq > * { min-width: 0; }
+#p-cnq > #cg, #p-cnq > .v2cq { display: contents; }
+#p-cnq > .lead { grid-area: lead; } #cStrip { grid-area: strip; } #p-cnq > .figs { grid-area: figs; } #cc { grid-area: chips; } #p-cnq > .card { grid-area: meth; }
+#cg > [data-card="line"] { grid-area: line; } #p-cnq [data-v2="VC"] { grid-area: comp; } #p-cnq [data-v2="VE"] { grid-area: each; }
+#cx { grid-area: cx; } #cgxBox { grid-area: more; } #p-cnq > details.detail:not(#cgxBox) { grid-area: table; }
+#p-cnq > .card, #cg > .card, #p-cnq .v2cq > .card { grid-template-columns: minmax(0, 1fr); background: var(--surface); border: 1px solid var(--ring); border-radius: 10px; padding: 18px 20px 16px; box-shadow: none; clip-path: none; row-gap: 12px; align-content: start; }
+#cg > .card > .bhead, #p-cnq .v2cq > .card > .bhead { position: static; grid-column: 1; gap: 6px; }
+#cg > .card > .bars, #p-cnq .v2cq > .card > .custom { grid-column: 1; grid-row: auto; }
+#cg .bhead .kicker { display: none; }
+#cg > [data-card="line"] .bar { grid-template-columns: minmax(0, 6em) minmax(0, 1fr) 5.6em; }   /* short line names: the bars get the room */
+#p-cnq > .card .level { grid-template-columns: minmax(0, 1fr) auto; row-gap: 5px; }   /* narrow card: name and value on a line, the bar under them */
+#p-cnq > .card .level .val { grid-column: 2; grid-row: 1; }
+#p-cnq > .card .level .track { grid-column: 1 / -1; grid-row: 2; height: 8px; border-radius: 4px; } #p-cnq > .card .level .fill { border-radius: 4px; }
+#cg .bhead h3, #p-cnq .v2cq .bhead h3, #p-cnq > .card h3 { font-family: var(--font-display); font-weight: 400; font-size: clamp(20px, 2vw, 24px); line-height: 1.15; }
+@media (max-width: 900px) { #p-cnq { grid-template-columns: minmax(0, 1fr); grid-template-areas: none; } #p-cnq > *, #p-cnq .v2cq > .card, #cg > .card { grid-area: auto; } }
+/* Où, layouts to choose from (layouts page only); without data-wl: the half magazine above */
+.wl-chap, .wl-sub, .wl-nav { display: none; }
+#p-where .v2mag .v2-band { scroll-margin-top: calc(var(--tabs-h) + 18px); }
+#p-where[data-wl="4"] .v2mag .v2-band, #p-where[data-wl="5"] .v2mag .v2-band { grid-area: auto; }
+/* 1 Magazine: three columns, large and small charts alternating */
+#p-where[data-wl="1"] .v2mag { grid-template-columns: repeat(3, minmax(0, 1fr)); grid-template-areas: "rate rate ci" "proj month month" "msn msn msn" "prod station station" "fin fin fin"; }
+/* 2 Chapters: the chapter title stays on the left while its cards scroll */
+#p-where[data-wl="2"] .v2mag { grid-template-columns: minmax(0, 210px) repeat(2, minmax(0, 1fr)); grid-template-areas: "c1 rate rate" "c1 month month" "c1 ci proj" "c1 prod prod" "c2 msn msn" "c2 fin fin" "c3 station station"; }
+#p-where[data-wl="2"] .wl-chap { display: block; border-top: 2px solid var(--ink); padding-top: 14px; }
+#p-where[data-wl="2"] .wl-chap[data-chap="prod"] { grid-area: c1; } #p-where[data-wl="2"] .wl-chap[data-chap="ac"] { grid-area: c2; } #p-where[data-wl="2"] .wl-chap[data-chap="st"] { grid-area: c3; }
+#p-where[data-wl="2"] .wl-chap[data-chap="ac"], #p-where[data-wl="2"] .wl-chap[data-chap="st"], #p-where[data-wl="2"] [data-v2="a:msn"], #p-where[data-wl="2"] [data-v2="a:station"] { margin-top: 30px; }
+.wl-chap > div { position: sticky; top: calc(var(--tabs-h) + 20px); display: grid; gap: 8px; }
+.wl-chap .n { font-family: var(--font-display); font-size: 46px; line-height: 1; color: var(--s1); }
+.wl-chap h3, .wl-colh h3 { font-family: var(--font-display); font-weight: 400; font-size: 28px; line-height: 1.1; }
+/* 3 Sub-tabs: one chapter at a time */
+#p-where[data-wl="3"] .wl-sub { display: flex; position: sticky; top: var(--tabs-h); z-index: 8; background: var(--page); padding: 10px 0; border-bottom: 1px solid var(--grid); box-shadow: 0 0 0 100vmax var(--page); clip-path: inset(0 -100vmax); }
+.wl-sub .seg button { font-size: 15px; padding: 8px 22px; }
+#p-where[data-wl="3"] .v2mag { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+#p-where[data-wl="3"][data-wg="prod"] .v2mag { grid-template-areas: "rate rate ci" "proj month month" "prod prod prod"; }
+#p-where[data-wl="3"][data-wg="ac"] .v2mag { grid-template-areas: "msn msn msn" "fin fin fin"; }
+#p-where[data-wl="3"][data-wg="st"] .v2mag { grid-template-areas: "station station station"; }
+#p-where[data-wl="3"] .v2mag > .wl-off { display: none; }
+/* 4 Diptych: two independent columns */
+#p-where[data-wl="4"] .v2mag { grid-template-areas: none; align-items: start; }
+.wl-col { display: grid; gap: 20px; align-content: start; min-width: 0; }
+.wl-colh { border-top: 2px solid var(--ink); padding-top: 12px; }
+/* 5 Contents: a fixed table of contents, the charts one under the other */
+#p-where[data-wl="5"] { grid-template-columns: minmax(0, 200px) minmax(0, 1fr); column-gap: 40px; grid-template-areas: "lead lead" "nav main" "nav more"; align-items: start; }
+#p-where[data-wl="5"] > .lead { grid-area: lead; } #p-where[data-wl="5"] > .v2mag { grid-area: main; grid-template-columns: minmax(0, 1fr); grid-template-areas: none; } #p-where[data-wl="5"] > details { grid-area: more; }
+#p-where[data-wl="5"] > .wl-nav { grid-area: nav; display: grid; gap: 4px; position: sticky; top: calc(var(--tabs-h) + 20px); }
+.wl-ng { display: grid; margin-top: 14px; }
+.wl-ng b { font-size: 11.5px; font-weight: 600; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); margin-bottom: 6px; }
+.wl-ng a { font-size: 13.5px; line-height: 1.3; color: var(--ink-2); text-decoration: none; padding: 6px 0 6px 12px; border-left: 2px solid var(--grid); }
+.wl-ng a:hover { color: var(--ink); } .wl-ng a.on { color: var(--ink); font-weight: 600; border-left-color: var(--s1); }
+@media (max-width: 900px) { #pg, #kg, #p-where .v2mag { grid-template-columns: minmax(0, 1fr); grid-template-areas: none; } #pg > .card, #kg > .card, #p-where .v2mag .v2-band { grid-area: auto; } }
 #p-ov[data-lay] .v2stats { display: flex; flex-wrap: wrap; gap: 6px 24px; margin-top: 2px; }
 #p-ov[data-lay] .v2stats b { font-size: 24px; min-width: 0; }
-#p-ov[data-lay="1"] { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-areas: "lead lead" "figs figs" "trend trend" "tgt cost" "delay ctl" "more more" "table table"; }
-#p-ov[data-lay="2"] { grid-template-columns: repeat(3, minmax(0, 1fr)); grid-template-areas: "lead lead lead" "trend trend figs" "tgt cost delay" "ctl ctl ctl" "more more more" "table table table"; }
-#p-ov[data-lay="2"] > .figs, #p-ov[data-lay="4"] > .figs { grid-template-columns: minmax(0, 1fr); align-self: stretch; }
-#p-ov[data-lay="2"] > .figs > .fig, #p-ov[data-lay="4"] > .figs > .fig { border-left: 0; border-top: 1px solid var(--grid); padding: 12px 0; }
-#p-ov[data-lay="2"] > .figs > .fig:first-child, #p-ov[data-lay="4"] > .figs > .fig:first-child { border-top: 0; }
-#p-ov[data-lay="3"] { gap: 0; grid-template-areas: "lead" "figs" "tgt" "trend" "cost" "delay" "ctl" "more" "table"; }
-#p-ov[data-lay="3"] .v2ov > .card { grid-template-columns: minmax(0, 210px) minmax(0, 1fr); column-gap: 36px; background: transparent; border: 0; border-top: 1px solid var(--grid); border-radius: 0; padding: 22px 0; }
-#p-ov[data-lay="3"] .v2ov > .card > .bhead { grid-column: 1; }
-#p-ov[data-lay="3"] .v2ov > .card > .custom { grid-column: 2; grid-row: 1; }
-#p-ov[data-lay="3"] .v2ov .bhead h3 { font-family: var(--font-ui); font-weight: 600; font-size: 16px; line-height: 1.3; }
-#p-ov[data-lay="3"] .v2ov .bhead .kicker { display: none; }
-#p-ov[data-lay="3"] .v2ov .bhead .sub { font-size: 12.5px; }
-#p-ov[data-lay="3"] .v2stats { display: grid; gap: 4px; } #p-ov[data-lay="3"] .v2stats b { font-size: 20px; }
-#p-ov[data-lay="4"] { grid-template-columns: minmax(0, 300px) minmax(0, 1fr); grid-template-areas: "lead lead" "figs trend" "tgt cost" "tgt delay" "tgt ctl" "more more" "table table"; }
-#p-ov[data-lay="4"] [data-v2="VT"] { align-self: start; position: sticky; top: calc(var(--tabs-h) + 12px); }
 #p-ov[data-lay="5"] { grid-template-columns: repeat(3, minmax(0, 1fr)); grid-template-areas: "lead lead lead" "figs figs figs" "trend trend tgt" "cost delay delay" "ctl ctl ctl" "more more more" "table table table"; align-items: stretch; }
 #p-ov[data-lay="5"] .v2ov > .card { align-content: start; }   /* cards side by side share one height; their content stays at the top */
 @media (max-width: 900px) {
   #p-ov[data-lay] { grid-template-columns: minmax(0, 1fr) !important; grid-template-areas: none !important; }
   #p-ov[data-lay] > *, #p-ov[data-lay] .v2ov > .card { grid-area: auto !important; position: static !important; }
-  #p-ov[data-lay="3"] .v2ov > .card { grid-template-columns: minmax(0, 1fr); } #p-ov[data-lay="3"] .v2ov > .card > .custom { grid-column: 1; grid-row: auto; }
 }
 /* Dashboard v2: the scorecard of volumes and rates */
 table.v2sc { min-width: 640px; font-variant-numeric: tabular-nums; }
@@ -1049,9 +1085,11 @@ window.FTO2_PAGE = window.FTO2_PAGE || 'suivi';
       cnqSub: 'Estimation à partir des temps du processus AEC : alerte, rédaction, support technique, reprise et contrôle, chiffrés défaut par défaut.',
       nKR: 'NC par MSN', nKRs: 'NC ÷ MSN produits', ovMore: 'Autres listes et graphiques', cnqMore: 'Autres répartitions du coût', parMore: 'Autres graphiques de causes', whereMore: 'Autres graphiques',
       allLines: 'Toutes lignes', v2Tgt: 'Objectif', v2VsTgt: 'vs objectif', v2Above: 'Au-dessus de l’objectif', v2Below: 'Sous l’objectif', v2TgtPh: 'Objectif (fictif)', v2Ph: 'fictif',
-      v2Ph25: '2025 fictif (= 2026)', v2MTgt: 'objectif mensuel {v} (fictif)', v2BudPh: 'Budget au prorata (fictif)', v2Y25: '2025', v2Y26: '2026 prévu', v2Flat: 'Stable', layBar: 'Mise en page', lay0: 'Récit (actuel)', lay1: 'Grille', lay2: 'Héros', lay3: 'Liste', lay4: 'Colonne', lay5: 'Magazine',
-      layD0: 'Une bande par graphique : titre à gauche, graphique à droite.', layD1: 'Cartes sur deux colonnes ; la tendance sur toute la largeur.', layD2: 'La tendance en grand, les chiffres à côté ; trois cartes dessous.',
-      layD3: 'Lignes compactes, à la manière du Pareto : titre court à gauche.', layD4: 'Un résumé à gauche (chiffres, objectifs) ; les graphiques à droite.', layD5: 'Tendance et objectifs côte à côte ; coût et délais dessous.', v2MonTgt: 'objectif du mois {v}', v2Cum: '{v} NC cumulées', v2Fc: 'prévues', v2TgtShort: 'objectif', v2Under: 'Mois sous son objectif', v2Over: 'Mois au-dessus de son objectif', v2CumLeg: 'NC cumulées', v2TgtCum: 'Objectif cumulé (fictif)', v2Summer: 'Juillet et août comptent pour 60 % d’un mois.', v2ObjH: 'Objectif par ligne · NC par MSN', v2ObjC: 'Objectifs fictifs en attendant les chiffres 2025 : taux 2026 moins 25 %.', v2PerMsnV: '{v} par MSN', v2StNow: 'NC depuis le début de la période', v2StFc: 'prévus à fin décembre', v2StTgt: 'objectif de l’année (fictif)', v2StCost: 'cumulés sur la période', v2StBud: 'budget de l’année (fictif)', v2QPer: 'Par MSN produit : la fermeture d’août ne pèse pas.', v2QMonth: 'Moyenne par mois.', v2PerMsn: 'par MSN', v2Ac: '{n} avions',
+      v2Ph25: '2025 fictif (= 2026)', v2MTgt: 'objectif mensuel {v} (fictif)', v2BudPh: 'Budget au prorata (fictif)', v2Y25: '2025', v2Y26: '2026 prévu', v2Flat: 'Stable', layBar: 'Mise en page de « Où »', wl0: 'Demi-magazine (actuel)', wl1: 'Magazine', wl2: 'Chapitres', wl3: 'Sous-onglets', wl4: 'Diptyque', wl5: 'Sommaire',
+      wlD0: 'Des cartes, en pleine largeur ou par deux.', wlD1: 'Comme la vue d’ensemble : trois colonnes, grands et petits graphiques en alternance.', wlD2: 'Trois chapitres (produits, avions, postes) ; le titre du chapitre reste à gauche.',
+      wlD3: 'Un chapitre à la fois, choisi en haut de l’onglet.', wlD4: 'Deux colonnes : par produit à gauche, par avion et par poste à droite.', wlD5: 'Un sommaire fixe à gauche ; les graphiques l’un sous l’autre.',
+      wlCh_prod: 'Produits', wlCh_ac: 'Avions', wlCh_st: 'Postes', wlChs_prod: 'Taux, carte mensuelle, précision, projection et coût, produit par produit.', wlChs_ac: 'Coût par avion et FIN qui reviennent.', wlChs_st: 'Défauts par poste de rédaction de la NC.',
+      wlCol_l: 'Par produit', wlCol_r: 'Par avion et par poste', wlNav: 'Sommaire', v2MonTgt: 'objectif du mois {v}', v2Cum: '{v} NC cumulées', v2Fc: 'prévues', v2TgtShort: 'objectif', v2Under: 'Mois sous son objectif', v2Over: 'Mois au-dessus de son objectif', v2CumLeg: 'NC cumulées', v2TgtCum: 'Objectif cumulé (fictif)', v2Summer: 'Juillet et août comptent pour 60 % d’un mois.', v2ObjH: 'Objectif par ligne · NC par MSN', v2ObjC: 'Objectifs fictifs en attendant les chiffres 2025 : taux 2026 moins 25 %.', v2PerMsnV: '{v} par MSN', v2StNow: 'NC depuis le début de la période', v2StFc: 'prévus à fin décembre', v2StTgt: 'objectif de l’année (fictif)', v2StCost: 'cumulés sur la période', v2StBud: 'budget de l’année (fictif)', v2QPer: 'Par MSN produit : la fermeture d’août ne pèse pas.', v2QMonth: 'Moyenne par mois.', v2PerMsn: 'par MSN', v2Ac: '{n} avions',
       scVol: 'Volume par mois', scTot: 'Total', scRate: 'Par MSN, par mois', scRateP: 'Par MSN', scLast3: '3 derniers mois', scNc: 'NC', scDef: 'Défauts', scCost: 'Coût',
       scNote: 'Par MSN : NC, défauts et coût des produits rattachés au fichier de production. Petit chiffre : écart des 3 derniers mois à la période.',
       tabWhere: 'Où', whereTitle: 'Où sont les problèmes ?', whereSub: 'Produits, lignes, avions et postes, rapportés au volume produit quand c’est possible.', titleMock: 'Tableau de bord FTO2 : maquette à noter',
@@ -1215,9 +1253,11 @@ window.FTO2_PAGE = window.FTO2_PAGE || 'suivi';
       cnqSub: 'Estimate from AEC process times: alert, writing, technical support, rework and check, costed defect by defect.',
       nKR: 'NCs per MSN', nKRs: 'NCs ÷ MSN built', ovMore: 'Other lists and charts', cnqMore: 'Other cost breakdowns', parMore: 'Other root-cause charts', whereMore: 'Other charts',
       allLines: 'All lines', v2Tgt: 'Target', v2VsTgt: 'vs target', v2Above: 'Above target', v2Below: 'Below target', v2TgtPh: 'Target (placeholder)', v2Ph: 'placeholder',
-      v2Ph25: '2025 placeholder (= 2026)', v2MTgt: 'monthly target {v} (placeholder)', v2BudPh: 'Pro-rata budget (placeholder)', v2Y25: '2025', v2Y26: '2026 forecast', v2Flat: 'Flat', layBar: 'Layout', lay0: 'Récit (current)', lay1: 'Grid', lay2: 'Hero', lay3: 'List', lay4: 'Column', lay5: 'Magazine',
-      layD0: 'One band per chart: title on the left, chart on the right.', layD1: 'Cards in two columns; the trend across the full width.', layD2: 'The trend large, the figures beside it; three cards below.',
-      layD3: 'Compact rows, like the Pareto: short title on the left.', layD4: 'A summary on the left (figures, targets); the charts on the right.', layD5: 'Trend and targets side by side; cost and lead time below.', v2MonTgt: 'month target {v}', v2Cum: '{v} NCs to date', v2Fc: 'expected', v2TgtShort: 'target', v2Under: 'Month under its target', v2Over: 'Month above its target', v2CumLeg: 'Cumulative NCs', v2TgtCum: 'Cumulative target (placeholder)', v2Summer: 'July and August count as 60% of a month.', v2ObjH: 'Target per line · NCs per MSN', v2ObjC: 'Placeholder targets until the 2025 figures come: 2026 rate minus 25%.', v2PerMsnV: '{v} per MSN', v2StNow: 'NCs since the start of the period', v2StFc: 'expected by end of December', v2StTgt: 'target for the year (placeholder)', v2StCost: 'so far in the period', v2StBud: 'budget for the year (placeholder)', v2QPer: 'Per MSN built: the August shutdown does not weigh.', v2QMonth: 'Monthly average.', v2PerMsn: 'per MSN', v2Ac: '{n} aircraft',
+      v2Ph25: '2025 placeholder (= 2026)', v2MTgt: 'monthly target {v} (placeholder)', v2BudPh: 'Pro-rata budget (placeholder)', v2Y25: '2025', v2Y26: '2026 forecast', v2Flat: 'Flat', layBar: 'Layout of “Where”', wl0: 'Half magazine (current)', wl1: 'Magazine', wl2: 'Chapters', wl3: 'Sub-tabs', wl4: 'Diptych', wl5: 'Contents',
+      wlD0: 'Cards, full width or in pairs.', wlD1: 'Like the overview: three columns, large and small charts alternating.', wlD2: 'Three chapters (products, aircraft, stations); the chapter title stays on the left.',
+      wlD3: 'One chapter at a time, picked at the top of the tab.', wlD4: 'Two columns: by product on the left, by aircraft and station on the right.', wlD5: 'A fixed table of contents on the left; the charts one under the other.',
+      wlCh_prod: 'Products', wlCh_ac: 'Aircraft', wlCh_st: 'Stations', wlChs_prod: 'Rates, monthly map, precision, forecast and cost, product by product.', wlChs_ac: 'Cost per aircraft and FINs that come back.', wlChs_st: 'Defects by the station where the NC was written.',
+      wlCol_l: 'By product', wlCol_r: 'By aircraft and station', wlNav: 'Contents', v2MonTgt: 'month target {v}', v2Cum: '{v} NCs to date', v2Fc: 'expected', v2TgtShort: 'target', v2Under: 'Month under its target', v2Over: 'Month above its target', v2CumLeg: 'Cumulative NCs', v2TgtCum: 'Cumulative target (placeholder)', v2Summer: 'July and August count as 60% of a month.', v2ObjH: 'Target per line · NCs per MSN', v2ObjC: 'Placeholder targets until the 2025 figures come: 2026 rate minus 25%.', v2PerMsnV: '{v} per MSN', v2StNow: 'NCs since the start of the period', v2StFc: 'expected by end of December', v2StTgt: 'target for the year (placeholder)', v2StCost: 'so far in the period', v2StBud: 'budget for the year (placeholder)', v2QPer: 'Per MSN built: the August shutdown does not weigh.', v2QMonth: 'Monthly average.', v2PerMsn: 'per MSN', v2Ac: '{n} aircraft',
       scVol: 'Volume per month', scTot: 'Total', scRate: 'Per MSN, per month', scRateP: 'Per MSN', scLast3: 'Last 3 months', scNc: 'NCs', scDef: 'Defects', scCost: 'Cost',
       scNote: 'Per MSN: NCs, defects and cost of the products matched to the production file. Small figure: last 3 months against the period.',
       tabWhere: 'Where', whereTitle: 'Where are the problems?', whereSub: 'Products, lines, aircraft and stations, against the volume built where possible.', titleMock: 'FTO2 dashboard: mock-up to score',
@@ -1418,7 +1458,7 @@ window.FTO2_PAGE = window.FTO2_PAGE || 'suivi';
     var grid = document.getElementById(o.grid), fold = o.fold ? document.getElementById(o.fold) : null;
     o.dims.forEach(function (d) {
       // one band per breakdown: name, reading guide and legend on the left, the chart on the right; o.mag: cards in a grid, only the d.wide ones across
-      var c = document.createElement('div'); c.className = 'card' + (!o.mag || d.wide ? ' wide' : ''); c.setAttribute('data-card', d.k);
+      var c = document.createElement('div'); c.className = 'card' + (!o.mag || d.wide || d.fold ? ' wide' : ''); c.setAttribute('data-card', d.k);
       c.innerHTML = '<div class="bhead">' + (o.kicker ? '<span class="kicker" data-t="' + o.kicker + '"></span>' : '') +
         '<div class="card-head"><h3 data-t="' + d.t + '"></h3><button type="button" class="clear-one" data-dim="' + d.k + '" hidden></button></div>' +
         (d.sub ? '<p class="sub" data-t="' + d.sub + '"></p>' : '') + (d.split && !d.nokey ? '<div class="key" data-key="1"></div>' : '') + '</div>' +
@@ -1800,7 +1840,7 @@ window.FTO2_PAGE = window.FTO2_PAGE || 'suivi';
   function uCat(u) { return u.d ? dCat(u.d) : '__none'; }
   function sum(arr, f) { return arr.reduce(function (s, x) { return s + f(x); }, 0); }
   var cnq = Board({
-    grid: 'cg', fold: 'cgx', chips: 'cc', search: 'cq', count: 'cn', thead: 'cth', tbody: 'ctb', more: 'cm', money: true, kicker: 'kmEur',
+    grid: 'cg', fold: 'cgx', chips: 'cc', search: 'cq', count: 'cn', thead: 'cth', tbody: 'ctb', more: 'cm', money: true, kicker: 'kmEur', mag: true,
     rows: selUnits, measure: uCost,
     dims: [
       { fold: true, k: 'cable', t: 'dCable', get: function (u) { return u.d && dCable(u.d) ? 'c' : 'n'; }, show: function (v) { return v === 'c' ? S('cable') : S('notCable'); }, order: function () { return ['c', 'n']; } },
@@ -4106,7 +4146,7 @@ window.FTO2_PAGE = window.FTO2_PAGE || 'suivi';
     if (!os.length) { pEmpty(k); return; }
     var lab = 96, mr = 70, rh = 28, H = os.length * rh + 28, pw = W0 - lab - mr, lo = Math.min.apply(null, os.map(function (x) { return x.l; })) / 1.3, hi = Math.max.apply(null, os.map(function (x) { return x.u; })) * 1.3, g = '';
     function X(v) { return lab + (Math.log10(v) - Math.log10(lo)) / (Math.log10(hi) - Math.log10(lo)) * pw; }
-    [0.01, 0.03, 0.1, 0.3, 1, 3, 10, 30].filter(function (t) { return t >= lo && t <= hi; }).forEach(function (t) { g += '<line x1="' + r1(X(t)) + '" x2="' + r1(X(t)) + '" y1="0" y2="' + (H - 22) + '" stroke="var(--grid)"/>' + tx(X(t), H - 6, String(t).replace('.', G.lang === 'fr' ? ',' : '.'), 'mu', 'middle'); });
+    (pw < 320 ? [0.01, 0.1, 1, 10] : [0.01, 0.03, 0.1, 0.3, 1, 3, 10, 30]).filter(function (t) { return t >= lo && t <= hi; }).forEach(function (t) { g += '<line x1="' + r1(X(t)) + '" x2="' + r1(X(t)) + '" y1="0" y2="' + (H - 22) + '" stroke="var(--grid)"/>' + tx(X(t), H - 6, String(t).replace('.', G.lang === 'fr' ? ',' : '.'), 'mu', 'middle'); });
     os.forEach(function (x, i) { var y = i * rh + rh / 2;
       g += tx(lab - 10, y + 4, x.o.p, 'ink', 'end') + '<line x1="' + r1(X(x.l)) + '" x2="' + r1(X(x.u)) + '" y1="' + y + '" y2="' + y + '" stroke="var(--ink-2)" stroke-width="2"/>';
       g += '<line x1="' + r1(X(x.l)) + '" x2="' + r1(X(x.l)) + '" y1="' + (y - 5) + '" y2="' + (y + 5) + '" stroke="var(--ink-2)" stroke-width="1.5"/><line x1="' + r1(X(x.u)) + '" x2="' + r1(X(x.u)) + '" y1="' + (y - 5) + '" y2="' + (y + 5) + '" stroke="var(--ink-2)" stroke-width="1.5"/>';
@@ -4858,7 +4898,7 @@ window.FTO2_PAGE = window.FTO2_PAGE || 'suivi';
     if (V2B) return; V2B = true;
     var ov = document.getElementById('p-ov'), figs = ov.querySelector('.figs');
     var og = v2Grid(V2L.ov.top); og.classList.add('v2ov'); ov.insertBefore(og, figs.nextSibling);
-    if (PAGE === 'layouts') v2LayBar(); else ov.setAttribute('data-lay', '5');   // Magazine, chosen by Mohammad on 19 Oct
+    ov.setAttribute('data-lay', '5');   // Magazine, chosen by Mohammad on 19 Oct
     var inner = document.querySelector('#ngxBox .inner'); inner.insertBefore(document.getElementById('ncChips'), inner.firstChild);   // the breakdown lists and their filter chips fold together
     var ngx = v2Wire(document.getElementById('ngx'));
     V2L.ov.fold.forEach(function (k) { var b = v2Band(k); if (b) ngx.appendChild(b); });
@@ -4866,24 +4906,67 @@ window.FTO2_PAGE = window.FTO2_PAGE || 'suivi';
     var pp = document.getElementById('p-pareto');
     var pf = v2Fold('parMore', V2L.pareto.fold); pf.id = 'parFold'; pp.appendChild(pf);
     var wh = document.getElementById('p-where'), wg = v2Grid(V2L.where.top); wg.classList.add('v2mag'); wh.appendChild(wg); wh.appendChild(v2Fold('whereMore', V2L.where.fold));
-    document.getElementById('p-cnq').insertBefore(v2Grid(V2L.cnq.more), document.getElementById('cgxBox'));
+    if (PAGE === 'layouts') { v2WlBuild(wh, wg); v2LayBar(); }
+    var cq = v2Grid(V2L.cnq.more); cq.classList.add('v2cq'); document.getElementById('p-cnq').insertBefore(cq, document.getElementById('cgxBox'));
     applyText();
   }
-  var V2LAYS = ['0', '1', '2', '3', '4', '5'];
+  // Où: five layouts to choose from, on the layouts page only (FTO2_Mises_en_page.html); the main page keeps the half magazine (0)
+  var WL = ['0', '1', '2', '3', '4', '5'], WLGS = ['prod', 'ac', 'st'], WLG = { prod: ['VP', '61', '64', '71', 'a:prod'], ac: ['a:msn', 'VF'], st: ['a:station'] };
+  function v2WlBuild(wh, wg) {
+    WLGS.forEach(function (gk, i) {   // chapter titles (layout 2)
+      var c = document.createElement('div'); c.className = 'wl-chap'; c.setAttribute('data-chap', gk);
+      c.innerHTML = '<div><span class="n">0' + (i + 1) + '</span><h3 data-t="wlCh_' + gk + '"></h3><p class="sub" data-t="wlChs_' + gk + '"></p></div>'; wg.appendChild(c);
+    });
+    var sub = document.createElement('div'); sub.className = 'wl-sub'; sub.innerHTML = '<div class="seg" role="group" id="wlSub"></div>'; wh.insertBefore(sub, wg);   // sub-tabs (layout 3)
+    sub.addEventListener('click', function (e) { var b = e.target.closest('[data-wgb]'); if (b) { wh.setAttribute('data-wg', b.getAttribute('data-wgb')); v2Render(); } });
+    var nav = document.createElement('nav'); nav.className = 'wl-nav'; nav.id = 'wlNav'; wh.insertBefore(nav, wg);   // contents (layout 5)
+    nav.addEventListener('click', function (e) { var a = e.target.closest('[data-go]'); if (!a) return; e.preventDefault(); var b = V2BAND[a.getAttribute('data-go')]; if (b) b.scrollIntoView({ behavior: 'smooth', block: 'start' }); });
+    window.addEventListener('scroll', wlSpy, { passive: true });
+    wh.setAttribute('data-wg', 'prod');
+  }
+  // layout 4 puts the cards in two columns; the others keep them in one grid, in chapter order
+  function wlArrange(n) {
+    var wg = document.querySelector('#p-where .v2mag'), cols = wg.querySelectorAll('.wl-col');
+    if (n === '4') {
+      if (!cols.length) [['l', ['prod']], ['r', ['ac', 'st']]].forEach(function (c) {
+        var d = document.createElement('div'); d.className = 'wl-col'; d.innerHTML = '<div class="wl-colh"><h3 data-t="wlCol_' + c[0] + '"></h3></div>';
+        c[1].forEach(function (g) { WLG[g].forEach(function (k) { if (V2BAND[k]) d.appendChild(V2BAND[k]); }); }); wg.appendChild(d);
+      });
+      return;
+    }
+    WLGS.forEach(function (g) { WLG[g].forEach(function (k) { if (V2BAND[k]) wg.appendChild(V2BAND[k]); }); });
+    cols.forEach(function (c) { c.remove(); });
+  }
+  function wlSpy() {
+    var wh = document.getElementById('p-where'); if (G.tab !== 'where' || wh.getAttribute('data-wl') !== '5') return;
+    var cur = 'VP'; WLGS.forEach(function (g) { WLG[g].forEach(function (k) { var b = V2BAND[k]; if (b && b.getBoundingClientRect().top < innerHeight * 0.35) cur = k; }); });
+    document.querySelectorAll('#wlNav [data-go]').forEach(function (a) { a.classList.toggle('on', a.getAttribute('data-go') === cur); });
+  }
+  function wlRefresh() {   // texts and per-layout state of the switch, called on every render of the layouts page
+    var wh = document.getElementById('p-where'), n = wh.getAttribute('data-wl') || '0', g = wh.getAttribute('data-wg') || 'prod';
+    document.getElementById('laySeg').innerHTML = segHtml(WL.map(function (x) { return [x, (x === '0' ? '' : x + ' · ') + S('wl' + x)]; }), n, 'data-wlb');
+    document.getElementById('layDesc').textContent = S('wlD' + n);
+    document.getElementById('wlSub').innerHTML = segHtml(WLGS.map(function (x) { return [x, S('wlCh_' + x)]; }), g, 'data-wgb');
+    WLGS.forEach(function (x) { WLG[x].forEach(function (k) { if (V2BAND[k]) V2BAND[k].classList.toggle('wl-off', x !== g); }); });
+    document.getElementById('wlNav').innerHTML = '<span class="kicker">' + esc(S('wlNav')) + '</span>' + WLGS.map(function (x) {
+      return '<div class="wl-ng"><b>' + esc(S('wlCh_' + x)) + '</b>' + WLG[x].filter(function (k) { return V2BAND[k]; }).map(function (k) { return '<a href="#" data-go="' + k + '">' + esc(v2Head(k)[1]) + '</a>'; }).join('') + '</div>';
+    }).join('');
+    wlSpy();
+  }
   function v2LayBar() {
     var bar = document.createElement('div'); bar.className = 'mk-bar'; bar.id = 'layBar';
     bar.innerHTML = '<b data-t="layBar"></b><div class="seg" role="group" id="laySeg"></div><span class="mk-save" id="layDesc"></span>';
     document.querySelector('.wrap').appendChild(bar); document.body.classList.add('mk-on');
-    var cur = '0'; try { cur = localStorage.getItem('fto2-lay') || '0'; } catch (e) {}
-    v2SetLay(cur, true);
-    bar.addEventListener('click', function (e) { var b = e.target.closest('[data-lay]'); if (b) v2SetLay(b.getAttribute('data-lay')); });
+    var cur = '0'; try { cur = localStorage.getItem('fto2-wl') || '0'; } catch (e) {}
+    v2SetWl(WL.indexOf(cur) >= 0 ? cur : '0', true);
+    bar.addEventListener('click', function (e) { var b = e.target.closest('[data-wlb]'); if (b) v2SetWl(b.getAttribute('data-wlb')); });
+    setTimeout(function () { if (G.tab === 'ov' && !location.hash) setTab('where'); }, 0);   // the page opens on Où
   }
-  function v2SetLay(n, quiet) {
-    var ov = document.getElementById('p-ov'); if (n === '0') ov.removeAttribute('data-lay'); else ov.setAttribute('data-lay', n);
-    try { localStorage.setItem('fto2-lay', n); } catch (e) {}
-    document.getElementById('laySeg').innerHTML = segHtml(V2LAYS.map(function (x) { return [x, (x === '0' ? '' : x + ' · ') + S('lay' + x)]; }), n, 'data-lay');
-    document.getElementById('layDesc').textContent = S('layD' + n);
-    if (!quiet) { if (G.tab !== 'ov') setTab('ov'); else v2Render(); window.scrollTo(0, 0); }
+  function v2SetWl(n, quiet) {
+    var wh = document.getElementById('p-where'); if (n === '0') wh.removeAttribute('data-wl'); else wh.setAttribute('data-wl', n);
+    try { localStorage.setItem('fto2-wl', n); } catch (e) {}
+    wlArrange(n); applyText(); wlRefresh();
+    if (!quiet) { if (G.tab !== 'where') setTab('where'); else v2Render(); window.scrollTo(0, 0); }
   }
   function v2Head(k) { if (k.indexOf('a:') === 0) { var a = k.slice(2); return [S('k_' + a), S('t_' + a), S('s_' + a)]; } return GSTR[k][G.lang]; }
   function v2Draw(k) {
@@ -4900,7 +4983,7 @@ window.FTO2_PAGE = window.FTO2_PAGE || 'suivi';
     PD = pSrc() ? pData() : null; PA = PD ? pAgg(PD) : null;
     var L2 = V2L[G.tab]; if (!L2) return;
     if (G.tab === 'ov') v2Kpis();
-    if (PAGE === 'layouts' && document.getElementById('laySeg')) { var cl = document.querySelector('#laySeg [aria-pressed="true"]'); document.getElementById('layDesc').textContent = S('layD' + (cl ? cl.getAttribute('data-lay') : '0')); document.querySelectorAll('#laySeg [data-lay]').forEach(function (b) { var x = b.getAttribute('data-lay'); b.textContent = (x === '0' ? '' : x + ' · ') + S('lay' + x); }); }
+    if (PAGE === 'layouts' && document.getElementById('laySeg')) wlRefresh();
     if (G.tab === 'pareto') {   // the fold sits under the lists of the active measure, above its detail table
       var sec = document.getElementById(PMODE === 'vol' ? 'pVol' : 'pCost'), det = sec.querySelector(':scope > details.detail'), pf = document.getElementById('parFold');
       if (pf && det && pf.nextSibling !== det) sec.insertBefore(pf, det); }

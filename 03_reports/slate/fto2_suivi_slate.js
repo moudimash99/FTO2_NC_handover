@@ -115,9 +115,11 @@ window.DASH = {"defects":[["216055047",1,"2026-01-06","2026-W02","A350","FTO2",0
       cnqSub: 'Estimation à partir des temps du processus AEC : alerte, rédaction, support technique, reprise et contrôle, chiffrés défaut par défaut.',
       nKR: 'NC par MSN', nKRs: 'NC ÷ MSN produits', ovMore: 'Autres listes et graphiques', cnqMore: 'Autres répartitions du coût', parMore: 'Autres graphiques de causes', whereMore: 'Autres graphiques',
       allLines: 'Toutes lignes', v2Tgt: 'Objectif', v2VsTgt: 'vs objectif', v2Above: 'Au-dessus de l’objectif', v2Below: 'Sous l’objectif', v2TgtPh: 'Objectif (fictif)', v2Ph: 'fictif',
-      v2Ph25: '2025 fictif (= 2026)', v2MTgt: 'objectif mensuel {v} (fictif)', v2BudPh: 'Budget au prorata (fictif)', v2Y25: '2025', v2Y26: '2026 prévu', v2Flat: 'Stable', layBar: 'Mise en page', lay0: 'Récit (actuel)', lay1: 'Grille', lay2: 'Héros', lay3: 'Liste', lay4: 'Colonne', lay5: 'Magazine',
-      layD0: 'Une bande par graphique : titre à gauche, graphique à droite.', layD1: 'Cartes sur deux colonnes ; la tendance sur toute la largeur.', layD2: 'La tendance en grand, les chiffres à côté ; trois cartes dessous.',
-      layD3: 'Lignes compactes, à la manière du Pareto : titre court à gauche.', layD4: 'Un résumé à gauche (chiffres, objectifs) ; les graphiques à droite.', layD5: 'Tendance et objectifs côte à côte ; coût et délais dessous.', v2MonTgt: 'objectif du mois {v}', v2Cum: '{v} NC cumulées', v2Fc: 'prévues', v2TgtShort: 'objectif', v2Under: 'Mois sous son objectif', v2Over: 'Mois au-dessus de son objectif', v2CumLeg: 'NC cumulées', v2TgtCum: 'Objectif cumulé (fictif)', v2Summer: 'Juillet et août comptent pour 60 % d’un mois.', v2ObjH: 'Objectif par ligne · NC par MSN', v2ObjC: 'Objectifs fictifs en attendant les chiffres 2025 : taux 2026 moins 25 %.', v2PerMsnV: '{v} par MSN', v2StNow: 'NC depuis le début de la période', v2StFc: 'prévus à fin décembre', v2StTgt: 'objectif de l’année (fictif)', v2StCost: 'cumulés sur la période', v2StBud: 'budget de l’année (fictif)', v2QPer: 'Par MSN produit : la fermeture d’août ne pèse pas.', v2QMonth: 'Moyenne par mois.', v2PerMsn: 'par MSN', v2Ac: '{n} avions',
+      v2Ph25: '2025 fictif (= 2026)', v2MTgt: 'objectif mensuel {v} (fictif)', v2BudPh: 'Budget au prorata (fictif)', v2Y25: '2025', v2Y26: '2026 prévu', v2Flat: 'Stable', layBar: 'Mise en page de « Où »', wl0: 'Demi-magazine (actuel)', wl1: 'Magazine', wl2: 'Chapitres', wl3: 'Sous-onglets', wl4: 'Diptyque', wl5: 'Sommaire',
+      wlD0: 'Des cartes, en pleine largeur ou par deux.', wlD1: 'Comme la vue d’ensemble : trois colonnes, grands et petits graphiques en alternance.', wlD2: 'Trois chapitres (produits, avions, postes) ; le titre du chapitre reste à gauche.',
+      wlD3: 'Un chapitre à la fois, choisi en haut de l’onglet.', wlD4: 'Deux colonnes : par produit à gauche, par avion et par poste à droite.', wlD5: 'Un sommaire fixe à gauche ; les graphiques l’un sous l’autre.',
+      wlCh_prod: 'Produits', wlCh_ac: 'Avions', wlCh_st: 'Postes', wlChs_prod: 'Taux, carte mensuelle, précision, projection et coût, produit par produit.', wlChs_ac: 'Coût par avion et FIN qui reviennent.', wlChs_st: 'Défauts par poste de rédaction de la NC.',
+      wlCol_l: 'Par produit', wlCol_r: 'Par avion et par poste', wlNav: 'Sommaire', v2MonTgt: 'objectif du mois {v}', v2Cum: '{v} NC cumulées', v2Fc: 'prévues', v2TgtShort: 'objectif', v2Under: 'Mois sous son objectif', v2Over: 'Mois au-dessus de son objectif', v2CumLeg: 'NC cumulées', v2TgtCum: 'Objectif cumulé (fictif)', v2Summer: 'Juillet et août comptent pour 60 % d’un mois.', v2ObjH: 'Objectif par ligne · NC par MSN', v2ObjC: 'Objectifs fictifs en attendant les chiffres 2025 : taux 2026 moins 25 %.', v2PerMsnV: '{v} par MSN', v2StNow: 'NC depuis le début de la période', v2StFc: 'prévus à fin décembre', v2StTgt: 'objectif de l’année (fictif)', v2StCost: 'cumulés sur la période', v2StBud: 'budget de l’année (fictif)', v2QPer: 'Par MSN produit : la fermeture d’août ne pèse pas.', v2QMonth: 'Moyenne par mois.', v2PerMsn: 'par MSN', v2Ac: '{n} avions',
       scVol: 'Volume par mois', scTot: 'Total', scRate: 'Par MSN, par mois', scRateP: 'Par MSN', scLast3: '3 derniers mois', scNc: 'NC', scDef: 'Défauts', scCost: 'Coût',
       scNote: 'Par MSN : NC, défauts et coût des produits rattachés au fichier de production. Petit chiffre : écart des 3 derniers mois à la période.',
       tabWhere: 'Où', whereTitle: 'Où sont les problèmes ?', whereSub: 'Produits, lignes, avions et postes, rapportés au volume produit quand c’est possible.', titleMock: 'Tableau de bord FTO2 : maquette à noter',
@@ -281,9 +283,11 @@ window.DASH = {"defects":[["216055047",1,"2026-01-06","2026-W02","A350","FTO2",0
       cnqSub: 'Estimate from AEC process times: alert, writing, technical support, rework and check, costed defect by defect.',
       nKR: 'NCs per MSN', nKRs: 'NCs ÷ MSN built', ovMore: 'Other lists and charts', cnqMore: 'Other cost breakdowns', parMore: 'Other root-cause charts', whereMore: 'Other charts',
       allLines: 'All lines', v2Tgt: 'Target', v2VsTgt: 'vs target', v2Above: 'Above target', v2Below: 'Below target', v2TgtPh: 'Target (placeholder)', v2Ph: 'placeholder',
-      v2Ph25: '2025 placeholder (= 2026)', v2MTgt: 'monthly target {v} (placeholder)', v2BudPh: 'Pro-rata budget (placeholder)', v2Y25: '2025', v2Y26: '2026 forecast', v2Flat: 'Flat', layBar: 'Layout', lay0: 'Récit (current)', lay1: 'Grid', lay2: 'Hero', lay3: 'List', lay4: 'Column', lay5: 'Magazine',
-      layD0: 'One band per chart: title on the left, chart on the right.', layD1: 'Cards in two columns; the trend across the full width.', layD2: 'The trend large, the figures beside it; three cards below.',
-      layD3: 'Compact rows, like the Pareto: short title on the left.', layD4: 'A summary on the left (figures, targets); the charts on the right.', layD5: 'Trend and targets side by side; cost and lead time below.', v2MonTgt: 'month target {v}', v2Cum: '{v} NCs to date', v2Fc: 'expected', v2TgtShort: 'target', v2Under: 'Month under its target', v2Over: 'Month above its target', v2CumLeg: 'Cumulative NCs', v2TgtCum: 'Cumulative target (placeholder)', v2Summer: 'July and August count as 60% of a month.', v2ObjH: 'Target per line · NCs per MSN', v2ObjC: 'Placeholder targets until the 2025 figures come: 2026 rate minus 25%.', v2PerMsnV: '{v} per MSN', v2StNow: 'NCs since the start of the period', v2StFc: 'expected by end of December', v2StTgt: 'target for the year (placeholder)', v2StCost: 'so far in the period', v2StBud: 'budget for the year (placeholder)', v2QPer: 'Per MSN built: the August shutdown does not weigh.', v2QMonth: 'Monthly average.', v2PerMsn: 'per MSN', v2Ac: '{n} aircraft',
+      v2Ph25: '2025 placeholder (= 2026)', v2MTgt: 'monthly target {v} (placeholder)', v2BudPh: 'Pro-rata budget (placeholder)', v2Y25: '2025', v2Y26: '2026 forecast', v2Flat: 'Flat', layBar: 'Layout of “Where”', wl0: 'Half magazine (current)', wl1: 'Magazine', wl2: 'Chapters', wl3: 'Sub-tabs', wl4: 'Diptych', wl5: 'Contents',
+      wlD0: 'Cards, full width or in pairs.', wlD1: 'Like the overview: three columns, large and small charts alternating.', wlD2: 'Three chapters (products, aircraft, stations); the chapter title stays on the left.',
+      wlD3: 'One chapter at a time, picked at the top of the tab.', wlD4: 'Two columns: by product on the left, by aircraft and station on the right.', wlD5: 'A fixed table of contents on the left; the charts one under the other.',
+      wlCh_prod: 'Products', wlCh_ac: 'Aircraft', wlCh_st: 'Stations', wlChs_prod: 'Rates, monthly map, precision, forecast and cost, product by product.', wlChs_ac: 'Cost per aircraft and FINs that come back.', wlChs_st: 'Defects by the station where the NC was written.',
+      wlCol_l: 'By product', wlCol_r: 'By aircraft and station', wlNav: 'Contents', v2MonTgt: 'month target {v}', v2Cum: '{v} NCs to date', v2Fc: 'expected', v2TgtShort: 'target', v2Under: 'Month under its target', v2Over: 'Month above its target', v2CumLeg: 'Cumulative NCs', v2TgtCum: 'Cumulative target (placeholder)', v2Summer: 'July and August count as 60% of a month.', v2ObjH: 'Target per line · NCs per MSN', v2ObjC: 'Placeholder targets until the 2025 figures come: 2026 rate minus 25%.', v2PerMsnV: '{v} per MSN', v2StNow: 'NCs since the start of the period', v2StFc: 'expected by end of December', v2StTgt: 'target for the year (placeholder)', v2StCost: 'so far in the period', v2StBud: 'budget for the year (placeholder)', v2QPer: 'Per MSN built: the August shutdown does not weigh.', v2QMonth: 'Monthly average.', v2PerMsn: 'per MSN', v2Ac: '{n} aircraft',
       scVol: 'Volume per month', scTot: 'Total', scRate: 'Per MSN, per month', scRateP: 'Per MSN', scLast3: 'Last 3 months', scNc: 'NCs', scDef: 'Defects', scCost: 'Cost',
       scNote: 'Per MSN: NCs, defects and cost of the products matched to the production file. Small figure: last 3 months against the period.',
       tabWhere: 'Where', whereTitle: 'Where are the problems?', whereSub: 'Products, lines, aircraft and stations, against the volume built where possible.', titleMock: 'FTO2 dashboard: mock-up to score',
@@ -484,7 +488,7 @@ window.DASH = {"defects":[["216055047",1,"2026-01-06","2026-W02","A350","FTO2",0
     var grid = document.getElementById(o.grid), fold = o.fold ? document.getElementById(o.fold) : null;
     o.dims.forEach(function (d) {
       // one band per breakdown: name, reading guide and legend on the left, the chart on the right; o.mag: cards in a grid, only the d.wide ones across
-      var c = document.createElement('div'); c.className = 'card' + (!o.mag || d.wide ? ' wide' : ''); c.setAttribute('data-card', d.k);
+      var c = document.createElement('div'); c.className = 'card' + (!o.mag || d.wide || d.fold ? ' wide' : ''); c.setAttribute('data-card', d.k);
       c.innerHTML = '<div class="bhead">' + (o.kicker ? '<span class="kicker" data-t="' + o.kicker + '"></span>' : '') +
         '<div class="card-head"><h3 data-t="' + d.t + '"></h3><button type="button" class="clear-one" data-dim="' + d.k + '" hidden></button></div>' +
         (d.sub ? '<p class="sub" data-t="' + d.sub + '"></p>' : '') + (d.split && !d.nokey ? '<div class="key" data-key="1"></div>' : '') + '</div>' +
@@ -866,7 +870,7 @@ window.DASH = {"defects":[["216055047",1,"2026-01-06","2026-W02","A350","FTO2",0
   function uCat(u) { return u.d ? dCat(u.d) : '__none'; }
   function sum(arr, f) { return arr.reduce(function (s, x) { return s + f(x); }, 0); }
   var cnq = Board({
-    grid: 'cg', fold: 'cgx', chips: 'cc', search: 'cq', count: 'cn', thead: 'cth', tbody: 'ctb', more: 'cm', money: true, kicker: 'kmEur',
+    grid: 'cg', fold: 'cgx', chips: 'cc', search: 'cq', count: 'cn', thead: 'cth', tbody: 'ctb', more: 'cm', money: true, kicker: 'kmEur', mag: true,
     rows: selUnits, measure: uCost,
     dims: [
       { fold: true, k: 'cable', t: 'dCable', get: function (u) { return u.d && dCable(u.d) ? 'c' : 'n'; }, show: function (v) { return v === 'c' ? S('cable') : S('notCable'); }, order: function () { return ['c', 'n']; } },
@@ -3172,7 +3176,7 @@ window.DASH = {"defects":[["216055047",1,"2026-01-06","2026-W02","A350","FTO2",0
     if (!os.length) { pEmpty(k); return; }
     var lab = 96, mr = 70, rh = 28, H = os.length * rh + 28, pw = W0 - lab - mr, lo = Math.min.apply(null, os.map(function (x) { return x.l; })) / 1.3, hi = Math.max.apply(null, os.map(function (x) { return x.u; })) * 1.3, g = '';
     function X(v) { return lab + (Math.log10(v) - Math.log10(lo)) / (Math.log10(hi) - Math.log10(lo)) * pw; }
-    [0.01, 0.03, 0.1, 0.3, 1, 3, 10, 30].filter(function (t) { return t >= lo && t <= hi; }).forEach(function (t) { g += '<line x1="' + r1(X(t)) + '" x2="' + r1(X(t)) + '" y1="0" y2="' + (H - 22) + '" stroke="var(--grid)"/>' + tx(X(t), H - 6, String(t).replace('.', G.lang === 'fr' ? ',' : '.'), 'mu', 'middle'); });
+    (pw < 320 ? [0.01, 0.1, 1, 10] : [0.01, 0.03, 0.1, 0.3, 1, 3, 10, 30]).filter(function (t) { return t >= lo && t <= hi; }).forEach(function (t) { g += '<line x1="' + r1(X(t)) + '" x2="' + r1(X(t)) + '" y1="0" y2="' + (H - 22) + '" stroke="var(--grid)"/>' + tx(X(t), H - 6, String(t).replace('.', G.lang === 'fr' ? ',' : '.'), 'mu', 'middle'); });
     os.forEach(function (x, i) { var y = i * rh + rh / 2;
       g += tx(lab - 10, y + 4, x.o.p, 'ink', 'end') + '<line x1="' + r1(X(x.l)) + '" x2="' + r1(X(x.u)) + '" y1="' + y + '" y2="' + y + '" stroke="var(--ink-2)" stroke-width="2"/>';
       g += '<line x1="' + r1(X(x.l)) + '" x2="' + r1(X(x.l)) + '" y1="' + (y - 5) + '" y2="' + (y + 5) + '" stroke="var(--ink-2)" stroke-width="1.5"/><line x1="' + r1(X(x.u)) + '" x2="' + r1(X(x.u)) + '" y1="' + (y - 5) + '" y2="' + (y + 5) + '" stroke="var(--ink-2)" stroke-width="1.5"/>';
@@ -3924,7 +3928,7 @@ window.DASH = {"defects":[["216055047",1,"2026-01-06","2026-W02","A350","FTO2",0
     if (V2B) return; V2B = true;
     var ov = document.getElementById('p-ov'), figs = ov.querySelector('.figs');
     var og = v2Grid(V2L.ov.top); og.classList.add('v2ov'); ov.insertBefore(og, figs.nextSibling);
-    if (PAGE === 'layouts') v2LayBar(); else ov.setAttribute('data-lay', '5');   // Magazine, chosen by Mohammad on 19 Oct
+    ov.setAttribute('data-lay', '5');   // Magazine, chosen by Mohammad on 19 Oct
     var inner = document.querySelector('#ngxBox .inner'); inner.insertBefore(document.getElementById('ncChips'), inner.firstChild);   // the breakdown lists and their filter chips fold together
     var ngx = v2Wire(document.getElementById('ngx'));
     V2L.ov.fold.forEach(function (k) { var b = v2Band(k); if (b) ngx.appendChild(b); });
@@ -3932,24 +3936,67 @@ window.DASH = {"defects":[["216055047",1,"2026-01-06","2026-W02","A350","FTO2",0
     var pp = document.getElementById('p-pareto');
     var pf = v2Fold('parMore', V2L.pareto.fold); pf.id = 'parFold'; pp.appendChild(pf);
     var wh = document.getElementById('p-where'), wg = v2Grid(V2L.where.top); wg.classList.add('v2mag'); wh.appendChild(wg); wh.appendChild(v2Fold('whereMore', V2L.where.fold));
-    document.getElementById('p-cnq').insertBefore(v2Grid(V2L.cnq.more), document.getElementById('cgxBox'));
+    if (PAGE === 'layouts') { v2WlBuild(wh, wg); v2LayBar(); }
+    var cq = v2Grid(V2L.cnq.more); cq.classList.add('v2cq'); document.getElementById('p-cnq').insertBefore(cq, document.getElementById('cgxBox'));
     applyText();
   }
-  var V2LAYS = ['0', '1', '2', '3', '4', '5'];
+  // Où: five layouts to choose from, on the layouts page only (FTO2_Mises_en_page.html); the main page keeps the half magazine (0)
+  var WL = ['0', '1', '2', '3', '4', '5'], WLGS = ['prod', 'ac', 'st'], WLG = { prod: ['VP', '61', '64', '71', 'a:prod'], ac: ['a:msn', 'VF'], st: ['a:station'] };
+  function v2WlBuild(wh, wg) {
+    WLGS.forEach(function (gk, i) {   // chapter titles (layout 2)
+      var c = document.createElement('div'); c.className = 'wl-chap'; c.setAttribute('data-chap', gk);
+      c.innerHTML = '<div><span class="n">0' + (i + 1) + '</span><h3 data-t="wlCh_' + gk + '"></h3><p class="sub" data-t="wlChs_' + gk + '"></p></div>'; wg.appendChild(c);
+    });
+    var sub = document.createElement('div'); sub.className = 'wl-sub'; sub.innerHTML = '<div class="seg" role="group" id="wlSub"></div>'; wh.insertBefore(sub, wg);   // sub-tabs (layout 3)
+    sub.addEventListener('click', function (e) { var b = e.target.closest('[data-wgb]'); if (b) { wh.setAttribute('data-wg', b.getAttribute('data-wgb')); v2Render(); } });
+    var nav = document.createElement('nav'); nav.className = 'wl-nav'; nav.id = 'wlNav'; wh.insertBefore(nav, wg);   // contents (layout 5)
+    nav.addEventListener('click', function (e) { var a = e.target.closest('[data-go]'); if (!a) return; e.preventDefault(); var b = V2BAND[a.getAttribute('data-go')]; if (b) b.scrollIntoView({ behavior: 'smooth', block: 'start' }); });
+    window.addEventListener('scroll', wlSpy, { passive: true });
+    wh.setAttribute('data-wg', 'prod');
+  }
+  // layout 4 puts the cards in two columns; the others keep them in one grid, in chapter order
+  function wlArrange(n) {
+    var wg = document.querySelector('#p-where .v2mag'), cols = wg.querySelectorAll('.wl-col');
+    if (n === '4') {
+      if (!cols.length) [['l', ['prod']], ['r', ['ac', 'st']]].forEach(function (c) {
+        var d = document.createElement('div'); d.className = 'wl-col'; d.innerHTML = '<div class="wl-colh"><h3 data-t="wlCol_' + c[0] + '"></h3></div>';
+        c[1].forEach(function (g) { WLG[g].forEach(function (k) { if (V2BAND[k]) d.appendChild(V2BAND[k]); }); }); wg.appendChild(d);
+      });
+      return;
+    }
+    WLGS.forEach(function (g) { WLG[g].forEach(function (k) { if (V2BAND[k]) wg.appendChild(V2BAND[k]); }); });
+    cols.forEach(function (c) { c.remove(); });
+  }
+  function wlSpy() {
+    var wh = document.getElementById('p-where'); if (G.tab !== 'where' || wh.getAttribute('data-wl') !== '5') return;
+    var cur = 'VP'; WLGS.forEach(function (g) { WLG[g].forEach(function (k) { var b = V2BAND[k]; if (b && b.getBoundingClientRect().top < innerHeight * 0.35) cur = k; }); });
+    document.querySelectorAll('#wlNav [data-go]').forEach(function (a) { a.classList.toggle('on', a.getAttribute('data-go') === cur); });
+  }
+  function wlRefresh() {   // texts and per-layout state of the switch, called on every render of the layouts page
+    var wh = document.getElementById('p-where'), n = wh.getAttribute('data-wl') || '0', g = wh.getAttribute('data-wg') || 'prod';
+    document.getElementById('laySeg').innerHTML = segHtml(WL.map(function (x) { return [x, (x === '0' ? '' : x + ' · ') + S('wl' + x)]; }), n, 'data-wlb');
+    document.getElementById('layDesc').textContent = S('wlD' + n);
+    document.getElementById('wlSub').innerHTML = segHtml(WLGS.map(function (x) { return [x, S('wlCh_' + x)]; }), g, 'data-wgb');
+    WLGS.forEach(function (x) { WLG[x].forEach(function (k) { if (V2BAND[k]) V2BAND[k].classList.toggle('wl-off', x !== g); }); });
+    document.getElementById('wlNav').innerHTML = '<span class="kicker">' + esc(S('wlNav')) + '</span>' + WLGS.map(function (x) {
+      return '<div class="wl-ng"><b>' + esc(S('wlCh_' + x)) + '</b>' + WLG[x].filter(function (k) { return V2BAND[k]; }).map(function (k) { return '<a href="#" data-go="' + k + '">' + esc(v2Head(k)[1]) + '</a>'; }).join('') + '</div>';
+    }).join('');
+    wlSpy();
+  }
   function v2LayBar() {
     var bar = document.createElement('div'); bar.className = 'mk-bar'; bar.id = 'layBar';
     bar.innerHTML = '<b data-t="layBar"></b><div class="seg" role="group" id="laySeg"></div><span class="mk-save" id="layDesc"></span>';
     document.querySelector('.wrap').appendChild(bar); document.body.classList.add('mk-on');
-    var cur = '0'; try { cur = localStorage.getItem('fto2-lay') || '0'; } catch (e) {}
-    v2SetLay(cur, true);
-    bar.addEventListener('click', function (e) { var b = e.target.closest('[data-lay]'); if (b) v2SetLay(b.getAttribute('data-lay')); });
+    var cur = '0'; try { cur = localStorage.getItem('fto2-wl') || '0'; } catch (e) {}
+    v2SetWl(WL.indexOf(cur) >= 0 ? cur : '0', true);
+    bar.addEventListener('click', function (e) { var b = e.target.closest('[data-wlb]'); if (b) v2SetWl(b.getAttribute('data-wlb')); });
+    setTimeout(function () { if (G.tab === 'ov' && !location.hash) setTab('where'); }, 0);   // the page opens on Où
   }
-  function v2SetLay(n, quiet) {
-    var ov = document.getElementById('p-ov'); if (n === '0') ov.removeAttribute('data-lay'); else ov.setAttribute('data-lay', n);
-    try { localStorage.setItem('fto2-lay', n); } catch (e) {}
-    document.getElementById('laySeg').innerHTML = segHtml(V2LAYS.map(function (x) { return [x, (x === '0' ? '' : x + ' · ') + S('lay' + x)]; }), n, 'data-lay');
-    document.getElementById('layDesc').textContent = S('layD' + n);
-    if (!quiet) { if (G.tab !== 'ov') setTab('ov'); else v2Render(); window.scrollTo(0, 0); }
+  function v2SetWl(n, quiet) {
+    var wh = document.getElementById('p-where'); if (n === '0') wh.removeAttribute('data-wl'); else wh.setAttribute('data-wl', n);
+    try { localStorage.setItem('fto2-wl', n); } catch (e) {}
+    wlArrange(n); applyText(); wlRefresh();
+    if (!quiet) { if (G.tab !== 'where') setTab('where'); else v2Render(); window.scrollTo(0, 0); }
   }
   function v2Head(k) { if (k.indexOf('a:') === 0) { var a = k.slice(2); return [S('k_' + a), S('t_' + a), S('s_' + a)]; } return GSTR[k][G.lang]; }
   function v2Draw(k) {
@@ -3966,7 +4013,7 @@ window.DASH = {"defects":[["216055047",1,"2026-01-06","2026-W02","A350","FTO2",0
     PD = pSrc() ? pData() : null; PA = PD ? pAgg(PD) : null;
     var L2 = V2L[G.tab]; if (!L2) return;
     if (G.tab === 'ov') v2Kpis();
-    if (PAGE === 'layouts' && document.getElementById('laySeg')) { var cl = document.querySelector('#laySeg [aria-pressed="true"]'); document.getElementById('layDesc').textContent = S('layD' + (cl ? cl.getAttribute('data-lay') : '0')); document.querySelectorAll('#laySeg [data-lay]').forEach(function (b) { var x = b.getAttribute('data-lay'); b.textContent = (x === '0' ? '' : x + ' · ') + S('lay' + x); }); }
+    if (PAGE === 'layouts' && document.getElementById('laySeg')) wlRefresh();
     if (G.tab === 'pareto') {   // the fold sits under the lists of the active measure, above its detail table
       var sec = document.getElementById(PMODE === 'vol' ? 'pVol' : 'pCost'), det = sec.querySelector(':scope > details.detail'), pf = document.getElementById('parFold');
       if (pf && det && pf.nextSibling !== det) sec.insertBefore(pf, det); }

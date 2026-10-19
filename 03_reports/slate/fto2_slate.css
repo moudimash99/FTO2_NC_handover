@@ -540,13 +540,13 @@
 .fto2 #p-ov[data-lay] [data-v2="VX"] { grid-area: ctl; }
 .fto2 #p-ov[data-lay] > #ngxBox { grid-area: more; }
 .fto2 #p-ov[data-lay] > details:not(#ngxBox) { grid-area: table; }
-.fto2 #p-ov[data-lay] .v2ov > .card, .fto2 #p-where .v2mag > .card { grid-template-columns: minmax(0, 1fr); background: var(--surface); border: 1px solid var(--ring); border-radius: 10px; padding: 18px 20px 16px; box-shadow: none; clip-path: none; row-gap: 10px; }
-.fto2 #p-ov[data-lay] .v2ov > .card > .bhead, .fto2 #p-where .v2mag > .card > .bhead { position: static; grid-column: 1; gap: 6px; }
-.fto2 #p-ov[data-lay] .v2ov > .card > .custom, .fto2 #p-where .v2mag > .card > .custom { grid-column: 1; grid-row: auto; }
+.fto2 #p-ov[data-lay] .v2ov > .card, .fto2 #p-where .v2mag .v2-band { grid-template-columns: minmax(0, 1fr); background: var(--surface); border: 1px solid var(--ring); border-radius: 10px; padding: 18px 20px 16px; box-shadow: none; clip-path: none; row-gap: 10px; }
+.fto2 #p-ov[data-lay] .v2ov > .card > .bhead, .fto2 #p-where .v2mag .v2-band > .bhead { position: static; grid-column: 1; gap: 6px; }
+.fto2 #p-ov[data-lay] .v2ov > .card > .custom, .fto2 #p-where .v2mag .v2-band > .custom { grid-column: 1; grid-row: auto; }
 .fto2 #p-ov[data-lay] .v2ov .bhead h3, .fto2 #p-where .v2mag .bhead h3 { font-size: clamp(20px, 2vw, 24px); }
 .fto2 #p-where .v2mag { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; align-items: stretch; margin: 4px 0 28px;
   grid-template-areas: "rate rate" "month month" "ci proj" "fin fin" "msn msn" "prod station"; }
-.fto2 #p-where .v2mag > .card { align-content: start; min-width: 0; }
+.fto2 #p-where .v2mag .v2-band { align-content: start; min-width: 0; }
 .fto2 #p-where .v2mag > [data-v2="VP"] { grid-area: rate; }
 .fto2 #p-where .v2mag > [data-v2="61"] { grid-area: month; }
 .fto2 #p-where .v2mag > [data-v2="64"] { grid-area: ci; }
@@ -568,35 +568,79 @@
 .fto2 #pg > [data-card="line"], .fto2 #kg > [data-card="line"] { grid-area: line; }
 .fto2 #pg > [data-card="code"], .fto2 #kg > [data-card="code"] { grid-area: code; }
 .fto2 #pg > [data-card="fin"], .fto2 #kg > [data-card="fin"] { grid-area: fin; }
+.fto2 #p-cnq { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; align-items: stretch;
+  grid-template-areas: "lead lead lead" "strip strip strip" "figs figs figs" "chips chips chips" "comp comp line" "comp comp meth" "each each each" "cx cx cx" "more more more" "table table table"; }
+.fto2 #p-cnq > * { min-width: 0; }
+.fto2 #p-cnq > #cg, .fto2 #p-cnq > .v2cq { display: contents; }
+.fto2 #p-cnq > .lead { grid-area: lead; }
+.fto2 #cStrip { grid-area: strip; }
+.fto2 #p-cnq > .figs { grid-area: figs; }
+.fto2 #cc { grid-area: chips; }
+.fto2 #p-cnq > .card { grid-area: meth; }
+.fto2 #cg > [data-card="line"] { grid-area: line; }
+.fto2 #p-cnq [data-v2="VC"] { grid-area: comp; }
+.fto2 #p-cnq [data-v2="VE"] { grid-area: each; }
+.fto2 #cx { grid-area: cx; }
+.fto2 #cgxBox { grid-area: more; }
+.fto2 #p-cnq > details.detail:not(#cgxBox) { grid-area: table; }
+.fto2 #p-cnq > .card, .fto2 #cg > .card, .fto2 #p-cnq .v2cq > .card { grid-template-columns: minmax(0, 1fr); background: var(--surface); border: 1px solid var(--ring); border-radius: 10px; padding: 18px 20px 16px; box-shadow: none; clip-path: none; row-gap: 12px; align-content: start; }
+.fto2 #cg > .card > .bhead, .fto2 #p-cnq .v2cq > .card > .bhead { position: static; grid-column: 1; gap: 6px; }
+.fto2 #cg > .card > .bars, .fto2 #p-cnq .v2cq > .card > .custom { grid-column: 1; grid-row: auto; }
+.fto2 #cg .bhead .kicker { display: none; }
+.fto2 #cg > [data-card="line"] .bar { grid-template-columns: minmax(0, 6em) minmax(0, 1fr) 5.6em; }
+.fto2 #p-cnq > .card .level { grid-template-columns: minmax(0, 1fr) auto; row-gap: 5px; }
+.fto2 #p-cnq > .card .level .val { grid-column: 2; grid-row: 1; }
+.fto2 #p-cnq > .card .level .track { grid-column: 1 / -1; grid-row: 2; height: 8px; border-radius: 4px; }
+.fto2 #p-cnq > .card .level .fill { border-radius: 4px; }
+.fto2 #cg .bhead h3, .fto2 #p-cnq .v2cq .bhead h3, .fto2 #p-cnq > .card h3 { font-family: var(--font-display); font-weight: 400; font-size: clamp(20px, 2vw, 24px); line-height: 1.15; }
+@media (max-width: 900px) {
+.fto2 #p-cnq { grid-template-columns: minmax(0, 1fr); grid-template-areas: none; }
+.fto2 #p-cnq > *, .fto2 #p-cnq .v2cq > .card, .fto2 #cg > .card { grid-area: auto; }
+}
+.fto2 .wl-chap, .fto2 .wl-sub, .fto2 .wl-nav { display: none; }
+.fto2 #p-where .v2mag .v2-band { scroll-margin-top: calc(var(--tabs-h) + 18px); }
+.fto2 #p-where[data-wl="4"] .v2mag .v2-band, .fto2 #p-where[data-wl="5"] .v2mag .v2-band { grid-area: auto; }
+.fto2 #p-where[data-wl="1"] .v2mag { grid-template-columns: repeat(3, minmax(0, 1fr)); grid-template-areas: "rate rate ci" "proj month month" "msn msn msn" "prod station station" "fin fin fin"; }
+.fto2 #p-where[data-wl="2"] .v2mag { grid-template-columns: minmax(0, 210px) repeat(2, minmax(0, 1fr)); grid-template-areas: "c1 rate rate" "c1 month month" "c1 ci proj" "c1 prod prod" "c2 msn msn" "c2 fin fin" "c3 station station"; }
+.fto2 #p-where[data-wl="2"] .wl-chap { display: block; border-top: 2px solid var(--ink); padding-top: 14px; }
+.fto2 #p-where[data-wl="2"] .wl-chap[data-chap="prod"] { grid-area: c1; }
+.fto2 #p-where[data-wl="2"] .wl-chap[data-chap="ac"] { grid-area: c2; }
+.fto2 #p-where[data-wl="2"] .wl-chap[data-chap="st"] { grid-area: c3; }
+.fto2 #p-where[data-wl="2"] .wl-chap[data-chap="ac"], .fto2 #p-where[data-wl="2"] .wl-chap[data-chap="st"], .fto2 #p-where[data-wl="2"] [data-v2="a:msn"], .fto2 #p-where[data-wl="2"] [data-v2="a:station"] { margin-top: 30px; }
+.fto2 .wl-chap > div { position: sticky; top: calc(var(--tabs-h) + 20px); display: grid; gap: 8px; }
+.fto2 .wl-chap .n { font-family: var(--font-display); font-size: 46px; line-height: 1; color: var(--s1); }
+.fto2 .wl-chap h3, .fto2 .wl-colh h3 { font-family: var(--font-display); font-weight: 400; font-size: 28px; line-height: 1.1; }
+.fto2 #p-where[data-wl="3"] .wl-sub { display: flex; position: sticky; top: var(--tabs-h); z-index: 8; background: var(--page); padding: 10px 0; border-bottom: 1px solid var(--grid); box-shadow: 0 0 0 100vmax var(--page); clip-path: inset(0 -100vmax); }
+.fto2 .wl-sub .seg button { font-size: 15px; padding: 8px 22px; }
+.fto2 #p-where[data-wl="3"] .v2mag { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.fto2 #p-where[data-wl="3"][data-wg="prod"] .v2mag { grid-template-areas: "rate rate ci" "proj month month" "prod prod prod"; }
+.fto2 #p-where[data-wl="3"][data-wg="ac"] .v2mag { grid-template-areas: "msn msn msn" "fin fin fin"; }
+.fto2 #p-where[data-wl="3"][data-wg="st"] .v2mag { grid-template-areas: "station station station"; }
+.fto2 #p-where[data-wl="3"] .v2mag > .wl-off { display: none; }
+.fto2 #p-where[data-wl="4"] .v2mag { grid-template-areas: none; align-items: start; }
+.fto2 .wl-col { display: grid; gap: 20px; align-content: start; min-width: 0; }
+.fto2 .wl-colh { border-top: 2px solid var(--ink); padding-top: 12px; }
+.fto2 #p-where[data-wl="5"] { grid-template-columns: minmax(0, 200px) minmax(0, 1fr); column-gap: 40px; grid-template-areas: "lead lead" "nav main" "nav more"; align-items: start; }
+.fto2 #p-where[data-wl="5"] > .lead { grid-area: lead; }
+.fto2 #p-where[data-wl="5"] > .v2mag { grid-area: main; grid-template-columns: minmax(0, 1fr); grid-template-areas: none; }
+.fto2 #p-where[data-wl="5"] > details { grid-area: more; }
+.fto2 #p-where[data-wl="5"] > .wl-nav { grid-area: nav; display: grid; gap: 4px; position: sticky; top: calc(var(--tabs-h) + 20px); }
+.fto2 .wl-ng { display: grid; margin-top: 14px; }
+.fto2 .wl-ng b { font-size: 11.5px; font-weight: 600; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); margin-bottom: 6px; }
+.fto2 .wl-ng a { font-size: 13.5px; line-height: 1.3; color: var(--ink-2); text-decoration: none; padding: 6px 0 6px 12px; border-left: 2px solid var(--grid); }
+.fto2 .wl-ng a:hover { color: var(--ink); }
+.fto2 .wl-ng a.on { color: var(--ink); font-weight: 600; border-left-color: var(--s1); }
 @media (max-width: 900px) {
 .fto2 #pg, .fto2 #kg, .fto2 #p-where .v2mag { grid-template-columns: minmax(0, 1fr); grid-template-areas: none; }
-.fto2 #pg > .card, .fto2 #kg > .card, .fto2 #p-where .v2mag > .card { grid-area: auto; }
+.fto2 #pg > .card, .fto2 #kg > .card, .fto2 #p-where .v2mag .v2-band { grid-area: auto; }
 }
 .fto2 #p-ov[data-lay] .v2stats { display: flex; flex-wrap: wrap; gap: 6px 24px; margin-top: 2px; }
 .fto2 #p-ov[data-lay] .v2stats b { font-size: 24px; min-width: 0; }
-.fto2 #p-ov[data-lay="1"] { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-areas: "lead lead" "figs figs" "trend trend" "tgt cost" "delay ctl" "more more" "table table"; }
-.fto2 #p-ov[data-lay="2"] { grid-template-columns: repeat(3, minmax(0, 1fr)); grid-template-areas: "lead lead lead" "trend trend figs" "tgt cost delay" "ctl ctl ctl" "more more more" "table table table"; }
-.fto2 #p-ov[data-lay="2"] > .figs, .fto2 #p-ov[data-lay="4"] > .figs { grid-template-columns: minmax(0, 1fr); align-self: stretch; }
-.fto2 #p-ov[data-lay="2"] > .figs > .fig, .fto2 #p-ov[data-lay="4"] > .figs > .fig { border-left: 0; border-top: 1px solid var(--grid); padding: 12px 0; }
-.fto2 #p-ov[data-lay="2"] > .figs > .fig:first-child, .fto2 #p-ov[data-lay="4"] > .figs > .fig:first-child { border-top: 0; }
-.fto2 #p-ov[data-lay="3"] { gap: 0; grid-template-areas: "lead" "figs" "tgt" "trend" "cost" "delay" "ctl" "more" "table"; }
-.fto2 #p-ov[data-lay="3"] .v2ov > .card { grid-template-columns: minmax(0, 210px) minmax(0, 1fr); column-gap: 36px; background: transparent; border: 0; border-top: 1px solid var(--grid); border-radius: 0; padding: 22px 0; }
-.fto2 #p-ov[data-lay="3"] .v2ov > .card > .bhead { grid-column: 1; }
-.fto2 #p-ov[data-lay="3"] .v2ov > .card > .custom { grid-column: 2; grid-row: 1; }
-.fto2 #p-ov[data-lay="3"] .v2ov .bhead h3 { font-family: var(--font-ui); font-weight: 600; font-size: 16px; line-height: 1.3; }
-.fto2 #p-ov[data-lay="3"] .v2ov .bhead .kicker { display: none; }
-.fto2 #p-ov[data-lay="3"] .v2ov .bhead .sub { font-size: 12.5px; }
-.fto2 #p-ov[data-lay="3"] .v2stats { display: grid; gap: 4px; }
-.fto2 #p-ov[data-lay="3"] .v2stats b { font-size: 20px; }
-.fto2 #p-ov[data-lay="4"] { grid-template-columns: minmax(0, 300px) minmax(0, 1fr); grid-template-areas: "lead lead" "figs trend" "tgt cost" "tgt delay" "tgt ctl" "more more" "table table"; }
-.fto2 #p-ov[data-lay="4"] [data-v2="VT"] { align-self: start; position: sticky; top: calc(var(--tabs-h) + 12px); }
 .fto2 #p-ov[data-lay="5"] { grid-template-columns: repeat(3, minmax(0, 1fr)); grid-template-areas: "lead lead lead" "figs figs figs" "trend trend tgt" "cost delay delay" "ctl ctl ctl" "more more more" "table table table"; align-items: stretch; }
 .fto2 #p-ov[data-lay="5"] .v2ov > .card { align-content: start; }
 @media (max-width: 900px) {
 .fto2 #p-ov[data-lay] { grid-template-columns: minmax(0, 1fr) !important; grid-template-areas: none !important; }
 .fto2 #p-ov[data-lay] > *, .fto2 #p-ov[data-lay] .v2ov > .card { grid-area: auto !important; position: static !important; }
-.fto2 #p-ov[data-lay="3"] .v2ov > .card { grid-template-columns: minmax(0, 1fr); }
-.fto2 #p-ov[data-lay="3"] .v2ov > .card > .custom { grid-column: 1; grid-row: auto; }
 }
 .fto2 table.v2sc { min-width: 640px; font-variant-numeric: tabular-nums; }
 .fto2 table.v2sc th[scope="row"] { font-size: 14px; font-weight: 600; color: var(--ink); vertical-align: middle; }
