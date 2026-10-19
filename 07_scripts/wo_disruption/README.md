@@ -95,3 +95,12 @@ python3 -I retest_conn.py $P; python3 -I conn_fit.py $P  # re-test on rework ord
 - Test NCs where >= 60% of defects are connection errors (11 NCs): planned rework ≈ 77 min + 15 min per connection error (22 min per error on average), against 35 min per error in the CNQ model.
 
 `python3 -I retest.py $P` — re-test operations on rework orders, by family and NC type.
+
+Simulation of proposed CNQ changes (nothing in `cnq_handoever/` is modified; parameters are copied in memory):
+
+```
+python3 -I simulate.py $P <repo>     # level 3 before/after each change, 2026 Feb–Sep and 2025 without ERMA
+python3 -I outlier.py $P             # the two largest planned rework orders (NC 218233692, 218248460)
+```
+
+- All six changes together: 2026 Feb–Sep 151,093 -> 136,417 EUR (217 -> 196 EUR per NC); 2025 without ERMA 178,170 -> 161,761 EUR. Customer returns 2026: 11,975 -> 13,670 EUR.
