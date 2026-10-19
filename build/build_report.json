@@ -18,12 +18,12 @@
     "classification": "root cause (long text)",
     "nc_on_aec": 856,
     "level1": 403488.79,
-    "level2": 144264.77,
-    "level3": 181404.77,
-    "cable_allocated": 42747.88,
-    "cable_share": 0.2356,
-    "level3_parser": 182887.14,
-    "cable_share_parser": 0.2354
+    "level2": 143298.09,
+    "level3": 175663.09,
+    "cable_allocated": 44336.23,
+    "cable_share": 0.2524,
+    "level3_parser": 177109.42,
+    "cable_share_parser": 0.2501
   },
   "scope": {
     "FTO2": 786,
@@ -37,13 +37,13 @@
       "ncs": 727,
       "ncs_without_defect_line": 63,
       "defects": 2709,
-      "cnq": 166428.13
+      "cnq": 159530.63
     },
     "client": {
       "ncs": 69,
       "ncs_without_defect_line": 4,
       "defects": 69,
-      "cnq": 11876.64
+      "cnq": 12449.95
     }
   },
   "defects_by_scope": {
@@ -63,8 +63,8 @@
     "nc_on_aec": 856,
     "nc_no_master_data": 0,
     "level1_airbus_aec": 403488.79,
-    "level2_global_aec": 144264.77,
-    "level3_detailed_aec": 181404.77
+    "level2_global_aec": 143298.09,
+    "level3_detailed_aec": 175663.09
   },
   "customer_returns": {
     "ncs": 69,

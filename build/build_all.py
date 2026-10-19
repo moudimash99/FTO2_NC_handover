@@ -98,7 +98,8 @@ def main():
             "msn": "msn", "trigger": "trigger", "notification_type": "notification_type", "closure_time": "closure_time",
             "Type_NC_auto": "type_nc_auto", "GPS_Type_NC": "gps_type_nc", "Programme_auto": "phase", "Produit_auto": "produit",
             "Origin_auto": "origin_auto", "Ext_Source": "ext_source", "defect_code_description_en": "sap_defect_code",
-            "cause_group_description_en": "sap_cause_group", "cause_code_description_en": "sap_cause_code", "creation_time": "creation_ts", "_source": "source_file"}
+            "cause_group_description_en": "sap_cause_group", "cause_code_description_en": "sap_cause_code", "creation_time": "creation_ts", "_source": "source_file",
+            "linked_document": "linked_document", "work_order": "work_order"}   # the CNQ model's rejection-with-rework-order rule reads these two
     ex = x[["notification_number"] + list(keep)].rename(columns=keep)
     ex["type_nc"] = ex["gps_type_nc"].where(ex["gps_type_nc"].notna(), ex["type_nc_auto"])
     nc = nc.merge(ex, on="notification_number", how="left")
@@ -127,7 +128,7 @@ def main():
     # ======================================================== 3. CNQ, both classifications
     nc_in = nc.rename(columns={"responsabilite": "responsabilite"})[
         ["notification_number", "statut", "decision_status", "liability", "date_creation", "type_nc", "produit",
-         "responsabilite", "perimetre", "programme", "plant"]].copy()
+         "responsabilite", "perimetre", "programme", "plant", "linked_document", "work_order"]].copy()
     runs = {}
     for key, sub, cab in (("parser", "sous_groupe", "defaut_cable"), ("llm", "llm_sous_categorie", "llm_defaut_cable")):
         dd = d[["notification_number", "seq", "qty", sub, cab]].rename(columns={sub: "sous_groupe", cab: "cable"})
@@ -424,7 +425,9 @@ def cnq_explain(d):
     return {"p": {"rate": P.RATE_STANDARD, "rateEng": P.RATE_ENGINEERING, "alert": P.MIN_ALERT, "write": P.MIN_WRITE_NC, "writeFinal": P.MIN_WRITE_NC_FINAL,
                   "support": P.MIN_SUPPORT, "setup": P.MIN_SETUP, "floor": P.MIN_WORK_FLOOR, "recheck": P.MIN_RECHECK_CLOSE,
                   "noDefect": P.MIN_HANDS_ON_NO_DEFECT, "writeGlobal": P.MIN_WRITE_NC_GLOBAL, "workGlobal": P.MIN_WORK_GLOBAL,
-                  "defDefault": P.MIN_DEFAULT_DEFECT, "crExtra": P.CUSTOMER_RETURN_EXTRA, "version": P.MODEL_VERSION},
+                  "defDefault": P.MIN_DEFAULT_DEFECT, "crExtra": P.CUSTOMER_RETURN_EXTRA, "version": P.MODEL_VERSION,
+                  "connNext": P.MIN_CONNECTION_NEXT, "connCls": list(P.CONNECTION_CLASSES), "intTypes": list(P.INTERNAL_TYPES),
+                  "intFactor": P.INTERNAL_WORK_FACTOR, "noAlert": list(P.NO_ALERT_TYPES)},
             "rules": {k: list(v[:8]) + [kind(v[8])] for k, v in P.RULES.items()},
             "cls": {k: [v[0], v[1], v[2], kind(v[4])] for k, v in P.DEFECT_TIMES.items()},
             "airbus": P.AIRBUS_STANDARD,

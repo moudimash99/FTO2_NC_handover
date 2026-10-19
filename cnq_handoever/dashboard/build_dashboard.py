@@ -26,7 +26,7 @@ cidx = {k: i for i, k in enumerate(classes)}
 unknown = sorted(set(d.sous_groupe) - set(classes))
 assert not unknown, "defect classes missing from cnq_params.DEFECT_TIMES: %s" % unknown
 
-RULE_FR = {"RWK": "Retouche", "EXC": "Échange", "REJ": "Rejet", "SCR": "Rebut", "DQN": "Demande de modification de conception (DQN)",
+RULE_FR = {"RWK": "Retouche", "EXC": "Échange", "REJ": "Rejet", "REJ_RW": "Rejet avec ordre de retouche", "SCR": "Rebut", "DQN": "Demande de modification de conception (DQN)",
            "ACC": "Acceptation en l'état", "PNC": "NC potentielle", "NDC": "Sans décision", "DELETED": "NC supprimée", "UNKNOWN": "Code de décision inconnu"}
 AIRBUS_BASIS = {
     "RWK": {"flag": 0, "en": "Official: rework as per design data", "fr": "Officiel : retouche selon la définition (DDS)"},
@@ -34,6 +34,7 @@ AIRBUS_BASIS = {
     "ACC": {"flag": 0, "en": "Official: acceptable as is", "fr": "Officiel : acceptable en l'état"},
     "DQN": {"flag": 1, "en": "Official figure, assumed match: engineering assessment", "fr": "Chiffre officiel, correspondance supposée : évaluation par l'ingénierie"},
     "REJ": {"flag": 1, "en": "Assumed: creation, assessment, decision", "fr": "Hypothèse : création, évaluation, décision"},
+    "REJ_RW": {"flag": 1, "en": "Assumed: same figure as a rejection", "fr": "Hypothèse : même chiffre qu'un rejet"},
     "SCR": {"flag": 1, "en": "Assumed: creation, assessment, decision", "fr": "Hypothèse : création, évaluation, décision"},
     "PNC": {"flag": 1, "en": "Assumed: creation, assessment, decision", "fr": "Hypothèse : création, évaluation, décision"},
     "NDC": {"flag": 1, "en": "Assumed: creation step only", "fr": "Hypothèse : étape de création uniquement"},
@@ -62,16 +63,19 @@ data = {
     "airbusBasis": AIRBUS_BASIS,
     "classes": [{"k": k, "en": P.DEFECT_TIMES[k][2], "ref": P.DEFECT_TIMES[k][3], "basis": basis(P.DEFECT_TIMES[k][4])} for k in classes],
     "nc": [[int(r.notification_number), nn(r.cnq_month), nn(r.programme), nn(r.get("produit")), r.cnq_rule, int(r.cnq_on_aec), r.cnq_liability_group,
-            int(r.cnq_final_inspection), int(r.cnq_customer_return), r.cnq_where_found, nn(r.statut)] for _, r in nc.iterrows()],
+            int(r.cnq_final_inspection), int(r.cnq_customer_return), r.cnq_where_found, nn(r.statut),
+            int(r.cnq_alert_raised), int(r.cnq_work_factor != 1)] for _, r in nc.iterrows()],
+    # same line order as the pipeline (the first connection error of an NC is the first in this order)
     "lines": [[idx[r.notification_number], cidx[r.sous_groupe], int(r.qty) if "qty" in d.columns and not pd.isna(r.qty) else 1,
-               "" if pd.isna(r.text) else " ".join(str(r.text).split())[:150]] for _, r in d.sort_values(["notification_number", "seq"]).iterrows()],
+               "" if pd.isna(r.text) else " ".join(str(r.text).split())[:150]] for _, r in d.sort_values(["notification_number", "seq"], kind="mergesort").iterrows()],
 }
 # default parameters = the pipeline's. Base minutes are the values BEFORE the "2 x" rule; derived classes point to their base.
 base_min = {k: v[0] for k, v in P.DEFECT_TIMES.items()}
 p = {"rate": P.RATE_STANDARD, "rateEng": P.RATE_ENGINEERING, "alert": P.MIN_ALERT, "write": P.MIN_WRITE_NC, "writeFinal": P.MIN_WRITE_NC_FINAL,
      "support": P.MIN_SUPPORT, "setup": P.MIN_SETUP, "floor": P.MIN_WORK_FLOOR, "recheck": P.MIN_RECHECK_CLOSE, "noDefect": P.MIN_HANDS_ON_NO_DEFECT,
      "writeGlobal": P.MIN_WRITE_NC_GLOBAL, "workGlobal": P.MIN_WORK_GLOBAL, "crExtra": P.CUSTOMER_RETURN_EXTRA, "airbus": dict(P.AIRBUS_STANDARD),
-     "classes": [{"min": base_min[k], "mat": P.DEFECT_TIMES[k][1],
+     "connNext": P.MIN_CONNECTION_NEXT, "internalFactor": P.INTERNAL_WORK_FACTOR,
+     "classes": [{"min": base_min[k], "mat": P.DEFECT_TIMES[k][1], "conn": k in P.CONNECTION_CLASSES,
                   "of": cidx[P.DERIVED_TIMES[k][0]] if k in P.DERIVED_TIMES else None,
                   "factor": P.DERIVED_TIMES[k][1] if k in P.DERIVED_TIMES else None} for k in classes]}
 

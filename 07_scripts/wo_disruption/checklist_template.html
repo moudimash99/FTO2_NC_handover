@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CNQ investigation checklist</title>
+<style>
+:root { --navy: #1f3864; --ink: #1d1d1f; --muted: #5f6368; --line: #d9dde3; --bg: #ffffff; --soft: #f4f6f9; --input: #fff2cc;
+        --high: #f8cbad; --med: #ffe699; --low: #e2efda; --info: #dde3ee; --ok: #2e7d32; }
+* { box-sizing: border-box; }
+body { margin: 0; font: 14px/1.45 Arial, "Segoe UI", Helvetica, sans-serif; color: var(--ink); background: var(--bg); }
+header { background: var(--navy); color: #fff; padding: 18px 24px 16px; }
+header h1 { margin: 0 0 4px; font-size: 21px; }
+header .sub { color: #c9d3e6; font-size: 13px; }
+header .actions { margin-top: 12px; display: flex; flex-wrap: wrap; gap: 8px; }
+button { font: inherit; cursor: pointer; border-radius: 6px; border: 1px solid var(--line); background: #fff; color: var(--ink); padding: 6px 12px; }
+header button { background: transparent; color: #fff; border-color: rgba(255,255,255,.5); }
+header button:hover { background: rgba(255,255,255,.12); }
+main { padding: 18px 24px 40px; max-width: 1400px; }
+h2 { font-size: 16px; margin: 22px 0 10px; color: var(--navy); }
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 12px; }
+.card { border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; background: var(--soft); }
+.card .k { font-size: 12px; color: var(--muted); }
+.card .v { font-size: 22px; font-weight: bold; margin: 2px 0; }
+.card .s { font-size: 12px; color: var(--muted); }
+.card.live .v { color: var(--navy); }
+table { border-collapse: collapse; width: 100%; }
+th, td { border-bottom: 1px solid var(--line); padding: 6px 8px; text-align: left; vertical-align: top; }
+th { background: var(--navy); color: #fff; font-weight: bold; font-size: 12.5px; position: sticky; top: 0; z-index: 1; }
+td.num, th.num { text-align: right; white-space: nowrap; }
+td.long { min-width: 260px; }
+tbody tr:nth-child(even) td { background: #fafbfc; }
+#checks tbody tr { cursor: pointer; }
+#checks tbody tr:hover td { background: #eef3fb; }
+.pill { display: inline-block; padding: 1px 9px; border-radius: 10px; font-size: 12px; font-weight: bold; }
+.p-High { background: var(--high); } .p-Medium { background: var(--med); } .p-Low { background: var(--low); } .p-Info { background: var(--info); }
+select, input[type=text], input[type=number], textarea { font: inherit; border: 1px solid #c8b26a; background: var(--input); border-radius: 4px; padding: 3px 6px; }
+input[type=number] { width: 90px; }
+input[type=text].wide { width: 220px; }
+textarea { width: 100%; min-height: 54px; resize: vertical; }
+.status-Done { color: var(--ok); font-weight: bold; }
+dialog { width: min(1500px, 96vw); max-height: 92vh; border: none; border-radius: 10px; padding: 0; box-shadow: 0 10px 40px rgba(0,0,0,.3); }
+dialog::backdrop { background: rgba(20,30,50,.45); }
+.dh { position: sticky; top: 0; background: var(--navy); color: #fff; padding: 14px 18px; display: flex; gap: 12px; align-items: center; z-index: 3; }
+.dh h3 { margin: 0; font-size: 17px; flex: 1; }
+.dh button { background: transparent; color: #fff; border-color: rgba(255,255,255,.5); }
+.db { padding: 14px 18px 22px; overflow: auto; max-height: calc(92vh - 56px); }
+.facts { display: grid; grid-template-columns: 170px 1fr; gap: 6px 14px; margin-bottom: 12px; }
+.facts .l { color: var(--muted); font-weight: bold; }
+.notes { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 10px 0 16px; }
+.notes label { font-size: 12px; color: var(--muted); font-weight: bold; }
+.tbar { display: flex; gap: 10px; align-items: center; margin: 16px 0 6px; flex-wrap: wrap; }
+.tbar .cap { font-weight: bold; color: var(--navy); }
+.tbar input { background: #fff; border-color: var(--line); width: 260px; }
+.tbar .count { color: var(--muted); font-size: 12px; }
+.twrap { max-height: 60vh; overflow: auto; border: 1px solid var(--line); border-radius: 6px; }
+.totals { margin: 6px 2px 0; font-size: 13px; color: var(--muted); }
+.totals b { color: var(--ink); }
+.legend { font-size: 12px; color: var(--muted); margin: 6px 0 0; }
+.legend .sw { display: inline-block; width: 12px; height: 12px; background: var(--input); border: 1px solid #c8b26a; vertical-align: -2px; border-radius: 2px; }
+.chg h4 { color: var(--navy); margin: 18px 0 6px; }
+@media (max-width: 760px) { main, header { padding-left: 16px; padding-right: 16px; } .notes, .facts { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<header>
+  <h1>CNQ investigation checklist</h1>
+  <div class="sub" id="sub"></div>
+  <div class="actions">
+    <button type="button" id="btnChanges">Changes to the CNQ</button>
+    <button type="button" id="btnExport">Export my answers (CSV)</button>
+    <button type="button" id="btnClear">Clear my answers</button>
+  </div>
+</header>
+<main>
+  <h2>Figures</h2>
+  <div class="cards" id="cards"></div>
+  <p class="legend">Cards marked "live" follow your answers. Your answers are kept in this browser only; use "Export my answers" to keep or share them.</p>
+  <h2>Checks</h2>
+  <p class="legend">Click a line to open its list. <span class="sw"></span> = a cell for you to fill.</p>
+  <div class="twrap" style="max-height:none"><table id="checks"><thead><tr><th>ID</th><th>Priority</th><th>Check</th><th>Question to answer</th><th class="num">Rows</th><th>Status</th></tr></thead><tbody></tbody></table></div>
+</main>
+<dialog id="dlg"><div class="dh"><h3 id="dlgTitle"></h3><button type="button" data-close>Close</button></div><div class="db" id="dlgBody"></div></dialog>
+<dialog id="chg"><div class="dh"><h3>Changes to the CNQ: done, decided and to do</h3><button type="button" data-close>Close</button></div><div class="db chg" id="chgBody"></div></dialog>
+<script>
+var DATA = /*__DATA__*/null;
+var KEY = "cnq.checklist.v1", RATE = DATA.meta.rate, S = load(), CUR = null;
+function load() { try { var s = JSON.parse(localStorage.getItem(KEY)); if (s && s.a) return s; } catch (e) {} return { a: {}, st: {}, nt: {} }; }
+function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
+function esc(s) { return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
+function fmt(v, t) {
+  if (v == null || v === "") return "";
+  if (t === "eur") return Number(v).toLocaleString("en-GB", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  if (t === "n1") return Number(v).toLocaleString("en-GB", { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+  if (t === "n0") return Number(v).toLocaleString("en-GB", { maximumFractionDigits: 0 });
+  return v;
+}
+function eur(v) { return Math.round(v).toLocaleString("en-GB") + " EUR"; }
+function num(v) { var x = parseFloat(v); return isFinite(x) ? x : 0; }
+function isNum(v) { return v !== "" && v != null && isFinite(parseFloat(v)); }
+// answers
+function defVal(inp, row) { var d = inp[3]; return d ? (row[d.field] ? d.nonempty : d.empty) : ""; }
+function inpOf(tid, f) { var l = DATA.tables[tid].inputs || []; for (var i = 0; i < l.length; i++) if (l[i][0] === f) return l[i]; return null; }
+function ans(tid, row, f) {
+  var t = DATA.tables[tid], k = row[t.key], a = S.a[tid] && S.a[tid][k];
+  if (a && a[f] != null && a[f] !== "") return a[f];
+  var inp = inpOf(tid, f); return inp ? defVal(inp, row) : "";
+}
+function setAns(tid, k, f, v) {
+  S.a[tid] = S.a[tid] || {}; S.a[tid][k] = S.a[tid][k] || {};
+  if (v === "") delete S.a[tid][k][f]; else S.a[tid][k][f] = v; save();
+}
+// computed columns
+var COMP = {
+  h3cost: function (tid, row) {
+    var rep = ans(tid, row, "rep");
+    return num(row.model) - (isNum(rep) ? num(row.rework) - num(rep) * RATE : 0) + num(ans(tid, row, "ana")) * RATE + num(ans(tid, row, "trans")) + num(ans(tid, row, "oth"));
+  }
+};
+function compVal(tid, row, c) { return COMP[c[2]](tid, row); }
+function totals(tid) {
+  var t = DATA.tables[tid], out = [];
+  (t.totals || []).forEach(function (d) {
+    var v = 0;
+    t.rows.forEach(function (r) {
+      var a = d.length > 3 ? ans(tid, r, d[3]) : null;
+      if (d[0] === "sum") v += num(r[d[1]]);
+      else if (d[0] === "count") v += 1;
+      else if (d[0] === "sumif") { if (a === d[4]) v += num(r[d[1]]); }
+      else if (d[0] === "sumif_ne") { if (a !== d[4]) v += num(r[d[1]]); }
+      else if (d[0] === "countif") { if (a === d[4]) v += 1; }
+      else if (d[0] === "countif_ne") { if (a !== d[4]) v += 1; }
+      else if (d[0] === "sumc") { var c = (t.computed || []).filter(function (x) { return x[0] === d[1]; })[0]; v += compVal(tid, r, c); }
+    });
+    out.push([d[2], v, d[0]]);
+  });
+  return out;
+}
+// live figures
+function blockMinutes(fromMonth) {
+  var m = 0, g = {};
+  DATA.tables.D.rows.forEach(function (r) { if (ans("D", r, "keep") !== "N" && (!fromMonth || r.month >= fromMonth)) m += num(r.tl); });
+  DATA.tables.M1g.rows.forEach(function (r) { g[r.g] = ans("M1g", r, "yes") === "Y"; });
+  DATA.tables.M1.rows.forEach(function (r) { if (g[r.g] && (!fromMonth || r.month >= fromMonth)) m += num(r.tl); });
+  return m;
+}
+function renderCards() {
+  var F = DATA.figures, h = "";
+  var card = function (k, v, s, live) { return '<div class="card' + (live ? " live" : "") + '"><div class="k">' + esc(k) + (live ? " · live" : "") + '</div><div class="v">' + v + '</div><div class="s">' + esc(s) + "</div></div>"; };
+  F.nc.forEach(function (x, i) { h += card("NC cost of non-quality, level 3", eur(x[1]), x[0], false); });
+  var crw = 0; DATA.tables.H3.rows.forEach(function (r) { crw += COMP.h3cost("H3", r); });
+  h += card("Customer returns 2026", eur(crw), "Model: " + eur(F.cr_model) + ". Follows the figures you enter in H3.", true);
+  var bm = blockMinutes(0), bf = blockMinutes(202602);
+  h += card("Disruption block (option B), Jan-Sep 2026", eur(bm / 60 * RATE), (bm / 60).toFixed(1) + " h lost; Feb-Sep: " + (bf / 60).toFixed(1) + " h. Shown beside the NC cost, not inside.", true);
+  var h1 = 0, h1t = 0; DATA.tables.H1.rows.forEach(function (r) { h1t += num(r.h); if (ans("H1", r, "nq") === "Y") h1 += num(r.h); });
+  h += card("Shop-floor rework with no NC, Sept 2026", h1t.toFixed(1) + " h", "Marked non-quality in H1: " + h1.toFixed(1) + " h = " + eur(h1 * RATE), true);
+  h += card("Not counted (scope): REC", F.rec_h + " h", "REC rework orders, Sept 2026 = " + eur(F.rec_h * RATE), false);
+  h += card("Not counted (scope): ERMA", eur(F.erma), "ERMA NCs 2025, FTO2 liable (184 NCs), new model", false);
+  document.getElementById("cards").innerHTML = h;
+}
+function itemRows(it) { var n = 0; it.tables.forEach(function (t) { n += DATA.tables[t].rows.length; }); return it.filter ? DATA.tables.D.rows.filter(function (r) { return r.erma; }).length : n; }
+function statusSel(id) {
+  var v = S.st[id] || "To do";
+  return '<select data-status="' + id + '" class="status-' + v.replace(" ", "") + '">' + ["To do", "In progress", "Done"].map(function (o) { return "<option" + (o === v ? " selected" : "") + ">" + o + "</option>"; }).join("") + "</select>";
+}
+function renderChecks() {
+  document.querySelector("#checks tbody").innerHTML = DATA.items.map(function (it, i) {
+    return '<tr data-item="' + i + '"><td><b>' + it.id + '</b></td><td><span class="pill p-' + it.prio + '">' + it.prio + "</span></td><td>" + esc(it.title) + "</td><td>" + esc(it.q) +
+      '</td><td class="num">' + (it.tables.length ? itemRows(it) : "-") + "</td><td>" + statusSel(it.id) + "</td></tr>";
+  }).join("");
+}
+// item dialog
+function inputHTML(tid, row, inp) {
+  var k = row[DATA.tables[tid].key], v = ans(tid, row, inp[0]), at = ' data-t="' + tid + '" data-k="' + esc(k) + '" data-f="' + inp[0] + '"';
+  if (inp[2] === "yn") return "<select" + at + ">" + ["", "Y", "N", "?"].map(function (o) { return "<option" + (o === v ? " selected" : "") + ">" + o + "</option>"; }).join("") + "</select>";
+  if (inp[2] === "num") return '<input type="number" step="any"' + at + ' value="' + esc(v) + '">';
+  return '<input type="text" class="wide"' + at + ' value="' + esc(v) + '">';
+}
+function tableHTML(tid, filter) {
+  var t = DATA.tables[tid], cols = t.cols, inps = t.inputs || [], comp = t.computed || [];
+  var h = '<div class="tbar">' + (t.caption ? '<span class="cap">' + esc(t.caption) + "</span>" : "") +
+    '<input type="search" placeholder="Search this list" data-filter="' + tid + '" value="' + esc(filter || "") + '"><span class="count" id="cnt-' + tid + '"></span></div>';
+  h += '<div class="twrap"><table id="tb-' + tid + '"><thead><tr>' + cols.map(function (c) { return '<th class="' + (/^(n|eur)/.test(c[2] || "") ? "num" : "") + '">' + esc(c[1]) + "</th>"; }).join("") +
+    inps.map(function (c) { return "<th>" + esc(c[1]) + "</th>"; }).join("") + comp.map(function (c) { return '<th class="num">' + esc(c[1]) + "</th>"; }).join("") + "</tr></thead><tbody>";
+  t.rows.forEach(function (r) {
+    h += '<tr data-k="' + esc(r[t.key]) + '">' + cols.map(function (c) { var ty = c[2] || ""; return '<td class="' + (/^(n|eur)/.test(ty) ? "num" : ty === "long" ? "long" : "") + '">' + esc(fmt(r[c[0]], ty)) + "</td>"; }).join("") +
+      inps.map(function (c) { return "<td>" + inputHTML(tid, r, c) + "</td>"; }).join("") +
+      comp.map(function (c) { return '<td class="num" data-comp="' + c[0] + '">' + fmt(compVal(tid, r, c), "eur") + "</td>"; }).join("") + "</tr>";
+  });
+  return h + '</tbody></table></div><div class="totals" id="tot-' + tid + '"></div>';
+}
+function updTotals(tid) {
+  var el = document.getElementById("tot-" + tid); if (!el) return;
+  el.innerHTML = totals(tid).map(function (x) { return x[0] + ": <b>" + (/count/.test(x[2]) ? x[1] : x[0].indexOf("EUR") >= 0 ? eur(x[1]) : Number(x[1]).toLocaleString("en-GB", { maximumFractionDigits: 1 })) + "</b>"; }).join(" · ");
+}
+function applyFilter(tid, q) {
+  var tb = document.getElementById("tb-" + tid); if (!tb) return; q = (q || "").toLowerCase(); var n = 0, all = 0;
+  tb.querySelectorAll("tbody tr").forEach(function (tr) {
+    all++; var txt = tr.textContent.toLowerCase(); tr.querySelectorAll("input,select").forEach(function (x) { txt += " " + String(x.value).toLowerCase(); });
+    var show = !q || txt.indexOf(q) >= 0; tr.style.display = show ? "" : "none"; if (show) n++;
+  });
+  document.getElementById("cnt-" + tid).textContent = (q ? n + " of " + all : all) + " rows";
+}
+function openItem(i) {
+  var it = DATA.items[i]; CUR = it; var nt = S.nt[it.id] || {};
+  document.getElementById("dlgTitle").textContent = it.id + " · " + it.title;
+  var h = '<div class="facts"><div class="l">Priority</div><div><span class="pill p-' + it.prio + '">' + it.prio + '</span> &nbsp; Status: ' + statusSel(it.id) + "</div>" +
+    '<div class="l">What we know</div><div>' + esc(it.know) + '</div><div class="l">Question</div><div><b>' + esc(it.q) + '</b></div><div class="l">Where to look / ask</div><div>' + esc(it.where) + "</div></div>";
+  h += '<div class="notes"><div><label>Finding</label><textarea data-note="f">' + esc(nt.f || "") + '</textarea></div><div><label>Decision</label><textarea data-note="d">' + esc(nt.d || "") + "</textarea></div></div>";
+  it.tables.forEach(function (tid) { h += tableHTML(tid, it.filter); });
+  document.getElementById("dlgBody").innerHTML = h;
+  it.tables.forEach(function (tid) { updTotals(tid); applyFilter(tid, it.filter); });
+  document.getElementById("dlg").showModal(); document.getElementById("dlgBody").scrollTop = 0;
+}
+function renderChanges() {
+  document.getElementById("chgBody").innerHTML = DATA.changes.map(function (s) {
+    return "<h4>" + esc(s[0]) + "</h4><table><thead><tr><th>Change</th><th>Why / detail</th><th>Where</th></tr></thead><tbody>" +
+      s[1].map(function (c) { return "<tr><td>" + esc(c[0]) + "</td><td>" + esc(c[1]) + "</td><td>" + esc(c[2]) + "</td></tr>"; }).join("") + "</tbody></table>";
+  }).join("");
+}
+// events
+document.querySelector("#checks tbody").addEventListener("click", function (e) {
+  if (e.target.closest("select")) return; var tr = e.target.closest("tr[data-item]"); if (tr) openItem(+tr.dataset.item);
+});
+document.addEventListener("change", function (e) {
+  var x = e.target, ds = x.dataset || {};
+  if (ds.status) { S.st[ds.status] = x.value; save(); x.className = "status-" + x.value.replace(" ", ""); renderChecks(); return; }
+  if (ds.note && CUR) { S.nt[CUR.id] = S.nt[CUR.id] || {}; S.nt[CUR.id][ds.note] = x.value; save(); return; }
+  if (ds.t) {
+    setAns(ds.t, ds.k, ds.f, x.value);
+    var t = DATA.tables[ds.t], row = t.rows.filter(function (r) { return String(r[t.key]) === ds.k; })[0], tr = x.closest("tr");
+    (t.computed || []).forEach(function (c) { var td = tr.querySelector('[data-comp="' + c[0] + '"]'); if (td) td.textContent = fmt(compVal(ds.t, row, c), "eur"); });
+    updTotals(ds.t); renderCards();
+  }
+});
+document.addEventListener("input", function (e) { var ds = e.target.dataset || {}; if (ds.filter) applyFilter(ds.filter, e.target.value); });
+document.querySelectorAll("[data-close]").forEach(function (b) { b.addEventListener("click", function () { b.closest("dialog").close(); }); });
+document.getElementById("dlg").addEventListener("close", function () { CUR = null; renderChecks(); });
+document.getElementById("btnChanges").addEventListener("click", function () { document.getElementById("chg").showModal(); });
+document.getElementById("btnClear").addEventListener("click", function () {
+  if (!confirm("Clear every answer, status and note saved in this browser?")) return;
+  S = { a: {}, st: {}, nt: {} }; save(); renderChecks(); renderCards();
+});
+document.getElementById("btnExport").addEventListener("click", function () {
+  var q = function (v) { return '"' + String(v == null ? "" : v).replace(/"/g, '""') + '"'; }, L = [["kind", "check_or_list", "row", "field", "value"].join(",")];
+  DATA.items.forEach(function (it) {
+    L.push(["status", it.id, "", "status", S.st[it.id] || "To do"].map(q).join(","));
+    var nt = S.nt[it.id] || {}; if (nt.f) L.push(["note", it.id, "", "finding", nt.f].map(q).join(",")); if (nt.d) L.push(["note", it.id, "", "decision", nt.d].map(q).join(","));
+  });
+  Object.keys(S.a).forEach(function (tid) { Object.keys(S.a[tid]).forEach(function (k) { Object.keys(S.a[tid][k]).forEach(function (f) { L.push(["answer", tid, k, f, S.a[tid][k][f]].map(q).join(",")); }); }); });
+  var blob = new Blob(["﻿" + L.join("\r\n")], { type: "text/csv;charset=utf-8" }), a = document.createElement("a");
+  a.href = URL.createObjectURL(blob); a.download = "cnq_checklist_answers_" + new Date().toISOString().slice(0, 10) + ".csv"; document.body.appendChild(a); a.click(); a.remove();
+});
+document.getElementById("sub").textContent = "Built " + DATA.meta.built + " · CNQ model " + DATA.meta.model + " · work orders Sept 2026, MES aléas Jan-Sep 2026, NCs 2025-2026 · rate " + RATE + " EUR/h";
+renderCards(); renderChecks(); renderChanges();
+</script>
+</body>
+</html>

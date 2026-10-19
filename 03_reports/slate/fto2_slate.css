@@ -374,6 +374,8 @@
 .fto2 .figs > .fig:first-child { border-top: 0; }
 }
 .fto2 details.explain { border-top: 1px solid var(--ink); border-bottom: 1px solid var(--grid); }
+.fto2 .cxrules { font-size: 13px; color: var(--ink-2); display: grid; gap: 4px; }
+.fto2 .cxrules ul { margin: 0; padding-left: 18px; display: grid; gap: 2px; }
 .fto2 details.explain > summary { cursor: pointer; padding: 16px 0; font-family: var(--font-display); font-size: clamp(22px, 2.4vw, 28px); line-height: 1.15; color: var(--s1); list-style-position: inside; }
 .fto2 details.explain[open] > summary { color: var(--ink); border-bottom: 1px solid var(--grid); }
 .fto2 .cx-in { display: grid; grid-template-columns: minmax(0, 1fr); gap: 36px; padding: 22px 0 34px; min-width: 0; }

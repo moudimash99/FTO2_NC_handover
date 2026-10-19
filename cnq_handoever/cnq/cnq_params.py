@@ -10,11 +10,13 @@ Every value carries a "basis" so a reader knows how far to trust it:
   TEAM      = the team's code table from the old Excel tool (estimates, never timed)
   OFFICIAL  = Airbus cost model MC.QU.02 (UG2600252, issue 1)
   BORROWED  = taken from another study because AEC has no figure
+  WO        = planned time on FTO2's rework orders (SAP order type S03, September 2026); to confirm on a full year
+  MES       = MES disruptions (aléas) of plant FTO2, Jan-Sep 2026: time lost declared by the operator
   ASSUMED   = an assumption nobody at AEC has confirmed yet
 Nothing in this file is a measured time.
 """
 
-MODEL_VERSION = "cnq-2026.10"
+MODEL_VERSION = "cnq-2026.10.19"
 
 # ---------------------------------------------------------------- who is "us"
 AEC_PLANT_CODE = "FTO2"            # liability == this code -> the NC is AEC non-quality
@@ -32,7 +34,8 @@ RATE_STANDARD = 50.00       # operator, quality inspector, technical support. OF
 RATE_ENGINEERING = 78.16    # engineering study on design queries. OFFICIAL
 
 # ---------------------------------------------------------------- fixed times per NC (minutes)
-MIN_ALERT = 30              # operator raises the alert (alea).                     LOCAL
+MIN_ALERT = 41              # operator raises the alert (alea).                     MES (mean time lost declared on the 214 quality aléas
+                            #   that led to an NC, Jan-Sep 2026; median 30). Was 30 (LOCAL) until 19 Oct 2026.
 MIN_WRITE_NC = 30           # quality inspector writes the NC.                      LOCAL
 MIN_WRITE_NC_FINAL = 60     # ... when the NC is found at final inspection.         LOCAL
 MIN_SUPPORT = 60            # technical support checks, estimates, work order.      LOCAL
@@ -41,6 +44,25 @@ MIN_WORK_FLOOR = 60         # the work on a reworked NC is never under 1 hour.  
 MIN_RECHECK_CLOSE = 30      # re-check and closing the NC.                          LOCAL
 MIN_HANDS_ON_NO_DEFECT = 10 # hands-on time when a reworked NC has no defect line.  LOCAL ("a 10 minute job")
 MIN_DEFAULT_DEFECT = 10     # hands-on time for a defect class missing from DEFECT_TIMES. ASSUMED
+
+# ---------------------------------------------------------------- rules set from the rework orders (19 Oct 2026)
+# The operator alert is charged only when an operator raises one. NCs found at test or at final inspection start
+# without an operator alert (0 of 52 test NCs and 4 of 23 final-inspection NCs had a disruption, Jul-Sep 2026).
+# Customer returns always get it: the customer's operator raises it, and FTO2 is the direct cause.
+# Values of the NC type, both vocabularies (GPS and pipeline):
+NO_ALERT_TYPES = ["TEST", "CONTROLE FINAL"]                                                                  # MES
+# Rejections: about half get a rework order (median 1 h 40 planned, Sept 2026). A rejection whose NC has a rework
+# order (an AW_/WO_/RS_ number in linked_document different from the NC's own work_order) uses rule "REJ_RW",
+# which charges the work. Without the two columns in the NC dataset, every rejection stays "REJ" (no work).
+REWORK_ORDER_PREFIXES = ["AW", "WO", "RS"]                                                                   # WO
+# Connection errors: the first one in an NC takes its class time, each following one takes MIN_CONNECTION_NEXT.
+# Rework orders of test NCs plan about 77 min + 15 min per connection error (11 NCs, Sept 2026).
+CONNECTION_CLASSES = ["Inversion", "Erreur de branchement", "Non connecté"]
+MIN_CONNECTION_NEXT = 15    # each connection error after the first one in the same NC.                     WO
+# Internal NCs: the rework orders plan twice the model's work (setup + hands-on): 1,896 min against 951 on the
+# 11 complete Sept 2026 orders, per-NC median ratio 2.0. The work of these NCs is multiplied by this factor.
+INTERNAL_TYPES = ["INTERNE", "NC INTERNE"]
+INTERNAL_WORK_FACTOR = 2.0  #                                                                               WO
 
 # ---------------------------------------------------------------- the two comparison levels shown next to the detailed cost
 # Level 2 "Global": every NC gets the average times, whatever its defects.
@@ -65,6 +87,7 @@ AIRBUS_STANDARD = {
     "ACC": 252.27,      # "Acceptable as is, quality as per DAC".                   OFFICIAL
     "DQN": 951.33,      # "Acceptable as is, engineering assessment".               OFFICIAL figure, ASSUMED match
     "REJ": 252.27,      # no reject line: taken as creation + assessment + decision. ASSUMED
+    "REJ_RW": 252.27,   # rejection with a rework order: same official figure as a rejection. ASSUMED
     "SCR": 252.27,      # same.                                                     ASSUMED
     "PNC": 252.27,      # same.                                                     ASSUMED
     "NDC": 69.56,       # creation step only (66.25 x 1.05).                        ASSUMED
@@ -73,13 +96,15 @@ AIRBUS_STANDARD = {
 }
 
 # ---------------------------------------------------------------- which steps are charged for each decision
-# rule key = decision_status of the NC, except deleted NCs which always use "DELETED".
+# rule key = decision_status of the NC, except deleted NCs which always use "DELETED", and rejections whose NC has a
+# rework order, which use "REJ_RW".
 # columns: alert, write, support, work (setup + hands-on + material), recheck, engineering hours, part value counted
 RULES = {
     #            alert write support work recheck eng_h part   label                         basis
     "RWK":     (1,    1,    1,      1,   1,      0.0,  0,     "Rework to drawing",          "LOCAL - the process AEC described"),
-    "EXC":     (1,    1,    1,      1,   1,      0.0,  1,     "Exchange",                   "ASSUMED - same as rework, plus the swapped part"),
+    "EXC":     (1,    1,    1,      0,   1,      0.0,  1,     "Exchange",                   "WO - no rework order at FTO2 (0 of 20 in 2026): no work, swapped part counted"),
     "REJ":     (1,    1,    1,      0,   1,      0.0,  1,     "Rejection",                  "ASSUMED - no work, part value counted"),
+    "REJ_RW":  (1,    1,    1,      1,   1,      0.0,  1,     "Rejection with a rework order", "WO - the NC has a rework order: work charged, part value counted"),
     "SCR":     (1,    1,    1,      0,   1,      0.0,  1,     "Scrap",                      "ASSUMED - no work, part value counted"),
     "DQN":     (1,    1,    1,      0,   1,      8.0,  0,     "Request for design change",  "Rule from AEC: carries the engineering study. 8 h is OFFICIAL, not an AEC figure"),
     "ACC":     (1,    1,    1,      0,   1,      0.0,  0,     "Accept as is",               "ASSUMED"),

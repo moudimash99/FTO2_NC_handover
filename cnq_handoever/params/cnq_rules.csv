@@ -1,7 +1,8 @@
 rule,alert,write,support,work,recheck,eng_hours,part,label,basis
 RWK,1,1,1,1,1,0.0,0,Rework to drawing,LOCAL - the process AEC described
-EXC,1,1,1,1,1,0.0,1,Exchange,"ASSUMED - same as rework, plus the swapped part"
+EXC,1,1,1,0,1,0.0,1,Exchange,"WO - no rework order at FTO2 (0 of 20 in 2026): no work, swapped part counted"
 REJ,1,1,1,0,1,0.0,1,Rejection,"ASSUMED - no work, part value counted"
+REJ_RW,1,1,1,1,1,0.0,1,Rejection with a rework order,"WO - the NC has a rework order: work charged, part value counted"
 SCR,1,1,1,0,1,0.0,1,Scrap,"ASSUMED - no work, part value counted"
 DQN,1,1,1,0,1,8.0,0,Request for design change,"Rule from AEC: carries the engineering study. 8 h is OFFICIAL, not an AEC figure"
 ACC,1,1,1,0,1,0.0,0,Accept as is,ASSUMED
