@@ -26,6 +26,7 @@ Effect of the applied changes on level 3: 134,206 -> 128,741 EUR on the CNQ pack
 | Scope: REC and ERMA are not included | REC: 746 h of rework orders in Sept 2026. ERMA: 184 NCs in 2025, 46,158 EUR (new model) | - |
 | Customer returns: count every cost we can find, including work done at the customer (AEC is the direct cause) | Figures to collect in check H3 | - |
 | Year comparisons without ERMA | The 2026 pipeline excludes ERMA | - |
+| Internal NCs always have an aléa, even when none is logged in MES: the alert step is charged on every internal NC | Assumption (Mohammad, 19 Oct). Only 10 of 61 internal NCs (Jul-Sep 2026) have a logged aléa. Already how the model works; to investigate later (check L2) | - |
 
 ## Kept for later (not applied)
 
@@ -65,4 +66,5 @@ One line per check in `05_outputs/CNQ_investigation_checklist.html`:
 - **M2 (Medium)** Rework orders naming NCs we do not have: Plant, liability and writer of those NCs: out of scope (ERMA, other plants), or missing from our export?
 - **M3 (Medium)** Exceptional NCs (not for the presentation): Is the planned time right? Should such NCs be costed from their order?
 - **D (Info)** Disruption block (option B): the list behind the figure: Nothing to do unless an aléa should not count: set Keep = N.
+- **L2 (Low)** Internal NCs with no aléa logged in MES (later, not tomorrow): Why are most aléas of internal NCs not logged in MES? Confirm the assumption.
 - **L1 (Low)** MSN 700/701 work (IEVB work centres): Confirm it is flight-test work and out of scope.

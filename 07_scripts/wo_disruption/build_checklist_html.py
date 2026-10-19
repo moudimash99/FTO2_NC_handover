@@ -210,6 +210,9 @@ ITEMS = [
  dict(id="D", prio="Info", title="Disruption block (option B): the list behind the figure", tables=["D"],
       know="Quality aléas with no NC on the same work order within 72 h, Jan-Sep 2026. Aléas that led to an NC are inside the NC cost (alert step), not here.",
       q="Nothing to do unless an aléa should not count: set Keep = N.", where="This page."),
+ dict(id="L2", prio="Low", title="Internal NCs with no aléa logged in MES (later, not tomorrow)", tables=[],
+      know="Only 10 of 61 internal NCs (Jul-Sep 2026) have a quality aléa logged in MES before them. Assumption (Mohammad, 19 Oct): an internal NC always starts with an aléa, even when it is not logged. The model already charges the 41-min alert on every internal NC.",
+      q="Why are most aléas of internal NCs not logged in MES? Confirm the assumption.", where="Line leaders; MES."),
  dict(id="L1", prio="Low", title="MSN 700/701 work (IEVB work centres)", tables=[],
       know="74 rework orders, 217 h in September on MSN 700/701 (e.g. 'Repose FTI sur bouteille oxy'), most likely flight-test installation.",
       q="Confirm it is flight-test work and out of scope.", where="Flight-test / IEV team."),
@@ -233,6 +236,7 @@ CHANGES = [
   ("Scope: REC and ERMA are not included", "REC: 746 h of rework orders in Sept 2026. ERMA: 184 NCs in 2025, 46,158 EUR (new model)", "-"),
   ("Customer returns: count every cost we can find, including work done at the customer (AEC is the direct cause)", "Figures to collect in check H3", "-"),
   ("Year comparisons without ERMA", "The 2026 pipeline excludes ERMA", "-"),
+  ("Internal NCs always have an aléa, even when none is logged in MES: the alert step is charged on every internal NC", "Assumption (Mohammad, 19 Oct). Only 10 of 61 internal NCs (Jul-Sep 2026) have a logged aléa. Already how the model works; to investigate later (check L2)", "-"),
  ]),
  ("Kept for later (not applied)", [
   ("Change 5: two defect classes missing from the time table", "'Mesure hors tolérance' -> 5 min like 'Point de masse / mesure'; 'Dommage – tresse de masse' -> 30 min like 'Dommage – câble'. About 25 lines a year, almost 0 EUR", "DEFECT_TIMES"),
