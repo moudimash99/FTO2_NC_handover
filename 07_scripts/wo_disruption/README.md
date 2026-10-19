@@ -83,3 +83,13 @@ python3 -I cr_sept.py $P                            # customer-return NCs per mo
 
 - Quality-related disruptions Jan–Sep 2026: 322 declared quality (238 h) + 93 other kinds followed by an NC (68 h) + 107 other kinds with quality wording (91 h) = 522, 398 h. Groups 2 and 3 are keyword / time-window matches and need a read.
 - Disruption export: 5 Jan 2026 08:57 (plant restart; no NCs 29 Dec–2 Jan) to 30 Sep 2026 23:31, sorted newest first, exactly 2,500 rows.
+
+Fifth round (test and connection times):
+
+```
+python3 -I op_times.py $P; python3 -I op_times2.py $P   # planned test / connection time per product order (S01)
+python3 -I s01_totals.py $P                              # S01 planned hours by operation type
+python3 -I retest_conn.py $P; python3 -I conn_fit.py $P  # re-test on rework orders; planned time vs number of connection errors
+```
+
+- Test NCs where >= 60% of defects are connection errors (11 NCs): planned rework ≈ 77 min + 15 min per connection error (22 min per error on average), against 35 min per error in the CNQ model.
