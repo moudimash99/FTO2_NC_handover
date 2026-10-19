@@ -27,12 +27,32 @@ python3 -I final_nums.py $P <repo>/06_input_data
 
 `profile.py`, `ranges.py`, `links.py`, `units.py`, `s03.py`, `ds_links.py` are the exploration steps (column profiles, date ranges, link tests, time units).
 
+Second round (after `run2025.py`):
+
+```
+python3 -I prefix.py $P <repo>/06_input_data       # what AW_ / WO_ / RS_ / TS_ links mean
+python3 -I prefix_ex.py $P <repo>/06_input_data
+python3 -I plan_vs_actual.py $P                     # the 2% of operations where confirmed != planned
+python3 -I nc_to_wo.py $P <repo>/06_input_data      # NC -> rework order, all NCs, both years
+python3 -I wo_to_nc.py $P <repo>/06_input_data      # every Sept S03 order -> trace back to an NC
+python3 -I erma.py $P                               # ERMA NCs (excluded by the 2026 pipeline)
+python3 -I calib.py $P                              # planned rework time vs CNQ model, complete orders
+python3 -I extra.py $P                              # REJ / EXC, NC-handling orders, timing gaps
+python3 -I y2025.py $P                              # 2025 vs 2026 with and without ERMA
+python3 -I subcode.py $P                            # sub-code fill in parser output
+```
+
+Link rule: an `AW_`, `WO_` or `RS_` link whose number is not the NC's own `work_order` is the NC's rework order (all such hits in the file are S03). Same number = the order the NC was raised on (S01).
+
 ## Main numbers
 
 - NC `linked_document` `AW_…` points to S03 "Parasitic flow" orders (89 of 89 found are S03). S03 = rework orders created from NCs, plus other orders (régul, REC subcontractor catch-up, A400M).
 - Work-order confirmations equal the standard value for 98% of operations; start = finish timestamp for 93%. No measured durations.
-- Unit `IM` read as 1/100 hour (to confirm).
-- 98 reworked 2026 NCs with an S03 order: planned 11,249 min on S03 vs 11,932 min of work in CNQ level 3. Per NC: 53 of 98 within ×0.5–2.
+- Unit `IM` = 1/100 hour: on the 193 operations where confirmed != planned, 176 confirmed values equal the start-to-finish clock time converted at 1 IM = 0.6 min (7 if read as minutes). Those 193 are artefacts (open operations, ×10 typos): 565 h planned, 8,535 h confirmed.
+- 96–97% of reworked FTO2 NCs have a rework order (2025: 760 of 790, 2026: 578 of 595). Exchanges: 0 of 20. Rejections: about half.
+- Sept 2026 S03: 614 orders, 1,615 planned h. Traced to an NC: ~160 orders, ~245 h. No NC number: 453 orders, 1,371 h (FAL catch-up on RECX work centres, REC subcontractors, OT régul, aircraft-side requests, cable/test work).
+- 84 reworked NCs with a complete rework order: planned 9,685 min vs 13,332 min for the model's setup + hands-on + recheck (model ~38% high). 1-defect NCs: planned median 59 min, model 110.
 - 214 of 322 quality disruptions (QLS) are followed by an NC on the same work order within 72 h, median 2.6 h. QLS time lost: median 30 min.
 - Jul–Sep 2026 FTO2 NCs with a work order: 61 of 219 preceded by a disruption (cable NCs 42 of 49, test NCs 0 of 52).
-- 2025 (plant FTO2, Jan–Dec): 1,002 AEC NCs, CNQ level 3 = 211,842 EUR (211 EUR per NC). 2026 Feb–Sep, same scope: 217 EUR per NC.
+- 2025 (plant FTO2, Jan–Dec): 1,002 AEC NCs, CNQ level 3 = 211,842 EUR (211 EUR per NC). The 2025 file includes 184 FTO2-liable NCs written by ERMA (33,672 EUR), which the 2026 pipeline excludes. Without ERMA: 818 NCs (68 per month), 178,170 EUR, 218 EUR per NC. 2026 Feb–Sep (pipeline, no ERMA): 87 NCs per month, 217 EUR per NC.
+- Parser output used for the cost: `sous_groupe` (42 classes), from keywords (53% of defects) and written head codes (30%). `sub_code` is empty in the pack v4.8 output.
