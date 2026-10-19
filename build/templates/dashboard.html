@@ -545,6 +545,41 @@ body.mk-on .wrap { padding-bottom: 90px; }
 .fig > span.v2spark { order: 1; display: block; margin: 6px 0 2px; line-height: 0; }
 .fig > small { order: 2; }
 .fig small.v2per { font-size: 12.5px; color: var(--ink-2); }
+/* Overview layouts (layouts page): the overview panel becomes a grid; each chart band is placed by name */
+#p-ov[data-lay] { display: grid; gap: 20px; align-items: start; grid-template-columns: minmax(0, 1fr); }
+#p-ov[data-lay] > * { min-width: 0; }
+#p-ov[data-lay] .v2ov { display: contents; }
+#p-ov[data-lay] > .lead { grid-area: lead; } #p-ov[data-lay] > .figs { grid-area: figs; }
+#p-ov[data-lay] [data-v2="VT"] { grid-area: tgt; } #p-ov[data-lay] [data-v2="VN"] { grid-area: trend; } #p-ov[data-lay] [data-v2="VB"] { grid-area: cost; }
+#p-ov[data-lay] [data-v2="a:lead"] { grid-area: delay; } #p-ov[data-lay] [data-v2="VX"] { grid-area: ctl; }
+#p-ov[data-lay] > #ngxBox { grid-area: more; } #p-ov[data-lay] > details:not(#ngxBox) { grid-area: table; }
+#p-ov[data-lay] .v2ov > .card { grid-template-columns: minmax(0, 1fr); background: var(--surface); border: 1px solid var(--ring); border-radius: 10px; padding: 18px 20px 16px; box-shadow: none; clip-path: none; row-gap: 10px; }
+#p-ov[data-lay] .v2ov > .card > .bhead { position: static; grid-column: 1; gap: 6px; }
+#p-ov[data-lay] .v2ov > .card > .custom { grid-column: 1; grid-row: auto; }
+#p-ov[data-lay] .v2ov .bhead h3 { font-size: clamp(20px, 2vw, 24px); }
+#p-ov[data-lay] .v2stats { display: flex; flex-wrap: wrap; gap: 6px 24px; margin-top: 2px; }
+#p-ov[data-lay] .v2stats b { font-size: 24px; min-width: 0; }
+#p-ov[data-lay="1"] { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-areas: "lead lead" "figs figs" "trend trend" "tgt cost" "delay ctl" "more more" "table table"; }
+#p-ov[data-lay="2"] { grid-template-columns: repeat(3, minmax(0, 1fr)); grid-template-areas: "lead lead lead" "trend trend figs" "tgt cost delay" "ctl ctl ctl" "more more more" "table table table"; }
+#p-ov[data-lay="2"] > .figs, #p-ov[data-lay="4"] > .figs { grid-template-columns: minmax(0, 1fr); align-self: stretch; }
+#p-ov[data-lay="2"] > .figs > .fig, #p-ov[data-lay="4"] > .figs > .fig { border-left: 0; border-top: 1px solid var(--grid); padding: 12px 0; }
+#p-ov[data-lay="2"] > .figs > .fig:first-child, #p-ov[data-lay="4"] > .figs > .fig:first-child { border-top: 0; }
+#p-ov[data-lay="3"] { gap: 0; grid-template-areas: "lead" "figs" "tgt" "trend" "cost" "delay" "ctl" "more" "table"; }
+#p-ov[data-lay="3"] .v2ov > .card { grid-template-columns: minmax(0, 210px) minmax(0, 1fr); column-gap: 36px; background: transparent; border: 0; border-top: 1px solid var(--grid); border-radius: 0; padding: 22px 0; }
+#p-ov[data-lay="3"] .v2ov > .card > .bhead { grid-column: 1; }
+#p-ov[data-lay="3"] .v2ov > .card > .custom { grid-column: 2; grid-row: 1; }
+#p-ov[data-lay="3"] .v2ov .bhead h3 { font-family: var(--font-ui); font-weight: 600; font-size: 16px; line-height: 1.3; }
+#p-ov[data-lay="3"] .v2ov .bhead .kicker { display: none; }
+#p-ov[data-lay="3"] .v2ov .bhead .sub { font-size: 12.5px; }
+#p-ov[data-lay="3"] .v2stats { display: grid; gap: 4px; } #p-ov[data-lay="3"] .v2stats b { font-size: 20px; }
+#p-ov[data-lay="4"] { grid-template-columns: minmax(0, 300px) minmax(0, 1fr); grid-template-areas: "lead lead" "figs trend" "tgt cost" "tgt delay" "tgt ctl" "more more" "table table"; }
+#p-ov[data-lay="4"] [data-v2="VT"] { align-self: start; position: sticky; top: calc(var(--tabs-h) + 12px); }
+#p-ov[data-lay="5"] { grid-template-columns: repeat(3, minmax(0, 1fr)); grid-template-areas: "lead lead lead" "figs figs figs" "trend trend tgt" "cost delay delay" "ctl ctl ctl" "more more more" "table table table"; }
+@media (max-width: 900px) {
+  #p-ov[data-lay] { grid-template-columns: minmax(0, 1fr) !important; grid-template-areas: none !important; }
+  #p-ov[data-lay] > *, #p-ov[data-lay] .v2ov > .card { grid-area: auto !important; position: static !important; }
+  #p-ov[data-lay="3"] .v2ov > .card { grid-template-columns: minmax(0, 1fr); } #p-ov[data-lay="3"] .v2ov > .card > .custom { grid-column: 1; grid-row: auto; }
+}
 /* Dashboard v2: the scorecard of volumes and rates */
 table.v2sc { min-width: 640px; font-variant-numeric: tabular-nums; }
 table.v2sc th[scope="row"] { font-size: 14px; font-weight: 600; color: var(--ink); vertical-align: middle; }
@@ -922,7 +957,7 @@ window.FTO2_PAGE = window.FTO2_PAGE || '__PAGE__';
       prodTip: 'FTO2 {s} · retours {c} · {n} NC · {k} MSN', prodUnknown: 'Non identifié', prodRest: '{n} autres familles',
       k_lead: 'Délais', t_lead: 'Combien de temps une NC reste ouverte', s_lead: 'Part des NC encore ouvertes N jours après leur création, par décision. Les NC encore ouvertes comptent jusqu’à aujourd’hui (méthode de Kaplan-Meier). Point : la moitié des NC sont closes.',
      
-      g_rw: 'Retouche', g_rej: 'Rebut / rejet', g_oth: 'Autres décisions', axDays: 'Jours depuis la création de la NC', daysShort: '{n} j', medLeg: 'Médiane : 50 % closes',
+      g_rw: 'Retouche', g_rej: 'Rebut / rejet', g_oth: 'Autres décisions', axDays: 'Jours depuis la création de la NC', daysShort: '{n} j', medDays: 'médiane {n} j', medLeg: 'Médiane : 50 % closes',
       hMedian: 'Médiane', hOpen7: 'Ouvertes à 7 j', hOpen30: 'Ouvertes à 30 j', hStillOpen: 'Encore ouvertes', kmTipH: 'Jour {d}', kmOpen: 'encore ouvertes',
       k_clock: 'Horaires', t_clock: 'Heure de rédaction des NC', s_clock: 'NC par heure de création, heure de Paris. Longueur : nombre de NC.',
       hourRange: '{a} h – {b} h', clockTip: '{n} NC · {p}', clockCenter: 'NC', hHour: 'Heure',
@@ -987,7 +1022,9 @@ window.FTO2_PAGE = window.FTO2_PAGE || '__PAGE__';
       cnqSub: 'Estimation à partir des temps du processus AEC : alerte, rédaction, support technique, reprise et contrôle, chiffrés défaut par défaut.',
       nKR: 'NC par MSN', nKRs: 'NC ÷ MSN produits', ovMore: 'Autres listes et graphiques', cnqMore: 'Autres répartitions du coût', parMore: 'Autres graphiques de causes', whereMore: 'Autres graphiques',
       allLines: 'Toutes lignes', v2Tgt: 'Objectif', v2VsTgt: 'vs objectif', v2Above: 'Au-dessus de l’objectif', v2Below: 'Sous l’objectif', v2TgtPh: 'Objectif (fictif)', v2Ph: 'fictif',
-      v2Ph25: '2025 fictif (= 2026)', v2MTgt: 'objectif mensuel {v} (fictif)', v2BudPh: 'Budget au prorata (fictif)', v2Y25: '2025', v2Y26: '2026 prévu', v2Flat: 'Stable', v2ObjH: 'Objectif par ligne · NC par MSN', v2ObjC: 'Objectifs fictifs en attendant les chiffres 2025 : taux 2026 moins 25 %.', v2PerMsnV: '{v} par MSN', v2StNow: 'NC depuis le début de la période', v2StFc: 'prévus à fin décembre', v2StTgt: 'objectif de l’année (fictif)', v2StCost: 'cumulés sur la période', v2StBud: 'budget de l’année (fictif)', v2QPer: 'Par MSN produit : la fermeture d’août ne pèse pas.', v2QMonth: 'Moyenne par mois.', v2PerMsn: 'par MSN', v2Ac: '{n} avions',
+      v2Ph25: '2025 fictif (= 2026)', v2MTgt: 'objectif mensuel {v} (fictif)', v2BudPh: 'Budget au prorata (fictif)', v2Y25: '2025', v2Y26: '2026 prévu', v2Flat: 'Stable', layBar: 'Mise en page', lay0: 'Récit (actuel)', lay1: 'Grille', lay2: 'Héros', lay3: 'Liste', lay4: 'Colonne', lay5: 'Magazine',
+      layD0: 'Une bande par graphique : titre à gauche, graphique à droite.', layD1: 'Cartes sur deux colonnes ; la tendance sur toute la largeur.', layD2: 'La tendance en grand, les chiffres à côté ; trois cartes dessous.',
+      layD3: 'Lignes compactes, à la manière du Pareto : titre court à gauche.', layD4: 'Un résumé à gauche (chiffres, objectifs) ; les graphiques à droite.', layD5: 'Tendance et objectifs côte à côte ; coût et délais dessous.', v2MonTgt: 'objectif du mois {v}', v2Cum: '{v} NC cumulées', v2Fc: 'prévues', v2TgtShort: 'objectif', v2Under: 'Mois sous son objectif', v2Over: 'Mois au-dessus de son objectif', v2CumLeg: 'NC cumulées', v2TgtCum: 'Objectif cumulé (fictif)', v2Summer: 'Juillet et août comptent pour 60 % d’un mois.', v2ObjH: 'Objectif par ligne · NC par MSN', v2ObjC: 'Objectifs fictifs en attendant les chiffres 2025 : taux 2026 moins 25 %.', v2PerMsnV: '{v} par MSN', v2StNow: 'NC depuis le début de la période', v2StFc: 'prévus à fin décembre', v2StTgt: 'objectif de l’année (fictif)', v2StCost: 'cumulés sur la période', v2StBud: 'budget de l’année (fictif)', v2QPer: 'Par MSN produit : la fermeture d’août ne pèse pas.', v2QMonth: 'Moyenne par mois.', v2PerMsn: 'par MSN', v2Ac: '{n} avions',
       scVol: 'Volume par mois', scTot: 'Total', scRate: 'Par MSN, par mois', scRateP: 'Par MSN', scLast3: '3 derniers mois', scNc: 'NC', scDef: 'Défauts', scCost: 'Coût',
       scNote: 'Par MSN : NC, défauts et coût des produits rattachés au fichier de production. Petit chiffre : écart des 3 derniers mois à la période.',
       tabWhere: 'Où', whereTitle: 'Où sont les problèmes ?', whereSub: 'Produits, lignes, avions et postes, rapportés au volume produit quand c’est possible.', titleMock: 'Tableau de bord FTO2 : maquette à noter',
@@ -1086,7 +1123,7 @@ window.FTO2_PAGE = window.FTO2_PAGE || '__PAGE__';
       prodTip: 'FTO2 {s} · returns {c} · {n} NCs · {k} MSNs', prodUnknown: 'Not identified', prodRest: '{n} other families',
       k_lead: 'Lead time', t_lead: 'How long an NC stays open', s_lead: 'Share of NCs still open N days after creation, by decision. NCs still open count until today (Kaplan-Meier). Dot: half of the NCs are closed.',
      
-      g_rw: 'Rework', g_rej: 'Scrap / rejection', g_oth: 'Other decisions', axDays: 'Days since the NC was created', daysShort: '{n} d', medLeg: 'Median: 50% closed',
+      g_rw: 'Rework', g_rej: 'Scrap / rejection', g_oth: 'Other decisions', axDays: 'Days since the NC was created', daysShort: '{n} d', medDays: 'median {n} d', medLeg: 'Median: 50% closed',
       hMedian: 'Median', hOpen7: 'Open at 7 d', hOpen30: 'Open at 30 d', hStillOpen: 'Still open', kmTipH: 'Day {d}', kmOpen: 'still open',
       k_clock: 'Hours', t_clock: 'Time NCs are written', s_clock: 'NCs by creation hour, Paris time. Length: number of NCs.',
       hourRange: '{a}:00–{b}:00', clockTip: '{n} NCs · {p}', clockCenter: 'NCs', hHour: 'Hour',
@@ -1151,7 +1188,9 @@ window.FTO2_PAGE = window.FTO2_PAGE || '__PAGE__';
       cnqSub: 'Estimate from AEC process times: alert, writing, technical support, rework and check, costed defect by defect.',
       nKR: 'NCs per MSN', nKRs: 'NCs ÷ MSN built', ovMore: 'Other lists and charts', cnqMore: 'Other cost breakdowns', parMore: 'Other root-cause charts', whereMore: 'Other charts',
       allLines: 'All lines', v2Tgt: 'Target', v2VsTgt: 'vs target', v2Above: 'Above target', v2Below: 'Below target', v2TgtPh: 'Target (placeholder)', v2Ph: 'placeholder',
-      v2Ph25: '2025 placeholder (= 2026)', v2MTgt: 'monthly target {v} (placeholder)', v2BudPh: 'Pro-rata budget (placeholder)', v2Y25: '2025', v2Y26: '2026 forecast', v2Flat: 'Flat', v2ObjH: 'Target per line · NCs per MSN', v2ObjC: 'Placeholder targets until the 2025 figures come: 2026 rate minus 25%.', v2PerMsnV: '{v} per MSN', v2StNow: 'NCs since the start of the period', v2StFc: 'expected by end of December', v2StTgt: 'target for the year (placeholder)', v2StCost: 'so far in the period', v2StBud: 'budget for the year (placeholder)', v2QPer: 'Per MSN built: the August shutdown does not weigh.', v2QMonth: 'Monthly average.', v2PerMsn: 'per MSN', v2Ac: '{n} aircraft',
+      v2Ph25: '2025 placeholder (= 2026)', v2MTgt: 'monthly target {v} (placeholder)', v2BudPh: 'Pro-rata budget (placeholder)', v2Y25: '2025', v2Y26: '2026 forecast', v2Flat: 'Flat', layBar: 'Layout', lay0: 'Récit (current)', lay1: 'Grid', lay2: 'Hero', lay3: 'List', lay4: 'Column', lay5: 'Magazine',
+      layD0: 'One band per chart: title on the left, chart on the right.', layD1: 'Cards in two columns; the trend across the full width.', layD2: 'The trend large, the figures beside it; three cards below.',
+      layD3: 'Compact rows, like the Pareto: short title on the left.', layD4: 'A summary on the left (figures, targets); the charts on the right.', layD5: 'Trend and targets side by side; cost and lead time below.', v2MonTgt: 'month target {v}', v2Cum: '{v} NCs to date', v2Fc: 'expected', v2TgtShort: 'target', v2Under: 'Month under its target', v2Over: 'Month above its target', v2CumLeg: 'Cumulative NCs', v2TgtCum: 'Cumulative target (placeholder)', v2Summer: 'July and August count as 60% of a month.', v2ObjH: 'Target per line · NCs per MSN', v2ObjC: 'Placeholder targets until the 2025 figures come: 2026 rate minus 25%.', v2PerMsnV: '{v} per MSN', v2StNow: 'NCs since the start of the period', v2StFc: 'expected by end of December', v2StTgt: 'target for the year (placeholder)', v2StCost: 'so far in the period', v2StBud: 'budget for the year (placeholder)', v2QPer: 'Per MSN built: the August shutdown does not weigh.', v2QMonth: 'Monthly average.', v2PerMsn: 'per MSN', v2Ac: '{n} aircraft',
       scVol: 'Volume per month', scTot: 'Total', scRate: 'Per MSN, per month', scRateP: 'Per MSN', scLast3: 'Last 3 months', scNc: 'NCs', scDef: 'Defects', scCost: 'Cost',
       scNote: 'Per MSN: NCs, defects and cost of the products matched to the production file. Small figure: last 3 months against the period.',
       tabWhere: 'Where', whereTitle: 'Where are the problems?', whereSub: 'Products, lines, aircraft and stations, against the volume built where possible.', titleMock: 'FTO2 dashboard: mock-up to score',
@@ -1246,14 +1285,14 @@ window.FTO2_PAGE = window.FTO2_PAGE || '__PAGE__';
   var ASIDE = { 'Kitting Factory': 1, 'FOD': 1, 'Autre': 1, 'Non classé': 1, '__none': 1 };
 
   // two pages from one file: the dashboard, and the weekly follow-up (weekly Pareto, MFT actions)
-  var PAGE = window.FTO2_PAGE === 'suivi' ? 'suivi' : (window.FTO2_PAGE === 'review' || window.FTO2_PAGE === 'mock') && D.dummy ? window.FTO2_PAGE : 'main';
+  var PAGE = window.FTO2_PAGE === 'suivi' ? 'suivi' : window.FTO2_PAGE === 'layouts' ? 'layouts' : (window.FTO2_PAGE === 'review' || window.FTO2_PAGE === 'mock') && D.dummy ? window.FTO2_PAGE : 'main';
   var TABS = PAGE === 'suivi' ? ['hebdo', 'mft'] : PAGE === 'review' ? ['rev'] : PAGE === 'mock' ? ['ov', 'pareto', 'where', 'cnq', 'client', 'rca', 'hebdo', 'mft'] : ['ov', 'pareto', 'where', 'cnq', 'client', 'rca'];
   var G = { lang: 'fr', minor: true, tab: TABS[0] };
   try { var s1 = localStorage.getItem('fto2-dash-lang'); if (s1 === 'fr' || s1 === 'en') G.lang = s1; } catch (e) {}
   var h0 = ''; try { h0 = EMBED ? '' : (location.hash || '').replace('#', ''); } catch (e) {} if (TABS.indexOf(h0) >= 0) G.tab = h0;
   document.querySelectorAll('#tabs [role="tab"]').forEach(function (b) { b.hidden = TABS.indexOf(b.getAttribute('data-tab')) < 0; });
   if (TABS.indexOf('gal') < 0) document.querySelectorAll('#tabs .gap[data-gal]').forEach(function (g) { g.hidden = true; });
-  if (PAGE !== 'main') {
+  if (PAGE !== 'main' && PAGE !== 'layouts') {
     document.querySelectorAll('#tabs .gap').forEach(function (g) { g.hidden = true; });
     var h1 = document.querySelector('h1[data-t="title"]'); if (h1) h1.setAttribute('data-t', PAGE === 'suivi' ? 'titleSuivi' : PAGE === 'mock' ? 'titleMock' : 'titleRev');
   }
@@ -2336,19 +2375,17 @@ window.FTO2_PAGE = window.FTO2_PAGE || '__PAGE__';
     [0, 0.25, 0.5, 0.75, 1].forEach(function (p) { g += '<line class="gl" x1="' + ml + '" x2="' + (ml + pw) + '" y1="' + r1(Y(p)) + '" y2="' + r1(Y(p)) + '"/>' + tx(ml - 8, Y(p) + 4, pct0(p * 100), 'mu', 'end'); });
     [0, 7, 14, 21, 30, 45, 60].forEach(function (t) { g += tx(X(t), mt + ph + 16, (t === 60 ? '≥ ' : '') + num(t), 'mu', 'middle'); });
     g += tx(ml + pw / 2, H - 6, S('axDays'), 'mu', 'middle');
-    var endY = spread(keys.map(function (k) { return Y(kmAt(curves[k], XM)) - 6; }), 14, mt + 10, mt + ph - 4), ends = '';
-    keys.forEach(function (k, ki) {
+    keys.forEach(function (k) {
       var pts = curves[k], d = 'M' + X(0) + ',' + Y(1), last = 1;
       pts.slice(1).forEach(function (p) { if (p[0] > XM) return; d += 'H' + r1(X(p[0])) + 'V' + r1(Y(p[1])); last = p[1]; });
       d += 'H' + r1(X(XM));
       g += '<path d="' + d + '" fill="none" stroke="' + col[k] + '" stroke-width="2"/>';
       var md = kmMedian(pts); if (md != null && md <= XM) g += '<circle cx="' + r1(X(md)) + '" cy="' + r1(Y(0.5)) + '" r="4.5" fill="' + col[k] + '" stroke="var(--surface)" stroke-width="2"/>';
-      ends += tx(X(XM) - 2, endY[ki], S('g_' + k) + (md != null ? ' · ' + S('daysShort', { n: num(Math.round(md)) }) : ''), 'b halo', 'end', ' style="fill:' + col[k] + '"');
     });
-    g += ends + '<line class="guide" x1="' + ml + '" x2="' + (ml + pw) + '" y1="' + r1(Y(0.5)) + '" y2="' + r1(Y(0.5)) + '"/>';
+    g += '<line class="guide" x1="' + ml + '" x2="' + (ml + pw) + '" y1="' + r1(Y(0.5)) + '" y2="' + r1(Y(0.5)) + '"/>';
     g += '<line id="kmX" class="cross" y1="' + mt + '" y2="' + (mt + ph) + '" x1="-10" x2="-10"/><rect data-km="1" x="' + ml + '" y="' + mt + '" width="' + pw + '" height="' + ph + '" fill="transparent"/>';
     A.km = { keys: keys, curves: curves, ml: ml, pw: pw, XM: XM };
-    var leg = keys.map(function (k) { return '<span><i class="ln" style="background:' + col[k] + '"></i>' + esc(S('g_' + k)) + ' (' + num(grp[k].length) + ')</span>'; }).join('') + '<span><i class="sw ring" style="background:var(--surface);border-color:var(--ink-2)"></i>' + esc(S('medLeg')) + '</span>';
+    var leg = keys.map(function (k) { var md = kmMedian(curves[k]); return '<span><i class="ln" style="background:' + col[k] + '"></i>' + esc(S('g_' + k)) + ' (' + num(grp[k].length) + ')' + (md != null ? ' · <b>' + esc(S('medDays', { n: num(Math.round(md)) })) + '</b>' : '') + '</span>'; }).join('') + '<span><i class="sw ring" style="background:var(--surface);border-color:var(--ink-2)"></i>' + esc(S('medLeg')) + '</span>';
     var rows = keys.map(function (k) { var c = curves[k], md = kmMedian(c); return [S('g_' + k), num(grp[k].length), md != null ? S('daysShort', { n: num(Math.round(md)) }) : '—', pct0(kmAt(c, 7) * 100), pct0(kmAt(c, 30) * 100), num(grp[k].filter(function (x) { return !x.e; }).length)]; });
     vSet('lead', svg(W0, H, g, S('t_lead')), leg, miniTable([S('kRule'), S('hNcs'), S('hMedian'), S('hOpen7'), S('hOpen30'), S('hStillOpen')], rows, 1));
   }
@@ -4733,7 +4770,7 @@ window.FTO2_PAGE = window.FTO2_PAGE || '__PAGE__';
   // Where: rates by product, FINs, aircraft, stations. Cost: what it is made of, every NC. The bands are today's cards, the rate charts, and charts
   // rebuilt on the real NCs (keys V*). Placeholders until the 2025 figures come, marked on the page: 2025 = this year's forecast,
   // target = 2025 - 25 %, budget = forecast - 25 %.
-  var V2 = PAGE === 'main', V2B = false, V2CUT = 0.75, V2BAND = {};
+  var V2 = PAGE === 'main' || PAGE === 'layouts', V2B = false, V2CUT = 0.75, V2BAND = {};
   var V2L = {
     ov: { top: ['VT', 'VN', 'VB', 'a:lead', 'VX'], fold: ['a:cal'] },
     pareto: { inboard: ['a:bub', 'a:flow'], more: ['54', '65', 'a:bump', 'VW', 'VQ'], fold: ['53', '78', '76'] },
@@ -4744,13 +4781,13 @@ window.FTO2_PAGE = window.FTO2_PAGE || '__PAGE__';
   Object.assign(GSTR, {
     VT: { fr: ['Objectif', 'Chaque ligne face à son objectif', 'NC par MSN produit ; trait : objectif. Objectifs fictifs en attendant 2025 : taux 2026 moins 25 %.', 'production MSN · NC'],
           en: ['Target', 'Each line against its target', 'NCs per MSN built; tick: target. Placeholder targets until 2025: 2026 rate minus 25%.', 'MSN output · NCs'] },
-    VN: { fr: ['Tendance', 'NC par mois et par programme', 'Clair : prévision au taux de la période × production prévue. Cliquez un programme pour filtrer.', 'NC · production MSN prévue'],
-          en: ['Trend', 'NCs per month and programme', 'Light: forecast at the period rate × planned output. Click a programme to filter.', 'NCs · planned MSN output'] },
+    VN: { fr: ['Tendance', 'NC cumulées sur l’année', 'Pointillé : prévision au taux de la période × production prévue ; tirets : objectif de fin d’année.', 'NC · production MSN prévue'],
+          en: ['Trend', 'Cumulative NCs over the year', 'Dotted: forecast at the period rate × planned output; dashed: year-end target.', 'NCs · planned MSN output'] },
     VB: { fr: ['Coût', 'Coût de non-qualité cumulé', 'Pointillé : prévision ; tirets : budget au prorata.', 'coût CNQ · production MSN prévue'],
           en: ['Cost', 'Cumulative cost of non-quality', 'Dotted: forecast; dashed: pro-rata budget.', 'CNQ cost · planned MSN output'] },
     VS: { fr: ['Volumes et taux', 'NC, défauts et coût : le volume, puis par MSN', 'Chaque ligne : le volume mois par mois, puis le même rapporté au nombre de MSN produits.', 'NC · défauts · coût · production MSN'],
           en: ['Volumes and rates', 'NCs, defects and cost: the volume, then per MSN', 'Each row: the volume month by month, then the same against the number of MSN built.', 'NCs · defects · cost · MSN output'] },
-    VX: { fr: ['Maîtrise statistique', 'NC par semaine, avec leurs limites', 'Un point hors des limites signale un vrai changement ; à l’intérieur, c’est la variation normale.', 'NC par semaine'],
+    VX: { fr: ['Maîtrise statistique', 'NC par semaine, avec leurs limites', 'Limites calculées sur la variation habituelle d’une semaine à l’autre. Un point dehors signale un vrai changement.', 'NC par semaine'],
           en: ['Process control', 'NCs per week, with their limits', 'A dot outside the limits marks a real change; inside is normal variation.', 'NCs per week'] },
     VW: { fr: ['Répartition', 'Cent défauts', 'Chaque case : 1 % des défauts, par catégorie.', 'catégorie des défauts'], en: ['Breakdown', 'A hundred defects', 'Each square: 1% of defects, by category.', 'defect category'] },
     VQ: { fr: ['Avant / après', 'Causes : un trimestre contre le suivant', 'Défauts par MSN produit, 10 premières causes, deux derniers trimestres de la période.', 'date, cause'],
@@ -4793,7 +4830,8 @@ window.FTO2_PAGE = window.FTO2_PAGE || '__PAGE__';
   function v2Build() {
     if (V2B) return; V2B = true;
     var ov = document.getElementById('p-ov'), figs = ov.querySelector('.figs');
-    ov.insertBefore(v2Grid(V2L.ov.top), figs.nextSibling);
+    var og = v2Grid(V2L.ov.top); og.classList.add('v2ov'); ov.insertBefore(og, figs.nextSibling);
+    if (PAGE === 'layouts') v2LayBar();
     var inner = document.querySelector('#ngxBox .inner'); inner.insertBefore(document.getElementById('ncChips'), inner.firstChild);   // the breakdown lists and their filter chips fold together
     var ngx = v2Wire(document.getElementById('ngx'));
     V2L.ov.fold.forEach(function (k) { var b = v2Band(k); if (b) ngx.appendChild(b); });
@@ -4804,6 +4842,22 @@ window.FTO2_PAGE = window.FTO2_PAGE || '__PAGE__';
     var wh = document.getElementById('p-where'); wh.appendChild(v2Grid(V2L.where.top)); wh.appendChild(v2Fold('whereMore', V2L.where.fold));
     document.getElementById('p-cnq').insertBefore(v2Grid(V2L.cnq.more), document.getElementById('cgxBox'));
     applyText();
+  }
+  var V2LAYS = ['0', '1', '2', '3', '4', '5'];
+  function v2LayBar() {
+    var bar = document.createElement('div'); bar.className = 'mk-bar'; bar.id = 'layBar';
+    bar.innerHTML = '<b data-t="layBar"></b><div class="seg" role="group" id="laySeg"></div><span class="mk-save" id="layDesc"></span>';
+    document.querySelector('.wrap').appendChild(bar); document.body.classList.add('mk-on');
+    var cur = '0'; try { cur = localStorage.getItem('fto2-lay') || '0'; } catch (e) {}
+    v2SetLay(cur, true);
+    bar.addEventListener('click', function (e) { var b = e.target.closest('[data-lay]'); if (b) v2SetLay(b.getAttribute('data-lay')); });
+  }
+  function v2SetLay(n, quiet) {
+    var ov = document.getElementById('p-ov'); if (n === '0') ov.removeAttribute('data-lay'); else ov.setAttribute('data-lay', n);
+    try { localStorage.setItem('fto2-lay', n); } catch (e) {}
+    document.getElementById('laySeg').innerHTML = segHtml(V2LAYS.map(function (x) { return [x, (x === '0' ? '' : x + ' · ') + S('lay' + x)]; }), n, 'data-lay');
+    document.getElementById('layDesc').textContent = S('layD' + n);
+    if (!quiet) { if (G.tab !== 'ov') setTab('ov'); else v2Render(); window.scrollTo(0, 0); }
   }
   function v2Head(k) { if (k.indexOf('a:') === 0) { var a = k.slice(2); return [S('k_' + a), S('t_' + a), S('s_' + a)]; } return GSTR[k][G.lang]; }
   function v2Draw(k) {
@@ -4820,6 +4874,7 @@ window.FTO2_PAGE = window.FTO2_PAGE || '__PAGE__';
     PD = pSrc() ? pData() : null; PA = PD ? pAgg(PD) : null;
     var L2 = V2L[G.tab]; if (!L2) return;
     if (G.tab === 'ov') v2Kpis();
+    if (PAGE === 'layouts' && document.getElementById('laySeg')) { var cl = document.querySelector('#laySeg [aria-pressed="true"]'); document.getElementById('layDesc').textContent = S('layD' + (cl ? cl.getAttribute('data-lay') : '0')); document.querySelectorAll('#laySeg [data-lay]').forEach(function (b) { var x = b.getAttribute('data-lay'); b.textContent = (x === '0' ? '' : x + ' · ') + S('lay' + x); }); }
     if (G.tab === 'pareto') { var gid = PMODE === 'vol' ? 'pg' : 'kg', anchor = document.getElementById(gid + '-rca'), card = anchor && anchor.closest('.card');
       if (card) L2.inboard.slice().reverse().forEach(function (k) { var b2 = V2BAND[k]; if (b2 && b2.previousSibling !== card) card.parentNode.insertBefore(b2, card.nextSibling); }); }
     ['top', 'inboard', 'mid', 'more', 'fold'].forEach(function (s2) {
@@ -4848,6 +4903,8 @@ window.FTO2_PAGE = window.FTO2_PAGE || '__PAGE__';
     var fc = M.fc.map(function (m) { var p = v2Plan(m); return { m: m, v: pa && p != null ? va / pa * p : m3, f: true }; });
     return { act: act, fc: fc, tot: sumA(act.map(function (x) { return x.v; })), ftot: sumA(fc.map(function (x) { return x.v; })) };
   }
+  // month label that fits a slot of w px: 'janv', then 'J', then every other month
+  function v2Mo(m, w, i) { var t = monthName(m); return w >= 30 ? t.slice(0, 4) : w >= 12 ? t.charAt(0).toUpperCase() : i % 2 ? '' : t.charAt(0).toUpperCase(); }
   function v2Up(s2) { return ' style="fill:var(--up)"' + (s2 || ''); }
 
   function v2Obj() {
@@ -4894,37 +4951,57 @@ window.FTO2_PAGE = window.FTO2_PAGE || '__PAGE__';
     if (!rows.length) { pEmpty(k); return; }
     if (rows.length > 1) rows.unshift({ l: S('allLines'), nc: sumA(rows.map(function (r) { return r.nc; })), eq: sumA(rows.map(function (r) { return r.eq; })), all: true });
     rows.forEach(function (r) { r.v = r.nc / r.eq; r.t = r.v * V2CUT; });   // placeholder: 2025 not in the data, taken = 2026
-    var W0 = gWd(k), lab = 104, mr = 214, rh = 36, H = rows.length * rh + 6, pw = W0 - lab - mr, g = '';
+    var W0 = gWd(k, 200), stack = W0 < 440, narrow = W0 < 640, lab = stack ? 0 : narrow ? 104 : 112, mr = stack ? 0 : narrow ? 104 : 214, rh = stack ? 44 : 36, H = rows.length * rh + 6, pw = W0 - lab - mr, g = '';
     rows.forEach(function (r, i) {
-      var y = i * rh + 8, mx = Math.max(r.v, r.t) * 1.18 || 1, X = function (v) { return lab + v / mx * pw; }, gap = r.v / r.t - 1;
+      var y = i * rh + (stack ? 22 : 8), mx = Math.max(r.v, r.t) * 1.18 || 1, X = function (v) { return lab + v / mx * pw; }, gap = r.v / r.t - 1;
+      if (stack) {   // narrow card: line name and figures on a row, the bar under them
+        g += tx(0, y - 6, r.l, r.all ? 'ink b' : 'ink') + tx(W0 - 46, y - 6, f2(r.v), 'ink b', 'end') + tx(W0 - 2, y - 6, (gap > 0 ? '+' : '') + pct0(gap * 100), 'b', 'end', ' style="fill:' + (gap > 0 ? 'var(--up)' : 'var(--down)') + '"');
+        g += '<rect x="0" y="' + (y + 2) + '" width="' + r1(pw) + '" height="8" rx="4" fill="var(--track)"/><rect x="0" y="' + (y + 2) + '" width="' + r1(Math.max(2, X(r.v))) + '" height="8" rx="4" fill="' + (r.all ? 'var(--ink)' : 'var(--ink-2)') + '"' + tip(r.l, [gx('perEq', { v: f2(r.v) }), S('v2Tgt') + ' : ' + f2(r.t), gx('ncEq', { n: num(r.nc), e: f1(r.eq) })]) + '/>' +
+          '<line x1="' + r1(X(r.t)) + '" x2="' + r1(X(r.t)) + '" y1="' + (y - 3) + '" y2="' + (y + 15) + '" stroke="var(--ink)" stroke-width="2"/>';
+        return;
+      }
       g += tx(lab - 12, y + 10, r.l, r.all ? 'ink b' : 'ink', 'end');
       g += '<rect x="' + lab + '" y="' + (y + 2) + '" width="' + r1(pw) + '" height="8" rx="4" fill="var(--track)"/>';
       g += '<rect x="' + lab + '" y="' + (y + 2) + '" width="' + r1(Math.max(2, X(r.v) - lab)) + '" height="8" rx="4" fill="' + (r.all ? 'var(--ink)' : 'var(--ink-2)') + '"' + tip(r.l, [gx('perEq', { v: f2(r.v) }), S('v2Tgt') + ' : ' + f2(r.t), gx('ncEq', { n: num(r.nc), e: f1(r.eq) })]) + '/>';
       g += '<line x1="' + r1(X(r.t)) + '" x2="' + r1(X(r.t)) + '" y1="' + (y - 3) + '" y2="' + (y + 15) + '" stroke="var(--ink)" stroke-width="2"/>';
-      g += tx(lab + pw + 14, y + 10, f2(r.v), 'ink b') + tx(lab + pw + 58, y + 10, S('v2Tgt').toLowerCase() + ' ' + f2(r.t), 'mu') + tx(W0 - 2, y + 10, (gap > 0 ? '+' : '') + pct0(gap * 100), 'b', 'end', ' style="fill:' + (gap > 0 ? 'var(--up)' : 'var(--down)') + '"');
+      g += tx(lab + pw + 12, y + 10, f2(r.v), 'ink b') + (narrow ? '' : tx(lab + pw + 58, y + 10, S('v2Tgt').toLowerCase() + ' ' + f2(r.t), 'mu')) + tx(W0 - 2, y + 10, (gap > 0 ? '+' : '') + pct0(gap * 100), 'b', 'end', ' style="fill:' + (gap > 0 ? 'var(--up)' : 'var(--down)') + '"');
     });
     gSet(k, svg(W0, H, g, gT(k)), sw('var(--ink-2)', S('nKR')) + '<span><i class="ln" style="width:2px;height:12px;background:var(--ink)"></i>' + esc(S('v2TgtPh')) + '</span>');
   }
 
+  var V2W = { 7: 0.6, 8: 0.6 };   // weight of a month in the monthly target: July and August are 60 % of a normal month (holidays)
   function v2Trend(k) {
     var S2 = v2Series(function () { return 1; }), all = S2.act.concat(S2.fc); if (!S2.act.length) { pEmpty(k); return; }
-    var year = S2.tot + S2.ftot, tgt = year * V2CUT, mtg = tgt / 12;   // placeholders until the 2025 total comes: 2025 = this year, target = 2025 - 25 %
-    var byL = {}, tl = {}; SEL_NC.forEach(function (n) { var m = n[1].slice(0, 7), l = PROG_COL[n[3]] ? n[3] : 'Autre'; (byL[m] || (byL[m] = {}))[l] = (byL[m][l] || 0) + 1; tl[l] = (tl[l] || 0) + 1; });
-    var lines = lineOrder(Object.keys(tl)), col = function (l) { return PROG_COL[l] || 'var(--dim)'; };
+    var year = S2.tot + S2.ftot, y25 = year, tgt = y25 * V2CUT;   // placeholders until the 2025 total comes: 2025 = this year, target = 2025 - 25 %
+    var wsum = 0; for (var mm = 1; mm <= 12; mm++) wsum += V2W[mm] || 1;
+    var mTgt = function (m) { return tgt * (V2W[+m.slice(5, 7)] || 1) / wsum; };
     v2Stats(k, [[num(S2.tot), S('v2StNow')], [num(Math.round(year)), S('v2StFc')], [num(Math.round(tgt)), S('v2StTgt'), true]]);
-    var W0 = gWd(k, 420), ml = 30, mr = 6, mt = 20, mb = 24, H = 290, pw = W0 - ml - mr, ph = H - mt - mb, nt = pNice(Math.max(mtg, Math.max.apply(null, all.map(function (x) { return x.v; })), 1) * 1.1), bw = pw / all.length, g = '';
-    function Y(v) { return mt + ph - v / nt.top * ph; }
-    g += pGridY(ml, pw, Y, nt);
-    all.forEach(function (x, i) {
-      var x0 = ml + i * bw + bw * 0.22, w = bw * 0.56, acc = 0;
-      if (x.f) g += '<rect x="' + r1(x0) + '" y="' + r1(Y(x.v)) + '" width="' + r1(w) + '" height="' + r1(Math.max(0.6, mt + ph - Y(x.v))) + '" rx="2" fill="' + tint('--ink-2', 14) + '" stroke="var(--ink-2)" stroke-opacity=".45" stroke-dasharray="3 3"' + tip(monthName(x.m) + ' ' + x.m.slice(0, 4), [gx('fcLeg') + ' : ' + num(Math.round(x.v))]) + '/>';
-      else lines.forEach(function (l) { var v = (byL[x.m] || {})[l] || 0; if (!v) return; var y1 = Y(acc + v), h = Y(acc) - y1; acc += v;
-        g += '<rect x="' + r1(x0) + '" y="' + r1(y1) + '" width="' + r1(w) + '" height="' + r1(Math.max(0.6, h - 1)) + '" fill="' + col(l) + '" data-aline="' + esc(l) + '" style="cursor:pointer"' + tip(monthName(x.m) + ' · ' + progName(l), [gx('ncCount', { n: num(v) })]) + '/>'; });
-      g += tx(x0 + w / 2, Y(x.v) - 6, num(Math.round(x.v)), x.f ? 'mu' : 'ink', 'middle', ' style="font-size:11px"') + tx(x0 + w / 2, H - 6, monthName(x.m).slice(0, 4), 'mu', 'middle');
-    });
-    g += '<line x1="' + ml + '" x2="' + r1(ml + pw) + '" y1="' + r1(Y(mtg)) + '" y2="' + r1(Y(mtg)) + '" stroke="var(--ink)" stroke-width="1.2" stroke-dasharray="5 4"/>';
-    gSet(k, svg(W0, H, g, gT(k)), lines.map(function (l) { return '<span data-aline="' + esc(l) + '" style="cursor:pointer"><i class="sw" style="background:' + col(l) + '"></i>' + esc(progName(l)) + ' <b>' + esc(num(tl[l])) + '</b> <span class="mu">' + esc(pct0(tl[l] / S2.tot * 100)) + '</span></span>'; }).join('') +
-      '<span><i class="sw" style="background:' + tint('--ink-2', 14) + ';border:1px dashed var(--ink-2)"></i>' + esc(gx('fcLeg')) + '</span>' + swl('var(--ink)', S('v2MTgt', { v: num(Math.round(mtg)) }), true));
+    var cum = [0], ct = [0], c = 0, t = 0;
+    all.forEach(function (x) { c += x.v; cum.push(c); t += mTgt(x.m); ct.push(t); });
+    var W0 = gWd(k, 300), cp = W0 < 560, ml = cp ? 34 : 40, lb = cp ? 44 : 70, gap = cp ? 14 : 34, mr = cp ? 54 : 118, mt = 22, mb = 26, H = cp ? 260 : 300, ph = H - mt - mb, x1 = ml + lb + gap, pw = W0 - x1 - mr, n = all.length, na = S2.act.length;
+    var nt = pNice(Math.max(y25, year, tgt, 1) * 1.08), g = '';
+    function Y(v) { return mt + ph - v / nt.top * ph; } function X(i) { return x1 + i / n * pw; }
+    for (var tk = 0; tk <= nt.top + 1e-9; tk += nt.step) g += '<line x1="' + ml + '" x2="' + r1(x1 + pw) + '" y1="' + r1(Y(tk)) + '" y2="' + r1(Y(tk)) + '" stroke="var(--grid)"/>' + tx(ml - 6, Y(tk) + 4, num(tk), 'mu', 'end');
+    // 2025: one bar, same scale as the cumulative curve
+    var bx = ml + (cp ? 8 : 14), bwd = lb - (cp ? 16 : 28);
+    g += '<rect x="' + bx + '" y="' + r1(Y(y25)) + '" width="' + bwd + '" height="' + r1(mt + ph - Y(y25)) + '" rx="2" fill="' + tint('--ink-2', 18) + '" stroke="var(--ink-2)" stroke-opacity=".5" stroke-dasharray="3 3"' + tip('2025', [gx('ncCount', { n: num(Math.round(y25)) }), S('v2Ph')]) + '/>' +
+      tx(bx + bwd / 2, Y(y25) - 6, num(Math.round(y25)), 'ink b', 'middle') + tx(bx + bwd / 2, H - 6, '2025', 'ink', 'middle');
+    all.forEach(function (x, i) { g += tx(X(i + 0.5), H - 6, v2Mo(x.m, pw / n, i), 'mu', 'middle'); });
+    // actual, then the forecast
+    g += '<path d="M' + r1(X(0)) + ',' + r1(Y(0)) + 'L' + cum.slice(0, na + 1).map(function (v, i) { return r1(X(i)) + ',' + r1(Y(v)); }).join('L') + 'L' + r1(X(na)) + ',' + r1(Y(0)) + 'Z" fill="' + tint('--s1', 10) + '"/>';
+    g += '<path d="M' + cum.slice(0, na + 1).map(function (v, i) { return r1(X(i)) + ',' + r1(Y(v)); }).join('L') + '" fill="none" stroke="var(--s1)" stroke-width="2"/>';
+    if (n > na) g += '<path d="M' + cum.slice(na).map(function (v, i) { return r1(X(na + i)) + ',' + r1(Y(v)); }).join('L') + '" fill="none" stroke="var(--s1)" stroke-width="2" stroke-dasharray="1 5" stroke-linecap="round"/>';
+    // year-end target, spread month by month (drawn over the shaded area)
+    g += '<path d="M' + ct.map(function (v, i) { return r1(X(i)) + ',' + r1(Y(v)); }).join('L') + '" fill="none" stroke="var(--ink)" stroke-width="1.3" stroke-dasharray="5 4"/>';
+    S2.act.forEach(function (x, i) { var over = x.v > mTgt(x.m);
+      g += '<circle cx="' + r1(X(i + 1)) + '" cy="' + r1(Y(cum[i + 1])) + '" r="4.5" fill="' + (over ? 'var(--up)' : 'var(--down)') + '" stroke="var(--surface)" stroke-width="1.8"' +
+        tip(monthName(x.m) + ' ' + x.m.slice(0, 4), [gx('ncCount', { n: num(x.v) }) + ' · ' + S('v2MonTgt', { v: num(Math.round(mTgt(x.m))) }), S('v2Cum', { v: num(cum[i + 1]) })]) + '/>'; });
+    if (n > na) g += '<circle cx="' + r1(X(n)) + '" cy="' + r1(Y(year)) + '" r="4" fill="var(--surface)" stroke="var(--s1)" stroke-width="2"' + tip(gx('fcLeg'), [num(Math.round(year))]) + '/>';
+    var ly = spread([Y(year) + 4, Y(tgt) + 4], 16, mt + 6, mt + ph);
+    g += tx(X(n) + 8, ly[0], num(Math.round(year)) + (cp ? '' : ' ' + S('v2Fc')), 'ink b') + tx(X(n) + 8, ly[1], num(Math.round(tgt)) + (cp ? '' : ' ' + S('v2TgtShort')), 'ink');
+    gSet(k, svg(W0, H, g, gT(k)), '<span><i class="sw" style="background:var(--down);border-radius:50%"></i>' + esc(S('v2Under')) + '</span><span><i class="sw" style="background:var(--up);border-radius:50%"></i>' + esc(S('v2Over')) + '</span>' +
+      swl('var(--s1)', S('v2CumLeg')) + '<span><i class="dash" style="border-top:2px dotted var(--s1)"></i>' + esc(gx('fcLeg')) + '</span>' + swl('var(--ink)', S('v2TgtCum'), true) +
+      '<span><i class="sw" style="background:' + tint('--ink-2', 18) + ';border:1px dashed var(--ink-2)"></i>' + esc(S('v2Ph25')) + '</span><span class="mu">' + esc(S('v2Summer')) + '</span>');
   }
 
   function v2Budget(k) {
@@ -4932,10 +5009,10 @@ window.FTO2_PAGE = window.FTO2_PAGE || '__PAGE__';
     var all = S2.act.concat(S2.fc), year = S2.tot + S2.ftot, bud = year * V2CUT, cum = [0], c = 0;   // placeholder budget: forecast - 25 %
     all.forEach(function (x) { c += x.v; cum.push(c); });
     v2Stats(k, [[kE(S2.tot), S('v2StCost')], [kE(year), S('v2StFc')], [kE(bud), S('v2StBud'), true]]);
-    var na = S2.act.length, n = all.length, W0 = gWd(k, 420), ml = 52, mr = 104, mt = 14, mb = 26, H = 280, pw = W0 - ml - mr, ph = H - mt - mb, nt = pNice(Math.max(year, bud) * 1.06), g = '';
+    var na = S2.act.length, n = all.length, W0 = gWd(k, 300), cp = W0 < 560, ml = cp ? 46 : 52, mr = cp ? 58 : 104, mt = 14, mb = 26, H = cp ? 250 : 280, pw = W0 - ml - mr, ph = H - mt - mb, nt = pNice(Math.max(year, bud) * 1.06), g = '';
     function X(i) { return ml + i / n * pw; } function Y(v) { return mt + ph - v / nt.top * ph; }
     g += pGridY(ml, pw, Y, nt, function (v) { return kE(v); });
-    all.forEach(function (x, i) { g += tx(X(i + 0.5), H - 8, monthName(x.m).slice(0, 4), 'mu', 'middle'); });
+    all.forEach(function (x, i) { g += tx(X(i + 0.5), H - 8, v2Mo(x.m, pw / n, i), 'mu', 'middle'); });
     var act = cum.slice(0, na + 1).map(function (v, i) { return r1(X(i)) + ',' + r1(Y(v)); });
     g += '<line x1="' + r1(X(0)) + '" y1="' + r1(Y(0)) + '" x2="' + r1(X(n)) + '" y2="' + r1(Y(bud)) + '" stroke="var(--ink-2)" stroke-width="1.4" stroke-dasharray="5 4"/>';
     g += '<path d="M' + r1(X(0)) + ',' + r1(Y(0)) + 'L' + act.join('L') + 'L' + r1(X(na)) + ',' + r1(Y(0)) + 'Z" fill="' + tint('--s1', 10) + '"/><path d="M' + act.join('L') + '" fill="none" stroke="var(--s1)" stroke-width="1.8"/>';
@@ -4943,7 +5020,7 @@ window.FTO2_PAGE = window.FTO2_PAGE || '__PAGE__';
     g += '<circle cx="' + r1(X(na)) + '" cy="' + r1(Y(cum[na])) + '" r="4.5" fill="var(--s1)" stroke="var(--surface)" stroke-width="2"' + tip(gx('cum'), [eur(cum[na])]) + '/>';
     g += '<circle cx="' + r1(X(n)) + '" cy="' + r1(Y(year)) + '" r="3.5" fill="var(--surface)" stroke="var(--s1)" stroke-width="2"' + tip(gx('proj'), [eur(year)]) + '/>';
     var ly = spread([Y(year) + 4, Y(bud) + 4], 16, mt + 6, mt + ph);
-    g += tx(X(n) + 8, ly[0], kE(year), 'ink b') + tx(X(n) + 8, ly[1], kE(bud) + ' ' + S('v2Ph'), 'mu') + tx(X(na) - 8, Y(cum[na]) - 10, kE(cum[na]), 'ink b', 'end');
+    g += tx(X(n) + 8, ly[0], kE(year), 'ink b') + tx(X(n) + 8, ly[1], kE(bud) + (cp ? '' : ' ' + S('v2Ph')), 'mu') + tx(X(na) - 8, Y(cum[na]) - 10, kE(cum[na]), 'ink b', 'end');
     gSet(k, svg(W0, H, g, gT(k)), swl('var(--s1)', gx('cum')) + '<span><i class="dash" style="border-top:2px dotted var(--s1)"></i>' + esc(gx('fcLeg')) + '</span>' + swl('var(--ink-2)', S('v2BudPh'), true));
   }
 
@@ -4977,10 +5054,12 @@ window.FTO2_PAGE = window.FTO2_PAGE || '__PAGE__';
     var cnt = {}; SEL_NC.forEach(function (n) { cnt[n[2]] = (cnt[n[2]] || 0) + 1; });
     var wk = WEEKS.filter(function (w) { var mo = isoDay(isoMonday(w)); return weekEnd(w) >= GF.from && mo <= GF.to && !isPartial(w); });
     if (wk.length < 6) { pEmpty(k); return; }
-    var c = wk.map(function (w) { return cnt[w] || 0; }), n = c.length, mean = avgOf(c), mr = [];
-    for (var i = 1; i < n; i++) mr.push(Math.abs(c[i] - c[i - 1]));
-    var mrb = avgOf(mr), ucl = mean + 2.66 * mrb, lcl = Math.max(0, mean - 2.66 * mrb), umr = 3.267 * mrb;
-    var W0 = gWd(k, 420), ml = 34, mrg = 92, pw = W0 - ml - mrg, h1 = 160, h2 = 60, gap = 36, mt = 10, H = mt + h1 + gap + h2 + 26, g = '';
+    // shutdown weeks (fewer than 10 série defects, as in the weekly tab) stay out of the mean and the limits
+    var c = wk.map(function (w) { return cnt[w] || 0; }), sh = wk.map(function (w) { return (WEEK_ALL[w] || 0) < 10; }), n = c.length, on = c.filter(function (v, j) { return !sh[j]; }), mean = avgOf(on), mr = [];
+    if (on.length < 6) { pEmpty(k); return; }
+    for (var i = 1; i < on.length; i++) mr.push(Math.abs(on[i] - on[i - 1]));
+    var mrb = avgOf(mr), ucl = mean + 2.66 * mrb, lcl = Math.max(0, mean - 2.66 * mrb);
+    var W0 = gWd(k, 300), ml = 34, mrg = 92, pw = W0 - ml - mrg, h1 = 200, mt = 10, H = mt + h1 + 26, g = '';
     function X(j) { return ml + j / (n - 1) * pw; }
     var top = Math.ceil(Math.max(ucl, Math.max.apply(null, c)) / 5) * 5 || 5; function Y(v) { return mt + h1 - v / top * h1; }
     [0, top / 2, top].forEach(function (t) { g += tx(ml - 6, Y(t) + 4, num(t), 'mu', 'end'); });
@@ -4988,15 +5067,11 @@ window.FTO2_PAGE = window.FTO2_PAGE || '__PAGE__';
     [[ucl, 'lsc', true], [mean, 'mean', false], [lcl, 'lic', true]].forEach(function (p) {
       g += '<line x1="' + ml + '" x2="' + (ml + pw) + '" y1="' + r1(Y(p[0])) + '" y2="' + r1(Y(p[0])) + '" stroke="' + (p[2] ? 'var(--up)' : 'var(--ink-2)') + '"' + (p[2] ? ' stroke-dasharray="4 3"' : '') + '/>' +
         tx(ml + pw + 8, Y(p[0]) + 4, p[1] === 'mean' ? gx('mean') + ' ' + f1(p[0]) : gx(p[1], { v: f1(p[0]) }), 'mu'); });
-    g += '<path d="' + c.map(function (v, j) { return (j ? 'L' : 'M') + r1(X(j)) + ',' + r1(Y(v)); }).join('') + '" fill="none" stroke="var(--s1)" stroke-width="1.5"/>';
-    c.forEach(function (v, j) { var out = v > ucl || v < lcl;
-      g += '<circle cx="' + r1(X(j)) + '" cy="' + r1(Y(v)) + '" r="' + (out ? 5 : 3.5) + '" fill="' + (out ? 'var(--up)' : 'var(--s1)') + '" stroke="var(--surface)" stroke-width="2"' + tip(weekLong(wk[j]), [gx('ncCount', { n: num(v) })]) + '/>'; });
-    var y0 = mt + h1 + gap, tm = Math.max(umr, Math.max.apply(null, mr)) * 1.1 || 1; function Y2(v) { return y0 + h2 - v / tm * h2; }
-    g += tx(0, y0 - 12, gx('mrT'), 'ink b') + '<line x1="' + ml + '" x2="' + (ml + pw) + '" y1="' + r1(Y2(0)) + '" y2="' + r1(Y2(0)) + '" stroke="var(--grid)"/>';
-    g += '<line x1="' + ml + '" x2="' + (ml + pw) + '" y1="' + r1(Y2(umr)) + '" y2="' + r1(Y2(umr)) + '" stroke="var(--up)" stroke-dasharray="4 3"/>' + tx(ml + pw + 8, Y2(umr) + 4, gx('lsc', { v: f1(umr) }), 'mu');
-    g += '<path d="' + mr.map(function (v, j) { return (j ? 'L' : 'M') + r1(X(j + 1)) + ',' + r1(Y2(v)); }).join('') + '" fill="none" stroke="var(--ink-2)" stroke-width="1.2"/>';
-    var lastM = ''; wk.forEach(function (w, j) { var m = isoDay(isoMonday(w)).slice(0, 7); if (m !== lastM) { lastM = m; g += tx(X(j), H - 6, monthName(m).slice(0, 4), 'mu', 'start'); } });
-    gSet(k, svg(W0, H, g, gT(k)), swl('var(--s1)', gx('xLeg')) + swl('var(--up)', gx('limLeg'), true) + sw('var(--up)', gx('outLim'), true));
+    g += '<path d="' + c.map(function (v, j) { return sh[j] ? '' : (j && !sh[j - 1] ? 'L' : 'M') + r1(X(j)) + ',' + r1(Y(v)); }).join('') + '" fill="none" stroke="var(--s1)" stroke-width="1.5"/>';
+    c.forEach(function (v, j) { var out = !sh[j] && (v > ucl || v < lcl);
+      g += '<circle cx="' + r1(X(j)) + '" cy="' + r1(Y(v)) + '" r="' + (out ? 5 : 3.5) + '" fill="' + (sh[j] ? 'var(--surface)' : out ? 'var(--up)' : 'var(--s1)') + '" stroke="' + (sh[j] ? 'var(--muted)' : 'var(--surface)') + '" stroke-width="' + (sh[j] ? 1.5 : 2) + '"' + tip(weekLong(wk[j]), [gx('ncCount', { n: num(v) })].concat(sh[j] ? [gx('shutWk')] : [])) + '/>'; });
+    var lastM = '', seen = {}; wk.forEach(function (w, j) { var m = isoDay(isoMonday(w)).slice(0, 7); if (m !== lastM) { lastM = m; g += tx(X(j), H - 6, v2Mo(m, pw * 4.3 / (n - 1), j && Object.keys(seen).length), 'mu', 'start'); seen[m] = 1; } });
+    gSet(k, svg(W0, H, g, gT(k)), swl('var(--s1)', gx('xLeg')) + swl('var(--up)', gx('limLeg'), true) + sw('var(--up)', gx('outLim'), true) + (sh.indexOf(true) >= 0 ? '<span><i class="sw" style="background:var(--surface);border:1.5px solid var(--muted);border-radius:50%"></i>' + esc(gx('shutWk')) + '</span>' : ''));
   }
 
   function v2Defs() { return D.defects.filter(function (r) { return SEL[r[0]] && keepMinor(r); }); }

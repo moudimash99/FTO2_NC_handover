@@ -230,8 +230,10 @@ def refresh_cnq_package(nc_in, d):
 
 
 # ============================================================ pages
-def _page(template, data, name, page="main"):
+def _page(template, data, name, page="main", title=None):
     t = open(os.path.join(ROOT, "build", "templates", template), encoding="utf-8").read().replace("__PAGE__", page)
+    if title:
+        t = t.replace("<title>FTO2 NC Dashboard</title>", "<title>" + title + "</title>", 1)
     page = t.replace("__DATA__", json.dumps(data, ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/"))
     # the published artifact gets its own skeleton; the offline copy needs one
     os.makedirs(os.path.join(ROOT, "build", "artifacts"), exist_ok=True)
@@ -372,6 +374,8 @@ def build_dashboard(d, nc, lt):
     _page("dashboard.html", local, "FTO2_Revue_Proposition.html", page="review")
     # the same layout as a mock-up of the final dashboard, every chart scored a to e at its side (local only)
     _page("dashboard.html", local, "FTO2_Maquette_Notee.html", page="mock")
+    # the same dashboard with a switch between five layouts of the overview, to choose one (local only)
+    _page("dashboard.html", data, "FTO2_Mises_en_page.html", page="layouts", title="FTO2 Overview Layouts")
     _page("dashboard.html", data, "FTO2_Suivi_Hebdo.html", page="suivi")
     slate_pack(data)
     slate_pack(data, page="suivi")

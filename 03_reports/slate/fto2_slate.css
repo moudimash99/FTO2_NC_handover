@@ -528,6 +528,47 @@
 .fto2 .fig > span.v2spark { order: 1; display: block; margin: 6px 0 2px; line-height: 0; }
 .fto2 .fig > small { order: 2; }
 .fto2 .fig small.v2per { font-size: 12.5px; color: var(--ink-2); }
+.fto2 #p-ov[data-lay] { display: grid; gap: 20px; align-items: start; grid-template-columns: minmax(0, 1fr); }
+.fto2 #p-ov[data-lay] > * { min-width: 0; }
+.fto2 #p-ov[data-lay] .v2ov { display: contents; }
+.fto2 #p-ov[data-lay] > .lead { grid-area: lead; }
+.fto2 #p-ov[data-lay] > .figs { grid-area: figs; }
+.fto2 #p-ov[data-lay] [data-v2="VT"] { grid-area: tgt; }
+.fto2 #p-ov[data-lay] [data-v2="VN"] { grid-area: trend; }
+.fto2 #p-ov[data-lay] [data-v2="VB"] { grid-area: cost; }
+.fto2 #p-ov[data-lay] [data-v2="a:lead"] { grid-area: delay; }
+.fto2 #p-ov[data-lay] [data-v2="VX"] { grid-area: ctl; }
+.fto2 #p-ov[data-lay] > #ngxBox { grid-area: more; }
+.fto2 #p-ov[data-lay] > details:not(#ngxBox) { grid-area: table; }
+.fto2 #p-ov[data-lay] .v2ov > .card { grid-template-columns: minmax(0, 1fr); background: var(--surface); border: 1px solid var(--ring); border-radius: 10px; padding: 18px 20px 16px; box-shadow: none; clip-path: none; row-gap: 10px; }
+.fto2 #p-ov[data-lay] .v2ov > .card > .bhead { position: static; grid-column: 1; gap: 6px; }
+.fto2 #p-ov[data-lay] .v2ov > .card > .custom { grid-column: 1; grid-row: auto; }
+.fto2 #p-ov[data-lay] .v2ov .bhead h3 { font-size: clamp(20px, 2vw, 24px); }
+.fto2 #p-ov[data-lay] .v2stats { display: flex; flex-wrap: wrap; gap: 6px 24px; margin-top: 2px; }
+.fto2 #p-ov[data-lay] .v2stats b { font-size: 24px; min-width: 0; }
+.fto2 #p-ov[data-lay="1"] { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-areas: "lead lead" "figs figs" "trend trend" "tgt cost" "delay ctl" "more more" "table table"; }
+.fto2 #p-ov[data-lay="2"] { grid-template-columns: repeat(3, minmax(0, 1fr)); grid-template-areas: "lead lead lead" "trend trend figs" "tgt cost delay" "ctl ctl ctl" "more more more" "table table table"; }
+.fto2 #p-ov[data-lay="2"] > .figs, .fto2 #p-ov[data-lay="4"] > .figs { grid-template-columns: minmax(0, 1fr); align-self: stretch; }
+.fto2 #p-ov[data-lay="2"] > .figs > .fig, .fto2 #p-ov[data-lay="4"] > .figs > .fig { border-left: 0; border-top: 1px solid var(--grid); padding: 12px 0; }
+.fto2 #p-ov[data-lay="2"] > .figs > .fig:first-child, .fto2 #p-ov[data-lay="4"] > .figs > .fig:first-child { border-top: 0; }
+.fto2 #p-ov[data-lay="3"] { gap: 0; grid-template-areas: "lead" "figs" "tgt" "trend" "cost" "delay" "ctl" "more" "table"; }
+.fto2 #p-ov[data-lay="3"] .v2ov > .card { grid-template-columns: minmax(0, 210px) minmax(0, 1fr); column-gap: 36px; background: transparent; border: 0; border-top: 1px solid var(--grid); border-radius: 0; padding: 22px 0; }
+.fto2 #p-ov[data-lay="3"] .v2ov > .card > .bhead { grid-column: 1; }
+.fto2 #p-ov[data-lay="3"] .v2ov > .card > .custom { grid-column: 2; grid-row: 1; }
+.fto2 #p-ov[data-lay="3"] .v2ov .bhead h3 { font-family: var(--font-ui); font-weight: 600; font-size: 16px; line-height: 1.3; }
+.fto2 #p-ov[data-lay="3"] .v2ov .bhead .kicker { display: none; }
+.fto2 #p-ov[data-lay="3"] .v2ov .bhead .sub { font-size: 12.5px; }
+.fto2 #p-ov[data-lay="3"] .v2stats { display: grid; gap: 4px; }
+.fto2 #p-ov[data-lay="3"] .v2stats b { font-size: 20px; }
+.fto2 #p-ov[data-lay="4"] { grid-template-columns: minmax(0, 300px) minmax(0, 1fr); grid-template-areas: "lead lead" "figs trend" "tgt cost" "tgt delay" "tgt ctl" "more more" "table table"; }
+.fto2 #p-ov[data-lay="4"] [data-v2="VT"] { align-self: start; position: sticky; top: calc(var(--tabs-h) + 12px); }
+.fto2 #p-ov[data-lay="5"] { grid-template-columns: repeat(3, minmax(0, 1fr)); grid-template-areas: "lead lead lead" "figs figs figs" "trend trend tgt" "cost delay delay" "ctl ctl ctl" "more more more" "table table table"; }
+@media (max-width: 900px) {
+.fto2 #p-ov[data-lay] { grid-template-columns: minmax(0, 1fr) !important; grid-template-areas: none !important; }
+.fto2 #p-ov[data-lay] > *, .fto2 #p-ov[data-lay] .v2ov > .card { grid-area: auto !important; position: static !important; }
+.fto2 #p-ov[data-lay="3"] .v2ov > .card { grid-template-columns: minmax(0, 1fr); }
+.fto2 #p-ov[data-lay="3"] .v2ov > .card > .custom { grid-column: 1; grid-row: auto; }
+}
 .fto2 table.v2sc { min-width: 640px; font-variant-numeric: tabular-nums; }
 .fto2 table.v2sc th[scope="row"] { font-size: 14px; font-weight: 600; color: var(--ink); vertical-align: middle; }
 .fto2 table.v2sc td { vertical-align: middle; }
