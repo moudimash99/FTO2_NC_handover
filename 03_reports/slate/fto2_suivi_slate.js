@@ -483,8 +483,8 @@ window.DASH = {"defects":[["216055047",1,"2026-01-06","2026-W02","A350","FTO2",0
     var b = { o: o, f: {}, q: '', limit: 100, open: {} };
     var grid = document.getElementById(o.grid), fold = o.fold ? document.getElementById(o.fold) : null;
     o.dims.forEach(function (d) {
-      // one band per breakdown: name, reading guide and legend on the left, the chart on the right
-      var c = document.createElement('div'); c.className = 'card wide';
+      // one band per breakdown: name, reading guide and legend on the left, the chart on the right; o.mag: cards in a grid, only the d.wide ones across
+      var c = document.createElement('div'); c.className = 'card' + (!o.mag || d.wide ? ' wide' : ''); c.setAttribute('data-card', d.k);
       c.innerHTML = '<div class="bhead">' + (o.kicker ? '<span class="kicker" data-t="' + o.kicker + '"></span>' : '') +
         '<div class="card-head"><h3 data-t="' + d.t + '"></h3><button type="button" class="clear-one" data-dim="' + d.k + '" hidden></button></div>' +
         (d.sub ? '<p class="sub" data-t="' + d.sub + '"></p>' : '') + (d.split && !d.nokey ? '<div class="key" data-key="1"></div>' : '') + '</div>' +
@@ -692,7 +692,7 @@ window.DASH = {"defects":[["216055047",1,"2026-01-06","2026-W02","A350","FTO2",0
   // ---------------------------------------------------------------- 2. Pareto (selection)
   function ncShareFmt(n) { return (Math.round(n * 10) / 10).toLocaleString(loc(), { minimumFractionDigits: n > 0 && n < 100 ? 1 : 0, maximumFractionDigits: 1 }); }
   var pareto = Board({
-    grid: 'pg', chips: 'pc', search: 'pq', count: 'pn', thead: 'pth', tbody: 'ptb', more: 'pm', valueHead: 'hDef', kicker: 'kmDef',
+    grid: 'pg', chips: 'pc', search: 'pq', count: 'pn', thead: 'pth', tbody: 'ptb', more: 'pm', valueHead: 'hDef', kicker: 'kmDef', mag: true,
     rows: function () { return D.defects.filter(function (r) { return SEL[r[0]] && keepMinor(r); }); },
     extras: [{ t: 'hNc', f: function (r) { return 1 / NLINES[r[0]]; }, fmt: ncShareFmt }],
     dims: [
@@ -731,7 +731,7 @@ window.DASH = {"defects":[["216055047",1,"2026-01-06","2026-W02","A350","FTO2",0
   var NLINES = {}; D.defects.forEach(function (r) { NLINES[r[0]] = (NLINES[r[0]] || 0) + 1; });
   function kShare(u) { return u.d ? 1 / NLINES[u.d[0]] : 1; }
   var costPareto = Board({
-    grid: 'kg', chips: 'kc', search: 'kq', count: 'kn', thead: 'kth', tbody: 'ktb', more: 'km', money: true, kicker: 'kmEur',
+    grid: 'kg', chips: 'kc', search: 'kq', count: 'kn', thead: 'kth', tbody: 'ktb', more: 'km', money: true, kicker: 'kmEur', mag: true,
     rows: function () { return UNITS.filter(function (u) { return SEL[u.n[0]] && (!u.d || keepMinor(u.d)); }); }, measure: kCost,
     extras: [{ t: 'hDef', f: function (u) { return u.d ? 1 : 0; }, fmt: function (n) { return num(n); } },
              { t: 'hNc', f: kShare, fmt: ncShareFmt }],
@@ -1378,7 +1378,7 @@ window.DASH = {"defects":[["216055047",1,"2026-01-06","2026-W02","A350","FTO2",0
       return { l: l, ms: Object.keys(per).filter(function (k) { return per[k].l === l; }).map(function (k) { return per[k]; }).sort(function (a, b) { return a.first < b.first ? -1 : a.first > b.first ? 1 : (+a.msn) - (+b.msn); }) }; });
     if (!rows.length) { vSet('msn', EMPTY); return; }
     var recent = isoDay(new Date(new Date(D.meta.to + 'T00:00:00Z').getTime() - 30 * 864e5));
-    var lab = 112, maxN = Math.max.apply(null, rows.map(function (r) { return r.ms.length; })), step = Math.max(5, Math.min(26, Math.floor((W0 - lab - 8) / maxN))), bw = Math.max(3, step - 2);
+    var lab = 136, maxN = Math.max.apply(null, rows.map(function (r) { return r.ms.length; })), step = Math.max(5, Math.min(26, Math.floor((W0 - lab - 8) / maxN))), bw = Math.max(3, step - 2);
     var maxC = Math.max.apply(null, rows.map(function (r) { return Math.max.apply(null, r.ms.map(function (m) { return m.s + m.c; })); }));
     var tick = maxC > 2500 ? 1000 : maxC > 1200 ? 500 : 250, top = Math.ceil(maxC / tick) * tick, ph = 92, rh = ph + 34, H = rows.length * rh + 4, g = '', rowsTbl = [];
     rows.forEach(function (row, ri) {
@@ -1399,8 +1399,8 @@ window.DASH = {"defects":[["216055047",1,"2026-01-06","2026-W02","A350","FTO2",0
       g += '<line class="guide" x1="' + lab + '" x2="' + r1(w) + '" y1="' + r1(Y(avg)) + '" y2="' + r1(Y(avg)) + '"/>' + tx(Math.min(w + 4, W0 - 4), Y(avg) + 4, S('avgShort', { v: eur(avg) }), 'mu halo', w + 90 > W0 ? 'end' : null);
       var placed = [];
       row.ms.slice().sort(function (a, b) { return (b.s + b.c) - (a.s + a.c); }).slice(0, 3).forEach(function (m) {
-        var j = row.ms.indexOf(m), cx = lab + j * step + 1 + bw / 2;
-        if (placed.some(function (p) { return Math.abs(p - cx) < 30; })) return; placed.push(cx);
+        var j = row.ms.indexOf(m), cx = lab + j * step + 1 + bw / 2, lw = String(m.msn).length * 7;   // label width, about 7 px a digit
+        if (placed.some(function (p) { return Math.abs(p[0] - cx) < (p[1] + lw) / 2 + 6; })) return; placed.push([cx, lw]);
         g += tx(cx, Y(m.s + m.c) - 5, m.msn, 'ink b halo', 'middle');
       });
       rowsTbl.push([progName(row.l), num(row.ms.length), eur(tot), eur(avg), (function () { var b = row.ms.slice().sort(function (a, c) { return (c.s + c.c) - (a.s + a.c); })[0]; return b.msn + ' (' + eur(b.s + b.c) + ')'; })()]);
@@ -3866,7 +3866,7 @@ window.DASH = {"defects":[["216055047",1,"2026-01-06","2026-W02","A350","FTO2",0
   var V2 = PAGE === 'main' || PAGE === 'layouts', V2B = false, V2CUT = 0.75, V2BAND = {};
   var V2L = {
     ov: { top: ['VT', 'VN', 'VB', 'a:lead', 'VX'], fold: ['a:cal'] },
-    pareto: { inboard: ['a:bub', 'a:flow'], more: ['54', '65', 'a:bump', 'VW', 'VQ'], fold: ['53', '78', '76'] },
+    pareto: { fold: ['a:bub', 'a:flow', '54', '65', 'a:bump', 'VW', 'VQ', '53', '78', '76'] },   // the Pareto reads as lists only; the other cause charts fold under them
     where: { top: ['VP', '61', '64', '71', 'VF', 'a:msn', 'a:prod', 'a:station'], fold: ['VI'] },
     cnq: { more: ['VC', 'VE'] }
   };
@@ -3930,9 +3930,8 @@ window.DASH = {"defects":[["216055047",1,"2026-01-06","2026-W02","A350","FTO2",0
     V2L.ov.fold.forEach(function (k) { var b = v2Band(k); if (b) ngx.appendChild(b); });
     document.getElementById('ngxBox').addEventListener('toggle', function (e) { if (e.target.open) v2Render(); });
     var pp = document.getElementById('p-pareto');
-    V2L.pareto.inboard.forEach(function (k) { var b2 = v2Band(k); if (b2) v2Wire(b2); });
-    pp.appendChild(v2Grid(V2L.pareto.more)); pp.appendChild(v2Fold('parMore', V2L.pareto.fold));
-    var wh = document.getElementById('p-where'); wh.appendChild(v2Grid(V2L.where.top)); wh.appendChild(v2Fold('whereMore', V2L.where.fold));
+    var pf = v2Fold('parMore', V2L.pareto.fold); pf.id = 'parFold'; pp.appendChild(pf);
+    var wh = document.getElementById('p-where'), wg = v2Grid(V2L.where.top); wg.classList.add('v2mag'); wh.appendChild(wg); wh.appendChild(v2Fold('whereMore', V2L.where.fold));
     document.getElementById('p-cnq').insertBefore(v2Grid(V2L.cnq.more), document.getElementById('cgxBox'));
     applyText();
   }
@@ -3968,8 +3967,9 @@ window.DASH = {"defects":[["216055047",1,"2026-01-06","2026-W02","A350","FTO2",0
     var L2 = V2L[G.tab]; if (!L2) return;
     if (G.tab === 'ov') v2Kpis();
     if (PAGE === 'layouts' && document.getElementById('laySeg')) { var cl = document.querySelector('#laySeg [aria-pressed="true"]'); document.getElementById('layDesc').textContent = S('layD' + (cl ? cl.getAttribute('data-lay') : '0')); document.querySelectorAll('#laySeg [data-lay]').forEach(function (b) { var x = b.getAttribute('data-lay'); b.textContent = (x === '0' ? '' : x + ' · ') + S('lay' + x); }); }
-    if (G.tab === 'pareto') { var gid = PMODE === 'vol' ? 'pg' : 'kg', anchor = document.getElementById(gid + '-rca'), card = anchor && anchor.closest('.card');
-      if (card) L2.inboard.slice().reverse().forEach(function (k) { var b2 = V2BAND[k]; if (b2 && b2.previousSibling !== card) card.parentNode.insertBefore(b2, card.nextSibling); }); }
+    if (G.tab === 'pareto') {   // the fold sits under the lists of the active measure, above its detail table
+      var sec = document.getElementById(PMODE === 'vol' ? 'pVol' : 'pCost'), det = sec.querySelector(':scope > details.detail'), pf = document.getElementById('parFold');
+      if (pf && det && pf.nextSibling !== det) sec.insertBefore(pf, det); }
     ['top', 'inboard', 'mid', 'more', 'fold'].forEach(function (s2) {
       (L2[s2] || []).forEach(function (k) {
         var b = V2BAND[k]; if (!b || !b.isConnected) return;

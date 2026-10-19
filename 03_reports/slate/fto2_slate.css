@@ -540,10 +540,38 @@
 .fto2 #p-ov[data-lay] [data-v2="VX"] { grid-area: ctl; }
 .fto2 #p-ov[data-lay] > #ngxBox { grid-area: more; }
 .fto2 #p-ov[data-lay] > details:not(#ngxBox) { grid-area: table; }
-.fto2 #p-ov[data-lay] .v2ov > .card { grid-template-columns: minmax(0, 1fr); background: var(--surface); border: 1px solid var(--ring); border-radius: 10px; padding: 18px 20px 16px; box-shadow: none; clip-path: none; row-gap: 10px; }
-.fto2 #p-ov[data-lay] .v2ov > .card > .bhead { position: static; grid-column: 1; gap: 6px; }
-.fto2 #p-ov[data-lay] .v2ov > .card > .custom { grid-column: 1; grid-row: auto; }
-.fto2 #p-ov[data-lay] .v2ov .bhead h3 { font-size: clamp(20px, 2vw, 24px); }
+.fto2 #p-ov[data-lay] .v2ov > .card, .fto2 #p-where .v2mag > .card { grid-template-columns: minmax(0, 1fr); background: var(--surface); border: 1px solid var(--ring); border-radius: 10px; padding: 18px 20px 16px; box-shadow: none; clip-path: none; row-gap: 10px; }
+.fto2 #p-ov[data-lay] .v2ov > .card > .bhead, .fto2 #p-where .v2mag > .card > .bhead { position: static; grid-column: 1; gap: 6px; }
+.fto2 #p-ov[data-lay] .v2ov > .card > .custom, .fto2 #p-where .v2mag > .card > .custom { grid-column: 1; grid-row: auto; }
+.fto2 #p-ov[data-lay] .v2ov .bhead h3, .fto2 #p-where .v2mag .bhead h3 { font-size: clamp(20px, 2vw, 24px); }
+.fto2 #p-where .v2mag { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; align-items: stretch; margin: 4px 0 28px;
+  grid-template-areas: "rate rate" "month month" "ci proj" "fin fin" "msn msn" "prod station"; }
+.fto2 #p-where .v2mag > .card { align-content: start; min-width: 0; }
+.fto2 #p-where .v2mag > [data-v2="VP"] { grid-area: rate; }
+.fto2 #p-where .v2mag > [data-v2="61"] { grid-area: month; }
+.fto2 #p-where .v2mag > [data-v2="64"] { grid-area: ci; }
+.fto2 #p-where .v2mag > [data-v2="71"] { grid-area: proj; }
+.fto2 #p-where .v2mag > [data-v2="VF"] { grid-area: fin; }
+.fto2 #p-where .v2mag > [data-v2="a:msn"] { grid-area: msn; }
+.fto2 #p-where .v2mag > [data-v2="a:prod"] { grid-area: prod; }
+.fto2 #p-where .v2mag > [data-v2="a:station"] { grid-area: station; }
+.fto2 #pg, .fto2 #kg { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; align-items: stretch; margin: 6px 0 28px;
+  grid-template-areas: "cat cat cat" "rca cable fin" "rca line fin" "code code code"; }
+.fto2 #pg > .card, .fto2 #kg > .card { grid-template-columns: minmax(0, 1fr); background: var(--surface); border: 1px solid var(--ring); border-radius: 10px; padding: 18px 20px 16px; box-shadow: none; clip-path: none; row-gap: 12px; align-content: start; }
+.fto2 #pg > .card > .bhead, .fto2 #kg > .card > .bhead { position: static; grid-column: 1; gap: 6px; }
+.fto2 #pg > .card > .bars, .fto2 #kg > .card > .bars { grid-column: 1; grid-row: auto; }
+.fto2 #pg .bhead .kicker, .fto2 #kg .bhead .kicker { display: none; }
+.fto2 #pg .bhead h3, .fto2 #kg .bhead h3 { font-size: clamp(20px, 2vw, 24px); }
+.fto2 #pg > [data-card="cat"], .fto2 #kg > [data-card="cat"] { grid-area: cat; }
+.fto2 #pg > [data-card="rca"], .fto2 #kg > [data-card="rca"] { grid-area: rca; }
+.fto2 #pg > [data-card="cable"], .fto2 #kg > [data-card="cable"] { grid-area: cable; }
+.fto2 #pg > [data-card="line"], .fto2 #kg > [data-card="line"] { grid-area: line; }
+.fto2 #pg > [data-card="code"], .fto2 #kg > [data-card="code"] { grid-area: code; }
+.fto2 #pg > [data-card="fin"], .fto2 #kg > [data-card="fin"] { grid-area: fin; }
+@media (max-width: 900px) {
+.fto2 #pg, .fto2 #kg, .fto2 #p-where .v2mag { grid-template-columns: minmax(0, 1fr); grid-template-areas: none; }
+.fto2 #pg > .card, .fto2 #kg > .card, .fto2 #p-where .v2mag > .card { grid-area: auto; }
+}
 .fto2 #p-ov[data-lay] .v2stats { display: flex; flex-wrap: wrap; gap: 6px 24px; margin-top: 2px; }
 .fto2 #p-ov[data-lay] .v2stats b { font-size: 24px; min-width: 0; }
 .fto2 #p-ov[data-lay="1"] { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-areas: "lead lead" "figs figs" "trend trend" "tgt cost" "delay ctl" "more more" "table table"; }
