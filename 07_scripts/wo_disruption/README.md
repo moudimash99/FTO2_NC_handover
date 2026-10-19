@@ -115,12 +115,16 @@ python3 check_dash.py <repo>/cnq_handoever/dashboard/cnq_dashboard.html   # head
 
 - Pack data (v4.7, 5 Jan-6 Jul 2026): level 3 134,206 -> 121,503 EUR. 2026 Feb-Sep: 151,093 -> 142,151 EUR. 2025 without ERMA: 178,170 -> 168,633 EUR.
 
-Investigation workbook (19 Oct 2026): `05_outputs/CNQ_investigation_checklist.xlsx`
+Investigation checklist (19 Oct 2026): `05_outputs/CNQ_investigation_checklist.html` (offline page; click a check to open its list)
+and `CNQ_CHANGES.md` at the repository root (every CNQ change: done, decided, to do). Both are written by the same script.
 
 ```
-python3 -I sheet_data.py $P <repo>       # lists and checks for the workbook (new model, option B block, M1 groups, returns, no-time orders)
+python3 -I sheet_data.py $P <repo>       # lists and checks (new model, option B block, M1 groups, returns, no-time orders)
 python3 -I cr_rec.py $P                  # customer returns linked to rework orders in the Sept file
-python3 -I build_checklist.py $P <repo> $X/disrup.csv <repo>/05_outputs/CNQ_investigation_checklist.xlsx
+python3 -I build_checklist_html.py $P <repo> $X/disrup.csv    # uses checklist_template.html
+python3 check_checklist.py <repo>/05_outputs/CNQ_investigation_checklist.html   # headless test (needs playwright)
 ```
 
 - Disruption block, option B (decided): quality aléas with no NC, Jan-Sep 2026: 108 aléas, 91.2 h, 4,560 EUR. Aléas that led to an NC stay inside the NC cost (alert step).
+- Decided after that: the 19 aléas on the MIP / 1101VB (possible ERMA NCs) are left out until checked: 89 aléas, 66.9 h, 3,347 EUR.
+- Final state of the CNQ model on 19 Oct 2026 (cnq-2026.10.19, all approved changes): pack 128,741 EUR; 2026 Feb-Sep 149,824 EUR; 2025 without ERMA 178,870 EUR; customer returns 2026 12,577 EUR. The figures quoted earlier in this file are intermediate steps.

@@ -1,6 +1,6 @@
 # FTO2 NC analysis — full handover
 
-Written 12 Oct 2026 for the agent taking over this work. Owner: Mohammad Machaka (intern, Quality, Airbus Operations electrical centre FTO2 / OLME, Toulouse). Manager: Emmanuelle.
+Written 12 Oct 2026 for the agent taking over this work; updated 19 Oct 2026 (CNQ model, work orders, MES aléas, 2025 NCs: see `CNQ_CHANGES.md`). Owner: Mohammad Machaka (intern, Quality, Airbus Operations electrical centre FTO2 / OLME, Toulouse). Manager: Emmanuelle.
 
 Read sections 1, 2 and 9 first. Everything else is reference. Every number below was computed on the files in this bundle; scripts to reproduce the recent ones are in `07_scripts/`.
 
@@ -31,6 +31,8 @@ Read sections 1, 2 and 9 first. Everything else is reference. Every number below
 | Full defect table for the presentation | Done | `05_outputs/FTO2_defects_detail_v48.xlsx` |
 | H1 2026 deep dive, writing standard, entry-tool spec | Done (Aug–Sep), not deployed | section 8, `03_reports/` |
 | CNQ reconciliation (predecessor files vs official method M1888 / UG2600252) | Mentioned by Mohammad, **not started here** | — |
+| CNQ model | Version cnq-2026.10.19: 7 rule changes from SAP rework orders and MES aléas, approved 19 Oct | `cnq_handoever/`, `CNQ_CHANGES.md` |
+| Work orders, MES aléas, 2025 NCs (uploaded 19 Oct) | Analysed; investigation checklist for Mohammad, **checks pending** | `05_outputs/CNQ_investigation_checklist.html`, `07_scripts/wo_disruption/` |
 
 ---
 
@@ -222,6 +224,7 @@ Full detail: `03_reports/dossier_stage_NC.md` (French master dossier) and `NC_de
 
 ## 9. Next steps, in priority order
 
+0. **CNQ checks (19 Oct):** go through `05_outputs/CNQ_investigation_checklist.html` with Mohammad (H1-H7 are high). Apply what he decides; the list of changes done, decided and kept for later is `CNQ_CHANGES.md`. Scope decided: REC and ERMA out; disruption block (quality aléas with no NC) shown beside the NC cost.
 1. **Cable defence:** get Mohammad's choice among options A–D and the "cable problem" definition; then produce the slide numbers (by defect and by NC). Nothing in the parser has been changed for this yet.
 2. **REC:** get the definition decision; ask for the precision query result and REC's roster; then write the final rule spec for the pipeline team (columns `rec_written`, `rec_fixed`, `imputation`).
 3. **Pack v4.8:** apply the two pending fixes (MT → A400M in `LINES`; drop A400M chart) when he asks; confirm whether the pack was installed.
@@ -265,3 +268,8 @@ Full detail: `03_reports/dossier_stage_NC.md` (French master dossier) and `NC_de
 | `06_input_data/` | Inputs Mohammad uploaded: dashboard export, missing IDs, nc-rec, REC tracker, cable team tracker, MFT action trackers (A330/A350), pipeline notebook, earlier REC note, sample NC text, code sheet text |
 | `07_scripts/` | `rec_checks.py`, `cable_check.py`, `build_defect_table.py` (+ older working scripts in `archive/`) |
 | `08_tools/` | NC entry tool prototypes (JSX), logic flow (Mermaid), old Slate SQL and preview |
+| `cnq_handoever/` | CNQ model (pipeline step, Slate queries, offline dashboard, tests); README_handover.md section 4 lists the 19 Oct changes |
+| `CNQ_CHANGES.md` | Every CNQ change: applied, decided, kept for later, needed from the pipeline team |
+| `05_outputs/CNQ_investigation_checklist.html` | Offline checklist of open CNQ checks; click a check to open its list; answers kept in the browser, CSV export |
+| `06_input_data/work_orders_disruptions_nc2025.rar` | Upload of 19 Oct: SAP work-order operations (Sept 2026), MES aléas (Jan-Sep 2026), Skywise NCs 2025 |
+| `07_scripts/wo_disruption/` | Scripts behind every number of the 19 Oct analysis, README with run order |
