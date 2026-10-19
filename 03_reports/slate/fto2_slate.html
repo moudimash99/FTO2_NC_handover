@@ -46,6 +46,7 @@
     <button type="button" role="tab" id="tab-prod" aria-controls="p-prod" data-tab="prod" data-t="tabProd"></button>
     <button type="button" role="tab" id="tab-hebdo" aria-controls="p-hebdo" data-tab="hebdo" data-t="tabWeek"></button>
     <button type="button" role="tab" id="tab-mft" aria-controls="p-mft" data-tab="mft" data-t="tabMft"></button>
+    <button type="button" role="tab" id="tab-rev" aria-controls="p-rev" data-tab="rev" data-t="tabRev"></button>
   </div>
 
   <!-- 1. Overview: headline figures and every chart counted in NCs -->
@@ -258,6 +259,18 @@
     <section class="hero"><span class="fict" id="pBadge"></span><h2 data-t="prodTitle"></h2><p class="sub" data-t="prodSub"></p><p class="sub" id="pCover"></p></section>
     <div class="gal-bar"><div class="controls"><div class="seg" role="group" data-ta="prodData" id="pSrcSeg"></div><div class="seg" role="group" data-ta="prodVer" id="pVerSeg"></div></div><p class="gal-keep" id="pKeep"></p></div>
     <div class="ggrid" id="pg2"></div>
+  </div>
+
+  <!-- Review page: the proposed final layout, each chart with the choices to make (local review page only) -->
+  <div class="panel" role="tabpanel" id="p-rev" aria-labelledby="tab-rev" hidden>
+    <section class="hero"><h2 data-t="revTitle"></h2><p class="sub" data-t="revSub"></p><p class="sub" data-t="revHow"></p></section>
+    <div class="gal-bar rv-bar">
+      <div class="controls"><div class="seg" role="group" data-ta="rvShowLab" id="rvShow"></div><button type="button" class="cxb" id="rvCopy" data-t="rvCopy"></button></div>
+      <p class="gal-keep" id="rvSum" aria-live="polite"></p>
+      <p class="rv-save" id="rvSave" aria-live="polite"></p>
+    </div>
+    <textarea class="rv-copybox" id="rvCopyBox" readonly hidden></textarea>
+    <div id="rvBody"></div>
   </div>
 
   <div id="tip" role="tooltip" hidden></div>

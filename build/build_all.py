@@ -365,7 +365,10 @@ def build_dashboard(d, nc, lt):
     # the local dashboard also carries the chart gallery, drawn on fictitious data (never in the Slate files)
     sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))   # -I leaves the script folder off the path
     import dummy_data
-    _page("dashboard.html", dict(data, dummy=dummy_data.make(ROOT), eqmsn=eqmsn(nc)), "FTO2_NC_Dashboard.html")
+    local = dict(data, dummy=dummy_data.make(ROOT), eqmsn=eqmsn(nc))
+    _page("dashboard.html", local, "FTO2_NC_Dashboard.html")
+    # the proposed final layout, chart by chart, with the choices to make (review page, local only)
+    _page("dashboard.html", local, "FTO2_Revue_Proposition.html", page="review")
     _page("dashboard.html", data, "FTO2_Suivi_Hebdo.html", page="suivi")
     slate_pack(data)
     slate_pack(data, page="suivi")

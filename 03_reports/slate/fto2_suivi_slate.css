@@ -413,6 +413,48 @@
 .fto2 .cxchain { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .fto2 .cx-nc { padding: 16px 14px; }
 }
+.fto2 .rv-bar { gap: 8px 20px; }
+.fto2 .rv-save { font-size: 12.5px; color: var(--muted); max-width: none; flex-basis: 100%; }
+.fto2 .rv-save.ok { color: var(--s1); }
+.fto2 .rv-save.warn { color: var(--up); }
+.fto2 .rv-copybox { width: 100%; min-height: 160px; font: 12.5px/1.45 var(--font-data); padding: 10px; border: 1px solid var(--ring); border-radius: 6px; background: var(--surface); color: var(--ink); }
+.fto2 .rv-sec { padding-top: 34px; }
+.fto2 .rv-sec > h3 { font-family: var(--font-display); font-weight: 400; font-size: clamp(28px, 3.2vw, 40px); line-height: 1.1; padding-bottom: 6px; }
+.fto2 .rv-sec > p.sub { max-width: 80ch; }
+.fto2 .rv-item { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2.3fr); column-gap: 48px; row-gap: 14px; padding: 40px 0; border-top: 1px solid var(--ink); align-items: start; }
+.fto2 .rv-item:nth-child(even) { background: var(--band); box-shadow: 0 0 0 100vmax var(--band); clip-path: inset(0 -100vmax); }
+.fto2 .rv-item[hidden] { display: none; }
+.fto2 .rv-left { display: grid; gap: 12px; align-content: start; position: sticky; top: calc(var(--tabs-h) + 92px); min-width: 0; }
+.fto2 .rv-num { font-family: var(--font-display); font-size: 46px; line-height: .9; color: var(--muted); font-variant-numeric: tabular-nums; }
+.fto2 .rv-left h4, .fto2 .rv-left p { margin: 0; }
+.fto2 .rv-left h4 { font-family: var(--font-display); font-weight: 400; font-size: clamp(22px, 2.4vw, 28px); line-height: 1.12; text-wrap: balance; }
+.fto2 .rv-src { font-size: 12.5px; color: var(--ink-2); }
+.fto2 .rv-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.fto2 .rv-tag { font-size: 11.5px; font-weight: 600; letter-spacing: .04em; border-radius: 4px; padding: 2px 8px; border: 1.5px solid currentColor; }
+.fto2 .rv-tag.keep { color: var(--s1); }
+.fto2 .rv-tag.drop { color: var(--up); }
+.fto2 .rv-tag.later { color: var(--ink-2); }
+.fto2 .rv-tag.rv-fict { color: var(--up); border-style: dashed; }
+.fto2 .rv-tag.rv-real { color: var(--s1); border-style: dashed; }
+.fto2 .rv-ctl { display: grid; grid-template-columns: 6.6em minmax(0, 1fr); gap: 8px 10px; align-items: center; font-size: 13px; padding-top: 10px; border-top: 1px solid var(--grid); }
+.fto2 .rv-ctl > span { color: var(--ink-2); }
+.fto2 .rv-ctl .seg { justify-self: start; max-width: 100%; overflow-x: auto; }
+.fto2 .rv-ctl .seg button { padding: 5px 11px; }
+.fto2 .rv-ctl input { font: inherit; font-size: 13px; width: 100%; padding: 5px 9px; border: 1px solid var(--ring); border-radius: 6px; background: var(--surface); color: var(--ink); }
+.fto2 .rv-ctl small { grid-column: 2; color: var(--muted); font-size: 11.5px; margin-top: -4px; }
+.fto2 .rv-right { display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; min-width: 0; }
+.fto2 .rv-right > .seg { justify-self: start; max-width: 100%; overflow-x: auto; }
+.fto2 .rv-right .gcard { padding: 18px 0 8px; border-top: 1px solid var(--grid); }
+.fto2 .rv-right .gcard:first-of-type { border-top: 0; padding-top: 0; }
+.fto2 .rv-right .vcard { border: 0; padding: 0; background: transparent; }
+.fto2 .rv-right .keep, .fto2 .rv-right .gnum { display: none; }
+.fto2 .rv-right .ghead { grid-template-columns: minmax(0, 1fr); }
+.fto2 .rv-alt { font-size: 12.5px; color: var(--ink-2); }
+@media (max-width: 860px) {
+.fto2 .rv-item { grid-template-columns: minmax(0, 1fr); padding: 30px 0; }
+.fto2 .rv-left { position: static; }
+.fto2 .rv-bar { position: static; }
+}
 .fto2 .fict.real { color: var(--s1); }
 .fto2 .fict { justify-self: start; font-size: 11.5px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--up); border: 1.5px solid currentColor; border-radius: 4px; padding: 3px 9px; }
 .fto2 .gal-bar { display: flex; flex-wrap: wrap; gap: 10px 20px; align-items: center; justify-content: space-between; position: sticky; top: var(--tabs-h); z-index: 9; background: var(--page); padding-block: 10px; border-bottom: 1px solid var(--grid); }

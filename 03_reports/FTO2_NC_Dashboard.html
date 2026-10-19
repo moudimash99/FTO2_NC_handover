@@ -442,6 +442,44 @@ table.cxt td.txt { min-width: 16em; }
 .cx-yes { font-weight: 700; color: var(--s1); } .cx-no { color: var(--muted); }
 @media (max-width: 900px) { .cxchain { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 @media (max-width: 480px) { .cxchain { grid-template-columns: repeat(2, minmax(0, 1fr)); } .cx-nc { padding: 16px 14px; } }
+/* Review page: one band per proposed chart, the choices on the left (kept in view), the chart or its versions on the right */
+.rv-bar { gap: 8px 20px; }
+.rv-save { font-size: 12.5px; color: var(--muted); max-width: none; flex-basis: 100%; }
+.rv-save.ok { color: var(--s1); } .rv-save.warn { color: var(--up); }
+.rv-copybox { width: 100%; min-height: 160px; font: 12.5px/1.45 var(--font-data); padding: 10px; border: 1px solid var(--ring); border-radius: 6px; background: var(--surface); color: var(--ink); }
+.rv-sec { padding-top: 34px; }
+.rv-sec > h3 { font-family: var(--font-display); font-weight: 400; font-size: clamp(28px, 3.2vw, 40px); line-height: 1.1; padding-bottom: 6px; }
+.rv-sec > p.sub { max-width: 80ch; }
+.rv-item { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2.3fr); column-gap: 48px; row-gap: 14px; padding: 40px 0; border-top: 1px solid var(--ink); align-items: start; }
+.rv-item:nth-child(even) { background: var(--band); box-shadow: 0 0 0 100vmax var(--band); clip-path: inset(0 -100vmax); }
+.rv-item[hidden] { display: none; }
+.rv-left { display: grid; gap: 12px; align-content: start; position: sticky; top: calc(var(--tabs-h) + 92px); min-width: 0; }
+.rv-num { font-family: var(--font-display); font-size: 46px; line-height: .9; color: var(--muted); font-variant-numeric: tabular-nums; }
+.rv-left h4, .rv-left p { margin: 0; }
+.rv-left h4 { font-family: var(--font-display); font-weight: 400; font-size: clamp(22px, 2.4vw, 28px); line-height: 1.12; text-wrap: balance; }
+.rv-src { font-size: 12.5px; color: var(--ink-2); }
+.rv-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.rv-tag { font-size: 11.5px; font-weight: 600; letter-spacing: .04em; border-radius: 4px; padding: 2px 8px; border: 1.5px solid currentColor; }
+.rv-tag.keep { color: var(--s1); } .rv-tag.drop { color: var(--up); } .rv-tag.later { color: var(--ink-2); } .rv-tag.rv-fict { color: var(--up); border-style: dashed; } .rv-tag.rv-real { color: var(--s1); border-style: dashed; }
+.rv-ctl { display: grid; grid-template-columns: 6.6em minmax(0, 1fr); gap: 8px 10px; align-items: center; font-size: 13px; padding-top: 10px; border-top: 1px solid var(--grid); }
+.rv-ctl > span { color: var(--ink-2); }
+.rv-ctl .seg { justify-self: start; max-width: 100%; overflow-x: auto; }
+.rv-ctl .seg button { padding: 5px 11px; }
+.rv-ctl input { font: inherit; font-size: 13px; width: 100%; padding: 5px 9px; border: 1px solid var(--ring); border-radius: 6px; background: var(--surface); color: var(--ink); }
+.rv-ctl small { grid-column: 2; color: var(--muted); font-size: 11.5px; margin-top: -4px; }
+.rv-right { display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; min-width: 0; }
+.rv-right > .seg { justify-self: start; max-width: 100%; overflow-x: auto; }
+.rv-right .gcard { padding: 18px 0 8px; border-top: 1px solid var(--grid); }
+.rv-right .gcard:first-of-type { border-top: 0; padding-top: 0; }
+.rv-right .vcard { border: 0; padding: 0; background: transparent; }
+.rv-right .keep, .rv-right .gnum { display: none; }
+.rv-right .ghead { grid-template-columns: minmax(0, 1fr); }
+.rv-alt { font-size: 12.5px; color: var(--ink-2); }
+@media (max-width: 860px) {
+  .rv-item { grid-template-columns: minmax(0, 1fr); padding: 30px 0; }
+  .rv-left { position: static; }
+  .rv-bar { position: static; }
+}
 /* Gallery: chart ideas drawn on fictitious data, two per row, each numbered so they can be picked */
 .fict.real { color: var(--s1); }
 .fict { justify-self: start; font-size: 11.5px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--up); border: 1.5px solid currentColor; border-radius: 4px; padding: 3px 9px; }
@@ -531,6 +569,7 @@ footer p { max-width: none; }
     <button type="button" role="tab" id="tab-prod" aria-controls="p-prod" data-tab="prod" data-t="tabProd"></button>
     <button type="button" role="tab" id="tab-hebdo" aria-controls="p-hebdo" data-tab="hebdo" data-t="tabWeek"></button>
     <button type="button" role="tab" id="tab-mft" aria-controls="p-mft" data-tab="mft" data-t="tabMft"></button>
+    <button type="button" role="tab" id="tab-rev" aria-controls="p-rev" data-tab="rev" data-t="tabRev"></button>
   </div>
 
   <!-- 1. Overview: headline figures and every chart counted in NCs -->
@@ -745,6 +784,18 @@ footer p { max-width: none; }
     <div class="ggrid" id="pg2"></div>
   </div>
 
+  <!-- Review page: the proposed final layout, each chart with the choices to make (local review page only) -->
+  <div class="panel" role="tabpanel" id="p-rev" aria-labelledby="tab-rev" hidden>
+    <section class="hero"><h2 data-t="revTitle"></h2><p class="sub" data-t="revSub"></p><p class="sub" data-t="revHow"></p></section>
+    <div class="gal-bar rv-bar">
+      <div class="controls"><div class="seg" role="group" data-ta="rvShowLab" id="rvShow"></div><button type="button" class="cxb" id="rvCopy" data-t="rvCopy"></button></div>
+      <p class="gal-keep" id="rvSum" aria-live="polite"></p>
+      <p class="rv-save" id="rvSave" aria-live="polite"></p>
+    </div>
+    <textarea class="rv-copybox" id="rvCopyBox" readonly hidden></textarea>
+    <div id="rvBody"></div>
+  </div>
+
   <div id="tip" role="tooltip" hidden></div>
   <footer><p id="foot1"></p><p data-t="foot2"></p><p id="foot3"></p><p data-t="foot4"></p><p data-t="foot5"></p></footer>
 </div>
@@ -857,6 +908,18 @@ window.FTO2_PAGE = window.FTO2_PAGE || 'main';
       wTrendAll: 'Tous les défauts, par semaine', wTrendProb: '{p}, par semaine', probClear: 'Revenir à tous les défauts',
       wTrendSub: 'En couleur, les semaines de la période choisie. Cliquez sur une semaine pour la choisir.',
       cnqSub: 'Estimation à partir des temps du processus AEC : alerte, rédaction, support technique, reprise et contrôle, chiffrés défaut par défaut.',
+      tabRev: 'Proposition', titleRev: 'Tableau de bord FTO2 : proposition à valider',
+      revTitle: 'La proposition, graphique par graphique',
+      revSub: 'Les onglets proposés sont rangés par question. Chaque graphique est dessiné : ceux marqués « fictif » viennent de la galerie et seront refaits sur les vraies NC.',
+      revHow: 'Pour chacun : garder ou non, sa priorité (a = le plus important, e = le moins), maintenant ou plus tard. Pour les trois choix ouverts, la version à garder. Sans réponse, la proposition s’applique.',
+      rvShowLab: 'Afficher', rvAll: 'Tout', rvOpen: 'À décider', rvKept: 'Gardés', rvDropped: 'Retirés',
+      rvSum: '{n} graphiques · gardés {k} · retirés {r} · à décider {u}', rvCopy: 'Copier le récapitulatif', rvCopied: 'Récapitulatif copié.', rvCopyHint: 'Récapitulatif ci-dessous : le sélectionner et le copier.',
+      rvSaveDb: 'Vos choix sont enregistrés sur la page à chaque clic : Claude peut les lire.', rvSaveLocal: 'Choix gardés dans ce navigateur seulement : utilisez « Copier le récapitulatif » pour les envoyer.',
+      rvSaving: 'Enregistrement…', rvSaveErr: 'Le dernier choix n’a pas pu être enregistré. Réessayer, ou copier le récapitulatif.', rvReadOnly: 'Lecture seule : vos choix ne peuvent pas être enregistrés ici.',
+      rvKeep: 'Garder ?', rvYes: 'Oui', rvNo: 'Non', rvPrio: 'Priorité', rvPrioHint: 'a = le plus important, en haut de l’onglet ; e = le moins', rvWhen: 'Quand ?', rvNow: 'Maintenant', rvLater: 'Plus tard',
+      rvPick: 'Version', rvNote: 'Remarque', rvNotePh: 'facultatif', rvView: 'Voir', rvCharts: 'Graphique(s) {l}',
+      rvPropKeep: 'Proposé : garder', rvPropDrop: 'Proposé : retirer', rvPropLater: 'Proposé : plus tard', rvPropPick: 'Choix ouvert', rvPropOpt: 'Proposé : facultatif', rvFict: 'Fictif', rvReal: 'Vraies données', rvMixed: 'Vraies données et fictif',
+      rvCurrent: 'actuel', rvUndecided: 'à décider',
       cxSum: 'Expliquer le calcul',
       cxStepsT: 'Les étapes d’une NC, avec leur temps et leur coût',
       cxStepsSub: 'Chaque NC suit six étapes. Le coût est la somme des minutes au taux horaire, plus l’ingénierie et la matière. La dernière ligne de chaque étape donne son total sur la sélection.',
@@ -996,6 +1059,18 @@ window.FTO2_PAGE = window.FTO2_PAGE || 'main';
       wTrendAll: 'All defects, per week', wTrendProb: '{p}, per week', probClear: 'Back to all defects',
       wTrendSub: 'Weeks of the chosen period are in colour. Click a week to choose it.',
       cnqSub: 'Estimate from AEC process times: alert, writing, technical support, rework and check, costed defect by defect.',
+      tabRev: 'Proposal', titleRev: 'FTO2 dashboard: proposal to validate',
+      revTitle: 'The proposal, chart by chart',
+      revSub: 'The proposed tabs are ordered by question. Every chart is drawn: those marked “dummy” come from the gallery and will be rebuilt on the real NCs.',
+      revHow: 'For each one: keep it or not, its priority (a = most important, e = least), now or later. For the three open choices, the version to keep. With no answer, the proposal applies.',
+      rvShowLab: 'Show', rvAll: 'All', rvOpen: 'To decide', rvKept: 'Kept', rvDropped: 'Dropped',
+      rvSum: '{n} charts · kept {k} · dropped {r} · to decide {u}', rvCopy: 'Copy the summary', rvCopied: 'Summary copied.', rvCopyHint: 'Summary below: select it and copy it.',
+      rvSaveDb: 'Your choices are saved on the page at every click: Claude can read them.', rvSaveLocal: 'Choices kept in this browser only: use “Copy the summary” to send them.',
+      rvSaving: 'Saving…', rvSaveErr: 'The last choice could not be saved. Try again, or copy the summary.', rvReadOnly: 'Read only: your choices cannot be saved here.',
+      rvKeep: 'Keep?', rvYes: 'Yes', rvNo: 'No', rvPrio: 'Priority', rvPrioHint: 'a = most important, top of the tab; e = least', rvWhen: 'When?', rvNow: 'Now', rvLater: 'Later',
+      rvPick: 'Version', rvNote: 'Note', rvNotePh: 'optional', rvView: 'View', rvCharts: 'Chart(s) {l}',
+      rvPropKeep: 'Proposed: keep', rvPropDrop: 'Proposed: drop', rvPropLater: 'Proposed: later', rvPropPick: 'Open choice', rvPropOpt: 'Proposed: optional', rvFict: 'Dummy', rvReal: 'Real data', rvMixed: 'Real data and dummy',
+      rvCurrent: 'current', rvUndecided: 'to decide',
       cxSum: 'Explain the calculation',
       cxStepsT: 'The steps of an NC, with their time and cost',
       cxStepsSub: 'Every NC goes through six steps. The cost is the sum of the minutes at the hourly rate, plus engineering and material. The last line of each step is its total over the selection.',
@@ -1068,16 +1143,16 @@ window.FTO2_PAGE = window.FTO2_PAGE || 'main';
   var ASIDE = { 'Kitting Factory': 1, 'FOD': 1, 'Autre': 1, 'Non classé': 1, '__none': 1 };
 
   // two pages from one file: the dashboard, and the weekly follow-up (weekly Pareto, MFT actions)
-  var PAGE = window.FTO2_PAGE === 'suivi' ? 'suivi' : 'main';
-  var TABS = PAGE === 'suivi' ? ['hebdo', 'mft'] : ['ov', 'pareto', 'ana', 'cnq', 'client', 'rca'].concat(D.dummy ? ['gal'] : []).concat(D.eqmsn || (D.dummy && D.dummy.eqmsn) ? ['prod'] : []);
+  var PAGE = window.FTO2_PAGE === 'suivi' ? 'suivi' : window.FTO2_PAGE === 'review' && D.dummy ? 'review' : 'main';
+  var TABS = PAGE === 'suivi' ? ['hebdo', 'mft'] : PAGE === 'review' ? ['rev'] : ['ov', 'pareto', 'ana', 'cnq', 'client', 'rca'].concat(D.dummy ? ['gal'] : []).concat(D.eqmsn || (D.dummy && D.dummy.eqmsn) ? ['prod'] : []);
   var G = { lang: 'fr', minor: true, tab: TABS[0] };
   try { var s1 = localStorage.getItem('fto2-dash-lang'); if (s1 === 'fr' || s1 === 'en') G.lang = s1; } catch (e) {}
   var h0 = ''; try { h0 = EMBED ? '' : (location.hash || '').replace('#', ''); } catch (e) {} if (TABS.indexOf(h0) >= 0) G.tab = h0;
   document.querySelectorAll('#tabs [role="tab"]').forEach(function (b) { b.hidden = TABS.indexOf(b.getAttribute('data-tab')) < 0; });
   if (TABS.indexOf('gal') < 0) document.querySelectorAll('#tabs .gap[data-gal]').forEach(function (g) { g.hidden = true; });
-  if (PAGE === 'suivi') {
+  if (PAGE !== 'main') {
     document.querySelectorAll('#tabs .gap').forEach(function (g) { g.hidden = true; });
-    var h1 = document.querySelector('h1[data-t="title"]'); if (h1) h1.setAttribute('data-t', 'titleSuivi');
+    var h1 = document.querySelector('h1[data-t="title"]'); if (h1) h1.setAttribute('data-t', PAGE === 'suivi' ? 'titleSuivi' : 'titleRev');
   }
 
   function S(k, v) { var s = STR[G.lang][k]; if (s == null) return k; Object.keys(v || {}).forEach(function (x) { s = s.split('{' + x + '}').join(v[x]); }); return s; }
@@ -2326,7 +2401,7 @@ window.FTO2_PAGE = window.FTO2_PAGE || 'main';
   var MP = document.getElementById('p-mft');
   MP.addEventListener('pointermove', function (e) { var t = e.target.closest && e.target.closest('[data-tip]'); if (t) showTip(e, t.getAttribute('data-tip').split('|')); else hideTip(); });
   MP.addEventListener('pointerleave', hideTip);
-  var rzT; window.addEventListener('resize', function () { clearTimeout(rzT); rzT = setTimeout(function () { renderAna(); renderGal(); renderProd(); }, 150); });
+  var rzT; window.addEventListener('resize', function () { clearTimeout(rzT); rzT = setTimeout(function () { renderAna(); renderGal(); renderProd(); renderRev(); }, 150); });
 
   // ---------------------------------------------------------------- 6. Gallery (local page only): chart ideas drawn on FICTITIOUS data
   // build/dummy_data.py draws the data at random; only the category / root cause / sub-category names are real (taxonomy).
@@ -4141,9 +4216,218 @@ window.FTO2_PAGE = window.FTO2_PAGE || 'main';
   document.getElementById('gTo').addEventListener('change', function (e) { setDate('to', e.target.value); });
   document.getElementById('gReset').addEventListener('click', function () { var c = Object.assign({}, GF0); setGF(c); });
 
+  // ---------------------------------------------------------------- Review page (local only): the proposed final layout, chart by chart, with the
+  // choices to make. Chart keys: '01'..'50' gallery (fictitious data), '51'..'80' NC rates (real data), 'A:<k>' a current Analyses chart (real data).
+  // Modes: one chart; 'sw' versions merged behind a switch; 'pick' an open choice between versions; 'all' a dossier showing every chart.
+  // Choices go to the page's own store when the viewer runs it (collection "choix", one document per item, Claude reads them), else to this browser.
+  var REV = [
+    { s: 'ov', fr: 'Vue d’ensemble : est-ce qu’on s’améliore ?', en: 'Overview: are we getting better?', items: [
+      { id: 'ov-control', c: ['26'], p: 'keep', fr: ['Carte de contrôle, NC par semaine', 'Pour l’atelier : une semaine hors limites se voit tout de suite. Remplace le calendrier des défauts.'], en: ['Control chart, NCs per week', 'For the shop floor: a week outside the limits stands out at once. Replaces the defect calendar.'] },
+      { id: 'ov-cost', c: ['66'], p: 'keep', fr: ['Coût de non-qualité par EqMSN, mois par mois', 'Pour la direction : le coût rapporté au volume produit.'], en: ['Cost of non-quality per EqMSN, month by month', 'For management: the cost against the volume built.'] },
+      { id: 'ov-proj', c: ['71', '72', '10'], m: 'sw', p: 'keep', o: { '71': ['NC', 'NCs'], '72': ['Coût', 'Cost'], '10': ['Budget', 'Budget'] }, fr: ['Projection à fin d’année', '71, 72 et 10 deviennent un seul graphique : interrupteur NC / coût, avec la ligne de budget quand il sera connu.'], en: ['Year-end projection', '71, 72 and 10 become one chart: an NC / cost switch, with the budget line once it is known.'] }
+    ] },
+    { s: 'ou', fr: 'Où ? Produits, lignes, postes, avions', en: 'Where? Products, lines, stations, aircraft', items: [
+      { id: 'ou-rate', c: ['56', '57', '58'], m: 'sw', p: 'keep', o: { '56': ['NC', 'NCs'], '57': ['Défauts', 'Defects'], '58': ['Coût', 'Cost'] }, fr: ['Taux par produit', '56, 57 et 58 deviennent un seul graphique avec un interrupteur NC / défauts / coût.'], en: ['Rate by product', '56, 57 and 58 become one chart with an NC / defects / cost switch.'] },
+      { id: 'ou-chance', c: ['63', '64'], m: 'pick', p: 'pick', o: { '63': ['Entonnoir (63)', 'Funnel (63)'], '64': ['Intervalles (64)', 'Intervals (64)'] }, fr: ['Vraiment pire, ou le hasard ?', 'Choix ouvert : 63 montre le volume ; 64 est plus simple à expliquer sans statistiques.'], en: ['Really worse, or chance?', 'Open choice: 63 shows the volume; 64 is easier to explain without statistics.'] },
+      { id: 'ou-pm', c: ['61'], p: 'keep', fr: ['Taux mensuel, produit par produit', 'Remplace 80 : mêmes informations, avec les valeurs.'], en: ['Monthly rate, product by product', 'Replaces 80: same information, with the values.'] },
+      { id: 'ou-ac', c: ['34'], p: 'keep', fr: ['A350 face à A330', 'Remplace le profil des lignes (mekko).'], en: ['A350 against A330', 'Replaces the line profile (mekko).'] },
+      { id: 'ou-st', c: ['40'], p: 'keep', fr: ['Les postes sur cinq mesures', ''], en: ['Stations on five measures', ''] },
+      { id: 'ou-fin', c: ['20'], p: 'keep', fr: ['Les FIN qui reviennent d’un avion à l’autre', ''], en: ['FINs that come back aircraft after aircraft', ''] },
+      { id: 'ou-learn', c: ['14'], p: 'opt', fr: ['Défauts selon le rang de l’avion', 'Facultatif dans la proposition.'], en: ['Defects by aircraft rank', 'Optional in the proposal.'] }
+    ] },
+    { s: 'quoi', fr: 'Quoi ? Les causes', en: 'What? The causes', items: [
+      { id: 'q-causes', c: ['53'], p: 'keep', fr: ['Les causes pour 10 EqMSN', ''], en: ['Causes per 10 EqMSN', ''] },
+      { id: 'q-move', c: ['33', 'A:bump'], m: 'pick', p: 'pick', o: { '33': ['Écarts (33)', 'Changes (33)'], 'A:bump': ['Classement actuel', 'Current ranking'] }, fr: ['Ce qui monte, ce qui baisse', 'Choix ouvert : 33, ou le classement mensuel des causes déjà dans Analyses.'], en: ['What goes up, what goes down', 'Open choice: 33, or the monthly cause ranking already in Insights.'] },
+      { id: 'q-trend', c: ['18'], p: 'keep', fr: ['Une petite courbe par cause', 'Remplace 12 et 36.'], en: ['One small curve per cause', 'Replaces 12 and 36.'] },
+      { id: 'q-prod', c: ['54'], p: 'keep', fr: ['Les trois premières causes de chaque produit', ''], en: ['Top three causes of each product', ''] },
+      { id: 'q-cable', c: ['65', '75'], m: 'all', p: 'keep', fr: ['Dossier câble', '65 et 75 dans une même carte : la tendance, puis le détail par produit.'], en: ['Cable dossier', '65 and 75 in one card: the trend, then the detail by product.'] },
+      { id: 'q-conn', c: ['78', '76', '05'], m: 'all', p: 'keep', fr: ['Dossier erreurs de branchement', '78 et 76 dans une même carte ; 05 s’y ajoutera quand le nombre d’insertions par produit sera connu.'], en: ['Connection-error dossier', '78 and 76 in one card; 05 joins once the number of insertions per product is known.'] }
+    ] },
+    { s: 'det', fr: 'Où c’est trouvé, et à quel coût ?', en: 'Where is it found, and at what cost?', items: [
+      { id: 'd-funnel', c: ['02', '32'], m: 'sw', p: 'keep', o: { '02': ['Entonnoir', 'Funnel'], '32': ['Coût par étape', 'Cost by stage'] }, fr: ['Où les défauts sont arrêtés, et ce qu’ils coûtent', '02 et 32 fusionnés : l’entonnoir de détection avec le coût d’un défaut à chaque étape.'], en: ['Where defects are stopped, and what they cost', '02 and 32 merged: the detection funnel with the cost of a defect at each stage.'] },
+      { id: 'd-nc', c: ['50'], p: 'keep', fr: ['Chaque NC à son coût, dans le temps', 'Remplace 13.'], en: ['Every NC at its cost, over time', 'Replaces 13.'] },
+      { id: 'd-comp', c: ['23'], p: 'keep', fr: ['De quoi est fait le coût', 'Irait dans l’onglet Coût de non-qualité.'], en: ['What the cost is made of', 'Would go to the Cost of non-quality tab.'] },
+      { id: 'd-lead', c: ['24', 'A:lead'], m: 'pick', p: 'pick', o: { '24': ['Boîtes (24)', 'Boxes (24)'], 'A:lead': ['Courbe actuelle', 'Current curve'] }, fr: ['Délai de clôture', 'Choix ouvert : 24 est plus simple à lire ; la courbe actuelle compte correctement les NC encore ouvertes.'], en: ['Time to close', 'Open choice: 24 is simpler to read; the current curve counts the NCs still open correctly.'] }
+    ] },
+    { s: 'pil', fr: 'Pilotage', en: 'Steering', items: [
+      { id: 'p-actions', c: ['19'], p: 'keep', fr: ['Calendrier des actions qualité', 'En tête de l’onglet Actions MFT.'], en: ['Quality action timeline', 'At the top of the MFT actions tab.'] },
+      { id: 'p-targets', c: ['09'], p: 'later', fr: ['Chaque ligne face à ses objectifs', 'En attente : les objectifs par ligne.'], en: ['Each line against its targets', 'Waiting for: the targets per line.'] },
+      { id: 'p-yield', c: ['16'], p: 'later', fr: ['Rendement au premier passage', 'En attente : le nombre d’unités par poste.'], en: ['First-pass yield', 'Waiting for: the number of units per station.'] },
+      { id: 'p-mes', c: ['46'], p: 'later', fr: ['Temps de retouche réel', 'En attente : les temps de retouche du MES.'], en: ['Real rework time', 'Waiting for: the rework times from MES.'] }
+    ] },
+    { s: 'drop', fr: 'Proposés au retrait : doublons', en: 'Proposed for removal: overlaps', items: [
+      { id: 'x-28', c: ['28'], p: 'drop', fr: [null, '71 projette déjà, avec la production prévue.'], en: [null, '71 already projects, with the planned output.'] },
+      { id: 'x-59', c: ['59'], p: 'drop', fr: [null, '63 répond à la même question.'], en: [null, '63 answers the same question.'] },
+      { id: 'x-80', c: ['80'], p: 'drop', fr: [null, '61 montre la même chose, avec les valeurs.'], en: [null, '61 shows the same, with the values.'] },
+      { id: 'x-15', c: ['15'], p: 'drop', fr: [null, 'Recoupe le graphique actuel du coût par MSN.'], en: [null, 'Overlaps the current cost-per-MSN chart.'] },
+      { id: 'x-22', c: ['22'], p: 'drop', fr: [null, 'La composition est déjà dans l’onglet Pareto.'], en: [null, 'The make-up is already on the Pareto tab.'] },
+      { id: 'x-39', c: ['39'], p: 'drop', fr: [null, 'La composition est déjà dans l’onglet Pareto.'], en: [null, 'The make-up is already on the Pareto tab.'] },
+      { id: 'x-12', c: ['12'], p: 'drop', fr: [null, '33 le dit plus clairement.'], en: [null, '33 says it more clearly.'] },
+      { id: 'x-36', c: ['36'], p: 'drop', fr: [null, '33 le dit plus clairement.'], en: [null, '33 says it more clearly.'] },
+      { id: 'x-13', c: ['13'], p: 'drop', fr: [null, '50 montre aussi la ligne.'], en: [null, '50 also shows the line.'] }
+    ] },
+    { s: 'old', fr: 'Graphiques actuels notés bas', en: 'Current charts graded low', items: [
+      { id: 'o-mek', c: ['A:mek'], p: 'drop', fr: [null, 'Noté C : remplacé par 34.'], en: [null, 'Graded C: replaced by 34.'] },
+      { id: 'o-cal', c: ['A:cal'], p: 'drop', fr: [null, 'Noté bas : remplacé par 26.'], en: [null, 'Graded low: replaced by 26.'] },
+      { id: 'o-lor', c: ['A:lor'], p: 'drop', fr: [null, 'Noté C/D : à retirer.'], en: [null, 'Graded C/D: to remove.'] },
+      { id: 'o-clock', c: ['A:clock'], p: 'drop', fr: [null, 'Noté F : à retirer.'], en: [null, 'Graded F: to remove.'] }
+    ] }
+  ];
+  var RV = { st: {}, view: {}, show: 'all', db: null, live: false, saving: 0, err: '', built: false };
+  var RV_ANA = { lead: function () { vLead(); }, bump: function () { vBump(aRows()); }, mek: function () { vMek(aRows(true)); }, cal: function () { vCal(aRows()); }, lor: function () { vLor(aRows()); }, clock: function () { vClock(); } };
+  function rvItems() { var a = []; REV.forEach(function (sec) { sec.items.forEach(function (it) { a.push(it); }); }); return a; }
+  function rvIsAna(c) { return c.indexOf('A:') === 0; }
+  function rvCard(c) { return document.getElementById(rvIsAna(c) ? 'v-' + c.slice(2) : 'g-' + c); }
+  function rvTitle(it) { var t = it[G.lang][0]; if (t) return t; var c = it.c[0]; return rvIsAna(c) ? S('t_' + c.slice(2)) : GSTR[c][G.lang][1]; }
+  function rvShown(it) { return it.m === 'all' ? it.c : [RV.view[it.id] || (RV.st[it.id] && RV.st[it.id].pick) || it.c[0]]; }
+  function rvDraw(c) {
+    if (rvIsAna(c)) { EMPTY = '<p class="empty">—</p>'; RV_ANA[c.slice(2)](); return; }
+    var t = GSTR[c][G.lang], gal = +c <= 50, sp = (gal ? GSPEC : PSPEC).filter(function (x) { return x[0] === c; })[0];
+    document.getElementById('g-' + c + '-k').textContent = t[0];
+    document.getElementById('g-' + c + '-h').textContent = t[1];
+    document.getElementById('g-' + c + '-s').textContent = t[2];
+    var f = document.getElementById('g-' + c + '-f');
+    if (gal) { f.className = 'feas ' + sp[1]; f.innerHTML = '<i aria-hidden="true">' + { ok: '✓', part: '◐', need: '○' }[sp[1]] + '</i>' + esc(gx('f_' + sp[1]) + ' · ' + t[3]); sp[2](c); }
+    else { f.className = 'feas ok'; f.innerHTML = '<i aria-hidden="true">✓</i>' + esc(gx('pReal') + ' · ' + t[3]); sp[1](c); }
+  }
+  function rvBuild() {
+    var n = 0, body = document.getElementById('rvBody');
+    body.innerHTML = REV.map(function (sec) {
+      return '<section class="rv-sec" id="rvs-' + sec.s + '"><h3 id="rvs-' + sec.s + '-h"></h3>' + sec.items.map(function (it) {
+        n++;
+        return '<article class="rv-item" id="rv-' + it.id + '"><div class="rv-left"><span class="rv-num">' + n + '</span><h4 id="rv-' + it.id + '-h"></h4><p class="sub" id="rv-' + it.id + '-n"></p>' +
+          '<p class="rv-src" id="rv-' + it.id + '-src"></p><div class="rv-tags" id="rv-' + it.id + '-tags"></div>' +
+          '<div class="rv-ctl"><div class="rv-ctlb" style="display:contents" id="rv-' + it.id + '-ctl"></div><label for="rv-' + it.id + '-note" data-t="rvNote"></label>' +
+          '<input type="text" id="rv-' + it.id + '-note" data-rvnote="' + it.id + '" maxlength="300" autocomplete="off"></div></div>' +
+          '<div class="rv-right" id="rv-' + it.id + '-r">' + (it.m === 'sw' || it.m === 'pick' ? '<div class="seg" role="group" id="rv-' + it.id + '-sw"></div>' : '') + '</div></article>';
+      }).join('') + '</section>';
+    }).join('');
+    rvItems().forEach(function (it) { var r = document.getElementById('rv-' + it.id + '-r'); it.c.forEach(function (c) { var el = rvCard(c); if (el) r.appendChild(el); }); });
+    RV.built = true;
+  }
+  function rvCtlHtml(it) {
+    var st = RV.st[it.id] || {}, b = function (f, v, lab) { return '<button type="button" data-rv="' + it.id + '|' + f + '|' + v + '" aria-pressed="' + (st[f] === v) + '">' + esc(lab) + '</button>'; };
+    var h = '<span>' + esc(S('rvKeep')) + '</span><div class="seg" role="group">' + b('keep', 'oui', S('rvYes')) + b('keep', 'non', S('rvNo')) + '</div>';
+    if (it.m === 'pick') h += '<span>' + esc(S('rvPick')) + '</span><div class="seg" role="group">' + it.c.map(function (c) { return b('pick', c, it.o[c][G.lang === 'fr' ? 0 : 1]); }).join('') + '</div>';
+    h += '<span>' + esc(S('rvPrio')) + '</span><div class="seg" role="group">' + ['a', 'b', 'c', 'd', 'e'].map(function (v) { return b('prio', v, v); }).join('') + '</div><small>' + esc(S('rvPrioHint')) + '</small>';
+    h += '<span>' + esc(S('rvWhen')) + '</span><div class="seg" role="group">' + b('when', 'now', S('rvNow')) + b('when', 'later', S('rvLater')) + '</div>';
+    return h;
+  }
+  function rvState() {   // choices, tags, counts and save status; no chart drawing
+    if (PAGE !== 'review' || !RV.built) return;
+    var all = rvItems(), k = 0, r = 0;
+    all.forEach(function (it) {
+      var st = RV.st[it.id] || {}, el = document.getElementById('rv-' + it.id);
+      if (st.keep === 'oui') k++; else if (st.keep === 'non') r++;
+      el.hidden = RV.show === 'open' ? !!st.keep : RV.show === 'kept' ? st.keep !== 'oui' : RV.show === 'dropped' ? st.keep !== 'non' : false;
+      document.getElementById('rv-' + it.id + '-ctl').innerHTML = rvCtlHtml(it);
+      var note = document.getElementById('rv-' + it.id + '-note');
+      if (document.activeElement !== note) note.value = st.note || '';
+      note.placeholder = S('rvNotePh'); note.previousElementSibling.textContent = S('rvNote');
+    });
+    document.getElementById('rvSum').textContent = S('rvSum', { n: all.length, k: k, r: r, u: all.length - k - r });
+    document.getElementById('rvShow').innerHTML = segHtml([['all', S('rvAll')], ['open', S('rvOpen')], ['kept', S('rvKept')], ['dropped', S('rvDropped')]], RV.show, 'data-rvshow');
+    var sv = document.getElementById('rvSave'), ro = RV.err === 'ro';
+    sv.textContent = RV.saving ? S('rvSaving') : RV.err ? S(ro ? 'rvReadOnly' : 'rvSaveErr') : RV.live ? S('rvSaveDb') : S('rvSaveLocal');
+    sv.className = 'rv-save' + (RV.err ? ' warn' : RV.live && !RV.saving ? ' ok' : '');
+  }
+  function rvDrawItem(it) {
+    var shown = rvShown(it), sw = document.getElementById('rv-' + it.id + '-sw');
+    if (sw) sw.innerHTML = '<span class="rv-alt" style="padding:5px 10px">' + esc(S('rvView')) + '</span>' + it.c.map(function (c) { return '<button type="button" data-rvsw="' + it.id + '|' + c + '" aria-pressed="' + (shown.indexOf(c) >= 0) + '">' + esc(it.o[c][G.lang === 'fr' ? 0 : 1]) + '</button>'; }).join('');
+    it.c.forEach(function (c) { var el = rvCard(c); if (el) el.hidden = shown.indexOf(c) < 0; });
+    shown.forEach(rvDraw);
+  }
+  function renderRev() {
+    if (PAGE !== 'review' || G.tab !== 'rev') return;
+    if (!RV.built) rvBuild();
+    if (pSrc()) { PD = pData(); PA = pAgg(PD); }
+    REV.forEach(function (sec) { document.getElementById('rvs-' + sec.s + '-h').textContent = sec[G.lang]; });
+    rvItems().forEach(function (it) {
+      var t = it[G.lang], fict = it.c.filter(function (c) { return !rvIsAna(c) && +c <= 50; }).length, tags = '';
+      document.getElementById('rv-' + it.id + '-h').textContent = rvTitle(it);
+      document.getElementById('rv-' + it.id + '-n').textContent = t[1];
+      document.getElementById('rv-' + it.id + '-src').textContent = S('rvCharts', { l: it.c.map(function (c) { return rvIsAna(c) ? S('rvCurrent') + ' : ' + S('t_' + c.slice(2)) : c; }).join(' · ') });
+      tags += '<span class="rv-tag ' + (it.p === 'drop' ? 'drop' : it.p === 'later' || it.p === 'opt' ? 'later' : 'keep') + '">' + esc(S({ keep: 'rvPropKeep', drop: 'rvPropDrop', later: 'rvPropLater', opt: 'rvPropOpt', pick: 'rvPropPick' }[it.p])) + '</span>';
+      tags += '<span class="rv-tag ' + (fict ? 'rv-fict' : 'rv-real') + '">' + esc(S(fict === it.c.length ? 'rvFict' : fict ? 'rvMixed' : 'rvReal')) + '</span>';
+      document.getElementById('rv-' + it.id + '-tags').innerHTML = tags;
+      rvDrawItem(it);
+    });
+    rvState();
+  }
+  // saving: this browser always; the page's store when the viewer runs it, one write at a time per document
+  var RVQ = {}, RVT = {};
+  function rvLocal() { try { if (!EMBED) localStorage.setItem('fto2-rev-choix', JSON.stringify(RV.st)); } catch (e) {} }
+  function rvSave(id) {
+    rvLocal();
+    if (!RV.db) { rvState(); return; }
+    var body = Object.assign({}, RV.st[id] || {}, { at: new Date().toISOString() });
+    RV.saving++; rvState();
+    RVQ[id] = (RVQ[id] || Promise.resolve()).then(function () { return RV.db.collection('choix').doc(id).set(body); })
+      .then(function () { if (RV.err !== 'ro') RV.err = ''; }, function (e) { RV.err = e && e.code === 'invalid_argument' ? 'ro' : 'err'; })
+      .then(function () { RV.saving--; rvState(); });
+  }
+  if (PAGE === 'review') {
+    try { RV.st = JSON.parse(localStorage.getItem('fto2-rev-choix') || '{}') || {}; } catch (e) {}
+    var RP = document.getElementById('p-rev');
+    RP.addEventListener('click', function (e) {
+      var b = e.target.closest('[data-rv]');
+      if (b) {
+        var p = b.getAttribute('data-rv').split('|'), it = rvItems().filter(function (x) { return x.id === p[0]; })[0], st = RV.st[p[0]] = Object.assign({}, RV.st[p[0]] || {});
+        st[p[1]] = st[p[1]] === p[2] ? '' : p[2];
+        if (p[1] === 'pick' && st.pick) { RV.view[p[0]] = st.pick; rvDrawItem(it); }
+        rvSave(p[0]); return;
+      }
+      var w = e.target.closest('[data-rvsw]');
+      if (w) { var q = w.getAttribute('data-rvsw').split('|'); RV.view[q[0]] = q[1]; rvDrawItem(rvItems().filter(function (x) { return x.id === q[0]; })[0]); return; }
+      var f = e.target.closest('[data-rvshow]'); if (f) { RV.show = f.getAttribute('data-rvshow'); rvState(); return; }
+      if (e.target.closest('#rvCopy')) rvCopy();
+    });
+    RP.addEventListener('input', function (e) {
+      var id = e.target.getAttribute && e.target.getAttribute('data-rvnote'); if (!id) return;
+      RV.st[id] = Object.assign({}, RV.st[id] || {}, { note: e.target.value });
+      clearTimeout(RVT[id]); RVT[id] = setTimeout(function () { rvSave(id); }, 700);
+    });
+    RP.addEventListener('pointermove', function (e) { var t = e.target.closest && e.target.closest('[data-tip]'); if (t) showTip(e, t.getAttribute('data-tip').split('|')); else hideTip(); });
+    RP.addEventListener('pointerleave', hideTip);
+    if (!EMBED && window.claude && typeof window.claude.use === 'function') {
+      window.claude.use('db').then(function (db) {
+        if (!db) return;
+        RV.db = db;
+        db.collection('choix').onSnapshot(function (snap) {
+          snap.docs.forEach(function (d) {
+            if (!d.exists) return;
+            var v = Object.assign({}, d.data()), ne = document.getElementById('rv-' + d.id + '-note'); delete v.at;
+            if (ne && document.activeElement === ne) v.note = ne.value;   // keep what is being typed
+            RV.st[d.id] = v;
+          });
+          RV.live = true; rvLocal(); rvState();
+        }, function () { RV.db = null; RV.live = false; rvState(); });
+      }, function () {});
+    }
+  }
+  function rvCopy() {
+    var L2 = G.lang === 'fr' ? 0 : 1, n = 0, out = [S('titleRev') + ' · ' + new Date().toLocaleDateString(loc())];
+    REV.forEach(function (sec) {
+      out.push('', '[' + sec[G.lang] + ']');
+      sec.items.forEach(function (it) {
+        n++; var st = RV.st[it.id] || {}, parts = [];
+        parts.push(S('rvKeep') + ' ' + (st.keep === 'oui' ? S('rvYes') : st.keep === 'non' ? S('rvNo') : S('rvUndecided')));
+        if (st.pick) parts.push(S('rvPick') + ' ' + it.o[st.pick][L2]);
+        if (st.prio) parts.push(S('rvPrio') + ' ' + st.prio);
+        if (st.when) parts.push(st.when === 'now' ? S('rvNow') : S('rvLater'));
+        if (st.note) parts.push('« ' + st.note + ' »');
+        out.push(n + '. ' + rvTitle(it) + ' (' + it.c.map(function (c) { return rvIsAna(c) ? S('rvCurrent') : c; }).join(', ') + ') : ' + parts.join(' · '));
+      });
+    });
+    var text = out.join('\n'), box = document.getElementById('rvCopyBox');
+    var shown = function () { box.hidden = false; box.value = text; box.focus(); box.select(); document.getElementById('rvSave').textContent = S('rvCopyHint'); };
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(function () { box.hidden = true; document.getElementById('rvSave').textContent = S('rvCopied'); }, shown);
+    else shown();
+  }
+
   // ---------------------------------------------------------------- language, tabs, minor switch
   function applyText() {
-    if (!EMBED) { document.documentElement.lang = G.lang; document.title = S(PAGE === 'suivi' ? 'titleSuivi' : 'title'); }
+    if (!EMBED) { document.documentElement.lang = G.lang; document.title = S(PAGE === 'suivi' ? 'titleSuivi' : PAGE === 'review' ? 'titleRev' : 'title'); }
     document.querySelectorAll('[data-t]').forEach(function (el) { el.textContent = S(el.getAttribute('data-t')); });
     document.querySelectorAll('[data-ta]').forEach(function (el) { el.setAttribute('aria-label', S(el.getAttribute('data-ta'))); });
     var dates = { from: day(D.meta.from), to: day(D.meta.to) }, A = D.meta.aside;
@@ -4157,8 +4441,8 @@ window.FTO2_PAGE = window.FTO2_PAGE || 'main';
     document.getElementById('lEn').setAttribute('aria-pressed', String(G.lang === 'en'));
     document.getElementById('miIn').setAttribute('aria-pressed', String(G.minor));
     document.getElementById('miOut').setAttribute('aria-pressed', String(!G.minor));
-    document.getElementById('minorCtl').hidden = G.tab === 'cnq' || G.tab === 'ov' || G.tab === 'mft';
-    document.querySelector('.fbar').hidden = G.tab === 'gal' || (G.tab === 'prod' && PR.src !== 'real');
+    document.getElementById('minorCtl').hidden = G.tab === 'cnq' || G.tab === 'ov' || G.tab === 'mft' || G.tab === 'rev';
+    document.querySelector('.fbar').hidden = G.tab === 'gal' || G.tab === 'rev' || (G.tab === 'prod' && PR.src !== 'real');
     renderBar();
   }
   function showTab() {
@@ -4168,7 +4452,7 @@ window.FTO2_PAGE = window.FTO2_PAGE || 'main';
       document.getElementById('p-' + t).hidden = G.tab !== t;
     });
   }
-  function renderAll() { applyText(); showTab(); renderPMode(); ncBoard.render(); pareto.render(); costPareto.render(); weekly.render(); cnq.render(); renderCx(); client.render(); renderRca(); renderAna(); renderMft(); renderGal(); renderProd(); }
+  function renderAll() { applyText(); showTab(); renderPMode(); ncBoard.render(); pareto.render(); costPareto.render(); weekly.render(); cnq.render(); renderCx(); client.render(); renderRca(); renderAna(); renderMft(); renderGal(); renderProd(); renderRev(); }
   function setTab(t) { G.tab = t; if (!EMBED) { try { history.replaceState(null, '', '#' + t); } catch (x) {} } applyText(); showTab(); if (t === 'hebdo') weekly.render(); if (t === 'ov') ncBoard.render(); if (t === 'ana') renderAna(); if (t === 'mft') renderMft(); if (t === 'gal') renderGal(); if (t === 'prod') renderProd(); if (t !== 'ana' && t !== 'mft') hideTip(); }
   document.getElementById('tabs').addEventListener('click', function (e) { var t = e.target.closest('[data-tab]'); if (t) setTab(t.getAttribute('data-tab')); });
   document.getElementById('tabs').addEventListener('keydown', function (e) {
