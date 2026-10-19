@@ -93,3 +93,5 @@ python3 -I retest_conn.py $P; python3 -I conn_fit.py $P  # re-test on rework ord
 ```
 
 - Test NCs where >= 60% of defects are connection errors (11 NCs): planned rework ≈ 77 min + 15 min per connection error (22 min per error on average), against 35 min per error in the CNQ model.
+
+`python3 -I retest.py $P` — re-test operations on rework orders, by family and NC type.
