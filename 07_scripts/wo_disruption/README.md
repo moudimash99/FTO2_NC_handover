@@ -56,3 +56,16 @@ Link rule: an `AW_`, `WO_` or `RS_` link whose number is not the NC's own `work_
 - Jul–Sep 2026 FTO2 NCs with a work order: 61 of 219 preceded by a disruption (cable NCs 42 of 49, test NCs 0 of 52).
 - 2025 (plant FTO2, Jan–Dec): 1,002 AEC NCs, CNQ level 3 = 211,842 EUR (211 EUR per NC). The 2025 file includes 184 FTO2-liable NCs written by ERMA (33,672 EUR), which the 2026 pipeline excludes. Without ERMA: 818 NCs (68 per month), 178,170 EUR, 218 EUR per NC. 2026 Feb–Sep (pipeline, no ERMA): 87 NCs per month, 217 EUR per NC.
 - Parser output used for the cost: `sous_groupe` (42 classes), from keywords (53% of defects) and written head codes (30%). `sub_code` is empty in the pack v4.8 output.
+
+Third round (after the second):
+
+```
+python3 -I wc_split.py $P                           # planned vs model without the quality re-check; S03 work centres
+python3 -I nonrec.py $P <repo>/06_input_data        # S03 split REC / IEVB (MSN 700/701) / régul / A400M / shop floor
+python3 -I ds_all.py $P <repo>/06_input_data        # disruptions: time lost by kind, links to NCs and rework orders
+python3 -I ds_rest.py $P                            # quality disruptions with no NC
+```
+
+- With the 30-min quality re-check left out (it is done by the quality line service, not planned on the order): planned 9,685 min vs model setup + defects 10,812 min (+12%; +4% without customer returns).
+- Sept S03 by family: REC 274 orders / 746 h, IEVB (MSN 700/701) 74 / 217 h, régul 8 / 200 h, A400M 9 / 58 h, FTO2 shop floor 249 / 394 h (144 orders / 213 h traced to an NC).
+- Disruptions Jan–Sep 2026 (all FTO2 shop floor): 1,346 h lost. Work order / definition 516 h, missing parts 330 h, line 261 h, quality 238 h.
