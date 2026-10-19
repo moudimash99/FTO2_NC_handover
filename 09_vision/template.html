@@ -1,0 +1,1448 @@
+<title>FTO2 NC Vision</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..600&family=Hanken+Grotesk:wght@400..700&display=swap">
+<style>
+/* Layout: the dashboard read as one story, from the plant to a single aircraft. A hero sentence and the year against
+   2025 on top; then five chapters, each with its number and name in a sticky rail on the left and the evidence on the
+   right. Same type and colours as the FTO2 dashboard (Newsreader titles, Hanken Grotesk text and figures, FTO2 green,
+   cable orange); red is kept for what reaches the customer and for alerts. Every title that states a finding is
+   written by the page from the data, and can be switched back to plain chart names. */
+:root {
+  --page: #ffffff;
+  --surface: #ffffff;
+  --band: #f3f5f2;
+  --ink: #15171a;
+  --ink-2: #474c52;
+  --muted: #6f767c;
+  --rule: #dde3dd;
+  --grid: #e7ebe6;
+  --track: #edf0ec;
+  --ring: rgba(21,23,26,0.12);
+  --accent: #1d6b52;
+  --accent-soft: rgba(29,107,82,0.10);
+  --accent-mid: #93c2b1;
+  --prior: #b9c3bc;
+  --flow: rgba(29,107,82,0.20);
+  --cable: #c2620c;
+  --escape: #b3261e;
+  --escape-soft: rgba(179,38,30,0.10);
+  --warn: #a8660a;
+  --good: #1d6b52;
+  --on-accent: #ffffff;
+  --font-display: "Newsreader", Georgia, "Times New Roman", serif;
+  --font-ui: "Hanken Grotesk", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --page: #101312; --surface: #161a18; --band: #1a1f1c; --ink: #eef1ee; --ink-2: #b9c1bb; --muted: #8b948e;
+    --rule: #2b322e; --grid: #252b28; --track: #222825; --ring: rgba(255,255,255,0.12);
+    --accent: #5cc29b; --accent-soft: rgba(92,194,155,0.14); --accent-mid: #2f6b55; --prior: #4b5550; --flow: rgba(92,194,155,0.22);
+    --cable: #f0a04b; --escape: #f07a6a; --escape-soft: rgba(240,122,106,0.14); --warn: #e8b04f; --good: #5cc29b; --on-accent: #101312;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --page: #101312; --surface: #161a18; --band: #1a1f1c; --ink: #eef1ee; --ink-2: #b9c1bb; --muted: #8b948e;
+  --rule: #2b322e; --grid: #252b28; --track: #222825; --ring: rgba(255,255,255,0.12);
+  --accent: #5cc29b; --accent-soft: rgba(92,194,155,0.14); --accent-mid: #2f6b55; --prior: #4b5550; --flow: rgba(92,194,155,0.22);
+  --cable: #f0a04b; --escape: #f07a6a; --escape-soft: rgba(240,122,106,0.14); --warn: #e8b04f; --good: #5cc29b; --on-accent: #101312;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--page); color: var(--ink); font-family: var(--font-ui); font-size: 15px; line-height: 1.5; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--page); }
+button { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 3px; }
+.wrap { max-width: 1280px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+
+/* ---------- top bar ---------- */
+.bar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: color-mix(in srgb, var(--page) 92%, transparent); backdrop-filter: blur(8px); border-bottom: 1px solid var(--rule); }
+.bar .wrap { display: flex; align-items: center; gap: 10px 18px; flex-wrap: wrap; }
+.bar .row1 { padding-block: 10px 6px; }
+.bar .row2 { padding-block: 4px 10px; }
+.brand { display: flex; align-items: baseline; gap: 10px; margin-right: auto; min-width: 0; }
+.brand b { font-family: var(--font-display); font-weight: 500; font-size: 19px; letter-spacing: -0.01em; white-space: nowrap; }
+.brand span { font-size: 11.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); font-weight: 600; white-space: nowrap; }
+.ctl { display: inline-flex; align-items: center; gap: 8px; }
+.ctl > i { font-style: normal; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); font-weight: 700; }
+.seg { display: inline-flex; border: 1px solid var(--ring); border-radius: 7px; overflow: hidden; background: var(--surface); }
+.seg button { font-size: 12.5px; padding: 5px 10px; border: 0; background: transparent; cursor: pointer; white-space: nowrap; }
+.seg button + button { border-left: 1px solid var(--ring); }
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--surface); font-weight: 600; }
+.seg button:hover:not([aria-pressed="true"]) { background: var(--accent-soft); }
+.btn { font-size: 12.5px; font-weight: 600; padding: 6px 12px; border-radius: 7px; border: 1px solid var(--ink); background: var(--ink); color: var(--surface); cursor: pointer; display: inline-flex; gap: 6px; align-items: center; white-space: nowrap; }
+.btn.ghost { background: transparent; color: var(--ink); border-color: var(--ring); }
+.btn:hover { filter: brightness(1.12); }
+.focusbar { display: flex; gap: 8px; flex-wrap: wrap; }
+.chip-x { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; padding: 3px 4px 3px 10px; border-radius: 999px; background: var(--accent-soft); color: var(--ink); border: 1px solid var(--ring); }
+.chip-x button { border: 0; background: transparent; cursor: pointer; padding: 0 6px; font-size: 14px; line-height: 1; color: var(--ink-2); }
+
+/* ---------- hero ---------- */
+.hero { padding-block: 34px 10px; display: grid; gap: 22px; }
+.eyebrow { font-size: 11.5px; letter-spacing: .09em; text-transform: uppercase; color: var(--accent); font-weight: 700; }
+.hero h1 { font-family: var(--font-display); font-weight: 450; font-size: clamp(30px, 4vw, 50px); line-height: 1.1; letter-spacing: -0.015em; margin: 0; max-width: 31ch; text-wrap: balance; }
+.hero h1 em { font-style: normal; color: var(--accent); }
+.hero h1 .bad { color: var(--escape); } .hero h1 .good { color: var(--accent); }
+.hero .lede { font-size: 15.5px; color: var(--ink-2); max-width: 70ch; margin: 0; }
+.tiles { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); border-top: 2px solid var(--ink); border-bottom: 1px solid var(--rule); }
+.tile { padding: 14px 16px 14px 0; display: grid; gap: 4px; align-content: start; min-width: 0; }
+.tile + .tile { padding-left: 16px; border-left: 1px solid var(--rule); }
+.tile .k { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2); font-weight: 700; }
+.tile .v { font-size: 34px; font-weight: 600; letter-spacing: -0.02em; line-height: 1.05; }
+.tile .s { font-size: 12.5px; color: var(--muted); }
+.delta { display: inline-flex; align-items: center; gap: 4px; font-size: 12.5px; font-weight: 600; }
+.delta.up { color: var(--escape); } .delta.down { color: var(--good); } .delta.flat { color: var(--ink-2); }
+.spark { display: block; width: 100%; height: 30px; margin-top: 2px; }
+.hero-grid { display: grid; grid-template-columns: minmax(0, 1.65fr) minmax(0, 1fr); gap: 28px; align-items: start; }
+
+/* ---------- cards, chapters ---------- */
+.card { background: var(--surface); border: 1px solid var(--rule); border-radius: 10px; padding: 18px 18px 14px; display: grid; gap: 10px; min-width: 0; }
+.card-h { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; flex-wrap: wrap; }
+.card-h h3 { font-size: 14.5px; font-weight: 650; margin: 0; }
+.card-h p, .note { font-size: 12.5px; color: var(--muted); margin: 0; max-width: 70ch; }
+.chap { display: grid; grid-template-columns: 210px minmax(0, 1fr); gap: 28px; padding-block: 44px; border-top: 1px solid var(--rule); scroll-margin-top: 104px; }
+.rail { position: sticky; top: 112px; align-self: start; display: grid; gap: 6px; }
+.rail .n { font-family: var(--font-display); font-size: 46px; line-height: 1; color: var(--accent); font-weight: 400; }
+.rail .nm { font-size: 13px; font-weight: 700; letter-spacing: .02em; }
+.rail .d { font-size: 12.5px; color: var(--muted); }
+.chap-body { display: grid; gap: 18px; min-width: 0; }
+.chap h2 { font-family: var(--font-display); font-weight: 450; font-size: clamp(24px, 2.6vw, 33px); line-height: 1.15; letter-spacing: -0.01em; margin: 0; max-width: 30ch; text-wrap: balance; }
+.chap h2 em { font-style: normal; color: var(--accent); }
+.chap h2 .bad { color: var(--escape); }
+.chap h2 .cab { color: var(--cable); }
+.sub2 { font-size: 14.5px; color: var(--ink-2); margin: 0; max-width: 72ch; }
+.grid2 { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: 18px; align-items: start; }
+.grid2.even { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+.chart { width: 100%; min-width: 0; position: relative; }
+.chart svg { display: block; overflow: visible; }
+.scroll-x { overflow-x: auto; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 12px; color: var(--ink-2); }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.sw { width: 12px; height: 10px; border-radius: 2px; display: inline-block; }
+.sw.line { height: 2px; width: 14px; border-radius: 1px; }
+.sw.dot { width: 9px; height: 9px; border-radius: 50%; }
+.tag { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 700; letter-spacing: .03em; padding: 1px 7px; border-radius: 999px; border: 1px solid currentColor; white-space: nowrap; }
+.tag.new { color: var(--escape); } .tag.chronic { color: var(--warn); } .tag.rise { color: var(--ink-2); }
+.datatoggle { justify-self: start; font-size: 12px; color: var(--accent); background: none; border: 0; padding: 0; cursor: pointer; font-weight: 600; }
+.datatoggle::before { content: "▸ "; }
+.datatoggle[aria-expanded="true"]::before { content: "▾ "; }
+.tbl { overflow-x: auto; }
+.tbl table { border-collapse: collapse; font-size: 12.5px; min-width: 100%; }
+.tbl th, .tbl td { text-align: left; padding: 5px 10px 5px 0; border-bottom: 1px solid var(--grid); white-space: nowrap; }
+.tbl td.num, .tbl th.num { text-align: right; font-variant-numeric: tabular-nums; }
+.tbl th { color: var(--muted); font-weight: 600; font-size: 11.5px; }
+svg text { font-family: var(--font-ui); fill: var(--ink-2); font-size: 11.5px; }
+svg .tick { fill: var(--muted); font-size: 11px; font-variant-numeric: tabular-nums; }
+svg .lab { fill: var(--ink); font-size: 12px; }
+svg .lab-b { fill: var(--ink); font-size: 12.5px; font-weight: 650; }
+svg .val { fill: var(--ink-2); font-size: 11.5px; font-variant-numeric: tabular-nums; }
+svg .gridline { stroke: var(--grid); stroke-width: 1; }
+svg .base { stroke: var(--rule); stroke-width: 1; }
+.hit { cursor: pointer; }
+
+/* signals */
+.signals { display: grid; gap: 0; background: var(--band); border-radius: 10px; padding: 16px 16px 6px; align-self: stretch; align-content: start; }
+.signals h3 { font-size: 11.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2); font-weight: 700; margin: 0 0 6px; }
+.sig { display: grid; grid-template-columns: auto minmax(0, 1fr) 84px; gap: 4px 12px; align-items: center; padding: 11px 0; border-top: 1px solid var(--rule); cursor: pointer; text-align: left; background: none; border-left: 0; border-right: 0; border-bottom: 0; width: 100%; }
+.sig:hover { background: var(--accent-soft); }
+.sig { padding-inline: 4px; border-radius: 0; }
+.sig .ic { width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; font-size: 13px; font-weight: 700; border: 1.5px solid currentColor; }
+.sig.crit .ic { color: var(--escape); } .sig.warn .ic { color: var(--warn); } .sig.good .ic { color: var(--good); } .sig.info .ic { color: var(--ink-2); }
+.sig .tx { font-size: 13.5px; line-height: 1.35; }
+.sig .tx b { font-weight: 650; }
+.sig .tx small { display: block; color: var(--muted); font-size: 12px; }
+.sig svg { width: 84px; height: 28px; }
+.sig-none { font-size: 13px; color: var(--muted); padding: 10px 0; border-top: 1px solid var(--rule); }
+
+/* anatomy */
+.anat-big { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; }
+.anat-big .v { font-size: 46px; font-weight: 600; letter-spacing: -0.02em; line-height: 1; }
+.anat-big .s { color: var(--ink-2); font-size: 14px; }
+
+/* passport */
+.pass { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 18px; }
+.pass-h { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.pass-h b { font-family: var(--font-display); font-size: 30px; font-weight: 500; letter-spacing: -0.01em; }
+.pills { display: flex; gap: 6px; flex-wrap: wrap; }
+.pill { font-size: 12px; padding: 2px 9px; border-radius: 999px; background: var(--band); border: 1px solid var(--rule); color: var(--ink-2); }
+.pill.hot { background: var(--accent-soft); color: var(--ink); border-color: transparent; cursor: pointer; }
+.stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0; border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
+.stats > div { padding: 10px 12px 10px 0; display: grid; gap: 2px; }
+.stats > div + div { padding-left: 12px; border-left: 1px solid var(--rule); }
+.stats .k { font-size: 11px; letter-spacing: .07em; text-transform: uppercase; color: var(--muted); font-weight: 700; }
+.stats .v { font-size: 24px; font-weight: 600; letter-spacing: -0.01em; }
+.stats .s { font-size: 12px; color: var(--muted); }
+.finlist { display: grid; gap: 6px; }
+.finrow { display: grid; grid-template-columns: 110px minmax(0, 1fr) auto; gap: 10px; align-items: center; font-size: 13px; }
+.finrow b { font-weight: 650; font-variant-numeric: tabular-nums; }
+
+/* footer */
+footer { border-top: 1px solid var(--rule); padding-block: 26px 60px; color: var(--muted); font-size: 12.5px; display: grid; gap: 6px; }
+footer p { margin: 0; max-width: 110ch; }
+
+/* tooltip */
+#tip { position: fixed; z-index: 50; pointer-events: none; background: var(--ink); color: var(--surface); border-radius: 8px; padding: 8px 10px; font-size: 12.5px; line-height: 1.35; max-width: 300px; box-shadow: 0 6px 24px rgba(0,0,0,.18); opacity: 0; transition: opacity .08s; }
+#tip.on { opacity: 1; }
+#tip b { font-weight: 700; font-size: 14px; display: block; }
+#tip .r { display: flex; gap: 8px; justify-content: space-between; }
+#tip .m { opacity: .75; }
+
+/* presentation mode: one chapter per screen */
+.deck-nav { position: fixed; z-index: 30; right: max(16px, env(safe-area-inset-right, 0px)); bottom: calc(16px + env(safe-area-inset-bottom, 0px)); display: none; gap: 8px; align-items: center; background: var(--surface); border: 1px solid var(--rule); border-radius: 999px; padding: 6px 8px 6px 14px; box-shadow: 0 6px 24px rgba(0,0,0,.12); font-size: 12.5px; }
+.deck-nav button { border: 1px solid var(--ring); background: var(--surface); border-radius: 999px; width: 30px; height: 30px; cursor: pointer; }
+.deck-nav .dots { display: flex; gap: 5px; }
+.deck-nav .dots i { width: 7px; height: 7px; border-radius: 50%; background: var(--prior); }
+.deck-nav .dots i.on { background: var(--accent); }
+body.presenting .bar, body.presenting footer, body.presenting .datatoggle, body.presenting .tbl, body.presenting .card-h p, body.presenting .hero .lede { display: none !important; }
+body.presenting .deck-nav { display: flex; }
+body.presenting [data-slide] { display: none; }
+body.presenting [data-slide].on { display: grid; align-content: start; padding-block: 28px 20px; border-top: 0; }
+body.presenting .chap.on { grid-template-columns: 240px minmax(0, 1fr); }
+body.presenting [data-slide].on.step1 [data-step="2"], body.presenting [data-slide].on.step2 [data-step="1"] { display: none; }
+body.presenting .rail { position: static; }
+body.presenting .wrap { max-width: 1440px; }
+@media (prefers-reduced-motion: no-preference) {
+  body.presenting [data-slide].on { animation: rise .35s ease; }
+  @keyframes rise { from { opacity: 0; } to { opacity: 1; } }
+  .fade { transition: opacity .15s; }
+}
+
+@media (max-width: 1060px) {
+  .tiles { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .tile:nth-child(4) { padding-left: 0; border-left: 0; }
+  .tile:nth-child(n+4) { border-top: 1px solid var(--rule); }
+  .hero-grid, .grid2, .grid2.even, .pass { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 860px) {
+  .chap, body.presenting .chap.on { grid-template-columns: minmax(0, 1fr); gap: 14px; }
+  .rail { position: static; display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+  .rail .n { font-size: 32px; }
+  .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .stats > div:nth-child(3) { padding-left: 0; border-left: 0; }
+}
+@media (max-width: 560px) {
+  .tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .tile:nth-child(n) { padding-left: 0; border-left: 0; }
+  .tile:nth-child(2n) { padding-left: 14px; border-left: 1px solid var(--rule); }
+  .tile:nth-child(n+3) { border-top: 1px solid var(--rule); }
+  .tile .v { font-size: 28px; }
+  .brand span { display: none; }
+}
+</style>
+
+<div class="bar" id="bar">
+  <div class="wrap row1">
+    <div class="brand"><b id="tTitle">Non-conformités FTO2</b><span id="tAsof"></span></div>
+    <div class="seg" id="fFind" role="group"></div>
+    <div class="seg" id="fLang" role="group"><button type="button" data-v="fr">FR</button><button type="button" data-v="en">EN</button></div>
+    <button type="button" class="btn ghost" id="bCopy"></button>
+    <button type="button" class="btn" id="bPresent"></button>
+  </div>
+  <div class="wrap row2">
+    <div class="ctl"><i id="lLine">Ligne</i><div class="seg" id="fLine" role="group"></div></div>
+    <div class="ctl"><i id="lPhase">Production</i><div class="seg" id="fPhase" role="group"></div></div>
+    <div class="ctl"><i id="lNature">Défauts</i><div class="seg" id="fNature" role="group"></div></div>
+    <div class="focusbar" id="focusbar" hidden></div>
+  </div>
+</div>
+
+<main class="wrap" id="main">
+  <section class="hero" id="s0" data-slide>
+    <div class="eyebrow" id="h0eye"></div>
+    <h1 id="h0"></h1>
+    <p class="lede" id="h0lede"></p>
+    <div class="tiles" id="tiles"></div>
+    <div class="hero-grid">
+      <div class="card">
+        <div class="card-h"><div><h3 id="ymTitle"></h3><p id="ymNote"></p></div><div class="seg" id="fUnit" role="group"></div></div>
+        <div class="chart" id="ymChart"></div>
+        <div class="legend" id="ymLegend"></div>
+        <button type="button" class="datatoggle" data-t="ym"></button><div class="tbl" id="tbl-ym" hidden></div>
+      </div>
+      <div class="signals" id="signals"></div>
+    </div>
+  </section>
+
+  <section class="chap" id="s1" data-slide>
+    <div class="rail"><div class="n">01</div><div class="nm" id="r1n"></div><div class="d" id="r1d"></div></div>
+    <div class="chap-body">
+      <h2 id="h1t"></h2>
+      <p class="sub2" id="h1s"></p>
+      <div class="grid2">
+        <div class="card"><div class="card-h"><div><h3 id="c1aT"></h3><p id="c1aN"></p></div></div><div class="chart" id="growChart"></div><div class="legend" id="growLegend"></div>
+          <button type="button" class="datatoggle" data-t="grow"></button><div class="tbl" id="tbl-grow" hidden></div></div>
+        <div class="card"><div class="card-h"><div><h3 id="c1bT"></h3><p id="c1bN"></p></div></div><div class="chart" id="cableChart"></div>
+          <button type="button" class="datatoggle" data-t="cable"></button><div class="tbl" id="tbl-cable" hidden></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="chap" id="s2" data-slide>
+    <div class="rail"><div class="n">02</div><div class="nm" id="r2n"></div><div class="d" id="r2d"></div></div>
+    <div class="chap-body">
+      <h2 id="h2t"></h2>
+      <p class="sub2" id="h2s"></p>
+      <div class="card" data-step="1"><div class="card-h"><div><h3 id="c2aT"></h3><p id="c2aN"></p></div></div>
+        <div class="scroll-x"><div class="chart" id="netChart" style="min-width:620px"></div></div>
+        <div class="legend" id="netLegend"></div>
+        <button type="button" class="datatoggle" data-t="net"></button><div class="tbl" id="tbl-net" hidden></div></div>
+      <div class="card" data-step="2"><div class="card-h"><div><h3 id="c2bT"></h3><p id="c2bN"></p></div></div><div class="chart" id="escChart"></div>
+        <button type="button" class="datatoggle" data-t="esc"></button><div class="tbl" id="tbl-esc" hidden></div></div>
+    </div>
+  </section>
+
+  <section class="chap" id="s3" data-slide>
+    <div class="rail"><div class="n">03</div><div class="nm" id="r3n"></div><div class="d" id="r3d"></div></div>
+    <div class="chap-body">
+      <h2 id="h3t"></h2>
+      <div class="card">
+        <div class="anat-big"><span class="v" id="anatV"></span><span class="s" id="anatS"></span></div>
+        <div class="chart" id="anatChart"></div>
+        <button type="button" class="datatoggle" data-t="anat"></button><div class="tbl" id="tbl-anat" hidden></div>
+      </div>
+      <div class="grid2 even">
+        <div class="card"><div class="card-h"><div><h3 id="c3bT"></h3><p id="c3bN"></p></div></div><div class="chart" id="sizeChart"></div>
+          <button type="button" class="datatoggle" data-t="size"></button><div class="tbl" id="tbl-size" hidden></div></div>
+        <div class="card"><div class="card-h"><div><h3 id="c3cT"></h3><p id="c3cN"></p></div></div><div class="chart" id="methChart"></div>
+          <button type="button" class="datatoggle" data-t="meth"></button><div class="tbl" id="tbl-meth" hidden></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="chap" id="s4" data-slide>
+    <div class="rail"><div class="n">04</div><div class="nm" id="r4n"></div><div class="d" id="r4d"></div></div>
+    <div class="chap-body">
+      <h2 id="h4t"></h2>
+      <p class="sub2" id="h4s"></p>
+      <div class="card" data-step="1"><div class="card-h"><div><h3 id="c4aT"></h3><p id="c4aN"></p></div></div><div class="chart" id="finChart"></div><div class="legend" id="finLegend"></div>
+        <button type="button" class="datatoggle" data-t="fin"></button><div class="tbl" id="tbl-fin" hidden></div></div>
+      <div class="card" data-step="2"><div class="card-h"><div><h3 id="c4bT"></h3><p id="c4bN"></p></div></div><div class="chart" id="pinChart"></div><div class="legend" id="pinLegend"></div>
+        <button type="button" class="datatoggle" data-t="pin"></button><div class="tbl" id="tbl-pin" hidden></div></div>
+    </div>
+  </section>
+
+  <section class="chap" id="s5" data-slide>
+    <div class="rail"><div class="n">05</div><div class="nm" id="r5n"></div><div class="d" id="r5d"></div></div>
+    <div class="chap-body">
+      <h2 id="h5t"></h2>
+      <div class="card"><div class="card-h"><div><h3 id="c5aT"></h3><p id="c5aN"></p></div><div class="seg" id="fMsnMetric" role="group"></div></div>
+        <div class="scroll-x"><div class="chart" id="stripChart"></div></div><div class="legend" id="stripLegend"></div></div>
+      <div class="card" id="passport"></div>
+    </div>
+  </section>
+
+  <footer id="foot"></footer>
+</main>
+
+<div class="deck-nav" id="deck"><span id="deckN"></span><div class="dots" id="deckDots"></div><button type="button" id="dPrev" aria-label="Previous">‹</button><button type="button" id="dNext" aria-label="Next">›</button><button type="button" id="dExit" aria-label="Exit">✕</button></div>
+<div id="tip" role="tooltip"></div>
+
+<script>
+(function () {
+  'use strict';
+  var D = /*__DATA__*/null;
+  var NC = D.nc, DF = D.df, N25 = D.nc25, F25 = D.df25, DICT = D.dict;
+  var NS = 'http://www.w3.org/2000/svg';
+  var CAT = DICT.cat, RCA = DICT.rca, LINE = DICT.line, WHERE = DICT.where;
+  var IDX = { aside: { 'Kitting Factory': 1, 'FOD': 1, 'Autre': 1 } };
+  var INV = RCA.indexOf('Inversion'), CONN = CAT.indexOf('Erreur Branchement');
+
+  // ---------------------------------------------------------------- words
+  var EN_NAME = {
+    'MEO Câblage': 'Wiring workmanship', 'Erreur Branchement': 'Connection error', 'Élément Manquant': 'Missing item',
+    'Élément Endommagé': 'Damaged item', 'Déverrouillage': 'Unlocked contact', 'Grounding/Bonding': 'Grounding/Bonding',
+    'Kitting Factory': 'Kitting Factory', 'FOD': 'FOD', 'Autre': 'Other',
+    'Inversion': 'Swapped wires', 'Mauvaise Borne': 'Wrong terminal', 'Non Connecté': 'Not connected',
+    'Frettage Incorrect': 'Incorrect lacing', 'Serrage Incorrect': 'Incorrect tightening', 'Mauvais Cheminement': 'Incorrect routing',
+    'MEO Gainage': 'Sleeving workmanship', 'Finition Inachevée': 'Incomplete finishing',
+    'Défaut de Sertissage sur câble standard': 'Crimping defect, standard cable', 'Défaut de Sertissage sur câble spécifique': 'Crimping defect, special cable',
+    'Erreur Fixation ou Protection': 'Wrong fastener or protection', 'Erreur Composant Électrique': 'Wrong electrical component',
+    'Fixation ou Protection Manquante': 'Missing fastener or protection', 'Obturateur Manquant': 'Missing blanking plug',
+    'Câble ou Élément Manquant': 'Missing cable or item', 'Identification Manquante': 'Missing identification',
+    'Câble Endommagé': 'Damaged cable', 'Composant Endommagé': 'Damaged component', 'Protection Endommagée': 'Damaged protection',
+    'Structure Endommagée': 'Damaged structure', 'Défaut de Métallisation': 'Bonding defect', "Défaut d'Impression": 'Printing defect',
+    'Erreur Dossier': 'Documentation error'
+  };
+  var T = {
+    fr: {
+      title: 'Non-conformités FTO2', asof: 'Données au {d}', line: 'Ligne', phase: 'Production', nature: 'Défauts', all: 'Toutes', serie: 'Série', allTypes: 'Tous types',
+      allDef: 'Tous', cableDef: 'Câble', findings: 'Constats', names: 'Noms', present: 'Présenter', exitP: 'Quitter', copy: 'Copier le résumé', copied: 'Résumé copié', copySel: 'Texte sélectionné : Ctrl+C',
+      sumHead: 'Non-conformités FTO2, données au {d} ({f})', sumSig: 'À regarder :',
+      months: ['janv.', 'févr.', 'mars', 'avr.', 'mai', 'juin', 'juil.', 'août', 'sept.', 'oct.', 'nov.', 'déc.'],
+      monthsLong: ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'],
+      eye0: 'FTO2 · Qualité · {y} face à {y0}', name0: 'Vue d’ensemble',
+      kNc: 'NC', kDef: 'Défauts', kCable: 'Défauts câble', kCost: 'Coût de non-qualité', kEnd: 'Fin d’année', kCli: 'Retours clients',
+      vs: 'vs {y0} à date', sharePart: '{p} des défauts', perNc: '{v} par NC', endS: 'au rythme récent / de l’année', cliS: '{n} défauts chez le client',
+      cableYoY: '{d} vs {y0}*', nTxt: 'NC', defTxt: 'défauts',
+      ymTitle: 'Mois par mois, {y} face à {y0}', ymNote: 'Même périmètre et même règle de date sur les deux années ; {m} {y} compté jusqu’au {d}.',
+      endNote: 'Fin d’année : {a} à {b} {u} si octobre–décembre suivent {y0} au rythme récent ou au rythme de l’année.',
+      unitNc: 'NC', unitDef: 'Défauts', lg25: '{y0}', lg26: '{y}', lgProj: 'Projection ({y0} × rythme récent)',
+      hero1: '{n} NC depuis janvier, <span class="{c}">{d}</span> par rapport à {y0} à la même date.',
+      heroClose: ' Depuis {m}, l’écart n’est plus que de <em>{r}</em>.', heroWide: ' Depuis {m}, l’écart se creuse : <span class="bad">{r}</span>.', heroSame: ' Depuis {m}, l’écart reste du même ordre ({r}).', heroBetter: ' Depuis {m}, FTO2 fait mieux que {y0} : <em>{r}</em>.',
+      lede: '{y0} : export Skywise de l’archive du 19 octobre, même périmètre que {y} (FTO2 responsable, NC non supprimées, sans ERMA).',
+      sigTitle: 'À regarder', sigNone: 'Rien d’anormal sur les quatre dernières semaines.',
+      sigUp: '<b>{r}</b> : {o} en 4 semaines, ~{e} attendus', sigUpS: 'au rythme du reste de l’année ({p}) · cliquer pour voir la cause',
+      sigDown: '<b>{r}</b> en baisse : {o} en 4 semaines, ~{e} attendus', sigFin: '<b>{f}</b> sur {k} avions différents en 4 semaines', sigFinS: '{r} · cliquer pour voir ces avions',
+      sigOpen: '<b>{n} NC ouvertes</b> depuis plus de 30 jours', sigOpen1: '<b>1 NC ouverte</b> depuis plus de 30 jours', sigOpenS: 'la plus ancienne : {d} jours', sigCli: '<b>{n} retours clients</b> en 4 semaines', sigCliS: '{a} par mois en moyenne avant',
+      r1n: 'Ce qui a grandi', r1d: 'Les causes, {y0} → {y}, même date.',
+      h1: '<em>{c}</em> pèse {p} de la hausse des défauts depuis {y0}.', h1down: 'Moins de défauts qu’en {y0} à la même date ({d}).',
+      h1s: 'Les défauts câble : <b>{cd}</b>, contre <b>{ad}</b> pour l’ensemble des défauts.',
+      c1aT: 'Défauts par cause, {y0} → {y}', c1aN: 'Jusqu’au {d} chaque année. Classement du parseur v4.8 sur les deux années (le seul disponible pour {y0}).',
+      c1bT: 'Défauts câble face au reste', c1bN: 'Indice 100 = {y0} à la même date.', idxAll: 'Tous les défauts', idxCable: 'Défauts câble', idxOther: 'Hors câble',
+      r2n: 'Qui attrape quoi', r2d: 'Où chaque défaut a été trouvé, jusqu’au client.',
+      h2: 'Le test attrape <em>{p}</em> des erreurs de branchement.', h2b: ' <span class="bad">{c}</span> atteint le plus le client : {e} de ces défauts.',
+      h2none: ' Aucun défaut de la sélection n’a atteint le client.', h2alt: '{s} trouve {p} des défauts.',
+      h2s: 'Chaque fil va d’une cause au poste qui l’a trouvée. En rouge, ce qui est sorti de l’usine.',
+      c2aT: 'De la cause au poste qui la trouve', c2aN: 'Défauts FTO2 et défauts des retours clients de la sélection.',
+      c2bT: 'Part de chaque cause trouvée chez le client', c2bN: 'Causes avec au moins 20 défauts. Retours clients ÷ (défauts FTO2 + retours clients).',
+      stage: { line: 'Sur la ligne', cables: 'Câbles', final: 'Contrôle final', test: 'Test', other: 'Autres', client: 'Chez le client' },
+      factory: 'Dans l’usine', outside: 'Après livraison', escOf: '{n} sur {t}', escNone: 'Aucun défaut de la sélection chez le client.',
+      r3n: 'Ce que coûte une NC', r3d: 'Le temps passé, étape par étape.',
+      h3: 'Une NC mobilise en moyenne <em>{t}</em> ; la reprise elle-même n’en représente que {p}.',
+      anatS: 'par NC, d’après le modèle CNQ ({n} NC). Coût moyen : {c}.',
+      steps: { alert: 'Alerte', writing: 'Rédaction', support: 'Support technique', setup: 'Préparation', hands_on: 'Reprise', recheck: 'Recontrôle' },
+      c3bT: 'Coût par défaut selon la taille de la NC', c3bN: 'Une NC à un défaut coûte autant de démarches qu’une liste de contrôle.',
+      size: ['1 défaut', '2 à 3', '4 à 10', 'plus de 10'], perDef: '{v} par défaut', ncs: '{n} NC',
+      c3cT: 'Trois méthodes, trois montants', c3cN: 'Mêmes NC, chiffrées de trois façons.', mAirbus: 'Standard Airbus', mDetail: 'Détail par défaut (retenue)', mAec: 'Moyenne AEC',
+      times: '×{v}',
+      r4n: 'Ce qui revient', r4d: 'Les mêmes repères, d’un avion à l’autre, d’une année à l’autre.',
+      h4: '<em>{f}</em> revient sur {k} avions {l} sur {n} cette année, contre {k0} sur {n0} en {y0}.', h4none: 'Pas de repère qui revienne sur plusieurs avions dans la sélection.',
+      h4s: '{p} des inversions lisibles se font entre deux broches qui se suivent ; {k} paires de broches reviennent sur plusieurs avions.',
+      h4s1: '{p} des inversions lisibles se font entre deux broches qui se suivent ; une paire de broches revient sur plusieurs avions.',
+      h4s0: '{p} des inversions lisibles se font entre deux broches qui se suivent.',
+      c4aT: 'Repères (FIN) touchés sur le plus d’avions', c4aN: 'Part des avions de la ligne avec au moins un défaut à ce repère, {y0} → {y} à la même date. Cliquer : voir ces avions au chapitre 05.',
+      tagNew: 'nouveau', tagChronic: 'chronique', tagRise: 'en hausse',
+      c4bT: 'Quelles broches sont inversées', c4bN: 'Connecteurs avec le plus d’inversions dont les deux broches sont écrites. Au-dessus : {y} ; en dessous : {y0}. Épaisseur : nombre d’avions.',
+      pinTip: 'Broches {a} ↔ {b}', planes: '{n} avions', plane1: '1 avion',
+      r5n: 'Un avion, toute son histoire', r5d: 'Chaque NC d’un MSN, du premier poste au client.',
+      h5: 'MSN {m} : {n} NC et {c}, <em>{x}</em> la médiane de la ligne.', h5low: 'MSN {m} : {n} NC et {c}, sous la médiane de la ligne.',
+      c5aT: 'Tous les avions de la sélection', c5aN: 'Une colonne par MSN, dans l’ordre des numéros. Point rouge : retour client. Cliquer pour ouvrir son passeport.',
+      mCost: 'Coût', mNc: 'NC',
+      pNc: 'NC', pDef: 'Défauts', pCost: 'Coût', pCli: 'Retours clients', pMed: 'médiane ligne {v}', pTimes: '{v} × la médiane',
+      pTl: 'Chaque NC de l’avion, par poste qui l’a trouvée', pFins: 'Ses repères qui reviennent sur d’autres avions', pOn: 'sur {n} avions', pCauses: 'Ses causes', pNone: 'Aucun repère partagé.',
+      dataBtn: 'Voir les données', dataHide: 'Masquer les données',
+      foot: ['Source : extractions Skywise ({f}), NC créées du 1er janvier au {d} ; {y0} : export Skywise de l’archive du 19 octobre ({n} NC dans le périmètre). Périmètre FTO2 : NC émises à FTO2 sous responsabilité FTO2, non supprimées, sans ERMA. Retours clients : NC émises hors FTO2 sous responsabilité FTO2.',
+        'Causes : classement par cause racine (lecture du texte complet) pour {y} ; comparaisons {y0} → {y} avec le parseur v4.8 sur les deux années. Les NC A400M n’ont pas de texte : comptées en NC et en coût, pas en défauts.',
+        'Coût : modèle CNQ de cette branche (50 €/h, temps du processus AEC). Le modèle cnq-2026.10.19 de la branche main (alerte seulement si un opérateur la lève, reprise ×2 sur les NC internes) déplacera ces montants.',
+        'Prototype : chaque phrase qui énonce un constat est écrite par la page à partir des données filtrées ; le bouton « Noms » rend les titres neutres.'],
+      tbl: { month: 'Mois', y0: '{y0}', y: '{y}', cause: 'Cause', cat: 'Catégorie', stage: 'Poste', defects: 'Défauts', share: 'Part', step: 'Étape', min: 'Minutes', size: 'Taille de la NC', ncs: 'NC', cost: 'Coût', perDef: 'Par défaut', method: 'Méthode', fin: 'Repère', l: 'Ligne', p0: 'Avions {y0}', p1: 'Avions {y}', pair: 'Broches', date: 'Date', nc: 'NC', found: 'Trouvée', causes: 'Causes' }
+    },
+    en: {
+      title: 'FTO2 non-conformities', asof: 'Data as of {d}', line: 'Line', phase: 'Production', nature: 'Defects', all: 'All', serie: 'Série', allTypes: 'All types',
+      allDef: 'All', cableDef: 'Cable', findings: 'Findings', names: 'Names', present: 'Present', exitP: 'Exit', copy: 'Copy summary', copied: 'Summary copied', copySel: 'Text selected: Ctrl+C',
+      sumHead: 'FTO2 non-conformities, data as of {d} ({f})', sumSig: 'To look at:',
+      months: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+      monthsLong: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+      eye0: 'FTO2 · Quality · {y} against {y0}', name0: 'Overview',
+      kNc: 'NCs', kDef: 'Defects', kCable: 'Cable defects', kCost: 'Cost of non-quality', kEnd: 'Year end', kCli: 'Customer returns',
+      vs: 'vs {y0} to date', sharePart: '{p} of defects', perNc: '{v} per NC', endS: 'at the recent pace / the year’s pace', cliS: '{n} defects at the customer',
+      cableYoY: '{d} vs {y0}*', nTxt: 'NCs', defTxt: 'defects',
+      ymTitle: 'Month by month, {y} against {y0}', ymNote: 'Same scope and same date rule for both years; {m} {y} counted up to the {d}.',
+      endNote: 'Year end: {a} to {b} {u} if October–December follow {y0} at the recent pace or at the year’s pace.',
+      unitNc: 'NCs', unitDef: 'Defects', lg25: '{y0}', lg26: '{y}', lgProj: 'Projection ({y0} × recent pace)',
+      hero1: '{n} NCs since January, <span class="{c}">{d}</span> on {y0} at the same date.',
+      heroClose: ' Since {m} the gap is down to <em>{r}</em>.', heroWide: ' Since {m} the gap is widening: <span class="bad">{r}</span>.', heroSame: ' Since {m} the gap is about the same ({r}).', heroBetter: ' Since {m} FTO2 is doing better than {y0}: <em>{r}</em>.',
+      lede: '{y0}: Skywise export from the 19 October archive, same scope as {y} (FTO2 liable, NCs not deleted, no ERMA).',
+      sigTitle: 'To look at', sigNone: 'Nothing unusual over the last four weeks.',
+      sigUp: '<b>{r}</b>: {o} in 4 weeks, ~{e} expected', sigUpS: 'at the pace of the rest of the year ({p}) · click to see the cause',
+      sigDown: '<b>{r}</b> going down: {o} in 4 weeks, ~{e} expected', sigFin: '<b>{f}</b> on {k} different aircraft in 4 weeks', sigFinS: '{r} · click to see these aircraft',
+      sigOpen: '<b>{n} NCs open</b> for more than 30 days', sigOpen1: '<b>1 NC open</b> for more than 30 days', sigOpenS: 'oldest: {d} days', sigCli: '<b>{n} customer returns</b> in 4 weeks', sigCliS: '{a} per month on average before',
+      r1n: 'What grew', r1d: 'Causes, {y0} → {y}, same date.',
+      h1: '<em>{c}</em> accounts for {p} of the rise in defects since {y0}.', h1down: 'Fewer defects than in {y0} at the same date ({d}).',
+      h1s: 'Cable defects: <b>{cd}</b>, against <b>{ad}</b> for all defects.',
+      c1aT: 'Defects by cause, {y0} → {y}', c1aN: 'Up to the {d} each year. Parser v4.8 classification for both years (the only one available for {y0}).',
+      c1bT: 'Cable defects against the rest', c1bN: 'Index 100 = {y0} at the same date.', idxAll: 'All defects', idxCable: 'Cable defects', idxOther: 'Other defects',
+      r2n: 'Who catches what', r2d: 'Where each defect was found, up to the customer.',
+      h2: 'The test bench catches <em>{p}</em> of connection errors.', h2b: ' <span class="bad">{c}</span> defects reach the customer most often: {e} of them.',
+      h2none: ' No defect in the selection reached the customer.', h2alt: '{s} finds {p} of defects.',
+      h2s: 'Each thread runs from a cause to the station that found it. In red, what left the plant.',
+      c2aT: 'From the cause to the station that finds it', c2aN: 'FTO2 defects and customer-return defects in the selection.',
+      c2bT: 'Share of each cause found at the customer', c2bN: 'Causes with at least 20 defects. Customer returns ÷ (FTO2 defects + customer returns).',
+      stage: { line: 'On the line', cables: 'Cables', final: 'Final inspection', test: 'Test', other: 'Other', client: 'At the customer' },
+      factory: 'In the plant', outside: 'After delivery', escOf: '{n} of {t}', escNone: 'No defect in the selection at the customer.',
+      r3n: 'What an NC costs', r3d: 'Time spent, step by step.',
+      h3: 'An NC takes <em>{t}</em> of work on average; the repair itself is only {p} of it.',
+      anatS: 'per NC, from the CNQ model ({n} NCs). Average cost: {c}.',
+      steps: { alert: 'Alert', writing: 'Writing', support: 'Technical support', setup: 'Setup', hands_on: 'Repair', recheck: 'Re-check' },
+      c3bT: 'Cost per defect by NC size', c3bN: 'A one-defect NC carries as much handling as an inspection list.',
+      size: ['1 defect', '2 to 3', '4 to 10', 'over 10'], perDef: '{v} per defect', ncs: '{n} NCs',
+      c3cT: 'Three methods, three amounts', c3cN: 'Same NCs, costed three ways.', mAirbus: 'Airbus standard', mDetail: 'Per-defect detail (used)', mAec: 'AEC average',
+      times: '×{v}',
+      r4n: 'What comes back', r4d: 'The same locations, aircraft after aircraft, year after year.',
+      h4: '<em>{f}</em> came back on {k} {l} aircraft out of {n} this year, against {k0} of {n0} in {y0}.', h4none: 'No location comes back on several aircraft in the selection.',
+      h4s: '{p} of readable swaps are between two pins that follow each other; {k} pin pairs come back on several aircraft.',
+      h4s1: '{p} of readable swaps are between two pins that follow each other; one pin pair comes back on several aircraft.',
+      h4s0: '{p} of readable swaps are between two pins that follow each other.',
+      c4aT: 'Locations (FIN) hit on the most aircraft', c4aN: 'Share of the line’s aircraft with at least one defect at this location, {y0} → {y} at the same date. Click to see these aircraft in chapter 05.',
+      tagNew: 'new', tagChronic: 'chronic', tagRise: 'rising',
+      c4bT: 'Which pins get swapped', c4bN: 'Connectors with the most swaps where both pins are written. Above: {y}; below: {y0}. Thickness: number of aircraft.',
+      pinTip: 'Pins {a} ↔ {b}', planes: '{n} aircraft', plane1: '1 aircraft',
+      r5n: 'One aircraft, its whole story', r5d: 'Every NC of one MSN, from the first station to the customer.',
+      h5: 'MSN {m}: {n} NCs and {c}, <em>{x}</em> the line median.', h5low: 'MSN {m}: {n} NCs and {c}, below the line median.',
+      c5aT: 'Every aircraft in the selection', c5aN: 'One column per MSN, in number order. Red dot: customer return. Click to open its passport.',
+      mCost: 'Cost', mNc: 'NCs',
+      pNc: 'NCs', pDef: 'Defects', pCost: 'Cost', pCli: 'Customer returns', pMed: 'line median {v}', pTimes: '{v} × the median',
+      pTl: 'Every NC of the aircraft, by the station that found it', pFins: 'Its locations that come back on other aircraft', pOn: 'on {n} aircraft', pCauses: 'Its causes', pNone: 'No shared location.',
+      dataBtn: 'Show the data', dataHide: 'Hide the data',
+      foot: ['Source: Skywise extracts ({f}), NCs created 1 January to {d}; {y0}: Skywise export in the 19 October archive ({n} NCs in scope). FTO2 scope: NCs raised at FTO2 that FTO2 is liable for, not deleted, no ERMA. Customer returns: NCs raised outside FTO2 that FTO2 is liable for.',
+        'Causes: root-cause classification (full text read) for {y}; {y0} → {y} comparisons use parser v4.8 for both years. A400M NCs have no text: counted as NCs and in the cost, not as defects.',
+        'Cost: this branch’s CNQ model (50 €/h, AEC process times). Model cnq-2026.10.19 on main (alert only when an operator raises one, rework ×2 on internal NCs) will move these amounts.',
+        'Prototype: every sentence that states a finding is written by the page from the filtered data; the “Names” button turns the titles back to plain names.'],
+      tbl: { month: 'Month', y0: '{y0}', y: '{y}', cause: 'Cause', cat: 'Category', stage: 'Station', defects: 'Defects', share: 'Share', step: 'Step', min: 'Minutes', size: 'NC size', ncs: 'NCs', cost: 'Cost', perDef: 'Per defect', method: 'Method', fin: 'Location', l: 'Line', p0: 'Aircraft {y0}', p1: 'Aircraft {y}', pair: 'Pins', date: 'Date', nc: 'NC', found: 'Found', causes: 'Causes' }
+    }
+  };
+
+  // ---------------------------------------------------------------- state
+  var S = { lang: 'fr', line: -1, phase: 0, cable: false, unit: 'nc', findings: true, focusCat: -1, focusFin: -1, msn: null, msnMetric: 'cost', slide: 0 };
+  try { var sv = JSON.parse(localStorage.getItem('fto2-vision') || '{}'); ['lang', 'findings', 'unit'].forEach(function (k) { if (sv[k] !== undefined) S[k] = sv[k]; }); } catch (e) {}
+  function save() { try { localStorage.setItem('fto2-vision', JSON.stringify({ lang: S.lang, findings: S.findings, unit: S.unit })); } catch (e) {} }
+
+  var Y = D.meta.y, Y0 = Y - 1;
+  var ASOF = new Date(D.meta.asof + 'T00:00:00Z');
+  var ASOF_DAY = Math.round((ASOF - Date.UTC(Y, 0, 1)) / 864e5);
+  function dayToDate(year, d) { return new Date(Date.UTC(year, 0, 1) + d * 864e5); }
+  function monthOf(year, d) { return dayToDate(year, d).getUTCMonth(); }
+  var CUT25 = Math.round((Date.UTC(Y0, ASOF.getUTCMonth(), ASOF.getUTCDate()) - Date.UTC(Y0, 0, 1)) / 864e5);   // same calendar date in Y0
+  var RECENT_START_MONTH = Math.max(0, ASOF.getUTCMonth() - 2);
+  var REC26 = Math.round((Date.UTC(Y, RECENT_START_MONTH, 1) - Date.UTC(Y, 0, 1)) / 864e5);
+  var REC25 = Math.round((Date.UTC(Y0, RECENT_START_MONTH, 1) - Date.UTC(Y0, 0, 1)) / 864e5);
+  var nNc = NC.id.length, nDf = DF.n.length, n25 = N25.d.length, nF25 = F25.n.length;
+
+  function L() { return T[S.lang]; }
+  function fill(s, v) { return String(s).replace(/\{(\w+)\}/g, function (m, k) { return v && v[k] !== undefined ? v[k] : m; }); }
+  function t(k, v) { var s = L()[k]; return fill(s === undefined ? k : s, Object.assign({ y: Y, y0: Y0 }, v || {})); }
+  function nm(fr) { return S.lang === 'en' ? (EN_NAME[fr] || fr) : fr; }
+  function loc() { return S.lang === 'fr' ? 'fr-FR' : 'en-GB'; }
+  function num(v, d) { return new Intl.NumberFormat(loc(), { maximumFractionDigits: d || 0, minimumFractionDigits: d || 0 }).format(v); }
+  function eur(v) { return S.lang === 'fr' ? num(v) + '\u00a0€' : '€' + num(v); }
+  function keur(v) { if (Math.abs(v) < 10000) return eur(v); var k = num(v / 1000, 1); return S.lang === 'fr' ? k + '\u00a0k€' : '€' + k + 'k'; }
+  function pct(v, d) { var s = num(v * 100, d === undefined ? 0 : d); return S.lang === 'fr' ? s + '\u202f%' : s + '%'; }
+  function spct(v) { var r = Math.round(v * 100); var s = (r > 0 ? '+' : r < 0 ? '−' : '') + num(Math.abs(r)); return S.lang === 'fr' ? s + '\u202f%' : s + '%'; }
+  function hm(min) { var h = Math.floor(min / 60), m = Math.round(min - h * 60); if (m === 60) { h++; m = 0; } return h + ' h ' + (m < 10 ? '0' : '') + m; }
+  function dateTxt(d) { return S.lang === 'fr' ? d.getUTCDate() + (d.getUTCDate() === 1 ? 'er' : '') + ' ' + L().monthsLong[d.getUTCMonth()] + ' ' + d.getUTCFullYear() : d.getUTCDate() + ' ' + L().monthsLong[d.getUTCMonth()] + ' ' + d.getUTCFullYear(); }
+
+  // ---------------------------------------------------------------- selection
+  // V holds everything the charts draw for the current filters. FTO2 = scope "serie" on the page.
+  function inLinePhase(l, ph) { return (S.line < 0 || l === S.line) && (S.phase < 0 || ph === S.phase); }
+  function select() {
+    var V = { nc: [], cli: [], df: [], dcli: [], n25: [], f25: [], pdf: [] };
+    var ncOk = new Uint8Array(nNc), dfOn = new Uint8Array(nDf);
+    var i;
+    for (i = 0; i < nNc; i++) if (inLinePhase(NC.l[i], NC.ph[i])) ncOk[i] = 1;
+    var hasCable = new Uint8Array(nNc), hasPCable = new Uint8Array(nNc);
+    for (i = 0; i < nDf; i++) { if (DF.cb[i]) hasCable[DF.n[i]] = 1; if (DF.pcb[i]) hasPCable[DF.n[i]] = 1; }
+    for (i = 0; i < nNc; i++) {
+      if (!ncOk[i] || (S.cable && !hasCable[i])) continue;
+      (NC.sc[i] ? V.cli : V.nc).push(i);
+    }
+    for (i = 0; i < nDf; i++) {
+      var n = DF.n[i];
+      if (!ncOk[n]) continue;
+      if (!NC.sc[n] && (!S.cable || DF.pcb[i])) V.pdf.push(i);   // parser view of FTO2 defects, for the year comparison
+      if (S.cable && !DF.cb[i]) continue;
+      (NC.sc[n] ? V.dcli : V.df).push(i);
+      dfOn[i] = 1;
+    }
+    var ok25 = new Uint8Array(n25), has25c = new Uint8Array(n25);
+    for (i = 0; i < nF25; i++) if (F25.pcb[i]) has25c[F25.n[i]] = 1;
+    for (i = 0; i < n25; i++) if (inLinePhase(N25.l[i], N25.ph[i]) && (!S.cable || has25c[i])) { ok25[i] = 1; V.n25.push(i); }
+    for (i = 0; i < nF25; i++) if (ok25[F25.n[i]] && (!S.cable || F25.pcb[i])) V.f25.push(i);
+    V.ncOk = ncOk; V.ok25 = ok25;
+    // NC counts in the parser view (cable filter on parser flags), used for the year-on-year deltas
+    V.pncL = []; for (i = 0; i < nNc; i++) if (ncOk[i] && !NC.sc[i] && (!S.cable || hasPCable[i])) V.pncL.push(i);
+    V.pnc = V.pncL.length;
+    return V;
+  }
+  function upTo(arr, dayArr, cut) { var k = 0; for (var i = 0; i < arr.length; i++) if (dayArr[arr[i]] <= cut) k++; return k; }
+  function sum(arr, f) { var s = 0; for (var i = 0; i < arr.length; i++) s += f(arr[i]); return s; }
+  function median(a) { if (!a.length) return 0; var b = a.slice().sort(function (x, y) { return x - y; }); var m = b.length >> 1; return b.length % 2 ? b[m] : (b[m - 1] + b[m]) / 2; }
+
+  // ---------------------------------------------------------------- svg + dom helpers
+  function el(tag, attrs, parent, text) {
+    var e = document.createElementNS(NS, tag), st = '';
+    if (attrs && tag === 'text') ['fill', 'font-size', 'font-weight'].forEach(function (k) { if (attrs[k] !== undefined && attrs[k] !== null) st += k + ':' + attrs[k] + (k === 'font-size' && typeof attrs[k] === 'number' ? 'px' : '') + ';'; });
+    if (attrs) for (var k in attrs) if (attrs[k] !== undefined && attrs[k] !== null && !(tag === 'text' && (k === 'fill' || k === 'font-size' || k === 'font-weight'))) e.setAttribute(k, attrs[k]);
+    if (st) e.setAttribute('style', st);
+    if (text !== undefined) e.textContent = text;
+    if (parent) parent.appendChild(e);
+    return e;
+  }
+  function svgIn(box, w, h) { box.textContent = ''; var s = el('svg', { width: w, height: h, viewBox: '0 0 ' + w + ' ' + h, role: 'img' }, box); return s; }
+  function $(id) { return document.getElementById(id); }
+  function html(id, s) { $(id).innerHTML = s; }
+  function txt(id, s) { $(id).textContent = s; }
+  function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+  function width(box) { return Math.max(260, Math.floor(box.getBoundingClientRect().width)); }
+  function niceStep(v) { if (v <= 0) return 1; var p = Math.pow(10, Math.floor(Math.log10(v))), f = v / p; return (f <= 1 ? 1 : f <= 2 ? 2 : f <= 2.5 ? 2.5 : f <= 5 ? 5 : 10) * p; }
+  function niceMax(v) { if (v <= 0) return 1; var st = niceStep(v / 4); return Math.ceil(v / st - 1e-9) * st; }
+  function ticks(mx) { var st = niceStep(mx / 4), out = []; for (var v = 0; v <= mx + 1e-9; v += st) out.push(v); return out; }
+  function cssv(name) { return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
+  function ellipsis(s, n) { return s.length > n ? s.slice(0, n - 1) + '…' : s; }
+
+  // tooltip: rows are [value, label] pairs, set with textContent
+  var tip = $('tip');
+  function showTip(ev, title, rows) {
+    tip.textContent = '';
+    if (title) { var b = document.createElement('b'); b.textContent = title; tip.appendChild(b); }
+    (rows || []).forEach(function (r) {
+      var d = document.createElement('div'); d.className = 'r';
+      var a = document.createElement('span'); a.className = 'm'; a.textContent = r[1];
+      var v = document.createElement('span'); v.textContent = r[0];
+      d.appendChild(a); d.appendChild(v); tip.appendChild(d);
+    });
+    tip.classList.add('on'); moveTip(ev);
+  }
+  function moveTip(ev) {
+    var x = ev.clientX + 14, y = ev.clientY + 14, r = tip.getBoundingClientRect();
+    if (x + r.width > innerWidth - 8) x = ev.clientX - r.width - 14;
+    if (y + r.height > innerHeight - 8) y = ev.clientY - r.height - 14;
+    tip.style.left = x + 'px'; tip.style.top = y + 'px';
+  }
+  function hideTip() { tip.classList.remove('on'); }
+  function hover(node, title, rows) {
+    node.addEventListener('pointermove', function (ev) { showTip(ev, typeof title === 'function' ? title() : title, typeof rows === 'function' ? rows() : rows); });
+    node.addEventListener('pointerleave', hideTip);
+    node.addEventListener('focus', function () { var r = node.getBoundingClientRect(); showTip({ clientX: r.left + r.width / 2, clientY: r.top }, typeof title === 'function' ? title() : title, typeof rows === 'function' ? rows() : rows); });
+    node.addEventListener('blur', hideTip);
+  }
+
+  // data tables (the readable twin of each chart)
+  var TABLES = {};
+  function table(key, head, rows, numCols) {
+    TABLES[key] = { head: head, rows: rows, num: numCols || [] };
+    var box = $('tbl-' + key); if (!box.hidden) drawTable(key);
+  }
+  function drawTable(key) {
+    var tb = TABLES[key], box = $('tbl-' + key); box.textContent = '';
+    if (!tb) return;
+    var tbl = document.createElement('table'), tr = document.createElement('tr');
+    tb.head.forEach(function (h, j) { var th = document.createElement('th'); th.textContent = h; if (tb.num.indexOf(j) >= 0) th.className = 'num'; tr.appendChild(th); });
+    var thead = document.createElement('thead'); thead.appendChild(tr); tbl.appendChild(thead);
+    var tbody = document.createElement('tbody');
+    tb.rows.forEach(function (r) { var tr2 = document.createElement('tr'); r.forEach(function (c, j) { var td = document.createElement('td'); td.textContent = c; if (tb.num.indexOf(j) >= 0) td.className = 'num'; tr2.appendChild(td); }); tbody.appendChild(tr2); });
+    tbl.appendChild(tbody); box.appendChild(tbl);
+  }
+
+  // ---------------------------------------------------------------- hero
+  function weekly(list, dayArr, cut, weeks) {   // counts per 7-day bin ending at cut; index 0 = oldest
+    var w = new Array(weeks).fill(0);
+    list.forEach(function (i) { var b = Math.floor((cut - dayArr[i]) / 7); if (b >= 0 && b < weeks) w[weeks - 1 - b]++; });
+    return w;
+  }
+  function spark(svg, vals, w, h, hot) {
+    var mx = Math.max.apply(null, vals.concat([1])), n = vals.length, pad = 3;
+    var x = function (i) { return pad + i * (w - 2 * pad) / (n - 1); }, y = function (v) { return h - 3 - v / mx * (h - 8); };
+    var dpath = vals.map(function (v, i) { return (i ? 'L' : 'M') + x(i).toFixed(1) + ',' + y(v).toFixed(1); }).join('');
+    el('path', { d: dpath + 'L' + x(n - 1) + ',' + (h - 2) + 'L' + x(0) + ',' + (h - 2) + 'Z', fill: 'var(--accent-soft)', stroke: 'none' }, svg);
+    el('path', { d: dpath, fill: 'none', stroke: 'var(--prior)', 'stroke-width': 1.5, 'stroke-linejoin': 'round' }, svg);
+    var k = hot || 4, d2 = vals.slice(n - k).map(function (v, i) { return (i ? 'L' : 'M') + x(n - k + i).toFixed(1) + ',' + y(v).toFixed(1); }).join('');
+    el('path', { d: d2, fill: 'none', stroke: 'var(--accent)', 'stroke-width': 2, 'stroke-linejoin': 'round', 'stroke-linecap': 'round' }, svg);
+    el('circle', { cx: x(n - 1), cy: y(vals[n - 1]), r: 3, fill: 'var(--accent)', stroke: 'var(--surface)', 'stroke-width': 1.5 }, svg);
+  }
+  function deltaHtml(r, label) {
+    if (r === null || !isFinite(r)) return '<span class="delta flat">' + esc(label || '') + '</span>';
+    var cls = r > 0.005 ? 'up' : r < -0.005 ? 'down' : 'flat', ar = r > 0.005 ? '▲' : r < -0.005 ? '▼' : '■';
+    return '<span class="delta ' + cls + '">' + ar + ' ' + spct(r) + '</span> <span class="s">' + esc(label || '') + '</span>';
+  }
+
+  function hero(V) {
+    var nc = V.nc.length, def = V.df.length;
+    var nc25 = upTo(V.n25, N25.d, CUT25), def25 = 0, i;
+    V.f25.forEach(function (j) { if (N25.d[F25.n[j]] <= CUT25) def25++; });
+    var pnc = S.cable ? V.pnc : nc, pdef = S.cable ? V.pdf.length : def;
+    var rNc = nc25 ? pnc / nc25 - 1 : null, rDef = def25 ? pdef / def25 - 1 : null;
+    // recent window: from the first day of (as-of month - 2), same calendar dates both years
+    var useDef = S.unit === 'def';
+    function windows(def) {
+      var w = { rec26: 0, rec25: 0, early26: 0, early25: 0 };
+      if (def) {
+        V.pdf.forEach(function (j) { var d = NC.d[DF.n[j]]; if (d >= REC26) w.rec26++; else w.early26++; });
+        V.f25.forEach(function (j) { var d = N25.d[F25.n[j]]; if (d > CUT25) return; if (d >= REC25) w.rec25++; else w.early25++; });
+      } else {
+        V.pncL.forEach(function (j) { if (NC.d[j] >= REC26) w.rec26++; else w.early26++; });
+        V.n25.forEach(function (j) { var d = N25.d[j]; if (d > CUT25) return; if (d >= REC25) w.rec25++; else w.early25++; });
+      }
+      w.rRec = w.rec25 ? w.rec26 / w.rec25 - 1 : null; w.rEarly = w.early25 ? w.early26 / w.early25 - 1 : null;
+      return w;
+    }
+    var WN = windows(false), WU = useDef ? windows(true) : WN;
+    var rRec = WN.rRec, rEarly = WN.rEarly, rec26 = WU.rec26, rec25 = WU.rec25;
+    V.rRec = WU.rRec; V.rEarly = WU.rEarly; V.rRecNc = rRec; V.rEarlyNc = rEarly;
+    // year-end: Y0 months after the cut, scaled by the recent pace or the year's pace
+    var rest25 = 0;
+    if (useDef) V.f25.forEach(function (j) { if (N25.d[F25.n[j]] > CUT25) rest25++; }); else V.n25.forEach(function (j) { if (N25.d[j] > CUT25) rest25++; });
+    var cur = useDef ? pdef : (S.cable ? V.pnc : nc), ytd25 = useDef ? def25 : nc25;
+    var endLow = cur + rest25 * (rec25 ? rec26 / rec25 : 1), endHigh = cur + rest25 * (ytd25 ? cur / ytd25 : 1);
+    if (endLow > endHigh) { var tmp = endLow; endLow = endHigh; endHigh = tmp; }
+    V.end = [endLow, endHigh];
+
+    // the sentence
+    var mName = L().monthsLong[RECENT_START_MONTH];
+    var s = fill(L().hero1, { n: num(nc), d: rNc === null ? '—' : spct(rNc), y0: Y0, c: rNc > 0.005 ? 'bad' : 'good' });
+    if (rNc !== null && rRec !== null && rEarly !== null) {
+      if (rRec < -0.005 && rEarly > 0) s += fill(L().heroBetter, { m: mName, r: spct(rRec), y0: Y0 });
+      else if (rRec < rEarly - 0.15) s += fill(L().heroClose, { m: mName, r: spct(rRec) });
+      else if (rRec > rEarly + 0.15) s += fill(L().heroWide, { m: mName, r: spct(rRec) });
+      else s += fill(L().heroSame, { m: mName, r: spct(rRec) });
+    }
+    if (S.cable) s = s.replace(/NCs?\b/, S.lang === 'fr' ? 'NC avec un défaut câble' : 'NCs with a cable defect');
+    html('h0', S.findings ? s : esc(L().name0));
+    txt('h0eye', t('eye0'));
+    txt('h0lede', t('lede'));
+
+    // tiles
+    var cost = S.cable ? sum(V.df, function (j) { return DF.c[j]; }) : sum(V.nc, function (j) { return NC.c[j]; });
+    var cableN = 0, pc26 = 0, pc25 = 0;
+    V.df.forEach(function (j) { if (DF.cb[j]) cableN++; });
+    // cable year-on-year: parser flags on both years, all defects of the selection
+    for (i = 0; i < nDf; i++) { var n = DF.n[i]; if (V.ncOk[n] && !NC.sc[n] && DF.pcb[i]) pc26++; }
+    for (i = 0; i < nF25; i++) { var n2 = F25.n[i]; if (V.ok25[n2] && F25.pcb[i] && N25.d[n2] <= CUT25) pc25++; }
+    var rCab = pc25 ? pc26 / pc25 - 1 : null;
+    var w26 = weekly(V.nc, NC.d, ASOF_DAY, 26);
+    var dw = new Array(26).fill(0); V.df.forEach(function (j) { var b = Math.floor((ASOF_DAY - NC.d[DF.n[j]]) / 7); if (b >= 0 && b < 26) dw[25 - b]++; });
+    var cw = new Array(26).fill(0); V.df.forEach(function (j) { if (!DF.cb[j]) return; var b = Math.floor((ASOF_DAY - NC.d[DF.n[j]]) / 7); if (b >= 0 && b < 26) cw[25 - b]++; });
+    var kw = new Array(26).fill(0); V.nc.forEach(function (j) { var b = Math.floor((ASOF_DAY - NC.d[j]) / 7); if (b >= 0 && b < 26) kw[25 - b] += NC.c[j]; });
+    var tiles = [
+      { k: t('kNc'), v: num(nc), s: deltaHtml(rNc, t('vs')), sp: w26, id: 'nc' },
+      { k: t('kDef'), v: num(def), s: deltaHtml(rDef, t('vs')), sp: dw, id: 'def' },
+      { k: t('kCable'), v: num(cableN), s: (S.cable ? '' : '<span class="s">' + esc(t('sharePart', { p: pct(def ? cableN / def : 0, 1) })) + '</span><br>') + deltaHtml(rCab, t('vs') + ' *'), sp: cw, id: 'cable' },
+      { k: t('kCost'), v: keur(cost), s: '<span class="s">' + esc(t('perNc', { v: eur(nc ? Math.round(cost / nc) : 0) })) + '</span>', sp: kw, id: 'cost' },
+      { k: t('kCli'), v: num(V.cli.length), s: '<span class="s">' + esc(t('cliS', { n: num(V.dcli.length) })) + '</span>', sp: weekly(V.cli, NC.d, ASOF_DAY, 26), id: 'cli' }
+    ];
+    var box = $('tiles'); box.textContent = '';
+    tiles.forEach(function (tl) {
+      var d = document.createElement('div'); d.className = 'tile'; d.setAttribute('data-k', tl.id);
+      d.innerHTML = '<div class="k">' + esc(tl.k) + '</div><div class="v" data-v="' + tl.id + '">' + esc(tl.v) + '</div><div>' + tl.s + '</div>';
+      var sv = el('svg', { class: 'spark', viewBox: '0 0 160 30', preserveAspectRatio: 'none' }); spark(sv, tl.sp, 160, 30); d.appendChild(sv);
+      box.appendChild(d);
+    });
+    V.kpi = { nc: nc, def: def, cost: cost, cable: cableN, cli: V.cli.length, dcli: V.dcli.length, nc25: nc25, def25: def25 };
+    monthly(V);
+    signals(V);
+  }
+
+  function monthly(V) {
+    var box = $('ymChart'), w = width(box), h = 250, m = { l: 34, r: 8, t: 26, b: 26 };
+    var svg = svgIn(box, w, h), useDef = S.unit === 'def';
+    var a25 = new Array(12).fill(0), a26 = new Array(12).fill(0), cutM = ASOF.getUTCMonth();
+    if (useDef) {
+      V.f25.forEach(function (j) { var d = N25.d[F25.n[j]]; a25[monthOf(Y0, d)]++; });
+      V.pdf.forEach(function (j) { a26[monthOf(Y, NC.d[DF.n[j]])]++; });
+    } else {
+      V.n25.forEach(function (j) { a25[monthOf(Y0, N25.d[j])]++; });
+      V.pncL.forEach(function (j) { a26[monthOf(Y, NC.d[j])]++; });
+    }
+    // the as-of month of Y0, cut at the same date, for the like-for-like pair
+    var cut25 = 0;
+    if (useDef) V.f25.forEach(function (j) { var d = N25.d[F25.n[j]]; if (monthOf(Y0, d) === cutM && d <= CUT25) cut25++; });
+    else V.n25.forEach(function (j) { var d = N25.d[j]; if (monthOf(Y0, d) === cutM && d <= CUT25) cut25++; });
+    var pace = V.rRec === null ? 1 : 1 + V.rRec;
+    var proj = a25.map(function (v, k) { return k > cutM ? v * pace : null; });
+    var mx = niceMax(Math.max.apply(null, a25.concat(a26, proj.filter(function (v) { return v !== null; }))));
+    var iw = w - m.l - m.r, ih = h - m.t - m.b, bw = iw / 12, cw = Math.min(16, bw / 2 - 3);
+    var y = function (v) { return m.t + ih - v / mx * ih; };
+    ticks(mx).forEach(function (gv) { el('line', { x1: m.l, x2: w - m.r, y1: y(gv), y2: y(gv), class: gv ? 'gridline' : 'base' }, svg); el('text', { x: m.l - 6, y: y(gv) + 4, 'text-anchor': 'end', class: 'tick' }, svg, num(gv)); });
+    // quarter gaps above the bars
+    for (var q = 0; q < 4; q++) {
+      var qs = q * 3, qe = Math.min(qs + 2, cutM); if (qs > cutM) break;
+      var s25 = 0, s26 = 0;
+      for (var k = qs; k <= qe; k++) { s25 += (k === cutM ? cut25 : a25[k]); s26 += a26[k]; }
+      if (!s25) continue;
+      var x0 = m.l + qs * bw + 4, x1 = m.l + (qe + 1) * bw - 4, r = s26 / s25 - 1;
+      el('line', { x1: x0, x2: x1, y1: 12, y2: 12, stroke: 'var(--rule)' }, svg);
+      el('text', { x: (x0 + x1) / 2, y: 9, 'text-anchor': 'middle', class: 'val', 'font-weight': 650, fill: r > 0.05 ? 'var(--escape)' : r < -0.05 ? 'var(--good)' : 'var(--ink-2)' }, svg, (S.lang === 'fr' ? 'T' : 'Q') + (q + 1) + ' ' + spct(r));
+    }
+    for (var mo = 0; mo < 12; mo++) {
+      var cx = m.l + mo * bw + bw / 2;
+      var v25 = a25[mo], v26 = mo <= cutM ? a26[mo] : null;
+      bar(svg, cx - cw - 1, cw, y(v25), y(0), 'var(--prior)');
+      if (mo === cutM) el('line', { x1: cx - cw - 1, x2: cx - 1, y1: y(cut25), y2: y(cut25), stroke: 'var(--ink-2)', 'stroke-width': 1.5, 'stroke-dasharray': '2 2' }, svg);
+      if (v26 !== null) bar(svg, cx + 1, cw, y(v26), y(0), 'var(--accent)');
+      else if (proj[mo] !== null) el('rect', { x: cx + 1.5, y: y(proj[mo]), width: cw - 1, height: Math.max(0, y(0) - y(proj[mo])), rx: 2, fill: 'none', stroke: 'var(--accent)', 'stroke-width': 1.2, 'stroke-dasharray': '3 2' }, svg);
+      el('text', { x: cx, y: h - 8, 'text-anchor': 'middle', class: 'tick' }, svg, bw < 40 ? L().months[mo].charAt(0).toUpperCase() : L().months[mo]);
+      var hitR = el('rect', { x: m.l + mo * bw, y: m.t, width: bw, height: ih, fill: 'transparent', class: 'hit', tabindex: 0 }, svg);
+      (function (mo, v25, v26) {
+        hover(hitR, L().monthsLong[mo], function () {
+          var rows = [[num(v25), String(Y0)]];
+          if (mo === cutM) rows.push([num(cut25), Y0 + ' ≤ ' + ASOF.getUTCDate()]);
+          if (v26 !== null) rows.push([num(v26), String(Y)]); else rows.push(['≈ ' + num(proj[mo]), S.lang === 'fr' ? 'projection' : 'projection']);
+          if (v26 !== null && (mo === cutM ? cut25 : v25)) rows.push([spct(v26 / (mo === cutM ? cut25 : v25) - 1), S.lang === 'fr' ? 'écart' : 'gap']);
+          return rows;
+        });
+      })(mo, v25, v26);
+    }
+    txt('ymTitle', t('ymTitle'));
+    txt('ymNote', t('ymNote', { m: L().monthsLong[cutM], d: ASOF.getUTCDate() }) + ' ' + t('endNote', { a: num(V.end[0]), b: num(V.end[1]), u: S.unit === 'def' ? t('defTxt') : t('nTxt') }));
+    html('ymLegend', '<span><i class="sw" style="background:var(--prior)"></i>' + Y0 + '</span><span><i class="sw" style="background:var(--accent)"></i>' + Y + '</span><span><i class="sw" style="border:1.2px dashed var(--accent);background:none"></i>' + esc(t('lgProj')) + '</span>');
+    table('ym', [L().tbl.month, String(Y0), String(Y)], L().months.map(function (mn, k) { return [mn, num(a25[k]), k <= cutM ? num(a26[k]) : (proj[k] === null ? '' : '≈ ' + num(proj[k]))]; }), [1, 2]);
+    V.months = { a25: a25, a26: a26, cut25: cut25 };
+  }
+  function bar(svg, x, w, y0, ybase, fill) {   // 4px rounded data end, square at the baseline
+    var h = Math.max(0, ybase - y0), r = Math.min(3, h, w / 2);
+    if (h <= 0) return null;
+    return el('path', { d: 'M' + x + ',' + ybase + 'V' + (y0 + r) + 'Q' + x + ',' + y0 + ' ' + (x + r) + ',' + y0 + 'H' + (x + w - r) + 'Q' + (x + w) + ',' + y0 + ' ' + (x + w) + ',' + (y0 + r) + 'V' + ybase + 'Z', fill: fill }, svg);
+  }
+  function hbar(svg, x0, y, len, h, fill) {    // horizontal bar from x0, rounded at the data end
+    var r = Math.min(3, len, h / 2); if (len <= 0) return null;
+    return el('path', { d: 'M' + x0 + ',' + y + 'H' + (x0 + len - r) + 'Q' + (x0 + len) + ',' + y + ' ' + (x0 + len) + ',' + (y + r) + 'V' + (y + h - r) + 'Q' + (x0 + len) + ',' + (y + h) + ' ' + (x0 + len - r) + ',' + (y + h) + 'H' + x0 + 'Z', fill: fill }, svg);
+  }
+
+  // ---------------------------------------------------------------- signals (rules, no judgement)
+  function poisUpper(k, lam) { if (k <= 0) return 1; var p = Math.exp(-lam), c = p; for (var i = 1; i < k; i++) { p *= lam / i; c += p; } return Math.max(0, 1 - c); }
+  function poisLower(k, lam) { var p = Math.exp(-lam), c = p; for (var i = 1; i <= k; i++) { p *= lam / i; c += p; } return Math.min(1, c); }
+  function signals(V) {
+    var out = [], i;
+    // weeks as 7-day bins back from the as-of date; shutdown weeks (< 10 defects) left out of the baseline
+    var NW = Math.floor(ASOF_DAY / 7), tot = new Array(NW).fill(0), byR = {};
+    V.df.forEach(function (j) { var b = Math.floor((ASOF_DAY - NC.d[DF.n[j]]) / 7); if (b >= NW) return; tot[b]++; var r = DF.r[j]; (byR[r] = byR[r] || new Array(NW).fill(0))[b]++; });
+    var active = []; for (i = 4; i < NW; i++) if (tot[i] >= 10) active.push(i);
+    if (active.length >= 8) {
+      Object.keys(byR).forEach(function (r) {
+        var w = byR[r], obs = w[0] + w[1] + w[2] + w[3], base = 0;
+        active.forEach(function (b) { base += w[b]; });
+        var exp = base / active.length * 4;
+        var pu = poisUpper(obs, exp), pl = poisLower(obs, exp);
+        var series = []; for (var b = 15; b >= 0; b--) series.push(w[b] || 0);
+        if (obs >= 8 && obs >= 1.25 * exp && pu < 0.05) out.push({ kind: 'up', strong: pu < 0.01, p: pu, r: +r, obs: obs, exp: exp, series: series });
+        else if (exp >= 8 && obs <= 0.6 * exp && pl < 0.05) out.push({ kind: 'down', strong: pl < 0.01, p: pl, r: +r, obs: obs, exp: exp, series: series });
+      });
+    }
+    out.sort(function (a, b) { return a.p - b.p; });
+    out = out.slice(0, 2);
+    // a location on several aircraft within four weeks
+    var fm = {};
+    V.df.forEach(function (j) { var f = DF.f[j]; if (f < 0) return; var n = DF.n[j]; if (ASOF_DAY - NC.d[n] >= 28) return; var key = NC.l[n] + '|' + f; (fm[key] = fm[key] || {})[NC.m[n]] = 1; });
+    var best = null;
+    Object.keys(fm).forEach(function (k) { var c = Object.keys(fm[k]).length; if (c >= 3 && (!best || c > best.k)) best = { key: k, k: c }; });
+    if (best) {
+      var parts = best.key.split('|'), fi = +parts[1], li = +parts[0];
+      var rc = {}; V.df.forEach(function (j) { if (DF.f[j] === fi && NC.l[DF.n[j]] === li) rc[DF.r[j]] = (rc[DF.r[j]] || 0) + 1; });
+      var top = Object.keys(rc).sort(function (a, b) { return rc[b] - rc[a]; })[0];
+      var ser = new Array(16).fill(0); V.df.forEach(function (j) { if (DF.f[j] !== fi || NC.l[DF.n[j]] !== li) return; var b = Math.floor((ASOF_DAY - NC.d[DF.n[j]]) / 7); if (b < 16) ser[15 - b]++; });
+      out.push({ kind: 'fin', f: fi, l: li, k: best.k, rca: top === undefined ? -1 : +top, series: ser });
+    }
+    // customer returns in four weeks
+    var cliRecent = 0; V.cli.forEach(function (j) { if (ASOF_DAY - NC.d[j] < 28) cliRecent++; });
+    if (cliRecent >= 2) { var before = V.cli.length - cliRecent, months = (ASOF_DAY - 28) / 30.4; var cs = new Array(16).fill(0); V.cli.forEach(function (j) { var b = Math.floor((ASOF_DAY - NC.d[j]) / 7); if (b < 16) cs[15 - b]++; }); out.push({ kind: 'cli', n: cliRecent, a: months > 0 ? before / months : 0, series: cs }); }
+    // NCs still open after 30 days
+    var old = 0, oldest = 0; V.nc.forEach(function (j) { if (!NC.op[j]) return; var age = ASOF_DAY - NC.d[j]; if (age > 30) { old++; oldest = Math.max(oldest, age); } });
+    if (old) out.push({ kind: 'open', n: old, d: oldest });
+    V.signals = out;
+    var box = $('signals'); box.textContent = '';
+    var h = document.createElement('h3'); h.textContent = t('sigTitle'); box.appendChild(h);
+    if (!out.length) { var nn = document.createElement('div'); nn.className = 'sig-none'; nn.textContent = t('sigNone'); box.appendChild(nn); return; }
+    out.forEach(function (sg) {
+      var b = document.createElement('button'); b.type = 'button';
+      var cls = (sg.kind === 'up' && sg.strong) || sg.kind === 'cli' ? 'crit' : sg.kind === 'up' ? 'warn' : sg.kind === 'down' ? 'good' : sg.kind === 'fin' ? 'warn' : 'info';
+      b.className = 'sig ' + cls; b.setAttribute('data-sig', sg.kind);
+      var icon = sg.kind === 'up' ? '▲' : sg.kind === 'down' ? '▼' : sg.kind === 'fin' ? '⟳' : sg.kind === 'cli' ? '!' : '◷';
+      var main = '', small = '';
+      var pTxt = sg.p !== undefined ? (sg.p < 0.001 ? 'p < 0,001' : 'p = ' + num(sg.p, 3)).replace(',', S.lang === 'fr' ? ',' : '.') : '';
+      if (S.lang === 'en') pTxt = pTxt.replace(/(\d),(\d)/, '$1.$2');
+      if (sg.kind === 'up') { main = fill(L().sigUp, { r: esc(nm(RCA[sg.r])), o: num(sg.obs), e: num(sg.exp) }); small = t('sigUpS', { p: pTxt }); }
+      if (sg.kind === 'down') { main = fill(L().sigDown, { r: esc(nm(RCA[sg.r])), o: num(sg.obs), e: num(sg.exp) }); small = t('sigUpS', { p: pTxt }); }
+      if (sg.kind === 'fin') { main = fill(L().sigFin, { f: esc(DICT.fin[sg.f]), k: num(sg.k) }); small = fill(L().sigFinS, { r: sg.rca >= 0 ? nm(RCA[sg.rca]) : '' }); }
+      if (sg.kind === 'cli') { main = fill(L().sigCli, { n: num(sg.n) }); small = fill(L().sigCliS, { a: num(sg.a, 1) }); }
+      if (sg.kind === 'open') { main = fill(sg.n === 1 ? L().sigOpen1 : L().sigOpen, { n: num(sg.n) }); small = fill(L().sigOpenS, { d: num(sg.d) }); }
+      b.innerHTML = '<span class="ic" aria-hidden="true">' + icon + '</span><span class="tx">' + main + '<small>' + esc(small) + '</small></span>';
+      if (sg.series) { var sv = el('svg', { viewBox: '0 0 84 28', preserveAspectRatio: 'none' }); spark(sv, sg.series, 84, 28); b.appendChild(sv); } else b.appendChild(document.createElement('span'));
+      b.addEventListener('click', function () {
+        if (sg.kind === 'up' || sg.kind === 'down') { S.focusCat = DICT.rcaCat[sg.r]; render(); go('s2'); }
+        else if (sg.kind === 'fin') { S.focusFin = sg.f; S.msn = null; render(); go('s5'); }
+        else if (sg.kind === 'cli') { go('s2'); }
+        else go('s5');
+      });
+      box.appendChild(b);
+    });
+  }
+  function go(id) { var e = $(id); if (!e) return; if (document.body.classList.contains('presenting')) { for (var k = 0; k < DECK.length; k++) if (DECK[k][0] === id) { showSlide(k); break; } } else e.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' }); }
+
+  // ---------------------------------------------------------------- 01 what grew
+  function growth(V) {
+    var c25 = {}, c26 = {}, k25 = {}, k26 = {}, i;
+    V.f25.forEach(function (j) { if (N25.d[F25.n[j]] > CUT25) return; c25[F25.pr[j]] = (c25[F25.pr[j]] || 0) + 1; k25[F25.pk[j]] = (k25[F25.pk[j]] || 0) + 1; });
+    V.pdf.forEach(function (j) { c26[DF.pr[j]] = (c26[DF.pr[j]] || 0) + 1; k26[DF.pk[j]] = (k26[DF.pk[j]] || 0) + 1; });
+    var tot25 = 0, tot26 = 0; Object.keys(c25).forEach(function (k) { tot25 += c25[k]; }); Object.keys(c26).forEach(function (k) { tot26 += c26[k]; });
+    var rows = []; RCA.forEach(function (r, k) { var a = c25[k] || 0, b = c26[k] || 0; if (a + b) rows.push({ r: k, a: a, b: b, d: b - a }); });
+    rows.sort(function (x, y) { return y.d - x.d || y.b - x.b; });
+    var dTot = tot26 - tot25;
+    // headline: the category that carries most of the rise
+    var cats = CAT.map(function (c, k) { return { k: k, d: (k26[k] || 0) - (k25[k] || 0) }; }).sort(function (a, b) { return b.d - a.d; });
+    // cable against the rest (parser flags both years, full selection, not the cable filter)
+    var pc25 = 0, pc26 = 0, all25 = 0, all26 = 0;
+    var ok25 = new Uint8Array(n25); for (i = 0; i < n25; i++) if (inLinePhase(N25.l[i], N25.ph[i]) && N25.d[i] <= CUT25) ok25[i] = 1;
+    for (i = 0; i < nF25; i++) if (ok25[F25.n[i]]) { all25++; if (F25.pcb[i]) pc25++; }
+    for (i = 0; i < nDf; i++) { var nn = DF.n[i]; if (!NC.sc[nn] && inLinePhase(NC.l[nn], NC.ph[nn])) { all26++; if (DF.pcb[i]) pc26++; } }
+    var rC = pc25 ? pc26 / pc25 - 1 : null, rA = all25 ? all26 / all25 - 1 : null, rO = (all25 - pc25) ? (all26 - pc26) / (all25 - pc25) - 1 : null;
+    V.growth = { tot25: tot25, tot26: tot26, cable: [pc25, pc26], all: [all25, all26] };
+    txt('r1n', t('r1n')); txt('r1d', t('r1d'));
+    if (S.findings) {
+      if (dTot > 0 && cats[0].d > 0) html('h1t', fill(L().h1, { c: esc(nm(CAT[cats[0].k])), p: pct(cats[0].d / dTot), y0: Y0 }));
+      else html('h1t', fill(L().h1down, { d: tot25 ? spct(tot26 / tot25 - 1) : '—', y0: Y0 }));
+      html('h1s', fill(L().h1s, { cd: rC === null ? '—' : spct(rC), ad: rA === null ? '—' : spct(rA) }));
+    } else { txt('h1t', S.lang === 'fr' ? 'Évolution par cause depuis ' + Y0 : 'Change by cause since ' + Y0); txt('h1s', ''); }
+    txt('c1aT', t('c1aT')); txt('c1aN', t('c1aN', { d: dateTxt(ASOF).replace(/ \d{4}$/, '') }));
+    // dumbbell: top 14 causes by size of the change
+    var top = rows.slice().sort(function (x, y) { return Math.abs(y.d) - Math.abs(x.d); }).slice(0, 14).sort(function (x, y) { return y.d - x.d; });
+    var box = $('growChart'), w = width(box), rh = 26, m = { l: Math.min(230, w * 0.44), r: w < 500 ? 46 : 64, t: 18, b: 22 };
+    var h = m.t + m.b + rh * top.length, svg = svgIn(box, w, h);
+    var mx = niceMax(Math.max.apply(null, top.map(function (r) { return Math.max(r.a, r.b); }).concat([1])));
+    var x = function (v) { return m.l + v / mx * (w - m.l - m.r); };
+    ticks(mx).forEach(function (gv) { el('line', { x1: x(gv), x2: x(gv), y1: m.t - 6, y2: h - m.b, class: 'gridline' }, svg); el('text', { x: x(gv), y: h - 6, 'text-anchor': 'middle', class: 'tick' }, svg, num(gv)); });
+    top.forEach(function (r, k) {
+      var yy = m.t + k * rh + rh / 2, foc = S.focusCat < 0 || DICT.rcaCat[r.r] === S.focusCat;
+      var gg = el('g', { opacity: foc ? 1 : 0.28, class: 'hit', tabindex: 0, 'data-rca': r.r }, svg);
+      el('rect', { x: 0, y: yy - rh / 2, width: w, height: rh, fill: 'transparent' }, gg);
+      el('text', { x: m.l - 10, y: yy + 4, 'text-anchor': 'end', class: 'lab' }, gg, ellipsis(nm(RCA[r.r]), Math.max(8, Math.floor((m.l - 14) / 6.3))));
+      el('line', { x1: x(r.a), x2: x(r.b), y1: yy, y2: yy, stroke: r.d >= 0 ? 'var(--accent-mid)' : 'var(--prior)', 'stroke-width': 3, 'stroke-linecap': 'round' }, gg);
+      el('circle', { cx: x(r.a), cy: yy, r: 4.5, fill: 'var(--prior)', stroke: 'var(--surface)', 'stroke-width': 2 }, gg);
+      el('circle', { cx: x(r.b), cy: yy, r: 5, fill: 'var(--accent)', stroke: 'var(--surface)', 'stroke-width': 2 }, gg);
+      el('text', { x: w - m.r + 8, y: yy + 4, class: 'val', 'font-weight': 650, fill: r.d > 0 ? 'var(--escape)' : r.d < 0 ? 'var(--good)' : 'var(--ink-2)' }, gg, (r.d > 0 ? '+' : r.d < 0 ? '−' : '') + num(Math.abs(r.d)));
+      hover(gg, nm(RCA[r.r]), function () { return [[num(r.a), String(Y0)], [num(r.b), String(Y)], [(r.d > 0 ? '+' : r.d < 0 ? '−' : '') + num(Math.abs(r.d)) + (r.a ? ' (' + spct(r.b / r.a - 1) + ')' : ''), S.lang === 'fr' ? 'écart' : 'change']]; });
+      gg.addEventListener('click', function () { S.focusCat = S.focusCat === DICT.rcaCat[r.r] ? -1 : DICT.rcaCat[r.r]; render(); });
+    });
+    html('growLegend', '<span><i class="sw dot" style="background:var(--prior)"></i>' + Y0 + '</span><span><i class="sw dot" style="background:var(--accent)"></i>' + Y + '</span>');
+    table('grow', [L().tbl.cause, L().tbl.cat, String(Y0), String(Y), '±'], rows.map(function (r) { return [nm(RCA[r.r]), nm(CAT[DICT.rcaCat[r.r]]), num(r.a), num(r.b), (r.d > 0 ? '+' : '') + num(r.d)]; }), [2, 3, 4]);
+    // index chart: cable vs other, 100 = Y0
+    txt('c1bT', t('c1bT')); txt('c1bN', t('c1bN'));
+    var b2 = $('cableChart'), w2 = width(b2), items = [{ k: t('idxAll'), a: all25, b: all26, c: 'var(--ink-2)' }, { k: t('idxOther'), a: all25 - pc25, b: all26 - pc26, c: 'var(--prior)' }, { k: t('idxCable'), a: pc25, b: pc26, c: 'var(--cable)' }];
+    var h2 = 64 + items.length * 52, svg2 = svgIn(b2, w2, h2), m2 = { l: 8, r: 70, t: 10 };
+    var vals = items.map(function (it) { return it.a ? 100 * it.b / it.a : 0; }), mx2 = niceMax(Math.max.apply(null, vals.concat([120])));
+    var x2 = function (v) { return m2.l + v / mx2 * (w2 - m2.l - m2.r); };
+    el('line', { x1: x2(100), x2: x2(100), y1: m2.t, y2: h2 - 22, stroke: 'var(--ink-2)', 'stroke-width': 1, 'stroke-dasharray': '3 3' }, svg2);
+    el('text', { x: x2(100), y: h2 - 6, 'text-anchor': 'middle', class: 'tick' }, svg2, '100 = ' + Y0);
+    items.forEach(function (it, k) {
+      var yy = m2.t + 8 + k * 52, v = it.a ? 100 * it.b / it.a : 0;
+      el('text', { x: m2.l, y: yy + 2, class: 'lab-b' }, svg2, it.k);
+      el('text', { x: w2 - m2.r + 64, y: yy + 2, 'text-anchor': 'end', class: 'val' }, svg2, num(it.a) + ' → ' + num(it.b));
+      el('rect', { x: m2.l, y: yy + 10, width: x2(mx2) - m2.l, height: 14, rx: 3, fill: 'var(--track)' }, svg2);
+      hbar(svg2, m2.l, yy + 10, x2(v) - m2.l, 14, it.c);
+      el('text', { x: x2(v) + 6, y: yy + 22, class: 'val', 'font-weight': 650 }, svg2, it.a ? spct(v / 100 - 1) : '—');
+    });
+    table('cable', ['', String(Y0), String(Y), '±'], items.map(function (it) { return [it.k, num(it.a), num(it.b), it.a ? spct(it.b / it.a - 1) : '—']; }), [1, 2, 3]);
+  }
+
+  // ---------------------------------------------------------------- 02 who catches what
+  function net(V) {
+    var M = {}, tot = {}, stTot = {}, i;
+    function add(c, s) { var k = c + '|' + s; M[k] = (M[k] || 0) + 1; tot[c] = (tot[c] || 0) + 1; stTot[s] = (stTot[s] || 0) + 1; }
+    V.df.forEach(function (j) { add(DF.k[j], WHERE[NC.w[DF.n[j]]]); });
+    V.dcli.forEach(function (j) { add(DF.k[j], 'client'); });
+    var cats = CAT.map(function (c, k) { return k; }).filter(function (k) { return tot[k]; });
+    var stages = WHERE.filter(function (s) { return stTot[s]; });
+    var all = 0; cats.forEach(function (k) { all += tot[k]; });
+    // headline numbers
+    var conn = tot[CONN] || 0, connTest = M[CONN + '|test'] || 0;
+    var rates = cats.map(function (k) { return { k: k, n: tot[k], e: M[k + '|client'] || 0 }; }).filter(function (r) { return r.n >= 20; });
+    rates.sort(function (a, b) { return b.e / b.n - a.e / a.n || b.n - a.n; });
+    V.net = { M: M, tot: tot, stTot: stTot, conn: conn, connTest: connTest };
+    txt('r2n', t('r2n')); txt('r2d', t('r2d'));
+    if (S.findings) {
+      var s = '';
+      if (conn >= 20) s = fill(L().h2, { p: pct(connTest / conn) });
+      else { var topS = stages.filter(function (x) { return x !== 'client'; }).sort(function (a, b) { return stTot[b] - stTot[a]; })[0]; s = topS ? fill(L().h2alt, { s: L().stage[topS], p: pct(stTot[topS] / Math.max(1, all)) }) : ''; }
+      if (rates.length && rates[0].e > 0) s += fill(L().h2b, { c: esc(nm(CAT[rates[0].k])), e: pct(rates[0].e / rates[0].n, 1) });
+      else s += L().h2none;
+      html('h2t', s);
+      txt('h2s', t('h2s'));
+    } else { txt('h2t', S.lang === 'fr' ? 'Où les défauts sont trouvés' : 'Where defects are found'); txt('h2s', ''); }
+    txt('c2aT', t('c2aT')); txt('c2aN', t('c2aN'));
+    // layout
+    var box = $('netChart'), w = Math.max(620, width(box)), h = 470, gap = 8, nodeW = 10;
+    var svg = svgIn(box, w, h), lx = Math.min(200, w * 0.24), rx = w - Math.min(210, w * 0.27);
+    var top = 16, bottom = h - 10, cliGap = 34;
+    var avail = bottom - top - gap * (cats.length - 1);
+    var k = avail / Math.max(1, all);
+    var availR = bottom - top - gap * (stages.length - 1) - cliGap;
+    var kr = Math.min(k, availR / Math.max(1, all));
+    var kk = Math.min(k, kr);
+    var L0 = {}, yy = top;
+    cats.forEach(function (c) { L0[c] = { y: yy, h: Math.max(2, tot[c] * kk), off: 0 }; yy += L0[c].h + gap; });
+    var R0 = {}; yy = top;
+    stages.forEach(function (s) { if (s === 'client') yy += cliGap - gap; R0[s] = { y: yy, h: Math.max(2, stTot[s] * kk), off: 0 }; yy += R0[s].h + gap; });
+    // factory line
+    if (R0.client) {
+      var fy = R0.client.y - cliGap / 2 - 3;
+      el('line', { x1: rx - 30, x2: w - 4, y1: fy, y2: fy, stroke: 'var(--ink-2)', 'stroke-width': 1, 'stroke-dasharray': '4 3' }, svg);
+      el('text', { x: w - 4, y: fy - 5, 'text-anchor': 'end', class: 'tick' }, svg, L().factory);
+      el('text', { x: w - 4, y: fy + 13, 'text-anchor': 'end', class: 'tick' }, svg, L().outside);
+    }
+    var gLinks = el('g', {}, svg), links = [];
+    cats.forEach(function (c) {
+      stages.forEach(function (s) {
+        var v = M[c + '|' + s]; if (!v) return;
+        var th = Math.max(1, v * kk), a = L0[c], b = R0[s];
+        var y1 = a.y + a.off + th / 2, y2 = b.y + b.off + th / 2; a.off += v * kk; b.off += v * kk;
+        var x1 = lx + nodeW, x2 = rx, mx = (x1 + x2) / 2;
+        var p = el('path', { d: 'M' + x1 + ',' + y1 + 'C' + mx + ',' + y1 + ' ' + mx + ',' + y2 + ' ' + x2 + ',' + y2, fill: 'none', stroke: s === 'client' ? 'var(--escape)' : 'var(--flow)', 'stroke-width': th, 'stroke-opacity': s === 'client' ? 0.9 : 1, class: 'fade' }, gLinks);
+        p.setAttribute('data-c', c); p.setAttribute('data-s', s);
+        links.push(p);
+        hover(p, nm(CAT[c]) + ' → ' + L().stage[s], [[num(v), L().tbl.defects], [pct(v / tot[c], 1), S.lang === 'fr' ? 'de la cause' : 'of the cause']]);
+      });
+    });
+    function emph(c) {
+      links.forEach(function (p) {
+        var on = c < 0 || +p.getAttribute('data-c') === c, cli = p.getAttribute('data-s') === 'client';
+        p.setAttribute('stroke', cli ? 'var(--escape)' : on && c >= 0 ? 'var(--accent)' : 'var(--flow)');
+        p.setAttribute('stroke-opacity', on ? (cli ? 0.95 : c >= 0 ? 0.55 : 1) : 0.12);
+      });
+    }
+    // label positions: centred on the node, then pushed down so no two labels overlap
+    var labY = {}, prev = -1e9;
+    cats.forEach(function (c) { var a = L0[c], want = a.y + a.h / 2 + 4 - (a.h > 26 ? 7 : 0), need = a.h > 26 ? 30 : 15; labY[c] = Math.max(want, prev); prev = labY[c] + need; });
+    var over = prev - (h - 2); if (over > 0) { var back = cats.slice().reverse(), lim = h - 2; back.forEach(function (c) { var need = L0[c].h > 26 ? 30 : 15; if (labY[c] + need > lim) labY[c] = lim - need; lim = labY[c]; }); }
+    cats.forEach(function (c) {
+      var a = L0[c], aside = IDX.aside[CAT[c]];
+      var g = el('g', { class: 'hit', tabindex: 0 }, svg);
+      el('rect', { x: lx, y: a.y, width: nodeW, height: a.h, rx: 2, fill: aside ? 'var(--prior)' : 'var(--ink)' }, g);
+      el('rect', { x: 0, y: Math.min(a.y, labY[c] - 12) - 2, width: lx + nodeW, height: Math.max(a.h, 16) + 4, fill: 'transparent' }, g);
+      var ty = labY[c], centre = a.y + a.h / 2;
+      if (Math.abs(ty - (centre + 4 - (a.h > 26 ? 7 : 0))) > 3) el('path', { d: 'M' + (lx - 6) + ',' + (ty - 4) + 'L' + (lx - 1) + ',' + centre, stroke: 'var(--rule)', fill: 'none' }, g);
+      el('text', { x: lx - 8, y: ty, 'text-anchor': 'end', class: aside ? 'tick' : 'lab' }, g, ellipsis(nm(CAT[c]), 26) + (a.h > 26 ? '' : '  ' + num(tot[c])));
+      if (a.h > 26) el('text', { x: lx - 8, y: ty + 14, 'text-anchor': 'end', class: 'tick' }, g, num(tot[c]));
+      hover(g, nm(CAT[c]), function () { return stages.filter(function (s) { return M[c + '|' + s]; }).map(function (s) { return [num(M[c + '|' + s]) + ' · ' + pct(M[c + '|' + s] / tot[c]), L().stage[s]]; }); });
+      g.addEventListener('pointerenter', function () { emph(c); });
+      g.addEventListener('pointerleave', function () { emph(S.focusCat); });
+      g.addEventListener('click', function () { S.focusCat = S.focusCat === c ? -1 : c; render(); });
+    });
+    stages.forEach(function (s) {
+      var b = R0[s], cli = s === 'client';
+      el('rect', { x: rx, y: b.y, width: nodeW, height: Math.max(2, b.h), rx: 2, fill: cli ? 'var(--escape)' : 'var(--accent)' }, svg);
+      var ty = b.y + b.h / 2 + 4, big = b.h > 24 || cli;
+      el('text', { x: rx + nodeW + 8, y: ty - (big ? 7 : 0), class: 'lab-b', fill: cli ? 'var(--escape)' : null }, svg, L().stage[s] + (big ? '' : '  ' + num(stTot[s])));
+      if (big) el('text', { x: rx + nodeW + 8, y: ty + 9, class: 'tick' }, svg, num(stTot[s]) + ' · ' + pct(stTot[s] / Math.max(1, all), cli ? 1 : 0));
+    });
+    emph(S.focusCat);
+    html('netLegend', '<span><i class="sw" style="background:var(--flow)"></i>' + esc(S.lang === 'fr' ? 'Trouvé dans l’usine' : 'Found in the plant') + '</span><span><i class="sw" style="background:var(--escape)"></i>' + esc(S.lang === 'fr' ? 'Trouvé chez le client' : 'Found at the customer') + '</span><span>' + esc(S.lang === 'fr' ? 'Survoler une cause pour suivre ses fils ; cliquer pour la garder.' : 'Hover a cause to follow its threads; click to keep it.') + '</span>');
+    table('net', [L().tbl.cat].concat(stages.map(function (s) { return L().stage[s]; }), [L().tbl.defects]), cats.map(function (c) { return [nm(CAT[c])].concat(stages.map(function (s) { return num(M[c + '|' + s] || 0); }), [num(tot[c])]); }), stages.map(function (s, k) { return k + 1; }).concat([stages.length + 1]));
+    // escape rates
+    txt('c2bT', t('c2bT')); txt('c2bN', t('c2bN'));
+    var b2 = $('escChart'), w2 = width(b2);
+    if (!rates.some(function (r) { return r.e; })) { b2.textContent = ''; var p0 = document.createElement('p'); p0.className = 'note'; p0.textContent = t('escNone'); b2.appendChild(p0); table('esc', [L().tbl.cat, L().tbl.share], []); return; }
+    var rh = 30, m2 = { l: Math.min(190, w2 * 0.36), r: 120 }, h2 = rates.length * rh + 8, svg2 = svgIn(b2, w2, h2);
+    var mxr = Math.max.apply(null, rates.map(function (r) { return r.e / r.n; }).concat([0.01]));
+    rates.forEach(function (r, k) {
+      var yy = 4 + k * rh, rate = r.e / r.n, len = (w2 - m2.l - m2.r) * rate / mxr;
+      var g = el('g', { opacity: S.focusCat < 0 || S.focusCat === r.k ? 1 : 0.3 }, svg2);
+      el('text', { x: m2.l - 10, y: yy + 15, 'text-anchor': 'end', class: 'lab' }, g, ellipsis(nm(CAT[r.k]), 28));
+      el('rect', { x: m2.l, y: yy + 6, width: w2 - m2.l - m2.r, height: 12, rx: 3, fill: 'var(--track)' }, g);
+      if (r.e) hbar(g, m2.l, yy + 6, Math.max(2, len), 12, 'var(--escape)');
+      el('text', { x: m2.l + Math.max(2, len) + 8, y: yy + 16, class: 'val', 'font-weight': 650 }, g, pct(rate, 1));
+      el('text', { x: w2, y: yy + 16, 'text-anchor': 'end', class: 'tick' }, g, fill(L().escOf, { n: num(r.e), t: num(r.n) }));
+    });
+    table('esc', [L().tbl.cat, S.lang === 'fr' ? 'Chez le client' : 'At the customer', L().tbl.defects, L().tbl.share], rates.map(function (r) { return [nm(CAT[r.k]), num(r.e), num(r.n), pct(r.e / r.n, 1)]; }), [1, 2, 3]);
+  }
+
+  // ---------------------------------------------------------------- 03 what an NC costs
+  function cost(V) {
+    var list = V.nc, n = list.length, steps = DICT.step;
+    var mean = {}; steps.forEach(function (s) { mean[s] = n ? sum(list, function (j) { return NC['t_' + s][j]; }) / n : 0; });
+    var totMin = 0; steps.forEach(function (s) { totMin += mean[s]; });
+    var costSum = sum(list, function (j) { return NC.c[j]; });
+    V.anat = { mean: mean, totMin: totMin };
+    txt('r3n', t('r3n')); txt('r3d', t('r3d'));
+    if (S.findings) html('h3t', fill(L().h3, { t: hm(totMin), p: pct(totMin ? mean.hands_on / totMin : 0) }));
+    else txt('h3t', S.lang === 'fr' ? 'Coût d’une NC' : 'Cost of an NC');
+    txt('anatV', hm(totMin)); txt('anatS', t('anatS', { n: num(n), c: eur(n ? Math.round(costSum / n) : 0) }));
+    var box = $('anatChart'), w = width(box), h = 116, svg = svgIn(box, w, h), x0 = 0, bh = 40, by = 34;
+    var gap = 2;
+    steps.forEach(function (s, k) {
+      var len = totMin ? (w - gap * (steps.length - 1)) * mean[s] / totMin : 0, hot = s === 'hands_on';
+      var r = el('rect', { x: x0, y: by, width: Math.max(0, len), height: bh, rx: 3, fill: hot ? 'var(--accent)' : k % 2 ? 'var(--prior)' : 'var(--accent-mid)', class: 'hit', tabindex: 0 }, svg);
+      if (!hot) r.setAttribute('fill-opacity', '0.75');
+      var name = L().steps[s], fits = len > name.length * 6.6 + 8;
+      el('text', { x: x0 + 2, y: by - 9, class: hot ? 'lab-b' : 'tick', 'font-weight': hot ? 700 : 500 }, svg, fits ? name : ellipsis(name, Math.max(1, Math.floor(len / 7))));
+      if (len > 36) el('text', { x: x0 + len / 2, y: by + bh / 2 + 4, 'text-anchor': 'middle', fill: hot ? 'var(--on-accent)' : 'var(--ink)', 'font-size': 12.5, 'font-weight': 650 }, svg, num(mean[s]) + ' min');
+      hover(r, name, [[num(mean[s], 1) + ' min', S.lang === 'fr' ? 'par NC' : 'per NC'], [pct(totMin ? mean[s] / totMin : 0), S.lang === 'fr' ? 'du temps' : 'of the time']]);
+      x0 += len + gap;
+    });
+    // bracket under the repair
+    var before = 0; for (var k = 0; k < steps.indexOf('hands_on'); k++) before += mean[steps[k]];
+    var bx0 = totMin ? (w - gap * 5) * before / totMin + gap * steps.indexOf('hands_on') : 0, bx1 = bx0 + (totMin ? (w - gap * 5) * mean.hands_on / totMin : 0);
+    el('path', { d: 'M' + bx0 + ',' + (by + bh + 8) + 'v6H' + bx1 + 'v-6', fill: 'none', stroke: 'var(--accent)', 'stroke-width': 1.5 }, svg);
+    el('text', { x: (bx0 + bx1) / 2, y: by + bh + 30, 'text-anchor': 'middle', class: 'lab-b', fill: 'var(--accent)' }, svg, (S.lang === 'fr' ? 'la reprise : ' : 'the repair: ') + pct(totMin ? mean.hands_on / totMin : 0));
+    table('anat', [L().tbl.step, L().tbl.min, L().tbl.share], steps.map(function (s) { return [L().steps[s], num(mean[s], 1), pct(totMin ? mean[s] / totMin : 0)]; }), [1, 2]);
+    // cost per defect by NC size
+    txt('c3bT', t('c3bT')); txt('c3bN', t('c3bN'));
+    var B = [[1, 1], [2, 3], [4, 10], [11, 1e9]].map(function (r) { return { lo: r[0], hi: r[1], nc: 0, def: 0, cost: 0 }; });
+    list.forEach(function (j) { var nd = NC.nd[j]; if (nd < 1) return; B.forEach(function (b) { if (nd >= b.lo && nd <= b.hi) { b.nc++; b.def += nd; b.cost += NC.c[j]; } }); });
+    var b2 = $('sizeChart'), w2 = width(b2), h2 = 210, svg2 = svgIn(b2, w2, h2), m2 = { l: 6, r: 6, t: 26, b: 40 };
+    var vals = B.map(function (b) { return b.def ? b.cost / b.def : 0; }), mx2 = niceMax(Math.max.apply(null, vals.concat([1])));
+    var bw = (w2 - m2.l - m2.r) / B.length, cw = Math.min(56, bw * 0.55);
+    B.forEach(function (b, k) {
+      var v = vals[k], cx = m2.l + bw * k + bw / 2, yv = m2.t + (h2 - m2.t - m2.b) * (1 - v / mx2);
+      bar(svg2, cx - cw / 2, cw, yv, h2 - m2.b, k === 0 ? 'var(--accent)' : 'var(--accent-mid)');
+      el('text', { x: cx, y: yv - 7, 'text-anchor': 'middle', class: 'lab-b' }, svg2, eur(Math.round(v)));
+      el('text', { x: cx, y: h2 - m2.b + 16, 'text-anchor': 'middle', class: 'lab' }, svg2, L().size[k]);
+      el('text', { x: cx, y: h2 - m2.b + 31, 'text-anchor': 'middle', class: 'tick' }, svg2, fill(L().ncs, { n: num(b.nc) }));
+    });
+    el('line', { x1: m2.l, x2: w2 - m2.r, y1: h2 - m2.b, y2: h2 - m2.b, class: 'base' }, svg2);
+    table('size', [L().tbl.size, L().tbl.ncs, L().tbl.defects, L().tbl.cost, L().tbl.perDef], B.map(function (b, k) { return [L().size[k], num(b.nc), num(b.def), eur(Math.round(b.cost)), eur(Math.round(vals[k]))]; }), [1, 2, 3, 4]);
+    // three methods
+    txt('c3cT', t('c3cT')); txt('c3cN', t('c3cN'));
+    var meth = [{ k: t('mAirbus'), v: sum(list, function (j) { return NC.cA[j]; }) }, { k: t('mDetail'), v: costSum, hot: 1 }, { k: t('mAec'), v: sum(list, function (j) { return NC.cG[j]; }) }];
+    V.methods = meth.map(function (m) { return Math.round(m.v); });
+    var b3 = $('methChart'), w3 = width(b3), h3 = 190, svg3 = svgIn(b3, w3, h3), mx3 = Math.max.apply(null, meth.map(function (m) { return m.v; }).concat([1]));
+    meth.forEach(function (mt, k) {
+      var yy = 8 + k * 56, len = (w3 - 90) * mt.v / mx3;
+      el('text', { x: 0, y: yy + 12, class: mt.hot ? 'lab-b' : 'lab' }, svg3, mt.k);
+      hbar(svg3, 0, yy + 20, Math.max(2, len), 16, mt.hot ? 'var(--accent)' : 'var(--prior)');
+      el('text', { x: len + 8, y: yy + 33, class: 'val', 'font-weight': 650 }, svg3, keur(mt.v));
+    });
+    if (meth[1].v) el('text', { x: w3, y: 20, 'text-anchor': 'end', fill: 'var(--escape)', 'font-size': 22, 'font-weight': 650 }, svg3, fill(L().times, { v: num(meth[0].v / meth[1].v, 1) }));
+    table('meth', [L().tbl.method, L().tbl.cost], meth.map(function (m) { return [m.k, eur(Math.round(m.v))]; }), [1]);
+  }
+
+  // ---------------------------------------------------------------- 04 what comes back
+  function repeat(V) {
+    var i;
+    // aircraft per line and year (MSNs with at least one NC in the selection, up to the same date)
+    var msn26 = {}, msn25 = {};
+    V.nc.forEach(function (j) { (msn26[NC.l[j]] = msn26[NC.l[j]] || {})[NC.m[j]] = 1; });
+    V.n25.forEach(function (j) { if (N25.d[j] <= CUT25) (msn25[N25.l[j]] = msn25[N25.l[j]] || {})[N25.m[j]] = 1; });
+    var cnt = function (o, l) { return o[l] ? Object.keys(o[l]).length : 0; };
+    var f26 = {}, f25 = {}, rc = {};
+    V.df.forEach(function (j) { var f = DF.f[j]; if (f < 0) return; var n = DF.n[j], key = NC.l[n] + '|' + f; (f26[key] = f26[key] || {})[NC.m[n]] = 1; (rc[key] = rc[key] || {})[DF.r[j]] = ((rc[key] || {})[DF.r[j]] || 0) + 1; });
+    V.f25.forEach(function (j) { var f = F25.f[j]; if (f < 0) return; var n = F25.n[j]; if (N25.d[n] > CUT25) return; var key = N25.l[n] + '|' + f; (f25[key] = f25[key] || {})[N25.m[n]] = 1; });
+    var rows = Object.keys(f26).map(function (key) {
+      var p = key.split('|'), l = +p[0], f = +p[1], k1 = Object.keys(f26[key]).length, k0 = f25[key] ? Object.keys(f25[key]).length : 0;
+      var n1 = cnt(msn26, l), n0 = cnt(msn25, l), s1 = n1 ? k1 / n1 : 0, s0 = n0 ? k0 / n0 : 0;
+      var top = Object.keys(rc[key]).sort(function (a, b) { return rc[key][b] - rc[key][a]; })[0];
+      var tag = s0 < 0.1 && s1 >= 0.2 ? 'new' : s0 >= 0.2 && s1 >= 0.2 ? 'chronic' : s1 - s0 >= 0.15 ? 'rise' : '';
+      return { key: key, l: l, f: f, k1: k1, k0: k0, n1: n1, n0: n0, s1: s1, s0: s0, rca: +top, tag: tag };
+    }).filter(function (r) { return r.k1 >= 3; });
+    rows.sort(function (a, b) { return b.k1 - a.k1 || b.s1 - a.s1; });
+    var top = rows.slice(0, 14);
+    V.fins = top;
+    // pins
+    var pairs26 = {}, pairs25 = {}, perFin = {}, consec = 0, withPins = 0;
+    V.df.forEach(function (j) {
+      if (DF.r[j] !== INV || !DF.pa[j] || DF.f[j] < 0) return;
+      withPins++; if (consecutive(DF.pa[j], DF.pb[j])) consec++;
+      var n = DF.n[j], key = DF.f[j] + '|' + DF.pa[j] + '|' + DF.pb[j];
+      (pairs26[key] = pairs26[key] || {})[NC.m[n]] = 1;
+      (perFin[DF.f[j]] = perFin[DF.f[j]] || {})[NC.m[n]] = 1;
+    });
+    V.f25.forEach(function (j) { if (F25.pr[j] !== INV || !F25.pa[j] || F25.f[j] < 0) return; if (N25.d[F25.n[j]] > CUT25) return; var key = F25.f[j] + '|' + F25.pa[j] + '|' + F25.pb[j]; (pairs25[key] = pairs25[key] || {})[N25.m[F25.n[j]]] = 1; });
+    var repeatPairs = Object.keys(pairs26).filter(function (k) { return Object.keys(pairs26[k]).length >= 2; }).length;
+    V.pins = { withPins: withPins, consec: consec, repeatPairs: repeatPairs };
+    txt('r4n', t('r4n')); txt('r4d', t('r4d'));
+    var lead = top.filter(function (r) { return r.tag === 'new' || r.tag === 'rise'; })[0] || top[0];
+    if (S.findings) {
+      if (lead) html('h4t', fill(L().h4, { f: esc(DICT.fin[lead.f]), k: num(lead.k1), n: num(lead.n1), k0: num(lead.k0), n0: num(lead.n0), l: LINE[lead.l], y0: Y0 }));
+      else txt('h4t', t('h4none'));
+      txt('h4s', withPins >= 10 ? t(repeatPairs > 1 ? 'h4s' : repeatPairs === 1 ? 'h4s1' : 'h4s0', { p: pct(consec / withPins), k: num(repeatPairs) }) : '');
+    } else { txt('h4t', S.lang === 'fr' ? 'Repères qui reviennent' : 'Locations that come back'); txt('h4s', ''); }
+    txt('c4aT', t('c4aT')); txt('c4aN', t('c4aN'));
+    var box = $('finChart'), w = width(box), narrow = w < 640, rh = 30, m = { l: narrow ? (S.line < 0 ? 112 : 84) : 128, r: narrow ? 52 : 150, t: 22, b: 24 };
+    if (!top.length) { box.textContent = ''; var p0 = document.createElement('p'); p0.className = 'note'; p0.textContent = t('h4none'); box.appendChild(p0); }
+    else {
+      var h = m.t + m.b + rh * top.length, svg = svgIn(box, w, h), x = function (v) { return m.l + v * (w - m.l - m.r); };
+      (narrow ? [0, 0.5, 1] : [0, 0.25, 0.5, 0.75, 1]).forEach(function (g) { el('line', { x1: x(g), x2: x(g), y1: m.t - 8, y2: h - m.b, class: 'gridline' }, svg); el('text', { x: x(g), y: h - 6, 'text-anchor': 'middle', class: 'tick' }, svg, pct(g)); });
+      top.forEach(function (r, k) {
+        var yy = m.t + k * rh + rh / 2, sel = S.focusFin === r.f;
+        var g = el('g', { class: 'hit', tabindex: 0, opacity: S.focusFin < 0 || sel ? 1 : 0.35 }, svg);
+        el('rect', { x: 0, y: yy - rh / 2, width: w, height: rh, fill: sel ? 'var(--accent-soft)' : 'transparent' }, g);
+        el('text', { x: 0, y: yy + 4, class: 'lab-b' }, g, DICT.fin[r.f]);
+        el('text', { x: m.l - 10, y: yy + 4, 'text-anchor': 'end', class: 'tick' }, g, S.line < 0 ? LINE[r.l] : '');
+        el('line', { x1: x(r.s0), x2: x(r.s1), y1: yy, y2: yy, stroke: 'var(--accent-mid)', 'stroke-width': 3, 'stroke-linecap': 'round' }, g);
+        el('circle', { cx: x(r.s0), cy: yy, r: 4.5, fill: 'var(--prior)', stroke: 'var(--surface)', 'stroke-width': 2 }, g);
+        el('circle', { cx: x(r.s1), cy: yy, r: 5, fill: 'var(--accent)', stroke: 'var(--surface)', 'stroke-width': 2 }, g);
+        el('text', { x: w - m.r + 10, y: yy + 4, class: 'val' }, g, num(r.k1) + '/' + num(r.n1) + (narrow ? '' : ' · ' + ellipsis(nm(RCA[r.rca]), 16)));
+        if (r.tag && !narrow) {
+          var tc = r.tag === 'new' ? 'var(--escape)' : r.tag === 'chronic' ? 'var(--warn)' : 'var(--ink-2)', lab = r.tag === 'new' ? L().tagNew : r.tag === 'chronic' ? L().tagChronic : L().tagRise;
+          var tx = x(Math.max(r.s0, r.s1)) + 12, tw = lab.length * 6.4 + 12;
+          if (tx + tw < w - m.r + 4) { el('rect', { x: tx, y: yy - 8, width: tw, height: 16, rx: 8, fill: 'none', stroke: tc }, g); el('text', { x: tx + tw / 2, y: yy + 4, 'text-anchor': 'middle', fill: tc, 'font-size': 10.5, 'font-weight': 700 }, g, lab); }
+        }
+        hover(g, DICT.fin[r.f] + ' · ' + LINE[r.l], function () { return [[num(r.k0) + '/' + num(r.n0) + ' · ' + pct(r.s0), String(Y0)], [num(r.k1) + '/' + num(r.n1) + ' · ' + pct(r.s1), String(Y)], [nm(RCA[r.rca]), S.lang === 'fr' ? 'cause principale' : 'main cause']]; });
+        g.addEventListener('click', function () { S.focusFin = S.focusFin === r.f ? -1 : r.f; S.msn = null; render(); if (S.focusFin >= 0) go('s5'); });
+      });
+    }
+    html('finLegend', '<span><i class="sw dot" style="background:var(--prior)"></i>' + Y0 + '</span><span><i class="sw dot" style="background:var(--accent)"></i>' + Y + '</span><span><span class="tag new">' + esc(L().tagNew) + '</span> &lt; 10 % → ≥ 20 %</span><span><span class="tag chronic">' + esc(L().tagChronic) + '</span> ≥ 20 % ' + (S.lang === 'fr' ? 'les deux années' : 'both years') + '</span>');
+    table('fin', [L().tbl.fin, L().tbl.l, fill(L().tbl.p0, { y0: Y0 }), fill(L().tbl.p1, { y: Y }), L().tbl.cause], rows.slice(0, 40).map(function (r) { return [DICT.fin[r.f], LINE[r.l], num(r.k0) + '/' + num(r.n0), num(r.k1) + '/' + num(r.n1), nm(RCA[r.rca])]; }), [2, 3]);
+    // pin arcs: top connectors by aircraft with readable swaps
+    txt('c4bT', t('c4bT')); txt('c4bN', t('c4bN'));
+    var fins = Object.keys(perFin).map(function (f) { return { f: +f, k: Object.keys(perFin[f]).length }; }).sort(function (a, b) { return b.k - a.k; }).slice(0, 6);
+    var pb = $('pinChart'); pb.textContent = '';
+    if (!fins.length) { var p1 = document.createElement('p'); p1.className = 'note'; p1.textContent = '—'; pb.appendChild(p1); table('pin', [], []); return; }
+    var wrapW = width(pb), cols = wrapW > 900 ? 3 : wrapW > 560 ? 2 : 1, cw = Math.floor((wrapW - (cols - 1) * 18) / cols);
+    var gridDiv = document.createElement('div'); gridDiv.style.display = 'grid'; gridDiv.style.gridTemplateColumns = 'repeat(' + cols + ', minmax(0, 1fr))'; gridDiv.style.gap = '18px'; pb.appendChild(gridDiv);
+    var trows = [];
+    fins.forEach(function (fo) {
+      var cell = document.createElement('div'); gridDiv.appendChild(cell);
+      var mine26 = Object.keys(pairs26).filter(function (k) { return +k.split('|')[0] === fo.f; });
+      var mine25 = Object.keys(pairs25).filter(function (k) { return +k.split('|')[0] === fo.f; });
+      var pinsSet = {}; mine26.concat(mine25).forEach(function (k) { var p = k.split('|'); pinsSet[p[1]] = 1; pinsSet[p[2]] = 1; });
+      var pins = Object.keys(pinsSet).sort(pinKey);
+      var h = 150, svg = svgIn(cell, cw, h), axisY = 86, pad = 14;
+      var pos = pinPositions(pins), lo = Math.min.apply(null, pins.map(function (q) { return pos[q]; })), hi = Math.max.apply(null, pins.map(function (q) { return pos[q]; }));
+      var px = function (p) { return hi === lo ? cw / 2 : pad + (pos[p] - lo) * (cw - 2 * pad) / (hi - lo); };
+      el('text', { x: 0, y: 14, class: 'lab-b' }, svg, DICT.fin[fo.f]);
+      el('text', { x: cw, y: 14, 'text-anchor': 'end', class: 'tick' }, svg, fill(fo.k === 1 ? L().plane1 : L().planes, { n: num(fo.k) }) + ' · ' + Y);
+      el('line', { x1: pad - 6, x2: cw - pad + 6, y1: axisY, y2: axisY, class: 'base' }, svg);
+      function arc(key, year) {
+        var p = key.split('|'), a = px(p[1]), b = px(p[2]), k = Object.keys((year === Y ? pairs26 : pairs25)[key]).length;
+        var r = Math.abs(b - a) / 2, up = year === Y, hh = Math.max(7, Math.min(up ? 56 : 44, r));   // neighbours stay visible as small bumps
+        var d = 'M' + a + ',' + axisY + ' C' + a + ',' + (axisY + (up ? -1 : 1) * hh * 1.33) + ' ' + b + ',' + (axisY + (up ? -1 : 1) * hh * 1.33) + ' ' + b + ',' + axisY;
+        var other = (year === Y ? pairs25 : pairs26)[key];
+        var path = el('path', { d: d, fill: 'none', stroke: up ? 'var(--accent)' : 'var(--prior)', 'stroke-width': k >= 3 ? 4.5 : k === 2 ? 3 : 1.6, 'stroke-linecap': 'round', class: 'hit' }, svg);
+        hover(path, fill(L().pinTip, { a: p[1], b: p[2] }) + ' · ' + DICT.fin[fo.f], function () { return [[fill(k === 1 ? L().plane1 : L().planes, { n: num(k) }), String(year)], [fill(L().planes, { n: num(other ? Object.keys(other).length : 0) }), String(year === Y ? Y0 : Y)]]; });
+        if (up) trows.push([DICT.fin[fo.f], p[1] + ' ↔ ' + p[2], num(other ? Object.keys(other).length : 0), num(k)]);
+      }
+      mine25.forEach(function (k) { arc(k, Y0); });
+      mine26.forEach(function (k) { arc(k, Y); });
+      var lastX = -1e9;
+      pins.forEach(function (p) { var xx = px(p); el('circle', { cx: xx, cy: axisY, r: 2.5, fill: 'var(--ink-2)' }, svg); if (xx - lastX >= 16) { el('text', { x: xx, y: axisY + 58, 'text-anchor': 'middle', class: 'tick', 'font-size': 10 }, svg, p); lastX = xx; } });
+    });
+    html('pinLegend', '<span><i class="sw line" style="background:var(--accent)"></i>' + Y + ' (' + (S.lang === 'fr' ? 'au-dessus' : 'above') + ')</span><span><i class="sw line" style="background:var(--prior)"></i>' + Y0 + ' (' + (S.lang === 'fr' ? 'en dessous' : 'below') + ')</span><span>' + esc(S.lang === 'fr' ? 'Trait fin : 1 avion · moyen : 2 · épais : 3 ou plus' : 'Thin: 1 aircraft · medium: 2 · thick: 3 or more') + '</span>');
+    table('pin', [L().tbl.fin, L().tbl.pair, fill(L().tbl.p0, { y0: Y0 }), fill(L().tbl.p1, { y: Y })], trows, [2, 3]);
+  }
+  // where a pin sits along the connector's numbering: numbers as such, single or doubled letters by alphabet rank;
+  // other names (3B, 7L: module and row) fall back to their rank in the list
+  function pinPositions(pins) {
+    var pos = {}, numeric = pins.every(function (p) { return /^\d+$/.test(p); }), alpha = pins.every(function (p) { return /^([A-Z])\1*$/.test(p); });
+    pins.forEach(function (p, k) { pos[p] = numeric ? +p : alpha ? (p.length - 1) * 26 + p.charCodeAt(0) - 64 : k; });
+    return pos;
+  }
+  function pinKey(a, b) { var na = /^\d+$/.test(a), nb = /^\d+$/.test(b); if (na && nb) return +a - +b; if (na !== nb) return na ? -1 : 1; return a.length - b.length || (a < b ? -1 : a > b ? 1 : 0); }
+  function consecutive(a, b) {
+    if (/^\d+$/.test(a) && /^\d+$/.test(b)) return Math.abs(+a - +b) === 1;
+    var dbl = function (p) { return /^[A-Z]+$/.test(p) && p === p[0].repeat(p.length); };
+    if (dbl(a) && dbl(b) && a.length === b.length) return Math.abs(a.charCodeAt(0) - b.charCodeAt(0)) === 1;
+    if (a.length === 2 && b.length === 2 && a.slice(1) === b.slice(1) && /[A-Z]/.test(a[0]) && /[A-Z]/.test(b[0])) return Math.abs(a.charCodeAt(0) - b.charCodeAt(0)) === 1;
+    return false;
+  }
+
+  // ---------------------------------------------------------------- 05 one aircraft
+  function passport(V) {
+    var per = {}, i;
+    function P(l, m) { var k = l + '|' + m; return per[k] = per[k] || { l: l, m: m, nc: [], cli: [], cost: 0, def: 0, fins: {} }; }
+    V.nc.forEach(function (j) { var p = P(NC.l[j], NC.m[j]); p.nc.push(j); p.cost += NC.c[j]; });
+    V.cli.forEach(function (j) { P(NC.l[j], NC.m[j]).cli.push(j); });
+    V.df.forEach(function (j) { var n = DF.n[j], p = per[NC.l[n] + '|' + NC.m[n]]; if (!p) return; p.def++; if (DF.f[j] >= 0) p.fins[DF.f[j]] = 1; });
+    var planes = Object.keys(per).map(function (k) { return per[k]; }).filter(function (p) { return p.nc.length; });
+    planes.sort(function (a, b) { return a.l - b.l || a.m - b.m; });
+    // aircraft per location (same line), to flag the locations of this aircraft that come back elsewhere
+    var finPlanes = {}; planes.forEach(function (p) { Object.keys(p.fins).forEach(function (f) { var k = p.l + '|' + f; finPlanes[k] = (finPlanes[k] || 0) + 1; }); });
+    var medCost = {}, medNc = {};
+    LINE.forEach(function (ln, l) { var ps = planes.filter(function (p) { return p.l === l; }); medCost[l] = median(ps.map(function (p) { return p.cost; })); medNc[l] = median(ps.map(function (p) { return p.nc.length; })); });
+    if (!S.msn || !per[S.msn] || !per[S.msn].nc.length) {
+      var cands = S.focusFin >= 0 ? planes.filter(function (p) { return p.fins[S.focusFin]; }) : planes;
+      var best = (cands.length ? cands : planes).slice().sort(function (a, b) { return b.cost - a.cost; })[0];
+      S.msn = best ? best.l + '|' + best.m : null;
+    }
+    txt('r5n', t('r5n')); txt('r5d', t('r5d'));
+    txt('c5aT', t('c5aT')); txt('c5aN', t('c5aN'));
+    // strip
+    var box = $('stripChart'), w = Math.max(width(box), planes.length * 7 + 60), h = 150, m = { l: 4, r: 4, t: 14, b: 30 };
+    box.style.minWidth = (planes.length * 7 + 60) + 'px';
+    var svg = svgIn(box, w, h), metric = S.msnMetric === 'nc' ? function (p) { return p.nc.length; } : function (p) { return p.cost; };
+    var mx = niceMax(Math.max.apply(null, planes.map(metric).concat([1])));
+    var lines = []; planes.forEach(function (p) { if (lines.indexOf(p.l) < 0) lines.push(p.l); });
+    var slot = (w - m.l - m.r - (lines.length - 1) * 16) / Math.max(1, planes.length), x = m.l, lastL = null;
+    planes.forEach(function (p) {
+      if (lastL !== null && p.l !== lastL) x += 16;
+      if (p.l !== lastL) el('text', { x: x, y: h - 6, class: 'lab-b' }, svg, LINE[p.l]);
+      lastL = p.l;
+      var v = metric(p), yv = m.t + (h - m.t - m.b) * (1 - v / mx), key = p.l + '|' + p.m;
+      var hit = S.focusFin >= 0 && p.fins[S.focusFin], sel = S.msn === key;
+      var bw = Math.max(2, slot - 2);
+      bar(svg, x, bw, yv, h - m.b, sel ? 'var(--ink)' : hit ? 'var(--accent)' : S.focusFin >= 0 ? 'var(--prior)' : 'var(--accent-mid)');
+      if (p.cli.length) el('circle', { cx: x + bw / 2, cy: yv - 6, r: 3, fill: 'var(--escape)' }, svg);
+      var r = el('rect', { x: x - 1, y: m.t - 10, width: slot, height: h - m.t - m.b + 10, fill: 'transparent', class: 'hit', tabindex: 0 }, svg);
+      hover(r, 'MSN ' + p.m + ' · ' + LINE[p.l], [[num(p.nc.length), L().pNc], [eur(Math.round(p.cost)), L().pCost], [num(p.cli.length), L().pCli]]);
+      r.addEventListener('click', function () { S.msn = key; render(); });
+      x += slot;
+    });
+    el('line', { x1: m.l, x2: w - m.r, y1: h - m.b, y2: h - m.b, class: 'base' }, svg);
+    html('stripLegend', '<span><i class="sw" style="background:var(--accent-mid)"></i>' + esc(S.msnMetric === 'nc' ? L().mNc : L().mCost) + '</span><span><i class="sw" style="background:var(--ink)"></i>' + esc(S.lang === 'fr' ? 'Avion ouvert ci-dessous' : 'Aircraft opened below') + '</span>' + (S.focusFin >= 0 ? '<span><i class="sw" style="background:var(--accent)"></i>' + esc((S.lang === 'fr' ? 'Avions touchés à ' : 'Aircraft hit at ') + DICT.fin[S.focusFin]) + '</span>' : '') + '<span><i class="sw dot" style="background:var(--escape)"></i>' + esc(L().pCli) + '</span>');
+    // the passport
+    var pp = $('passport'); pp.textContent = '';
+    var p = per[S.msn];
+    if (!p) { html('h5t', ''); return; }
+    var ratio = medCost[p.l] ? p.cost / medCost[p.l] : 0;
+    if (S.findings) html('h5t', fill(ratio >= 1.05 ? L().h5 : L().h5low, { m: p.m, n: num(p.nc.length), c: eur(Math.round(p.cost)), x: num(ratio, 1) + (S.lang === 'fr' ? ' fois' : ' times') }));
+    else txt('h5t', (S.lang === 'fr' ? 'Passeport avion' : 'Aircraft passport'));
+    V.passport = { msn: p.m, nc: p.nc.length, cost: Math.round(p.cost) };
+    var prods = {}; p.nc.forEach(function (j) { prods[DICT.product[NC.pr[j]]] = 1; });
+    var head = document.createElement('div'); head.className = 'pass-h';
+    head.innerHTML = '<b>MSN ' + esc(p.m) + '</b><span class="pill">' + esc(LINE[p.l]) + '</span>' + Object.keys(prods).map(function (x) { return '<span class="pill">' + esc(x) + '</span>'; }).join('');
+    pp.appendChild(head);
+    var st = document.createElement('div'); st.className = 'stats';
+    st.innerHTML = '<div><span class="k">' + esc(L().pNc) + '</span><span class="v">' + num(p.nc.length) + '</span><span class="s">' + esc(fill(L().pMed, { v: num(medNc[p.l], 1) })) + '</span></div>' +
+      '<div><span class="k">' + esc(L().pDef) + '</span><span class="v">' + num(p.def) + '</span><span class="s">&nbsp;</span></div>' +
+      '<div><span class="k">' + esc(L().pCost) + '</span><span class="v">' + esc(eur(Math.round(p.cost))) + '</span><span class="s">' + esc(fill(L().pTimes, { v: num(ratio, 1) })) + '</span></div>' +
+      '<div><span class="k">' + esc(L().pCli) + '</span><span class="v" style="color:' + (p.cli.length ? 'var(--escape)' : 'inherit') + '">' + num(p.cli.length) + '</span><span class="s">&nbsp;</span></div>';
+    pp.appendChild(st);
+    var grid = document.createElement('div'); grid.className = 'pass'; pp.appendChild(grid);
+    // timeline: one lane per station, one dot per NC (size = defects)
+    var left = document.createElement('div'); grid.appendChild(left);
+    var lt = document.createElement('h3'); lt.style.fontSize = '13px'; lt.style.margin = '6px 0'; lt.textContent = L().pTl; left.appendChild(lt);
+    var tl = document.createElement('div'); tl.className = 'chart'; left.appendChild(tl);
+    var lanes = WHERE.slice(), all = p.nc.concat(p.cli);
+    var d0 = Math.min.apply(null, all.map(function (j) { return NC.d[j]; })), d1 = Math.max.apply(null, all.map(function (j) { return NC.d[j]; }));
+    d0 = Math.max(0, d0 - 7); d1 = Math.min(ASOF_DAY, d1 + 7); if (d1 - d0 < 28) d1 = Math.min(ASOF_DAY, d0 + 28);
+    var tw = width(tl), th = 26 * lanes.length + 30, tsv = svgIn(tl, tw, th), tm = { l: 104, r: 12 };
+    var tx = function (d) { return tm.l + (d - d0) / Math.max(1, d1 - d0) * (tw - tm.l - tm.r); };
+    lanes.forEach(function (s, k) {
+      var yy = 12 + k * 26;
+      el('line', { x1: tm.l, x2: tw - tm.r, y1: yy, y2: yy, class: 'gridline' }, tsv);
+      el('text', { x: tm.l - 8, y: yy + 4, 'text-anchor': 'end', class: s === 'client' ? 'lab-b' : 'tick', fill: s === 'client' ? 'var(--escape)' : null }, tsv, L().stage[s]);
+    });
+    // month ticks
+    for (var mo = 0; mo < 12; mo++) { var md = Math.round((Date.UTC(Y, mo, 1) - Date.UTC(Y, 0, 1)) / 864e5); if (md >= d0 && md <= d1) { el('line', { x1: tx(md), x2: tx(md), y1: 4, y2: 12 + 26 * (lanes.length - 1), class: 'gridline' }, tsv); el('text', { x: tx(md) + 3, y: th - 6, class: 'tick' }, tsv, L().months[mo]); } }
+    var ncDefs = {}; for (i = 0; i < nDf; i++) { var nn = DF.n[i]; if (NC.m[nn] === p.m && NC.l[nn] === p.l) (ncDefs[nn] = ncDefs[nn] || []).push(i); }
+    all.sort(function (a, b) { return NC.d[a] - NC.d[b]; }).forEach(function (j) {
+      var s = NC.sc[j] ? 'client' : WHERE[NC.w[j]], yy = 12 + lanes.indexOf(s) * 26, nd = Math.max(1, NC.nd[j]);
+      var c = el('circle', { cx: tx(NC.d[j]), cy: yy, r: Math.min(11, 3.5 + Math.sqrt(nd) * 1.6), fill: s === 'client' ? 'var(--escape)' : 'var(--accent)', 'fill-opacity': s === 'client' ? 0.9 : 0.75, stroke: 'var(--surface)', 'stroke-width': 1.5, class: 'hit', tabindex: 0 }, tsv);
+      var ds = ncDefs[j] || [], causes = {}; ds.forEach(function (k) { causes[nm(RCA[DF.r[k]])] = (causes[nm(RCA[DF.r[k]])] || 0) + 1; });
+      hover(c, 'NC ' + NC.id[j], function () {
+        var rows = [[dateTxt(dayToDate(Y, NC.d[j])), L().tbl.date], [eur(Math.round(NC.c[j])), L().pCost], [num(NC.nd[j] < 0 ? 0 : NC.nd[j]), L().pDef]];
+        Object.keys(causes).sort(function (a, b) { return causes[b] - causes[a]; }).slice(0, 3).forEach(function (k) { rows.push([num(causes[k]), k]); });
+        return rows;
+      });
+    });
+    // locations and causes
+    var right = document.createElement('div'); grid.appendChild(right);
+    var rt = document.createElement('h3'); rt.style.fontSize = '13px'; rt.style.margin = '6px 0'; rt.textContent = L().pFins; right.appendChild(rt);
+    var fl = document.createElement('div'); fl.className = 'pills'; right.appendChild(fl);
+    var mineFins = Object.keys(p.fins).map(function (f) { return { f: +f, k: finPlanes[p.l + '|' + f] || 1 }; }).filter(function (x) { return x.k >= 3; }).sort(function (a, b) { return b.k - a.k; }).slice(0, 14);
+    if (!mineFins.length) { var e0 = document.createElement('span'); e0.className = 'note'; e0.textContent = L().pNone; fl.appendChild(e0); }
+    mineFins.forEach(function (x) {
+      var b = document.createElement('button'); b.type = 'button'; b.className = 'pill hot'; b.textContent = DICT.fin[x.f] + ' · ' + fill(L().pOn, { n: num(x.k) });
+      if (S.focusFin === x.f) { b.style.background = 'var(--accent)'; b.style.color = 'var(--on-accent)'; }
+      b.addEventListener('click', function () { S.focusFin = S.focusFin === x.f ? -1 : x.f; render(); });
+      fl.appendChild(b);
+    });
+    var ct = document.createElement('h3'); ct.style.fontSize = '13px'; ct.style.margin = '14px 0 6px'; ct.textContent = L().pCauses; right.appendChild(ct);
+    var cc = {}; p.nc.concat(p.cli).forEach(function (j) { (ncDefs[j] || []).forEach(function (k) { cc[DF.r[k]] = (cc[DF.r[k]] || 0) + 1; }); });
+    var ck = Object.keys(cc).sort(function (a, b) { return cc[b] - cc[a]; }).slice(0, 6), cmax = ck.length ? cc[ck[0]] : 1;
+    var cl = document.createElement('div'); cl.className = 'finlist'; right.appendChild(cl);
+    ck.forEach(function (r) {
+      var row = document.createElement('div'); row.className = 'finrow'; row.style.gridTemplateColumns = 'minmax(0, 1.3fr) minmax(0, 1fr) 28px';
+      var a = document.createElement('span'); a.textContent = nm(RCA[+r]); a.style.fontSize = '12.5px';
+      var bar2 = document.createElement('span'); bar2.style.height = '8px'; bar2.style.borderRadius = '0 3px 3px 0'; bar2.style.background = 'var(--accent-mid)'; bar2.style.width = Math.max(4, 100 * cc[r] / cmax) + '%';
+      var b = document.createElement('b'); b.textContent = num(cc[r]); b.style.textAlign = 'right';
+      row.appendChild(a); row.appendChild(bar2); row.appendChild(b); cl.appendChild(row);
+    });
+  }
+
+  // ---------------------------------------------------------------- controls and frame
+  var SLIDES = ['s0', 's1', 's2', 's3', 's4', 's5'];
+  var DECK = [['s0'], ['s1'], ['s2', 1], ['s2', 2], ['s3'], ['s4', 1], ['s4', 2], ['s5']];
+  function seg(id, items, cur, onPick) {
+    var box = $(id); box.textContent = '';
+    items.forEach(function (it) {
+      var b = document.createElement('button'); b.type = 'button'; b.textContent = it[1]; b.setAttribute('aria-pressed', String(it[0] === cur));
+      b.addEventListener('click', function () { onPick(it[0]); });
+      box.appendChild(b);
+    });
+  }
+  function controls() {
+    seg('fLine', [[-1, L().all]].concat(LINE.map(function (l, k) { return [k, l]; })), S.line, function (v) { S.line = v; S.msn = null; S.focusFin = -1; render(); });
+    seg('fPhase', [[0, L().serie], [-1, L().allTypes]], S.phase, function (v) { S.phase = v; render(); });
+    seg('fNature', [[false, L().allDef], [true, L().cableDef]], S.cable, function (v) { S.cable = v; S.msn = null; render(); });
+    seg('fFind', [[true, L().findings], [false, L().names]], S.findings, function (v) { S.findings = v; save(); render(); });
+    seg('fUnit', [['nc', L().unitNc], ['def', L().unitDef]], S.unit, function (v) { S.unit = v; save(); render(); });
+    seg('fMsnMetric', [['cost', L().mCost], ['nc', L().mNc]], S.msnMetric, function (v) { S.msnMetric = v; render(); });
+    Array.prototype.forEach.call($('fLang').children, function (b) { b.setAttribute('aria-pressed', String(b.getAttribute('data-v') === S.lang)); });
+    txt('lLine', L().line); txt('lPhase', L().phase); txt('lNature', L().nature);
+    txt('tTitle', L().title); txt('tAsof', fill(L().asof, { d: dateTxt(ASOF) }));
+    $('bPresent').textContent = '▸ ' + L().present;
+    if (!copyFlash) $('bCopy').textContent = L().copy;
+    document.documentElement.lang = S.lang;
+    Array.prototype.forEach.call(document.querySelectorAll('.datatoggle'), function (b) { var open = !$('tbl-' + b.getAttribute('data-t')).hidden; b.textContent = open ? L().dataHide : L().dataBtn; b.setAttribute('aria-expanded', String(open)); });
+    var fb = $('focusbar'); fb.textContent = '';
+    var chips = [];
+    if (S.focusCat >= 0) chips.push([nm(CAT[S.focusCat]), function () { S.focusCat = -1; render(); }]);
+    if (S.focusFin >= 0) chips.push([DICT.fin[S.focusFin], function () { S.focusFin = -1; render(); }]);
+    chips.forEach(function (c) { var s = document.createElement('span'); s.className = 'chip-x'; s.textContent = c[0]; var x = document.createElement('button'); x.type = 'button'; x.setAttribute('aria-label', 'remove'); x.textContent = '×'; x.addEventListener('click', c[1]); s.appendChild(x); fb.appendChild(s); });
+    fb.hidden = !chips.length;
+    var ft = $('foot'); ft.textContent = '';
+    L().foot.forEach(function (s) { var p = document.createElement('p'); p.textContent = fill(s, { f: D.meta.ncFile, d: dateTxt(ASOF), y: Y, y0: Y0, n: num(D.meta.n2025) }); ft.appendChild(p); });
+    var star = document.createElement('p'); star.textContent = S.lang === 'fr' ? '* Défauts câble : évolution calculée avec le parseur v4.8 sur les deux années.' : '* Cable defects: change computed with parser v4.8 on both years.'; ft.appendChild(star);
+  }
+  var V = null;
+  function render() {
+    hideTip();
+    var live = document.querySelector('body.presenting [data-slide].on');
+    if (live) { live.style.transform = ''; live.style.marginBottom = ''; }
+    controls();
+    V = select();
+    hero(V); growth(V); net(V); cost(V); repeat(V); passport(V);
+    window.__V = V; window.__CAT = CAT;
+    if (live) fit(live);
+  }
+
+  // presentation mode: one section per screen, scaled down when it is taller than the screen
+  function fit(sec) {
+    var hgt = sec.scrollHeight, room = window.innerHeight - 70, k = Math.min(1, room / Math.max(1, hgt));
+    sec.style.transformOrigin = 'top center';
+    sec.style.transform = k < 1 ? 'scale(' + k.toFixed(3) + ')' : '';
+    sec.style.marginBottom = k < 1 ? (-(1 - k) * hgt) + 'px' : '';
+  }
+  function showSlide(k) {
+    S.slide = Math.max(0, Math.min(DECK.length - 1, k));
+    var cur = DECK[S.slide];
+    SLIDES.forEach(function (id) { var e = $(id); e.classList.toggle('on', id === cur[0]); e.classList.toggle('step1', id === cur[0] && cur[1] === 1); e.classList.toggle('step2', id === cur[0] && cur[1] === 2); });
+    $('deckN').textContent = (S.slide + 1) + ' / ' + DECK.length;
+    var dots = $('deckDots'); dots.textContent = ''; DECK.forEach(function (x, i) { var d = document.createElement('i'); if (i === S.slide) d.className = 'on'; dots.appendChild(d); });
+    window.scrollTo(0, 0);
+    render();
+  }
+  function present(on) {
+    document.body.classList.toggle('presenting', on);
+    if (on) { showSlide(S.slide || 0); try { if (document.documentElement.requestFullscreen) document.documentElement.requestFullscreen().catch(function () {}); } catch (e) {} }
+    else { SLIDES.forEach(function (id) { $(id).classList.remove('on', 'step1', 'step2'); $(id).style.transform = ''; $(id).style.marginBottom = ''; }); try { if (document.fullscreenElement) document.exitFullscreen(); } catch (e) {} render(); }
+  }
+  $('bPresent').addEventListener('click', function () { present(true); });
+  // the findings of the current view as plain text, for an email or a Teams message
+  var copyFlash = false;
+  function summaryText() {
+    var was = S.findings; if (!was) { S.findings = true; render(); }
+    var f = [S.line < 0 ? L().all : LINE[S.line], S.phase < 0 ? L().allTypes : L().serie, S.cable ? L().cableDef : L().allDef].join(' · ');
+    var out = [fill(L().sumHead, { d: dateTxt(ASOF), f: f }), ''];
+    [['h0'], ['h1t', 'h1s'], ['h2t'], ['h3t'], ['h4t', 'h4s'], ['h5t']].forEach(function (ids) {
+      var line = ids.map(function (id) { return $(id).textContent.trim(); }).filter(Boolean).join(' ');
+      if (line) out.push('• ' + line);
+    });
+    var sigTxt = Array.prototype.map.call(document.querySelectorAll('#signals .sig .tx'), function (e) { var c = e.cloneNode(true); var sm = c.querySelector('small'); if (sm) sm.remove(); return '  – ' + c.textContent.trim(); });
+    if (sigTxt.length) { out.push(''); out.push(L().sumSig); out = out.concat(sigTxt); }
+    if (!was) { S.findings = false; render(); }
+    return out.join('\n');
+  }
+  $('bCopy').addEventListener('click', function () {
+    var text = summaryText(), b = $('bCopy');
+    function flash(msg) { copyFlash = true; b.textContent = msg; setTimeout(function () { copyFlash = false; b.textContent = L().copy; }, 2200); }
+    function fallback() {
+      var ta = document.createElement('textarea'); ta.value = text; ta.setAttribute('readonly', ''); ta.style.position = 'fixed'; ta.style.left = '-9999px'; document.body.appendChild(ta); ta.select();
+      var ok = false; try { ok = document.execCommand('copy'); } catch (e) {}
+      document.body.removeChild(ta); flash(ok ? L().copied : L().copySel);
+    }
+    try { navigator.clipboard.writeText(text).then(function () { flash(L().copied); }, fallback); } catch (e) { fallback(); }
+  });
+  $('dExit').addEventListener('click', function () { present(false); });
+  $('dPrev').addEventListener('click', function () { showSlide(S.slide - 1); });
+  $('dNext').addEventListener('click', function () { showSlide(S.slide + 1); });
+  document.addEventListener('keydown', function (e) {
+    if (!document.body.classList.contains('presenting')) return;
+    if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ') { e.preventDefault(); showSlide(S.slide + 1); }
+    if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); showSlide(S.slide - 1); }
+    if (e.key === 'Escape') present(false);
+  });
+  document.addEventListener('fullscreenchange', function () { if (!document.fullscreenElement && document.body.classList.contains('presenting')) present(false); });
+  Array.prototype.forEach.call($('fLang').children, function (b) { b.addEventListener('click', function () { S.lang = b.getAttribute('data-v'); save(); render(); }); });
+  Array.prototype.forEach.call(document.querySelectorAll('.datatoggle'), function (b) {
+    b.addEventListener('click', function () { var k = b.getAttribute('data-t'), box = $('tbl-' + k); box.hidden = !box.hidden; if (!box.hidden) drawTable(k); controls(); });
+  });
+  var rz = null; window.addEventListener('resize', function () { clearTimeout(rz); rz = setTimeout(render, 120); });
+  window.addEventListener('scroll', hideTip, { passive: true });
+  if (location.hash === '#present') present(true);
+  render();
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(render);
+})();
+</script>

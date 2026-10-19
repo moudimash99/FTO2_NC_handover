@@ -1,0 +1,145 @@
+{
+ "default": {
+  "nc": 722,
+  "defects": 2704,
+  "cost": 165744,
+  "clientNc": 34,
+  "clientDefects": 32,
+  "cableDefects": 237,
+  "nc2025": 518,
+  "defects2025": 1855,
+  "defects2026parser": 2704,
+  "found": {
+   "cables": 224,
+   "test": 197,
+   "line": 171,
+   "final": 111,
+   "other": 19
+  },
+  "escapesByCat": {
+   "Déverrouillage": 2,
+   "MEO Câblage": 16,
+   "Élément Endommagé": 9,
+   "Élément Manquant": 5
+  },
+  "minutesPerNc": {
+   "alert": 30.0,
+   "writing": 34.6,
+   "support": 59.9,
+   "setup": 43.7,
+   "hands_on": 63.5,
+   "recheck": 30.0
+  },
+  "methods": {
+   "airbus": 363604,
+   "detail": 165744,
+   "aec": 129154
+  }
+ },
+ "A350": {
+  "nc": 340,
+  "defects": 2100,
+  "cost": 92408,
+  "clientNc": 20,
+  "clientDefects": 20,
+  "cableDefects": 159,
+  "nc2025": 227,
+  "defects2025": 1345,
+  "defects2026parser": 2100,
+  "found": {
+   "cables": 135,
+   "test": 100,
+   "final": 56,
+   "line": 41,
+   "other": 8
+  },
+  "escapesByCat": {
+   "MEO Câblage": 15,
+   "Élément Endommagé": 2,
+   "Élément Manquant": 3
+  },
+  "minutesPerNc": {
+   "alert": 30.0,
+   "writing": 34.9,
+   "support": 60.0,
+   "setup": 49.6,
+   "hands_on": 102.2,
+   "recheck": 30.0
+  },
+  "methods": {
+   "airbus": 182220,
+   "detail": 92408,
+   "aec": 64499
+  }
+ },
+ "cable": {
+  "nc": 228,
+  "defects": 237,
+  "cost": 42148,
+  "clientNc": 0,
+  "clientDefects": 0,
+  "cableDefects": 237,
+  "nc2025": 200,
+  "defects2025": 223,
+  "defects2026parser": 243,
+  "found": {
+   "cables": 186,
+   "test": 30,
+   "line": 8,
+   "final": 4
+  },
+  "escapesByCat": {},
+  "minutesPerNc": {
+   "alert": 30.0,
+   "writing": 30.5,
+   "support": 60.0,
+   "setup": 50.3,
+   "hands_on": 37.2,
+   "recheck": 30.0
+  },
+  "methods": {
+   "airbus": 122221,
+   "detail": 46000,
+   "aec": 40434
+  }
+ },
+ "allPhases": {
+  "nc": 727,
+  "defects": 2709,
+  "cost": 166428,
+  "clientNc": 69,
+  "clientDefects": 69,
+  "cableDefects": 237,
+  "nc2025": 530,
+  "defects2025": 1867,
+  "defects2026parser": 2709,
+  "found": {
+   "cables": 224,
+   "test": 197,
+   "line": 176,
+   "final": 111,
+   "other": 19
+  },
+  "escapesByCat": {
+   "Déverrouillage": 3,
+   "Erreur Branchement": 2,
+   "FOD": 1,
+   "MEO Câblage": 30,
+   "Élément Endommagé": 23,
+   "Élément Manquant": 10
+  },
+  "minutesPerNc": {
+   "alert": 30.0,
+   "writing": 34.6,
+   "support": 59.9,
+   "setup": 43.4,
+   "hands_on": 63.1,
+   "recheck": 30.0
+  },
+  "methods": {
+   "airbus": 365155,
+   "detail": 166428,
+   "aec": 129830
+  }
+ }
+}
