@@ -396,6 +396,47 @@ details.detail .inner { padding-inline: 0; }
   .fig, .figs > .fig:first-child { border-left: 0; border-top: 1px solid var(--grid); padding-left: 0; }
   .figs > .fig:first-child { border-top: 0; }
 }
+/* CNQ: "explain the calculation", folded by default: the steps with their time and cost, then one real NC worked out line by line */
+details.explain { border-top: 1px solid var(--ink); border-bottom: 1px solid var(--grid); }
+details.explain > summary { cursor: pointer; padding: 16px 0; font-family: var(--font-display); font-size: clamp(22px, 2.4vw, 28px); line-height: 1.15; color: var(--s1); list-style-position: inside; }
+details.explain[open] > summary { color: var(--ink); border-bottom: 1px solid var(--grid); }
+.cx-in { display: grid; grid-template-columns: minmax(0, 1fr); gap: 36px; padding: 22px 0 34px; min-width: 0; }
+.cx-sec { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; min-width: 0; }
+.cx-sec h3 { font-family: var(--font-display); font-weight: 400; font-size: 24px; line-height: 1.15; }
+.cxchain { list-style: none; margin: 8px 0 0; padding: 0; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 18px; counter-reset: st; }
+.cxchain li { counter-increment: st; border-top: 3px solid var(--s1); padding-top: 10px; display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.cxchain li.var { border-top-color: var(--ink-2); }
+.cxchain li::before { content: counter(st); font-size: 12px; font-weight: 600; color: var(--muted); }
+.cxchain .cn { font-weight: 600; font-size: 14px; line-height: 1.3; min-height: 2.6em; }
+.cxchain .cv { font-family: var(--font-display); font-size: 32px; line-height: 1.05; white-space: nowrap; }
+.cxchain .ce { font-size: 14px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.cxchain .cs { font-size: 12.5px; color: var(--muted); line-height: 1.35; }
+.cxchain .sel { margin-top: auto; }
+.cxchain .sel, .cxplus .sel { margin-block-start: 6px; padding-top: 6px; border-top: 1px solid var(--grid); font-size: 12.5px; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+.cxchain .sel b, .cxplus .sel b { color: var(--ink); }
+.cxplus { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); gap: 14px 18px; margin-top: 6px; }
+.cxplus > div { border-left: 3px solid var(--dim); padding: 2px 0 2px 12px; display: grid; gap: 2px; align-content: start; }
+.cxplus > div.tot { border-left-color: var(--ink); }
+.cxplus .cn { font-weight: 600; font-size: 14px; }
+.cxplus .cv { font-size: 14px; font-variant-numeric: tabular-nums; }
+.cxformula { font-weight: 600; font-size: 15.5px; max-width: 70ch; }
+.cx-nc { background: var(--band); border-radius: 8px; padding: 20px 22px 22px; }
+.cx-pick { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.cx-pick label { font-size: 13.5px; }
+.cx-pick input { font: inherit; font-size: 13.5px; width: 11em; padding: 5px 9px; border: 1px solid var(--ring); border-radius: 6px; background: var(--surface); color: var(--ink); }
+.cxb { font: inherit; font-size: 12.5px; border: 1px solid var(--ring); background: var(--surface); color: var(--ink); border-radius: 999px; padding: 4px 12px; cursor: pointer; white-space: nowrap; }
+.cxb[aria-pressed="true"], .cxb.go { background: var(--ink); color: var(--surface); border-color: var(--ink); font-weight: 600; }
+.cx-facts { display: flex; flex-wrap: wrap; gap: 4px 22px; font-size: 13.5px; margin: 6px 0 2px; }
+table.cxt { min-width: 560px; font-variant-numeric: tabular-nums; }
+table.cxt th.r, table.cxt td.r { text-align: right; white-space: nowrap; }
+table.cxt tr.off td { color: var(--muted); }
+table.cxt tr.total td { font-weight: 600; border-top: 2px solid var(--ink); border-bottom: 0; }
+table.cxt td.txt { min-width: 16em; }
+.cx-lv { display: grid; gap: 6px; font-size: 13.5px; margin: 4px 0 8px; }
+.cx-lv div { border-left: 3px solid var(--dim); padding-left: 10px; }
+.cx-yes { font-weight: 700; color: var(--s1); } .cx-no { color: var(--muted); }
+@media (max-width: 900px) { .cxchain { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 480px) { .cxchain { grid-template-columns: repeat(2, minmax(0, 1fr)); } .cx-nc { padding: 16px 14px; } }
 /* Gallery: chart ideas drawn on fictitious data, two per row, each numbered so they can be picked */
 .fict.real { color: var(--s1); }
 .fict { justify-self: start; font-size: 11.5px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--up); border: 1.5px solid currentColor; border-radius: 4px; padding: 3px 9px; }
@@ -603,6 +644,31 @@ footer p { max-width: none; }
       <div class="levels" id="cLevels"></div>
       <p class="sub" data-t="cLevelsSub"></p>
     </div>
+    <details class="explain" id="cx">
+      <summary data-t="cxSum"></summary>
+      <div class="cx-in">
+        <section class="cx-sec">
+          <h3 data-t="cxStepsT"></h3>
+          <p class="sub" data-t="cxStepsSub"></p>
+          <ol class="cxchain" id="cxChain"></ol>
+          <div class="cxplus" id="cxPlus"></div>
+          <p class="cxformula" id="cxFormula"></p>
+          <p class="sub" id="cxExample"></p>
+          <details class="vdata"><summary data-t="cxRulesSum"></summary><div class="table-wrap" id="cxRules"></div></details>
+        </section>
+        <section class="cx-sec cx-nc">
+          <h3 data-t="cxNcT"></h3>
+          <div class="cx-pick">
+            <label for="cxNum" data-t="cxNum"></label>
+            <input type="text" id="cxNum" list="cxList" inputmode="numeric" autocomplete="off">
+            <datalist id="cxList"></datalist>
+            <button type="button" class="cxb go" id="cxGo" data-t="cxShow"></button>
+          </div>
+          <div class="cx-pick" id="cxEx" role="group"></div>
+          <div id="cxOut" aria-live="polite"></div>
+        </section>
+      </div>
+    </details>
     <div class="chips" id="cc"></div>
     <div class="grid" id="cg"></div>
     <details class="detail"><summary><span data-t="tblNc"></span><span class="count" id="cn"></span></summary>
@@ -784,6 +850,32 @@ window.FTO2_PAGE = window.FTO2_PAGE || '__PAGE__';
       wTrendAll: 'Tous les défauts, par semaine', wTrendProb: '{p}, par semaine', probClear: 'Revenir à tous les défauts',
       wTrendSub: 'En couleur, les semaines de la période choisie. Cliquez sur une semaine pour la choisir.',
       cnqSub: 'Estimation à partir des temps du processus AEC : alerte, rédaction, support technique, reprise et contrôle, chiffrés défaut par défaut.',
+      cxSum: 'Expliquer le calcul',
+      cxStepsT: 'Les étapes d’une NC, avec leur temps et leur coût',
+      cxStepsSub: 'Chaque NC suit six étapes. Le coût est la somme des minutes au taux horaire, plus l’ingénierie et la matière. La dernière ligne de chaque étape donne son total sur la sélection.',
+      cs_alert: 'Aléa', cs_writing: 'Rédaction de la NC', cs_support: 'Support technique', cs_setup: 'Préparation', cs_hands: 'Intervention', cs_recheck: 'Recontrôle et clôture',
+      cu_alert: 'l’opérateur signale le défaut', cu_writing: '{x} min au contrôle final', cu_support: 'vérification, estimation, ordre de travail',
+      cu_setup: 'badgeage, approvisionnement, mise en place', cu_hands: 'minutes de chaque défaut relevé', cu_recheck: 'contrôle de la retouche, puis clôture',
+      cxPerNc: '{c} par NC', cxHandsV: 'selon les défauts', cxSel: 'Sélection : {c} · {p}',
+      cxEng: 'Étude d’ingénierie', cxEngV: 'DQN : {h} h × {r} €/h = {c}', cxMat: 'Matière', cxMatV: 'somme de la matière des défauts', cxTot: 'Total de la sélection', cxTotV: '{n} NC',
+      cxFormula: 'Coût = total des minutes ÷ 60 × {r} €/h + ingénierie + matière. Préparation et intervention ne descendent jamais sous {f} min.',
+      cxExample: 'Exemple, une retouche avec un seul défaut de 10 min : {a} + {b} + {c} + {d} + 10 + {e} = {m} min, soit {c2}.',
+      cxRulesSum: 'Voir ce qui est compté pour chaque décision',
+      cxRuleH: ['Décision', 'NC', 'Aléa', 'Rédaction', 'Support', 'Travail et matière', 'Recontrôle', 'Ingénierie', 'Pièce', 'Standard Airbus', 'Origine'],
+      bk_LOCAL: 'Processus décrit par AEC', bk_RULE: 'Règle AEC', bk_ASSUMED: 'Hypothèse', bk_OFFICIAL: 'Officiel Airbus', bk_TEAM: 'Table de l’équipe', bk_BORROWED: 'Emprunté', bk_DERIVED: 'Règle de l’équipe',
+      cxNcT: 'Le calcul sur une NC réelle', cxNum: 'Numéro de NC', cxShow: 'Afficher', cxNone: 'Aucune NC ne porte ce numéro dans les données. Choisir un numéro dans la liste.',
+      ex_one: 'Retouche à un défaut', ex_many: 'Retouche à plusieurs défauts', ex_final: 'Retouche au contrôle final', ex_noline: 'Retouche sans ligne de défaut',
+      ex_rej: 'Rejet', ex_exc: 'Échange', ex_dqn: 'Demande de DQN', ex_cli: 'Retour client',
+      fx_nc: 'NC', fx_date: 'Créée le', fx_line: 'Ligne', fx_dec: 'Décision', fx_where: 'Détection', fx_lines: 'Lignes de défaut',
+      cxH: ['Étape', 'Calcul', 'Minutes', 'Coût à {r} €/h'],
+      n_once: '{x} min, une fois par NC', n_plain: '{x} min', n_final: '{x} min car détectée au contrôle final',
+      n_floor: 'relevée de {a} à {b} min pour que préparation et intervention atteignent {f} min', n_noline: 'aucune ligne de défaut : forfait de {x} min',
+      n_lines: '{n} ligne(s) de défaut, détaillées ci-dessous', n_off: 'non compté pour cette décision',
+      r_eng: 'Étude d’ingénierie', r_eng_how: '{h} h à {r} €/h', r_mat: 'Matière', r_mat_how: 'somme de la matière des lignes de défaut',
+      r_part: 'Valeur de la pièce', r_part_how: 'pas de prix dans les données : comptée 0 €', r_adj: 'Retour client : forfait ou montant réel', r_tot: 'Total niveau 3',
+      x2_line: 'Niveau 2, moyenne globale : {m} min aux temps moyens, soit {c}.', x1_line: 'Niveau 1, standard Airbus : {c} pour une décision « {l} », quel que soit le nombre de défauts.',
+      d_lines: 'Voir les {n} lignes de défaut de cette NC', dlH: ['#', 'Texte saisi', 'Classe (cause racine)', 'Minutes', 'Matière'],
+      dl_on: 'Somme, reprise ci-dessus en intervention et matière', dl_off: 'Somme, non comptée : cette décision ne comporte pas de travail',
       stripTotal: 'Total FTO2', stripSerie: 'Émises à FTO2', stripClient: 'Retours clients',
       cTotal: 'Coût de non-qualité', cNcs: 'NC', cPerNc: 'Coût moyen par NC', cCable: 'Coût des défauts câble', cCableSub: '{p} du coût',
       cLevels: 'Comparaison des méthodes de chiffrage', cLevelsSub: 'Standard Airbus : coût forfaitaire par décision. Moyenne AEC : temps moyens par NC. Détail par défaut : étapes AEC et reprise calculée pour chaque défaut (méthode retenue).',
@@ -897,6 +989,32 @@ window.FTO2_PAGE = window.FTO2_PAGE || '__PAGE__';
       wTrendAll: 'All defects, per week', wTrendProb: '{p}, per week', probClear: 'Back to all defects',
       wTrendSub: 'Weeks of the chosen period are in colour. Click a week to choose it.',
       cnqSub: 'Estimate from AEC process times: alert, writing, technical support, rework and check, costed defect by defect.',
+      cxSum: 'Explain the calculation',
+      cxStepsT: 'The steps of an NC, with their time and cost',
+      cxStepsSub: 'Every NC goes through six steps. The cost is the sum of the minutes at the hourly rate, plus engineering and material. The last line of each step is its total over the selection.',
+      cs_alert: 'Alert', cs_writing: 'Writing the NC', cs_support: 'Technical support', cs_setup: 'Setup', cs_hands: 'Hands-on work', cs_recheck: 'Re-check and closing',
+      cu_alert: 'the operator reports the defect', cu_writing: '{x} min at final inspection', cu_support: 'check, estimate, work order',
+      cu_setup: 'badging, fetching, setting up', cu_hands: 'minutes of each defect found', cu_recheck: 'check of the rework, then closing',
+      cxPerNc: '{c} per NC', cxHandsV: 'depends on the defects', cxSel: 'Selection: {c} · {p}',
+      cxEng: 'Engineering study', cxEngV: 'Design query: {h} h × {r} EUR/h = {c}', cxMat: 'Material', cxMatV: 'sum of the material of the defects', cxTot: 'Selection total', cxTotV: '{n} NCs',
+      cxFormula: 'Cost = total minutes ÷ 60 × {r} EUR/h + engineering + material. Setup and hands-on work are never under {f} min.',
+      cxExample: 'Example, a rework with a single 10-minute defect: {a} + {b} + {c} + {d} + 10 + {e} = {m} min, which is {c2}.',
+      cxRulesSum: 'See what is charged for each decision',
+      cxRuleH: ['Decision', 'NCs', 'Alert', 'Writing', 'Support', 'Work and material', 'Re-check', 'Engineering', 'Part', 'Airbus standard', 'Basis'],
+      bk_LOCAL: 'Process described by AEC', bk_RULE: 'AEC rule', bk_ASSUMED: 'Assumed', bk_OFFICIAL: 'Official Airbus', bk_TEAM: 'Team table', bk_BORROWED: 'Borrowed', bk_DERIVED: 'Team rule',
+      cxNcT: 'The calculation on a real NC', cxNum: 'NC number', cxShow: 'Show', cxNone: 'No NC with that number in the data. Pick one from the list.',
+      ex_one: 'Rework, one defect', ex_many: 'Rework, several defects', ex_final: 'Rework at final inspection', ex_noline: 'Rework, no defect line',
+      ex_rej: 'Rejection', ex_exc: 'Exchange', ex_dqn: 'Design query', ex_cli: 'Customer return',
+      fx_nc: 'NC', fx_date: 'Created', fx_line: 'Line', fx_dec: 'Decision', fx_where: 'Found at', fx_lines: 'Defect lines',
+      cxH: ['Step', 'How', 'Minutes', 'Cost at {r} EUR/h'],
+      n_once: '{x} min, once per NC', n_plain: '{x} min', n_final: '{x} min because it was found at final inspection',
+      n_floor: 'raised from {a} to {b} min so setup and hands-on work reach {f} min', n_noline: 'no defect line: flat {x} min',
+      n_lines: '{n} defect line(s), listed below', n_off: 'not charged for this decision',
+      r_eng: 'Engineering study', r_eng_how: '{h} h at {r} EUR/h', r_mat: 'Material', r_mat_how: 'sum of the material of the defect lines',
+      r_part: 'Value of the part', r_part_how: 'no price in the data: counted as 0 EUR', r_adj: 'Customer return: flat amount or real amount', r_tot: 'Total, level 3',
+      x2_line: 'Level 2, global average: {m} min at average times, which is {c}.', x1_line: 'Level 1, Airbus standard: {c} for a “{l}” decision, whatever the number of defects.',
+      d_lines: 'Show the {n} defect lines of this NC', dlH: ['#', 'What was written', 'Class (root cause)', 'Minutes', 'Material'],
+      dl_on: 'Sum, used above as hands-on work and material', dl_off: 'Sum, not charged: this decision has no work',
       stripTotal: 'FTO2 total', stripSerie: 'Raised at FTO2', stripClient: 'Customer returns',
       cTotal: 'Cost of non-quality', cNcs: 'NCs', cPerNc: 'Average cost per NC', cCable: 'Cost of cable defects', cCableSub: '{p} of the cost',
       cLevels: 'Costing methods compared', cLevelsSub: 'Airbus standard: flat cost per decision. AEC average: average times per NC. Per defect: AEC steps with the rework built for each defect (method used).',
@@ -1459,6 +1577,130 @@ window.FTO2_PAGE = window.FTO2_PAGE || '__PAGE__';
       document.getElementById('cLevels').innerHTML = lv.map(function (l) { return '<div class="level' + (l[2] ? ' main' : '') + '"><span class="name">' + esc(l[0]) + '</span><span class="track"><span class="fill" style="width:' + (l[1] / mx * 100) + '%"></span></span><span class="val">' + eur(l[1]) + '</span></div>'; }).join('');
     }
   });
+
+  // ---------------------------------------------------------------- 4b. Explain the calculation (folded by default): the steps with their
+  // time and cost per NC and over the selection, then one real NC worked out step by step. Every figure comes from the pipeline:
+  // NC row [40] = the model's minutes [alert, writing, support, setup, hands-on, re-check], engineering hours, final-inspection flag.
+  var CXP = D.cnqp || null, CX = { nc: null, lines: false };
+  var CX_STEPS = [['alert', 'alert'], ['writing', 'write'], ['support', 'support'], ['setup', 'work'], ['hands', 'work'], ['recheck', 'recheck']];
+  var CX_RF = { alert: 0, write: 1, support: 2, work: 3, recheck: 4, eng: 5, part: 6, label: 7, basis: 8 };
+  function eur2(x) { return (+x).toLocaleString(loc(), { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + (G.lang === 'fr' ? ' €' : ' EUR'); }
+  function dec(x) { return (+x).toLocaleString(loc(), { maximumFractionDigits: 2 }); }
+  function mn(x) { return (Math.round(x * 10) / 10).toLocaleString(loc()) + ' min'; }
+  function cxSteps(n) { return n[40] || [0, 0, 0, 0, 0, 0, 0, 0]; }
+  function cxRule(n) { return CXP.rules[n[6]] || null; }
+  function cxAdj(n) {   // customer return: the flat extra or the real amount, i.e. what the level-3 cost holds beyond the steps (0 today)
+    var f = cxRule(n), st = cxSteps(n); if (!f) return 0;
+    var m = [f[0], f[1], f[2], f[3], f[3], f[4]].reduce(function (a, on, j) { return a + (on ? st[j] : 0); }, 0), d = n[12] - (m / 60 * CXP.p.rate + n[18] + n[17]);
+    return Math.abs(d) >= 0.05 ? d : 0;
+  }
+  function cxLines(nc) { return D.defects.filter(function (r) { return r[0] === nc; }).sort(function (a, b2) { return a[1] - b2[1]; }); }
+  function cxLine(r) {   // minutes and material of one defect line, from its class (root-cause labelling, the one behind the figures)
+    var c = CXP.cls[dSub(r)], q = CXP.qty[r[0] + '|' + r[1]] || 1;
+    return { m: (c ? c[0] : CXP.p.defDefault) * q, a: (c ? c[1] : 0) * q, cls: dSub(r) && G.lang === 'en' && c ? c[2] : (dSub(r) || '—') };
+  }
+  // example NCs, picked from the selection: the most recent NC of each kind
+  var CX_EX = [
+    ['ex_one', function (n) { return n[6] === 'RWK' && n[21] === 1 && !cxSteps(n)[7]; }],
+    ['ex_many', function (n) { return n[6] === 'RWK' && n[21] >= 5 && !cxSteps(n)[7]; }],
+    ['ex_final', function (n) { return n[6] === 'RWK' && n[21] >= 2 && cxSteps(n)[7]; }],
+    ['ex_noline', function (n) { return n[6] === 'RWK' && n[21] === 0; }],
+    ['ex_rej', function (n) { return n[6] === 'REJ'; }],
+    ['ex_exc', function (n) { return n[6] === 'EXC'; }],
+    ['ex_dqn', function (n) { return n[6] === 'DQN'; }],
+    ['ex_cli', function (n) { return n[23] === 'client'; }]
+  ];
+  function cxExamples() {
+    var sorted = SEL_NC.slice().sort(function (a, b2) { return a[1] < b2[1] ? 1 : a[1] > b2[1] ? -1 : String(b2[0]).localeCompare(String(a[0])); });
+    return CX_EX.map(function (e) { var n = sorted.find(e[1]); return n ? [e[0], n[0]] : null; }).filter(Boolean);
+  }
+  function renderCx() {
+    var box = document.getElementById('cx'); if (!box) return;
+    box.hidden = !CXP; if (!CXP) return;
+    var P = CXP.p, r = P.rate, tot = sum(SEL_NC, function (n) { return n[12]; }) || 0;
+    var stepTot = CX_STEPS.map(function (st, j) { return sum(SEL_NC, function (n) { return cxSteps(n)[j]; }) / 60 * r; });
+    var engTot = sum(SEL_NC, function (n) { return n[18]; }), matTot = sum(SEL_NC, function (n) { return n[17]; });
+    var shr = function (v) { return tot ? pct(v / tot * 100) : '—'; };
+    var vals = { alert: P.alert, writing: P.write, support: P.support, setup: P.setup, recheck: P.recheck };
+    var subs = { alert: S('cu_alert'), writing: S('cu_writing', { x: P.writeFinal }), support: S('cu_support'), setup: S('cu_setup'), hands: S('cu_hands'), recheck: S('cu_recheck') };
+    document.getElementById('cxChain').innerHTML = CX_STEPS.map(function (st, j) {
+      var k = st[0], v = vals[k];
+      return '<li' + (k === 'hands' ? ' class="var"' : '') + '><div class="cn">' + esc(S('cs_' + k)) + '</div><div class="cv">' + (v != null ? esc(num(v)) + ' min' : 'Σ') + '</div>' +
+        '<div class="ce">' + esc(v != null ? '= ' + S('cxPerNc', { c: eur2(v / 60 * r) }) : S('cxHandsV')) + '</div><div class="cs">' + esc(subs[k]) + '</div>' +
+        '<div class="sel">' + S('cxSel', { c: '<b>' + esc(eur(stepTot[j])) + '</b>', p: esc(shr(stepTot[j])) }) + '</div></li>';
+    }).join('');
+    var dqn = CXP.rules.DQN, eh = dqn ? dqn[CX_RF.eng] : 0, other = sum(SEL_NC, cxAdj);
+    document.getElementById('cxPlus').innerHTML =
+      '<div><span class="cn">' + esc(S('cxEng')) + '</span><span class="cv">' + esc(S('cxEngV', { h: dec(eh), r: dec(P.rateEng), c: eur2(eh * P.rateEng) })) + '</span><div class="sel">' + S('cxSel', { c: '<b>' + esc(eur(engTot)) + '</b>', p: esc(shr(engTot)) }) + '</div></div>' +
+      '<div><span class="cn">' + esc(S('cxMat')) + '</span><span class="cv">' + esc(S('cxMatV')) + '</span><div class="sel">' + S('cxSel', { c: '<b>' + esc(eur(matTot)) + '</b>', p: esc(shr(matTot)) }) + '</div></div>' +
+      (Math.abs(other) >= 0.5 ? '<div><span class="cn">' + esc(S('r_adj')) + '</span><div class="sel">' + S('cxSel', { c: '<b>' + esc(eur(other)) + '</b>', p: esc(shr(other)) }) + '</div></div>' : '') +
+      '<div class="tot"><span class="cn">' + esc(S('cxTot')) + '</span><span class="cv">' + esc(S('cxTotV', { n: num(SEL_NC.length) })) + '</span><div class="sel"><b>' + esc(eur(tot)) + '</b></div></div>';
+    document.getElementById('cxFormula').textContent = S('cxFormula', { r: dec(r), f: num(P.floor) });
+    var setup = Math.max(P.setup, P.floor - 10), m = P.alert + P.write + P.support + setup + 10 + P.recheck;
+    document.getElementById('cxExample').textContent = S('cxExample', { a: P.alert, b: P.write, c: P.support, d: setup, e: P.recheck, m: num(m), c2: eur2(m / 60 * r) });
+    // what each decision charges
+    var cnt = {}; SEL_NC.forEach(function (n) { cnt[n[6]] = (cnt[n[6]] || 0) + 1; });
+    var yn = function (v) { return v ? '<span class="cx-yes">✓</span>' : '<span class="cx-no">–</span>'; }, H = S('cxRuleH');
+    document.getElementById('cxRules').innerHTML = '<table class="cxt"><thead><tr>' + H.map(function (h, j) { return '<th scope="col"' + (j === 1 || j === 9 ? ' class="r"' : '') + '>' + esc(h) + '</th>'; }).join('') + '</tr></thead><tbody>' +
+      Object.keys(CXP.rules).sort(function (a, b2) { return (cnt[b2] || 0) - (cnt[a] || 0); }).map(function (k) {
+        var f = CXP.rules[k];
+        return '<tr' + (cnt[k] ? '' : ' class="off"') + '><td>' + esc(ruleName(f[CX_RF.label])) + '</td><td class="r">' + num(cnt[k] || 0) + '</td><td>' + yn(f[0]) + '</td><td>' + yn(f[1]) + '</td><td>' + yn(f[2]) + '</td><td>' + yn(f[3]) + '</td><td>' + yn(f[4]) +
+          '</td><td>' + (f[5] ? esc(dec(f[5])) + ' h' : yn(0)) + '</td><td>' + yn(f[6]) + '</td><td class="r">' + esc(eur2(CXP.airbus[k] || 0)) + '</td><td><span class="tag">' + esc(S('bk_' + f[CX_RF.basis])) + '</span></td></tr>';
+      }).join('') + '</tbody></table>';
+    // the NC picker: list of the selection, example buttons, then the NC itself
+    document.getElementById('cxList').innerHTML = SEL_NC.map(function (n) { return '<option value="' + esc(n[0]) + '">'; }).join('');
+    var ex = cxExamples();
+    if (CX.nc == null || !NC[CX.nc]) { var f0 = ex.find(function (e) { return e[0] === 'ex_final'; }) || ex[0]; CX.nc = f0 ? f0[1] : null; }
+    document.getElementById('cxEx').innerHTML = ex.map(function (e) { return '<button type="button" class="cxb" data-cxnc="' + esc(e[1]) + '" aria-pressed="' + (String(e[1]) === String(CX.nc)) + '">' + esc(S(e[0])) + '</button>'; }).join('');
+    document.getElementById('cxNum').setAttribute('placeholder', CX.nc || '');
+    renderCxNc();
+  }
+  function renderCxNc() {
+    var out = document.getElementById('cxOut'), n = CX.nc != null ? NC[CX.nc] : null;
+    if (!n) { out.innerHTML = CX.nc != null ? '<p class="sub">' + esc(S('cxNone')) + '</p>' : ''; return; }
+    var P = CXP.p, r = P.rate, f = cxRule(n) || [0, 0, 0, 0, 0, 0, 0, n[7], ''], st = cxSteps(n), fin = st[7], lines = cxLines(n[0]), sep = G.lang === 'fr' ? ' : ' : ': ';
+    var fact = function (k, v) { return '<span>' + esc(S(k)) + sep + '<b>' + esc(v) + '</b></span>'; };
+    var h = '<div class="cx-facts">' + fact('fx_nc', n[0]) + fact('fx_date', shortDay(n[1])) + fact('fx_line', n[3] || '—') + fact('fx_dec', ruleName(n[7])) + fact('fx_where', whereName(n[8])) + fact('fx_lines', num(lines.length)) + '</div>';
+    var notes = {
+      alert: S('n_once', { x: P.alert }), writing: fin ? S('n_final', { x: P.writeFinal }) : S('n_plain', { x: P.write }), support: S('n_once', { x: P.support }),
+      setup: st[3] > P.setup ? S('n_floor', { a: P.setup, b: dec(st[3]), f: P.floor }) : S('n_once', { x: P.setup }),
+      hands: !lines.length ? S('n_noline', { x: P.noDefect }) : S('n_lines', { n: num(lines.length) }), recheck: S('n_once', { x: P.recheck })
+    };
+    var H = S('cxH'), totMin = 0;
+    var tb = '<div class="table-wrap"><table class="cxt"><thead><tr><th scope="col">' + esc(H[0]) + '</th><th scope="col">' + esc(H[1]) + '</th><th scope="col" class="r">' + esc(H[2]) + '</th><th scope="col" class="r">' + esc(H[3].replace('{r}', dec(r))) + '</th></tr></thead><tbody>';
+    CX_STEPS.forEach(function (s2, j) {
+      var on = !!f[CX_RF[s2[1]]], m = st[j]; if (on) totMin += m;
+      tb += '<tr' + (on ? '' : ' class="off"') + '><td>' + esc(S('cs_' + s2[0])) + '</td><td>' + esc(on ? notes[s2[0]] : S('n_off')) + '</td><td class="r">' + (on ? esc(mn(m)) : '–') + '</td><td class="r">' + (on ? esc(eur2(m / 60 * r)) : '–') + '</td></tr>';
+    });
+    if (st[6]) tb += '<tr><td>' + esc(S('r_eng')) + '</td><td>' + esc(S('r_eng_how', { h: dec(st[6]), r: dec(P.rateEng) })) + '</td><td class="r">–</td><td class="r">' + esc(eur2(n[18])) + '</td></tr>';
+    if (f[3]) tb += '<tr><td>' + esc(S('r_mat')) + '</td><td>' + esc(S('r_mat_how')) + '</td><td class="r">–</td><td class="r">' + esc(eur2(n[17])) + '</td></tr>';
+    if (f[6]) tb += '<tr><td>' + esc(S('r_part')) + '</td><td>' + esc(S('r_part_how')) + '</td><td class="r">–</td><td class="r">' + esc(eur2(0)) + '</td></tr>';
+    var adj = cxAdj(n);
+    if (adj) tb += '<tr><td>' + esc(S('r_adj')) + '</td><td></td><td class="r">–</td><td class="r">' + esc(eur2(adj)) + '</td></tr>';
+    tb += '<tr class="total"><td>' + esc(S('r_tot')) + '</td><td></td><td class="r">' + esc(mn(totMin)) + '</td><td class="r">' + esc(eur2(n[12])) + '</td></tr></tbody></table></div>';
+    var m2 = f[0] * P.alert + f[1] * P.writeGlobal + f[2] * P.support + f[3] * P.workGlobal + f[4] * P.recheck;
+    var lv = '<div class="cx-lv"><div>' + esc(S('x2_line', { m: num(m2), c: '\u0001' })).replace('\u0001', '<b>' + esc(eur2(n[10])) + '</b>') + '</div><div>' +
+      esc(S('x1_line', { c: '\u0001', l: ruleName(n[7]) })).replace('\u0001', '<b>' + esc(eur2(n[9])) + '</b>') + '</div></div>';
+    var dl = '';
+    if (lines.length) {
+      var D2 = S('dlH'), sm = 0, sa = 0;
+      dl = '<details class="vdata" id="cxLines"' + (CX.lines ? ' open' : '') + '><summary>' + esc(S('d_lines', { n: num(lines.length) })) + '</summary><div class="table-wrap"><table class="cxt"><thead><tr>' +
+        D2.map(function (x, j) { return '<th scope="col"' + (j >= 3 ? ' class="r"' : '') + '>' + esc(x) + '</th>'; }).join('') + '</tr></thead><tbody>' +
+        lines.map(function (ln, j) { var c = cxLine(ln); sm += c.m; sa += c.a; return '<tr><td>' + (j + 1) + '</td><td class="txt">' + esc(tidy(ln[18])) + '</td><td>' + esc(c.cls) + '</td><td class="r">' + esc(mn(c.m)) + '</td><td class="r">' + esc(eur2(c.a)) + '</td></tr>'; }).join('') +
+        '<tr class="total"><td></td><td>' + esc(S(f[3] ? 'dl_on' : 'dl_off')) + '</td><td></td><td class="r">' + esc(mn(sm)) + '</td><td class="r">' + esc(eur2(sa)) + '</td></tr></tbody></table></div></details>';
+    }
+    out.innerHTML = h + tb + lv + dl;
+  }
+  function cxPick(v) {
+    v = String(v || '').trim(); if (!v) return;
+    CX.nc = NC[v] ? v : (NC[+v] ? +v : v);
+    document.querySelectorAll('#cxEx .cxb').forEach(function (b2) { b2.setAttribute('aria-pressed', String(b2.getAttribute('data-cxnc') === String(CX.nc))); });
+    renderCxNc();
+  }
+  document.getElementById('cxGo').addEventListener('click', function () { cxPick(document.getElementById('cxNum').value); });
+  document.getElementById('cxNum').addEventListener('keydown', function (e) { if (e.key === 'Enter') cxPick(e.target.value); });
+  document.getElementById('cxEx').addEventListener('click', function (e) { var b2 = e.target.closest('[data-cxnc]'); if (b2) { document.getElementById('cxNum').value = ''; cxPick(b2.getAttribute('data-cxnc')); } });
+  document.getElementById('cxOut').addEventListener('toggle', function (e) { if (e.target.id === 'cxLines') CX.lines = e.target.open; }, true);
 
   // ---------------------------------------------------------------- 4. Customer returns
   function cx(r) { return D.client[r[0] + '|' + r[1]] || ['', '', '', '', '', '']; }
@@ -3919,7 +4161,7 @@ window.FTO2_PAGE = window.FTO2_PAGE || '__PAGE__';
       document.getElementById('p-' + t).hidden = G.tab !== t;
     });
   }
-  function renderAll() { applyText(); showTab(); renderPMode(); ncBoard.render(); pareto.render(); costPareto.render(); weekly.render(); cnq.render(); client.render(); renderRca(); renderAna(); renderMft(); renderGal(); renderProd(); }
+  function renderAll() { applyText(); showTab(); renderPMode(); ncBoard.render(); pareto.render(); costPareto.render(); weekly.render(); cnq.render(); renderCx(); client.render(); renderRca(); renderAna(); renderMft(); renderGal(); renderProd(); }
   function setTab(t) { G.tab = t; if (!EMBED) { try { history.replaceState(null, '', '#' + t); } catch (x) {} } applyText(); showTab(); if (t === 'hebdo') weekly.render(); if (t === 'ov') ncBoard.render(); if (t === 'ana') renderAna(); if (t === 'mft') renderMft(); if (t === 'gal') renderGal(); if (t === 'prod') renderProd(); if (t !== 'ana' && t !== 'mft') hideTip(); }
   document.getElementById('tabs').addEventListener('click', function (e) { var t = e.target.closest('[data-tab]'); if (t) setTab(t.getAttribute('data-tab')); });
   document.getElementById('tabs').addEventListener('keydown', function (e) {

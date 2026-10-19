@@ -359,6 +359,7 @@ def build_dashboard(d, nc, lt):
     client, lt_client = customer_return_extras(d, nc, lt)
     actions = mft_actions()
     data = {"defects": defs, "ncs": ncs, "direct": direct, "rca": rca_reference(d), "client": client, "lt": lt_client, "codes": CODE_DESC, "actions": actions,
+            "cnqp": cnq_explain(d),
             "meta": {"from": "2026-01-01", "to": REPORT["created_to"], "aside": aside, "noLine": no_line,
                      "modelTotal": round(float(aec.cnq_cost_total.sum()), 2)}}
     # the local dashboard also carries the chart gallery, drawn on fictitious data (never in the Slate files)
@@ -407,10 +408,26 @@ def eqmsn(nc):
     return out
 
 
+def cnq_explain(d):
+    """The CNQ parameters the "explain the calculation" part shows: times and rates, which steps each decision charges,
+    minutes and material per defect class, the Airbus standard per decision, and the defect lines counted more than once."""
+    import cnq.cnq_params as P
+    kind = lambda b: "DERIVED" if b.startswith("TEAM RULE") else "RULE" if b.startswith("Rule from AEC") else b.split(" ")[0].upper()
+    return {"p": {"rate": P.RATE_STANDARD, "rateEng": P.RATE_ENGINEERING, "alert": P.MIN_ALERT, "write": P.MIN_WRITE_NC, "writeFinal": P.MIN_WRITE_NC_FINAL,
+                  "support": P.MIN_SUPPORT, "setup": P.MIN_SETUP, "floor": P.MIN_WORK_FLOOR, "recheck": P.MIN_RECHECK_CLOSE,
+                  "noDefect": P.MIN_HANDS_ON_NO_DEFECT, "writeGlobal": P.MIN_WRITE_NC_GLOBAL, "workGlobal": P.MIN_WORK_GLOBAL,
+                  "defDefault": P.MIN_DEFAULT_DEFECT, "crExtra": P.CUSTOMER_RETURN_EXTRA, "version": P.MODEL_VERSION},
+            "rules": {k: list(v[:8]) + [kind(v[8])] for k, v in P.RULES.items()},
+            "cls": {k: [v[0], v[1], v[2], kind(v[4])] for k, v in P.DEFECT_TIMES.items()},
+            "airbus": P.AIRBUS_STANDARD,
+            "qty": {"%s|%d" % (r.notification_number, r.seq): int(r.qty) for r in d.itertuples() if pd.notna(r.qty) and int(r.qty) != 1}}
+
+
 def nc_extras(r):
     """NC fields for the aircraft, product, lead-time, time-of-day and NC charts: [msn, product family, station, creation hour (Paris),
     days to close (None while open), open, age in days if open, closure date, NC type, liability, SAP defect code, SAP cause group,
-    SAP cause, status, data source]. SAP labels lose their brackets. Data source: every NC comes from Skywise; Ext_Source says whether it
+    SAP cause, status, data source, CNQ steps]. CNQ steps = the model's minutes [alert, writing, support, setup, hands-on, re-check],
+    engineering hours and the final-inspection flag, for the "explain the calculation" part. SAP labels lose their brackets. Data source: every NC comes from Skywise; Ext_Source says whether it
     is also in a manual list (gps = GPS register, test = Test list) or only in Skywise (sky)."""
     msn = S_(r.msn)
     msn = msn[:-2] if msn.endswith(".0") else msn
@@ -424,7 +441,9 @@ def nc_extras(r):
     sap = lambda v: S_(v).strip().strip("[]").strip()
     return [msn, S_(r.produit) or "Other", S_(r.station_description).strip(), hour, lead, is_open, age,
             closed.strftime("%Y-%m-%d") if pd.notna(closed) else "", S_(r.type_nc).strip(), sap(r.liability), sap(r.sap_defect_code),
-            sap(r.sap_cause_group), sap(r.sap_cause_code), S_(r.statut), {"GPS": "gps", "Test": "test"}.get(S_(r.ext_source).strip(), "sky")]
+            sap(r.sap_cause_group), sap(r.sap_cause_code), S_(r.statut), {"GPS": "gps", "Test": "test"}.get(S_(r.ext_source).strip(), "sky"),
+            [round(float(x or 0), 1) for x in (r.cnq_min_alert, r.cnq_min_writing, r.cnq_min_support, r.cnq_min_setup, r.cnq_min_hands_on,
+                                                r.cnq_min_recheck, r.cnq_hours_engineering)] + [int(r.cnq_final_inspection or 0)]]
 
 
 FR_MONTHS = {"janvier": 1, "fevrier": 2, "février": 2, "mars": 3, "avril": 4, "mai": 5, "juin": 6, "juillet": 7, "aout": 8, "août": 8,

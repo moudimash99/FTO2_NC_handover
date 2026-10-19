@@ -166,6 +166,31 @@
       <div class="levels" id="cLevels"></div>
       <p class="sub" data-t="cLevelsSub"></p>
     </div>
+    <details class="explain" id="cx">
+      <summary data-t="cxSum"></summary>
+      <div class="cx-in">
+        <section class="cx-sec">
+          <h3 data-t="cxStepsT"></h3>
+          <p class="sub" data-t="cxStepsSub"></p>
+          <ol class="cxchain" id="cxChain"></ol>
+          <div class="cxplus" id="cxPlus"></div>
+          <p class="cxformula" id="cxFormula"></p>
+          <p class="sub" id="cxExample"></p>
+          <details class="vdata"><summary data-t="cxRulesSum"></summary><div class="table-wrap" id="cxRules"></div></details>
+        </section>
+        <section class="cx-sec cx-nc">
+          <h3 data-t="cxNcT"></h3>
+          <div class="cx-pick">
+            <label for="cxNum" data-t="cxNum"></label>
+            <input type="text" id="cxNum" list="cxList" inputmode="numeric" autocomplete="off">
+            <datalist id="cxList"></datalist>
+            <button type="button" class="cxb go" id="cxGo" data-t="cxShow"></button>
+          </div>
+          <div class="cx-pick" id="cxEx" role="group"></div>
+          <div id="cxOut" aria-live="polite"></div>
+        </section>
+      </div>
+    </details>
     <div class="chips" id="cc"></div>
     <div class="grid" id="cg"></div>
     <details class="detail"><summary><span data-t="tblNc"></span><span class="count" id="cn"></span></summary>
