@@ -113,6 +113,14 @@ window.DASH = {"defects":[["216055047",1,"2026-01-06","2026-W02","A350","FTO2",0
       wTrendAll: 'Tous les défauts, par semaine', wTrendProb: '{p}, par semaine', probClear: 'Revenir à tous les défauts',
       wTrendSub: 'En couleur, les semaines de la période choisie. Cliquez sur une semaine pour la choisir.',
       cnqSub: 'Estimation à partir des temps du processus AEC : alerte, rédaction, support technique, reprise et contrôle, chiffrés défaut par défaut.',
+      tabWhere: 'Où', whereTitle: 'Où sont les problèmes ?', whereSub: 'Produits, lignes, avions et postes, rapportés au volume produit quand c’est possible.', titleMock: 'Tableau de bord FTO2 : maquette à noter',
+      mkScore: 'Note', mkOut: 'hors', mkIn: 'garde', mkOthers: 'Autres candidats', mkOthersSub: 'Proposés hors ; une note les fait revenir.', mkFigs: 'Chiffres clés', mkExplain: 'Expliquer le calcul (repliable)', mkTabScore: 'Cet onglet',
+      mkBarAll: 'Notés {k} sur {n}', mkPreview: 'Aperçu final', mkCopy: 'Copier les notes', mkCopied: 'Notes copiées.', mkSaveDb: 'Enregistré sur la page', mkSaveLocal: 'Enregistré dans ce navigateur', mkSaving: 'Enregistrement…', mkSaveErr: 'Non enregistré',
+      mkReal: 'Vraies données', mkFict: 'Fictif', mkTrioK: 'Trois mesures, côte à côte', mkTrioOv: 'NC, défauts et coût par avion produit, mois par mois', mkTrioOvS: 'Les trois mesures restent visibles sans interrupteur ; chacune se note à part.',
+      mkTrioWh: 'Taux par produit : NC, défauts, coût', mkTrioWhS: 'Même ordre de produits dans les trois ; chacune se note à part.', mkOldOv: 'Listes actuelles de la vue d’ensemble', mkOldOvS: 'À répartir entre Où et Pareto, ou à retirer.',
+      mkTgtK: 'Objectif', mkTgtT: 'À quelle distance de l’objectif ?', mkTgtS: 'NC par avion produit (EqMSN), comparées à 2025 moins 25 %.',
+      mkNow: '2026 à date', mkLast3: '3 derniers mois', mkTarget: 'Objectif', mkGap: 'Écart à l’objectif', mkBase: 'Taux 2025 (NC par EqMSN)', mkBaseHint: 'Le taux 2025 n’est pas dans les données : le saisir pour afficher l’objectif.', mkTgtCalc: '{b} × 0,75', mkPerEq: 'NC par EqMSN', mkMatched: 'sur les NC rattachées à un produit',
+      mkD1k: 'Taux', mkD1t: 'Défauts par EqMSN, mois par mois', mkD1s: 'Trait : moyenne de la période ; pointillé : moyenne glissante sur 3 mois.', mkD1d: 'production EqMSN · défauts',
       tabRev: 'Proposition', titleRev: 'Tableau de bord FTO2 : proposition à valider',
       revTitle: 'La proposition, graphique par graphique',
       revSub: 'Les onglets proposés sont rangés par question. Chaque graphique est dessiné : ceux marqués « fictif » viennent de la galerie et seront refaits sur les vraies NC.',
@@ -264,6 +272,14 @@ window.DASH = {"defects":[["216055047",1,"2026-01-06","2026-W02","A350","FTO2",0
       wTrendAll: 'All defects, per week', wTrendProb: '{p}, per week', probClear: 'Back to all defects',
       wTrendSub: 'Weeks of the chosen period are in colour. Click a week to choose it.',
       cnqSub: 'Estimate from AEC process times: alert, writing, technical support, rework and check, costed defect by defect.',
+      tabWhere: 'Where', whereTitle: 'Where are the problems?', whereSub: 'Products, lines, aircraft and stations, against the volume built where possible.', titleMock: 'FTO2 dashboard: mock-up to score',
+      mkScore: 'Score', mkOut: 'out', mkIn: 'kept', mkOthers: 'Other candidates', mkOthersSub: 'Proposed out; a score brings them back.', mkFigs: 'Headline figures', mkExplain: 'Explain the calculation (folded)', mkTabScore: 'This tab',
+      mkBarAll: 'Scored {k} of {n}', mkPreview: 'Final preview', mkCopy: 'Copy the scores', mkCopied: 'Scores copied.', mkSaveDb: 'Saved on the page', mkSaveLocal: 'Saved in this browser', mkSaving: 'Saving…', mkSaveErr: 'Not saved',
+      mkReal: 'Real data', mkFict: 'Dummy', mkTrioK: 'Three measures, side by side', mkTrioOv: 'NCs, defects and cost per aircraft built, month by month', mkTrioOvS: 'All three stay visible with no switch; each is scored on its own.',
+      mkTrioWh: 'Rate by product: NCs, defects, cost', mkTrioWhS: 'Same product order in all three; each is scored on its own.', mkOldOv: 'Today’s overview lists', mkOldOvS: 'To spread between Where and Pareto, or to remove.',
+      mkTgtK: 'Target', mkTgtT: 'How close are we to the target?', mkTgtS: 'NCs per aircraft built (EqMSN), against 2025 minus 25%.',
+      mkNow: '2026 to date', mkLast3: 'Last 3 months', mkTarget: 'Target', mkGap: 'Gap to target', mkBase: '2025 rate (NCs per EqMSN)', mkBaseHint: 'The 2025 rate is not in the data: enter it to show the target.', mkTgtCalc: '{b} × 0.75', mkPerEq: 'NCs per EqMSN', mkMatched: 'on the NCs matched to a product',
+      mkD1k: 'Rate', mkD1t: 'Defects per EqMSN, month by month', mkD1s: 'Line: period average; dashed: 3-month moving average.', mkD1d: 'EqMSN output · defects',
       tabRev: 'Proposal', titleRev: 'FTO2 dashboard: proposal to validate',
       revTitle: 'The proposal, chart by chart',
       revSub: 'The proposed tabs are ordered by question. Every chart is drawn: those marked “dummy” come from the gallery and will be rebuilt on the real NCs.',
@@ -348,8 +364,8 @@ window.DASH = {"defects":[["216055047",1,"2026-01-06","2026-W02","A350","FTO2",0
   var ASIDE = { 'Kitting Factory': 1, 'FOD': 1, 'Autre': 1, 'Non classé': 1, '__none': 1 };
 
   // two pages from one file: the dashboard, and the weekly follow-up (weekly Pareto, MFT actions)
-  var PAGE = window.FTO2_PAGE === 'suivi' ? 'suivi' : window.FTO2_PAGE === 'review' && D.dummy ? 'review' : 'main';
-  var TABS = PAGE === 'suivi' ? ['hebdo', 'mft'] : PAGE === 'review' ? ['rev'] : ['ov', 'pareto', 'ana', 'cnq', 'client', 'rca'].concat(D.dummy ? ['gal'] : []).concat(D.eqmsn || (D.dummy && D.dummy.eqmsn) ? ['prod'] : []);
+  var PAGE = window.FTO2_PAGE === 'suivi' ? 'suivi' : (window.FTO2_PAGE === 'review' || window.FTO2_PAGE === 'mock') && D.dummy ? window.FTO2_PAGE : 'main';
+  var TABS = PAGE === 'suivi' ? ['hebdo', 'mft'] : PAGE === 'review' ? ['rev'] : PAGE === 'mock' ? ['ov', 'pareto', 'where', 'cnq', 'client', 'rca', 'hebdo', 'mft'] : ['ov', 'pareto', 'ana', 'cnq', 'client', 'rca'].concat(D.dummy ? ['gal'] : []).concat(D.eqmsn || (D.dummy && D.dummy.eqmsn) ? ['prod'] : []);
   var G = { lang: 'fr', minor: true, tab: TABS[0] };
   try { var s1 = localStorage.getItem('fto2-dash-lang'); if (s1 === 'fr' || s1 === 'en') G.lang = s1; } catch (e) {}
   var h0 = ''; try { h0 = EMBED ? '' : (location.hash || '').replace('#', ''); } catch (e) {} if (TABS.indexOf(h0) >= 0) G.tab = h0;
@@ -357,7 +373,7 @@ window.DASH = {"defects":[["216055047",1,"2026-01-06","2026-W02","A350","FTO2",0
   if (TABS.indexOf('gal') < 0) document.querySelectorAll('#tabs .gap[data-gal]').forEach(function (g) { g.hidden = true; });
   if (PAGE !== 'main') {
     document.querySelectorAll('#tabs .gap').forEach(function (g) { g.hidden = true; });
-    var h1 = document.querySelector('h1[data-t="title"]'); if (h1) h1.setAttribute('data-t', PAGE === 'suivi' ? 'titleSuivi' : 'titleRev');
+    var h1 = document.querySelector('h1[data-t="title"]'); if (h1) h1.setAttribute('data-t', PAGE === 'suivi' ? 'titleSuivi' : PAGE === 'mock' ? 'titleMock' : 'titleRev');
   }
 
   function S(k, v) { var s = STR[G.lang][k]; if (s == null) return k; Object.keys(v || {}).forEach(function (x) { s = s.split('{' + x + '}').join(v[x]); }); return s; }
@@ -1606,7 +1622,7 @@ window.DASH = {"defects":[["216055047",1,"2026-01-06","2026-W02","A350","FTO2",0
   var MP = document.getElementById('p-mft');
   MP.addEventListener('pointermove', function (e) { var t = e.target.closest && e.target.closest('[data-tip]'); if (t) showTip(e, t.getAttribute('data-tip').split('|')); else hideTip(); });
   MP.addEventListener('pointerleave', hideTip);
-  var rzT; window.addEventListener('resize', function () { clearTimeout(rzT); rzT = setTimeout(function () { renderAna(); renderGal(); renderProd(); renderRev(); }, 150); });
+  var rzT; window.addEventListener('resize', function () { clearTimeout(rzT); rzT = setTimeout(function () { renderAna(); renderGal(); renderProd(); renderRev(); renderMock(); }, 150); });
 
   // ---------------------------------------------------------------- 6. Gallery (local page only): chart ideas drawn on FICTITIOUS data
   // build/dummy_data.py draws the data at random; only the category / root cause / sub-category names are real (taxonomy).
@@ -3479,7 +3495,8 @@ window.DASH = {"defects":[["216055047",1,"2026-01-06","2026-W02","A350","FTO2",0
     ] }
   ];
   var RV = { st: {}, view: {}, show: 'all', db: null, live: false, saving: 0, err: '', built: false };
-  var RV_ANA = { lead: function () { vLead(); }, bump: function () { vBump(aRows()); }, mek: function () { vMek(aRows(true)); }, cal: function () { vCal(aRows()); }, lor: function () { vLor(aRows()); }, clock: function () { vClock(); } };
+  var RV_ANA = { lead: function () { vLead(); }, bump: function () { vBump(aRows()); }, mek: function () { vMek(aRows(true)); }, cal: function () { vCal(aRows()); }, lor: function () { vLor(aRows()); }, clock: function () { vClock(); },
+    flow: function () { vFlow(aRows()); }, bub: function () { vBub(aRows()); }, msn: function () { vMsn(); }, prod: function () { vProd(); }, station: function () { vStation(aRows()); } };
   function rvItems() { var a = []; REV.forEach(function (sec) { sec.items.forEach(function (it) { a.push(it); }); }); return a; }
   function rvIsAna(c) { return c.indexOf('A:') === 0; }
   function rvCard(c) { return document.getElementById(rvIsAna(c) ? 'v-' + c.slice(2) : 'g-' + c); }
@@ -3630,9 +3647,206 @@ window.DASH = {"defects":[["216055047",1,"2026-01-06","2026-W02","A350","FTO2",0
     else shown();
   }
 
+  // ---------------------------------------------------------------- Mock-up page (local only): the final dashboard as proposed (layout A), every chart
+  // scored a to e at its side; no score = out. "Final preview" keeps only the scored charts, in score order. Scores go to the page's own store
+  // (collection "note", one document per chart) when the viewer runs it, else to this browser. Keys: g:<id> a gallery or rates card,
+  // a:<k> a current Analyses card, b:<grid>-<dim> a breakdown card (both Pareto measures share b:par-<dim>), f:<tab> a row of headline
+  // figures, c:<name> another card of today's tabs, t:target the target band. Seeds = the grades given on the review page.
+  var MK = { st: {}, built: false, preview: false, db: null, live: false, saving: 0, err: '', base: '' };
+  var MK_SEED = { 't:target': 'a', 'g:66': 'b', 'g:71': 'a', 'g:72': 'a', 'a:lead': 'b', 'a:cal': 'e', 'a:clock': 'e', 'g:53': 'c', 'g:54': 'b', 'a:bump': 'b', 'g:65': 'c',
+    'g:78': 'c', 'g:76': 'c', 'g:22': 'd', 'g:12': 'd', 'g:56': 'd', 'g:57': 'd', 'g:58': 'd', 'g:61': 'b', 'g:34': 'd', 'g:20': 'c', 'g:14': 'd', 'g:15': 'd', 'g:13': 'b',
+    'g:50': 'e', 'a:lor': 'e', 'g:18': 'c' };
+  // per tab: the bands on top (one chart each, a trio = three side by side, the target band), then the other candidates (proposed out)
+  var MK_TABS = {
+    ov: { top: [['target'], ['trio', 'mkTrioOv', 'mkTrioOvS', ['g:51', 'g:D1', 'g:66']], 'g:71', 'g:72', 'g:26', 'a:lead'], x: ['g:28', 'g:10', 'g:24', 'a:cal', 'a:clock'] },
+    pareto: { top: ['a:bump', 'g:53', 'g:54', 'g:65', 'g:78', 'g:76', 'a:flow', 'a:bub'], x: ['g:22', 'g:12', 'g:33', 'g:75', 'g:05', 'g:36', 'g:39'] },
+    where: { top: [['trio', 'mkTrioWh', 'mkTrioWhS', ['g:56', 'g:57', 'g:58']], 'g:61', 'g:34', 'g:20', 'a:msn', 'a:prod', 'a:station', 'g:14', 'g:63', 'g:64', 'g:40', 'g:15'], x: ['a:mek', 'g:59', 'g:80', 'g:16', 'g:09'] },
+    cnq: { top: ['g:23', 'g:13', 'g:50', 'a:lor'], x: ['g:02', 'g:32'] },
+    hebdo: { top: ['g:18'], x: [] },
+    mft: { top: ['g:19'], x: ['g:46'] }
+  };
+  function mkScoreOf(k) { var v = MK.st[k]; return v != null ? v : (MK_SEED[k] || ''); }
+  function mkEl(k) { var id = k.slice(2); return k === 'g:D1' ? MK.d1 : k.indexOf('g:') === 0 ? document.getElementById('g-' + id) : document.getElementById('v-' + id); }
+  function mkW(k) { return '<div class="mk-sc" data-mkw="' + k + '"></div>'; }
+  function mkBand(k) {
+    var el = mkEl(k); if (!el) return null;
+    var c = document.createElement('div'); c.className = 'card wide mk-band'; c.setAttribute('data-mkcard', k);
+    c.innerHTML = '<div class="bhead"><span class="kicker" data-mkk="' + k + '"></span><h3 data-mkh="' + k + '"></h3><p class="sub" data-mks2="' + k + '"></p><div class="rv-tags" data-mktag="' + k + '"></div>' + mkW(k) + '</div><div class="custom mk-body"></div>';
+    c.querySelector('.mk-body').appendChild(el);
+    return c;
+  }
+  function mkTrio(sp) {
+    var c = document.createElement('div'); c.className = 'card wide mk-trio-band'; c.setAttribute('data-mkcard', 'trio:' + sp[1]);
+    c.innerHTML = '<div class="bhead" style="position:static"><span class="kicker" data-mkt="mkTrioK"></span><h3 data-mkt="' + sp[1] + '"></h3><p class="sub" data-mkt="' + sp[2] + '"></p></div><div class="mk-trio"></div>';
+    var box = c.querySelector('.mk-trio');
+    sp[3].forEach(function (k) { var el = mkEl(k); if (!el) return; var cell = document.createElement('div'); cell.className = 'mk-cell'; cell.setAttribute('data-mkcard', k); cell.innerHTML = mkW(k); cell.appendChild(el); box.appendChild(cell); });
+    return c;
+  }
+  function mkTargetBand() {
+    var c = document.createElement('div'); c.className = 'card wide mk-band'; c.setAttribute('data-mkcard', 't:target');
+    c.innerHTML = '<div class="bhead"><span class="kicker" data-mkt="mkTgtK"></span><h3 data-mkt="mkTgtT"></h3><p class="sub" data-mkt="mkTgtS"></p>' + mkW('t:target') + '</div><div class="custom mk-tgt" id="mkTgt"></div>';
+    return c;
+  }
+  function mkInline(k, label, el) { var d = document.createElement('div'); d.className = 'mk-inline'; d.setAttribute('data-mkcard', k); d.innerHTML = '<b data-mkt="' + label + '"></b>' + mkW(k); if (el) el.setAttribute('data-mkcard', k); return d; }
+  function mkHead(cls, key, sub) { var f = document.createDocumentFragment(), h = document.createElement('h3'), p = document.createElement('p'); h.className = 'mk-sub ' + cls; h.setAttribute('data-mkt', key); p.className = 'sub ' + cls; p.setAttribute('data-mkt', sub); f.appendChild(h); f.appendChild(p); return f; }
+  function mkBuild() {
+    GSTR.D1 = { fr: [STR.fr.mkD1k, STR.fr.mkD1t, STR.fr.mkD1s, STR.fr.mkD1d], en: [STR.en.mkD1k, STR.en.mkD1t, STR.en.mkD1s, STR.en.mkD1d] };
+    var tmp = document.createElement('div'); tmp.innerHTML = pCard(['D1']); MK.d1 = tmp.firstChild;
+    Object.keys(MK_TABS).forEach(function (tab) {
+      var sp = MK_TABS[tab], panel = document.getElementById('p-' + tab), top = document.createElement('div');
+      top.className = 'grid mk-grid'; top.id = 'mk-' + tab;
+      sp.top.forEach(function (it) { var c = Array.isArray(it) ? (it[0] === 'target' ? mkTargetBand() : mkTrio(it)) : mkBand(it); if (c) top.appendChild(c); });
+      if (tab === 'ov') { var figs = panel.querySelector('.figs'); panel.insertBefore(top, figs.nextSibling); panel.insertBefore(mkHead('', 'mkOldOv', 'mkOldOvS'), document.getElementById('ncChips')); }
+      else panel.appendChild(top);
+      if (sp.x.length) { var x = document.createElement('div'); x.className = 'grid mk-grid'; sp.x.forEach(function (k) { var c = mkBand(k); if (c) x.appendChild(c); }); panel.appendChild(mkHead('mk-xhead', 'mkOthers', 'mkOthersSub')); panel.appendChild(x); }
+    });
+    // today's cards: breakdowns, headline figures and the other cards keep their place and get a score
+    ['ng', 'pg', 'kg', 'cg', 'rg', 'wg'].forEach(function (g) {
+      [].forEach.call(document.getElementById(g).children, function (c) {
+        var ch = c.querySelector('[id^="' + g + '-"]'); if (!ch) return;
+        var k = (g === 'pg' || g === 'kg' ? 'b:par-' : 'b:' + g + '-') + ch.id.slice(g.length + 1);
+        c.setAttribute('data-mkcard', k); c.querySelector('.bhead').insertAdjacentHTML('beforeend', mkW(k));
+      });
+    });
+    ['ov', 'pareto', 'cnq', 'client', 'hebdo'].forEach(function (tab) {
+      [].forEach.call(document.getElementById('p-' + tab).querySelectorAll('.figs'), function (f) { f.parentNode.insertBefore(mkInline('f:' + tab, 'mkFigs', f), f.nextSibling); });
+    });
+    [['c:levels', 'cLevels'], ['c:wmatrix', 'wMatrix'], ['c:wtrend', 'wTrendCols']].forEach(function (p) {
+      var c = document.getElementById(p[1]).closest('.card'); c.setAttribute('data-mkcard', p[0]); c.querySelector('.card-head').insertAdjacentHTML('beforeend', mkW(p[0]));
+    });
+    var cxe = document.getElementById('cx'); cxe.parentNode.insertBefore(mkInline('c:explain', 'mkExplain', cxe), cxe);
+    var act = document.getElementById('v-act'); act.setAttribute('data-mkcard', 'a:act'); act.querySelector('.vhead').insertAdjacentHTML('beforeend', mkW('a:act'));
+    var rl = document.querySelector('#p-rca .lead'); rl.parentNode.insertBefore(mkInline('c:rca', 'tabRca', null), rl.nextSibling);
+    var bar = document.createElement('div'); bar.className = 'mk-bar'; bar.id = 'mkBar';
+    bar.innerHTML = '<span id="mkCount"></span><span id="mkTab"></span><button type="button" class="cxb" id="mkPrev" aria-pressed="false"></button><button type="button" class="cxb" id="mkCopy"></button><span class="mk-save" id="mkSave"></span>';
+    document.querySelector('.wrap').appendChild(bar); document.body.classList.add('mk-on');
+    MK.built = true;
+  }
+  function mkDrawOne(k) {
+    var id = k.slice(2), t, real;
+    if (k === 'g:D1') {
+      t = GSTR.D1[G.lang]; real = true;
+      document.getElementById('g-D1-k').textContent = t[0]; document.getElementById('g-D1-h').textContent = t[1]; document.getElementById('g-D1-s').textContent = t[2];
+      var f = document.getElementById('g-D1-f'); f.className = 'feas ok'; f.innerHTML = '<i aria-hidden="true">✓</i>' + esc(gx('pReal') + ' · ' + t[3]);
+      pTrend('D1', pMonthly(function (o, i) { return o.def[i]; }), f2, function (v) { return gx('perEq', { v: f2(v) }); });
+    } else if (k.indexOf('a:') === 0) { rvDraw('A:' + id); t = [S('k_' + id), S('t_' + id), S('s_' + id)]; real = true; }
+    else { rvDraw(id); t = GSTR[id][G.lang]; real = +id > 50; }
+    var set = function (a, v) { var e = document.querySelector('[' + a + '="' + k + '"]'); if (e) e.textContent = v; };
+    set('data-mkk', t[0]); set('data-mkh', t[1]); set('data-mks2', t[2]);
+    var tg = document.querySelector('[data-mktag="' + k + '"]'); if (tg) tg.innerHTML = '<span class="rv-tag ' + (real ? 'rv-real' : 'rv-fict') + '">' + esc(S(real ? 'mkReal' : 'mkFict')) + '</span>';
+  }
+  function mkTargetRender() {
+    var box = document.getElementById('mkTgt'); if (!box || !pSrc()) return;
+    var eq = pTot(function (o) { return o.EQ; }), rate = eq ? pTot(function (o) { return o.NC; }) / eq : NaN;
+    var rows = pMonthly(function (o, i) { return o.nc[i]; }).slice(-3), r3 = rows.length ? sumA(rows.map(function (x) { return x.v; })) / sumA(rows.map(function (x) { return x.e; })) : NaN;
+    var base = parseFloat(String(MK.base).replace(',', '.')) || 0, tgt = base ? base * 0.75 : NaN, gap = base ? rate / tgt - 1 : NaN, fmt = function (v) { return isFinite(v) ? f2(v) : '—'; };
+    var tile = function (lab, v, sm, cls) { return '<div><span>' + esc(lab) + '</span><b' + (cls ? ' class="' + cls + '"' : '') + '>' + esc(v) + '</b>' + (sm ? '<small>' + esc(sm) + '</small>' : '') + '</div>'; };
+    var h = '<div class="mk-tiles">' + tile(S('mkNow'), fmt(rate), S('mkPerEq')) + tile(S('mkLast3'), fmt(r3), S('mkPerEq')) +
+      tile(S('mkTarget'), fmt(tgt), base ? S('mkTgtCalc', { b: f2(base) }) : '') + tile(S('mkGap'), isFinite(gap) ? (gap > 0 ? '+' : '') + pct(gap * 100) : '—', '', isFinite(gap) ? (gap > 0 ? 'up' : 'down') : '') + '</div>';
+    var W0 = Math.max(box.clientWidth || 600, 300), mx = Math.max(rate || 0, r3 || 0, base, tgt || 0) * 1.15 || 1, X = function (v) { return 8 + v / mx * (W0 - 16); }, g = '';
+    g += '<rect x="8" y="22" width="' + r1(W0 - 16) + '" height="18" rx="3" fill="var(--track)"/>';
+    if (isFinite(rate)) g += '<rect x="8" y="22" width="' + r1(Math.max(2, X(rate) - 8)) + '" height="18" rx="3" fill="var(--s1)"' + tip(S('mkNow'), [fmt(rate) + ' ' + S('mkPerEq')]) + '/>';
+    if (isFinite(r3)) g += '<circle cx="' + r1(X(r3)) + '" cy="31" r="5" fill="var(--surface)" stroke="var(--ink)" stroke-width="2"' + tip(S('mkLast3'), [fmt(r3)]) + '/>' + tx(X(r3), 58, S('mkLast3'), 'mu', 'middle');
+    if (isFinite(tgt)) g += '<line x1="' + r1(X(tgt)) + '" x2="' + r1(X(tgt)) + '" y1="14" y2="48" stroke="var(--ink)" stroke-width="2.5"/>' + tx(X(tgt), 11, S('mkTarget') + ' ' + fmt(tgt), 'ink b', 'middle');
+    if (base) g += '<line x1="' + r1(X(base)) + '" x2="' + r1(X(base)) + '" y1="18" y2="44" stroke="var(--muted)" stroke-dasharray="3 2"/>' + tx(X(base), 74, '2025 ' + fmt(base), 'mu', 'middle');
+    h += svg(W0, 80, g, S('mkTgtT'));
+    h += '<div class="mk-base"><label for="mkBaseIn">' + esc(S('mkBase')) + '</label><input type="text" inputmode="decimal" id="mkBaseIn" value="' + esc(MK.base) + '"><span class="sub">' + esc(base ? S('mkMatched') : S('mkBaseHint')) + '</span></div>';
+    var foc = document.activeElement && document.activeElement.id === 'mkBaseIn';
+    if (!foc) box.innerHTML = h;
+  }
+  function mkState() {
+    if (PAGE !== 'mock' || !MK.built) return;
+    document.querySelectorAll('[data-mkw]').forEach(function (w) {
+      var k = w.getAttribute('data-mkw'), v = mkScoreOf(k);
+      w.innerHTML = '<span>' + esc(S('mkScore')) + '</span><div class="seg" role="group">' + ['a', 'b', 'c', 'd', 'e'].map(function (x) { return '<button type="button" data-mkv="' + k + '|' + x + '" aria-pressed="' + (v === x) + '">' + x + '</button>'; }).join('') +
+        '</div><b class="mk-st' + (v ? ' on' : '') + '">' + esc(v ? S('mkIn') + ' · ' + v : S('mkOut')) + '</b>';
+    });
+    var all = {}, here = {}, panel = document.getElementById('p-' + G.tab);
+    document.querySelectorAll('[data-mkw]').forEach(function (w) { var k = w.getAttribute('data-mkw'); all[k] = mkScoreOf(k); if (panel && panel.contains(w)) here[k] = all[k]; });
+    document.querySelectorAll('[data-mkcard]').forEach(function (el) {
+      var k = el.getAttribute('data-mkcard'), v;
+      if (k.indexOf('trio:') === 0) v = [].map.call(el.querySelectorAll('.mk-cell'), function (c) { return mkScoreOf(c.getAttribute('data-mkcard')); }).filter(Boolean).sort()[0] || '';
+      else v = mkScoreOf(k);
+      el.setAttribute('data-mkout', v ? '0' : '1');
+      el.style.order = MK.preview ? String(v ? 'abcde'.indexOf(v) + 1 : 9) : '';
+    });
+    var cnt = function (o) { var ks = Object.keys(o); return S('mkBarAll', { k: ks.filter(function (k) { return o[k]; }).length, n: ks.length }); };
+    document.getElementById('mkCount').innerHTML = '<b>' + esc(cnt(all)) + '</b>';
+    document.getElementById('mkTab').textContent = S('mkTabScore') + ' : ' + cnt(here).toLowerCase();
+    var pv = document.getElementById('mkPrev'); pv.textContent = S('mkPreview'); pv.setAttribute('aria-pressed', String(MK.preview));
+    document.getElementById('mkCopy').textContent = S('mkCopy');
+    document.querySelector('.wrap').classList.toggle('mk-preview', MK.preview);
+    var sv = document.getElementById('mkSave');
+    sv.textContent = MK.saving ? S('mkSaving') : MK.err ? S('mkSaveErr') : MK.live ? S('mkSaveDb') : S('mkSaveLocal');
+    sv.className = 'mk-save' + (MK.err ? ' warn' : MK.live && !MK.saving ? ' ok' : '');
+  }
+  function renderMock() {
+    if (PAGE !== 'mock') return;
+    if (!MK.built) mkBuild();
+    document.querySelectorAll('[data-mkt]').forEach(function (e) { e.textContent = S(e.getAttribute('data-mkt')); });
+    if (pSrc()) { PD = pData(); PA = pAgg(PD); }
+    var sp = MK_TABS[G.tab];
+    if (sp) sp.top.concat(sp.x).forEach(function (it) { if (!Array.isArray(it)) mkDrawOne(it); else if (it[0] === 'trio') it[3].forEach(mkDrawOne); });
+    if (G.tab === 'ov') mkTargetRender();
+    mkState();
+  }
+  // saving: this browser always; the page's store when the viewer runs it, one write at a time per document
+  var MKQ = {};
+  function mkLocal() { try { if (!EMBED) localStorage.setItem('fto2-mock-note', JSON.stringify({ st: MK.st, base: MK.base })); } catch (e) {} }
+  function mkPut(col, id, body) {
+    mkLocal(); if (!MK.db) { mkState(); return; }
+    MK.saving++; mkState();
+    var q = col + '/' + id;
+    MKQ[q] = (MKQ[q] || Promise.resolve()).then(function () { return MK.db.collection(col).doc(id).set(Object.assign({}, body, { at: new Date().toISOString() })); })
+      .then(function () { MK.err = ''; }, function () { MK.err = 'err'; }).then(function () { MK.saving--; mkState(); });
+  }
+  function mkCopy() {
+    var out = [S('titleMock') + ' · ' + new Date().toLocaleDateString(loc())];
+    TABS.forEach(function (tab) {
+      var panel = document.getElementById('p-' + tab), seen = {}, lines = [];
+      [].forEach.call(panel.querySelectorAll('[data-mkw]'), function (w) {
+        var k = w.getAttribute('data-mkw'); if (seen[k]) return; seen[k] = 1;
+        var host = w.closest('.mk-cell') || w.closest('.mk-inline') || w.closest('.card') || w.parentNode, h = host.querySelector('h3') || host.querySelector('b');
+        lines.push('- ' + (h ? h.textContent : k) + ' : ' + (mkScoreOf(k) || S('mkOut')));
+      });
+      if (lines.length) out.push('', '[' + document.getElementById('tab-' + tab).textContent + ']'); out = out.concat(lines);
+    });
+    if (MK.base) out.push('', S('mkBase') + ' : ' + MK.base);
+    var text = out.join('\n'), sv = document.getElementById('mkSave');
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(function () { sv.textContent = S('mkCopied'); }, function () { window.prompt('', text); });
+    else window.prompt('', text);
+  }
+  if (PAGE === 'mock') {
+    try { var mk0 = JSON.parse(localStorage.getItem('fto2-mock-note') || '{}') || {}; MK.st = mk0.st || {}; MK.base = mk0.base || ''; } catch (e) {}
+    document.addEventListener('click', function (e) {
+      var b = e.target.closest && e.target.closest('[data-mkv]');
+      if (b) { var p = b.getAttribute('data-mkv').split('|'); MK.st[p[0]] = mkScoreOf(p[0]) === p[1] ? '' : p[1]; mkPut('note', p[0], { s: MK.st[p[0]] }); return; }
+      if (e.target.closest && e.target.closest('#mkPrev')) { MK.preview = !MK.preview; mkState(); return; }
+      if (e.target.closest && e.target.closest('#mkCopy')) mkCopy();
+    });
+    document.addEventListener('change', function (e) { if (e.target.id === 'mkBaseIn') { MK.base = e.target.value.trim(); mkPut('reglages', 'objectif', { base: MK.base }); e.target.blur(); mkTargetRender(); } });
+    document.addEventListener('pointermove', function (e) {
+      if (!e.target.closest || !e.target.closest('.mk-body, .mk-trio, .mk-tgt')) return;
+      var t = e.target.closest('[data-tip]'); if (t) showTip(e, t.getAttribute('data-tip').split('|')); else hideTip();
+    });
+    if (!EMBED && window.claude && typeof window.claude.use === 'function') {
+      window.claude.use('db').then(function (db) {
+        if (!db) return;
+        MK.db = db;
+        db.collection('note').onSnapshot(function (snap) {
+          snap.docs.forEach(function (d) { if (d.exists) MK.st[d.id] = (d.data() || {}).s || ''; });
+          MK.live = true; mkLocal(); mkState();
+        }, function () { MK.db = null; MK.live = false; mkState(); });
+        db.collection('reglages').doc('objectif').onSnapshot(function (d) {
+          if (d.exists && document.activeElement && document.activeElement.id !== 'mkBaseIn') { MK.base = (d.data() || {}).base || ''; mkLocal(); if (G.tab === 'ov' && MK.built) mkTargetRender(); }
+        }, function () {});
+      }, function () {});
+    }
+  }
+
   // ---------------------------------------------------------------- language, tabs, minor switch
   function applyText() {
-    if (!EMBED) { document.documentElement.lang = G.lang; document.title = S(PAGE === 'suivi' ? 'titleSuivi' : PAGE === 'review' ? 'titleRev' : 'title'); }
+    if (!EMBED) { document.documentElement.lang = G.lang; document.title = S(PAGE === 'suivi' ? 'titleSuivi' : PAGE === 'review' ? 'titleRev' : PAGE === 'mock' ? 'titleMock' : 'title'); }
     document.querySelectorAll('[data-t]').forEach(function (el) { el.textContent = S(el.getAttribute('data-t')); });
     document.querySelectorAll('[data-ta]').forEach(function (el) { el.setAttribute('aria-label', S(el.getAttribute('data-ta'))); });
     var dates = { from: day(D.meta.from), to: day(D.meta.to) }, A = D.meta.aside;
@@ -3657,8 +3871,8 @@ window.DASH = {"defects":[["216055047",1,"2026-01-06","2026-W02","A350","FTO2",0
       document.getElementById('p-' + t).hidden = G.tab !== t;
     });
   }
-  function renderAll() { applyText(); showTab(); renderPMode(); ncBoard.render(); pareto.render(); costPareto.render(); weekly.render(); cnq.render(); renderCx(); client.render(); renderRca(); renderAna(); renderMft(); renderGal(); renderProd(); renderRev(); }
-  function setTab(t) { G.tab = t; if (!EMBED) { try { history.replaceState(null, '', '#' + t); } catch (x) {} } applyText(); showTab(); if (t === 'hebdo') weekly.render(); if (t === 'ov') ncBoard.render(); if (t === 'ana') renderAna(); if (t === 'mft') renderMft(); if (t === 'gal') renderGal(); if (t === 'prod') renderProd(); if (t !== 'ana' && t !== 'mft') hideTip(); }
+  function renderAll() { applyText(); showTab(); renderPMode(); ncBoard.render(); pareto.render(); costPareto.render(); weekly.render(); cnq.render(); renderCx(); client.render(); renderRca(); renderAna(); renderMft(); renderGal(); renderProd(); renderRev(); renderMock(); }
+  function setTab(t) { G.tab = t; if (!EMBED) { try { history.replaceState(null, '', '#' + t); } catch (x) {} } applyText(); showTab(); if (t === 'hebdo') weekly.render(); if (t === 'ov') ncBoard.render(); if (t === 'ana') renderAna(); if (t === 'mft') renderMft(); if (t === 'gal') renderGal(); if (t === 'prod') renderProd(); if (PAGE === 'mock') renderMock(); if (t !== 'ana' && t !== 'mft') hideTip(); }
   document.getElementById('tabs').addEventListener('click', function (e) { var t = e.target.closest('[data-tab]'); if (t) setTab(t.getAttribute('data-tab')); });
   document.getElementById('tabs').addEventListener('keydown', function (e) {
     if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;

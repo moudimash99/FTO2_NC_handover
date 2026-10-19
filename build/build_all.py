@@ -369,6 +369,8 @@ def build_dashboard(d, nc, lt):
     _page("dashboard.html", local, "FTO2_NC_Dashboard.html")
     # the proposed final layout, chart by chart, with the choices to make (review page, local only)
     _page("dashboard.html", local, "FTO2_Revue_Proposition.html", page="review")
+    # the same layout as a mock-up of the final dashboard, every chart scored a to e at its side (local only)
+    _page("dashboard.html", local, "FTO2_Maquette_Notee.html", page="mock")
     _page("dashboard.html", data, "FTO2_Suivi_Hebdo.html", page="suivi")
     slate_pack(data)
     slate_pack(data, page="suivi")

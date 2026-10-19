@@ -455,6 +455,47 @@
 .fto2 .rv-left { position: static; }
 .fto2 .rv-bar { position: static; }
 }
+.fto2 .mk-sc { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; font-size: 12.5px; }
+.fto2 .mk-sc > span { color: var(--ink-2); font-weight: 600; }
+.fto2 .mk-sc .seg button { padding: 4px 10px; font-weight: 600; }
+.fto2 .mk-sc .mk-st { font-size: 11.5px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: var(--up); }
+.fto2 .mk-sc .mk-st.on { color: var(--s1); }
+.fto2 .mk-inline { display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: center; padding: 8px 0; border-bottom: 1px dashed var(--grid); }
+.fto2 .mk-inline > b { font-size: 13px; font-weight: 600; }
+.fto2 .mk-sub { font-family: var(--font-display); font-weight: 400; font-size: clamp(24px, 2.8vw, 34px); line-height: 1.1; padding: 36px 0 4px; border-top: 1px solid var(--ink); margin-top: 24px; }
+.fto2 .mk-sub + p.sub { margin-bottom: 4px; }
+.fto2 .mk-band .mk-body .ghead, .fto2 .mk-band .mk-body .gcard > p.sub, .fto2 .mk-band .mk-body .feas, .fto2 .mk-band .mk-body .vhead { display: none; }
+.fto2 .mk-body .gcard, .fto2 .mk-body .vcard { padding: 0; border: 0; background: transparent; }
+.fto2 .mk-trio .keep, .fto2 .mk-trio .gnum { display: none; }
+.fto2 .mk-trio .ghead { grid-template-columns: minmax(0, 1fr); }
+.fto2 .grid > .card.mk-trio-band { grid-template-columns: minmax(0, 1fr); }
+.fto2 .mk-trio { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 330px), 1fr)); gap: 18px 28px; min-width: 0; }
+.fto2 .mk-cell { display: grid; gap: 8px; align-content: start; min-width: 0; padding-top: 10px; border-top: 1px solid var(--grid); }
+.fto2 .mk-cell .gcard { padding: 0; border: 0; }
+.fto2 .mk-tgt { display: grid; gap: 16px; min-width: 0; }
+.fto2 .mk-tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 0; border-top: 1px solid var(--ink); border-bottom: 1px solid var(--grid); }
+.fto2 .mk-tiles > div { padding: 12px 16px; border-left: 1px solid var(--grid); display: grid; gap: 3px; }
+.fto2 .mk-tiles > div:first-child { border-left: 0; padding-left: 0; }
+.fto2 .mk-tiles b { font-family: var(--font-display); font-weight: 400; font-size: 34px; line-height: 1.05; font-variant-numeric: tabular-nums; }
+.fto2 .mk-tiles span { font-size: 11.5px; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); order: -1; }
+.fto2 .mk-tiles small { font-size: 12px; color: var(--muted); }
+.fto2 .mk-tiles .up { color: var(--up); }
+.fto2 .mk-tiles .down { color: var(--down); }
+.fto2 .mk-base { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; font-size: 13px; }
+.fto2 .mk-base input { font: inherit; font-size: 13px; width: 7em; padding: 5px 9px; border: 1px solid var(--ring); border-radius: 6px; background: var(--surface); color: var(--ink); }
+.fto2 .mk-bar { position: fixed; left: 50%; bottom: 14px; transform: translateX(-50%); z-index: 30; display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; justify-content: center;
+  background: var(--surface); border: 1px solid var(--ring); border-radius: 10px; padding: 8px 14px; box-shadow: 0 6px 24px rgba(0,0,0,.14); font-size: 13px; max-width: calc(100vw - 24px); }
+.fto2 .mk-bar b { font-weight: 600; }
+.fto2 .mk-bar .mk-save { color: var(--muted); font-size: 12px; }
+.fto2 .mk-bar .mk-save.ok { color: var(--s1); }
+.fto2 .mk-bar .mk-save.warn { color: var(--up); }
+.fto2 body.mk-on .wrap { padding-bottom: 90px; }
+.fto2 .mk-preview .grid { display: flex; flex-direction: column; }
+.fto2 .mk-preview [data-mkcard][data-mkout="1"], .fto2 .mk-preview .mk-xhead { display: none !important; }
+.fto2 .mk-preview .mk-sc .seg, .fto2 .mk-preview .mk-sc > span:first-child { display: none; }
+@media (max-width: 560px) {
+.fto2 .mk-bar { left: 8px; right: 8px; transform: none; bottom: 8px; }
+}
 .fto2 .fict.real { color: var(--s1); }
 .fto2 .fict { justify-self: start; font-size: 11.5px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--up); border: 1.5px solid currentColor; border-radius: 4px; padding: 3px 9px; }
 .fto2 .gal-bar { display: flex; flex-wrap: wrap; gap: 10px 20px; align-items: center; justify-content: space-between; position: sticky; top: var(--tabs-h); z-index: 9; background: var(--page); padding-block: 10px; border-bottom: 1px solid var(--grid); }

@@ -35,6 +35,7 @@
   <div class="tabs" role="tablist" id="tabs">
     <button type="button" role="tab" id="tab-ov" aria-controls="p-ov" data-tab="ov" data-t="tabOv"></button>
     <button type="button" role="tab" id="tab-pareto" aria-controls="p-pareto" data-tab="pareto" data-t="tabPareto"></button>
+    <button type="button" role="tab" id="tab-where" aria-controls="p-where" data-tab="where" data-t="tabWhere"></button>
     <button type="button" role="tab" id="tab-ana" aria-controls="p-ana" data-tab="ana" data-t="tabAna"></button>
     <button type="button" role="tab" id="tab-cnq" aria-controls="p-cnq" data-tab="cnq" data-t="tabCnq"></button>
     <span class="gap" aria-hidden="true"></span>
@@ -200,6 +201,11 @@
         <div class="table-wrap"><table><thead><tr id="cth"></tr></thead><tbody id="ctb"></tbody></table></div>
         <button type="button" class="more" id="cm" hidden></button>
       </div></details>
+  </div>
+
+  <!-- Mock-up page only: products, lines, aircraft, stations -->
+  <div class="panel" role="tabpanel" id="p-where" aria-labelledby="tab-where" hidden>
+    <div class="lead"><h2 data-t="whereTitle"></h2><p class="sub" data-t="whereSub"></p></div>
   </div>
 
   <!-- 3b. Insights (series) -->
