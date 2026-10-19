@@ -26,7 +26,7 @@ cidx = {k: i for i, k in enumerate(classes)}
 unknown = sorted(set(d.sous_groupe) - set(classes))
 assert not unknown, "defect classes missing from cnq_params.DEFECT_TIMES: %s" % unknown
 
-RULE_FR = {"RWK": "Retouche", "EXC": "Échange", "REJ": "Rejet", "SCR": "Rebut", "DQN": "Demande de modification de conception (DQN)",
+RULE_FR = {"RWK": "Retouche", "EXC": "Échange", "REJ": "Rejet", "REJ_RW": "Rejet avec ordre de retouche", "SCR": "Rebut", "DQN": "Demande de modification de conception (DQN)",
            "ACC": "Acceptation en l'état", "PNC": "NC potentielle", "NDC": "Sans décision", "DELETED": "NC supprimée", "UNKNOWN": "Code de décision inconnu"}
 AIRBUS_BASIS = {
     "RWK": {"flag": 0, "en": "Official: rework as per design data", "fr": "Officiel : retouche selon la définition (DDS)"},
@@ -34,6 +34,7 @@ AIRBUS_BASIS = {
     "ACC": {"flag": 0, "en": "Official: acceptable as is", "fr": "Officiel : acceptable en l'état"},
     "DQN": {"flag": 1, "en": "Official figure, assumed match: engineering assessment", "fr": "Chiffre officiel, correspondance supposée : évaluation par l'ingénierie"},
     "REJ": {"flag": 1, "en": "Assumed: creation, assessment, decision", "fr": "Hypothèse : création, évaluation, décision"},
+    "REJ_RW": {"flag": 1, "en": "Assumed: same figure as a rejection", "fr": "Hypothèse : même chiffre qu'un rejet"},
     "SCR": {"flag": 1, "en": "Assumed: creation, assessment, decision", "fr": "Hypothèse : création, évaluation, décision"},
     "PNC": {"flag": 1, "en": "Assumed: creation, assessment, decision", "fr": "Hypothèse : création, évaluation, décision"},
     "NDC": {"flag": 1, "en": "Assumed: creation step only", "fr": "Hypothèse : étape de création uniquement"},

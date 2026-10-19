@@ -13,10 +13,11 @@ tested on a laptop with two CSV files (see run_local.py).
 
 How one NC is costed
 --------------------
-  rule          = "DELETED" if the NC is deleted, else its decision code (RWK, EXC, REJ, ...)
+  rule          = "DELETED" if the NC is deleted, else its decision code (RWK, EXC, REJ, ...); a rejection whose
+                  NC has a rework order (linked_document, see REWORK_ORDER_PREFIXES) becomes "REJ_RW"
   admin minutes = alert + writing the NC (longer at final inspection) + technical support + re-check/close
                   (each charged or not, according to the rule; the alert only when an operator raises one,
-                  i.e. not for NCs found at test, at final inspection or by the customer)
+                  i.e. not for NCs found at test or at final inspection; customer returns always get it)
   work minutes  = if the rule includes work: fixed setup + sum of minutes of its defect lines
                   (flat figure when the NC has no defect line); the first connection error of an NC takes its
                   class time, each following one MIN_CONNECTION_NEXT; internal NCs x INTERNAL_WORK_FACTOR
@@ -33,6 +34,8 @@ Two comparison figures are written next to it for every NC:
   cnq_cost_global  = level 2, the same steps with average times (work = 1 hour flat), plus material
   cnq_cost_total   = level 3, the detailed cost described above
 """
+import re
+
 import numpy as np
 import pandas as pd
 
@@ -52,6 +55,16 @@ def _first_present(df, names):
         if n in df.columns:
             return df[n]
     return pd.Series([None] * len(df), index=df.index, dtype="object")
+
+
+def _has_rework_order(nc, params):
+    """True when linked_document holds an AW_/WO_/RS_ number different from the NC's own work order."""
+    if "linked_document" not in nc.columns or "work_order" not in nc.columns:
+        return pd.Series(False, index=nc.index)
+    pat = re.compile(r"(?:%s)_0*(\d+)" % "|".join(params.REWORK_ORDER_PREFIXES))
+    own = nc["work_order"].astype("string").str.strip().str.replace(r"\.0$", "", regex=True).str.lstrip("0").fillna("")
+    links = nc["linked_document"].astype("string").fillna("")
+    return pd.Series([any(n != o for n in pat.findall(l)) for l, o in zip(links, own)], index=nc.index)
 
 
 def compute_cnq(nc, defects, params=P):
@@ -77,6 +90,9 @@ def compute_cnq(nc, defects, params=P):
     rule = decision.where(decision.isin(rules.index), "UNKNOWN")
     rule = rule.where((statut != "deleted").fillna(True), "DELETED")
     rule = rule.where(has_master, "NO_DATA")
+    has_order = _has_rework_order(nc, params)
+    nc["cnq_rework_order"] = has_order.astype(int)
+    rule = rule.where(~((rule == "REJ") & has_order).fillna(False), "REJ_RW")
     nc["cnq_rule"] = rule.astype(object)
     nc["cnq_decision_label"] = nc["cnq_rule"].map(rules["label"]).fillna("No master data")
 
@@ -102,7 +118,7 @@ def compute_cnq(nc, defects, params=P):
                              np.where(nc["cnq_final_inspection"] == 1, "Final inspection", labelled))
     nc.loc[~has_master, "cnq_where_found"] = "No master data"
     type_up = type_nc.str.upper()
-    no_alert = type_up.isin([t.upper() for t in params.NO_ALERT_TYPES]).fillna(False) | (nc["cnq_customer_return"] == 1)
+    no_alert = type_up.isin([t.upper() for t in params.NO_ALERT_TYPES]).fillna(False) & (nc["cnq_customer_return"] == 0)
     nc["cnq_alert_raised"] = (~no_alert).astype(int)
     internal = type_up.isin([t.upper() for t in params.INTERNAL_TYPES]).fillna(False)
     nc["cnq_work_factor"] = np.where(internal, params.INTERNAL_WORK_FACTOR, 1.0)
@@ -214,7 +230,7 @@ def parameters_as_tables(params=P):
     """The parameters as three small tables, for review or to publish next to the datasets."""
     steps = pd.DataFrame([
         ("RATE_STANDARD", params.RATE_STANDARD, "EUR/hour", "OFFICIAL"), ("RATE_ENGINEERING", params.RATE_ENGINEERING, "EUR/hour", "OFFICIAL"),
-        ("MIN_ALERT", params.MIN_ALERT, "minutes", "LOCAL"), ("MIN_WRITE_NC", params.MIN_WRITE_NC, "minutes", "LOCAL"),
+        ("MIN_ALERT", params.MIN_ALERT, "minutes", "MES"), ("MIN_WRITE_NC", params.MIN_WRITE_NC, "minutes", "LOCAL"),
         ("MIN_WRITE_NC_FINAL", params.MIN_WRITE_NC_FINAL, "minutes", "LOCAL"), ("MIN_SUPPORT", params.MIN_SUPPORT, "minutes", "LOCAL"),
         ("MIN_SETUP", params.MIN_SETUP, "minutes", "LOCAL"), ("MIN_RECHECK_CLOSE", params.MIN_RECHECK_CLOSE, "minutes", "LOCAL"),
         ("MIN_HANDS_ON_NO_DEFECT", params.MIN_HANDS_ON_NO_DEFECT, "minutes", "LOCAL"), ("MIN_DEFAULT_DEFECT", params.MIN_DEFAULT_DEFECT, "minutes", "ASSUMED"),

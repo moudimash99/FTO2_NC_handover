@@ -13,6 +13,8 @@ out = {}
 for tag in ["nc26", "nc25"]:
     nc = pd.read_pickle(f"{D}/cnq_{tag}.pkl"); d = pd.read_pickle(f"{D}/defs_{tag}.pkl")
     nc = nc[[c for c in nc.columns if not c.startswith("cnq_")]]; d = d[[c for c in d.columns if not c.startswith("cnq_")]]
+    links = nr["2025" if tag == "nc25" else "2026"][["notification_number", "linked_document", "work_order"]].astype({"notification_number": str})
+    nc = nc.drop(columns=[c for c in ("linked_document", "work_order") if c in nc.columns]).merge(links, on="notification_number", how="left")
     out[tag], _ = compute_cnq(nc, d)
 c26, c25 = out["nc26"].set_index("notification_number"), out["nc25"].set_index("notification_number")
 R = {}

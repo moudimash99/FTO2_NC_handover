@@ -4,7 +4,8 @@ Run the CNQ calculation on two CSV exports, outside Foundry.
 
     python tests/run_local.py <nc.csv> <defects.csv> [<extra_nc_columns.csv>]
 
-The third file is a STOPGAP: the v4.7 NC export has no decision, liability, NC type or product.
+The third file is a STOPGAP: the v4.7 NC export has no decision, liability, NC type or product
+(nor linked_document / work_order, used to find the NC's rework order).
 Until the pipeline adds them, they are joined here from the earlier Skywise export by NC number.
 Writes sample_output/*.csv, params/*.csv and tests/expected_totals.json.
 """
@@ -23,7 +24,8 @@ def load(nc_path, defects_path, extra_path=None):
     if extra_path:
         x = pd.read_csv(extra_path, low_memory=False)
         x["type_nc"] = x["GPS_Type_NC"].where(x["GPS_Type_NC"].notna(), x["Type_NC_auto"])
-        x = x.rename(columns={"Produit_auto": "produit"})[["notification_number", "decision_status", "liability", "type_nc", "produit"]]
+        keep = ["notification_number", "decision_status", "liability", "type_nc", "produit"] + [c for c in ("linked_document", "work_order") if c in x.columns]
+        x = x.rename(columns={"Produit_auto": "produit"})[keep]
         nc = nc.merge(x, on="notification_number", how="left")
     return nc, defects
 

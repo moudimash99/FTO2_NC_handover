@@ -33,11 +33,11 @@ Only NCs where AEC is liable are counted (595 NCs, 5 Jan to 6 Jul 2026, parser v
 | Level | What it does | Total | Per NC | Column |
 |---|---|---|---|---|
 | 1. Airbus transnational | Each NC at the official Airbus standard cost for its decision. No material. | 280,004 EUR | 471 EUR | `cnq_cost_airbus` |
-| 2. Global average | Each NC at AEC's average times: 30 min to write the NC, 1 hour of work for a rework. Plus material. | 95,975 EUR | 161 EUR | `cnq_cost_global` |
-| 3. Per defect | AEC's steps, with the work built from each defect found. Plus material. | 121,503 EUR | 204 EUR | `cnq_cost_total` |
+| 2. Global average | Each NC at AEC's average times: 30 min to write the NC, 1 hour of work for a rework. Plus material. | 101,513 EUR | 171 EUR | `cnq_cost_global` |
+| 3. Per defect | AEC's steps, with the work built from each defect found. Plus material. | 128,741 EUR | 216 EUR | `cnq_cost_total` |
 
 Level 3 is the reference. Levels 1 and 2 are there to compare: what the general Airbus model would
-say, and what a flat average would say. NCs on other plants or suppliers (131 NCs, 15,721 EUR of
+say, and what a flat average would say. NCs on other plants or suppliers (131 NCs, 18,560 EUR of
 handling at level 3) are shown aside and are in none of the totals.
 
 Before the changes of 19 October 2026 (section 4), level 3 was 134,206 EUR and level 2 102,500 EUR.
@@ -50,7 +50,7 @@ For a reworked NC:
 
 | Step | Time | Charged |
 |---|---|---|
-| Operator raises the alert | 30 min | once per NC, only when an operator raises one: not for NCs found at test, at final inspection or by the customer |
+| Operator raises the alert (aléa) | 41 min | once per NC, only when an operator raises one: not for NCs found at test or at final inspection. Customer returns always get it (the customer's operator raises it). |
 | Quality inspector writes the NC | 30 min, 60 at final inspection | once per NC |
 | Technical support checks, estimates, creates the work order | 60 min | once per NC |
 | Around the work: badging, fetching, setting up | 50 min | once per NC |
@@ -66,7 +66,7 @@ The work (around the job + hands-on) is never under 1 hour. If the defects add u
 
 **Example A - one defect, found in-process, internal NC (NC 216135746).** One defect, "bonding
 protection badly applied", 10 minutes. Work (50 + 10) x 2 = 120 minutes.
-30 + 30 + 60 + 120 + 30 = 270 minutes. 270 / 60 x 50 = **225.00 EUR**. No material.
+41 + 30 + 60 + 120 + 30 = 281 minutes. 281 / 60 x 50 = **234.17 EUR**. No material.
 
 **Example B - nine defects, found at final inspection (NC 216224176).** No operator alert.
 Hands-on: 6 connection errors (35 + 5 x 15 = 110 min) + 2 wrong electrical references x 30 min +
@@ -74,28 +74,31 @@ Hands-on: 6 connection errors (35 + 5 x 15 = 110 min) + 2 wrong electrical refer
 60 (final inspection) + 60 + 50 + 200 + 30 = 400 minutes. 400 / 60 x 50 = 333.33 EUR, plus
 0.36 EUR of material = **333.69 EUR**.
 
-**Example C - a one-minute defect, cable NC.** Hands-on 1 minute. 50 + 1 = 51 minutes of work is
-under the minimum, so the time around the job becomes 59 minutes.
-30 + 30 + 60 + 59 + 1 + 30 = 210 minutes = **175.00 EUR**. This applies to 128 AEC NCs.
+**Example C - a one-minute defect, cable NC (NC 216573781).** Hands-on 1 minute. 50 + 1 = 51
+minutes of work is under the minimum, so the time around the job becomes 59 minutes.
+41 + 30 + 60 + 59 + 1 + 30 = 221 minutes = **184.17 EUR**. This applies to 128 AEC NCs.
 
 Other decisions:
 
 | Decision | What is charged | Example |
 |---|---|---|
-| Rejection, scrap | Alert, writing, technical support, closing. No work. Plus the value of the part. | NC 16995857 (a customer return, so no alert): 30 + 60 + 30 = 120 min = **100.00 EUR**. Part: 0 EUR, no price in the data. |
-| Deleted (any decision) | Alert and writing only | NC 216123618: 30 + 30 = 60 min = **50.00 EUR** |
-| Design query | Alert, writing, technical support, closing, plus 8 h of engineering at 78.16 EUR/h | NC 216733534: 125.00 + 625.28 = **750.28 EUR** |
-| Exchange | Same as rework, plus the value of the swapped part | |
-| Accept as is, potential NC | Alert, writing, technical support, closing | 125.00 EUR (100.00 EUR without alert) |
-| No decision | Alert and writing | 50.00 EUR |
+| Rejection, scrap | Alert, writing, technical support, closing. No work. Plus the value of the part. | NC 16995857 (a customer return): 41 + 30 + 60 + 30 = 161 min = **134.17 EUR**. Part: 0 EUR, no price in the data. |
+| Rejection with a rework order | Same as rework, plus the value of the part. A rejection whose NC has a rework order in `linked_document`. | NC 216052773 (internal): 41 + 30 + 60 + (50 + 20) x 2 + 30 = 301 min = 250.83 EUR + 0.85 material = **251.68 EUR** |
+| Exchange | Alert, writing, technical support, closing. No work (no rework order at FTO2). Plus the value of the swapped part. | NC 216037622: 161 min = **134.17 EUR** |
+| Deleted (any decision) | Alert and writing only | NC 216123618: 41 + 30 = 71 min = **59.17 EUR** |
+| Design query | Alert, writing, technical support, closing, plus 8 h of engineering at 78.16 EUR/h | NC 216733534: 134.17 + 625.28 = **759.45 EUR** |
+| Accept as is, potential NC | Alert, writing, technical support, closing | 134.17 EUR (100.00 EUR without alert) |
+| No decision | Alert and writing | 59.17 EUR |
 
-Only the rework process was described by the team. The other rows are assumptions.
+Only the rework process was described by the team. Rejection and exchange were set from the
+September 2026 rework orders; the other rows are assumptions.
 
 ### Customer returns
 
-A customer return on AEC (45 NCs, 6,964 EUR) is in the total and is costed like any NC of its
-decision, without the operator alert: only the handling of the NC is estimated. Two ways to go
-further, both already built:
+A customer return on AEC (45 NCs, 8,434 EUR) is in the total and is costed like any NC of its
+decision, every step included (the customer's alert too): AEC is the direct cause. The repair
+itself happens at the customer; the model estimates it at FTO2's times. Two ways to go further,
+both already built:
 
 - `CUSTOMER_RETURN_EXTRA` in `cnq_params.py`: a flat amount added to every customer return
   (analysis, reply to the customer, logistics). It is 0 EUR until the team sets a figure.
@@ -112,7 +115,7 @@ The same steps, but every NC gets the average times whatever its defects: 30 min
 NC and 1 hour of work for a rework. Material is added as in level 3. The alert follows the same
 rule as level 3.
 
-- Example A: 30 + 30 + 60 + 60 + 30 = 210 min = 175.00 EUR, against 225.00 EUR at level 3.
+- Example A: 41 + 30 + 60 + 60 + 30 = 221 min = 184.17 EUR, against 234.17 EUR at level 3.
 - Example B: 30 + 60 + 60 + 30 = 180 min = 150.00 EUR + 0.36 EUR material = **150.36 EUR**, against
   333.69 EUR at level 3. This is what the flat average hides: an NC with nine defects costs no more
   than one with one.
@@ -129,7 +132,7 @@ No material, and no account of how many defects the NC has.
 | Exchange | 542.42 EUR | assumed: taken as a rework |
 | Accept as is | 252.27 EUR | official "acceptable as is" |
 | Design query | 951.33 EUR | official "engineering assessment", assumed match |
-| Reject, scrap, potential NC | 252.27 EUR | assumed: creation, assessment, decision |
+| Reject (with or without rework order), scrap, potential NC | 252.27 EUR | assumed: creation, assessment, decision |
 | No decision, deleted | 69.56 EUR | assumed: creation step only |
 
 Examples A and B both cost 542.42 EUR at this level.
@@ -153,22 +156,29 @@ the "2 x" classes follow. One line of the notes, "SO3", could not be read; nothi
 Effect to be aware of: a damaged cable is now 30 min (2 x missing cable or part, 15 min). The old
 code table said 60 min.
 
-### Changes of 19 October 2026, from the SAP rework orders
+### Changes of 19 October 2026, from the SAP rework orders and the MES aléas
 
 The rework orders technical support creates for each NC (SAP order type S03, linked from the NC's
-`linked_document` field) carry a planned time per operation. Compared with the model on the
-September 2026 orders (unit IM = 1/100 hour), three rules were changed, approved by Mohammad:
+`linked_document` field) carry a planned time per operation (unit IM = 1/100 hour). The MES
+disruptions (aléas) carry the time lost declared by the operator. Compared with the model on
+September 2026 orders and Jan-Sep 2026 aléas, these rules were changed, approved by Mohammad:
 
 | Change | Evidence | Parameter |
 |---|---|---|
-| The operator alert is charged only when an operator raises one: not for NCs found at test, at final inspection or by the customer | Jul-Sep 2026: 0 of 52 test NCs and 4 of 23 final-inspection NCs started with an MES disruption; 42 of 49 cable NCs did | `NO_ALERT_TYPES` |
+| The operator alert is charged only when an operator raises one: not for NCs found at test or at final inspection | Jul-Sep 2026: 0 of 52 test NCs and 4 of 23 final-inspection NCs started with an MES aléa; 42 of 49 cable NCs did | `NO_ALERT_TYPES` |
+| Customer returns always get the alert | The customer's operator raises it; AEC is the direct cause | `NO_ALERT_TYPES` (customer returns exempt) |
+| The alert is 41 min instead of 30 | Mean time lost declared on the 214 quality aléas that led to an NC (median 30) | `MIN_ALERT` |
 | Connection errors: the first one of an NC takes its class time (35 min), each following one 15 min | Rework orders of test NCs plan about 77 min + 15 min per connection error (11 NCs). Before, the model was 79% above the planned time on test NCs. | `CONNECTION_CLASSES`, `MIN_CONNECTION_NEXT` |
 | Internal NCs: work (around the job + hands-on) x 2 | 11 complete rework orders of internal NCs: 1,896 planned minutes against 951 in the model; per-NC median ratio 2.0 | `INTERNAL_TYPES`, `INTERNAL_WORK_FACTOR` |
+| Exchange: no work, swapped part counted | 0 of 20 exchanges in 2026 had a rework order | `RULES["EXC"]` |
+| Rejection with a rework order: work charged (rule `REJ_RW`) | About half of rejections get a rework order (median 1 h 40 planned) | `REWORK_ORDER_PREFIXES`, `RULES["REJ_RW"]` |
 
-Effect on level 3: 134,206 -> 121,503 EUR on this package's data; 151,093 -> 142,151 EUR on 2026
-Feb-Sep (parser v4.8, plant FTO2); 178,170 -> 168,633 EUR on 2025 (plant FTO2, without ERMA).
-These three figures come from one month of rework orders; they are marked WO and should be
-re-checked on a full year of orders.
+Effect on level 3: 134,206 -> 128,741 EUR on this package's data; 151,093 -> 149,824 EUR on 2026
+Feb-Sep (parser v4.8, raised at FTO2); 178,170 -> 178,870 EUR on 2025 (raised at FTO2, without
+ERMA). The totals move little, but the cost moves between NC types: test NCs down, internal NCs
+and rejections with a rework order up. The WO figures come from one month of rework orders and
+should be re-checked on a full year. The full list of changes, done and to do, is in
+`CNQ_CHANGES.md` at the root of the repository.
 
 ## 5. What is in the package
 
@@ -223,6 +233,7 @@ not have yet.
 | `type_nc` (e.g. `CONTROLE FINAL`) | 60 minutes instead of 30 to write the NC; "where found" chart | **no - add** |
 | `produit` | product chart only | **no - add** |
 | `responsabilite` | splits the aside group into plant / supplier | yes |
+| `linked_document`, `work_order` | finds the NC's rework order (a rejection with a rework order is charged its work) | **no - add from Skywise**; without them every rejection is costed without work |
 | `perimetre` | flags customer returns | yes |
 | `part_value` | value of a rejected or exchanged part, in EUR | no - optional, see section 9 |
 | `customer_return_cost` | real amount of a customer return, in EUR; replaces the estimate | no - optional |
@@ -246,6 +257,7 @@ The defects dataset needs `notification_number`, `sous_groupe` and, if present, 
 | OFFICIAL | Airbus cost model MC.QU.02 |
 | BORROWED | From a 2021 time study, because AEC has no figure |
 | WO | Planned time on FTO2's SAP rework orders (order type S03), September 2026 only. Planned, not measured; to re-check on a full year |
+| MES | MES disruptions (aléas) of plant FTO2, Jan-Sep 2026: time lost declared by the operator |
 | ASSUMED | Not confirmed by anyone at AEC |
 
 Nothing is measured. Two research reports looked for published benchmarks and found none that
@@ -274,8 +286,10 @@ confirms or rejects any of these times. The only way to firm them up is to time 
 7. **Two material figures look too high**: 45.20 EUR for a badly positioned identification plate
    and 63.77 EUR for unfinished wiring. Together they drive about 3,500 EUR.
 8. **Routing and printing defects** are open points from the team's notes (section 4).
-9. **Other processes are assumptions.** Reject, exchange and design query have not been described
-   by the team, and their level 1 match to the Airbus model is assumed too.
+9. **Other processes are partly assumptions.** Design query has not been described by the team.
+   Reject and exchange were set from one month of rework orders; an exchange gets no work, although
+   swapping the part may take time that is planned nowhere. Their level 1 match to the Airbus model
+   is assumed.
 10. **One rate for everyone.** 50 EUR/h is the official France rate. Finance should supply AEC rates
    for operators, inspectors and technical support.
 11. **The final-inspection flag is approximate.** The two type columns in the Skywise export often
@@ -302,7 +316,7 @@ work separately from the hands-on part.
 ## 11. Why level 3 differs from the Excel workbook
 
 The workbook `CNQ_model_AEC_2026.xlsx` gave 148,200 EUR on the earlier export. Level 3 gave
-134,206 EUR before the changes of 19 October 2026 (121,503 EUR after them). The differences, before
+134,206 EUR before the changes of 19 October 2026 (128,741 EUR after them). The differences, before
 those changes:
 
 | Difference | Effect |
