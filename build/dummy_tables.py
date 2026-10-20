@@ -206,7 +206,6 @@ def nc_query():
     nc,
     to_char(day, 'YYYY-MM-DD') AS created,
     line,
-    plant_scope,
     plant,
     on_aec,
     rule,

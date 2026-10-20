@@ -64,11 +64,9 @@
     "cable_share_parser": 0.2673
   },
   "scope": {
-    "FTO2": 786,
-    "Supprimée": 136,
-    "Fournisseur": 84,
-    "Retour client": 69,
-    "Hors périmètre": 52
+    "serie": 988,
+    "autre": 70,
+    "client": 69
   },
   "report_scope": {
     "serie": {
@@ -91,11 +89,9 @@
     }
   },
   "defects_by_scope": {
-    "FTO2": 2768,
-    "Supprimée": 152,
-    "Retour client": 69,
-    "Fournisseur": 64,
-    "Hors périmètre": 45
+    "serie": 2968,
+    "client": 69,
+    "autre": 61
   },
   "cnq_package_checks": {
     "build_dashboard.py": "OK",
@@ -136,9 +132,9 @@
       "ncs": 713,
       "defects": 1463,
       "aleas": 99,
-      "js_kb": 1195
+      "js_kb": 1188
     },
-    "level23_js_kb": 591,
+    "level23_js_kb": 590,
     "pipeline_notebook": true,
     "level4": [
       "FTO2_NC_Dashboard_level2.slate.json",

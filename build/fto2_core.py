@@ -6,7 +6,7 @@ The same file runs in two places:
     - on the laptop: build/build_all.py runs it on the CSV exports of 06_input_data;
     - in Skywise (Level 3): the notebook runs it unchanged on the datasets fto2_dashboard_data and
       fto2_dashboard_data_missing_ids that the pipeline notebook already writes.
-The NC selection is the pipeline's: nothing here adds or removes an NC (the scope columns only label them).
+The NC selection is the pipeline's: nothing here adds or removes an NC (the scope column only labels them).
 
     nc_t, def_t, dis_t, info, to_label = fto2_core.build(frames, labels, ref_dir, ops, dis)
 
@@ -31,6 +31,8 @@ import numpy as np
 import pandas as pd
 
 import fto2_logic as L
+
+HOME_PLANTS = ("FTO2", "FT02")   # the pipeline's own test for our plant (Type_NC_auto: both spellings)
 import nc_defect_parser as PARSER
 from cnq.cnq_core import compute_cnq
 from cnq.cnq_orders import nc_order_times
@@ -46,7 +48,6 @@ NC_COLUMNS = [
     ("nc", "text", "NC number"),
     ("created", "date", "creation date"),
     ("line", "text", "aircraft line: A350, A330, A320, A400M, Autre"),
-    ("plant_scope", "text", "perimetre: FTO2, Retour client, Fournisseur, Supprimée, Hors périmètre"),
     ("plant", "text", "plant of the NC"),
     ("on_aec", "int", "1 when AEC (FTO2) is in the liability, so the NC is costed"),
     ("rule", "text", "CNQ rule: RWK, REJ, REJ_RW, EXC, SCR, DQN, ..., DELETED"),
@@ -62,7 +63,7 @@ NC_COLUMNS = [
     ("cable", "int", "1 when a defect line is a cable defect (root-cause labels)"),
     ("defect_lines", "int", "number of defect lines"),
     ("title", "text", "NC title (80 characters)"),
-    ("scope", "text", "where the NC was raised: serie (at FTO2), client (customer return), autre (another plant); every NC counts"),
+    ("scope", "text", "serie = plant FTO2 or FT02; client = customer return (Type_NC_auto 'NC Retour client' with FTO2 in the liability); autre = the rest"),
     ("phase", "text", "production type: SERIE, REC, FTI"),
     ("msn", "text", "aircraft MSN"),
     ("product", "text", "product family (Produit_auto)"),
@@ -235,6 +236,9 @@ def prepare(x, lab, ref_dir, ops=None, dis=None, say=None):
     say("   parser v4.8 on %d NCs..." % len(x))
     defects = L.build_defects(x)
     nc = L.build_nc(x, defects)
+    # the parser pack's own perimetre label is not used by the dashboard (20 Oct): only the pipeline's columns decide
+    defects = defects.drop(columns=["perimetre"], errors="ignore")
+    nc = nc.drop(columns=["perimetre"], errors="ignore")
     defects["notification_number"] = defects["notification_number"].astype(str)
     report["parser"] = {"defect_lines": int(len(defects)), "ncs": int(defects.notification_number.nunique())}
 
@@ -306,8 +310,12 @@ def prepare(x, lab, ref_dir, ops=None, dis=None, say=None):
 
     say("   cost model (both classifications)...")
     # CNQ, both classifications
+    # customer return: the pipeline's own NC type (Type_NC_auto "NC Retour client" = plant not FTO2 / FT02) with FTO2 in the
+    # liability list. The cost model and the customer-returns tab use it; the plant switch reads the plant column itself.
+    ours = nc["liability"].fillna("").astype(str).str.upper().str.contains(L.OUR_PLANT.upper(), regex=False)
+    nc["customer_return"] = ((nc["type_nc_auto"].fillna("").astype(str).str.strip() == "NC Retour client") & ours).astype(int)
     nc_in = nc[["notification_number", "statut", "decision_status", "liability", "date_creation", "type_nc", "produit",
-                "responsabilite", "perimetre", "programme", "plant", "linked_document", "work_order",
+                "responsabilite", "customer_return", "programme", "plant", "linked_document", "work_order",
                 "rework_orders", "order_state", "order_minutes_setup", "order_minutes_work", "aleas", "alea_minutes"]].copy()
     runs = {}
     for key, sub, cab in (("parser", "sous_groupe", "defaut_cable"), ("llm", "llm_sous_categorie", "llm_defaut_cable")):
@@ -341,13 +349,13 @@ def prepare(x, lab, ref_dir, ops=None, dis=None, say=None):
     nc_ref["nc_cable"] = nc_ref.notification_number.isin(set(d[d.defaut_cable].notification_number))
     nc_ref["nc_cable_llm"] = nc_ref.notification_number.isin(set(d[d.llm_defaut_cable].notification_number))
     nc_ref["long_text"] = nc_ref.notification_number.map(lt)
-    # where the NC was raised, for the plant switch and the customer-returns tab. Every NC of the pipeline's selection counts
-    # (deleted, supplier-liable and not-liable ones included, decided 20 Oct); the cost is FTO2's only where FTO2 is liable.
-    #   serie  = raised at FTO2
-    #   client = customer return (raised elsewhere, FTO2 in the liability)
-    #   autre  = raised at another plant, not a customer return
-    at_fto2 = nc_ref["plant"].fillna("").astype(str).str.strip().str.upper() == L.OUR_PLANT.upper()
-    nc_ref["scope"] = np.select([nc_ref.perimetre == "Retour client", at_fto2], ["client", "serie"], default="autre")
+    # where the NC was raised, only from the pipeline's columns. Every NC of the pipeline's selection counts (deleted, supplier
+    # and not-liable ones included, decided 20 Oct); the cost is FTO2's only where FTO2 is liable.
+    #   serie  = plant FTO2 or FT02 (the pipeline's own plant test, Type_NC_auto)
+    #   client = customer return (customer_return above)
+    #   autre  = the rest: raised at another plant, not a customer return
+    home = nc_ref["plant"].fillna("").astype(str).str.strip().str.upper().isin(HOME_PLANTS)
+    nc_ref["scope"] = np.select([nc_ref.customer_return == 1, home], ["client", "serie"], default="autre")
     d["scope"] = d.notification_number.map(nc_ref.set_index("notification_number")["scope"]).fillna("")
     d["phase"] = d.notification_number.map(nc_ref.set_index("notification_number")["phase"]).fillna("")
     return {"d": d, "nc": nc_ref, "lt": lt, "nc_in": nc_in, "nc_parser": np_, "nc_llm": nl_, "def_llm": dl_, "dis": block, "codes": codes, "report": report}
@@ -417,7 +425,7 @@ def tables(d, nc, lt, created_to):
         if not r.date_creation:
             continue
         e = nc_extras(r, created_to)
-        rows.append([r.notification_number, r.date_creation, S_(r.ligne), S_(r.perimetre), S_(r.plant), int(r.cnq_on_aec), r.cnq_rule,
+        rows.append([r.notification_number, r.date_creation, S_(r.ligne), S_(r.plant), int(r.cnq_on_aec), r.cnq_rule,
                      r.cnq_decision_label, r.cnq_where_found, round(r.cnq_cost_airbus, 2), round(r.cnq_cost_global, 2), round(r.cnq_cost_total, 2),
                      round(r.cnq_cost_admin, 2), round(r.cnq_cost_work, 2), round(r.cnq_cost_material, 2), round(r.cnq_cost_engineering, 2),
                      int(r.nc_cable_llm), int(r.cnq_defect_lines), S_(r.description_short)[:80], r.scope, S_(r.phase)]
@@ -551,7 +559,7 @@ def year_baseline(raw, station_desc, ref_dir, year):
     """One year of NCs through the pipeline's rules, the parser and the CNQ model (no stored labels: parser classes), summed per
     month, report scope, phase, line and product: [month, scope, phase, line, product, NCs, defect lines, major defect lines,
     level-3 cost, level-2, level-1]. The work minutes are the model's (no rework-order operations for that year).
-    Same scope rule as the dashboard (serie = raised at FTO2 with FTO2 liable, not deleted; client = customer return)."""
+    Same scope rule as the dashboard (serie = plant FTO2 or FT02; client = customer return)."""
     x, _ = merge_exports([pipeline_rules(raw, station_desc)])
     empty = pd.DataFrame(columns=["notification_number", "seq", "snippet", "llm_sous_categorie", "llm_sous_code", "llm_defaut_cable", "llm_confiance", "llm_symptome"])
     p = prepare(x, empty, ref_dir)

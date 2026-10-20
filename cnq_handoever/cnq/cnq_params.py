@@ -21,7 +21,6 @@ MODEL_VERSION = "cnq-2026.10.20b"
 # ---------------------------------------------------------------- who is "us"
 AEC_PLANT_CODE = "FTO2"            # liability == this code -> the NC is AEC non-quality
 FINAL_INSPECTION_TYPES = ["CONTROLE FINAL"]   # values of the NC type that mean "found at final inspection"
-CUSTOMER_RETURN_PERIMETERS = ["Retour client"]  # values of `perimetre` that mean "customer return"
 # English label shown on the charts for each NC type (anything else is shown as written)
 WHERE_FOUND_LABELS = {
     "CONTROLE FINAL": "Final inspection", "INTERNE": "In-process (internal)", "CABLES": "Cables", "FOURNISSEUR": "Supplier",

@@ -10,7 +10,7 @@ Input (the only data read):
     04_reference/llm_labels_longtext.csv       Root-cause labels per defect line (Sonnet, full long text, 12 Oct 2026).
 
 Steps:
-    1. parser v4.8 (02_dashboard_pack/.../fto2_logic.py)  -> one row per defect, one row per NC, scope (perimetre)
+    1. parser v4.8 (02_dashboard_pack/.../fto2_logic.py)  -> one row per defect, one row per NC; where raised (scope) from the pipeline's plant and Type_NC_auto
     2. join the long-text labels on (NC, defect #); a line whose text changed or that is new is marked "to label"
     3. CNQ model cnq-2026.10 (cnq_handoever/) for both classifications
     4. write the tables, refresh the CNQ package sample outputs, build the HTML pages and the Excel files
@@ -144,11 +144,11 @@ def main():
     REPORT["cnq"] = {"classification": "root cause (long text)", "nc_on_aec": int(len(aec)), "level1": round(float(aec.cnq_cost_airbus.sum()), 2),
                      "level2": round(float(aec.cnq_cost_global.sum()), 2), "level3": round(t3, 2), "cable_allocated": round(cab_alloc, 2),
                      "cable_share": round(cab_alloc / t3, 4), "level3_parser": round(t3p, 2), "cable_share_parser": round(cab_p / t3p, 4)}
-    REPORT["scope"] = nc_ref.perimetre.value_counts().to_dict()
+    REPORT["scope"] = nc_ref.scope.value_counts().to_dict()
     REPORT["report_scope"] = {k: {"ncs": int((nc_ref.scope == k).sum()), "ncs_without_defect_line": int(((nc_ref.scope == k) & (nc_ref.cnq_defect_lines == 0)).sum()),
                                   "defects": int((d.scope == k).sum()), "cnq": round(float(nc_ref.loc[nc_ref.scope == k, "cnq_cost_total"].sum()), 2)}
                               for k in ("serie", "client", "autre")}
-    REPORT["defects_by_scope"] = d.perimetre.value_counts().to_dict()
+    REPORT["defects_by_scope"] = d.scope.value_counts().to_dict()
 
     # ======================================================== 4a. CNQ package: same data, same totals
     refresh_cnq_package(nc_in, d)
@@ -296,7 +296,7 @@ def build_dashboard(d, nc, lt, y25=None, dis_t=None):
     ncd = nc.set_index("notification_number")
     defs = []
     for r in d.itertuples():
-        defs.append([r.notification_number, int(r.seq), r.date_creation, r.semaine, S_(r.ligne), r.perimetre,
+        defs.append([r.notification_number, int(r.seq), r.date_creation, r.semaine, S_(r.ligne), "",
                      r.groupe, rca(r.rca_type), r.sous_groupe, int(bool(r.mineur)), int(bool(r.defaut_cable)),
                      r.llm_categorie, r.llm_rca_nom, r.llm_sous_categorie, int(bool(r.llm_mineur)), int(bool(r.llm_defaut_cable)),
                      round(float(r.cnq_cost_allocated), 2), round(float(r.cnq_cost_allocated_llm), 2), S_(r.text)[:220],
@@ -306,12 +306,12 @@ def build_dashboard(d, nc, lt, y25=None, dis_t=None):
         if not r.date_creation:
             continue
         k = int(r.cnq_on_aec)   # FTO2's cost only where FTO2 is liable; every NC counts
-        ncs.append([r.notification_number, r.date_creation, week_of(r.date_creation), S_(r.ligne), r.perimetre, int(r.cnq_on_aec), r.cnq_rule,
+        ncs.append([r.notification_number, r.date_creation, week_of(r.date_creation), S_(r.ligne), "", int(r.cnq_on_aec), r.cnq_rule,
                     r.cnq_decision_label, r.cnq_where_found] + [round(k * v, 2) for v in (r.cnq_cost_airbus, r.cnq_cost_global, r.cnq_cost_total_parser,
                     r.cnq_cost_total, r.cnq_cost_admin, r.cnq_cost_work_parser, r.cnq_cost_work, r.cnq_cost_material_parser, r.cnq_cost_material,
                     r.cnq_cost_engineering)] + [
                     int(r.nc_cable), int(r.nc_cable_llm), int(r.cnq_defect_lines), S_(r.description_short)[:80], r.scope, S_(r.phase)]
-                   + nc_extras(r))
+                   + nc_extras(r) + [S_(r.plant), 0 if k else round(float(r.cnq_cost_total), 2)])   # [42] plant (the plant switch), [43] cost FTO2 does not bear
     direct = {"%s|%d" % (r.notification_number, r.seq): [round(float(r.cnq_cost_direct), 2), round(float(r.cnq_cost_direct_llm), 2)]
               for r in d.itertuples() if r.cnq_cost_allocated or r.cnq_cost_allocated_llm}
     aec, nl = nc[nc.cnq_on_aec == 1], nc[(nc.cnq_on_aec != 1) & (nc.date_creation != "")]
@@ -522,7 +522,7 @@ def build_review(d, lt):
     f = d[(d.scope != "") & (d.sous_groupe != d.llm_sous_categorie)].copy()
     f["long_text"] = f.notification_number.map(lambda n: lt.get(n, "")[:1500])
     f = f.sort_values(["nb_defauts_nc", "notification_number", "seq"])
-    dis = pd.DataFrame({"NC": f.notification_number, "Défaut #": f.seq, "Défauts dans la NC": f.nb_defauts_nc, "Périmètre": f.scope.map({"serie": "Série", "client": "Retour client"}),
+    dis = pd.DataFrame({"NC": f.notification_number, "Défaut #": f.seq, "Défauts dans la NC": f.nb_defauts_nc, "Où émise": f.scope.map({"serie": "Usine FTO2", "client": "Retour client", "autre": "Autre usine"}),
                         "Code écrit": f.code, "Extrait": f.text, "Texte complet": f.long_text,
                         "Parser – catégorie": f.groupe, "Parser – sous-catégorie": f.sous_groupe,
                         "Cause racine – catégorie": f.llm_categorie, "Cause racine – sous-catégorie": f.llm_sous_categorie,
@@ -553,7 +553,7 @@ def build_detail(d, nc, x):
     kind = pd.cut(m.nb_defauts_nc, [0, 1, 10, 10 ** 6], labels=["Seul (1 défaut)", "Liste courte (2-10)", "Liste d'inspection (>10)"]).astype(str)
     out = pd.DataFrame({
         "NC": m.notification_number, "Défaut #": m.seq, "Défauts dans la NC": m.nb_defauts_nc, "Type de NC": kind,
-        "Périmètre": m.perimetre, "Périmètre rapport": m.scope.map({"serie": "Série", "client": "Retour client"}).fillna(""), "Statut": m.statut, "Créée": m.date_creation, "Semaine": m.semaine,
+        "Où émise": m.scope.map({"serie": "Usine FTO2", "client": "Retour client", "autre": "Autre usine"}).fillna(""), "Statut": m.statut, "Créée": m.date_creation, "Semaine": m.semaine,
         "Clôturée": pd.to_datetime(m.closure_time, errors="coerce", utc=True).dt.strftime("%Y-%m-%d"), "Ligne": m.ligne, "MSN": m.msn,
         "Phase": m.phase, "Type NC (pipeline)": m.type_nc_auto, "Produit": m.produit, "Site": m.plant, "Poste": m.station,
         "Description poste": m.station_description, "Décision": m.decision_label, "Responsabilité": m.liability, "Rédacteur": m.user_department,
@@ -571,8 +571,8 @@ def build_detail(d, nc, x):
         summ_rows.append([cat, len(p), len(l), int(l.llm_defaut_cable.sum()), int(l.llm_mineur.sum()), round(float(l.cnq_cost_allocated_llm.sum()))])
     summ = pd.DataFrame(summ_rows, columns=["Catégorie", "Défauts série (parser)", "Défauts série (cause racine)", "dont câble", "dont mineurs", "CNQ réparti (EUR)"])
     readme = pd.DataFrame({"Read me": [
-        "Une ligne par défaut, NC créées du %s au %s, exports Skywise de 06_input_data (le standard est limité aux 1 000 NC les plus récentes, complété par numéro)." % (REPORT["created_from"], REPORT["created_to"]),
-        "Périmètre rapport (celui du tableau de bord) : Série = émise à FTO2, FTO2 responsable, non supprimée ; Retour client = émise hors FTO2 avec FTO2 responsable. La colonne Périmètre garde le détail du pack (FTO2, Hors périmètre, Fournisseur, Supprimée).",
+        "Une ligne par défaut, NC créées du %s au %s, exports Skywise de 06_input_data (sélection standard complète, complétée par numéro avec les listes GPS et Test)." % (REPORT["created_from"], REPORT["created_to"]),
+        "Où émise (comme le tableau de bord) : Usine FTO2 = plant FTO2 ou FT02 ; Retour client = Type_NC_auto du pipeline « NC Retour client » avec FTO2 dans la responsabilité ; Autre usine = le reste. Toutes les NC du pipeline sont là, supprimées et fournisseur comprises.",
         "Deux classements : parser v4.8 (règles, comme dans Skywise) et cause racine (modèle de langage avec le texte complet, 12 oct. 2026, non vérifié à la main).",
         "CNQ réparti : coût de la NC (modèle cnq-2026.10, niveau 3) partagé entre ses défauts. Seules les NC dont FTO2 est responsable ont un coût.",
         "Régénéré par build/build_all.py."]})

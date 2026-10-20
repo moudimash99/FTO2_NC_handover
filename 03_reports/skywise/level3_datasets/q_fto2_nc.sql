@@ -3,7 +3,6 @@ SELECT
     nc,
     CAST(created AS VARCHAR) AS created,
     line,
-    plant_scope,
     plant,
     on_aec,
     rule,

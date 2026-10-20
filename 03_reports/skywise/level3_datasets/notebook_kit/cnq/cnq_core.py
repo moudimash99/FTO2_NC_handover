@@ -117,8 +117,10 @@ def compute_cnq(nc, defects, params=P):
         type_nc = type_nc.where(type_nc.notna(), nc["Type_NC_auto"])
     type_nc = type_nc.astype("string").str.strip()
     nc["cnq_final_inspection"] = type_nc.str.upper().isin([t.upper() for t in params.FINAL_INSPECTION_TYPES]).fillna(False).astype(int)
-    perim = _first_present(nc, ["perimetre"]).astype("string").str.strip()
-    nc["cnq_customer_return"] = perim.isin(params.CUSTOMER_RETURN_PERIMETERS).fillna(False).astype(int)
+    # customer return: column customer_return (1/0), set by the dashboard's data step from the pipeline's Type_NC_auto
+    # ("NC Retour client") with FTO2 in the liability list
+    cr = pd.to_numeric(_first_present(nc, ["customer_return"]), errors="coerce")
+    nc["cnq_customer_return"] = (cr.fillna(0) > 0).astype(int)
     labelled = type_nc.str.upper().map(params.WHERE_FOUND_LABELS).astype(object)
     labelled = labelled.where(labelled.notna(), type_nc.astype(object)).where(type_nc.notna(), "Not recorded")
     nc["cnq_where_found"] = np.where(nc["cnq_customer_return"] == 1, "Customer return",

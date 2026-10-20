@@ -16,11 +16,6 @@
    "meaning": "aircraft line: A350, A330, A320, A400M, Autre"
   },
   {
-   "name": "plant_scope",
-   "type": "text",
-   "meaning": "perimetre: FTO2, Retour client, Fournisseur, Supprimée, Hors périmètre"
-  },
-  {
    "name": "plant",
    "type": "text",
    "meaning": "plant of the NC"
@@ -98,7 +93,7 @@
   {
    "name": "scope",
    "type": "text",
-   "meaning": "where the NC was raised: serie (at FTO2), client (customer return), autre (another plant); every NC counts"
+   "meaning": "serie = plant FTO2 or FT02; client = customer return (Type_NC_auto 'NC Retour client' with FTO2 in the liability); autre = the rest"
   },
   {
    "name": "phase",

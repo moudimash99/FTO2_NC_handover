@@ -129,7 +129,10 @@ and `q_fto2_dis.sql`. The JS, CSS, HTML and state stay those of level 2.
 Expected: the real dashboard, same figures as the laptop build. Default view on the data of 28 September 2026:
 **910 NC, 2 890 défauts, 3,5 défauts par NC, 347,1 k€, 1,79 NC par MSN** (with the September 2026 operations and the
 Jan-Sep aléas, as on the laptop). Every NC of the selection counts (decided 20 Oct): all phases, all dates and the plant
-switch off show every row of `fto2_dash_nc` (1,127 on the laptop data). The cost is FTO2's only where FTO2 is liable;
+switch off show every row of `fto2_dash_nc` (1,127 on the laptop data). "Usine FTO2 uniquement" keeps the NCs whose `plant` is FTO2
+or FT02 (988 on the laptop data, all production types); the Customer returns tab shows `Type_NC_auto` "NC Retour client" with
+FTO2 in the liability (69; 34 in Série). Since 20 Oct `fto2_dash_nc` has no `plant_scope` column: re-run the notebook with the
+new `notebook_kit` files and paste the new `q_fto2_nc.sql` together, or the old query asks for a column that is gone. The cost is FTO2's only where FTO2 is liable;
 the other NCs count as NCs with a cost of 0 (the footnote gives their number and handling cost). Coût tab, block "Aléas
 qualité sans NC": 8 233 € (at the production rate, 123 €/h), 66,9 h, 89 aléas (19 possible ERMA aléas left out).
 

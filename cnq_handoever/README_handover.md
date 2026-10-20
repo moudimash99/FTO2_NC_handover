@@ -286,7 +286,7 @@ Foundry build. The NC file must carry the columns of section 7; `build_all.py` t
 | `linked_document`, `work_order` | finds the NC's rework order (a rejection with a rework order is charged its work) | **no - add from Skywise**; without them every rejection is costed without work |
 | `order_state`, `order_minutes_setup`, `order_minutes_work` | the planned time of the NC's rework orders (`cnq_orders.nc_order_times`, from the S03 work-order operations) | no - optional; without them the model's times are used |
 | `alea_minutes` | declared time of the quality aléas that led to the NC (`cnq_disruptions.nc_alea_times`, from MES Disruptions) | no - optional; without it the flat 41 min are used |
-| `perimetre` | flags customer returns | yes |
+| `customer_return` | 1 for a customer return (pipeline's `Type_NC_auto` = "NC Retour client" with FTO2 in the liability) | yes |
 | `part_value` | value of a rejected or exchanged part, in EUR | no - optional, see section 9 |
 | `customer_return_cost` | real amount of a customer return, in EUR; replaces the estimate | no - optional |
 
