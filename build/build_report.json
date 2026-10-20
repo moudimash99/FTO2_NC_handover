@@ -6,12 +6,12 @@
   "nc_rows": 1127,
   "created_from": "2025-12-15",
   "created_to": "2026-09-28",
+  "labels": {
+    "ok": 3098
+  },
   "subcodes": {
     "exact": 2956,
     "parent_or_none": 142
-  },
-  "labels": {
-    "ok": 3098
   },
   "unknown_cnq_classes": [],
   "cnq": {
@@ -81,6 +81,10 @@
   "eqmsn": {
     "products": 10,
     "total_std": 640.46
+  },
+  "dash_tables": {
+    "nc": 1127,
+    "defects": 3098
   },
   "review_disagreements": 301
 }

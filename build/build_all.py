@@ -38,8 +38,11 @@ sys.path.insert(0, CNQ)
 import fto2_logic as L                                   # noqa: E402
 import nc_defect_parser as PARSER                        # noqa: E402
 from cnq.cnq_core import compute_cnq, parameters_as_tables  # noqa: E402
+sys.path.insert(0, os.path.join(ROOT, "build"))
+import fto2_core as core                                # noqa: E402   the data steps, shared with the Skywise notebook
 
 REPORT = {}
+CODE_DESC = {}   # official sub-code -> [en, fr], filled by the data steps
 
 
 def say(*a):
@@ -54,121 +57,27 @@ def load_exports():
         x = pd.read_csv(f, low_memory=False, dtype={"notification_number": str})
         x["_source"] = os.path.basename(f)
         frames.append(x)
-    x = pd.concat(frames, ignore_index=True)
-    x["notification_number"] = x["notification_number"].astype(str).str.strip()
-    x["_changed"] = pd.to_datetime(x["changed_time"], errors="coerce", utc=True)
-    x = x.sort_values("_changed").drop_duplicates("notification_number", keep="last").reset_index(drop=True)
+    x, info = core.merge_exports(frames)
     REPORT["inputs"] = {os.path.basename(f): int((x["_source"] == os.path.basename(f)).sum()) for f in files}
-    REPORT["nc_rows"] = int(len(x))
-    created = pd.to_datetime(x["creation_time"], errors="coerce", utc=True)
-    REPORT["created_from"], REPORT["created_to"] = str(created.min().date()), str(created.max().date())
+    REPORT.update(info)
     return x
 
 
-def clean_long_text(t):
-    t = str(t or "")
-    t = re.sub(r"(?:--\s*){3,}", "", t)
-    t = re.sub(r"Tél\.\s*[^\n]*", "", t)
-    t = re.sub(r"#(UID|TEL|PRS)~", "", t)
-    t = re.sub(r"[ \t]+", " ", t)
-    t = re.sub(r"\n\s*\*?\s*\n", "\n", t)
-    return t.strip()
-
-
-def week_of(iso):
-    d = pd.Timestamp(iso)
-    y, w, _ = d.isocalendar()
-    return "%d-W%02d" % (y, w)
+clean_long_text, week_of = core.clean_long_text, core.week_of
 
 
 # ============================================================ main
 def main():
     x = load_exports()
     say("exports:", REPORT["inputs"], "->", len(x), "NCs")
-    defects = L.build_defects(x)
-    nc = L.build_nc(x, defects)
-    defects["notification_number"] = defects["notification_number"].astype(str)
-    say("parser v4.8:", len(defects), "defect lines in", defects.notification_number.nunique(), "NCs")
-
-    # NC fields from the export that the parser datasets do not carry
-    keep = {"decision_status": "decision_status", "decision_status_description_en": "decision_label", "liability": "liability",
-            "liability_description": "liability_description", "responsible_defect_level1": "responsible_level1",
-            "responsible_defect_level1_name": "responsible_level1_name", "station": "station", "station_description": "station_description",
-            "work_ctr": "work_ctr", "user_department": "user_department", "description_short": "description_short",
-            "msn": "msn", "trigger": "trigger", "notification_type": "notification_type", "closure_time": "closure_time",
-            "Type_NC_auto": "type_nc_auto", "GPS_Type_NC": "gps_type_nc", "Programme_auto": "phase", "Produit_auto": "produit",
-            "Origin_auto": "origin_auto", "Ext_Source": "ext_source", "defect_code_description_en": "sap_defect_code",
-            "cause_group_description_en": "sap_cause_group", "cause_code_description_en": "sap_cause_code", "creation_time": "creation_ts", "_source": "source_file",
-            "linked_document": "linked_document", "work_order": "work_order"}   # the CNQ model's rejection-with-rework-order rule reads these two
-    ex = x[["notification_number"] + list(keep)].rename(columns=keep)
-    ex["type_nc"] = ex["gps_type_nc"].where(ex["gps_type_nc"].notna(), ex["type_nc_auto"])
-    nc = nc.merge(ex, on="notification_number", how="left")
-    lt = dict(zip(x.notification_number, x.description_long_text.map(clean_long_text)))
-
-    # ======================================================== 2. long-text labels
     lab = pd.read_csv(os.path.join(ROOT, "04_reference", "llm_labels_longtext.csv"), dtype={"notification_number": str}, encoding="utf-8-sig")
-    d = defects.merge(lab, on=["notification_number", "seq"], how="left")
-    norm = lambda s: s.fillna("").astype(str).str.replace(r"\s+", " ", regex=True).str.strip()
-    same_text = (norm(d["text"]) == norm(d["snippet"])) | (norm(d["text"]).isin(["", "N/A"]) & (norm(d["snippet"]) == ""))
-    d["llm_status"] = np.where(d["llm_sous_categorie"].isna(), "a_labelliser", np.where(same_text, "ok", "texte_change"))
-    # a line without a usable label falls back to the parser label, so every chart stays complete
-    use = d["llm_status"] == "ok"
-    for c_llm, c_par in (("llm_sous_categorie", "sous_groupe"), ("llm_defaut_cable", "defaut_cable")):
-        d[c_llm] = d[c_llm].where(use, d[c_par])
-    d["llm_defaut_cable"] = d["llm_defaut_cable"].astype(str).str.lower().isin(["true", "1"])
-    d["llm_categorie"] = d["llm_sous_categorie"].map(lambda s: PARSER.SOUS_CATEGORIES.get(s, ("Autre",))[0])
-    d["llm_rca_type"] = d["llm_sous_categorie"].map(lambda s: PARSER.SOUS_CATEGORIES.get(s, (None, "AUTRE"))[1])
-    d["llm_rca_nom"] = d["llm_rca_type"].map(L.RCA_NAMES).fillna("Non classé")
-    d["llm_mineur"] = d["llm_sous_categorie"].map(PARSER.est_mineur)
-    d["sous_code_officiel"] = official_subcode(d)
-    d = d.drop(columns=["snippet"])
-    REPORT["labels"] = d["llm_status"].value_counts().to_dict()
+    p = core.prepare(x, lab, os.path.join(ROOT, "04_reference"))   # parser, labels, CNQ, scope: build/fto2_core.py
+    d, nc_ref, lt, nc_in = p["d"], p["nc"], p["lt"], p["nc_in"]
+    nl_, dl_ = p["nc_llm"], p["def_llm"]
+    CODE_DESC.update(p["codes"])
+    REPORT.update({k: p["report"][k] for k in ("labels", "subcodes", "unknown_cnq_classes")})
+    say("parser v4.8:", p["report"]["parser"]["defect_lines"], "defect lines in", p["report"]["parser"]["ncs"], "NCs")
     say("labels:", REPORT["labels"])
-
-    # ======================================================== 3. CNQ, both classifications
-    nc_in = nc.rename(columns={"responsabilite": "responsabilite"})[
-        ["notification_number", "statut", "decision_status", "liability", "date_creation", "type_nc", "produit",
-         "responsabilite", "perimetre", "programme", "plant", "linked_document", "work_order"]].copy()
-    runs = {}
-    for key, sub, cab in (("parser", "sous_groupe", "defaut_cable"), ("llm", "llm_sous_categorie", "llm_defaut_cable")):
-        dd = d[["notification_number", "seq", "qty", sub, cab]].rename(columns={sub: "sous_groupe", cab: "cable"})
-        n_out, d_out = compute_cnq(nc_in, dd)
-        # share each NC's cost among its defect lines: the line's own work and material + an equal part of the rest
-        a = n_out.set_index("notification_number")
-        lines = d_out.groupby("notification_number")["seq"].transform("size")
-        direct_sum = d_out.groupby("notification_number")["cnq_cost_direct"].transform("sum")
-        nc_cost = d_out["notification_number"].map(a["cnq_cost_total"]) * d_out["cnq_on_aec"]
-        d_out["cnq_cost_allocated"] = d_out["cnq_cost_direct"] + (nc_cost - direct_sum * d_out["cnq_on_aec"]) / lines
-        runs[key] = (n_out, d_out)
-    np_, dp_ = runs["parser"]
-    nl_, dl_ = runs["llm"]          # root-cause labels: the main figures
-    REPORT["unknown_cnq_classes"] = sorted(set(d.sous_groupe) - set(__import__("cnq.cnq_params", fromlist=["x"]).DEFECT_TIMES))
-
-    # reference datasets
-    dp_i = dp_.set_index(["notification_number", "seq"])
-    dl_i = dl_.set_index(["notification_number", "seq"])
-    k = list(zip(d.notification_number, d.seq))
-    d["cnq_cost_direct"] = [dp_i.at[i, "cnq_cost_direct"] for i in k]
-    d["cnq_cost_allocated"] = [dp_i.at[i, "cnq_cost_allocated"] for i in k]
-    d["cnq_cost_direct_llm"] = [dl_i.at[i, "cnq_cost_direct"] for i in k]
-    d["cnq_cost_allocated_llm"] = [dl_i.at[i, "cnq_cost_allocated"] for i in k]
-    d["nb_defauts_nc"] = d.groupby("notification_number")["seq"].transform("size")
-    d["semaine"] = d["date_creation"].map(lambda s: week_of(s) if s else "")
-    cnq_cols = [c for c in np_.columns if c.startswith("cnq_")]
-    nc_ref = nc.merge(nl_[["notification_number"] + cnq_cols], on="notification_number", how="left")
-    pc = np_.set_index("notification_number")
-    for c in ("cnq_cost_total", "cnq_cost_work", "cnq_cost_material", "cnq_cost_global"):
-        nc_ref[c + "_parser"] = nc_ref.notification_number.map(pc[c])
-    nc_ref["nc_cable"] = nc_ref.notification_number.isin(set(d[d.defaut_cable].notification_number))
-    nc_ref["nc_cable_llm"] = nc_ref.notification_number.isin(set(d[d.llm_defaut_cable].notification_number))
-    nc_ref["long_text"] = nc_ref.notification_number.map(lt)
-    # the reporting scope used by every page, so all of them count the same NCs:
-    #   serie  = raised at FTO2, FTO2 in the liability, not deleted
-    #   client = customer return (raised elsewhere, FTO2 in the liability, not deleted)
-    liab_f = nc_ref["liability"].fillna("").astype(str).str.upper().str.contains("FTO2")
-    nc_ref["scope"] = np.select([(nc_ref.perimetre == "FTO2") & liab_f, nc_ref.perimetre == "Retour client"], ["serie", "client"], default="")
-    d["scope"] = d.notification_number.map(nc_ref.set_index("notification_number")["scope"]).fillna("")
-    d["phase"] = d.notification_number.map(nc_ref.set_index("notification_number")["phase"]).fillna("")
     d.to_csv(os.path.join(OUT, "fto2_defects.csv"), index=False, encoding="utf-8-sig")
     nc_ref.to_csv(os.path.join(OUT, "fto2_nc.csv"), index=False, encoding="utf-8-sig")
     nl_.to_csv(os.path.join(OUT, "fto2_nc_cnq.csv"), index=False)
@@ -370,7 +279,13 @@ def build_dashboard(d, nc, lt):
     import dummy_data
     data["eqmsn"] = eqmsn(nc)
     local = dict(data, dummy=dummy_data.make(ROOT))
-    _page("dashboard.html", data, "FTO2_NC_Dashboard.html")
+    # the main page goes through the two tables, as in Skywise: the JS (fto2FromTables) rebuilds the page's data from them
+    nc_t, def_t = core.tables(d, nc, lt, REPORT["created_to"])
+    nc_t.to_csv(os.path.join(OUT, "fto2_dash_nc.csv"), index=False, encoding="utf-8-sig")
+    def_t.to_csv(os.path.join(OUT, "fto2_dash_defects.csv"), index=False, encoding="utf-8-sig")
+    REPORT["dash_tables"] = {"nc": int(len(nc_t)), "defects": int(len(def_t))}
+    src = {"tables": {"nc": colmajor(nc_t), "def": colmajor(def_t)}, "ref": reference_block(data)}
+    _page("dashboard.html", src, "FTO2_NC_Dashboard.html")
     # the proposed final layout, chart by chart, with the choices to make (review page, local only)
     _page("dashboard.html", local, "FTO2_Revue_Proposition.html", page="review")
     # the same layout as a mock-up of the final dashboard, every chart scored a to e at its side (local only)
@@ -378,6 +293,20 @@ def build_dashboard(d, nc, lt):
     _page("dashboard.html", data, "FTO2_Suivi_Hebdo.html", page="suivi")
     slate_pack(data)
     slate_pack(data, page="suivi")
+
+
+def colmajor(df):
+    """A table as Slate returns a query result: one array per column (empty -> null)."""
+    return {c: [None if (isinstance(v, float) and np.isnan(v)) else v for v in df[c].tolist()] for c in df.columns}
+
+
+def reference_block(data):
+    """What does not come from the two tables: code sheet, MFT actions, cost parameters, production plan, root-cause tree.
+    Written into the page (and into the Slate JS); the examples, quantities and product lines are rebuilt from the tables."""
+    cq = {k: v for k, v in data["cnqp"].items() if k != "qty"}
+    eq = {k: v for k, v in data["eqmsn"].items() if k != "line"} if data.get("eqmsn") else None
+    return {"from": data["meta"]["from"], "codes": data["codes"], "actions": data["actions"], "cnqp": cq, "eqmsn": eq,
+            "rca": [dict(o, ex=[]) for o in data["rca"]]}
 
 
 def eqmsn(nc):
@@ -435,26 +364,7 @@ def cnq_explain(d):
 
 
 def nc_extras(r):
-    """NC fields for the aircraft, product, lead-time, time-of-day and NC charts: [msn, product family, station, creation hour (Paris),
-    days to close (None while open), open, age in days if open, closure date, NC type, liability, SAP defect code, SAP cause group,
-    SAP cause, status, data source, CNQ steps]. CNQ steps = the model's minutes [alert, writing, support, setup, hands-on, re-check],
-    engineering hours and the final-inspection flag, for the "explain the calculation" part. SAP labels lose their brackets. Data source: every NC comes from Skywise; Ext_Source says whether it
-    is also in a manual list (gps = GPS register, test = Test list) or only in Skywise (sky)."""
-    msn = S_(r.msn)
-    msn = msn[:-2] if msn.endswith(".0") else msn
-    created = pd.to_datetime(r.creation_ts, errors="coerce", utc=True)
-    closed = pd.to_datetime(r.closure_time, errors="coerce", utc=True)
-    hour = int(created.tz_convert("Europe/Paris").hour) if pd.notna(created) else -1
-    is_open = int(r.statut == "open")
-    lead = round((closed - created).total_seconds() / 86400, 2) if pd.notna(created) and pd.notna(closed) and not is_open else None
-    end = pd.Timestamp(REPORT["created_to"] + "T23:59:59", tz="UTC")
-    age = round((end - created).total_seconds() / 86400, 1) if is_open and pd.notna(created) else None
-    sap = lambda v: S_(v).strip().strip("[]").strip()
-    return [msn, S_(r.produit) or "Other", S_(r.station_description).strip(), hour, lead, is_open, age,
-            closed.strftime("%Y-%m-%d") if pd.notna(closed) else "", S_(r.type_nc).strip(), sap(r.liability), sap(r.sap_defect_code),
-            sap(r.sap_cause_group), sap(r.sap_cause_code), S_(r.statut), {"GPS": "gps", "Test": "test"}.get(S_(r.ext_source).strip(), "sky"),
-            [round(float(x or 0), 1) for x in (r.cnq_min_alert, r.cnq_min_writing, r.cnq_min_support, r.cnq_min_setup, r.cnq_min_hands_on,
-                                                r.cnq_min_recheck, r.cnq_hours_engineering)] + [int(r.cnq_final_inspection or 0)]]
+    return core.nc_extras(r, REPORT["created_to"])
 
 
 FR_MONTHS = {"janvier": 1, "fevrier": 2, "février": 2, "mars": 3, "avril": 4, "mai": 5, "juin": 6, "juillet": 7, "aout": 8, "août": 8,
@@ -492,39 +402,6 @@ def mft_actions():
     return out
 
 
-CODE_DESC = {}
-
-
-def official_subcode(d):
-    """Official sub-code of each defect line: the one chosen by the long-text labelling; for the approved exceptions,
-    which have no sub-code of their own, the parent code (E1 = part of Q06-001; E2 = a Q11 component code)."""
-    ref = pd.read_csv(os.path.join(ROOT, "04_reference", "reference_souscodes_pareto.csv"), encoding="utf-8-sig")
-    ref = ref[~ref.sous_code.astype(str).str.startswith("(")]
-    fr = pd.read_csv(os.path.join(ROOT, "04_reference", "souscodes_fr.csv"), encoding="utf-8-sig").set_index("sous_code").description_fr
-    missing = sorted(set(ref.sous_code) - set(fr.index))
-    assert not missing, "French description missing in 04_reference/souscodes_fr.csv for: %s" % missing
-    CODE_DESC.update({c: [en, fr[c]] for c, en in zip(ref.sous_code, ref.object_desc)})
-    first = ref.groupby("sous_categorie").sous_code.first()
-    fallback = {"Câble à refaire (ligne)": "Q06-001", "Composant HS": "Q11 (composant)", "Composant – cause non écrite": "Q11 (composant)",
-                "Non classé": "Non codé"}
-    CODE_DESC.update({"Q11 (composant)": ["Component (sub-code not specified)", "Composant (sous-code non précisé)"], "Non codé": ["No code", "Sans code"]})
-    out = []
-    for code, sub, status in zip(d.llm_sous_code.fillna("").astype(str).str.strip(), d.llm_sous_categorie, d.llm_status):
-        if status == "ok" and code in CODE_DESC:
-            out.append(code)
-        elif sub in fallback:
-            out.append(fallback[sub])
-        elif sub in first.index:
-            head = first[sub][:3] + " (non précisé)"
-            CODE_DESC.setdefault(head, ["Sub-code not specified", "Sous-code non précisé"])
-            out.append(head)
-        else:
-            out.append("Non codé")
-    s = pd.Series(out, index=d.index)
-    REPORT["subcodes"] = {"exact": int(s.isin(ref.sous_code).sum()), "parent_or_none": int((~s.isin(ref.sous_code)).sum())}
-    return s
-
-
 def rca_reference(d):
     """The RCA page: hierarchy official sub-code -> sub-category -> RCA -> category, definitions, real examples."""
     ref = os.path.join(ROOT, "04_reference")
@@ -550,30 +427,7 @@ def rca_reference(d):
 
 
 def customer_return_extras(d, nc, lt):
-    """Customer-return tab: damage type, detection, observed consequence, cause text, plant, liability; and the NC texts."""
-    ncd = nc.set_index("notification_number")
-    r = d[d.scope == "client"]
-    extra, texts = {}, {}
-    for x in r.itertuples():
-        n = ncd.loc[x.notification_number]
-        L_ = lt.get(x.notification_number, "")
-        det = re.search(r"Moment of Detection\s*:\s*([^\n]+)", L_)
-        det = det.group(1).strip() if det else ""
-        nat = ""
-        if x.llm_categorie == "Élément Endommagé":
-            if re.search(r"unpacking|reception", det, re.I):
-                nat = "recu"
-            elif x.llm_sous_categorie == "Composant HS":
-                nat = "hs"
-            elif x.llm_sous_categorie == "Composant – cause non écrite":
-                nat = "nc"
-            else:
-                nat = "phys"
-        sym = S_(x.llm_symptome)
-        extra["%s|%d" % (x.notification_number, x.seq)] = [nat, det, sym[:1].upper() + sym[1:], "", S_(n.plant), S_(n.liability)]
-        texts[x.notification_number] = L_[:2500]
-    REPORT["customer_returns"] = {"ncs": int((nc.scope == "client").sum()), "defects": int(len(r)),
-                                  "damage_types": pd.Series([v[0] for v in extra.values() if v[0]]).value_counts().to_dict()}
+    extra, texts, REPORT["customer_returns"] = core.customer_return_extras(d, nc, lt)
     return extra, texts
 
 

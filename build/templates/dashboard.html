@@ -959,6 +959,83 @@ window.DASH = __DATA__;
 window.FTO2_PAGE = window.FTO2_PAGE || '__PAGE__';
 </script>
 <script>
+/* ===== ADAPTER START ===== */
+// The page's data from its two tables, one row per NC and one row per defect line (columns: build/fto2_core.py, NC_COLUMNS and
+// DEF_COLUMNS), plus the fixed references (code sheet, MFT actions, cost parameters, production plan, root-cause tree).
+// A table comes as a Slate query result (one array per column) or as rows (an array of objects).
+function fto2FromTables(ncIn, defIn, ref) {
+  ref = ref || {};
+  function rows(t) {
+    if (!t) return [];
+    if (Array.isArray(t)) return t;
+    var cols = Object.keys(t), n = 0, out = [];
+    cols.forEach(function (c) { if (t[c] && t[c].length > n) n = t[c].length; });
+    for (var i = 0; i < n; i++) { var o = {}; cols.forEach(function (c) { o[c] = t[c] ? t[c][i] : null; }); out.push(o); }
+    return out;
+  }
+  function str(v) { return v == null ? '' : String(v); }
+  function num(v) { var x = typeof v === 'number' ? v : parseFloat(v); return isFinite(x) ? x : 0; }
+  function numOrNull(v) { if (v == null || v === '') return null; var x = typeof v === 'number' ? v : parseFloat(v); return isFinite(x) ? x : null; }
+  function int(v) { return Math.round(num(v)); }
+  function day(v) { if (v == null || v === '') return ''; if (typeof v === 'number') return new Date(v).toISOString().slice(0, 10); return String(v).slice(0, 10); }
+  function r2(x) { return Math.round(x * 100) / 100; }
+  function isoWeek(iso) {   // '2026-W02', as Python's isocalendar()
+    var d = new Date(iso + 'T00:00:00Z'), dow = (d.getUTCDay() + 6) % 7;
+    d.setUTCDate(d.getUTCDate() - dow + 3);   // the Thursday of the week decides the year
+    var y = d.getUTCFullYear(), j4 = new Date(Date.UTC(y, 0, 4)), t1 = Date.UTC(y, 0, 4 - (j4.getUTCDay() + 6) % 7 + 3);
+    var w = 1 + Math.round((d.getTime() - t1) / 6048e5);
+    return y + '-W' + (w < 10 ? '0' : '') + w;
+  }
+  function clean(t) { return t.trim().split(/\s+/).join(' ').replace(/^[ *:\-]+|[ *:\-]+$/g, ''); }
+  var ncs = [], byNc = {};
+  rows(ncIn).forEach(function (r) {
+    var id = str(r.nc).trim().replace(/\.0$/, ''), created = day(r.created);
+    if (!id || !created) return;
+    var a = [id, created, isoWeek(created), str(r.line), str(r.plant_scope), int(r.on_aec), str(r.rule), str(r.decision_label), str(r.where_found),
+      num(r.cost_airbus), num(r.cost_global), 0, num(r.cost_total), num(r.cost_admin), 0, num(r.cost_work), 0, num(r.cost_material), num(r.cost_engineering),
+      0, int(r.cable), int(r.defect_lines), str(r.title), str(r.scope), str(r.phase),
+      str(r.msn).replace(/\.0$/, ''), str(r.product) || 'Other', str(r.station), r.hour == null || r.hour === '' ? -1 : int(r.hour), numOrNull(r.lead_days), int(r.is_open),
+      numOrNull(r.age_days), day(r.closed), str(r.type_nc), str(r.liability), str(r.sap_defect), str(r.sap_cause_group), str(r.sap_cause), str(r.status), str(r.source) || 'sky',
+      [num(r.min_alert), num(r.min_writing), num(r.min_support), num(r.min_setup), num(r.min_hands_on), num(r.min_recheck), num(r.hours_engineering), int(r.final_inspection)]];
+    ncs.push(a); byNc[id] = { a: a, plant: str(r.plant), lt: str(r.long_text) };
+  });
+  var defects = [], client = {}, lt = {}, qty = {}, pool = [];
+  rows(defIn).forEach(function (r) {
+    var id = str(r.nc).trim().replace(/\.0$/, ''), n = byNc[id];
+    if (!n) return;   // an NC without a creation date is in no selection
+    var a = n.a, seq = int(r.seq), k = id + '|' + seq, text = str(r.text);
+    defects.push([id, seq, a[1], a[2], a[3], a[4], '', '', '', 0, 0, str(r.cat), str(r.rca), str(r.sub), int(r.minor), int(r.cable), 0, num(r.cost_alloc),
+      text, '', a[23], a[24], str(r.subcode), str(r.fin)]);
+    if (r.qty != null && r.qty !== '' && int(r.qty) !== 1) qty[k] = int(r.qty);
+    if (a[23] === 'client') { client[k] = [str(r.cr_nature), str(r.cr_detection), str(r.cr_symptom), '', n.plant, a[34]]; lt[id] = n.lt; }
+    if (a[23] && str(r.label_src) === 'ai' && str(r.ai_conf) === 'high' && text.length >= 30 && text.length <= 170) pool.push([a[1], id, str(r.rca), text]);
+  });
+  // root-cause page: three recent, clearly labelled examples per root cause
+  pool.sort(function (x, y) { return x[0] < y[0] ? 1 : x[0] > y[0] ? -1 : 0; });
+  var ex = {};
+  pool.forEach(function (p) { var e = ex[p[2]] || (ex[p[2]] = []); if (e.length < 3 && !e.some(function (q) { return q[0] === p[1]; })) e.push([p[1], clean(p[3])]); });
+  var rca = (ref.rca || []).map(function (o) { var c = {}; for (var key in o) c[key] = o[key]; c.ex = ex[o.rca] || []; return c; });
+  // production plan: each product's line is the line of most of its NCs
+  var eq = null;
+  if (ref.eqmsn) {
+    eq = {}; for (var key in ref.eqmsn) eq[key] = ref.eqmsn[key];
+    var cnt = {};
+    ncs.forEach(function (a) { var p = (eq.map || {})[a[26].toUpperCase()]; if (p && a[3]) { var c = cnt[p] || (cnt[p] = {}); c[a[3]] = (c[a[3]] || 0) + 1; } });
+    eq.line = {};
+    Object.keys(eq.std || {}).forEach(function (p) { var best = '', bv = 0, c = cnt[p] || {}; Object.keys(c).forEach(function (l) { if (c[l] > bv) { bv = c[l]; best = l; } }); eq.line[p] = best; });
+  }
+  var to = '', aec = ncs.filter(function (a) { return a[5] === 1; }), sum = function (xs) { return r2(xs.reduce(function (s, a) { return s + a[12]; }, 0)); };
+  ncs.forEach(function (a) { if (a[1] > to) to = a[1]; });
+  var del = aec.filter(function (a) { return a[6] === 'DELETED'; }), oth = aec.filter(function (a) { return a[23] === '' && a[6] !== 'DELETED'; });
+  var cnqp = {}; for (var k2 in (ref.cnqp || {})) cnqp[k2] = ref.cnqp[k2]; cnqp.qty = qty;
+  return { defects: defects, ncs: ncs, rca: rca, client: client, lt: lt, codes: ref.codes || {}, actions: ref.actions || [], cnqp: cnqp, eqmsn: eq,
+    meta: { from: ref.from || '2026-01-01', to: to, aside: { deleted: [del.length, sum(del)], other: [oth.length, sum(oth)] },
+      noLine: ncs.filter(function (a) { return a[23] === 'serie' && a[21] === 0; }).length, modelTotal: sum(aec) } };
+}
+if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.tables.nc, window.DASH.tables.def, window.DASH.ref);
+/* ===== ADAPTER END ===== */
+</script>
+<script>
 (function () {
   'use strict';
   var D = window.DASH, EMBED = !!window.FTO2_EMBED;
