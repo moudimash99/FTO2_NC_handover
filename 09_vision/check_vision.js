@@ -1,5 +1,6 @@
 // Page check for FTO2_Vision.html: no script error, and the figures the page computes for four filter settings
-// equal the ones build_vision.py wrote to expected.json. Also checks the page never scrolls sideways at phone width.
+// (counts, costs, and every 2025 → 2026 comparison at equal production) equal the ones build_vision.py wrote to
+// expected.json. Also checks the page never scrolls sideways at phone width.
 //   NODE_PATH=$(npm root -g) node 09_vision/check_vision.js [screenshot folder]
 const { chromium } = require('playwright');
 const path = require('path');
@@ -22,15 +23,26 @@ function eq(name, got, want, tol) {
   await p.waitForTimeout(800);
   const pick = async (group, label) => { await p.click(`#${group} button:text-is("${label}")`); await p.waitForTimeout(250); };
   const read = () => p.evaluate(() => {
-    const V = window.__V, D = null;
-    return { kpi: V.kpi, M: V.net.M, mean: V.anat.mean, methods: V.methods, cat: window.__CAT };
+    const V = window.__V, c = x => ({ exp: x.exp, act: x.act, r: x.r, ac26: x.ac26, ac25: x.ac25 });
+    return { kpi: V.kpi, M: V.net.M, mean: V.anat.mean, methods: V.methods, cat: window.__CAT,
+      prod: { nc: c(V.prod.nc), defects: c(V.prod.def), cable: c(V.prod.cable), early: c(V.prod.early), recent: c(V.prod.recent) },
+      quarters: V.quarters.filter(w => !w.year).map(w => c(w.c)) };
   });
+  // a year-on-year comparison at equal production: same counts, same aircraft, same expected 2025
+  function eqProd(name, got, want) {
+    eq(name + ' 2026', got.act, want.act); eq(name + ' 2025 at 2026 production', got.exp, want.exp, 0.01);
+    eq(name + ' aircraft 2026', got.ac26, want.ac26); eq(name + ' aircraft 2025', got.ac25, want.ac25);
+    if (got.r === null || want.r === null) eq(name + ' change', got.r, want.r); else eq(name + ' change', got.r, want.r, 0.0005);
+  }
   async function check(name, e) {
     const r = await read();
     eq(name + ' NC', r.kpi.nc, e.nc); eq(name + ' defects', r.kpi.def, e.defects); eq(name + ' cost', Math.round(r.kpi.cost), e.cost, 1);
     eq(name + ' customer NCs', r.kpi.cli, e.clientNc); eq(name + ' customer defects', r.kpi.dcli, e.clientDefects);
     eq(name + ' cable defects', r.kpi.cable, e.cableDefects);
-    eq(name + ' NC 2025', r.kpi.nc25, e.nc2025); eq(name + ' defects 2025', r.kpi.def25, e.defects2025);
+    eq(name + ' aircraft', r.kpi.planes, e.prod.planes);
+    for (const k of ['nc', 'defects', 'cable', 'early', 'recent']) eqProd(name + ' ' + k, r.prod[k], e.prod[k]);
+    eq(name + ' quarters', r.quarters.length, e.prod.quarters.length);
+    e.prod.quarters.forEach((q, k) => eqProd(name + ' Q' + (k + 1), r.quarters[k], q));
     for (const [cat, n] of Object.entries(e.escapesByCat)) { const k = r.cat.indexOf(cat); eq(name + ' escapes ' + cat, r.M[k + '|client'] || 0, n); }
     for (const [st, v] of Object.entries(e.minutesPerNc)) eq(name + ' minutes ' + st, Math.round(r.mean[st] * 10) / 10, v, 0.05);
     eq(name + ' Airbus method', r.methods[0], e.methods.airbus, 1); eq(name + ' detail method', r.methods[1], e.methods.detail, 1); eq(name + ' AEC method', r.methods[2], e.methods.aec, 1);

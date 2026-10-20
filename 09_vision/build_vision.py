@@ -1,4 +1,4 @@
-"""Build the FTO2 vision prototype: 09_vision/FTO2_Vision.html, plus expected.json for the page check.
+"""Build the FTO2 vision prototype (09_vision/FTO2_Vision.html), the visual lab (FTO2_Visual_Lab.html) and expected.json.
 
 Inputs: the dashboard outputs (05_outputs/fto2_nc.csv, fto2_defects.csv, made by build/build_all.py) and the
 2025 NCs (09_vision/data/*_2025.csv, made by prep_2025.py). Every figure on the page is computed in the page from
@@ -137,6 +137,51 @@ def cat_of(rca, d, d25):
     return _CAT_OF[rca]
 
 
+MINAC = 8   # a line needs this many aircraft in 2025 to be compared
+
+
+def equal_production(F, line=None, phase="SERIE", cable=False):
+    """2025 at 2026 production, the page's rule: on each line the 2025 count is multiplied by aircraft 2026 / aircraft
+    2025, aircraft being the MSNs with at least one FTO2 NC in the window (whatever the defect filter); lines with fewer
+    than MINAC aircraft in 2025 are left out. Counts use parser v4.8 on both years."""
+    nc, d, n25, d25, asof = F["nc"], F["d"], F["n25"], F["d25"], F["asof"]
+    y, y0, y25 = asof.year, date(asof.year, 1, 1), date(asof.year - 1, 1, 1)
+    asof_day, cut25 = (asof - y0).days, (date(y - 1, asof.month, asof.day) - y25).days
+    sel = lambda df: (df.ligne == line if line else df.ligne.notna()) & (df.phase == phase if phase else df.phase.notna())
+    s = nc[sel(nc) & (nc.scope == "serie")].copy()
+    s["day"] = (pd.to_datetime(s.date_creation).dt.date - y0).map(lambda t: t.days)
+    a = n25[sel(n25)].copy()
+    a["day"] = (pd.to_datetime(a.date).dt.date - y25).map(lambda t: t.days)
+    own = lambda df, nc_: df[df.notification_number.isin(nc_.notification_number)].drop(columns=["ligne", "day"], errors="ignore") \
+        .merge(nc_[["notification_number", "ligne", "day"]], on="notification_number")   # line and day of the defect's NC
+    sd, ad = own(d, s), own(d25, a)
+    sd["pcb"] = truthy(sd.defaut_cable)
+    if cable:
+        sd, ad = sd[sd.pcb == 1], ad[ad.cable == 1]
+    s_n = s[s.notification_number.isin(sd.notification_number)] if cable else s
+    a_n = a[a.notification_number.isin(ad.notification_number)] if cable else a
+
+    def window(frm, to, kind):
+        to25 = min(to, cut25)
+        ac26 = s[(s.day >= frm) & (s.day <= to)].groupby("ligne").msn.nunique()
+        ac25 = a[(a.day >= frm) & (a.day <= to25)].groupby("ligne").msn.nunique()
+        lines = [l for l in LINES if ac25.get(l, 0) >= MINAC and ac26.get(l, 0) > 0]
+        x26, x25 = {"nc": (s_n, a_n), "defects": (sd, ad), "cable": (sd[sd.pcb == 1], ad[ad.cable == 1])}[kind]
+        c26 = x26[(x26.day >= frm) & (x26.day <= to)].groupby("ligne").size()
+        c25 = x25[(x25.day >= frm) & (x25.day <= to25)].groupby("ligne").size()
+        exp = sum(c25.get(l, 0) * ac26[l] / ac25[l] for l in lines)
+        act = int(sum(c26.get(l, 0) for l in lines))
+        return {"exp": round(float(exp), 4), "act": act, "r": round(act / exp - 1, 5) if exp >= 5 else None, "lines": lines,
+                "ac26": int(sum(ac26[l] for l in lines)), "ac25": int(sum(ac25[l] for l in lines))}
+
+    month_day = lambda mo: (date(y, mo + 1, 1) - y0).days
+    rec = month_day(max(0, asof.month - 3))
+    quarters = [window(month_day(q * 3), min(asof_day, month_day(q * 3 + 3) - 1 if q < 3 else 364), "nc") for q in range((asof.month - 1) // 3 + 1)]
+    return {"nc": window(0, asof_day, "nc"), "defects": window(0, asof_day, "defects"), "cable": window(0, asof_day, "cable"),
+            "early": window(0, rec - 1, "nc"), "recent": window(rec, asof_day, "nc"), "quarters": quarters,
+            "planes": int(s.groupby(["ligne", "msn"]).ngroups)}
+
+
 def expected(F, line=None, phase="SERIE", cable=False):
     """The figures the page must show for one filter setting (same rules as the page script)."""
     nc, d, n25, d25, asof = F["nc"], F["d"], F["n25"], F["d25"], F["asof"]
@@ -173,6 +218,7 @@ def expected(F, line=None, phase="SERIE", cable=False):
         "escapesByCat": {k: int(v) for k, v in by_cat.items() if v},
         "minutesPerNc": mins,
         "methods": {"airbus": round(float(s.cnq_cost_airbus.sum())), "detail": round(float(s.cnq_cost_total.sum())), "aec": round(float(s.cnq_cost_global.sum()))},
+        "prod": equal_production(F, line, phase, cable),
     }
 
 
@@ -185,6 +231,10 @@ def main():
     out = os.path.join(HERE, "FTO2_Vision.html")
     with open(out, "w", encoding="utf-8") as f:
         f.write(page)
+    # the visual lab: five other ways of drawing the same rows
+    lab = open(os.path.join(HERE, "template_lab.html"), encoding="utf-8").read().replace("/*__DATA__*/null", data)
+    with open(os.path.join(HERE, "FTO2_Visual_Lab.html"), "w", encoding="utf-8") as f:
+        f.write(lab)
     exp = {"default": expected(F), "A350": expected(F, line="A350"), "cable": expected(F, cable=True),
            "allPhases": expected(F, phase=None)}
     with open(os.path.join(HERE, "expected.json"), "w", encoding="utf-8") as f:

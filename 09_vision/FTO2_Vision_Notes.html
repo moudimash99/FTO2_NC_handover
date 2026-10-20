@@ -153,11 +153,11 @@ footer { border-top: 1px solid var(--rule); padding-top: 22px; color: var(--mute
       <h2>Five numbers the dashboard does not show today</h2>
     </div>
     <ul class="summary">
-      <li><b class="n good">+11%</b><span>2026 is 39% above 2025 at the same date, but the gap fell from about +50% in the first half to +11% since July. A real 2025 was already in the repo, in the archive you uploaded on 19 October.</span></li>
+      <li><b class="n bad">+16%</b><span>NCs per aircraft against 2025 at the same date. The raw count is +39%, but more aircraft went through FTO2 (110 against 93 on the lines with a 2025 base, plus 23 A320). Since July the A350 is back to its 2025 level; the A330 stays 25% above. A real 2025 was already in the repo, in the archive you uploaded on 19 October.</span></li>
       <li><b class="n good">805 / 813</b><span>The test bench catches almost every connection error, and none reached a customer this year in Série. What reaches the customer is damage, missing items and workmanship.</span></li>
       <li><b class="n">4 h 22</b><span>An NC takes 4 h 22 of work in the cost model, of which 1 h 04 is the repair. The cost of non-quality is mostly the handling around each NC.</span></li>
       <li><b class="n bad">20 / 68</b><span>Half of the defects that name a location sit on 113 locations hit on five aircraft or more. 300VT101 was on 4 of 50 A350 in 2025 and is on 20 of 68 this year.</span></li>
-      <li><b class="n cab">+9%</b><span>Cable defects grew 9% from 2025 to 2026 while all defects grew 46%. Same parser, same scope, both years. Their share fell from 12% to 9%.</span></li>
+      <li><b class="n cab">−9%</b><span>Cable defects per aircraft against 2025, while all defects per aircraft rose 16%. Same parser, same scope, both years. Their share fell from 12% to 9%.</span></li>
     </ul>
   </section>
 
@@ -171,12 +171,13 @@ footer { border-top: 1px solid var(--rule); padding-top: 22px; color: var(--mute
     <article class="finding">
       <div class="k">1</div>
       <div class="body">
-        <span class="big" style="color:var(--accent)">+11%</span>
-        <h3>The gap with 2025 closed in the third quarter</h3>
-        <p>2026 counts 722 NCs against 518 at the same date in 2025, +39%. Quarter by quarter, the gap was +50% and +55% in Q1 and Q2, then +11% in Q3. In defects it is +72%, +57%, then +6%. The MFT actions on the A330 and A350 lines started in July.</p>
-        <p>That is a coincidence in time, not a proof. The A350 line had more aircraft with an NC this year (68 against 50 at the same date), so part of its rise is volume: 4.5 NCs per aircraft in 2025, 5.0 in 2026. The A330 got worse per aircraft, 7.0 to 8.8.</p>
-        <p class="where"><b>Where it goes:</b> the overview. It replaces the placeholder 2025 bar, the fictitious target and the budget line with the real year, and gives every headline figure a comparison.</p>
-        <p class="data"><b>Data:</b> the 2025 Skywise export in <code>06_input_data/work_orders_disruptions_nc2025.rar</code> on main, counted like 2026: FTO2 liable, not deleted, no ERMA, the same phase rule, cut at the same calendar date. Check: January 2026 is in both files, and 83 of the 86 January NCs of the 2025 file are in your extract.</p>
+        <span class="big" style="color:var(--escape)">+16%</span>
+        <h3>Per aircraft, 2026 is 16% above 2025, not 39%</h3>
+        <p>2026 counts 722 NCs against 518 at the same date in 2025, +39%. Most of that is production: on the three lines with a 2025 base, 110 aircraft went through FTO2 against 93 (+18%), and the A320 line went from 2 aircraft to 23. Compared at equal production, with 2025 scaled line by line to the 2026 number of aircraft, NCs and defects per aircraft are both up 16%.</p>
+        <p>By quarter, NCs per aircraft were +5%, +36%, then +12% in Q3 (defects per aircraft +24%, +29%, then −3%). The lines split. The A350 is back to its 2025 level since July: 3.3 NCs per aircraft in Q3 2025, 3.4 in Q3 2026. The A330 stays 25% above, 6.1 to 7.6. The MFT actions started in July; that is a coincidence in time, not a proof, and for all lines together the move from +23% in the first half to +12% since July is within what chance gives over three months.</p>
+        <p class="muted">Corrected on 20 October. The first version compared raw counts (+39%, a gap "closing" from +50% to +11%), which mostly measured the extra aircraft, as you pointed out.</p>
+        <p class="where"><b>Where it goes:</b> the overview. It replaces the placeholder 2025 bar, the fictitious target and the budget line with the real year at equal production, and gives every headline figure a comparison per aircraft.</p>
+        <p class="data"><b>Data:</b> the 2025 Skywise export in <code>06_input_data/work_orders_disruptions_nc2025.rar</code> on main, counted like 2026: FTO2 liable, not deleted, no ERMA, the same phase rule, cut at the same calendar date. Check: January 2026 is in both files, and 83 of the 86 January NCs of the 2025 file are in your extract. Aircraft: MSNs with at least one FTO2 NC in the period, until a 2025 production file replaces them.</p>
       </div>
     </article>
 
@@ -217,11 +218,11 @@ footer { border-top: 1px solid var(--rule); padding-top: 22px; color: var(--mute
     <article class="finding">
       <div class="k">5</div>
       <div class="body">
-        <span class="big" style="color:var(--cable)">+9%</span>
-        <h3>Cable defects grew far less than the rest</h3>
-        <p>From 2025 to 2026 at the same date, cable defects went from 223 to 243, +9%, while all defects went from 1,855 to 2,704, +46%. Their share fell from 12.0% to 9.0%. Same parser and same scope on both years.</p>
+        <span class="big" style="color:var(--cable)">−9%</span>
+        <h3>Per aircraft, cable defects went down while the rest went up</h3>
+        <p>Scaled to the 2026 number of aircraft, 2025 would have had 265 cable defects at this date; 2026 has 241, −9%. Over the same aircraft, all defects went from 2,307 to 2,666 (+16%) and the other defects from 2,042 to 2,425 (+19%). Their share fell from 12.0% to 9.0%. Same parser and same scope on both years; the A320 is left out (2 aircraft in 2025).</p>
         <p class="where"><b>Where it goes:</b> the cable discussion first. It needs no change to the categories, so it holds whichever option (A to D) you choose. In the dashboard it is one small index chart beside the year comparison.</p>
-        <p class="data"><b>Data:</b> ready. The cable flag of parser v4.8 on both years (243 in 2026; the root-cause labels give 237).</p>
+        <p class="data"><b>Data:</b> ready. The cable flag of parser v4.8 on both years (243 in 2026 with the A320; the root-cause labels give 237).</p>
       </div>
     </article>
   </section>
@@ -233,8 +234,8 @@ footer { border-top: 1px solid var(--rule); padding-top: 22px; color: var(--mute
       <p>The prototype keeps your fonts, your green and your cable orange, and reads top to bottom from the plant to one aircraft. Every sentence that states a finding is computed from the filtered rows, which keeps your rule of no hand-written facts. A switch turns the titles back into plain chart names.</p>
     </div>
     <figure>
-      <img src="img/proto_hero.jpg" alt="Prototype first screen: a sentence comparing 2026 with 2025, five headline figures with their change and a sparkline, the months of 2026 against 2025, and a list of alerts." width="1100" height="877">
-      <figcaption>The first screen: the sentence, five figures against 2025, the year month by month with the projection to December, and what to look at this week.</figcaption>
+      <img src="img/proto_hero.jpg" alt="Prototype first screen: a sentence comparing 2026 with 2025 per aircraft, six headline figures with their change and a sparkline, NCs per aircraft by quarter against 2025 at equal production, and a list of alerts." width="1100" height="869">
+      <figcaption>The first screen: the sentence, six figures against 2025 per aircraft, NCs per aircraft quarter by quarter at equal production, and what to look at this week.</figcaption>
     </figure>
     <div class="pair">
       <figure>
@@ -441,9 +442,9 @@ footer { border-top: 1px solid var(--rule); padding-top: 22px; color: var(--mute
       <h2>Five requests that unlock the rest</h2>
     </div>
     <ul class="asks">
+      <li><b>Production planning</b><span>Aircraft per line and month for 2025 and 2026 (the Avances / Retards export per MSN, or EqMSN). It replaces the "MSN with an NC" count in every year comparison, and allows "are late aircraft worse?".</span></li>
       <li><b>Pipeline team</b><span>The 2025 NCs in the dashboard dataset, with the same query as 2026 (dates from 1 January 2025). The archive copy works for the prototype; the dashboard needs it in Skywise.</span></li>
       <li><b>Pipeline team</b><span>The disruption → NC link (same work order, NC created within 72 hours) and the NC → rework order link, as columns in <code>fto2_nc</code>. Both rules are already written in <code>07_scripts/wo_disruption</code> on main.</span></li>
-      <li><b>Production planning</b><span>The Avances / Retards export per MSN, with dates. It allows "are late aircraft worse?", and NCs per aircraft built instead of per aircraft that had an NC.</span></li>
       <li><b>Line quality / methods</b><span>Insert drawings for the ten connectors with the most swaps (300VT101, 1608VC020A, 115VMA, 1608VC097A, 1609VC002, 10FC1A and the next four). Then "neighbouring pins" means physical neighbours.</span></li>
       <li><b>Emmanuelle</b><span>A real yearly target and budget, or the decision to show none. Until then the page shows 2025 as the only reference.</span></li>
     </ul>
@@ -456,9 +457,9 @@ footer { border-top: 1px solid var(--rule); padding-top: 22px; color: var(--mute
     </div>
     <ul class="limits">
       <li>2025 has only the parser's labels. The year comparisons by cause use parser v4.8 on both years, so their 2026 values differ slightly from the root-cause labels used everywhere else (for example 243 cable defects against 237).</li>
-      <li>The Q3 closing of the gap coincides with the July actions. It does not prove they worked; the MFT follow-up page already tracks each action against its own cause.</li>
+      <li>The A350's return to its 2025 level in Q3 coincides with the July actions. It does not prove they worked; the MFT follow-up page already tracks each action against its own cause.</li>
       <li>Customer-return rates rest on 32 defects in Série (69 with REC and FTI). They show where to look, not a measured escape rate.</li>
-      <li>"Aircraft" in the per-aircraft figures means aircraft with at least one NC; the per-MSN production plan would give a true rate.</li>
+      <li>Every 2025 → 2026 comparison is at equal production: on each line, 2025 is scaled by aircraft 2026 ÷ aircraft 2025. Until a 2025 production file is available, "aircraft" means MSNs with at least one FTO2 NC in the period, and lines with fewer than 8 aircraft in 2025 (the A320) are left out of the comparisons.</li>
       <li>Pins are read from the text for 390 of 479 swapped-wire defects. Consecutive numbers are not always physical neighbours.</li>
       <li>Alerts use a Poisson test against the rest of the year, at 5% (amber) and 1% (red). With 25 causes, expect about one amber alert by chance on a quiet month.</li>
       <li>The prototype is a separate page. Moving its parts into the dashboard goes through <code>build/build_all.py</code> and the template, tab by tab, as in the roadmap.</li>
@@ -477,7 +478,7 @@ footer { border-top: 1px solid var(--rule); padding-top: 22px; color: var(--mute
   // the roadmap: id, stage, where, what, detail, data readiness
   var ROAD = [
     ['Now', [
-      ['r01', 'Overview', 'Real 2025 instead of the placeholders', 'Trend, headline figures with their change against 2025, quarter gaps. Drop the fictitious target and budget.', 'yes', '½ day'],
+      ['r01', 'Overview', 'Real 2025 instead of the placeholders', 'NCs and defects per aircraft against 2025 at equal production, by quarter; headline figures with their change. Drop the fictitious target and budget.', 'yes', '½ day'],
       ['r02', 'Customer returns', 'Cause → station → customer flow', 'The chapter 02 chart, plus the share of each cause found at the customer.', 'yes', '1 day'],
       ['r03', 'Cost', 'Anatomy of an NC', 'Where the 4 h 22 go, cost per defect by NC size, the three methods. Replaces the bubble timeline and the month chart.', 'yes', '½ day'],
       ['r04', 'All tabs', 'One colour rule', 'Green FTO2, orange cable, red customer and alerts, grey context. Cost parts in shades of one hue.', 'yes', '½ day']

@@ -11,7 +11,7 @@ so it does not touch the dashboard work on `claude/funny-johnson-q41xki`. Nothin
 | `VISION.md` | The same in short, for the next session: findings, changes, roadmap ids `r01`–`r13`, where the choices are stored |
 | `build_vision.py` | Packs the dashboard outputs and the 2025 NCs into the page; writes `expected.json` |
 | `template.html` | The page: CSS, HTML and the script that computes every figure from the rows |
-| `check_vision.js` | Opens the page headless, sets four filter settings and compares the page's figures with `expected.json`; also checks presentation mode, phone width and script errors |
+| `check_vision.js` | Opens the page headless, sets four filter settings and compares the page's figures with `expected.json` (counts, costs, every equal-production comparison by quarter and year to date); also checks presentation mode, phone width and script errors |
 | `prep_2025.py` | 2025 NCs from the 19 Oct archive (`06_input_data/work_orders_disruptions_nc2025.rar`, branch `main`) with the 2026 scope rules and parser v4.8; writes `data/nc_2025.csv`, `data/defects_2025.csv` (no NC text) |
 | `pins.py` | Reads the two pins of a swapped-wire defect from the text (`... ENTRE LES BORNES 41 ET 42`) |
 
@@ -30,6 +30,10 @@ NODE_PATH=$(npm root -g) node 09_vision/check_vision.js            # all checks 
   FTO2 liable. Default filters: all lines, Série, all defects (722 NCs, 2,704 defects, 165,744 EUR on the 28 Sep extract).
 - 2025 is counted the same way (FTO2 liable, not deleted, no ERMA, same phase rule) and up to the same calendar date.
   Check: January 2026 is in both files; 83 of the 86 January NCs of the 2025 file are in the 2026 extract.
+- Years are compared at equal production: on each line the 2025 count is multiplied by aircraft 2026 ÷ aircraft 2025
+  in the same window (quarter or year to date). Aircraft = MSNs with at least one FTO2 NC in the window (any defect
+  type) until a 2025 production file exists; a line with fewer than 8 aircraft in 2025 (A320) is left out. The hero
+  says the gap narrowed or widened only when the recent count is unlikely at the early gap (Poisson, 5 %).
 - Causes: the root-cause labels for 2026 everywhere, except the 2025 → 2026 comparisons, which use parser v4.8 on both
   years (the only labels 2025 has). Cable year-on-year uses the parser's cable flag on both years.
 - Every sentence that states a finding is computed from the filtered rows; the "Noms / Names" button turns titles back

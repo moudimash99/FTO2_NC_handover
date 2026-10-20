@@ -88,7 +88,7 @@ button { font: inherit; color: inherit; }
 .hero h1 em { font-style: italic; }
 .hero h1 .bad { color: var(--escape); } .hero h1 .good { color: var(--accent); }
 .hero .lede { font-size: 15.5px; color: var(--ink-2); max-width: 70ch; margin: 0; }
-.tiles { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); border-top: 2px solid var(--ink); border-bottom: 1px solid var(--rule); }
+.tiles { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); border-top: 2px solid var(--ink); border-bottom: 1px solid var(--rule); }
 .tile { padding: 14px 16px 14px 0; display: grid; gap: 4px; align-content: start; min-width: 0; }
 .tile + .tile { padding-left: 16px; border-left: 1px solid var(--rule); }
 .tile .k { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2); font-weight: 700; }
@@ -211,10 +211,12 @@ body.presenting .wrap { max-width: 1440px; }
   .fade { transition: opacity .15s; }
 }
 
-@media (max-width: 1060px) {
+@media (max-width: 1180px) {
   .tiles { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .tile:nth-child(4) { padding-left: 0; border-left: 0; }
   .tile:nth-child(n+4) { border-top: 1px solid var(--rule); }
+}
+@media (max-width: 1060px) {
   .hero-grid, .grid2, .grid2.even, .pass { grid-template-columns: minmax(0, 1fr); }
 }
 @media (max-width: 860px) {
@@ -375,29 +377,29 @@ body.presenting .wrap { max-width: 1440px; }
       months: ['janv.', 'févr.', 'mars', 'avr.', 'mai', 'juin', 'juil.', 'août', 'sept.', 'oct.', 'nov.', 'déc.'],
       monthsLong: ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'],
       eye0: 'FTO2 · Qualité · {y} face à {y0}', name0: 'Vue d’ensemble',
-      kNc: 'NC', kDef: 'Défauts', kCable: 'Défauts câble', kCost: 'Coût de non-qualité', kEnd: 'Fin d’année', kCli: 'Retours clients',
-      vs: 'vs {y0} à date', sharePart: '{p} des défauts', perNc: '{v} par NC', endS: 'au rythme récent / de l’année', cliS: '{n} défauts chez le client',
-      cableYoY: '{d} vs {y0}*', nTxt: 'NC', defTxt: 'défauts',
-      ymTitle: 'Mois par mois, {y} face à {y0}', ymNote: 'Même périmètre et même règle de date sur les deux années ; {m} {y} compté jusqu’au {d}.',
-      endNote: 'Fin d’année : {a} à {b} {u} si octobre–décembre suivent {y0} au rythme récent ou au rythme de l’année.',
-      unitNc: 'NC', unitDef: 'Défauts', lg25: '{y0}', lg26: '{y}', lgProj: 'Projection ({y0} × rythme récent)',
-      hero1: '{n} NC depuis janvier, <span class="{c}">{d}</span> par rapport à {y0} à la même date.',
-      heroFew: '{n} NC depuis janvier ; {k} seulement à la même date en {y0}, trop peu pour comparer.', heroNone: '{n} NC depuis janvier ; aucune à la même date en {y0}.',
+      kNc: 'NC', kPlanes: 'Avions passés à FTO2', kDef: 'Défauts', kCable: 'Défauts câble', kCost: 'Coût de non-qualité', kCli: 'Retours clients',
+      vsProd: 'par avion, vs {y0}', vsVol: 'vs {y0} à date ({l})', sharePart: '{p} des défauts', perNc: '{v} par NC', cliS: '{n} défauts chez le client', defTxt: 'défauts',
+      ymTitle: 'NC par avion, trimestre par trimestre', ymTitleDef: 'Défauts par avion, trimestre par trimestre',
+      qNote: 'Avions passés à FTO2 dans la période (MSN avec au moins une NC), aux mêmes dates en {y0}. {y0} est ramené au nombre d’avions de {y}, ligne par ligne ({l}).',
+      qPlanes: '{a} → {b} avions', qRate25: '{y0}, à la production de {y}', qRate25s: '{y0} à production {y}', qNone: 'Trop peu d’avions en {y0} dans la sélection pour comparer à production égale.', qNoneYear: 'Trop peu d’avions par trimestre en {y0} pour comparer trimestre par trimestre ; depuis janvier : {r} par avion.',
+      unitNc: 'NC', unitDef: 'Défauts',
+      hero1: '{n} NC depuis janvier : <span class="{c}">{d}</span> par avion par rapport à {y0} à la même date.',
+      heroFew: '{n} NC depuis janvier ; trop peu d’avions ou de NC en {y0} pour comparer à production égale.',
       heroBack: ' Depuis {m}, FTO2 est revenu au niveau de {y0} ({r}).', heroLevel: ' Depuis {m}, FTO2 reste au niveau de {y0} ({r}).',
       few: 'trop peu en {y0} pour comparer',
       heroClose: ' Depuis {m}, l’écart n’est plus que de <span class="good">{r}</span>.', heroWide: ' Depuis {m}, l’écart se creuse : <span class="bad">{r}</span>.', heroSame: ' Depuis {m}, l’écart reste du même ordre ({r}).', heroBetter: ' Depuis {m}, FTO2 fait mieux que {y0} : <span class="good">{r}</span>.',
-      lede: '{y0} : export Skywise de l’archive du 19 octobre, même périmètre que {y} (FTO2 responsable, NC non supprimées, sans ERMA).',
+      lede: '{y0} : export Skywise de l’archive du 19 octobre, même périmètre que {y} (FTO2 responsable, NC non supprimées, sans ERMA). Les deux années sont comparées à production égale : {y0} est ramené, ligne par ligne, au nombre d’avions passés à FTO2 en {y}.',
       sigTitle: 'À regarder', sigNone: 'Rien d’anormal sur les quatre dernières semaines.',
       sigUp: '<b>{r}</b> : {o} en 4 semaines, ~{e} attendus', sigUpS: 'rythme du reste de l’année · {p}',
       sigDown: '<b>{r}</b> en baisse : {o} en 4 semaines, ~{e} attendus', sigFin: '<b>{f}</b> sur {k} avions différents en 4 semaines', sigFinS: '{r}',
       sigOpen: '<b>{n} NC ouvertes</b> depuis plus de 30 jours', sigOpen1: '<b>1 NC ouverte</b> depuis plus de 30 jours', sigOpenS: 'la plus ancienne : {d} jours', sigCli: '<b>{n} retours clients</b> en 4 semaines', sigCliS: '{a} par mois en moyenne avant',
-      r1n: 'Ce qui a grandi', r1d: 'Les causes, {y0} → {y}, même date.',
-      h1: '<em>{c}</em> pèse {p} de la hausse des défauts depuis {y0}.', h1down: 'Moins de défauts qu’en {y0} à la même date ({d}).',
-      h1all: '<em>{c}</em> fait toute la hausse des défauts depuis {y0} : {d}.', h1few: 'Trop peu de défauts en {y0} pour comparer ({a} contre {b} cette année).',
+      r1n: 'Ce qui a grandi', r1d: 'Les causes, {y0} → {y}, à production égale.',
+      h1: '<em>{c}</em> pèse {p} de la hausse des défauts par avion depuis {y0}.', h1down: 'Moins de défauts par avion qu’en {y0} à la même date ({d}).',
+      h1all: '<em>{c}</em> fait toute la hausse des défauts par avion depuis {y0} : {d}.', h1few: 'Trop peu d’avions ou de défauts en {y0} pour comparer à production égale.',
       h1none: 'Aucun défaut lisible dans la sélection.', h1noneA400: 'Les NC A400M n’ont pas de texte lisible : pas de défauts à comparer.',
-      h1s: 'Les défauts câble : <b>{cd}</b>, contre <b>{ad}</b> pour l’ensemble des défauts.',
-      c1aT: 'Défauts par cause, {y0} → {y}', c1aN: 'Jusqu’au {d} chaque année. Classement du parseur v4.8 sur les deux années (le seul disponible pour {y0}).',
-      c1bT: 'Défauts câble face au reste', c1bN: 'Indice 100 = {y0} à la même date.', cableShare: 'Part des défauts câble : {a} en {y0} → {b} en {y}', idxAll: 'Tous les défauts', idxCable: 'Défauts câble', idxOther: 'Hors câble',
+      h1s: 'Par avion, les défauts câble font <b>{cd}</b>, contre <b>{ad}</b> pour l’ensemble des défauts.',
+      c1aT: 'Défauts par cause, {y0} → {y} à production égale', c1aN: 'Jusqu’au {d} chaque année ; {y0} ramené au nombre d’avions de {y}, ligne par ligne ({l}). Parseur v4.8 sur les deux années (le seul classement disponible pour {y0}).',
+      c1bT: 'Défauts câble face au reste', c1bN: 'Indice 100 = {y0} à la même date, ramené au nombre d’avions de {y}.', cableShare: 'Part des défauts câble : {a} en {y0} → {b} en {y}', idxAll: 'Tous les défauts', idxCable: 'Défauts câble', idxOther: 'Hors câble',
       r2n: 'Qui attrape quoi', r2d: 'Où chaque défaut a été trouvé, jusqu’au client.',
       h2: 'Le test attrape <span class="good">{p}</span> des erreurs de branchement.', h2b: ' <span class="bad">{c}</span> atteint le plus le client : {e} de ces défauts.',
       h2none: ' Aucun défaut de la sélection n’a atteint le client.', h2alt: '{p} des défauts sont trouvés {s}.',
@@ -422,7 +424,7 @@ body.presenting .wrap { max-width: 1440px; }
       h4s0: '{p} des inversions lisibles se font entre deux broches qui se suivent.',
       c4aT: 'Repères (FIN) touchés sur le plus d’avions', c4aN: 'Part des avions de la ligne avec au moins un défaut à ce repère, {y0} → {y} à la même date. Cliquer : voir ces avions au chapitre 05.',
       tagNew: 'nouveau', tagChronic: 'chronique', tagRise: 'en hausse',
-      c4bT: 'Quelles broches sont inversées', c4bN: 'Connecteurs avec le plus d’inversions dont les deux broches sont écrites. Au-dessus : {y} ; en dessous : {y0}. Épaisseur : nombre d’avions.',
+      c4bT: 'Quelles broches sont inversées', c4bN: 'Connecteurs avec le plus d’inversions dont les deux broches sont écrites. Au-dessus : {y} ({b} avions passés à FTO2) ; en dessous : {y0} ({a} avions à la même date). Épaisseur : nombre d’avions.',
       pinTip: 'Broches {a} ↔ {b}', planes: '{n} avions', plane1: '1 avion',
       r5n: 'Un avion, toute son histoire', r5d: 'Chaque NC d’un MSN, du premier poste au client.',
       h5: 'MSN {m} : {n} NC et {c}, <span class="bad">{x}</span> la médiane de la ligne.', h5low: 'MSN {m} : {n} NC et {c}, sous la médiane de la ligne.',
@@ -435,7 +437,9 @@ body.presenting .wrap { max-width: 1440px; }
         'Causes : classement par cause racine (lecture du texte complet) pour {y} ; comparaisons {y0} → {y} avec le parseur v4.8 sur les deux années. Les NC A400M n’ont pas de texte : comptées en NC et en coût, pas en défauts.',
         'Coût : modèle CNQ de cette branche (50 €/h, temps du processus AEC). Le modèle cnq-2026.10.19 de la branche main (alerte seulement si un opérateur la lève, reprise ×2 sur les NC internes) déplacera ces montants.',
         'Prototype : chaque phrase qui énonce un constat est écrite par la page à partir des données filtrées ; le bouton « Noms » rend les titres neutres.'],
-      tbl: { month: 'Mois', y0: '{y0}', y: '{y}', cause: 'Cause', cat: 'Catégorie', stage: 'Poste', defects: 'Défauts', share: 'Part', step: 'Étape', min: 'Minutes', size: 'Taille de la NC', ncs: 'NC', cost: 'Coût', perDef: 'Par défaut', method: 'Méthode', fin: 'Repère', l: 'Ligne', p0: 'Avions {y0}', p1: 'Avions {y}', pair: 'Broches', date: 'Date', nc: 'NC', found: 'Trouvée', causes: 'Causes' }
+      footProd: 'Production égale : sur chaque ligne, le nombre de {y0} est multiplié par avions {y} ÷ avions {y0}. En attendant un fichier de production {y0}, un avion compte quand son MSN a au moins une NC FTO2 dans la période. Une ligne avec moins de {k} avions en {y0} n’est pas comparée{x}.',
+      footProdX: ' (ici : {l})',
+      tbl: { period: 'Période', planes: 'Avions {y}', cause: 'Cause', cat: 'Catégorie', stage: 'Poste', defects: 'Défauts', share: 'Part', step: 'Étape', min: 'Minutes', size: 'Taille de la NC', ncs: 'NC', cost: 'Coût', perDef: 'Par défaut', method: 'Méthode', fin: 'Repère', l: 'Ligne', p0: 'Avions {y0}', p1: 'Avions {y}', pair: 'Broches', date: 'Date', nc: 'NC', found: 'Trouvée', causes: 'Causes' }
     },
     en: {
       title: 'FTO2 non-conformities', asof: 'Data as of {d}', line: 'Line', phase: 'Production', nature: 'Defects', all: 'All', serie: 'Série', allTypes: 'All types',
@@ -444,29 +448,29 @@ body.presenting .wrap { max-width: 1440px; }
       months: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
       monthsLong: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
       eye0: 'FTO2 · Quality · {y} against {y0}', name0: 'Overview',
-      kNc: 'NCs', kDef: 'Defects', kCable: 'Cable defects', kCost: 'Cost of non-quality', kEnd: 'Year end', kCli: 'Customer returns',
-      vs: 'vs {y0} to date', sharePart: '{p} of defects', perNc: '{v} per NC', endS: 'at the recent pace / the year’s pace', cliS: '{n} defects at the customer',
-      cableYoY: '{d} vs {y0}*', nTxt: 'NCs', defTxt: 'defects',
-      ymTitle: 'Month by month, {y} against {y0}', ymNote: 'Same scope and same date rule for both years; {m} {y} counted up to the {d}.',
-      endNote: 'Year end: {a} to {b} {u} if October–December follow {y0} at the recent pace or at the year’s pace.',
-      unitNc: 'NCs', unitDef: 'Defects', lg25: '{y0}', lg26: '{y}', lgProj: 'Projection ({y0} × recent pace)',
-      hero1: '{n} NCs since January, <span class="{c}">{d}</span> on {y0} at the same date.',
-      heroFew: '{n} NCs since January; only {k} at the same date in {y0}, too few to compare.', heroNone: '{n} NCs since January; none at the same date in {y0}.',
+      kNc: 'NCs', kPlanes: 'Aircraft through FTO2', kDef: 'Defects', kCable: 'Cable defects', kCost: 'Cost of non-quality', kCli: 'Customer returns',
+      vsProd: 'per aircraft, vs {y0}', vsVol: 'vs {y0} to date ({l})', sharePart: '{p} of defects', perNc: '{v} per NC', cliS: '{n} defects at the customer', defTxt: 'defects',
+      ymTitle: 'NCs per aircraft, quarter by quarter', ymTitleDef: 'Defects per aircraft, quarter by quarter',
+      qNote: 'Aircraft through FTO2 in the period (MSNs with at least one NC), same dates in {y0}. {y0} is scaled to the {y} number of aircraft, line by line ({l}).',
+      qPlanes: '{a} → {b} aircraft', qRate25: '{y0} at {y} production', qRate25s: '{y0} at {y} production', qNone: 'Too few aircraft in {y0} in the selection to compare at equal production.', qNoneYear: 'Too few aircraft per quarter in {y0} to compare quarter by quarter; since January: {r} per aircraft.',
+      unitNc: 'NCs', unitDef: 'Defects',
+      hero1: '{n} NCs since January: <span class="{c}">{d}</span> per aircraft against {y0} at the same date.',
+      heroFew: '{n} NCs since January; too few aircraft or NCs in {y0} to compare at equal production.',
       heroBack: ' Since {m} FTO2 is back to the {y0} level ({r}).', heroLevel: ' Since {m} FTO2 stays at the {y0} level ({r}).',
       few: 'too few in {y0} to compare',
       heroClose: ' Since {m} the gap is down to <span class="good">{r}</span>.', heroWide: ' Since {m} the gap is widening: <span class="bad">{r}</span>.', heroSame: ' Since {m} the gap is about the same ({r}).', heroBetter: ' Since {m} FTO2 is doing better than {y0}: <span class="good">{r}</span>.',
-      lede: '{y0}: Skywise export from the 19 October archive, same scope as {y} (FTO2 liable, NCs not deleted, no ERMA).',
+      lede: '{y0}: Skywise export from the 19 October archive, same scope as {y} (FTO2 liable, NCs not deleted, no ERMA). The two years are compared at equal production: line by line, {y0} is scaled to the number of aircraft that went through FTO2 in {y}.',
       sigTitle: 'To look at', sigNone: 'Nothing unusual over the last four weeks.',
       sigUp: '<b>{r}</b>: {o} in 4 weeks, ~{e} expected', sigUpS: 'pace of the rest of the year · {p}',
       sigDown: '<b>{r}</b> going down: {o} in 4 weeks, ~{e} expected', sigFin: '<b>{f}</b> on {k} different aircraft in 4 weeks', sigFinS: '{r}',
       sigOpen: '<b>{n} NCs open</b> for more than 30 days', sigOpen1: '<b>1 NC open</b> for more than 30 days', sigOpenS: 'oldest: {d} days', sigCli: '<b>{n} customer returns</b> in 4 weeks', sigCliS: '{a} per month on average before',
-      r1n: 'What grew', r1d: 'Causes, {y0} → {y}, same date.',
-      h1: '<em>{c}</em> accounts for {p} of the rise in defects since {y0}.', h1down: 'Fewer defects than in {y0} at the same date ({d}).',
-      h1all: '<em>{c}</em> makes up the whole rise in defects since {y0}: {d}.', h1few: 'Too few defects in {y0} to compare ({a} against {b} this year).',
+      r1n: 'What grew', r1d: 'Causes, {y0} → {y}, at equal production.',
+      h1: '<em>{c}</em> accounts for {p} of the rise in defects per aircraft since {y0}.', h1down: 'Fewer defects per aircraft than in {y0} at the same date ({d}).',
+      h1all: '<em>{c}</em> makes up the whole rise in defects per aircraft since {y0}: {d}.', h1few: 'Too few aircraft or defects in {y0} to compare at equal production.',
       h1none: 'No readable defect in the selection.', h1noneA400: 'A400M NCs have no readable text: no defects to compare.',
-      h1s: 'Cable defects: <b>{cd}</b>, against <b>{ad}</b> for all defects.',
-      c1aT: 'Defects by cause, {y0} → {y}', c1aN: 'Up to the {d} each year. Parser v4.8 classification for both years (the only one available for {y0}).',
-      c1bT: 'Cable defects against the rest', c1bN: 'Index 100 = {y0} at the same date.', cableShare: 'Share of cable defects: {a} in {y0} → {b} in {y}', idxAll: 'All defects', idxCable: 'Cable defects', idxOther: 'Other defects',
+      h1s: 'Per aircraft, cable defects are <b>{cd}</b>, against <b>{ad}</b> for all defects.',
+      c1aT: 'Defects by cause, {y0} → {y} at equal production', c1aN: 'Up to the {d} each year; {y0} scaled to the {y} number of aircraft, line by line ({l}). Parser v4.8 on both years (the only classification available for {y0}).',
+      c1bT: 'Cable defects against the rest', c1bN: 'Index 100 = {y0} at the same date, scaled to the {y} number of aircraft.', cableShare: 'Share of cable defects: {a} in {y0} → {b} in {y}', idxAll: 'All defects', idxCable: 'Cable defects', idxOther: 'Other defects',
       r2n: 'Who catches what', r2d: 'Where each defect was found, up to the customer.',
       h2: 'The test bench catches <span class="good">{p}</span> of connection errors.', h2b: ' <span class="bad">{c}</span> defects reach the customer most often: {e} of them.',
       h2none: ' No defect in the selection reached the customer.', h2alt: '{p} of defects are found {s}.',
@@ -491,7 +495,7 @@ body.presenting .wrap { max-width: 1440px; }
       h4s0: '{p} of readable swaps are between two pins that follow each other.',
       c4aT: 'Locations (FIN) hit on the most aircraft', c4aN: 'Share of the line’s aircraft with at least one defect at this location, {y0} → {y} at the same date. Click to see these aircraft in chapter 05.',
       tagNew: 'new', tagChronic: 'chronic', tagRise: 'rising',
-      c4bT: 'Which pins get swapped', c4bN: 'Connectors with the most swaps where both pins are written. Above: {y}; below: {y0}. Thickness: number of aircraft.',
+      c4bT: 'Which pins get swapped', c4bN: 'Connectors with the most swaps where both pins are written. Above: {y} ({b} aircraft through FTO2); below: {y0} ({a} aircraft at the same date). Thickness: number of aircraft.',
       pinTip: 'Pins {a} ↔ {b}', planes: '{n} aircraft', plane1: '1 aircraft',
       r5n: 'One aircraft, its whole story', r5d: 'Every NC of one MSN, from the first station to the customer.',
       h5: 'MSN {m}: {n} NCs and {c}, <span class="bad">{x}</span> the line median.', h5low: 'MSN {m}: {n} NCs and {c}, below the line median.',
@@ -504,7 +508,9 @@ body.presenting .wrap { max-width: 1440px; }
         'Causes: root-cause classification (full text read) for {y}; {y0} → {y} comparisons use parser v4.8 for both years. A400M NCs have no text: counted as NCs and in the cost, not as defects.',
         'Cost: this branch’s CNQ model (50 €/h, AEC process times). Model cnq-2026.10.19 on main (alert only when an operator raises one, rework ×2 on internal NCs) will move these amounts.',
         'Prototype: every sentence that states a finding is written by the page from the filtered data; the “Names” button turns the titles back to plain names.'],
-      tbl: { month: 'Month', y0: '{y0}', y: '{y}', cause: 'Cause', cat: 'Category', stage: 'Station', defects: 'Defects', share: 'Share', step: 'Step', min: 'Minutes', size: 'NC size', ncs: 'NCs', cost: 'Cost', perDef: 'Per defect', method: 'Method', fin: 'Location', l: 'Line', p0: 'Aircraft {y0}', p1: 'Aircraft {y}', pair: 'Pins', date: 'Date', nc: 'NC', found: 'Found', causes: 'Causes' }
+      footProd: 'Equal production: on each line, the {y0} count is multiplied by {y} aircraft ÷ {y0} aircraft. Until a {y0} production file is available, an aircraft counts when its MSN has at least one FTO2 NC in the period. A line with fewer than {k} aircraft in {y0} is not compared{x}.',
+      footProdX: ' (here: {l})',
+      tbl: { period: 'Period', planes: 'Aircraft {y}', cause: 'Cause', cat: 'Category', stage: 'Station', defects: 'Defects', share: 'Share', step: 'Step', min: 'Minutes', size: 'NC size', ncs: 'NCs', cost: 'Cost', perDef: 'Per defect', method: 'Method', fin: 'Location', l: 'Line', p0: 'Aircraft {y0}', p1: 'Aircraft {y}', pair: 'Pins', date: 'Date', nc: 'NC', found: 'Found', causes: 'Causes' }
     }
   };
 
@@ -564,6 +570,9 @@ body.presenting .wrap { max-width: 1440px; }
     for (i = 0; i < n25; i++) if (inLinePhase(N25.l[i], N25.ph[i]) && (!S.cable || has25c[i])) { ok25[i] = 1; V.n25.push(i); }
     for (i = 0; i < nF25; i++) if (ok25[F25.n[i]] && (!S.cable || F25.pcb[i])) V.f25.push(i);
     V.ncOk = ncOk; V.ok25 = ok25;
+    // production does not depend on the cable filter: every FTO2 NC of the line / phase selection
+    V.ncAll = []; for (i = 0; i < nNc; i++) if (ncOk[i] && !NC.sc[i]) V.ncAll.push(i);
+    V.n25All = []; for (i = 0; i < n25; i++) if (inLinePhase(N25.l[i], N25.ph[i])) V.n25All.push(i);
     // NC counts in the parser view (cable filter on parser flags), used for the year-on-year deltas
     V.pncL = []; for (i = 0; i < nNc; i++) if (ncOk[i] && !NC.sc[i] && (!S.cable || hasPCable[i])) V.pncL.push(i);
     V.pnc = V.pncL.length;
@@ -657,76 +666,98 @@ body.presenting .wrap { max-width: 1440px; }
     el('path', { d: d2, fill: 'none', stroke: 'var(--accent)', 'stroke-width': 2, 'stroke-linejoin': 'round', 'stroke-linecap': 'round' }, svg);
     el('circle', { cx: x(n - 1), cy: y(vals[n - 1]), r: 3, fill: 'var(--accent)', stroke: 'var(--surface)', 'stroke-width': 1.5 }, svg);
   }
-  function deltaHtml(r, label) {
+  function deltaHtml(r, label, neutral) {
     if (r === null || !isFinite(r)) return '<span class="s">' + esc(t('few')) + '</span>';
-    var cls = r > 0.005 ? 'up' : r < -0.005 ? 'down' : 'flat', ar = r > 0.005 ? '▲' : r < -0.005 ? '▼' : '■';
+    var cls = neutral ? 'flat' : r > 0.005 ? 'up' : r < -0.005 ? 'down' : 'flat', ar = r > 0.005 ? '▲' : r < -0.005 ? '▼' : '■';
     return '<span class="delta ' + cls + '">' + ar + ' ' + spct(r) + '</span> <span class="s">' + esc(label || '') + '</span>';
   }
 
+  // ---------------------------------------------------------------- production
+  // Years are compared at equal production: line by line, the 2025 count is scaled by aircraft 2026 ÷ aircraft 2025,
+  // aircraft being the MSNs that went through FTO2 (at least one NC) in the same calendar window, until a 2025
+  // production file exists. Lines with fewer than MINAC aircraft in 2025 (A320 at this date) are left out of the comparison.
+  var MINAC = 8;
+  function monthDay(mo) { return Math.round((Date.UTC(Y, mo, 1) - Date.UTC(Y, 0, 1)) / 864e5); }
+  function aircraft(V, from, to) {
+    var a26 = {}, a25 = {}, to25 = Math.min(to, CUT25), out = { a26: {}, a25: {} };
+    V.ncAll.forEach(function (j) { var d = NC.d[j]; if (d >= from && d <= to) (a26[NC.l[j]] = a26[NC.l[j]] || {})[NC.m[j]] = 1; });
+    V.n25All.forEach(function (j) { var d = N25.d[j]; if (d >= from && d <= to25) (a25[N25.l[j]] = a25[N25.l[j]] || {})[N25.m[j]] = 1; });
+    Object.keys(a26).forEach(function (l) { out.a26[l] = Object.keys(a26[l]).length; });
+    Object.keys(a25).forEach(function (l) { out.a25[l] = Object.keys(a25[l]).length; });
+    return out;
+  }
+  // counts per line of a 2026 list and a 2025 list within a window
+  function perLine(list26, day26, line26, list25, day25, line25, from, to) {
+    var c26 = {}, c25 = {}, to25 = Math.min(to, CUT25);
+    list26.forEach(function (j) { var d = day26(j); if (d >= from && d <= to) { var l = line26(j); c26[l] = (c26[l] || 0) + 1; } });
+    list25.forEach(function (j) { var d = day25(j); if (d >= from && d <= to25) { var l = line25(j); c25[l] = (c25[l] || 0) + 1; } });
+    return { c26: c26, c25: c25 };
+  }
+  function scaled(c, A) {
+    var lines = Object.keys(A.a25).filter(function (l) { return A.a25[l] >= MINAC && A.a26[l]; }), exp = 0, act = 0, ac26 = 0, ac25 = 0;
+    lines.forEach(function (l) { exp += (c.c25[l] || 0) * A.a26[l] / A.a25[l]; act += c.c26[l] || 0; ac26 += A.a26[l]; ac25 += A.a25[l]; });
+    return { exp: exp, act: act, r: exp >= 5 ? act / exp - 1 : null, lines: lines.map(Number), ac26: ac26, ac25: ac25 };
+  }
+  var ncDay = function (j) { return NC.d[j]; }, ncLine = function (j) { return NC.l[j]; };
+  var n25Day = function (j) { return N25.d[j]; }, n25Line = function (j) { return N25.l[j]; };
+  var dfDay = function (j) { return NC.d[DF.n[j]]; }, dfLine = function (j) { return NC.l[DF.n[j]]; };
+  var f25Day = function (j) { return N25.d[F25.n[j]]; }, f25Line = function (j) { return N25.l[F25.n[j]]; };
+  function compareNc(V, from, to, A) { return scaled(perLine(V.pncL, ncDay, ncLine, V.n25, n25Day, n25Line, from, to), A || aircraft(V, from, to)); }
+  function compareDef(V, from, to, A, keep26, keep25) {
+    return scaled(perLine(keep26 ? V.pdf.filter(keep26) : V.pdf, dfDay, dfLine, keep25 ? V.f25.filter(keep25) : V.f25, f25Day, f25Line, from, to), A || aircraft(V, from, to));
+  }
+  function lineNames(lines) { return lines.map(function (l) { return LINE[l]; }).join(', '); }
+
   function hero(V) {
-    var nc = V.nc.length, def = V.df.length;
-    var nc25 = upTo(V.n25, N25.d, CUT25), def25 = 0, i;
-    V.f25.forEach(function (j) { if (N25.d[F25.n[j]] <= CUT25) def25++; });
-    var pnc = S.cable ? V.pnc : nc, pdef = S.cable ? V.pdf.length : def;
-    var MIN = 20;   // below this many in the 2025 base, no percentage is shown
-    var rNc = nc25 >= MIN ? pnc / nc25 - 1 : null, rDef = def25 >= MIN ? pdef / def25 - 1 : null;
-    // recent window: from the first day of (as-of month - 2), same calendar dates both years
-    var useDef = S.unit === 'def';
-    function windows(def) {
-      var w = { rec26: 0, rec25: 0, early26: 0, early25: 0 };
-      if (def) {
-        V.pdf.forEach(function (j) { var d = NC.d[DF.n[j]]; if (d >= REC26) w.rec26++; else w.early26++; });
-        V.f25.forEach(function (j) { var d = N25.d[F25.n[j]]; if (d > CUT25) return; if (d >= REC25) w.rec25++; else w.early25++; });
-      } else {
-        V.pncL.forEach(function (j) { if (NC.d[j] >= REC26) w.rec26++; else w.early26++; });
-        V.n25.forEach(function (j) { var d = N25.d[j]; if (d > CUT25) return; if (d >= REC25) w.rec25++; else w.early25++; });
-      }
-      w.rRec = w.rec25 >= 15 ? w.rec26 / w.rec25 - 1 : null; w.rEarly = w.early25 >= 15 ? w.early26 / w.early25 - 1 : null;
-      return w;
-    }
-    var WN = windows(false), WU = useDef ? windows(true) : WN;
-    var rRec = WN.rRec, rEarly = WN.rEarly, rec26 = WU.rec26, rec25 = WU.rec25;
-    V.rRec = WU.rRec; V.rEarly = WU.rEarly; V.rRecNc = rRec; V.rEarlyNc = rEarly;
-    // year-end: Y0 months after the cut, scaled by the recent pace or the year's pace
-    var rest25 = 0;
-    if (useDef) V.f25.forEach(function (j) { if (N25.d[F25.n[j]] > CUT25) rest25++; }); else V.n25.forEach(function (j) { if (N25.d[j] > CUT25) rest25++; });
-    var cur = useDef ? pdef : (S.cable ? V.pnc : nc), ytd25 = useDef ? def25 : nc25;
-    var endLow = cur + rest25 * (rec25 ? rec26 / rec25 : 1), endHigh = cur + rest25 * (ytd25 ? cur / ytd25 : 1);
-    if (endLow > endHigh) { var tmp = endLow; endLow = endHigh; endHigh = tmp; }
-    V.end = [endLow, endHigh];
+    var nc = V.nc.length, def = V.df.length, i;
+    var A = aircraft(V, 0, ASOF_DAY);
+    var cNc = compareNc(V, 0, ASOF_DAY, A), cDef = compareDef(V, 0, ASOF_DAY, A);
+    var rNc = cNc.r, rDef = cDef.r, rVol = cNc.ac25 ? cNc.ac26 / cNc.ac25 - 1 : null;
+    // first months against the recent ones (from the first day of as-of month - 2), aircraft counted in each window
+    var WE = compareNc(V, 0, REC26 - 1), WR = compareNc(V, REC26, ASOF_DAY);
+    var rEarly = WE.r, rRec = WR.r;
+    V.prod = { nc: cNc, def: cDef, early: WE, recent: WR, A: A };
+    var left = Object.keys(A.a26).filter(function (l) { return !(A.a25[l] >= MINAC); }).map(Number);
+    txt('footProd', t('footProd', { k: MINAC, x: left.length ? fill(L().footProdX, { l: lineNames(left) }) : '' }));
 
     // the sentence
     var mName = L().monthsLong[RECENT_START_MONTH];
     var s = rNc !== null ? fill(L().hero1, { n: num(nc), d: spct(rNc), y0: Y0, c: rNc > 0.005 ? 'bad' : 'good' })
-      : fill(nc25 ? L().heroFew : L().heroNone, { n: num(nc), k: num(nc25), y0: Y0 });
+      : fill(L().heroFew, { n: num(nc), y0: Y0 });
     if (rNc !== null && rRec !== null && rEarly !== null) {
-      if (rRec < -0.03 && rEarly > 0) s += fill(L().heroBetter, { m: mName, r: spct(rRec), y0: Y0 });
-      else if (Math.abs(rRec) <= 0.03) s += fill(rEarly > 0.1 ? L().heroBack : L().heroLevel, { m: mName, r: spct(rRec), y0: Y0 });
-      else if (rRec < rEarly - 0.15) s += fill(L().heroClose, { m: mName, r: spct(rRec) });
-      else if (rRec > rEarly + 0.15) s += fill(L().heroWide, { m: mName, r: spct(rRec) });
+      // the gap narrows or widens only when the recent count is unlikely at the early gap (Poisson, 5 %)
+      var lam = WR.exp * (1 + rEarly);
+      if (rRec < -0.05 && rEarly > 0) s += fill(L().heroBetter, { m: mName, r: spct(rRec), y0: Y0 });
+      else if (Math.abs(rRec) <= 0.05) s += fill(rEarly > 0.1 ? L().heroBack : L().heroLevel, { m: mName, r: spct(rRec), y0: Y0 });
+      else if (rRec < rEarly && poisLower(WR.act, lam) < 0.05) s += fill(L().heroClose, { m: mName, r: spct(rRec) });
+      else if (rRec > rEarly && poisUpper(WR.act, lam) < 0.05) s += fill(L().heroWide, { m: mName, r: spct(rRec) });
       else s += fill(L().heroSame, { m: mName, r: spct(rRec) });
     }
     if (S.cable) s = s.replace(/NCs?\b/, S.lang === 'fr' ? 'NC avec un défaut câble' : 'NCs with a cable defect');
+    var planes = {}; V.ncAll.forEach(function (j) { planes[NC.l[j] + '|' + NC.m[j]] = 1; });
+    var nPlanes = Object.keys(planes).length;
     html('h0', S.findings ? s : esc(L().name0));
     txt('h0eye', t('eye0'));
     txt('h0lede', t('lede'));
 
     // tiles
     var cost = S.cable ? sum(V.df, function (j) { return DF.c[j]; }) : sum(V.nc, function (j) { return NC.c[j]; });
-    var cableN = 0, pc26 = 0, pc25 = 0;
+    var cableN = 0;
     V.df.forEach(function (j) { if (DF.cb[j]) cableN++; });
-    // cable year-on-year: parser flags on both years, all defects of the selection
-    for (i = 0; i < nDf; i++) { var n = DF.n[i]; if (V.ncOk[n] && !NC.sc[n] && DF.pcb[i]) pc26++; }
-    for (i = 0; i < nF25; i++) { var n2 = F25.n[i]; if (V.ok25[n2] && F25.pcb[i] && N25.d[n2] <= CUT25) pc25++; }
-    var rCab = pc25 >= MIN ? pc26 / pc25 - 1 : null;
+    // cable at equal production: parser flags on both years
+    var cCab = compareDef(V, 0, ASOF_DAY, A, function (j) { return DF.pcb[j]; }, function (j) { return F25.pcb[j]; }), rCab = cCab.r;
+    V.prod.cable = cCab;
+    var aw = new Array(26).fill(0), seen = {};
+    V.ncAll.forEach(function (j) { var b = Math.floor((ASOF_DAY - NC.d[j]) / 7); if (b < 0 || b >= 26) return; var key = b + '|' + NC.l[j] + '|' + NC.m[j]; if (!seen[key]) { seen[key] = 1; aw[25 - b]++; } });
     var w26 = weekly(V.nc, NC.d, ASOF_DAY, 26);
     var dw = new Array(26).fill(0); V.df.forEach(function (j) { var b = Math.floor((ASOF_DAY - NC.d[DF.n[j]]) / 7); if (b >= 0 && b < 26) dw[25 - b]++; });
     var cw = new Array(26).fill(0); V.df.forEach(function (j) { if (!DF.cb[j]) return; var b = Math.floor((ASOF_DAY - NC.d[DF.n[j]]) / 7); if (b >= 0 && b < 26) cw[25 - b]++; });
     var kw = new Array(26).fill(0); V.nc.forEach(function (j) { var b = Math.floor((ASOF_DAY - NC.d[j]) / 7); if (b >= 0 && b < 26) kw[25 - b] += NC.c[j]; });
     var tiles = [
-      { k: t('kNc'), v: num(nc), s: deltaHtml(rNc, t('vs')), sp: w26, id: 'nc' },
-      { k: t('kDef'), v: num(def), s: deltaHtml(rDef, t('vs')), sp: dw, id: 'def' },
-      { k: t('kCable'), v: num(cableN), s: (S.cable ? '' : '<span class="s">' + esc(t('sharePart', { p: pct(def ? cableN / def : 0, 1) })) + '</span><br>') + deltaHtml(rCab, t('vs') + ' *'), sp: cw, id: 'cable' },
+      { k: t('kNc'), v: num(nc), s: deltaHtml(rNc, t('vsProd')), sp: w26, id: 'nc' },
+      { k: t('kPlanes'), v: num(nPlanes), s: deltaHtml(rVol, t('vsVol', { l: lineNames(cNc.lines) }), true), sp: aw, id: 'planes' },
+      { k: t('kDef'), v: num(def), s: deltaHtml(rDef, t('vsProd')), sp: dw, id: 'def' },
+      { k: t('kCable'), v: num(cableN), s: (S.cable ? '' : '<span class="s">' + esc(t('sharePart', { p: pct(def ? cableN / def : 0, 1) })) + '</span><br>') + deltaHtml(rCab, t('vsProd') + '\u00a0*'), sp: cw, id: 'cable' },
       { k: t('kCost'), v: keur(cost), s: '<span class="s">' + esc(t('perNc', { v: eur(nc ? Math.round(cost / nc) : 0) })) + '</span>', sp: kw, id: 'cost' },
       { k: t('kCli'), v: num(V.cli.length), s: '<span class="s">' + esc(t('cliS', { n: num(V.dcli.length) })) + '</span>', sp: weekly(V.cli, NC.d, ASOF_DAY, 26), id: 'cli' }
     ];
@@ -737,66 +768,58 @@ body.presenting .wrap { max-width: 1440px; }
       var sv = el('svg', { class: 'spark', viewBox: '0 0 160 30', preserveAspectRatio: 'none' }); spark(sv, tl.sp, 160, 30); d.appendChild(sv);
       box.appendChild(d);
     });
-    V.kpi = { nc: nc, def: def, cost: cost, cable: cableN, cli: V.cli.length, dcli: V.dcli.length, nc25: nc25, def25: def25 };
-    monthly(V);
+    V.kpi = { nc: nc, def: def, cost: cost, cable: cableN, cli: V.cli.length, dcli: V.dcli.length, planes: nPlanes };
+    quarters(V);
     signals(V);
   }
 
-  function monthly(V) {
-    var box = $('ymChart'), w = width(box), h = 250, m = { l: 34, r: 8, t: 26, b: 26 };
-    var svg = svgIn(box, w, h), useDef = S.unit === 'def';
-    var a25 = new Array(12).fill(0), a26 = new Array(12).fill(0), cutM = ASOF.getUTCMonth();
-    if (useDef) {
-      V.f25.forEach(function (j) { var d = N25.d[F25.n[j]]; a25[monthOf(Y0, d)]++; });
-      V.pdf.forEach(function (j) { a26[monthOf(Y, NC.d[DF.n[j]])]++; });
-    } else {
-      V.n25.forEach(function (j) { a25[monthOf(Y0, N25.d[j])]++; });
-      V.pncL.forEach(function (j) { a26[monthOf(Y, NC.d[j])]++; });
-    }
-    // the as-of month of Y0, cut at the same date, for the like-for-like pair
-    var cut25 = 0;
-    if (useDef) V.f25.forEach(function (j) { var d = N25.d[F25.n[j]]; if (monthOf(Y0, d) === cutM && d <= CUT25) cut25++; });
-    else V.n25.forEach(function (j) { var d = N25.d[j]; if (monthOf(Y0, d) === cutM && d <= CUT25) cut25++; });
-    var pace = V.rRec === null ? 1 : 1 + V.rRec;
-    var proj = a25.map(function (v, k) { return k > cutM ? v * pace : null; });
-    var mx = niceMax(Math.max.apply(null, a25.concat(a26, proj.filter(function (v) { return v !== null; }))));
-    var iw = w - m.l - m.r, ih = h - m.t - m.b, bw = iw / 12, cw = Math.min(16, bw / 2 - 3);
+  function quarters(V) {
+    var box = $('ymChart'), w = width(box), h = 268, m = { l: 34, r: 8, t: 30, b: 44 };
+    var useDef = S.unit === 'def', cutQ = Math.floor(ASOF.getUTCMonth() / 3), wins = [], q;
+    for (q = 0; q <= cutQ; q++) wins.push({ lab: (S.lang === 'fr' ? 'T' : 'Q') + (q + 1), from: monthDay(q * 3), to: Math.min(ASOF_DAY, q < 3 ? monthDay(q * 3 + 3) - 1 : 364) });
+    wins.push({ lab: S.lang === 'fr' ? 'Depuis janvier' : 'Since January', from: 0, to: ASOF_DAY, year: true });
+    wins.forEach(function (wn) {
+      var c = useDef ? compareDef(V, wn.from, wn.to) : compareNc(V, wn.from, wn.to);
+      wn.c = c; wn.r26 = c.ac26 ? c.act / c.ac26 : null; wn.r25 = c.ac26 ? c.exp / c.ac26 : null;
+    });
+    var svg = svgIn(box, w, h);
+    // bars for the quarters only: over the whole year an aircraft is counted once, so its rate is not on the same scale
+    var vals = []; wins.forEach(function (wn) { if (wn.r26 !== null && !wn.year) vals.push(wn.r26, wn.r25); });
+    if (!vals.length) { var yr = wins[wins.length - 1].c; emptyNote(box, yr.r !== null ? t('qNoneYear', { r: spct(yr.r) }) : t('qNone')); $('ymLegend').textContent = ''; txt('ymTitle', t('ymTitle')); txt('ymNote', ''); table('ym', [], []); V.quarters = wins; return; }
+    var mx = niceMax(Math.max.apply(null, vals.concat([1]))), iw = w - m.l - m.r, ih = h - m.t - m.b;
     var y = function (v) { return m.t + ih - v / mx * ih; };
-    ticks(mx).forEach(function (gv) { el('line', { x1: m.l, x2: w - m.r, y1: y(gv), y2: y(gv), class: gv ? 'gridline' : 'base' }, svg); el('text', { x: m.l - 6, y: y(gv) + 4, 'text-anchor': 'end', class: 'tick' }, svg, num(gv)); });
-    // quarter gaps above the bars
-    for (var q = 0; q < 4; q++) {
-      var qs = q * 3, qe = Math.min(qs + 2, cutM); if (qs > cutM) break;
-      var s25 = 0, s26 = 0;
-      for (var k = qs; k <= qe; k++) { s25 += (k === cutM ? cut25 : a25[k]); s26 += a26[k]; }
-      if (s25 < 10) continue;
-      var x0 = m.l + qs * bw + 4, x1 = m.l + (qe + 1) * bw - 4, r = s26 / s25 - 1;
-      el('line', { x1: x0, x2: x1, y1: 12, y2: 12, stroke: 'var(--rule)' }, svg);
-      el('text', { x: (x0 + x1) / 2, y: 9, 'text-anchor': 'middle', class: 'val', 'font-weight': 650, fill: r > 0.05 ? 'var(--escape)' : r < -0.05 ? 'var(--good)' : 'var(--ink-2)' }, svg, (S.lang === 'fr' ? 'T' : 'Q') + (q + 1) + ' ' + spct(r));
-    }
-    for (var mo = 0; mo < 12; mo++) {
-      var cx = m.l + mo * bw + bw / 2;
-      var v25 = a25[mo], v26 = mo <= cutM ? a26[mo] : null;
-      bar(svg, cx - cw - 1, cw, y(v25), y(0), 'var(--prior)');
-      if (mo === cutM) el('line', { x1: cx - cw - 1, x2: cx - 1, y1: y(cut25), y2: y(cut25), stroke: 'var(--ink-2)', 'stroke-width': 1.5, 'stroke-dasharray': '2 2' }, svg);
-      if (v26 !== null) bar(svg, cx + 1, cw, y(v26), y(0), 'var(--accent)');
-      else if (proj[mo] !== null) el('rect', { x: cx + 1.5, y: y(proj[mo]), width: cw - 1, height: Math.max(0, y(0) - y(proj[mo])), rx: 2, fill: 'none', stroke: 'var(--accent)', 'stroke-width': 1.2, 'stroke-dasharray': '3 2' }, svg);
-      el('text', { x: cx, y: h - 8, 'text-anchor': 'middle', class: 'tick' }, svg, bw < 40 ? L().months[mo].charAt(0).toUpperCase() : L().months[mo]);
-      var hitR = el('rect', { x: m.l + mo * bw, y: m.t, width: bw, height: ih, fill: 'transparent', class: 'hit', tabindex: 0 }, svg);
-      (function (mo, v25, v26) {
-        hover(hitR, L().monthsLong[mo], function () {
-          var rows = [[num(v25), String(Y0)]];
-          if (mo === cutM) rows.push([num(cut25), Y0 + ' ≤ ' + ASOF.getUTCDate()]);
-          if (v26 !== null) rows.push([num(v26), String(Y)]); else rows.push(['≈ ' + num(proj[mo]), S.lang === 'fr' ? 'projection' : 'projection']);
-          if (v26 !== null && (mo === cutM ? cut25 : v25)) rows.push([spct(v26 / (mo === cutM ? cut25 : v25) - 1), S.lang === 'fr' ? 'écart' : 'gap']);
-          return rows;
-        });
-      })(mo, v25, v26);
-    }
-    txt('ymTitle', t('ymTitle'));
-    txt('ymNote', t('ymNote', { m: L().monthsLong[cutM], d: ASOF.getUTCDate() }) + ' ' + t('endNote', { a: num(V.end[0]), b: num(V.end[1]), u: S.unit === 'def' ? t('defTxt') : t('nTxt') }));
-    html('ymLegend', '<span><i class="sw" style="background:var(--prior)"></i>' + Y0 + '</span><span><i class="sw" style="background:var(--accent)"></i>' + Y + '</span><span><i class="sw" style="border:1.2px dashed var(--accent);background:none"></i>' + esc(t('lgProj')) + '</span>');
-    table('ym', [L().tbl.month, String(Y0), String(Y)], L().months.map(function (mn, k) { return [mn, num(a25[k]), k <= cutM ? num(a26[k]) : (proj[k] === null ? '' : '≈ ' + num(proj[k]))]; }), [1, 2]);
-    V.months = { a25: a25, a26: a26, cut25: cut25 };
+    ticks(mx).forEach(function (gv) { el('line', { x1: m.l, x2: w - m.r, y1: y(gv), y2: y(gv), class: gv ? 'gridline' : 'base' }, svg); el('text', { x: m.l - 6, y: y(gv) + 4, 'text-anchor': 'end', class: 'tick' }, svg, num(gv, mx < 10 ? 0 : 0)); });
+    var slots = wins.length + 0.6, sw = iw / slots, cw = Math.min(42, sw * 0.3);
+    wins.forEach(function (wn, k) {
+      var cx = m.l + sw * (k + (wn.year ? 0.6 : 0)) + sw / 2;
+      if (wn.year) {
+        el('line', { x1: cx - sw / 2 - sw * 0.3, x2: cx - sw / 2 - sw * 0.3, y1: m.t - 18, y2: h - m.b + 30, class: 'gridline' }, svg);
+        if (wn.c.r !== null) {
+          el('text', { x: cx, y: m.t + ih * 0.45, 'text-anchor': 'middle', 'font-size': 30, 'font-weight': 600, fill: wn.c.r > 0.05 ? 'var(--escape)' : wn.c.r < -0.05 ? 'var(--good)' : 'var(--ink)' }, svg, spct(wn.c.r));
+          el('text', { x: cx, y: m.t + ih * 0.45 + 22, 'text-anchor': 'middle', class: 'tick' }, svg, S.lang === 'fr' ? 'par avion' : 'per aircraft');
+        }
+      } else if (wn.r26 !== null) {
+        bar(svg, cx - cw - 2, cw, y(wn.r25), y(0), 'var(--prior)');
+        bar(svg, cx + 2, cw, y(wn.r26), y(0), wn.year ? 'var(--ink)' : 'var(--accent)');
+        el('text', { x: cx - cw / 2 - 2, y: y(wn.r25) - 6, 'text-anchor': 'middle', class: 'val' }, svg, num(wn.r25, 1));
+        el('text', { x: cx + cw / 2 + 2, y: y(wn.r26) - 6, 'text-anchor': 'middle', class: 'lab-b' }, svg, num(wn.r26, 1));
+        if (wn.c.r !== null) el('text', { x: cx, y: 14, 'text-anchor': 'middle', class: 'val', 'font-weight': 650, fill: wn.c.r > 0.05 ? 'var(--escape)' : wn.c.r < -0.05 ? 'var(--good)' : 'var(--ink-2)' }, svg, spct(wn.c.r));
+      }
+      el('text', { x: cx, y: h - m.b + 17, 'text-anchor': 'middle', class: 'lab-b' }, svg, wn.lab);
+      el('text', { x: cx, y: h - m.b + 32, 'text-anchor': 'middle', class: 'tick' }, svg, sw < 110 ? num(wn.c.ac25) + '\u2192' + num(wn.c.ac26) : fill(L().qPlanes, { a: num(wn.c.ac25), b: num(wn.c.ac26) }));
+      var hit = el('rect', { x: cx - sw / 2, y: m.t - 20, width: sw, height: ih + 20, fill: 'transparent', class: 'hit', tabindex: 0 }, svg);
+      hover(hit, wn.lab, function () {
+        return [[num(wn.r25, 2), fill(L().qRate25, { y0: Y0, y: Y })], [num(wn.r26, 2), String(Y)], [wn.c.r === null ? '—' : spct(wn.c.r), S.lang === 'fr' ? 'écart à production égale' : 'gap at equal production'],
+          [num(wn.c.ac25) + ' → ' + num(wn.c.ac26), S.lang === 'fr' ? 'avions passés à FTO2' : 'aircraft through FTO2']];
+      });
+    });
+    var lines = (wins[wins.length - 1].c || {}).lines || [];
+    txt('ymTitle', t(useDef ? 'ymTitleDef' : 'ymTitle'));
+    txt('ymNote', t('qNote', { l: lineNames(lines) }));
+    html('ymLegend', '<span><i class="sw" style="background:var(--prior)"></i>' + esc(fill(L().qRate25, { y0: Y0, y: Y })) + '</span><span><i class="sw" style="background:var(--accent)"></i>' + Y + '</span>');
+    table('ym', [L().tbl.period, fill(L().tbl.planes, { y: Y0 }), fill(L().tbl.planes, { y: Y }), fill(L().qRate25, { y0: Y0, y: Y }), String(Y), '±'],
+      wins.map(function (wn) { return [wn.lab, num(wn.c.ac25), num(wn.c.ac26), wn.r25 === null ? '—' : num(wn.r25, 2), wn.r26 === null ? '—' : num(wn.r26, 2), wn.c.r === null ? '—' : spct(wn.c.r)]; }), [1, 2, 3, 4, 5]);
+    V.quarters = wins;
   }
   function bar(svg, x, w, y0, ybase, fill) {   // 4px rounded data end, square at the baseline
     var h = Math.max(0, ybase - y0), r = Math.min(3, h, w / 2);
@@ -881,31 +904,35 @@ body.presenting .wrap { max-width: 1440px; }
 
   // ---------------------------------------------------------------- 01 what grew
   function growth(V) {
-    var c25 = {}, c26 = {}, k25 = {}, k26 = {}, i;
-    V.f25.forEach(function (j) { if (N25.d[F25.n[j]] > CUT25) return; c25[F25.pr[j]] = (c25[F25.pr[j]] || 0) + 1; k25[F25.pk[j]] = (k25[F25.pk[j]] || 0) + 1; });
-    V.pdf.forEach(function (j) { c26[DF.pr[j]] = (c26[DF.pr[j]] || 0) + 1; k26[DF.pk[j]] = (k26[DF.pk[j]] || 0) + 1; });
-    var tot25 = 0, tot26 = 0; Object.keys(c25).forEach(function (k) { tot25 += c25[k]; }); Object.keys(c26).forEach(function (k) { tot26 += c26[k]; });
-    var rows = []; RCA.forEach(function (r, k) { var a = c25[k] || 0, b = c26[k] || 0; if (a + b) rows.push({ r: k, a: a, b: b, d: b - a }); });
+    var i, A = aircraft(V, 0, ASOF_DAY);
+    var comp = Object.keys(A.a25).filter(function (l) { return A.a25[l] >= MINAC && A.a26[l]; }).map(Number);
+    var fac = {}; comp.forEach(function (l) { fac[l] = A.a26[l] / A.a25[l]; });
+    // per cause and per category: 2025 at 2026 production (expected) against 2026, on the comparable lines
+    var e25 = {}, c26 = {}, ke = {}, k26 = {};
+    V.f25.forEach(function (j) { var n = F25.n[j]; if (N25.d[n] > CUT25 || !fac[N25.l[n]]) return; var f = fac[N25.l[n]]; e25[F25.pr[j]] = (e25[F25.pr[j]] || 0) + f; ke[F25.pk[j]] = (ke[F25.pk[j]] || 0) + f; });
+    V.pdf.forEach(function (j) { if (!fac[NC.l[DF.n[j]]]) return; c26[DF.pr[j]] = (c26[DF.pr[j]] || 0) + 1; k26[DF.pk[j]] = (k26[DF.pk[j]] || 0) + 1; });
+    var tot25 = 0, tot26 = 0; Object.keys(e25).forEach(function (k) { tot25 += e25[k]; }); Object.keys(c26).forEach(function (k) { tot26 += c26[k]; });
+    var rows = []; RCA.forEach(function (r, k) { var a = e25[k] || 0, b = c26[k] || 0; if (a + b) rows.push({ r: k, a: a, b: b, d: b - a }); });
     rows.sort(function (x, y) { return y.d - x.d || y.b - x.b; });
     var dTot = tot26 - tot25;
     // headline: the category that carries most of the rise
-    var cats = CAT.map(function (c, k) { return { k: k, d: (k26[k] || 0) - (k25[k] || 0) }; }).sort(function (a, b) { return b.d - a.d; });
-    // cable against the rest (parser flags both years, full selection, not the cable filter)
-    var pc25 = 0, pc26 = 0, all25 = 0, all26 = 0;
-    var ok25 = new Uint8Array(n25); for (i = 0; i < n25; i++) if (inLinePhase(N25.l[i], N25.ph[i]) && N25.d[i] <= CUT25) ok25[i] = 1;
-    for (i = 0; i < nF25; i++) if (ok25[F25.n[i]]) { all25++; if (F25.pcb[i]) pc25++; }
-    for (i = 0; i < nDf; i++) { var nn = DF.n[i]; if (!NC.sc[nn] && inLinePhase(NC.l[nn], NC.ph[nn])) { all26++; if (DF.pcb[i]) pc26++; } }
-    var rC = pc25 ? pc26 / pc25 - 1 : null, rA = all25 ? all26 / all25 - 1 : null, rO = (all25 - pc25) ? (all26 - pc26) / (all25 - pc25) - 1 : null;
-    V.growth = { tot25: tot25, tot26: tot26, cable: [pc25, pc26], all: [all25, all26] };
+    var cats = CAT.map(function (c, k) { return { k: k, d: (k26[k] || 0) - (ke[k] || 0) }; }).sort(function (a, b) { return b.d - a.d; });
+    // cable against the rest, at equal production (parser flags, full selection, not the cable filter)
+    var pc25 = 0, pc26 = 0, all25 = 0, all26 = 0, raw25 = 0, rawc25 = 0;
+    for (i = 0; i < nF25; i++) { var n0 = F25.n[i]; if (!inLinePhase(N25.l[n0], N25.ph[n0]) || N25.d[n0] > CUT25 || !fac[N25.l[n0]]) continue; all25 += fac[N25.l[n0]]; raw25++; if (F25.pcb[i]) { pc25 += fac[N25.l[n0]]; rawc25++; } }
+    for (i = 0; i < nDf; i++) { var nn = DF.n[i]; if (!NC.sc[nn] && inLinePhase(NC.l[nn], NC.ph[nn]) && fac[NC.l[nn]]) { all26++; if (DF.pcb[i]) pc26++; } }
+    var rC = pc25 ? pc26 / pc25 - 1 : null, rA = all25 ? all26 / all25 - 1 : null;
+    V.growth = { tot25: tot25, tot26: tot26, cable: [pc25, pc26], all: [all25, all26], lines: comp };
     txt('r1n', t('r1n')); txt('r1d', t('r1d'));
     if (S.findings) {
-      if (!tot25 && !tot26) html('h1t', esc(S.line === LINE.indexOf('A400M') ? L().h1noneA400 : L().h1none));
-      else if (tot25 < 20) html('h1t', fill(L().h1few, { a: num(tot25), b: num(tot26), y0: Y0 }));
+      if (!comp.length) html('h1t', fill(L().h1few, { y0: Y0 }));
+      else if (!tot25 && !tot26) html('h1t', esc(S.line === LINE.indexOf('A400M') ? L().h1noneA400 : L().h1none));
+      else if (tot25 < 20) html('h1t', fill(L().h1few, { y0: Y0 }));
       else if (dTot > 0 && cats[0].d > 0) html('h1t', cats[0].d / dTot > 0.95 ? fill(L().h1all, { c: esc(nm(CAT[cats[0].k])), d: '+' + num(cats[0].d) + ' ' + t('defTxt'), y0: Y0 }) : fill(L().h1, { c: esc(nm(CAT[cats[0].k])), p: pct(cats[0].d / dTot), y0: Y0 }));
       else html('h1t', fill(L().h1down, { d: spct(tot26 / tot25 - 1), y0: Y0 }));
       html('h1s', pc25 >= 20 && all25 >= 20 ? fill(L().h1s, { cd: spct(rC), ad: spct(rA) }) : '');
     } else { txt('h1t', S.lang === 'fr' ? 'Évolution par cause depuis ' + Y0 : 'Change by cause since ' + Y0); txt('h1s', ''); }
-    txt('c1aT', t('c1aT')); txt('c1aN', t('c1aN', { d: dateTxt(ASOF).replace(/ \d{4}$/, '') }));
+    txt('c1aT', t('c1aT')); txt('c1aN', t('c1aN', { d: dateTxt(ASOF).replace(/ \d{4}$/, ''), l: lineNames(comp) }));
     // dumbbell: top 14 causes by size of the change
     var top = rows.slice().sort(function (x, y) { return Math.abs(y.d) - Math.abs(x.d); }).slice(0, 14).sort(function (x, y) { return y.d - x.d; });
     if (!top.length) { emptyNote($('growChart'), noDefectsText()); emptyNote($('cableChart'), noDefectsText()); $('growLegend').textContent = ''; table('grow', [], []); table('cable', [], []); return; }
@@ -922,12 +949,12 @@ body.presenting .wrap { max-width: 1440px; }
       el('line', { x1: x(r.a), x2: x(r.b), y1: yy, y2: yy, stroke: r.d >= 0 ? 'var(--accent-mid)' : 'var(--prior)', 'stroke-width': 3, 'stroke-linecap': 'round' }, gg);
       el('circle', { cx: x(r.a), cy: yy, r: 4.5, fill: 'var(--prior)', stroke: 'var(--surface)', 'stroke-width': 2 }, gg);
       el('circle', { cx: x(r.b), cy: yy, r: 5, fill: 'var(--accent)', stroke: 'var(--surface)', 'stroke-width': 2 }, gg);
-      el('text', { x: w - m.r + 8, y: yy + 4, class: 'val', 'font-weight': 650, fill: r.d > 0 ? 'var(--escape)' : r.d < 0 ? 'var(--good)' : 'var(--ink-2)' }, gg, (r.d > 0 ? '+' : r.d < 0 ? '−' : '') + num(Math.abs(r.d)));
-      hover(gg, nm(RCA[r.r]), function () { return [[num(r.a), String(Y0)], [num(r.b), String(Y)], [(r.d > 0 ? '+' : r.d < 0 ? '−' : '') + num(Math.abs(r.d)) + (r.a ? ' (' + spct(r.b / r.a - 1) + ')' : ''), S.lang === 'fr' ? 'écart' : 'change']]; });
+      el('text', { x: w - m.r + 8, y: yy + 4, class: 'val', 'font-weight': 650, fill: r.d > 0.5 ? 'var(--escape)' : r.d < -0.5 ? 'var(--good)' : 'var(--ink-2)' }, gg, (r.d > 0.5 ? '+' : r.d < -0.5 ? '−' : '') + num(Math.abs(r.d)));
+      hover(gg, nm(RCA[r.r]), function () { return [[num(r.a), fill(L().qRate25s, { y0: Y0, y: Y })], [num(r.b), String(Y)], [(r.d > 0 ? '+' : r.d < 0 ? '−' : '') + num(Math.abs(r.d)) + (r.a >= 5 ? ' (' + spct(r.b / r.a - 1) + ')' : ''), S.lang === 'fr' ? 'écart à production égale' : 'gap at equal production']]; });
       gg.addEventListener('click', function () { S.focusCat = S.focusCat === DICT.rcaCat[r.r] ? -1 : DICT.rcaCat[r.r]; render(); });
     });
-    html('growLegend', '<span><i class="sw dot" style="background:var(--prior)"></i>' + Y0 + '</span><span><i class="sw dot" style="background:var(--accent)"></i>' + Y + '</span>');
-    table('grow', [L().tbl.cause, L().tbl.cat, String(Y0), String(Y), '±'], rows.map(function (r) { return [nm(RCA[r.r]), nm(CAT[DICT.rcaCat[r.r]]), num(r.a), num(r.b), (r.d > 0 ? '+' : '') + num(r.d)]; }), [2, 3, 4]);
+    html('growLegend', '<span><i class="sw dot" style="background:var(--prior)"></i>' + esc(fill(L().qRate25s, { y0: Y0, y: Y })) + '</span><span><i class="sw dot" style="background:var(--accent)"></i>' + Y + '</span>');
+    table('grow', [L().tbl.cause, L().tbl.cat, fill(L().qRate25s, { y0: Y0, y: Y }), String(Y), '±'], rows.map(function (r) { return [nm(RCA[r.r]), nm(CAT[DICT.rcaCat[r.r]]), num(r.a), num(r.b), (r.d > 0 ? '+' : '') + num(r.d)]; }), [2, 3, 4]);
     // index chart: cable vs other, 100 = Y0
     txt('c1bT', t('c1bT')); txt('c1bN', t('c1bN'));
     var b2 = $('cableChart'), w2 = width(b2), items = [{ k: t('idxAll'), a: all25, b: all26, c: 'var(--ink-2)' }, { k: t('idxOther'), a: all25 - pc25, b: all26 - pc26, c: 'var(--prior)' }, { k: t('idxCable'), a: pc25, b: pc26, c: 'var(--cable)' }];
@@ -937,16 +964,16 @@ body.presenting .wrap { max-width: 1440px; }
     el('line', { x1: x2(100), x2: x2(100), y1: m2.t, y2: h2 - 62, stroke: 'var(--ink-2)', 'stroke-width': 1, 'stroke-dasharray': '3 3' }, svg2);
     el('text', { x: x2(100), y: h2 - 46, 'text-anchor': 'middle', class: 'tick' }, svg2, '100 = ' + Y0);
     el('line', { x1: 0, x2: w2, y1: h2 - 32, y2: h2 - 32, class: 'gridline' }, svg2);
-    el('text', { x: 0, y: h2 - 10, class: 'lab' }, svg2, t('cableShare', { a: pct(all25 ? pc25 / all25 : 0, 1), b: pct(all26 ? pc26 / all26 : 0, 1) }));
+    el('text', { x: 0, y: h2 - 10, class: 'lab' }, svg2, t('cableShare', { a: pct(raw25 ? rawc25 / raw25 : 0, 1), b: pct(all26 ? pc26 / all26 : 0, 1) }));
     items.forEach(function (it, k) {
       var yy = m2.t + 8 + k * 52, v = it.a ? 100 * it.b / it.a : 0;
       el('text', { x: m2.l, y: yy + 2, class: 'lab-b' }, svg2, it.k);
       el('text', { x: w2 - m2.r + 64, y: yy + 2, 'text-anchor': 'end', class: 'val' }, svg2, num(it.a) + ' → ' + num(it.b));
       el('rect', { x: m2.l, y: yy + 10, width: x2(mx2) - m2.l, height: 14, rx: 3, fill: 'var(--track)' }, svg2);
       hbar(svg2, m2.l, yy + 10, x2(v) - m2.l, 14, it.c);
-      el('text', { x: x2(v) + 6, y: yy + 22, class: 'val', 'font-weight': 650 }, svg2, it.a ? spct(v / 100 - 1) : '—');
+      el('text', { x: Math.max(x2(v), x2(100)) + 6, y: yy + 22, class: 'val', 'font-weight': 650 }, svg2, it.a ? spct(v / 100 - 1) : '—');
     });
-    table('cable', ['', String(Y0), String(Y), '±'], items.map(function (it) { return [it.k, num(it.a), num(it.b), it.a ? spct(it.b / it.a - 1) : '—']; }), [1, 2, 3]);
+    table('cable', ['', fill(L().qRate25s, { y0: Y0, y: Y }), String(Y), '±'], items.map(function (it) { return [it.k, num(it.a), num(it.b), it.a ? spct(it.b / it.a - 1) : '—']; }), [1, 2, 3]);
   }
 
   // ---------------------------------------------------------------- 02 who catches what
@@ -1131,11 +1158,9 @@ body.presenting .wrap { max-width: 1440px; }
   // ---------------------------------------------------------------- 04 what comes back
   function repeat(V) {
     var i;
-    // aircraft per line and year (MSNs with at least one NC in the selection, up to the same date)
-    var msn26 = {}, msn25 = {};
-    V.nc.forEach(function (j) { (msn26[NC.l[j]] = msn26[NC.l[j]] || {})[NC.m[j]] = 1; });
-    V.n25.forEach(function (j) { if (N25.d[j] <= CUT25) (msn25[N25.l[j]] = msn25[N25.l[j]] || {})[N25.m[j]] = 1; });
-    var cnt = function (o, l) { return o[l] ? Object.keys(o[l]).length : 0; };
+    // aircraft per line and year: every MSN through FTO2 in the line / phase selection up to the same date, whatever the
+    // cable filter, so a location is always read as a share of the line's aircraft
+    var A = V.prod.A, cnt = function (o, l) { return o[l] || 0; }, msn26 = A.a26, msn25 = A.a25;
     var f26 = {}, f25 = {}, rc = {};
     V.df.forEach(function (j) { var f = DF.f[j]; if (f < 0) return; var n = DF.n[j], key = NC.l[n] + '|' + f; (f26[key] = f26[key] || {})[NC.m[n]] = 1; (rc[key] = rc[key] || {})[DF.r[j]] = ((rc[key] || {})[DF.r[j]] || 0) + 1; });
     V.f25.forEach(function (j) { var f = F25.f[j]; if (f < 0) return; var n = F25.n[j]; if (N25.d[n] > CUT25) return; var key = N25.l[n] + '|' + f; (f25[key] = f25[key] || {})[N25.m[n]] = 1; });
@@ -1196,7 +1221,8 @@ body.presenting .wrap { max-width: 1440px; }
     html('finLegend', '<span><i class="sw dot" style="background:var(--prior)"></i>' + Y0 + '</span><span><i class="sw dot" style="background:var(--accent)"></i>' + Y + '</span><span><span class="tag new">' + esc(L().tagNew) + '</span> &lt; 10 % → ≥ 20 %</span><span><span class="tag chronic">' + esc(L().tagChronic) + '</span> ≥ 20 % ' + (S.lang === 'fr' ? 'les deux années' : 'both years') + '</span>');
     table('fin', [L().tbl.fin, L().tbl.l, fill(L().tbl.p0, { y0: Y0 }), fill(L().tbl.p1, { y: Y }), L().tbl.cause], rows.slice(0, 40).map(function (r) { return [DICT.fin[r.f], LINE[r.l], num(r.k0) + '/' + num(r.n0), num(r.k1) + '/' + num(r.n1), nm(RCA[r.rca])]; }), [2, 3]);
     // pin arcs: top connectors by aircraft with readable swaps
-    txt('c4bT', t('c4bT')); txt('c4bN', t('c4bN'));
+    var ac26 = 0, ac25 = 0; Object.keys(A.a26).forEach(function (l) { ac26 += A.a26[l]; }); Object.keys(A.a25).forEach(function (l) { ac25 += A.a25[l]; });
+    txt('c4bT', t('c4bT')); txt('c4bN', t('c4bN', { a: num(ac25), b: num(ac26) }));
     var fins = Object.keys(perFin).map(function (f) { return { f: +f, k: Object.keys(perFin[f]).length }; }).sort(function (a, b) { return b.k - a.k; }).slice(0, 6);
     var pb = $('pinChart'); pb.textContent = '';
     if (!fins.length) { emptyNote(pb, S.lang === 'fr' ? 'Aucune inversion avec ses deux broches écrites dans la sélection.' : 'No swapped wires with both pins written in the selection.'); $('pinLegend').textContent = ''; table('pin', [], []); return; }
@@ -1395,7 +1421,8 @@ body.presenting .wrap { max-width: 1440px; }
     fb.hidden = !chips.length;
     var ft = $('foot'); ft.textContent = '';
     L().foot.forEach(function (s) { var p = document.createElement('p'); p.textContent = fill(s, { f: D.meta.ncFile, d: dateTxt(ASOF), y: Y, y0: Y0, n: num(D.meta.n2025) }); ft.appendChild(p); });
-    var star = document.createElement('p'); star.textContent = S.lang === 'fr' ? '* Défauts câble : évolution calculée avec le parseur v4.8 sur les deux années.' : '* Cable defects: change computed with parser v4.8 on both years.'; ft.appendChild(star);
+    var prod = document.createElement('p'); prod.id = 'footProd'; ft.appendChild(prod);
+    var star = document.createElement('p'); star.textContent = S.lang === 'fr' ? '* Défauts câble : évolution par avion, avec le parseur v4.8 sur les deux années.' : '* Cable defects: change per aircraft, with parser v4.8 on both years.'; ft.appendChild(star);
     var notes = document.createElement('p'), a = document.createElement('a');
     a.href = 'https://claude.ai/artifact/W4Y6wLvN772mzHnxwYNvKu'; a.target = '_blank'; a.rel = 'noopener';
     a.textContent = S.lang === 'fr' ? 'Notes, feuille de route et choix (en anglais)' : 'Notes, roadmap and choices';

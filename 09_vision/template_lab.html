@@ -1,0 +1,725 @@
+<title>FTO2 Visual Lab</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..600&family=Hanken+Grotesk:wght@400..700&display=swap">
+<style>
+/* Layout: a lab bench of five full-width plates, each one way of drawing the same FTO2 defects, numbered in the order
+   they were proposed, each closing on where it would live in the dashboard and a keep / later / no choice. Same type and
+   colours as the FTO2 pages; red marks what reached the customer, orange the cable defects, green FTO2. */
+:root {
+  --page: #ffffff;
+  --surface: #ffffff;
+  --band: #f3f5f2;
+  --ink: #15171a;
+  --ink-2: #474c52;
+  --muted: #6f767c;
+  --rule: #dde3dd;
+  --grid: #e7ebe6;
+  --track: #edf0ec;
+  --ring: rgba(21,23,26,0.12);
+  --accent: #1d6b52;
+  --accent-soft: rgba(29,107,82,0.10);
+  --accent-mid: #93c2b1;
+  --prior: #b9c3bc;
+  --flow: rgba(29,107,82,0.22);
+  --river-a: #cdd8d1;
+  --river-b: #b3c4ba;
+  --cable: #c2620c;
+  --escape: #b3261e;
+  --warn: #a8660a;
+  --on-accent: #ffffff;
+  --font-display: "Newsreader", Georgia, "Times New Roman", serif;
+  --font-ui: "Hanken Grotesk", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --page: #101312; --surface: #161a18; --band: #1a1f1c; --ink: #eef1ee; --ink-2: #b9c1bb; --muted: #8b948e;
+    --rule: #2b322e; --grid: #252b28; --track: #222825; --ring: rgba(255,255,255,0.12);
+    --accent: #5cc29b; --accent-soft: rgba(92,194,155,0.14); --accent-mid: #2f6b55; --prior: #4b5550; --flow: rgba(92,194,155,0.20);
+    --river-a: #2c3631; --river-b: #3a4a42; --cable: #f0a04b; --escape: #f07a6a; --warn: #e8b04f; --on-accent: #101312;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --page: #101312; --surface: #161a18; --band: #1a1f1c; --ink: #eef1ee; --ink-2: #b9c1bb; --muted: #8b948e;
+  --rule: #2b322e; --grid: #252b28; --track: #222825; --ring: rgba(255,255,255,0.12);
+  --accent: #5cc29b; --accent-soft: rgba(92,194,155,0.14); --accent-mid: #2f6b55; --prior: #4b5550; --flow: rgba(92,194,155,0.20);
+  --river-a: #2c3631; --river-b: #3a4a42; --cable: #f0a04b; --escape: #f07a6a; --warn: #e8b04f; --on-accent: #101312;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body { margin: 0; background: var(--page); color: var(--ink); font-family: var(--font-ui); font-size: 15px; line-height: 1.5; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--page); }
+button { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 3px; }
+.wrap { max-width: 1280px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.bar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: color-mix(in srgb, var(--page) 92%, transparent); backdrop-filter: blur(8px); border-bottom: 1px solid var(--rule); }
+.bar .wrap { display: flex; align-items: center; gap: 10px 18px; flex-wrap: wrap; padding-block: 10px; }
+.brand { display: flex; align-items: baseline; gap: 10px; margin-right: auto; min-width: 0; }
+.brand b { font-family: var(--font-display); font-weight: 500; font-size: 19px; white-space: nowrap; }
+.brand span { font-size: 11.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); font-weight: 600; white-space: nowrap; }
+.ctl { display: inline-flex; align-items: center; gap: 8px; }
+.ctl > i { font-style: normal; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); font-weight: 700; }
+.seg { display: inline-flex; border: 1px solid var(--ring); border-radius: 7px; overflow: hidden; background: var(--surface); }
+.seg button { font-size: 12.5px; padding: 5px 10px; border: 0; background: transparent; cursor: pointer; white-space: nowrap; }
+.seg button + button { border-left: 1px solid var(--ring); }
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--surface); font-weight: 600; }
+.seg button:hover:not([aria-pressed="true"]) { background: var(--accent-soft); }
+.btn { font-size: 13px; font-weight: 650; padding: 7px 14px; border-radius: 8px; border: 1px solid var(--ink); background: var(--ink); color: var(--surface); cursor: pointer; display: inline-flex; gap: 8px; align-items: center; white-space: nowrap; }
+.btn:hover { filter: brightness(1.12); }
+.btn[disabled] { opacity: .5; cursor: default; }
+
+.hero { padding-block: 40px 6px; display: grid; gap: 14px; }
+.eyebrow { font-size: 11.5px; letter-spacing: .09em; text-transform: uppercase; color: var(--accent); font-weight: 700; }
+.hero h1 { font-family: var(--font-display); font-weight: 450; font-size: clamp(32px, 4.4vw, 54px); line-height: 1.06; letter-spacing: -0.015em; margin: 0; max-width: 22ch; text-wrap: balance; }
+.lede { font-size: 16.5px; color: var(--ink-2); max-width: 70ch; margin: 0; }
+
+.plate { display: grid; gap: 16px; padding-block: 44px 20px; border-top: 1px solid var(--rule); margin-top: 32px; scroll-margin-top: 70px; }
+.plate-h { display: grid; grid-template-columns: 64px minmax(0, 1fr) auto; gap: 6px 20px; align-items: end; }
+.plate-h .n { font-family: var(--font-display); font-size: 52px; line-height: .9; color: var(--accent); }
+.plate-h h2 { font-family: var(--font-display); font-weight: 450; font-size: clamp(26px, 3vw, 38px); line-height: 1.1; margin: 0; letter-spacing: -0.01em; }
+.plate-h p { margin: 4px 0 0; color: var(--ink-2); max-width: 78ch; font-size: 14.5px; }
+.stage { background: var(--surface); border: 1px solid var(--rule); border-radius: 12px; padding: 18px; display: grid; gap: 12px; min-width: 0; position: relative; }
+.chart { width: 100%; min-width: 0; position: relative; }
+.chart svg, .chart canvas { display: block; }
+.scroll-x { overflow-x: auto; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 12.5px; color: var(--ink-2); align-items: center; }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.sw { width: 12px; height: 10px; border-radius: 2px; display: inline-block; }
+.sw.dot { width: 9px; height: 9px; border-radius: 50%; }
+.sw.line { width: 16px; height: 0; border-top: 2px solid; border-radius: 0; }
+.sw.dash { width: 16px; height: 0; border-top: 1.5px dashed; border-radius: 0; }
+.plate-f { display: flex; justify-content: space-between; gap: 12px 24px; flex-wrap: wrap; align-items: center; }
+.where { font-size: 13.5px; color: var(--ink-2); max-width: 80ch; }
+.where b { color: var(--ink); }
+.choice { display: inline-flex; border: 1px solid var(--ring); border-radius: 7px; overflow: hidden; background: var(--surface); }
+.choice button { font-size: 12.5px; padding: 6px 11px; border: 0; background: transparent; cursor: pointer; white-space: nowrap; }
+.choice button + button { border-left: 1px solid var(--ring); }
+.choice button[aria-pressed="true"][data-v="keep"] { background: var(--accent); color: var(--on-accent); font-weight: 650; }
+.choice button[aria-pressed="true"][data-v="later"] { background: var(--warn); color: var(--on-accent); font-weight: 650; }
+.choice button[aria-pressed="true"][data-v="no"] { background: var(--ink-2); color: var(--surface); font-weight: 650; }
+.save-state { font-size: 12.5px; color: var(--muted); }
+.clock { position: absolute; right: 22px; top: 18px; font-family: var(--font-display); font-size: 26px; color: var(--ink-2); pointer-events: none; }
+.tools { display: flex; gap: 10px 16px; flex-wrap: wrap; align-items: center; }
+svg text { font-family: var(--font-ui); fill: var(--ink-2); font-size: 11.5px; }
+svg .tick { fill: var(--muted); font-size: 11px; font-variant-numeric: tabular-nums; }
+svg .lab { fill: var(--ink); font-size: 12.5px; }
+svg .lab-b { fill: var(--ink); font-size: 13px; font-weight: 650; }
+svg .halo { paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round; }
+svg .gridline { stroke: var(--grid); stroke-width: 1; }
+.hit { cursor: pointer; }
+footer { border-top: 1px solid var(--rule); margin-top: 40px; padding-block: 22px 60px; color: var(--muted); font-size: 12.5px; display: grid; gap: 6px; }
+footer p { margin: 0; max-width: 110ch; }
+#tip { position: fixed; z-index: 50; pointer-events: none; background: var(--ink); color: var(--surface); border-radius: 8px; padding: 8px 10px; font-size: 12.5px; line-height: 1.35; max-width: 320px; box-shadow: 0 6px 24px rgba(0,0,0,.18); opacity: 0; transition: opacity .08s; }
+#tip.on { opacity: 1; }
+#tip b { font-weight: 700; font-size: 14px; display: block; }
+#tip .r { display: flex; gap: 10px; justify-content: space-between; }
+#tip .m { opacity: .75; }
+@media (prefers-reduced-motion: no-preference) { .fade { transition: opacity .18s, fill .18s; } }
+@media (max-width: 760px) {
+  .plate-h { grid-template-columns: 44px minmax(0, 1fr); }
+  .plate-h .n { font-size: 38px; }
+  .plate-h .tools { grid-column: 1 / -1; }
+  .brand span { display: none; }
+}
+</style>
+
+<div class="bar">
+  <div class="wrap">
+    <div class="brand"><b id="tTitle"></b><span id="tAsof"></span></div>
+    <div class="ctl"><i id="lLine"></i><div class="seg" id="fLine" role="group"></div></div>
+    <div class="seg" id="fLang" role="group"><button type="button" data-v="fr">FR</button><button type="button" data-v="en">EN</button></div>
+  </div>
+</div>
+
+<main class="wrap">
+  <section class="hero">
+    <div class="eyebrow" id="hEye"></div>
+    <h1 id="hTitle"></h1>
+    <p class="lede" id="hLede"></p>
+  </section>
+
+  <section class="plate" id="v1">
+    <div class="plate-h"><div class="n">1</div><div><h2 id="v1T"></h2><p id="v1P"></p></div>
+      <div class="tools"><div class="ctl"><i id="v1HlL"></i><div class="seg" id="v1Hl" role="group"></div></div></div></div>
+    <div class="stage"><div class="scroll-x"><div class="chart" id="jChart" style="min-width:760px"></div></div><div class="legend" id="jLegend"></div></div>
+    <div class="plate-f"><p class="where" id="v1W"></p><div class="choice" data-id="v1" role="group"></div></div>
+  </section>
+
+  <section class="plate" id="v2">
+    <div class="plate-h"><div class="n">2</div><div><h2 id="v2T"></h2><p id="v2P"></p></div>
+      <div class="tools"><button type="button" class="btn" id="rPlay"></button></div></div>
+    <div class="stage"><div class="clock" id="rClock" aria-live="polite"></div><div class="scroll-x"><div class="chart" id="rChart" style="min-width:640px"></div></div><div class="legend" id="rLegend"></div></div>
+    <div class="plate-f"><p class="where" id="v2W"></p><div class="choice" data-id="v2" role="group"></div></div>
+  </section>
+
+  <section class="plate" id="v3">
+    <div class="plate-h"><div class="n">3</div><div><h2 id="v3T"></h2><p id="v3P"></p></div></div>
+    <div class="stage"><div class="scroll-x"><div class="chart" id="lChart" style="min-width:680px"></div></div><div class="legend" id="lLegend"></div></div>
+    <div class="plate-f"><p class="where" id="v3W"></p><div class="choice" data-id="v3" role="group"></div></div>
+  </section>
+
+  <section class="plate" id="v4">
+    <div class="plate-h"><div class="n">4</div><div><h2 id="v4T"></h2><p id="v4P"></p></div></div>
+    <div class="stage"><div class="chart" id="fChart"></div><div class="legend" id="fLegend"></div></div>
+    <div class="plate-f"><p class="where" id="v4W"></p><div class="choice" data-id="v4" role="group"></div></div>
+  </section>
+
+  <section class="plate" id="v5">
+    <div class="plate-h"><div class="n">5</div><div><h2 id="v5T"></h2><p id="v5P"></p></div></div>
+    <div class="stage"><div class="scroll-x"><div class="chart" id="sChart" style="min-width:640px"></div></div><div class="legend" id="sLegend"></div></div>
+    <div class="plate-f"><p class="where" id="v5W"></p><div class="choice" data-id="v5" role="group"></div></div>
+  </section>
+
+  <footer id="foot"></footer>
+</main>
+<div id="tip" role="tooltip"></div>
+
+<script>
+(function () {
+  'use strict';
+  var D = /*__DATA__*/null;
+  var NC = D.nc, DF = D.df, N25 = D.nc25, F25 = D.df25, DICT = D.dict;
+  var NS = 'http://www.w3.org/2000/svg';
+  var CAT = DICT.cat, RCA = DICT.rca, LINE = DICT.line, WHERE = DICT.where;
+  var INV = RCA.indexOf('Inversion');
+  var Y = D.meta.y, Y0 = Y - 1;
+  var ASOF = new Date(D.meta.asof + 'T00:00:00Z');
+  var ASOF_DAY = Math.round((ASOF - Date.UTC(Y, 0, 1)) / 864e5);
+  var CUT25 = Math.round((Date.UTC(Y0, ASOF.getUTCMonth(), ASOF.getUTCDate()) - Date.UTC(Y0, 0, 1)) / 864e5);
+  var nNc = NC.id.length, nDf = DF.n.length, n25 = N25.d.length, nF25 = F25.n.length;
+  // decisions in four groups
+  var DEC_GROUP = DICT.decision.map(function (d) {
+    if (/^Rework|^Repair/.test(d)) return 0;
+    if (/^Reject|^Scrap/.test(d)) return 1;
+    if (/^Exchange/.test(d)) return 2;
+    return 3;
+  });
+  // the river: five main categories and the rest together
+  var RIVER = [0, 1, 2, 3, 4, 5];
+  function riverGroup(k) { return k < 5 ? k : 5; }
+
+  var EN_NAME = {
+    'MEO Câblage': 'Wiring workmanship', 'Erreur Branchement': 'Connection error', 'Élément Manquant': 'Missing item',
+    'Élément Endommagé': 'Damaged item', 'Déverrouillage': 'Unlocked contact', 'Grounding/Bonding': 'Grounding/Bonding',
+    'Kitting Factory': 'Kitting Factory', 'FOD': 'FOD', 'Autre': 'Other', 'Inversion': 'Swapped wires'
+  };
+  var T = {
+    fr: {
+      title: 'Non-conformités FTO2', asof: 'Données au {d}', line: 'Ligne', all: 'Toutes',
+      eye: 'FTO2 · Labo visuel', h1: 'Cinq façons de voir les mêmes défauts',
+      lede: 'Dans l’esprit du schéma « cause → poste » : chaque fil, point ou trait est un vrai défaut ou une vraie NC de l’extraction du {d}, en série. Gardez ce qui vous parle, le reste part.',
+      months: ['janv.', 'févr.', 'mars', 'avr.', 'mai', 'juin', 'juil.', 'août', 'sept.', 'oct.', 'nov.', 'déc.'],
+      monthsLong: ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'],
+      keep: 'Garder', later: 'Plus tard', no: 'Non', saved: 'Choix enregistré avec la page.', local: 'Choix gardé dans ce navigateur.',
+      v1T: 'Le voyage d’un défaut', v1P: 'Ligne avion → cause → poste qui le trouve → décision. Chaque fil garde la même épaisseur d’un bout à l’autre. Survolez un bloc pour suivre ses fils ; cliquez pour le garder.',
+      v1Hl: 'En évidence', hlClient: 'Retours clients', hlCable: 'Défauts câble',
+      v1W: '<b>Où :</b> remplacerait le schéma du chapitre 02 ; en tête du Pareto, il dit d’un coup d’œil où part chaque catégorie et ce qu’on en fait.',
+      colLine: 'Ligne', colCat: 'Cause', colStage: 'Trouvé', colDec: 'Décision',
+      stage: { line: 'Sur la ligne', cables: 'Câbles', final: 'Contrôle final', test: 'Test', other: 'Autres', client: 'Chez le client' },
+      dec: ['Retouche', 'Rebut / rejet', 'Échange', 'Autres décisions'],
+      v2T: 'La pluie de l’année', v2P: 'Un point par défaut. Lancez l’année : chaque défaut tombe, à sa date, dans le poste qui l’a trouvé. Les colonnes se remplissent de janvier (en bas) à septembre (en haut).',
+      play: '▶ Lancer l’année', replay: '▶ Relancer', playing: 'L’année défile…',
+      v2W: '<b>Où :</b> ouverture d’une présentation, ou en-tête de la vue d’ensemble : le volume de l’année devient physique, et les points rouges sautent aux yeux.',
+      rCable: 'Défaut câble', rClient: 'Trouvé chez le client', rOther: 'Autre défaut', rHover: 'Survolez une cause en haut pour allumer ses points.',
+      v3T: 'Les lignes de vie des avions', v3P: 'Une ligne par MSN, un point par NC (taille : nombre de défauts). L’escalier suit l’ordre de production ; les points rouges sont les retours clients, souvent bien après les autres NC.',
+      v3W: '<b>Où :</b> onglet Où, partie Avions ; un clic sur une ligne ouvrirait le passeport de l’avion.',
+      lNc: 'NC trouvée à FTO2', lCli: 'Retour client', lLife: 'De la première à la dernière NC', aircraft: 'avions',
+      v4T: 'Les faces des connecteurs', v4P: 'Les broches inversées, dessinées sur le pourtour du connecteur dans l’ordre de numérotation (pas encore le plan d’insert réel). Vert : {y} ; gris pointillé : {y0} ; épaisseur : nombre d’avions.',
+      v4W: '<b>Où :</b> onglet Où, à la place des arcs ; avec les plans d’insert, chaque broche serait à sa vraie place sur la face.',
+      fPairs: '{n} paires', fPlanes: '{n} avions', f1: '1 avion', f2: '2 avions', f3: '3 avions ou plus',
+      v5T: 'Le fleuve des causes', v5P: 'Les défauts semaine par semaine, chaque courant une cause. Le contour pointillé est {y0} à la même semaine. Survolez pour lire une semaine ; cliquez un courant pour l’allumer.',
+      v5W: '<b>Où :</b> vue d’ensemble, à la place de la courbe cumulée, ou en tête du Pareto hebdomadaire.',
+      others: 'Autres causes', week: 'Semaine du {d}', total: 'Total', y0tot: '{y0}, même semaine', ghost: '{y0}, même semaine (contour)',
+      defects: 'défauts', ncs: 'NC', first: 'Première NC', last: 'Dernière NC', span: '{n} jours entre la première et la dernière', cli: 'retours clients',
+      foot: ['Source : extraction Skywise du {d} (05_outputs/fto2_nc.csv, fto2_defects.csv), périmètre FTO2, série ; retours clients : NC émises hors FTO2 sous responsabilité FTO2. {y0} : export Skywise de l’archive du 19 octobre, même périmètre et même date.',
+        'Causes : classement par cause racine. Broches : lues dans le texte des inversions (deux broches écrites). Les NC A400M n’ont pas de texte : elles ont une ligne de vie mais pas de défauts.']
+    },
+    en: {
+      title: 'FTO2 non-conformities', asof: 'Data as of {d}', line: 'Line', all: 'All',
+      eye: 'FTO2 · Visual lab', h1: 'Five ways to see the same defects',
+      lede: 'In the spirit of the cause → station flow: every thread, dot or line is a real defect or NC from the {d} extract, Série. Keep what speaks to you; drop the rest.',
+      months: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+      monthsLong: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+      keep: 'Keep', later: 'Later', no: 'No', saved: 'Choice saved with the page.', local: 'Choice kept in this browser.',
+      v1T: 'A defect’s journey', v1P: 'Aircraft line → cause → station that finds it → decision. Each thread keeps its thickness from end to end. Hover a block to follow its threads; click to keep it.',
+      v1Hl: 'Highlight', hlClient: 'Customer returns', hlCable: 'Cable defects',
+      v1W: '<b>Where:</b> would replace the chapter 02 flow; at the top of the Pareto it shows at a glance where each category goes and what is done with it.',
+      colLine: 'Line', colCat: 'Cause', colStage: 'Found', colDec: 'Decision',
+      stage: { line: 'On the line', cables: 'Cables', final: 'Final inspection', test: 'Test', other: 'Other', client: 'At the customer' },
+      dec: ['Rework', 'Reject / scrap', 'Exchange', 'Other decisions'],
+      v2T: 'The year’s rain', v2P: 'One dot per defect. Run the year: each defect falls, on its date, into the station that found it. Columns fill from January (bottom) to September (top).',
+      play: '▶ Run the year', replay: '▶ Run again', playing: 'The year is running…',
+      v2W: '<b>Where:</b> the opening of a presentation, or the top of the overview: the year’s volume becomes physical, and the red dots stand out.',
+      rCable: 'Cable defect', rClient: 'Found at the customer', rOther: 'Other defect', rHover: 'Hover a cause at the top to light its dots.',
+      v3T: 'Aircraft lifelines', v3P: 'One line per MSN, one dot per NC (size: number of defects). The staircase follows the production order; red dots are customer returns, often well after the other NCs.',
+      v3W: '<b>Where:</b> the Où tab, Aircraft part; clicking a line would open the aircraft passport.',
+      lNc: 'NC found at FTO2', lCli: 'Customer return', lLife: 'From the first to the last NC', aircraft: 'aircraft',
+      v4T: 'Connector faces', v4P: 'Swapped pins drawn around the connector in numbering order (not yet the real insert layout). Green: {y}; grey dashed: {y0}; thickness: number of aircraft.',
+      v4W: '<b>Where:</b> the Où tab, in place of the arcs; with the insert drawings each pin would sit at its real place on the face.',
+      fPairs: '{n} pairs', fPlanes: '{n} aircraft', f1: '1 aircraft', f2: '2 aircraft', f3: '3 aircraft or more',
+      v5T: 'The river of causes', v5P: 'Defects week by week, each stream one cause. The dashed outline is {y0} in the same week. Hover to read a week; click a stream to light it.',
+      v5W: '<b>Where:</b> the overview, in place of the cumulative curve, or at the top of the weekly Pareto.',
+      others: 'Other causes', week: 'Week of {d}', total: 'Total', y0tot: '{y0}, same week', ghost: '{y0}, same week (outline)',
+      defects: 'defects', ncs: 'NCs', first: 'First NC', last: 'Last NC', span: '{n} days from first to last', cli: 'customer returns',
+      foot: ['Source: Skywise extract of {d} (05_outputs/fto2_nc.csv, fto2_defects.csv), FTO2 scope, Série; customer returns: NCs raised outside FTO2 that FTO2 is liable for. {y0}: Skywise export from the 19 October archive, same scope and date.',
+        'Causes: root-cause classification. Pins: read from the text of swapped-wire defects (both pins written). A400M NCs have no text: they have a lifeline but no defects.']
+    }
+  };
+  var S = { lang: 'fr', line: -1, hl: 'client', jPin: null, river: -1 };
+  try { var sv = JSON.parse(localStorage.getItem('fto2-lab') || '{}'); if (sv.lang) S.lang = sv.lang; } catch (e) {}
+  function L() { return T[S.lang]; }
+  function fill(s, v) { return String(s).replace(/\{(\w+)\}/g, function (m, k) { return v && v[k] !== undefined ? v[k] : m; }); }
+  function t(k, v) { return fill(L()[k], Object.assign({ y: Y, y0: Y0 }, v || {})); }
+  function nm(fr) { return S.lang === 'en' ? (EN_NAME[fr] || fr) : fr; }
+  function num(v, d) { return new Intl.NumberFormat(S.lang === 'fr' ? 'fr-FR' : 'en-GB', { maximumFractionDigits: d || 0, minimumFractionDigits: d || 0 }).format(v); }
+  function pct(v) { var s = num(v * 100); return S.lang === 'fr' ? s + ' %' : s + '%'; }
+  function dayDate(year, d) { return new Date(Date.UTC(year, 0, 1) + d * 864e5); }
+  function dateTxt(d, noYear) { var s = d.getUTCDate() + (S.lang === 'fr' && d.getUTCDate() === 1 ? 'er' : '') + ' ' + L().monthsLong[d.getUTCMonth()]; return noYear ? s : s + ' ' + d.getUTCFullYear(); }
+  function $(id) { return document.getElementById(id); }
+  function el(tag, attrs, parent, text) {
+    var e = document.createElementNS(NS, tag), st = '';
+    if (attrs && tag === 'text') ['fill', 'font-size', 'font-weight', 'font-family'].forEach(function (k) { if (attrs[k] != null) st += k + ':' + attrs[k] + (k === 'font-size' && typeof attrs[k] === 'number' ? 'px' : '') + ';'; });
+    if (attrs) for (var k in attrs) if (attrs[k] != null && !(tag === 'text' && /^(fill|font-size|font-weight|font-family)$/.test(k))) e.setAttribute(k, attrs[k]);
+    if (st) e.setAttribute('style', st);
+    if (text !== undefined) e.textContent = text;
+    if (parent) parent.appendChild(e);
+    return e;
+  }
+  function svgIn(box, w, h) { box.textContent = ''; return el('svg', { width: w, height: h, viewBox: '0 0 ' + w + ' ' + h, role: 'img' }, box); }
+  function width(box) { return Math.max(260, Math.floor(box.getBoundingClientRect().width)); }
+  function css(name) { return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
+  function ellipsis(s, n) { return s.length > n ? s.slice(0, n - 1) + '…' : s; }
+
+  var tip = $('tip');
+  function showTip(ev, title, rows) {
+    tip.textContent = '';
+    if (title) { var b = document.createElement('b'); b.textContent = title; tip.appendChild(b); }
+    (rows || []).forEach(function (r) { var d = document.createElement('div'); d.className = 'r'; var a = document.createElement('span'); a.className = 'm'; a.textContent = r[1]; var v = document.createElement('span'); v.textContent = r[0]; d.appendChild(a); d.appendChild(v); tip.appendChild(d); });
+    tip.classList.add('on');
+    var x = ev.clientX + 14, y = ev.clientY + 14, r = tip.getBoundingClientRect();
+    if (x + r.width > innerWidth - 8) x = ev.clientX - r.width - 14;
+    if (y + r.height > innerHeight - 8) y = ev.clientY - r.height - 14;
+    tip.style.left = x + 'px'; tip.style.top = y + 'px';
+  }
+  function hideTip() { tip.classList.remove('on'); }
+
+  // ---------------------------------------------------------------- selection: FTO2 série and customer returns, one line or all
+  function select() {
+    var V = { nc: [], cli: [], df: [], dcli: [] }, ok = new Uint8Array(nNc), i;
+    for (i = 0; i < nNc; i++) if (NC.ph[i] === 0 && (S.line < 0 || NC.l[i] === S.line)) { ok[i] = 1; (NC.sc[i] ? V.cli : V.nc).push(i); }
+    for (i = 0; i < nDf; i++) { var n = DF.n[i]; if (ok[n]) (NC.sc[n] ? V.dcli : V.df).push(i); }
+    V.ok25 = new Uint8Array(n25);
+    for (i = 0; i < n25; i++) if (N25.ph[i] === 0 && (S.line < 0 || N25.l[i] === S.line) && N25.d[i] <= CUT25) V.ok25[i] = 1;
+    return V;
+  }
+
+  // ---------------------------------------------------------------- 1. the journey: line → cause → station → decision
+  function journey(V) {
+    var box = $('jChart'), w = Math.max(760, width(box)), h = 600;
+    var M = {};
+    function add(j, stage) { var n = DF.n[j], key = NC.l[n] + '|' + DF.k[j] + '|' + stage + '|' + DEC_GROUP[NC.dec[n]] + '|' + DF.cb[j]; M[key] = (M[key] || 0) + 1; }
+    V.df.forEach(function (j) { add(j, NC.w[DF.n[j]]); });
+    V.dcli.forEach(function (j) { add(j, 5); });
+    var strands = Object.keys(M).map(function (k) { var p = k.split('|').map(Number); return { c: [p[0], p[1], p[2], p[3]], cb: p[4], v: M[k] }; });
+    var svg = svgIn(box, w, h);
+    if (!strands.length) { el('text', { x: 0, y: 30, class: 'lab' }, svg, S.lang === 'fr' ? 'Aucun défaut lisible pour cette ligne.' : 'No readable defect for this line.'); $('jLegend').textContent = ''; window.__lab.journey = { total: 0 }; return; }
+    var total = strands.reduce(function (a, s) { return a + s.v; }, 0);
+    // nodes per column, in a fixed order; the customer sits below a gap
+    var cols = [[], [], [], []], val = [{}, {}, {}, {}];
+    strands.forEach(function (s) { s.c.forEach(function (v, c) { val[c][v] = (val[c][v] || 0) + s.v; }); });
+    for (var c = 0; c < 4; c++) cols[c] = Object.keys(val[c]).map(Number).sort(function (a, b) { return a - b; });
+    var top = 26, bottom = h - 14, gap = 10, cliGap = 30;
+    var gapsOf = function (c) { return gap * (cols[c].length - 1) + (c === 2 && cols[2].indexOf(5) > 0 ? cliGap - gap : 0); };
+    var k = Infinity; for (c = 0; c < 4; c++) k = Math.min(k, (bottom - top - gapsOf(c)) / total);
+    var xs = [118, 0, 0, w - 150]; xs[1] = xs[0] + (xs[3] - xs[0]) * 0.33; xs[2] = xs[0] + (xs[3] - xs[0]) * 0.66;
+    var nodeW = 11, pos = [{}, {}, {}, {}];
+    for (c = 0; c < 4; c++) {
+      var colH = total * k + gapsOf(c), y = top + (bottom - top - colH) / 2;
+      cols[c].forEach(function (v) { if (c === 2 && v === 5 && cols[2].length > 1) y += cliGap - gap; pos[c][v] = { y: y, h: val[c][v] * k, off: 0 }; y += val[c][v] * k + gap; });
+    }
+    // where each thread sits inside each block: sorted by its neighbours to keep crossings low
+    var orderKey = [function (s) { return [s.c[1], s.c[2], s.c[3]]; }, function (s) { return [s.c[0], s.c[2], s.c[3]]; }, function (s) { return [s.c[1], s.c[3], s.c[0]]; }, function (s) { return [s.c[2], s.c[1], s.c[0]]; }];
+    strands.forEach(function (s) { s.y = [0, 0, 0, 0]; });
+    for (c = 0; c < 4; c++) {
+      var sorted = strands.slice().sort(function (a, b) { var ka = orderKey[c](a), kb = orderKey[c](b); for (var q = 0; q < 3; q++) if (ka[q] !== kb[q]) return ka[q] - kb[q]; return a.cb - b.cb; });
+      sorted.forEach(function (s) { var p = pos[c][s.c[c]]; s.y[c] = p.y + p.off; p.off += s.v * k; });
+    }
+    function band(x1, a1, b1, x2, a2, b2) { var mx = (x1 + x2) / 2; return 'M' + x1 + ',' + a1 + 'C' + mx + ',' + a1 + ' ' + mx + ',' + a2 + ' ' + x2 + ',' + a2 + 'L' + x2 + ',' + b2 + 'C' + mx + ',' + b2 + ' ' + mx + ',' + b1 + ' ' + x1 + ',' + b1 + 'Z'; }
+    var gS = el('g', {}, svg);
+    strands.sort(function (a, b) { return (special(a) ? 1 : 0) - (special(b) ? 1 : 0); });   // highlighted threads on top
+    function special(s) { return S.hl === 'client' ? s.c[2] === 5 : s.cb === 1; }
+    function baseFill(s) { return special(s) ? (S.hl === 'client' ? 'var(--escape)' : 'var(--cable)') : 'var(--flow)'; }
+    strands.forEach(function (s) {
+      var g = el('g', { class: 'fade hit' }, gS), th = s.v * k;
+      for (var q = 0; q < 3; q++) el('path', { d: band(xs[q] + nodeW, s.y[q], s.y[q] + th, xs[q + 1], s.y[q + 1], s.y[q + 1] + th), fill: baseFill(s), 'fill-opacity': special(s) ? 0.85 : 1 }, g);
+      s.g = g;
+      g.addEventListener('pointermove', function (ev) { if (!S.jPin) emph(function (x) { return x === s; }); showTip(ev, num(s.v) + ' ' + L().defects, [[LINE[s.c[0]], L().colLine], [nm(CAT[s.c[1]]), L().colCat], [L().stage[WHERE[s.c[2]]], L().colStage], [L().dec[s.c[3]], L().colDec]].concat(s.cb ? [[S.lang === 'fr' ? 'oui' : 'yes', L().hlCable]] : [])); });
+      g.addEventListener('pointerleave', function () { hideTip(); if (!S.jPin) emph(null); });
+    });
+    function emph(test) {
+      strands.forEach(function (s) {
+        var on = !test || test(s);
+        s.g.setAttribute('opacity', on ? 1 : 0.1);
+        Array.prototype.forEach.call(s.g.children, function (p) { p.setAttribute('fill', test && on && !special(s) ? 'var(--accent)' : baseFill(s)); p.setAttribute('fill-opacity', test && on && !special(s) ? 0.55 : special(s) ? 0.85 : 1); });
+      });
+    }
+    var heads = [L().colLine, L().colCat, L().colStage, L().colDec];
+    var nameOf = [function (v) { return LINE[v]; }, function (v) { return nm(CAT[v]); }, function (v) { return L().stage[WHERE[v]]; }, function (v) { return L().dec[v]; }];
+    for (c = 0; c < 4; c++) {
+      el('text', { x: c === 0 ? xs[0] + nodeW : c === 3 ? xs[3] : xs[c] + nodeW / 2, y: 12, 'text-anchor': c === 0 ? 'end' : c === 3 ? 'start' : 'middle', class: 'tick', 'font-weight': 700 }, svg, heads[c].toUpperCase());
+      cols[c].forEach(function (v) {
+        var p = pos[c][v], cli = c === 2 && v === 5;
+        var g = el('g', { class: 'hit', tabindex: 0 }, svg);
+        el('rect', { x: xs[c], y: p.y, width: nodeW, height: Math.max(1.5, p.h), rx: 2, fill: cli ? 'var(--escape)' : 'var(--ink)' }, g);
+        var lx = c === 0 ? xs[c] - 8 : xs[c] + nodeW + 8, anchor = c === 0 ? 'end' : 'start', ty = p.y + p.h / 2 + 4;
+        var big = p.h > 26;
+        el('text', { x: lx, y: big ? ty - 6 : ty, 'text-anchor': anchor, class: 'lab-b halo', fill: cli ? 'var(--escape)' : null }, g, ellipsis(nameOf[c](v), 24) + (big ? '' : '  ' + num(val[c][v])));
+        if (big) el('text', { x: lx, y: ty + 9, 'text-anchor': anchor, class: 'tick halo' }, g, num(val[c][v]) + ' · ' + pct(val[c][v] / total));
+        el('rect', { x: Math.min(xs[c], lx - (anchor === 'end' ? 150 : 0)), y: p.y - 2, width: 160, height: Math.max(p.h, 14) + 4, fill: 'transparent' }, g);
+        (function (c, v) {
+          var test = function (s) { return s.c[c] === v; };
+          g.addEventListener('pointerenter', function () { if (!S.jPin) emph(test); });
+          g.addEventListener('pointermove', function (ev) {
+            var next = {}, nc = c < 3 ? c + 1 : c - 1;
+            strands.forEach(function (s) { if (test(s)) next[s.c[nc]] = (next[s.c[nc]] || 0) + s.v; });
+            showTip(ev, nameOf[c](v) + ' · ' + num(val[c][v]), Object.keys(next).sort(function (a, b) { return next[b] - next[a]; }).slice(0, 6).map(function (x) { return [num(next[x]) + ' · ' + pct(next[x] / val[c][v]), (c < 3 ? '→ ' : '← ') + nameOf[nc](+x)]; }));
+          });
+          g.addEventListener('pointerleave', function () { hideTip(); if (!S.jPin) emph(null); else emph(S.jPin.test); });
+          g.addEventListener('click', function (ev) { ev.stopPropagation(); S.jPin = S.jPin && S.jPin.c === c && S.jPin.v === v ? null : { c: c, v: v, test: test }; emph(S.jPin ? S.jPin.test : null); });
+        })(c, v);
+      });
+    }
+    svg.addEventListener('click', function () { S.jPin = null; emph(null); });
+    if (S.jPin) { var pin = S.jPin; S.jPin = { c: pin.c, v: pin.v, test: function (s) { return s.c[pin.c] === pin.v; } }; emph(S.jPin.test); }
+    $('jLegend').innerHTML = '<span><i class="sw" style="background:var(--flow)"></i>' + (S.lang === 'fr' ? 'Un fil = des défauts au même parcours' : 'A thread = defects with the same path') + '</span><span><i class="sw" style="background:' + (S.hl === 'client' ? 'var(--escape)' : 'var(--cable)') + '"></i>' + (S.hl === 'client' ? L().hlClient : L().hlCable) + '</span>';
+    window.__lab.journey = { total: total, strands: strands.length };
+  }
+
+  // ---------------------------------------------------------------- 2. the year's rain: one dot per defect, falling on its date
+  var RAIN = { t: 1, raf: 0, hoverCat: -1 };
+  function rain(V) {
+    var box = $('rChart'), w = Math.max(640, width(box));
+    var stages = [0, 1, 2, 3, 4, 5], dots = [];
+    V.df.forEach(function (j) { var n = DF.n[j]; dots.push({ j: j, s: NC.w[n], d: NC.d[n], k: DF.k[j], cb: DF.cb[j] }); });
+    V.dcli.forEach(function (j) { var n = DF.n[j]; dots.push({ j: j, s: 5, d: NC.d[n], k: DF.k[j], cb: DF.cb[j] }); });
+    var per = stages.map(function (s) { return dots.filter(function (x) { return x.s === s; }).sort(function (a, b) { return a.d - b.d || a.j - b.j; }); });
+    var used = stages.filter(function (s) { return per[s].length; });
+    var cell = w >= 1000 ? 6 : 5, cols = w >= 1000 ? 26 : 20, binW = cols * cell, gapX = (w - used.length * binW) / Math.max(1, used.length);
+    var maxRows = Math.max.apply(null, used.map(function (s) { return Math.ceil(per[s].length / cols); }).concat([1]));
+    var topBand = 78, H = topBand + maxRows * cell + 64, base = H - 46;
+    var catsUsed = CAT.map(function (c, k) { return k; }).filter(function (k) { return dots.some(function (x) { return x.k === k; }); });
+    var catX = {}; catsUsed.forEach(function (k, i) { catX[k] = (i + 0.5) * w / catsUsed.length; });
+    used.forEach(function (s, bi) {
+      var x0 = gapX / 2 + bi * (binW + gapX);
+      per[s].forEach(function (dt, q) { var row = Math.floor(q / cols), col = q % cols; dt.x = x0 + col * cell + cell / 2; dt.y = base - row * cell - cell / 2; dt.sx = catX[dt.k]; dt.sy = 44; dt.arr = Math.max(0, dt.d) / Math.max(1, ASOF_DAY) * 0.86; });
+      per[s].x0 = x0;
+    });
+    box.textContent = '';
+    var cv = document.createElement('canvas'), dpr = window.devicePixelRatio || 1;
+    cv.width = Math.round(w * dpr); cv.height = Math.round(H * dpr); cv.style.width = w + 'px'; cv.style.height = H + 'px';
+    cv.setAttribute('role', 'img'); cv.setAttribute('aria-label', L().v2T + ': ' + num(dots.length) + ' ' + L().defects);
+    box.appendChild(cv);
+    var ctx = cv.getContext('2d'); ctx.scale(dpr, dpr);
+    var C = { acc: css('--accent'), mid: css('--accent-mid'), cab: css('--cable'), esc: css('--escape'), ink: css('--ink'), ink2: css('--ink-2'), mut: css('--muted'), rule: css('--rule'), font: css('--font-ui') };
+    function draw(tt) {
+      ctx.clearRect(0, 0, w, H);
+      // causes along the top
+      ctx.textAlign = 'center'; ctx.textBaseline = 'alphabetic';
+      catsUsed.forEach(function (k) {
+        var on = RAIN.hoverCat < 0 || RAIN.hoverCat === k;
+        ctx.fillStyle = on ? C.ink : C.mut; ctx.font = (RAIN.hoverCat === k ? '700 ' : '600 ') + '12px ' + C.font;
+        ctx.fillText(ellipsis(nm(CAT[k]), w / catsUsed.length / 6.6 | 0), catX[k], 22);
+        ctx.fillStyle = C.rule; ctx.fillRect(catX[k] - 14, 30, 28, 2);
+      });
+      // bins
+      used.forEach(function (s) {
+        var x0 = per[s].x0, cli = s === 5;
+        ctx.fillStyle = C.rule; ctx.fillRect(x0 - 2, base + 1, binW + 4, 1.5);
+        var shown = per[s].filter(function (dt) { return tt >= dt.arr + 0.12; }).length;
+        ctx.textAlign = 'center'; ctx.fillStyle = cli ? C.esc : C.ink; ctx.font = '700 13px ' + C.font;
+        ctx.fillText(L().stage[WHERE[s]], x0 + binW / 2, base + 20);
+        ctx.fillStyle = C.ink2; ctx.font = '12px ' + C.font;
+        ctx.fillText(num(tt >= 1 ? per[s].length : shown), x0 + binW / 2, base + 36);
+      });
+      var r = cell * 0.4;
+      dots.forEach(function (dt) {
+        var p = tt >= 1 ? 1 : Math.max(0, Math.min(1, (tt - dt.arr) / 0.12));
+        if (p <= 0) return;
+        var e = p * p, x = dt.sx + (dt.x - dt.sx) * (p < 1 ? Math.min(1, p * 1.4) : 1), y = dt.sy + (dt.y - dt.sy) * e;
+        var col = dt.s === 5 ? C.esc : dt.cb ? C.cab : C.mid, a = 1;
+        if (RAIN.hoverCat >= 0) { if (dt.k === RAIN.hoverCat) col = dt.s === 5 ? C.esc : dt.cb ? C.cab : C.acc; else a = 0.16; }
+        ctx.globalAlpha = a; ctx.fillStyle = col;
+        ctx.beginPath(); ctx.arc(x, y, r, 0, 6.283); ctx.fill();
+      });
+      ctx.globalAlpha = 1;
+      if (tt < 1) { var dd = dayDate(Y, Math.min(ASOF_DAY, Math.round(tt / 0.86 * ASOF_DAY))); $('rClock').textContent = dateTxt(dd, true); }
+      else $('rClock').textContent = '';
+    }
+    RAIN.draw = draw;
+    draw(RAIN.t);
+    // pointer: a cause at the top lights its dots; a dot gives its NC
+    cv.onpointermove = function (ev) {
+      var rc = cv.getBoundingClientRect(), mx = ev.clientX - rc.left, my = ev.clientY - rc.top;
+      if (my < 40) {
+        var best = -1, bd = 1e9; catsUsed.forEach(function (k) { var d = Math.abs(catX[k] - mx); if (d < bd) { bd = d; best = k; } });
+        if (RAIN.hoverCat !== best) { RAIN.hoverCat = best; if (RAIN.t >= 1) draw(1); }
+        var nk = dots.filter(function (x) { return x.k === best; }).length;
+        showTip(ev, nm(CAT[best]), [[num(nk), L().defects]]); return;
+      }
+      if (RAIN.hoverCat >= 0 && my > 44) { RAIN.hoverCat = -1; if (RAIN.t >= 1) draw(1); }
+      var hit = null;
+      used.forEach(function (s) { var x0 = per[s].x0; if (mx >= x0 && mx < x0 + binW && my <= base) { var col = Math.floor((mx - x0) / cell), row = Math.floor((base - my) / cell), q = row * cols + col; if (q >= 0 && q < per[s].length) hit = per[s][q]; } });
+      if (hit && RAIN.t >= 1) { var n = DF.n[hit.j]; showTip(ev, 'NC ' + NC.id[n], [[dateTxt(dayDate(Y, NC.d[n])), S.lang === 'fr' ? 'date' : 'date'], [nm(CAT[hit.k]), L().colCat], [L().stage[WHERE[hit.s]], L().colStage]]); }
+      else hideTip();
+    };
+    cv.onpointerleave = function () { hideTip(); if (RAIN.hoverCat >= 0) { RAIN.hoverCat = -1; if (RAIN.t >= 1) draw(1); } };
+    $('rLegend').innerHTML = '<span><i class="sw dot" style="background:var(--accent-mid)"></i>' + L().rOther + '</span><span><i class="sw dot" style="background:var(--cable)"></i>' + L().rCable + '</span><span><i class="sw dot" style="background:var(--escape)"></i>' + L().rClient + '</span><span>' + L().rHover + '</span>';
+    window.__lab.rain = { dots: dots.length, bins: used.map(function (s) { return [WHERE[s], per[s].length]; }) };
+  }
+  function playRain() {
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) { RAIN.t = 1; RAIN.draw(1); return; }
+    cancelAnimationFrame(RAIN.raf);
+    var t0 = performance.now(), dur = 9000, b = $('rPlay');
+    b.disabled = true; b.textContent = L().playing;
+    function step(now) {
+      RAIN.t = Math.min(1, (now - t0) / dur);
+      RAIN.draw(RAIN.t);
+      if (RAIN.t < 1) RAIN.raf = requestAnimationFrame(step); else { b.disabled = false; b.textContent = L().replay; }
+    }
+    RAIN.raf = requestAnimationFrame(step);
+  }
+
+  // ---------------------------------------------------------------- 3. aircraft lifelines
+  function lifelines(V) {
+    var box = $('lChart'), w = Math.max(680, width(box));
+    var per = {};
+    function P(l, m) { var k = l + '|' + m; return per[k] = per[k] || { l: l, m: m, nc: [], cli: [] }; }
+    V.nc.forEach(function (j) { P(NC.l[j], NC.m[j]).nc.push(j); });
+    V.cli.forEach(function (j) { P(NC.l[j], NC.m[j]).cli.push(j); });
+    var planes = Object.keys(per).map(function (k) { return per[k]; });
+    planes.sort(function (a, b) { return a.l - b.l || a.m - b.m; });
+    var lines = []; planes.forEach(function (p) { if (lines.indexOf(p.l) < 0) lines.push(p.l); });
+    var rowH = planes.length > 90 ? 5 : planes.length > 40 ? 8 : 12, groupGap = 26;
+    var m = { l: 116, r: 18, t: 30, b: 28 };
+    var H = m.t + m.b + planes.length * rowH + lines.length * groupGap;
+    var svg = svgIn(box, w, H), x = function (d) { return m.l + d / ASOF_DAY * (w - m.l - m.r); };
+    for (var mo = 0; mo <= ASOF.getUTCMonth(); mo++) {
+      var md = Math.round((Date.UTC(Y, mo, 1) - Date.UTC(Y, 0, 1)) / 864e5);
+      el('line', { x1: x(md), x2: x(md), y1: m.t - 8, y2: H - m.b + 4, class: 'gridline' }, svg);
+      el('text', { x: x(md) + 4, y: m.t - 12, class: 'tick' }, svg, L().months[mo]);
+      el('text', { x: x(md) + 4, y: H - 8, class: 'tick' }, svg, L().months[mo]);
+    }
+    var y = m.t, last = null, gRows = el('g', {}, svg), rows = [];
+    planes.forEach(function (p) {
+      if (p.l !== last) { y += groupGap; var cnt = planes.filter(function (q) { return q.l === p.l; }).length; el('text', { x: 0, y: y - 8, class: 'lab-b' }, svg, LINE[p.l] + ' · ' + num(cnt) + ' ' + L().aircraft); last = p.l; }
+      var cy = y + rowH / 2, g = el('g', {}, gRows);
+      var band = el('rect', { x: m.l - 4, y: y, width: w - m.l - m.r + 8, height: rowH, fill: 'transparent' }, g);
+      var days = p.nc.map(function (j) { return NC.d[j]; });
+      if (days.length > 1) el('line', { x1: x(Math.min.apply(null, days)), x2: x(Math.max.apply(null, days)), y1: cy, y2: cy, stroke: 'var(--prior)', 'stroke-width': rowH > 6 ? 1.5 : 1 }, g);
+      p.nc.forEach(function (j) { var nd = Math.max(1, NC.nd[j]); el('circle', { cx: x(NC.d[j]), cy: cy, r: Math.min(rowH * 0.9, 1.3 + Math.sqrt(nd) * (rowH > 6 ? 1.1 : 0.75)), fill: 'var(--accent)', 'fill-opacity': 0.72 }, g); });
+      p.cli.forEach(function (j) { el('circle', { cx: x(NC.d[j]), cy: cy, r: Math.max(2.6, rowH * 0.55), fill: 'var(--escape)', stroke: 'var(--surface)', 'stroke-width': 1 }, g); });
+      if (rowH >= 8) el('text', { x: m.l - 8, y: cy + 4, 'text-anchor': 'end', class: 'tick' }, g, String(p.m));
+      g.setAttribute('class', 'hit');
+      g.addEventListener('pointermove', function (ev) {
+        band.setAttribute('fill', 'var(--accent-soft)');
+        var defs = p.nc.reduce(function (a, j) { return a + Math.max(0, NC.nd[j]); }, 0);
+        var rowsT = [[num(p.nc.length), L().ncs], [num(defs), L().defects]];
+        if (days.length) { var a = Math.min.apply(null, days), b = Math.max.apply(null, days); rowsT.push([dateTxt(dayDate(Y, a), true), L().first], [dateTxt(dayDate(Y, b), true), L().last]); }
+        if (p.cli.length) rowsT.push([num(p.cli.length), L().cli]);
+        showTip(ev, 'MSN ' + p.m + ' · ' + LINE[p.l], rowsT);
+      });
+      g.addEventListener('pointerleave', function () { band.setAttribute('fill', 'transparent'); hideTip(); });
+      rows.push(p);
+      y += rowH;
+    });
+    $('lLegend').innerHTML = '<span><i class="sw dot" style="background:var(--accent);opacity:.72"></i>' + L().lNc + '</span><span><i class="sw dot" style="background:var(--escape)"></i>' + L().lCli + '</span><span><i class="sw line" style="border-color:var(--prior)"></i>' + L().lLife + '</span>';
+    window.__lab.lifelines = { planes: planes.length, ncDots: V.nc.length, cliDots: V.cli.length };
+  }
+
+  // ---------------------------------------------------------------- 4. connector faces: swapped pins as chords
+  function pinPositions(pins) {
+    var pos = {}, numeric = pins.every(function (p) { return /^\d+$/.test(p); }), alpha = pins.every(function (p) { return /^([A-Z])\1*$/.test(p); });
+    pins.forEach(function (p, k) { pos[p] = numeric ? +p : alpha ? (p.length - 1) * 26 + p.charCodeAt(0) - 64 : k; });
+    return pos;
+  }
+  function pinKey(a, b) { var na = /^\d+$/.test(a), nb = /^\d+$/.test(b); if (na && nb) return +a - +b; if (na !== nb) return na ? -1 : 1; return a.length - b.length || (a < b ? -1 : a > b ? 1 : 0); }
+  function faces(V) {
+    var box = $('fChart'), w = width(box);
+    var pairs26 = {}, pairs25 = {}, perFin = {}, i;
+    V.df.forEach(function (j) { if (DF.r[j] !== INV || !DF.pa[j] || DF.f[j] < 0) return; var n = DF.n[j], key = DF.f[j] + '|' + DF.pa[j] + '|' + DF.pb[j]; (pairs26[key] = pairs26[key] || {})[NC.m[n]] = 1; (perFin[DF.f[j]] = perFin[DF.f[j]] || {})[NC.m[n]] = 1; });
+    for (i = 0; i < nF25; i++) { var n = F25.n[i]; if (!V.ok25[n] || F25.pr[i] !== INV || !F25.pa[i] || F25.f[i] < 0) continue; var key = F25.f[i] + '|' + F25.pa[i] + '|' + F25.pb[i]; (pairs25[key] = pairs25[key] || {})[N25.m[n]] = 1; }
+    var fins = Object.keys(perFin).map(function (f) { return { f: +f, k: Object.keys(perFin[f]).length }; }).sort(function (a, b) { return b.k - a.k; }).slice(0, 8);
+    box.textContent = '';
+    if (!fins.length) { var p0 = document.createElement('p'); p0.className = 'where'; p0.textContent = S.lang === 'fr' ? 'Aucune inversion avec ses deux broches écrites pour cette ligne.' : 'No swapped wires with both pins written for this line.'; box.appendChild(p0); window.__lab.faces = { n: 0 }; return; }
+    var colsN = w >= 1100 ? 4 : w >= 760 ? 3 : w >= 480 ? 2 : 1, cw = Math.floor((w - (colsN - 1) * 18) / colsN);
+    var grid = document.createElement('div'); grid.style.display = 'grid'; grid.style.gridTemplateColumns = 'repeat(' + colsN + ', minmax(0, 1fr))'; grid.style.gap = '18px'; box.appendChild(grid);
+    fins.forEach(function (fo) {
+      var cell = document.createElement('div'); grid.appendChild(cell);
+      var mine26 = Object.keys(pairs26).filter(function (k) { return +k.split('|')[0] === fo.f; }), mine25 = Object.keys(pairs25).filter(function (k) { return +k.split('|')[0] === fo.f; });
+      var set = {}; mine26.concat(mine25).forEach(function (k) { var p = k.split('|'); set[p[1]] = 1; set[p[2]] = 1; });
+      var pins = Object.keys(set).sort(pinKey), pos = pinPositions(pins);
+      var lo = Math.min.apply(null, pins.map(function (q) { return pos[q]; })), hi = Math.max.apply(null, pins.map(function (q) { return pos[q]; }));
+      var size = Math.min(cw, 260), R = size / 2 - 30, cx = cw / 2, cy = size / 2 + 4;
+      var svg = svgIn(cell, cw, size + 30);
+      var ang = function (p) { var f = hi === lo ? 0.5 : (pos[p] - lo) / (hi - lo); return (-90 + 18 + f * 324) * Math.PI / 180; };
+      var pt = function (p, r) { var a = ang(p); return [cx + Math.cos(a) * r, cy + Math.sin(a) * r]; };
+      el('circle', { cx: cx, cy: cy, r: R + 10, fill: 'var(--band)', stroke: 'var(--rule)', 'stroke-width': 1.5 }, svg);
+      el('circle', { cx: cx, cy: cy, r: R, fill: 'none', stroke: 'var(--rule)', 'stroke-width': 1 }, svg);
+      // the key notch of a circular connector, at the top
+      el('rect', { x: cx - 5, y: cy - R - 14, width: 10, height: 8, rx: 2, fill: 'var(--rule)' }, svg);
+      function chord(key, year) {
+        var p = key.split('|'), a = pt(p[1], R), b = pt(p[2], R), k = Object.keys((year === Y ? pairs26 : pairs25)[key]).length;
+        var path = el('path', { d: 'M' + a[0] + ',' + a[1] + ' Q' + cx + ',' + cy + ' ' + b[0] + ',' + b[1], fill: 'none', stroke: year === Y ? 'var(--accent)' : 'var(--prior)', 'stroke-width': year === Y ? (k >= 3 ? 4.5 : k === 2 ? 3 : 1.6) : 1.4, 'stroke-dasharray': year === Y ? null : '3 3', 'stroke-linecap': 'round', class: 'hit' }, svg);
+        var other = (year === Y ? pairs25 : pairs26)[key];
+        path.addEventListener('pointermove', function (ev) { showTip(ev, DICT.fin[fo.f] + ' · ' + p[1] + ' ↔ ' + p[2], [[num(k), String(year)], [num(other ? Object.keys(other).length : 0), String(year === Y ? Y0 : Y)]]); });
+        path.addEventListener('pointerleave', hideTip);
+      }
+      mine25.forEach(function (k) { chord(k, Y0); });
+      mine26.forEach(function (k) { chord(k, Y); });
+      var lastA = -1e9;
+      pins.forEach(function (p) {
+        var q = pt(p, R), lab = pt(p, R + 20);
+        el('circle', { cx: q[0], cy: q[1], r: 3, fill: 'var(--ink-2)' }, svg);
+        var a = ang(p) * R;
+        if (a - lastA >= 15) { el('text', { x: lab[0], y: lab[1] + 4, 'text-anchor': 'middle', class: 'tick', 'font-size': 10 }, svg, p); lastA = a; }
+      });
+      el('text', { x: cx, y: cy - 4, 'text-anchor': 'middle', class: 'lab-b halo', 'font-family': 'var(--font-display)', 'font-size': 16 }, svg, DICT.fin[fo.f]);
+      el('text', { x: cx, y: cy + 14, 'text-anchor': 'middle', class: 'tick halo' }, svg, fill(L().fPlanes, { n: num(fo.k) }));
+    });
+    $('fLegend').innerHTML = '<span><i class="sw line" style="border-color:var(--accent);border-top-width:1.6px"></i>' + L().f1 + '</span><span><i class="sw line" style="border-color:var(--accent);border-top-width:3px"></i>' + L().f2 + '</span><span><i class="sw line" style="border-color:var(--accent);border-top-width:4.5px"></i>' + L().f3 + '</span><span><i class="sw dash" style="border-color:var(--prior)"></i>' + Y0 + '</span>';
+    window.__lab.faces = { n: fins.length };
+  }
+
+  // ---------------------------------------------------------------- 5. the river of causes
+  function monotonePath(pts) {   // monotone cubic through points, no overshoot
+    var n = pts.length; if (n < 2) return '';
+    var dx = [], dy = [], m = [], tg = [];
+    for (var i = 0; i < n - 1; i++) { dx[i] = pts[i + 1][0] - pts[i][0]; dy[i] = pts[i + 1][1] - pts[i][1]; m[i] = dy[i] / dx[i]; }
+    tg[0] = m[0]; tg[n - 1] = m[n - 2];
+    for (i = 1; i < n - 1; i++) tg[i] = m[i - 1] * m[i] <= 0 ? 0 : (m[i - 1] + m[i]) / 2;
+    for (i = 0; i < n - 1; i++) { if (m[i] === 0) { tg[i] = tg[i + 1] = 0; continue; } var a = tg[i] / m[i], b = tg[i + 1] / m[i], s = a * a + b * b; if (s > 9) { var tt = 3 / Math.sqrt(s); tg[i] = tt * a * m[i]; tg[i + 1] = tt * b * m[i]; } }
+    var d = 'M' + pts[0][0].toFixed(1) + ',' + pts[0][1].toFixed(1);
+    for (i = 0; i < n - 1; i++) { var h = dx[i] / 3; d += 'C' + (pts[i][0] + h).toFixed(1) + ',' + (pts[i][1] + h * tg[i]).toFixed(1) + ' ' + (pts[i + 1][0] - h).toFixed(1) + ',' + (pts[i + 1][1] - h * tg[i + 1]).toFixed(1) + ' ' + pts[i + 1][0].toFixed(1) + ',' + pts[i + 1][1].toFixed(1); }
+    return d;
+  }
+  function river(V) {
+    var box = $('sChart'), w = Math.max(640, width(box)), H = 380, m = { l: 18, r: 18, t: 30, b: 34 };
+    var NW = Math.floor(ASOF_DAY / 7) + 1;
+    var val = RIVER.map(function () { return new Array(NW).fill(0); }), tot25 = new Array(NW).fill(0), i;
+    V.df.forEach(function (j) { var wk = Math.floor(NC.d[DF.n[j]] / 7); if (wk < NW) val[riverGroup(DF.k[j])][wk]++; });
+    for (i = 0; i < nF25; i++) { var n = F25.n[i]; if (!V.ok25[n]) continue; var wk = Math.floor(N25.d[n] / 7); if (wk < NW) tot25[wk]++; }
+    var tot = new Array(NW).fill(0); for (var wk2 = 0; wk2 < NW; wk2++) RIVER.forEach(function (g) { tot[wk2] += val[g][wk2]; });
+    var svg = svgIn(box, w, H);
+    var mx = Math.max.apply(null, tot.concat(tot25, [1])), mid = m.t + (H - m.t - m.b) / 2, half = (H - m.t - m.b) / 2;
+    var xs = function (k) { return m.l + k / Math.max(1, NW - 1) * (w - m.l - m.r); }, ys = function (v) { return v / mx * half * 2; };
+    // month marks
+    for (var mo = 0; mo <= ASOF.getUTCMonth(); mo++) { var md = Math.round((Date.UTC(Y, mo, 1) - Date.UTC(Y, 0, 1)) / 864e5) / 7; el('line', { x1: xs(md), x2: xs(md), y1: m.t - 6, y2: H - m.b + 4, class: 'gridline' }, svg); el('text', { x: xs(md) + 4, y: H - 10, class: 'tick' }, svg, L().months[mo]); }
+    // stacked from the centre line
+    var lowers = [], uppers = [], acc = tot.map(function (v) { return -v / 2; });
+    RIVER.forEach(function (g) { lowers[g] = acc.slice(); acc = acc.map(function (a, k) { return a + val[g][k]; }); uppers[g] = acc.slice(); });
+    var gS = el('g', {}, svg), paths = [];
+    RIVER.forEach(function (g) {
+      var up = uppers[g].map(function (v, k) { return [xs(k), mid - ys(v)]; }), lo = lowers[g].map(function (v, k) { return [xs(k), mid - ys(v)]; }).reverse();
+      var d = monotonePath(up) + 'L' + monotonePath(lo).slice(1) + 'Z';
+      var p = el('path', { d: d, fill: g % 2 ? 'var(--river-b)' : 'var(--river-a)', stroke: 'var(--surface)', 'stroke-width': 1, class: 'fade hit' }, gS);
+      p.addEventListener('click', function (ev) { ev.stopPropagation(); S.river = S.river === g ? -1 : g; paint(); });
+      paths[g] = p;
+    });
+    // 2025 in the same week, as an outline around the river
+    var g25u = tot25.map(function (v, k) { return [xs(k), mid - ys(v / 2)]; }), g25l = tot25.map(function (v, k) { return [xs(k), mid + ys(v / 2)]; });
+    el('path', { d: monotonePath(g25u), fill: 'none', stroke: 'var(--ink-2)', 'stroke-width': 1.3, 'stroke-dasharray': '4 3', opacity: 0.8 }, svg);
+    el('path', { d: monotonePath(g25l), fill: 'none', stroke: 'var(--ink-2)', 'stroke-width': 1.3, 'stroke-dasharray': '4 3', opacity: 0.8 }, svg);
+    // names inside the streams, where each is widest
+    var gLab = el('g', { 'pointer-events': 'none' }, svg), labs = [];
+    RIVER.forEach(function (g) {
+      var best = -1, bw = 0; for (var k = 2; k < NW - 2; k++) if (val[g][k] > bw) { bw = val[g][k]; best = k; }
+      var th = ys(bw); labs[g] = null;
+      if (best >= 0 && th >= 16) labs[g] = el('text', { x: xs(best), y: mid - ys((lowers[g][best] + uppers[g][best]) / 2) + 4, 'text-anchor': 'middle', class: 'lab halo', 'font-weight': 650 }, gLab, g < 5 ? nm(CAT[g]) : L().others);
+    });
+    function paint() {
+      RIVER.forEach(function (g) { var on = S.river < 0 || S.river === g; paths[g].setAttribute('fill', S.river === g ? 'var(--accent)' : g % 2 ? 'var(--river-b)' : 'var(--river-a)'); paths[g].setAttribute('opacity', on ? 1 : 0.45); if (labs[g]) labs[g].setAttribute('style', 'font-weight:650;fill:' + (S.river === g ? 'var(--on-accent)' : 'var(--ink)')); if (labs[g]) labs[g].setAttribute('class', S.river === g ? 'lab' : 'lab halo'); });
+    }
+    paint();
+    svg.addEventListener('click', function () { S.river = -1; paint(); });
+    // crosshair: the nearest week
+    var cross = el('line', { x1: 0, x2: 0, y1: m.t - 6, y2: H - m.b, stroke: 'var(--ink)', 'stroke-width': 1, opacity: 0 }, svg);
+    var hitR = el('rect', { x: m.l, y: m.t, width: w - m.l - m.r, height: H - m.t - m.b, fill: 'transparent', 'pointer-events': 'all' }, svg);
+    hitR.style.pointerEvents = 'none';
+    svg.addEventListener('pointermove', function (ev) {
+      var rc = svg.getBoundingClientRect(), mxp = ev.clientX - rc.left, k = Math.round((mxp - m.l) / (w - m.l - m.r) * (NW - 1));
+      if (k < 0 || k >= NW) { cross.setAttribute('opacity', 0); hideTip(); return; }
+      cross.setAttribute('x1', xs(k)); cross.setAttribute('x2', xs(k)); cross.setAttribute('opacity', 0.5);
+      var rows = RIVER.map(function (g) { return [num(val[g][k]), g < 5 ? nm(CAT[g]) : L().others]; }).reverse();
+      rows.push([num(tot[k]), L().total]); rows.push([num(tot25[k]), t('y0tot')]);
+      showTip(ev, fill(L().week, { d: dateTxt(dayDate(Y, k * 7), true) }), rows);
+    });
+    svg.addEventListener('pointerleave', function () { cross.setAttribute('opacity', 0); hideTip(); });
+    $('sLegend').innerHTML = '<span><i class="sw dash" style="border-color:var(--ink-2)"></i>' + t('ghost') + '</span><span>' + (S.lang === 'fr' ? 'Largeur du courant : défauts de la semaine' : 'Stream width: defects in the week') + '</span>';
+    window.__lab.river = { weeks: NW, total: tot.reduce(function (a, b) { return a + b; }, 0) };
+  }
+
+  // ---------------------------------------------------------------- choices, saved with the page when it can
+  var CH = { state: {}, db: null };
+  function drawChoices() {
+    Array.prototype.forEach.call(document.querySelectorAll('.choice'), function (box) {
+      var id = box.getAttribute('data-id'); box.textContent = '';
+      ['keep', 'later', 'no'].forEach(function (v) {
+        var b = document.createElement('button'); b.type = 'button'; b.setAttribute('data-v', v); b.textContent = L()[v];
+        b.setAttribute('aria-pressed', String((CH.state[id] || {}).choice === v));
+        b.addEventListener('click', function () { var cur = (CH.state[id] || {}).choice; saveChoice(id, cur === v ? '' : v); });
+        box.appendChild(b);
+      });
+    });
+  }
+  function saveChoice(id, v) {
+    var doc = { choice: v, at: new Date().toISOString() }; CH.state[id] = doc; drawChoices();
+    if (CH.db) CH.db.collection('lab').doc(id).set(doc).catch(function () {});
+    else { try { localStorage.setItem('fto2-lab-choices', JSON.stringify(CH.state)); } catch (e) {} }
+  }
+  try { CH.state = JSON.parse(localStorage.getItem('fto2-lab-choices') || '{}') || {}; } catch (e) {}
+  if (window.claude && typeof window.claude.use === 'function') {
+    window.claude.use('db').then(function (db) {
+      if (!db) return;
+      CH.db = db;
+      db.collection('lab').onSnapshot(function (snap) { var next = {}; snap.docs.forEach(function (d) { if (d.exists) next[d.id] = d.data(); }); CH.state = next; drawChoices(); }, function () { CH.db = null; });
+    }, function () {});
+  }
+
+  // ---------------------------------------------------------------- frame
+  function seg(id, items, cur, onPick) {
+    var box = $(id); box.textContent = '';
+    items.forEach(function (it) { var b = document.createElement('button'); b.type = 'button'; b.textContent = it[1]; b.setAttribute('aria-pressed', String(it[0] === cur)); b.addEventListener('click', function () { onPick(it[0]); }); box.appendChild(b); });
+  }
+  function texts() {
+    document.documentElement.lang = S.lang;
+    $('tTitle').textContent = L().title; $('tAsof').textContent = fill(L().asof, { d: dateTxt(ASOF) });
+    $('lLine').textContent = L().line;
+    $('hEye').textContent = L().eye; $('hTitle').textContent = L().h1; $('hLede').textContent = fill(L().lede, { d: dateTxt(ASOF) });
+    ['v1', 'v2', 'v3', 'v4', 'v5'].forEach(function (v) { $(v + 'T').textContent = t(v + 'T'); $(v + 'P').textContent = t(v + 'P'); $(v + 'W').innerHTML = L()[v + 'W']; });
+    $('v1HlL').textContent = L().v1Hl;
+    if (!$('rPlay').disabled) $('rPlay').textContent = RAIN.t < 1 ? L().playing : L().play;
+    Array.prototype.forEach.call($('fLang').children, function (b) { b.setAttribute('aria-pressed', String(b.getAttribute('data-v') === S.lang)); });
+    seg('fLine', [[-1, L().all], [0, 'A350'], [1, 'A330'], [2, 'A320'], [3, 'A400M']], S.line, function (v) { S.line = v; S.jPin = null; render(); });
+    seg('v1Hl', [['client', L().hlClient], ['cable', L().hlCable]], S.hl, function (v) { S.hl = v; render(); });
+    var ft = $('foot'); ft.textContent = '';
+    L().foot.forEach(function (s) { var p = document.createElement('p'); p.textContent = fill(s, { d: dateTxt(ASOF), y0: Y0 }); ft.appendChild(p); });
+    drawChoices();
+  }
+  window.__lab = {};
+  function render() {
+    hideTip(); texts();
+    var V = select();
+    journey(V); rain(V); lifelines(V); faces(V); river(V);
+  }
+  Array.prototype.forEach.call($('fLang').children, function (b) { b.addEventListener('click', function () { S.lang = b.getAttribute('data-v'); try { localStorage.setItem('fto2-lab', JSON.stringify({ lang: S.lang })); } catch (e) {} render(); }); });
+  $('rPlay').addEventListener('click', playRain);
+  var rz = null; window.addEventListener('resize', function () { clearTimeout(rz); rz = setTimeout(render, 150); });
+  window.addEventListener('scroll', hideTip, { passive: true });
+  try { matchMedia('(prefers-color-scheme: dark)').addEventListener('change', render); } catch (e) {}
+  render();
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(render);
+})();
+</script>
