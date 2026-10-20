@@ -312,9 +312,13 @@ NB_HEAD = """# FTO2 NC pipeline and dashboard tables, in one run (Skywise Code W
 #   while the current Slate app is in use (KEEP_OLD_OUTPUTS = True): fto2_dashboard_data, fto2_dashboard_data_missing_ids,
 #          fto2_parsed_defects, fto2_parsed_defects_missing_ids, written as before
 # The data/ folder (station mapping, GPS register, Test list) stays where it is.
+#
+# Run it either way, from the workspace folder: as a script (python fto2_pipeline_notebook.py, prints each step as it goes),
+# or as the notebook fto2_pipeline_notebook.ipynb (same code, one cell per part).
 
 # %%
 import sys
+import time
 sys.path.insert(0, "notebook_kit")           # the dashboard's Python first: parser v4.8, CNQ model, data steps
 import re
 import warnings
@@ -337,6 +341,12 @@ MES_DISRUPTIONS = "mes_disruptions"
 SINCE = "2025-12-01 00:00:00"                # rework operations and aléas read from this date
 # True while the current Slate app reads the former outputs; False once the new dashboard has replaced it.
 KEEP_OLD_OUTPUTS = True
+
+T0 = time.time()
+def step(msg):   # a progress line with the time since the start, printed at once
+    print(f"[{time.time() - T0:6.1f} s] {msg}", flush=True)
+
+step("Start: FTO2 pipeline and dashboard tables")
 """
 
 NB_LISTS = """# %%
@@ -357,19 +367,24 @@ def extract_nc_ids(file_name, id_column, date_column, skiprows=0):
         print(f"❌ Error processing {file_name}: {e}")
         return set()
 
+step("Reading the GPS register and the Test list...")
 list_ids = extract_nc_ids(GPS_LIST, 'N°  NC / AM / AF', ' Date SAP', skiprows=3) | extract_nc_ids(TEST_LIST, 'N° NC', 'Dates', skiprows=2)
+step(f"   {len(list_ids)} NC numbers on the lists from {LIST_FROM_YEAR}")
 """
 
 NB_RUN = """# %%
 # =========================================================
 # C. BOTH SELECTIONS IN ONE RUN; EACH NC KEEPS ITS ORIGIN
 # =========================================================
+step("Standard selection: fetching non_conformity (FTO2 and FTO2-liable)...")
 standard_df = add_external(select_ncs("STANDARD"))
+step(f"   standard selection: {len(standard_df)} NCs")
 in_standard = set(standard_df['notification_number'].astype(str).str.lstrip('0'))
 missing_ids = sorted(i.lstrip('0') for i in list_ids if i.lstrip('0') not in in_standard)   # on the lists, not caught by the selection
 print(f"GPS / Test lists: {len(list_ids)} NCs from {LIST_FROM_YEAR}; {len(missing_ids)} not in the standard selection, fetched by number")
 runs = [("fto2_dashboard_data", standard_df)]
 if missing_ids:
+    step(f"Missing IDs: fetching {len(missing_ids)} NCs by number...")
     missing_df = add_external(select_ncs("MISSING_IDS"))
     found = set(missing_df['notification_number'].astype(str).str.lstrip('0'))
     print(f"   found in non_conformity: {len(found)}; not in Skywise at all: {len(set(missing_ids) - found)}")
@@ -379,6 +394,7 @@ frames = []
 for name, final_df in runs:
     final_df['Ext_Nb_Defauts'] = pd.to_numeric(final_df['Ext_Nb_Defauts'], errors='coerce')
     if KEEP_OLD_OUTPUTS:   # the former outputs, as before, for the current Slate app
+        step(f"Former outputs: parsing and writing {name}...")
         enriched_nc_df, defects_df = explode_dataframe(df=final_df, text_col="description_long_text", id_col="notification_number", manual_count_col="Ext_Nb_Defauts")
         for col in ['code', 'fin', 'text', 'source_format', 'mode_erreur', 'type_reporting', 'loc', 'severite', 'sub_code', 'confidence', 'resolved_by', 'sap_type', 'severite_off']:
             if col in defects_df.columns:
@@ -394,22 +410,30 @@ for name, final_df in runs:
 # =========================================================
 # D. THE DASHBOARD'S THREE TABLES
 # =========================================================
+step("Reading fto2_ai_labels...")
 labels = Dataset.get("fto2_ai_labels").read_table(format="pandas")
+step(f"   {len(labels)} stored labels")
 ops = dis = None
 if WO_OPERATIONS:
+    step(f"Reading {WO_OPERATIONS} (S03 operations at FTO2)...")
     ops = (Dataset.get(WO_OPERATIONS)
            .where((Column.get("plant") == "FTO2") & (Column.get("order_type") == "S03"))
            .select("order_number", "order_type", "operation_number", "operation_short_text", "plant", "labor_standard_value",
                    "unit_of_measure_for_the_standard_value_labor", "setup_standard_value", "unit_of_measure_for_the_standard_value_setup")
            .read_table(format="pandas"))
+    step(f"   {len(ops)} operations")
 if MES_DISRUPTIONS:
+    step(f"Reading {MES_DISRUPTIONS} (aléas at FTO2 since {SINCE[:10]})...")
     dis = (Dataset.get(MES_DISRUPTIONS)
            .where((Column.get("plant") == "FTO2") & (Column.get("open_date_time") >= SINCE))
            .select("disruption_id", "plant", "physical_station", "work_order", "wo_designation", "ds_material", "type_desc", "open_date_time",
                    "open_date_time_tz", "status", "time_lost", "program", "comment")
            .read_table(format="pandas"))
-nc_t, def_t, dis_t, info, to_label = core.build(frames, labels, ref_dir="notebook_kit/ref", ops=ops, dis=dis)
+    step(f"   {len(dis)} aléas")
+step("Dashboard tables: parser, root-cause labels, rework orders, aléas, cost model...")
+nc_t, def_t, dis_t, info, to_label = core.build(frames, labels, ref_dir="notebook_kit/ref", ops=ops, dis=dis, say=step)
 
+step("Writing fto2_dash_nc, fto2_dash_defects, fto2_dash_disruptions...")
 Dataset.get("fto2_dash_nc").write_table(nc_t)
 Dataset.get("fto2_dash_defects").write_table(def_t)
 Dataset.get("fto2_dash_disruptions").write_table(dis_t)
@@ -420,6 +444,7 @@ print("rework orders:", info["rework_orders"], "| aléas:", info.get("aleas", "n
 # lines for the next AI pass (once IT has approved the tool): a CSV to download from the workspace. Each line comes with its
 # full text (snippet) and the NC's long text; the labels go back into fto2_ai_labels with the same notification_number, seq, snippet.
 to_label.to_csv("fto2_lines_to_label.csv", index=False)
+step(f"Done. {len(to_label)} defect lines to label -> fto2_lines_to_label.csv")
 """
 
 

@@ -222,18 +222,22 @@ def official_subcode(d, ref_dir):
 
 
 # ============================================================ 3. parser, labels, CNQ
-def prepare(x, lab, ref_dir, ops=None, dis=None):
+def prepare(x, lab, ref_dir, ops=None, dis=None, say=None):
     """Steps 1-3 of the build: parser v4.8, the stored root-cause labels, the CNQ model for both classifications, the report
     scope. ops: the rework orders' operations (SAP order type S03), or None; an NC whose rework orders are closed and planned
     gets their planned time instead of the model's setup and hands-on. dis: the MES disruptions, or None; an NC that a quality
     aléa led to gets that aléa's declared time for the alert step. Returns a dict: d (one row per defect), nc (one row per NC),
-    lt (long texts), nc_in (the model's NC input), dis (the quality aléas with no NC), codes (sub-code descriptions) and report."""
+    lt (long texts), nc_in (the model's NC input), dis (the quality aléas with no NC), codes (sub-code descriptions) and report.
+    say: optional progress printer (the Skywise notebook passes its step())."""
+    say = say or (lambda msg: None)
     report = {}
+    say("   parser v4.8 on %d NCs..." % len(x))
     defects = L.build_defects(x)
     nc = L.build_nc(x, defects)
     defects["notification_number"] = defects["notification_number"].astype(str)
     report["parser"] = {"defect_lines": int(len(defects)), "ncs": int(defects.notification_number.nunique())}
 
+    say("   %d defect lines" % len(defects))
     # NC fields from the export that the parser datasets do not carry
     keep = {"decision_status": "decision_status", "decision_status_description_en": "decision_label", "liability": "liability",
             "liability_description": "liability_description", "responsible_defect_level1": "responsible_level1",
@@ -252,6 +256,7 @@ def prepare(x, lab, ref_dir, ops=None, dis=None):
     ex["type_nc"] = ex["gps_type_nc"].where(ex["gps_type_nc"].notna(), ex["type_nc_auto"])
     nc = nc.merge(ex, on="notification_number", how="left")
     lt = dict(zip(x.notification_number, x.description_long_text.map(clean_long_text)))
+    say("   rework orders...")
     # rework orders: the links, and with the operations their state and planned minutes (cnq/cnq_orders.py)
     ot = nc_order_times(nc, ops)
     nc = nc.merge(ot, on="notification_number", how="left")
@@ -260,6 +265,7 @@ def prepare(x, lab, ref_dir, ops=None, dis=None):
     report["rework_orders"] = {"ncs_with_link": int((nc.rework_orders != "").sum()),
                                "operations": int(len(ops)) if ops is not None else 0,
                                "state": nc.loc[nc.rework_orders != "", "order_state"].value_counts().to_dict()}
+    say("   aléas...")
     # MES aléas: the declared time of the quality aléas that led to each NC, and those that led to none (cnq/cnq_disruptions.py)
     block = None
     if dis is not None:
@@ -271,6 +277,7 @@ def prepare(x, lab, ref_dir, ops=None, dis=None):
         nc["aleas"], nc["alea_minutes"] = None, np.nan
     nc["aleas"] = nc["aleas"].fillna("")
 
+    say("   root-cause labels...")
     # long-text labels; a line whose text changed or that is new is marked "to label" and keeps the parser label
     lab = lab.copy()
     lab["notification_number"] = lab["notification_number"].astype(str).str.strip().str.replace(r"\.0$", "", regex=True)
@@ -293,6 +300,7 @@ def prepare(x, lab, ref_dir, ops=None, dis=None):
     d = d.drop(columns=["snippet"])
     report["labels"] = d["llm_status"].value_counts().to_dict()
 
+    say("   cost model (both classifications)...")
     # CNQ, both classifications
     nc_in = nc[["notification_number", "statut", "decision_status", "liability", "date_creation", "type_nc", "produit",
                 "responsabilite", "perimetre", "programme", "plant", "linked_document", "work_order",
@@ -439,11 +447,14 @@ def dis_table(block):
                          "status": b.get("status", pd.Series("", index=b.index)).map(S_), "comment": b.get("comment", pd.Series("", index=b.index)).map(one)})
 
 
-def build(frames, labels, ref_dir, ops=None, dis=None):
+def build(frames, labels, ref_dir, ops=None, dis=None, say=None):
     """Everything in one call, as the Skywise notebook uses it: (nc_t, def_t, dis_t, info, to_label). ops: rework-order operations or
-    None; dis: MES disruptions or None."""
+    None; dis: MES disruptions or None; say: optional progress printer."""
+    say = say or (lambda msg: None)
     x, info = merge_exports(frames)
-    p = prepare(x, labels, ref_dir, ops, dis)
+    say("   %d NCs after merging the selections" % len(x))
+    p = prepare(x, labels, ref_dir, ops, dis, say)
+    say("   building the tables...")
     nc_t, def_t = tables(p["d"], p["nc"], p["lt"], info["created_to"])
     aec = p["nc"][p["nc"].cnq_on_aec == 1]
     info.update(p["report"])
