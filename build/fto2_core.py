@@ -555,6 +555,22 @@ def station_pairs(frames):
     return dict(s.drop_duplicates("station").values)
 
 
+def year_causes(p, year):
+    """The year's defect lines per month, scope, phase, line, product, category and root cause, from year_baseline's third output
+    (the parser's labels: the 2025 extract has no stored labels): (columns, rows) with rows
+    [month, scope, phase, line, product, category, root cause, defect lines, major defect lines]."""
+    nc, d = p["nc"], p["d"]
+    nc = nc[nc.date_creation.astype(str).str.startswith(str(year))]
+    cols = ["notification_number"] + [c for c in ("date_creation", "scope", "phase", "ligne", "produit") if c not in d.columns]
+    m = d.drop(columns=[c for c in ("date_creation",) if c in d.columns]).merge(nc[cols + (["date_creation"] if "date_creation" not in cols else [])], on="notification_number")
+    m["month"] = m.date_creation.astype(str).str[:7]
+    m["prod"] = m.produit.fillna("").astype(str).replace("", "Other")
+    m["major"] = (~m.llm_mineur.astype(bool)).astype(int)
+    g = m.groupby(["month", "scope", "phase", "ligne", "prod", "llm_categorie", "llm_rca_nom"], dropna=False).agg(n=("seq", "size"), dm=("major", "sum")).reset_index()
+    rows = [[r.month, r.scope, S_(r.phase), S_(r.ligne), r.prod, S_(r.llm_categorie), S_(r.llm_rca_nom), int(r.n), int(r.dm)] for r in g.itertuples()]
+    return ["month", "scope", "phase", "line", "product", "cat", "rca", "def", "defMajor"], rows
+
+
 def year_baseline(raw, station_desc, ref_dir, year):
     """One year of NCs through the pipeline's rules, the parser and the CNQ model (no stored labels: parser classes), summed per
     month, report scope, phase, line and product: [month, scope, phase, line, product, NCs, defect lines, major defect lines,

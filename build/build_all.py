@@ -96,9 +96,10 @@ def year_2025(x):
     if not os.path.exists(path):
         return None
     raw = pd.read_csv(path, dtype=str, keep_default_na=False, na_values=[""])
-    rows, info, _ = core.year_baseline(raw, core.station_pairs([x]), os.path.join(ROOT, "04_reference"), 2025)
+    rows, info, p = core.year_baseline(raw, core.station_pairs([x]), os.path.join(ROOT, "04_reference"), 2025)
     out = {"cols": ["month", "scope", "phase", "line", "product", "nc", "def", "defMajor", "cost", "cost2", "cost1"], "rows": rows,
            "from": info["created_from"], "to": info["created_to"], "prod": None, "msn": None}
+    out["rcaCols"], out["rca"] = core.year_causes(p, 2025)   # 2025 defects by cause (parser labels), for the 2025 / 2026 cause charts
     lv = os.path.join(ROOT, "06_input_data", "Livraisons_MSN_2025.csv")
     if os.path.exists(lv):
         t = pd.read_csv(lv, encoding="utf-8")

@@ -45,6 +45,7 @@
     <button type="button" role="tab" id="tab-client" aria-controls="p-client" data-tab="client" data-t="tabClient"></button>
     <span class="gap" aria-hidden="true"></span>
     <button type="button" role="tab" id="tab-rca" aria-controls="p-rca" data-tab="rca" data-t="tabRca"></button>
+    <button type="button" role="tab" id="tab-pplan" aria-controls="p-pplan" data-tab="pplan" data-t="tabPplan"></button>
     <span class="gap" aria-hidden="true" data-gal="1"></span>
     <button type="button" role="tab" id="tab-gal" aria-controls="p-gal" data-tab="gal" data-t="tabGal"></button>
     <button type="button" role="tab" id="tab-prod" aria-controls="p-prod" data-tab="prod" data-t="tabProd"></button>
@@ -91,6 +92,7 @@
       <p class="sub" data-t="ncShareNote"></p>
       <div class="chips" id="pc"></div>
       <div class="grid" id="pg"></div>
+      <div class="grid" id="pgl"></div>
       <details class="detail" id="pd"><summary><span data-t="tblDefects"></span><span class="count" id="pn"></span></summary>
         <div class="inner">
           <input type="search" id="pq" autocomplete="off">
@@ -106,6 +108,7 @@
       <p class="sub" data-t="costSub"></p>
       <div class="chips" id="kc"></div>
       <div class="grid" id="kg"></div>
+      <div class="grid" id="kgl"></div>
       <details class="detail"><summary><span data-t="tblCost"></span><span class="count" id="kn"></span></summary>
         <div class="inner">
           <input type="search" id="kq" autocomplete="off">
@@ -269,6 +272,18 @@
     </div>
     <div class="table-wrap"><table class="rcatab"><thead><tr id="rth"></tr></thead><tbody id="rtb"></tbody></table></div>
     <div id="rcaCards" class="panel"></div>
+  </div>
+
+  <!-- Production: the volumes behind the rates and the targets (tables first), then how they are used -->
+  <div class="panel" role="tabpanel" id="p-pplan" aria-labelledby="tab-pplan" hidden>
+    <div class="lead"><h2 data-t="ppTitle"></h2><p class="sub" data-t="ppSub"></p></div>
+    <div class="figs" id="ppFigs"></div>
+    <div class="pp-grid">
+      <div class="card pp-card"><h3 data-t="ppLines"></h3><p class="sub" data-t="ppLinesS"></p><div class="table-wrap" id="ppLinesT"></div></div>
+      <div class="card pp-card"><h3 data-t="ppMonth"></h3><p class="sub" data-t="ppMonthS"></p><div id="ppMonthC"></div><div class="vlegend" id="ppMonthL"></div></div>
+      <div class="card pp-card pp-wide"><h3 data-t="ppProds"></h3><p class="sub" data-t="ppProdsS"></p><div class="table-wrap" id="ppProdsT"></div><p class="sub" id="ppOut"></p></div>
+      <div class="card pp-card pp-wide pp-how"><h3 data-t="ppHowT"></h3><div id="ppHow"></div></div>
+    </div>
   </div>
 
   <!-- 6. Gallery: chart ideas on fictitious data (local page only) -->
