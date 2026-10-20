@@ -6,8 +6,9 @@ so it does not touch the dashboard work on `claude/funny-johnson-q41xki`. Nothin
 
 | File | What it is |
 | --- | --- |
-| `FTO2_Vision.html` | The prototype page (one file, opens offline; plain JavaScript and SVG, no library, so it can go into a Slate code box like the current dashboard) |
-| `VISION.md` | The write-up: what the data says that the dashboard does not show yet, what to change visually, the roadmap and the data to ask for |
+| `FTO2_Vision.html` | The prototype page (published at https://claude.ai/artifact/KmELL2B43ksMwXPcEGdFov; one file, opens offline; plain JavaScript and SVG, no library, so it can go into a Slate code box like the current dashboard) |
+| `FTO2_Vision_Notes.html`, `img/` | The notes page (published at https://claude.ai/artifact/W4Y6wLvN772mzHnxwYNvKu): findings, what to keep and change with crops of the 19 Oct dashboard, connections diagram, roadmap with a Now / Later / No choice per line saved in the page's store (collection `choices`) |
+| `VISION.md` | The same in short, for the next session: findings, changes, roadmap ids `r01`–`r13`, where the choices are stored |
 | `build_vision.py` | Packs the dashboard outputs and the 2025 NCs into the page; writes `expected.json` |
 | `template.html` | The page: CSS, HTML and the script that computes every figure from the rows |
 | `check_vision.js` | Opens the page headless, sets four filter settings and compares the page's figures with `expected.json`; also checks presentation mode, phone width and script errors |
