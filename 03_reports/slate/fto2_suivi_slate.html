@@ -30,7 +30,8 @@
         <span class="fb-pick" id="gPick" hidden><span id="gPickTxt"></span><button type="button" id="gPickX" aria-label="✕">✕</button></span>
         <button type="button" class="fb-reset" id="gReset" data-t="fReset" hidden></button>
       </div>
-      <p class="fb-sum" id="fbSum" aria-live="polite"></p>
+      <div class="fb-sumrow"><p class="fb-sum" id="fbSum" aria-live="polite"></p><button type="button" class="fb-info" id="gInfoBtn" aria-expanded="false" aria-controls="gInfo"><span aria-hidden="true">ⓘ</span> <span data-t="infoBtn"></span></button></div>
+      <div class="fb-funnel" id="gInfo" hidden></div>
     </section>
   </header>
 
@@ -79,12 +80,13 @@
     <div class="controls">
       <div class="ctl"><span class="label" id="pmLab" data-t="measureLabel"></span>
         <div class="seg" role="group" aria-labelledby="pmLab" id="pMode"></div></div>
+      <div class="ctl"><span class="label" id="pcLab" data-t="cabLabel"></span>
+        <div class="seg" role="group" aria-labelledby="pcLab" id="pCab"></div></div>
     </div>
     <section class="psec" id="pVol">
       <div class="figs">
         <div class="fig"><b id="pf1"></b><span data-t="figDefects"></span></div>
         <div class="fig"><b id="pf2" class="word"></b><span data-t="figTopCat"></span><small id="pf2s"></small></div>
-        <div class="fig"><b id="pf3"></b><span data-t="figCableShare"></span><small id="pf3s"></small></div>
       </div>
       <p class="sub" data-t="ncShareNote"></p>
       <div class="chips" id="pc"></div>
@@ -100,7 +102,6 @@
       <div class="figs">
         <div class="fig"><b id="kf1"></b><span data-t="kTotal"></span></div>
         <div class="fig"><b id="kf2" class="word"></b><span data-t="kTopCat"></span><small id="kf2s"></small></div>
-        <div class="fig"><b id="kf3"></b><span data-t="kCableShare"></span><small id="kf3s"></small></div>
       </div>
       <p class="sub" data-t="costSub"></p>
       <div class="chips" id="kc"></div>

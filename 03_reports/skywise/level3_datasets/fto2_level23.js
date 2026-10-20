@@ -42,7 +42,7 @@ function fto2FromTables(ncIn, defIn, ref, disIn) {
       str(r.msn).replace(/\.0$/, ''), str(r.product) || 'Other', str(r.station), r.hour == null || r.hour === '' ? -1 : int(r.hour), numOrNull(r.lead_days), int(r.is_open),
       numOrNull(r.age_days), day(r.closed), str(r.type_nc), str(r.liability), str(r.sap_defect), str(r.sap_cause_group), str(r.sap_cause), str(r.status), str(r.source) || 'sky',
       [num(r.min_alert), num(r.min_writing), num(r.min_support), num(r.min_setup), num(r.min_hands_on), num(r.min_recheck), num(r.hours_engineering), int(r.final_inspection),
-        str(r.work_source), str(r.order_state), str(r.rework_orders), str(r.alert_source), str(r.aleas)], str(r.origin) || 'normal'];
+        str(r.work_source), str(r.order_state), str(r.rework_orders), str(r.alert_source), str(r.aleas)], str(r.origin) || 'normal', str(r.plant), k ? 0 : num(r.cost_total)];
     ncs.push(a); byNc[id] = { a: a, plant: str(r.plant), lt: str(r.long_text) };
   });
   var defects = [], client = {}, lt = {}, qty = {}, pool = [];
@@ -121,6 +121,7 @@ function fto2FromTables(ncIn, defIn, ref, disIn) {
       galSub: 'Des idées de graphiques dessinées sur des données inventées, pour choisir ceux à construire. Sous chaque graphique : ce qu’il faut pour le faire avec les vraies données.',
       tabOv: 'Vue d’ensemble', tabMft: 'Actions MFT', titleSuivi: 'Suivi hebdomadaire FTO2', mftTitle: 'Actions MFT', mftSub: 'Actions des fichiers de suivi MFT A330 et A350, et le problème visé, mois par mois.',
       nKD: 'Défauts', nKDP: 'Défauts par NC', nKDPs: 'NC avec au moins un défaut lu', nKC: 'Coût de non-qualité', stTip: '{c} closes · {o} ouvertes',
+      cabLabel: 'Défauts câble dans les barres', cabHide: 'Masqués', cabShow: 'Affichés',
       measureLabel: 'Mesure', mVol: 'Volume (défauts)', mCost: 'Coût de non-qualité', figTopCat: 'Première catégorie', figCableShare: 'Part des défauts câble', cabSub: '{n} défauts câble',
       kTopCat: 'Première catégorie en coût', kCableShare: 'Part du coût liée aux défauts câble',
       ncTitle: 'Vue d’ensemble', ncSub: 'Chaque NC compte une fois, quel que soit son nombre de défauts.',
@@ -176,6 +177,14 @@ function fto2FromTables(ncIn, defIn, ref, disIn) {
       minorLabel: 'Défauts mineurs', minorIn: 'Inclus', minorOut: 'Exclus',
       tabPareto: 'Pareto', tabCost: 'Pareto des coûts', tabWeek: 'Pareto hebdomadaire', tabCnq: 'Coût de non-qualité', tabClient: 'Retours clients', tabRca: 'Causes (RCA)',
       serieSub: 'NC émises à FTO2, toutes : supprimées et hors responsabilité FTO2 comprises.', serieSubAll: 'Toutes les NC, émises à FTO2 ou dans d’autres usines (retours clients compris).',
+      infoBtn: 'Comment la sélection est faite', inf_title: 'Ce que chaque filtre retire, dans l’ordre', inf_out: 'Retirées', inf_left: 'Restent',
+      inf_start: 'NC fournies par le pipeline', inf_startS: '{a} sortie normale · {b} IDs manquants ; le tableau n’en retire aucune d’office',
+      inf_period: 'Période', inf_phase: 'Type de production', inf_line: 'Avion', inf_src: 'Source des données', inf_org: 'Origine (pipeline)', inf_plant: 'Usine FTO2 uniquement', inf_pick: 'Clic sur un graphique',
+      inf_all: 'tout (non appliqué)', inf_phaseS: 'retire {v}', inf_plantS: '{c} retours clients · {o} NC émises dans une autre usine{p}{m}', inf_plantM: ', dont {n} venues des listes d’IDs manquants',
+      inf_plantNo: 'non : les retours clients et les NC des autres usines restent', inf_end: 'Sélection', inf_endS: '{d} défauts',
+      inf_cost: 'Coût : compté seulement là où FTO2 est responsable. {n} NC de la sélection comptent comme NC avec un coût de 0 € (leur traitement selon le modèle : {e}).',
+      inf_minor: 'Défauts mineurs {v} : ce choix change le nombre de défauts, pas le nombre de NC.', inf_nodef: '{n} NC de la sélection n’ont aucune ligne de défaut lisible : comptées en NC et en coût, pas en défauts.',
+      inf_cli: 'Onglet Retours clients : il montre les retours clients des mêmes filtres, quel que soit l’interrupteur usine ({n} NC).', inf_in: 'inclus', inf_ex: 'exclus',
       fbTitle: 'Filtres', fSrc: 'Source des données', fOrg: 'Origine (pipeline)', org_all: 'Les deux sorties', org_normal: 'Sortie normale', org_missing_ids: 'IDs manquants', src_all: 'Toutes les données', src_sky: 'Skywise uniquement', src_man: 'Listes manuelles (GPS ou Test)', src_gps: 'Registre GPS', src_test: 'Liste Test',
       fPlant: 'Usine FTO2 uniquement', fYes: 'Oui', fNo: 'Non', fPlantOff: 'Sans effet ici : l’onglet sépare déjà FTO2 et retours clients.',
       fPhase: 'Type de production', ph_all: 'Tous', ph_SERIE: 'Série', ph_REC: 'REC', ph_FTI: 'FTI', fLine: 'Avion', line_all: 'Tous les avions',
@@ -208,7 +217,7 @@ function fto2FromTables(ncIn, defIn, ref, disIn) {
       wTrendAll: 'Tous les défauts, par semaine', wTrendProb: '{p}, par semaine', probClear: 'Revenir à tous les défauts',
       wTrendSub: 'En couleur, les semaines de la période choisie. Cliquez sur une semaine pour la choisir.',
       cnqSub: 'Estimation à partir des temps du processus AEC : alerte, rédaction, support technique, reprise et contrôle, chiffrés défaut par défaut.',
-      nKR: 'NC par MSN', nKRs: 'NC ÷ MSN produits', ovMore: 'Autres listes et graphiques', cnqMore: 'Autres répartitions du coût', parMore: 'Autres graphiques de causes', whereMore: 'Autres graphiques',
+      nKR: 'NC par MSN', nKRs: 'NC ÷ MSN produits', ovMore: 'Autres listes et graphiques', cnqMore: 'Autres graphiques du coût', parMore: 'Autres graphiques de causes', whereMore: 'Autres graphiques',
       allLines: 'Toutes lignes', v2Tgt: 'Objectif', v2VsTgt: 'vs objectif', v2Above: 'Au-dessus de l’objectif', v2Below: 'Sous l’objectif', v2TgtPh: 'Objectif (fictif)', v2Ph: 'fictif',
       v2Ph25: '2025 fictif (= 2026)', v2Y25b: '2025, même filtre', v2Y25c: '2025 à la même date', v2Y25at: '2025 à la même date : {v}', v2TgtCumR: 'Objectif cumulé (2025 − 25 %)', v2StTgtR: 'objectif de l’année (2025 − 25 %)', v2StBudR: 'budget de l’année (2025 − 25 %)', v2BudR: 'Budget au prorata (coût 2025 − 25 %)', v2TgtR: 'Objectif : taux 2025 − 25 %', v2NoCli25: '2025 sans retours client (absents de l’extraction 2025)', v2Rate25: '2025 : {v} NC par produit livré', v2Rate25s: 'Taux 2025', v2BudR2: 'budget', v2MTgt: 'objectif mensuel {v} (fictif)', v2BudPh: 'Budget au prorata (fictif)', v2Y25: '2025', v2Y26: '2026 prévu', v2Flat: 'Stable', 
       vpFc: 'Fait et prévision', vpMsn: 'Par MSN', vpFcK: 'Volumes', vpFcT: 'NC, défauts et coût attendus d’ici décembre, produit par produit', vpFcS: 'Réalisé, puis prévision : volume de la période par MSN × MSN prévus jusqu’à décembre.', vpFcH: 'fait → fin décembre', vpDec: 'Prévu à fin décembre', dType: 'Répartition du coût par type de NC', typeSub: 'Type de la NC, là où elle a été trouvée ; « NC câbles » = NC du type Câbles ; 100 % = coût de la sélection.', ty_cab: 'NC câbles', ty_fin: 'Contrôle final', ty_test: 'Test', ty_int: 'Interne', ty_sup: 'Fournisseurs', ty_oth: 'Autres', wlCh_prod: 'Produits', wlCh_ac: 'Avions', wlCh_st: 'Postes', wlChs_prod: 'Taux, carte mensuelle, précision, projection et coût, produit par produit.', wlChs_ac: 'Coût par avion et FIN qui reviennent.', wlChs_st: 'Défauts par poste de rédaction de la NC.',
@@ -290,6 +299,7 @@ function fto2FromTables(ncIn, defIn, ref, disIn) {
       galSub: 'Chart ideas drawn on made-up data, to choose which ones to build. Under each chart: what it takes to make it with the real data.',
       tabOv: 'Overview', tabMft: 'MFT actions', titleSuivi: 'FTO2 weekly follow-up', mftTitle: 'MFT actions', mftSub: 'Actions from the A330 and A350 MFT trackers, and the problem they target, month by month.',
       nKD: 'Defects', nKDP: 'Defects per NC', nKDPs: 'NCs with at least one defect read', nKC: 'Cost of non-quality', stTip: '{c} closed · {o} open',
+      cabLabel: 'Cable defects in the bars', cabHide: 'Hidden', cabShow: 'Shown',
       measureLabel: 'Measure', mVol: 'Volume (defects)', mCost: 'Cost of non-quality', figTopCat: 'Top category', figCableShare: 'Share of cable defects', cabSub: '{n} cable defects',
       kTopCat: 'Top category by cost', kCableShare: 'Share of cost from cable defects',
       ncTitle: 'Overview', ncSub: 'Each NC counts once, whatever its number of defects.',
@@ -345,6 +355,14 @@ function fto2FromTables(ncIn, defIn, ref, disIn) {
       minorLabel: 'Minor defects', minorIn: 'Included', minorOut: 'Excluded',
       tabPareto: 'Pareto', tabCost: 'Cost Pareto', tabWeek: 'Weekly Pareto', tabCnq: 'Cost of non-quality', tabClient: 'Customer returns', tabRca: 'Root causes (RCA)',
       serieSub: 'Every NC raised at FTO2, deleted and not-liable ones included.', serieSubAll: 'Every NC, raised at FTO2 or at other plants (customer returns included).',
+      infoBtn: 'How the selection is made', inf_title: 'What each filter removes, in order', inf_out: 'Removed', inf_left: 'Left',
+      inf_start: 'NCs from the pipeline', inf_startS: '{a} normal output · {b} missing IDs; the page drops none of them by itself',
+      inf_period: 'Period', inf_phase: 'Production type', inf_line: 'Aircraft', inf_src: 'Data source', inf_org: 'Origin (pipeline)', inf_plant: 'FTO2 plant only', inf_pick: 'Click on a chart',
+      inf_all: 'all (not applied)', inf_phaseS: 'removes {v}', inf_plantS: '{c} customer returns · {o} NCs raised at another plant{p}{m}', inf_plantM: ', {n} of them from the missing-ID lists',
+      inf_plantNo: 'off: customer returns and other plants’ NCs stay', inf_end: 'Selection', inf_endS: '{d} defects',
+      inf_cost: 'Cost: counted only where FTO2 is liable. {n} NCs of the selection count as NCs with a cost of €0 (their handling in the model: {e}).',
+      inf_minor: 'Minor defects {v}: this changes the number of defects, not the number of NCs.', inf_nodef: '{n} NCs of the selection have no readable defect line: counted as NCs and in the cost, not as defects.',
+      inf_cli: 'Customer returns tab: it shows the customer returns under the same filters, whatever the plant switch ({n} NCs).', inf_in: 'included', inf_ex: 'excluded',
       fbTitle: 'Filters', fSrc: 'Data source', fOrg: 'Origin (pipeline)', org_all: 'Both outputs', org_normal: 'Normal output', org_missing_ids: 'Missing IDs', src_all: 'All data', src_sky: 'Skywise only', src_man: 'Manual lists (GPS or Test)', src_gps: 'GPS register', src_test: 'Test list',
       fPlant: 'FTO2 plant only', fYes: 'Yes', fNo: 'No', fPlantOff: 'No effect here: this tab already shows FTO2 and customer returns apart.',
       fPhase: 'Production type', ph_all: 'All', ph_SERIE: 'Series', ph_REC: 'REC', ph_FTI: 'FTI', fLine: 'Aircraft', line_all: 'All aircraft',
@@ -377,7 +395,7 @@ function fto2FromTables(ncIn, defIn, ref, disIn) {
       wTrendAll: 'All defects, per week', wTrendProb: '{p}, per week', probClear: 'Back to all defects',
       wTrendSub: 'Weeks of the chosen period are in colour. Click a week to choose it.',
       cnqSub: 'Estimate from AEC process times: alert, writing, technical support, rework and check, costed defect by defect.',
-      nKR: 'NCs per MSN', nKRs: 'NCs ÷ MSN built', ovMore: 'Other lists and charts', cnqMore: 'Other cost breakdowns', parMore: 'Other root-cause charts', whereMore: 'Other charts',
+      nKR: 'NCs per MSN', nKRs: 'NCs ÷ MSN built', ovMore: 'Other lists and charts', cnqMore: 'Other cost charts', parMore: 'Other root-cause charts', whereMore: 'Other charts',
       allLines: 'All lines', v2Tgt: 'Target', v2VsTgt: 'vs target', v2Above: 'Above target', v2Below: 'Below target', v2TgtPh: 'Target (placeholder)', v2Ph: 'placeholder',
       v2Ph25: '2025 placeholder (= 2026)', v2Y25b: '2025, same filter', v2Y25c: '2025 at the same date', v2Y25at: '2025 at the same date: {v}', v2TgtCumR: 'Cumulative target (2025 − 25%)', v2StTgtR: 'target for the year (2025 − 25%)', v2StBudR: 'budget for the year (2025 − 25%)', v2BudR: 'Pro-rata budget (2025 cost − 25%)', v2TgtR: 'Target: 2025 rate − 25%', v2NoCli25: '2025 without customer returns (not in the 2025 extract)', v2Rate25: '2025: {v} NCs per product delivered', v2Rate25s: '2025 rate', v2BudR2: 'budget', v2MTgt: 'monthly target {v} (placeholder)', v2BudPh: 'Pro-rata budget (placeholder)', v2Y25: '2025', v2Y26: '2026 forecast', v2Flat: 'Flat', 
       vpFc: 'Done and forecast', vpMsn: 'Per MSN', vpFcK: 'Volumes', vpFcT: 'NCs, defects and cost expected by December, product by product', vpFcS: 'Actual, then the forecast: the period’s volume per MSN × the MSN planned to December.', vpFcH: 'done → end of December', vpDec: 'Expected by end of December', dType: 'Cost split by NC type', typeSub: 'NC type, where it was found; “Cable NCs” = NCs of the Cables type; 100% = the cost of the selection.', ty_cab: 'Cable NCs', ty_fin: 'Final inspection', ty_test: 'Test', ty_int: 'In-house', ty_sup: 'Suppliers', ty_oth: 'Other', wlCh_prod: 'Products', wlCh_ac: 'Aircraft', wlCh_st: 'Stations', wlChs_prod: 'Rates, monthly map, precision, forecast and cost, product by product.', wlChs_ac: 'Cost per aircraft and FINs that come back.', wlChs_st: 'Defects by the station where the NC was written.',
@@ -632,6 +650,7 @@ function fto2FromTables(ncIn, defIn, ref, disIn) {
       b.limit = 100; b.render();
     };
     grid.addEventListener('click', onPick); if (fold) fold.addEventListener('click', onPick);
+    b.watch = function (el) { el.addEventListener('click', onPick); };   // a card moved out of the board keeps its click filter
     var chips = document.getElementById(o.chips);
     chips.addEventListener('click', function (e) {
       if (e.target.closest('.reset')) { b.f = {}; b.limit = 100; b.render(); return; }
@@ -657,10 +676,10 @@ function fto2FromTables(ncIn, defIn, ref, disIn) {
     function measure(r) { return o.measure ? o.measure(r) : 1; }
     function fmt(n) { return o.money ? eurK(n) : num(n); }
     b.renderDim = function (d) {
-      var all = b.base(), rs = b.filtered(d.k), m = {}, base = {};
+      var all = b.base(), rs = b.filtered(d.k), m = {}, base = {}, sp = d.split && (!d.splitIf || d.splitIf()) ? d.split : null;   // splitIf: the shading can be switched off
       all.forEach(function (r) { var v = d.get(r); if (v != null && v !== '') base[v] = 1; });
       var m2 = {}, ex = (o.extras || []).map(function () { return {}; });
-      rs.forEach(function (r) { var v = d.get(r); if (v != null && v !== '') { m[v] = (m[v] || 0) + measure(r); if (d.split && d.split(r)) m2[v] = (m2[v] || 0) + measure(r);
+      rs.forEach(function (r) { var v = d.get(r); if (v != null && v !== '') { m[v] = (m[v] || 0) + measure(r); if (sp && sp(r)) m2[v] = (m2[v] || 0) + measure(r);
         (o.extras || []).forEach(function (x, i) { ex[i][v] = (ex[i][v] || 0) + x.f(r); }); } });
       var vals = Object.keys(base);
       vals = d.order ? d.order(vals) : vals.sort(function (x, y) { return (m[y] || 0) - (m[x] || 0) || (x < y ? -1 : 1); });
@@ -672,6 +691,7 @@ function fto2FromTables(ncIn, defIn, ref, disIn) {
       el.classList.toggle('active', act);
       var keyEl = card.querySelector('[data-key]');
       var kk = d.keys || ['keyOther', 'keyCable'], sc = d.splitCls ? ' ' + d.splitCls : '';
+      if (keyEl) keyEl.hidden = !sp;
       if (keyEl) keyEl.innerHTML = '<span><i></i>' + esc(S(kk[0])) + '</span><span><i class="c' + sc + '"></i>' + esc(S(kk[1])) + '</span>';
       if (!vals.length) { el.innerHTML = '<p class="empty">—</p>'; }
       else if (d.custom) { el.innerHTML = d.custom(vals, m, rs, b, el); }
@@ -689,8 +709,8 @@ function fto2FromTables(ncIn, defIn, ref, disIn) {
           if (aside && !sepDone) { sepDone = true; head = '<div class="sep">' + esc(S('aside')) + '</div>'; }
           if (d.pareto && !aside) cum += n;
           var tick = ref && ref[v] != null ? '<span class="tick" style="left:calc(' + (ref[v] / max * 100) + '% - 1px)"></span>' : '';
-          var c2 = d.split ? m2[v] || 0 : 0, cab = c2 && n ? '<span class="cab' + sc + '" style="width:' + (c2 / n * 100) + '%"></span>' : '';
-          var tip = d.split ? lab + ' : ' + S(d.splitTip || 'ofWhichCable', { n: fmt(n), c: fmt(c2) }) : lab;
+          var c2 = sp ? m2[v] || 0 : 0, cab = c2 && n ? '<span class="cab' + sc + '" style="width:' + (c2 / n * 100) + '%"></span>' : '';
+          var tip = sp ? lab + ' : ' + S(d.splitTip || 'ofWhichCable', { n: fmt(n), c: fmt(c2) }) : lab;
           return head + '<button type="button" class="bar' + (n ? '' : ' zero') + (aside ? ' aside' : '') + '" data-dim="' + d.k + '" data-v="' + esc(v) + '" aria-pressed="' + on + '" title="' + tip + '" aria-label="' + tip + '">' +
             '<span class="name">' + lab + '</span><span class="track"><span class="fill" style="width:' + (n / max * 100) + '%">' + cab + '</span>' + tick + '</span><span class="val">' + fmt(n) + '</span>' +
             (o.extras || []).map(function (x, i) { return '<span class="ext">' + x.fmt(ex[i][v] || 0) + '</span>'; }).join('') +
@@ -841,12 +861,11 @@ function fto2FromTables(ncIn, defIn, ref, disIn) {
     rows: function () { return D.defects.filter(function (r) { return SEL[r[0]] && keepMinor(r); }); },
     extras: [{ t: 'hNc', f: function (r) { return 1 / NLINES[r[0]]; }, fmt: ncShareFmt }],
     dims: [
-      { k: 'cat', t: 'dCat', sub: 'paretoSub', wide: true, pareto: true, split: dCable, get: dCat, show: L },
-      { k: 'rca', t: 'dRca', top: 15, split: dCable, get: dRca, show: L },
-      { k: 'cable', t: 'dCable', sub: 'cableSub', split: dCable, nokey: true, get: function (r) { return dCable(r) ? 'c' : 'n'; }, show: function (v) { return v === 'c' ? S('cable') : S('notCable'); }, order: function () { return ['c', 'n']; } },
+      { k: 'cat', t: 'dCat', sub: 'paretoSub', wide: true, pareto: true, split: dCable, splitIf: cabOn, get: dCat, show: L },
+      { k: 'rca', t: 'dRca', top: 15, split: dCable, splitIf: cabOn, get: dRca, show: L },
       { k: 'line', t: 'dLine', get: function (r) { return r[4]; }, show: function (v) { return v; }, order: lineOrder },
-      { k: 'code', t: 'dCode', sub: 'codeSub', top: 15, wide: true, longName: true, split: dCable, nokey: true, get: dCode, show: codeName },
-      { k: 'fin', t: 'dFin', sub: 'finSub', top: 20, split: dCable, nokey: true, get: function (r) { return dFin(r) || null; }, show: function (v) { return v; } }
+      { k: 'code', t: 'dCode', sub: 'codeSub', top: 15, wide: true, longName: true, split: dCable, splitIf: cabOn, nokey: true, get: dCode, show: codeName },
+      { k: 'fin', t: 'dFin', sub: 'finSub', top: 10, split: dCable, splitIf: cabOn, nokey: true, get: function (r) { return dFin(r) || null; }, show: function (v) { return v; } }
     ],
     text: defectText, head: defectHead, row: defectRow, sort: byDate,
     after: function (b) {
@@ -856,8 +875,6 @@ function fto2FromTables(ncIn, defIn, ref, disIn) {
       document.getElementById('pf1').textContent = num(rs.length);
       document.getElementById('pf2').textContent = top ? L(top) : '—';
       document.getElementById('pf2s').textContent = top ? S('topSub', { n: num(m[top]), p: pct(m[top] / rs.length * 100) }) : '';
-      document.getElementById('pf3').textContent = rs.length ? pct(cab / rs.length * 100) : '—';
-      document.getElementById('pf3s').textContent = S('cabSub', { n: num(cab) });
     }
   });
 
@@ -881,12 +898,11 @@ function fto2FromTables(ncIn, defIn, ref, disIn) {
     extras: [{ t: 'hDef', f: function (u) { return u.d ? 1 : 0; }, fmt: function (n) { return num(n); } },
              { t: 'hNc', f: kShare, fmt: ncShareFmt }],
     dims: [
-      { k: 'cat', t: 'dCat', sub: 'ncShareNote', wide: true, pareto: true, split: kCab, get: function (u) { return u.d ? dCat(u.d) : '__none'; }, show: function (v) { return v === '__none' ? S('noLine') : L(v); } },
-      { k: 'rca', t: 'dRca', top: 15, split: kCab, get: function (u) { return u.d ? dRca(u.d) : null; }, show: L },
-      { k: 'cable', t: 'dCable', sub: 'cableSub', split: kCab, nokey: true, get: function (u) { return kCab(u) ? 'c' : 'n'; }, show: function (v) { return v === 'c' ? S('cable') : S('notCable'); }, order: function () { return ['c', 'n']; } },
+      { k: 'cat', t: 'dCat', sub: 'ncShareNote', wide: true, pareto: true, split: kCab, splitIf: cabOn, get: function (u) { return u.d ? dCat(u.d) : '__none'; }, show: function (v) { return v === '__none' ? S('noLine') : L(v); } },
+      { k: 'rca', t: 'dRca', top: 15, split: kCab, splitIf: cabOn, get: function (u) { return u.d ? dRca(u.d) : null; }, show: L },
       { k: 'line', t: 'dLine', get: function (u) { return u.n[3]; }, show: function (v) { return v; }, order: lineOrder },
-      { k: 'code', t: 'dCode', sub: 'codeSub', top: 15, wide: true, longName: true, split: kCab, nokey: true, get: function (u) { return u.d ? dCode(u.d) : null; }, show: codeName },
-      { k: 'fin', t: 'dFin', sub: 'finSub', top: 20, split: kCab, nokey: true, get: function (u) { return u.d ? dFin(u.d) || null : null; }, show: function (v) { return v; } }
+      { k: 'code', t: 'dCode', sub: 'codeSub', top: 15, wide: true, longName: true, split: kCab, splitIf: cabOn, nokey: true, get: function (u) { return u.d ? dCode(u.d) : null; }, show: codeName },
+      { k: 'fin', t: 'dFin', sub: 'finSub', top: 10, split: kCab, splitIf: cabOn, nokey: true, get: function (u) { return u.d ? dFin(u.d) || null : null; }, show: function (v) { return v; } }
     ],
     text: function (u) { return u.n[0] + ' ' + u.n[22] + ' ' + (u.d ? defectText(u.d) : ''); },
     sort: function (a, b2) { return kCost(b2) - kCost(a); },
@@ -903,16 +919,19 @@ function fto2FromTables(ncIn, defIn, ref, disIn) {
       document.getElementById('kf1').textContent = eur(tot);
       document.getElementById('kf2').textContent = top ? L(top) : '—';
       document.getElementById('kf2s').textContent = top ? S('topCostSub', { e: eur(m[top]), p: pct(m[top] / tot * 100) }) : '';
-      document.getElementById('kf3').textContent = tot ? pct(cab / tot * 100) : '—';
-      document.getElementById('kf3s').textContent = eur(cab);
     }
   });
   // volume or cost: the filters follow from one to the other
   var PMODE = 'cost';
+  function cabOn() { return !!G.cab; }   // the cable shading in the Pareto bars, off by default
   function renderPMode() {
     document.getElementById('pMode').innerHTML = segHtml([['vol', S('mVol')], ['cost', S('mCost')]], PMODE, 'data-pmode');
+    document.getElementById('pCab').innerHTML = segHtml([['0', S('cabHide')], ['1', S('cabShow')]], G.cab ? '1' : '0', 'data-pcab');
     document.getElementById('pVol').hidden = PMODE !== 'vol'; document.getElementById('pCost').hidden = PMODE !== 'cost';
   }
+  document.getElementById('pCab').addEventListener('click', function (e) {
+    var c = e.target.closest('[data-pcab]'); if (!c) return; G.cab = c.getAttribute('data-pcab') === '1'; renderPMode(); pareto.render(); costPareto.render();
+  });
   document.getElementById('pMode').addEventListener('click', function (e) {
     var c = e.target.closest('[data-pmode]'); if (!c || c.getAttribute('data-pmode') === PMODE) return;
     var from = PMODE === 'vol' ? pareto : costPareto, to = PMODE === 'vol' ? costPareto : pareto;
@@ -3667,7 +3686,52 @@ function fto2FromTables(ncIn, defIn, ref, disIn) {
     var cli = G.tab === 'client', nc = cli ? CLI_NC : SEL_NC, set = cli ? CLI : SEL;
     var nd = D.defects.filter(function (r) { return set[r[0]] && keepMinor(r); }).length;
     document.getElementById('fbSum').textContent = S(cli ? 'fbSumCli' : 'fbSum', { n: num(nc.length), d: num(nd) });
+    renderInfo();
   }
+  // ---------------------------------------------------------------- the ⓘ panel: every filter in order, what it removes, what is left (same tests as gNc and gScope)
+  function selText(id) { var el = document.getElementById(id), o = el && el.selectedOptions && el.selectedOptions[0]; return o ? o.textContent : ''; }
+  function renderInfo() {
+    var box = document.getElementById('gInfo'); if (!box || box.hidden) return;
+    var cur = REP.slice(), T = REP.length, rows = [];
+    var nMiss = REP.filter(function (n) { return n[41] === 'missing_ids'; }).length;
+    function step(lab, on, val, test, detail, offLab) {
+      var keep = on ? cur.filter(test) : cur, gone = on ? cur.filter(function (n) { return !test(n); }) : [];
+      rows.push({ lab: lab, val: on ? val : offLab || S('inf_all'), off: !on, out: gone.length, left: keep.length, det: on && detail ? detail(gone) : '' });
+      cur = keep;
+    }
+    step(S('inf_period'), true, shortDay(GF.from) + ' → ' + shortDay(GF.to), function (n) { return n[1] >= GF.from && n[1] <= GF.to; });
+    step(S('inf_phase'), !!GF.phase, GF.phase ? S('ph_' + GF.phase) : '', function (n) { return n[24] === GF.phase; }, function (g) {
+      var c = {}; g.forEach(function (n) { c[n[24] || '—'] = (c[n[24] || '—'] || 0) + 1; });
+      return Object.keys(c).length ? S('inf_phaseS', { v: phaseOrder(Object.keys(c)).map(function (k) { return k + ' ' + num(c[k]); }).join(' · ') }) : ''; });
+    step(S('inf_line'), !!GF.line, GF.line, function (n) { return n[3] === GF.line; });
+    step(S('inf_src'), GF.src !== 'all', selText('gSrc'), function (n) { return GF.src === 'man' ? n[39] !== 'sky' : n[39] === GF.src; });
+    step(S('inf_org'), !!GF.org, selText('gOrg'), function (n) { return (n[41] || 'normal') === GF.org; });
+    step(S('inf_plant'), !!GF.fto2, S('fYes'), function (n) { return n[23] === 'serie'; }, function (g) {
+      var cli = g.filter(function (n) { return n[23] === 'client'; }).length, oth = g.filter(function (n) { return n[23] !== 'client'; }), pl = {};
+      oth.forEach(function (n) { var k = n[42] || '—'; pl[k] = (pl[k] || 0) + 1; });
+      var top = Object.keys(pl).sort(function (a, b) { return pl[b] - pl[a]; }).slice(0, 4).map(function (k) { return k + ' ' + num(pl[k]); }).join(', ');
+      var miss = oth.filter(function (n) { return n[41] === 'missing_ids'; }).length;
+      return S('inf_plantS', { c: num(cli), o: num(oth.length), p: top ? ' (' + top + ')' : '', m: miss ? S('inf_plantM', { n: num(miss) }) : '' }); }, S('inf_plantNo'));
+    step(S('inf_pick'), !!GF.pick, GF.pick ? pickLabel(GF.pick) : '', function (n) { return pickNc(n); });
+    var set = ids(cur), nd = D.defects.filter(function (r) { return set[r[0]] && keepMinor(r); }).length;
+    var zero = cur.filter(function (n) { return n[5] !== 1; }), zeroE = sumA(zero.map(function (n) { return n[43] || 0; }));
+    var noDef = cur.filter(function (n) { return !n[21]; }).length;
+    var bar = function (v) { return '<span class="fn-bar"><i style="width:' + (T ? v / T * 100 : 0) + '%"></i></span>'; };
+    var h = '<h3>' + esc(S('inf_title')) + '</h3><div class="fn-row hd"><span></span><span class="out">' + esc(S('inf_out')) + '</span><span class="left">' + esc(S('inf_left')) + '</span><span></span></div>';
+    h += '<div class="fn-row"><span class="k">' + esc(S('inf_start')) + '<small>' + esc(S('inf_startS', { a: num(T - nMiss), b: num(nMiss) })) + '</small></span><span class="out"></span><span class="left">' + num(T) + '</span>' + bar(T) + '</div>';
+    rows.forEach(function (r) {
+      h += '<div class="fn-row' + (r.off ? ' off' : '') + '"><span class="k">' + esc(r.lab) + ' : ' + esc(r.val) + (r.det ? '<small>' + esc(r.det) + '</small>' : '') + '</span><span class="out">' + (r.off ? '' : '− ' + num(r.out)) + '</span><span class="left">' + num(r.left) + '</span>' + bar(r.left) + '</div>';
+    });
+    h += '<div class="fn-row end"><span class="k">' + esc(S('inf_end')) + '<small>' + esc(S('inf_endS', { d: num(nd) })) + '</small></span><span class="out"></span><span class="left">' + num(cur.length) + '</span>' + bar(cur.length) + '</div>';
+    var notes = [S('inf_cost', { n: num(zero.length), e: eur(zeroE) }), S('inf_minor', { v: S(G.minor ? 'inf_in' : 'inf_ex') })];
+    if (noDef) notes.push(S('inf_nodef', { n: num(noDef) }));
+    if (G.tab === 'client') notes.push(S('inf_cli', { n: num(CLI_NC.length) }));
+    if (cur.length !== SEL_NC.length) notes.push('⚠ ' + num(cur.length) + ' ≠ ' + num(SEL_NC.length));   // the panel and the page must agree
+    box.innerHTML = h + notes.map(function (t) { return '<p class="fn-note">' + esc(t) + '</p>'; }).join('');
+  }
+  document.getElementById('gInfoBtn').addEventListener('click', function () {
+    var box = document.getElementById('gInfo'), open = box.hidden; box.hidden = !open; this.setAttribute('aria-expanded', String(open)); renderInfo();
+  });
   function setGF(ch) { Object.keys(ch).forEach(function (k) { GF[k] = ch[k]; }); select(); A.msn = null; renderAll(); }
   document.getElementById('gSrc').addEventListener('change', function (e) { setGF({ src: e.target.value }); });
   document.getElementById('gPickX').addEventListener('click', function (e) { e.stopPropagation(); GF.pick = null; pickPrep(); setGF({}); });
@@ -4109,9 +4173,9 @@ function fto2FromTables(ncIn, defIn, ref, disIn) {
   var V2 = PAGE === 'main', V2B = false, V2CUT = 0.75, V2BAND = {};
   var V2L = {
     ov: { top: ['VT', 'VN', 'VB', 'a:lead', 'VX'], fold: ['a:cal'] },
-    pareto: { fold: ['a:bub', 'a:flow', '54', '65', 'a:bump', 'VW', 'VQ', '53', '78', '76'] },   // the Pareto reads as lists only; the other cause charts fold under them
-    where: { top: ['VP', '61', '64', 'a:prod', 'a:msn', 'VF', 'a:station'], fold: ['VI'] },
-    cnq: { more: ['VC', 'VE'] }
+    pareto: { fold: ['a:bub', 'a:flow', '65', 'a:bump', 'VW', 'VQ', '53', '78', '76'] },   // the Pareto reads as lists only; the other cause charts fold under them
+    where: { top: ['VP', '61', '64', 'a:prod', '54', 'a:msn', 'VF', 'a:station'], fold: ['VI'] },
+    cnq: { more: ['VC'], fold: ['VE'] }
   };
   var V2F = { VT: v2Target, VN: v2Trend, VB: v2Budget, VS: v2Score, VX: v2Xmr, VW: v2Waffle, VQ: v2Quarters, VP: v2Prod, VF: v2Fins, VI: v2Icons, VC: v2Comp, VE: v2Each };
   Object.assign(GSTR, {
@@ -4167,6 +4231,7 @@ function fto2FromTables(ncIn, defIn, ref, disIn) {
     if (V2B) return; V2B = true;
     var ov = document.getElementById('p-ov'), figs = ov.querySelector('.figs');
     var og = v2Grid(V2L.ov.top); og.classList.add('v2ov'); ov.insertBefore(og, figs.nextSibling);
+    var pie0 = document.querySelector('#ngx [data-card="prog"]'); if (pie0) { og.appendChild(pie0); ncBoard.watch(pie0); }   // NCs by line: up with the charts (20 Oct)
     ov.setAttribute('data-lay', '5');   // Magazine, chosen by Mohammad on 19 Oct
     var inner = document.querySelector('#ngxBox .inner'); inner.insertBefore(document.getElementById('ncChips'), inner.firstChild);   // the breakdown lists and their filter chips fold together
     var ngx = v2Wire(document.getElementById('ngx'));
@@ -4177,6 +4242,9 @@ function fto2FromTables(ncIn, defIn, ref, disIn) {
     var wh = document.getElementById('p-where'), wg = v2Grid(V2L.where.top); wg.classList.add('v2mag'); wh.appendChild(wg); wh.appendChild(v2Fold('whereMore', V2L.where.fold)); wh.appendChild(document.getElementById('whBox'));
     v2Chapters(wg);
     var cq = v2Grid(V2L.cnq.more); cq.classList.add('v2cq'); document.getElementById('p-cnq').insertBefore(cq, document.getElementById('cgxBox'));
+    var cgb = document.getElementById('cgxBox'), cgx = v2Wire(document.getElementById('cgx')); cgb.hidden = false;
+    V2L.cnq.fold.forEach(function (k) { var b = v2Band(k); if (b) cgx.appendChild(b); });
+    cgb.addEventListener('toggle', function () { if (cgb.open) v2Render(); });
     applyText();
   }
   // Où in chapters: products, aircraft, stations
@@ -4533,7 +4601,7 @@ function fto2FromTables(ncIn, defIn, ref, disIn) {
     SEL_NC.forEach(function (n) { if (n[3] === l && n[25]) ms[n[25]] = 1; });
     var msn = Object.keys(ms).sort(function (a, b) { return (parseInt(a, 10) || 0) - (parseInt(b, 10) || 0); }), n0 = msn.length;
     v2Defs().forEach(function (r) { var n = NC[r[0]], f = dFin(r); if (!f || n[3] !== l || !n[25]) return; var key = f + '|' + n[25]; if (!has[key]) { has[key] = 0; fc[f] = (fc[f] || 0) + 1; } has[key]++; });
-    var fins = Object.keys(fc).filter(function (f) { return fc[f] >= 2; }).sort(function (a, b) { return fc[b] - fc[a] || (a < b ? -1 : 1); }).slice(0, 20);
+    var fins = Object.keys(fc).filter(function (f) { return fc[f] >= 2; }).sort(function (a, b) { return fc[b] - fc[a] || (a < b ? -1 : 1); }).slice(0, 10);
     if (!fins.length || n0 < 2) { pEmpty(k); return; }
     var W0 = gWd(k), lab = 92, mr = 78, cw = Math.max(2, (W0 - lab - mr) / n0), rh = 17, H = fins.length * rh + 26, g = '';
     fins.forEach(function (f, i) {

@@ -81,6 +81,24 @@
 .fto2 td.pickc:hover, .fto2 td.nc[data-pick]:hover { color: var(--s1); }
 .fto2 .fb-reset { font: inherit; font-size: 13px; color: var(--s1); background: none; border: 1px solid var(--ring); border-radius: 6px; padding: 5px 12px; cursor: pointer; }
 .fto2 .fb-note { font-size: 11.5px; color: var(--muted); max-width: 16em; line-height: 1.3; }
+.fto2 .fb-sumrow { display: flex; align-items: center; gap: 6px 14px; flex-wrap: wrap; }
+.fto2 .fb-info { font: inherit; font-size: 12.5px; border: 1px solid var(--ring); background: var(--surface); color: var(--ink-2); border-radius: 999px; padding: 3px 12px; cursor: pointer; }
+.fto2 .fb-info[aria-expanded="true"] { border-color: var(--s1); color: var(--ink); }
+.fto2 .fb-funnel { margin-top: 12px; border: 1px solid var(--ring); border-radius: 10px; padding: 14px 18px 12px; background: var(--surface); max-width: 920px; }
+.fto2 .fb-funnel[hidden] { display: none; }
+.fto2 .fb-funnel h3 { font-size: 14px; font-weight: 600; margin: 0 0 6px; }
+.fto2 .fn-row { display: grid; grid-template-columns: minmax(0, 1fr) 64px 64px minmax(80px, 160px); gap: 12px; align-items: center; font-size: 13px; padding: 6px 0; border-top: 1px solid var(--grid); font-variant-numeric: tabular-nums; }
+.fto2 .fn-row.hd { border-top: 0; font-size: 11.5px; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; padding: 0 0 2px; }
+.fto2 .fn-row .k small { display: block; color: var(--muted); font-size: 12px; margin-top: 1px; }
+.fto2 .fn-row .out, .fto2 .fn-row .left { text-align: right; }
+.fto2 .fn-row .out { color: var(--ink-2); }
+.fto2 .fn-row .left { font-weight: 600; color: var(--ink); }
+.fto2 .fn-row.off { color: var(--muted); }
+.fto2 .fn-row.off .left { font-weight: 400; color: var(--muted); }
+.fto2 .fn-row.end { border-top: 1px solid var(--ink); font-weight: 600; }
+.fto2 .fn-bar { height: 8px; background: var(--track); border-radius: 4px; overflow: hidden; }
+.fto2 .fn-bar i { display: block; height: 100%; background: var(--s1); border-radius: 4px; }
+.fto2 .fn-note { font-size: 12.5px; color: var(--ink-2); margin: 8px 0 0; }
 .fto2 .fb-sum { font-size: 13px; color: var(--ink-2); font-variant-numeric: tabular-nums; max-width: none; }
 .fto2 .tabs { display: flex; gap: 2px; border-bottom: 1px solid var(--grid); overflow-x: auto; align-items: end; position: sticky; top: 0; z-index: 10; background: var(--page); }
 .fto2 .tabs [role="tab"] { font: inherit; font-size: 15px; font-weight: 600; color: var(--ink-2); background: none; border: 0; border-bottom: 3px solid transparent; padding: 10px 14px 9px; cursor: pointer; white-space: nowrap; }
@@ -546,6 +564,7 @@
 .fto2 #p-ov[data-lay] [data-v2="VN"] { grid-area: trend; }
 .fto2 #p-ov[data-lay] [data-v2="VB"] { grid-area: cost; }
 .fto2 #p-ov[data-lay] [data-v2="a:lead"] { grid-area: delay; }
+.fto2 #p-ov[data-lay] [data-card="prog"] { grid-area: pie; }
 .fto2 #p-ov[data-lay] [data-v2="VX"] { grid-area: ctl; }
 .fto2 #p-ov[data-lay] > #ngxBox { grid-area: more; }
 .fto2 #p-ov[data-lay] > details:not(#ngxBox) { grid-area: table; }
@@ -554,12 +573,13 @@
 .fto2 #p-ov[data-lay] .v2ov > .card > .custom, .fto2 #p-where .v2mag .v2-band > .custom { grid-column: 1; grid-row: auto; }
 .fto2 #p-ov[data-lay] .v2ov .bhead h3, .fto2 #p-where .v2mag .bhead h3 { font-size: clamp(20px, 2vw, 24px); }
 .fto2 #p-where .v2mag { display: grid; grid-template-columns: minmax(0, 210px) repeat(2, minmax(0, 1fr)); gap: 20px; align-items: stretch; margin: 4px 0 28px;
-  grid-template-areas: "c1 rate rate" "c1 month month" "c1 ci prod" "c2 msn msn" "c2 fin fin" "c3 station station"; }
+  grid-template-areas: "c1 rate rate" "c1 month month" "c1 ci prod" "c1 cause cause" "c2 msn msn" "c2 fin fin" "c3 station station"; }
 .fto2 #p-where .v2mag .v2-band { align-content: start; min-width: 0; scroll-margin-top: calc(var(--tabs-h) + 18px); }
 .fto2 #p-where .v2mag > [data-v2="VP"] { grid-area: rate; }
 .fto2 #p-where .v2mag > [data-v2="61"] { grid-area: month; }
 .fto2 #p-where .v2mag > [data-v2="64"] { grid-area: ci; }
 .fto2 #p-where .v2mag > [data-v2="a:prod"] { grid-area: prod; }
+.fto2 #p-where .v2mag > [data-v2="54"] { grid-area: cause; }
 .fto2 #p-where .v2mag > [data-v2="VF"] { grid-area: fin; }
 .fto2 #p-where .v2mag > [data-v2="a:msn"] { grid-area: msn; }
 .fto2 #p-where .v2mag > [data-v2="a:station"] { grid-area: station; }
@@ -654,7 +674,7 @@
 }
 .fto2 #p-ov[data-lay] .v2stats { display: flex; flex-wrap: wrap; gap: 6px 24px; margin-top: 2px; }
 .fto2 #p-ov[data-lay] .v2stats b { font-size: 24px; min-width: 0; }
-.fto2 #p-ov[data-lay="5"] { grid-template-columns: repeat(3, minmax(0, 1fr)); grid-template-areas: "lead lead lead" "figs figs figs" "trend trend tgt" "cost delay delay" "ctl ctl ctl" "more more more" "table table table"; align-items: stretch; }
+.fto2 #p-ov[data-lay="5"] { grid-template-columns: repeat(3, minmax(0, 1fr)); grid-template-areas: "lead lead lead" "figs figs figs" "trend trend tgt" "pie delay delay" "cost cost cost" "ctl ctl ctl" "more more more" "table table table"; align-items: stretch; }
 .fto2 #p-ov[data-lay="5"] .v2ov > .card { align-content: start; }
 @media (max-width: 900px) {
 .fto2 #p-ov[data-lay] { grid-template-columns: minmax(0, 1fr) !important; grid-template-areas: none !important; }
