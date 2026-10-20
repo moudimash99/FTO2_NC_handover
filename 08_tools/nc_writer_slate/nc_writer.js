@@ -1,0 +1,767 @@
+// NC FTO2 · Saisie structurée: the Streamlit app (reference/app_streamlit.py) rebuilt for a Slate
+// Code Sandbox widget. Paste this file in the widget's JavaScript tab, nc_writer.css in the CSS tab
+// and nc_writer.html in the HTML tab. No library and no network call: the sandbox allows neither.
+// Outside Slate (nc_writer_standalone.html) the same code runs and only shows / downloads the NC.
+(function (root) {
+"use strict";
+
+// What Slate sees on "Soumettre": the widget state gets {submission: row}, then the event fires.
+// The Slate event handler reads <widget>.state.submission.<column> and writes the row (README).
+// Never type two opening curly braces in this file: Slate would read them as a Handlebars template.
+var CONFIG = { stateKey: "submission", eventName: "submit" };
+
+// --- TAXONOMY: the official code sheet, copied from app_streamlit.py (tests/check_parity.py checks it) ---
+// <DATA>
+var NATURES = [
+  { code: "Q01", label: "Verrouillage", hint: "Contact non verrouillé / faux contact", isTest: false, objects: [
+    { sub: "Q01-001", label: "Contact", detail: "Cuivre, aluminium, fibre optique", sev: 7, rpn: 245, cdve: "Q01-003" },
+    { sub: "Q01-002", label: "Faux contact", detail: "Non verrouillé", sev: 3, rpn: 120, cdve: null }
+  ] },
+  { code: "Q03", label: "Élément manquant", hint: "Quelque chose n'est pas là", isTest: false, objects: [
+    { sub: "Q03-001", label: "Obturateur", detail: "Circulaire, rectangulaire, module VT, trou de ventilation", sev: 3, rpn: 72, cdve: null },
+    { sub: "Q03-002", label: "Gaine thermorétractable", detail: "Basse temp, haute temp", sev: 3, rpn: 72, cdve: null },
+    { sub: "Q03-003", label: "Élément mécanique", detail: "Vis, rondelle, écrou, entretoise", sev: 4, rpn: 96, cdve: null },
+    { sub: "Q03-004", label: "Élément électrique", detail: "Câble, contact, diode, résistance, connecteur, module VG, raccordement arrière", sev: 4, rpn: 64, cdve: null },
+    { sub: "Q03-005", label: "Freinage", detail: "Fil de frein, colle, vernis frangible", sev: 3, rpn: 48, cdve: null },
+    { sub: "Q03-006", label: "Collier", detail: "Cheminement, frette plastique, frette ficelle, support en V, plastique, métal", sev: 3, rpn: 108, cdve: null },
+    { sub: "Q03-007", label: "Bouchons de protection", detail: "Trou de ventilation, trou ouvert", sev: 3, rpn: 60, cdve: null },
+    { sub: "Q03-008", label: "Protection d'extrémité", detail: "Bouchon de prise, sac plastique", sev: 3, rpn: 72, cdve: null },
+    { sub: "Q03-009", label: "Étiquette d'inviolabilité", detail: "Serrure de porte, prise coupée", sev: 3, rpn: 36, cdve: null },
+    { sub: "Q03-010", label: "Gainage", detail: "Textile, annelée, EMI, réserve", sev: 4, rpn: 72, cdve: null },
+    { sub: "Q03-011", label: "Plaque/manchon/drapeau d'identification", detail: "Bout, route, numéro de câble, collier, rampe", sev: 3, rpn: 48, cdve: null },
+    { sub: "Q03-012", label: "Étiquette d'identification", detail: "FIN, MSN", sev: 3, rpn: 60, cdve: null }
+  ] },
+  { code: "Q04", label: "Erreur de montage", hint: "Mauvaise réf, mauvais sens, mauvaise taille", isTest: false, objects: [
+    { sub: "Q04-001", label: "Obturateur", detail: "Référence, sens de montage", sev: 3, rpn: 72, cdve: null },
+    { sub: "Q04-002", label: "Gaine thermorétractable", detail: "Référence, taille", sev: 3, rpn: 72, cdve: null },
+    { sub: "Q04-003", label: "Mécanique", detail: "Vis, rondelle, écrou, entretoise, support en V, structure, barre VT", sev: 4, rpn: 128, cdve: null },
+    { sub: "Q04-004", label: "Contact", detail: "Référence, cuivre, aluminium", sev: 9, rpn: 216, cdve: null },
+    { sub: "Q04-005", label: "Électrique (Résistance, connecteur, relais...)", detail: "Réf, montage, orientation", sev: 3, rpn: 63, cdve: null },
+    { sub: "Q04-006", label: "Fil de freinage", detail: "Référence", sev: 3, rpn: 54, cdve: null },
+    { sub: "Q04-007", label: "Collier de cheminement plastique", detail: "Référence, taille, orientation", sev: 3, rpn: 75, cdve: null },
+    { sub: "Q04-008", label: "Collier de cheminement métallique", detail: "Référence, taille, orientation", sev: 3, rpn: 45, cdve: null },
+    { sub: "Q04-009", label: "Détrompage", detail: "Clé de codage, broche de prise ARINC, clé de polarisation", sev: 4, rpn: 80, cdve: null },
+    { sub: "Q04-010", label: "Bouchon de protection ventilation", detail: "Référence", sev: 3, rpn: 36, cdve: null },
+    { sub: "Q04-011", label: "Élément électrique", detail: "Tresse de masse, cosse, voyant lumineux", sev: 4, rpn: 96, cdve: null },
+    { sub: "Q04-012", label: "Capuchon de protection de prise", detail: "Référence, taille", sev: 3, rpn: 36, cdve: null },
+    { sub: "Q04-013", label: "Plaque d'identification", detail: "Plaque, étiquette de fonction, adhésif de bout, manchon", sev: 3, rpn: 72, cdve: null },
+    { sub: "Q04-014", label: "Frettage", detail: "Référence frette plastique, référence frette ficelle", sev: 3, rpn: 60, cdve: null }
+  ] },
+  { code: "Q05", label: "Serrage", hint: "Trop serré, pas assez, desserré", isTest: false, objects: [
+    { sub: "Q05-001", label: "Élément électrique", detail: "Raccordement arrière, connecteur, module VG, cosse, disjoncteur", sev: 8, rpn: 480, cdve: null },
+    { sub: "Q05-002", label: "Mécanique", detail: "Vis, fil de freinage, vernis frangible, pince, bloc diode, BAND-IT, barre VT", sev: 4, rpn: 160, cdve: null },
+    { sub: "Q05-003", label: "Collier corde", detail: "Sur-serré / sous-serré / vis desserrée", sev: 4, rpn: 240, cdve: null },
+    { sub: "Q05-004", label: "Frettage", detail: "Collier plastique, frette ficelle", sev: 4, rpn: 120, cdve: null }
+  ] },
+  { code: "Q06", label: "Mise en œuvre câblage", hint: "Cheminement, gainage, contact/clash", isTest: false, objects: [
+    { sub: "Q06-001", label: "Harnais", detail: "Cheminement, gestion de câble, sur/sous-longueur, mauvaise destination", sev: 4, rpn: 96, cdve: null },
+    { sub: "Q06-002", label: "Mauvaise installation de gaine", detail: "Ligne visible, mauvaise torsion, branche, chaussette", sev: 4, rpn: 96, cdve: null },
+    { sub: "Q06-003", label: "Ruban amalgamant", detail: "Chevauchement, chevauchement permis", sev: 3, rpn: 75, cdve: null },
+    { sub: "Q06-004", label: "Câble en contact avec élément structurel", detail: "Clash avec plaque, rampe, tuyau, vis, bielle", sev: 5, rpn: 120, cdve: null },
+    { sub: "Q06-005", label: "Câble en contact avec composant électrique", detail: "Clash avec VG, connecteur", sev: 5, rpn: 80, cdve: null },
+    { sub: "Q06-006", label: "Mauvais positionnement d'anneau thermo", detail: "Collier plastique, ficelle", sev: 3, rpn: 60, cdve: null },
+    { sub: "Q06-007", label: "Frange sur raccordement arrière", detail: "Gaine non sécurisée, gaine trop courte", sev: 3, rpn: 90, cdve: null },
+    { sub: "Q06-008", label: "Gainage", detail: "Trop court, en contact avec passe-fil, non sécurisé au connecteur", sev: 4, rpn: 96, cdve: null },
+    { sub: "Q06-009", label: "Route non reprise après test", detail: "Câblage non terminé", sev: 3, rpn: 60, cdve: null },
+    { sub: "Q06-010", label: "Identification", detail: "Positionnement flamme, plaque, manchon - décalé, non spécifié", sev: 4, rpn: 80, cdve: null },
+    { sub: "Q06-011", label: "Implémentation frettage", detail: "Nœud cabestan double, longueur de frette coupée", sev: 3, rpn: 90, cdve: null },
+    { sub: "Q06-012", label: "Connexions dans collier Band-it", detail: "", sev: 5, rpn: 60, cdve: null }
+  ] },
+  { code: "Q07", label: "Sertissage standard", hint: "Contacts et cosses cuivre/alu", isTest: false, objects: [
+    { sub: "Q07-001", label: "Contact aluminium", detail: "Dénudage, Sertissage", sev: 9, rpn: 135, cdve: "Q07-006" },
+    { sub: "Q07-002", label: "Contact cuivre", detail: "Dénudage, Sertissage", sev: 9, rpn: 180, cdve: "Q07-007" },
+    { sub: "Q07-003", label: "Manchon auto-soudeur", detail: "Déformation, surchauffe", sev: 9, rpn: 180, cdve: "Q07-008" },
+    { sub: "Q07-004", label: "Cosse cuivre", detail: "Dénudage, Sertissage", sev: 9, rpn: 135, cdve: "Q07-009" },
+    { sub: "Q07-005", label: "Cosse aluminium", detail: "Dénudage, Sertissage", sev: 9, rpn: 135, cdve: "Q07-010" }
+  ] },
+  { code: "Q08", label: "Sertissage spécifique", hint: "Quadrax, twinax, coax, fibre, brasure", isTest: false, objects: [
+    { sub: "Q08-001", label: "Contact QUADRAX", detail: "Dénudage, Sertissage", sev: 9, rpn: 27, cdve: null },
+    { sub: "Q08-002", label: "Contact TWINAX", detail: "Dénudage, Sertissage", sev: 9, rpn: 27, cdve: null },
+    { sub: "Q08-003", label: "Contact TRIAXIAL", detail: "Dénudage, Sertissage", sev: 9, rpn: 27, cdve: null },
+    { sub: "Q08-004", label: "Contact BUSCAN", detail: "Dénudage, Sertissage", sev: 9, rpn: 27, cdve: null },
+    { sub: "Q08-005", label: "Contact Coax", detail: "Dénudage, Sertissage", sev: 9, rpn: 27, cdve: null },
+    { sub: "Q08-006", label: "Contact fibre optique", detail: "Dénudage, Collage", sev: 6, rpn: 18, cdve: null },
+    { sub: "Q08-007", label: "Brasure", detail: "Soudure non conforme", sev: 9, rpn: 135, cdve: null }
+  ] },
+  { code: "Q09", label: "Métallisation / bonding", hint: "Protection, point de masse", isTest: false, objects: [
+    { sub: "Q09-001", label: "Protection non appliquée", detail: "Vaseline, peinture de protection", sev: 6, rpn: 42, cdve: "Q09-004" },
+    { sub: "Q09-002", label: "Application de protection", detail: "Partiellement appliquée, métallisation visible", sev: 6, rpn: 42, cdve: "Q09-005" },
+    { sub: "Q09-003", label: "Point de masse", detail: "Oxydation, diamètre de brosse non conforme", sev: 6, rpn: 42, cdve: "Q09-006" }
+  ] },
+  { code: "Q10", label: "Dommage structure", hint: "Plaque, structure, main courante, tuyauterie", isTest: false, objects: [
+    { sub: "Q10-001", label: "Plaque endommagée", detail: "Impact, rayure, plié, salissure", sev: 4, rpn: 120, cdve: null },
+    { sub: "Q10-002", label: "Structure endommagée", detail: "Impact, rayure, salissure", sev: 4, rpn: 120, cdve: null },
+    { sub: "Q10-003", label: "Main courante endommagée", detail: "Impact, rayure, plié, salie", sev: 4, rpn: 100, cdve: null },
+    { sub: "Q10-004", label: "Colonne", detail: "Impact, rayure, salissure", sev: 4, rpn: 80, cdve: null },
+    { sub: "Q10-005", label: "Tuyauterie endommagée", detail: "Impact, rayure, salissure", sev: 4, rpn: 80, cdve: null },
+    { sub: "Q10-006", label: "Mécanisme", detail: "Insert, vis - filetages endommagés, vis cassées à l'intérieur", sev: 4, rpn: 160, cdve: null }
+  ] },
+  { code: "Q11", label: "Dommage élément élec.", hint: "Câble, composant, cosse, contact abîmés", isTest: false, objects: [
+    { sub: "Q11-001", label: "Câble coupé", detail: "", sev: 8, rpn: 48, cdve: null },
+    { sub: "Q11-014", label: "Câble rayé, endommagé", detail: "", sev: 8, rpn: 480, cdve: null },
+    { sub: "Q11-002", label: "Identification", detail: "Onde, étiquette, manchon - déchiré, sali", sev: 3, rpn: 72, cdve: null },
+    { sub: "Q11-003", label: "Composant", detail: "Module VG, disjoncteur, module barre VT, connecteur", sev: 4, rpn: 168, cdve: "Q11-016" },
+    { sub: "Q11-004", label: "Gaine de protection", detail: "Textile, annelée, EMI", sev: 4, rpn: 96, cdve: null },
+    { sub: "Q11-005", label: "Cosse", detail: "Cuivre, aluminium", sev: 4, rpn: 140, cdve: "Q11-018" },
+    { sub: "Q11-006", label: "Contact", detail: "Cuivre, aluminium", sev: 9, rpn: 189, cdve: "Q11-019" },
+    { sub: "Q11-007", label: "Ruban amalgamant", detail: "Déchiré, sali", sev: 3, rpn: 45, cdve: null },
+    { sub: "Q11-008", label: "Gaine thermorétractable", detail: "Déchirée, salie", sev: 3, rpn: 45, cdve: null },
+    { sub: "Q11-009", label: "Métallisation tresse de masse", detail: "Brins cassés", sev: 4, rpn: 60, cdve: "Q11-022" },
+    { sub: "Q11-010", label: "Collier de câble", detail: "Plastique, métal, support en V", sev: 3, rpn: 60, cdve: null },
+    { sub: "Q11-011", label: "Collier BAND-IT", detail: "Collier métal, bande PTFE", sev: 5, rpn: 40, cdve: null },
+    { sub: "Q11-012", label: "Barre VT", detail: "Module endommagé, rail déformé", sev: 3, rpn: 60, cdve: null },
+    { sub: "Q11-013", label: "Manchons d'étanchéité endommagés", detail: "", sev: 4, rpn: 112, cdve: "Q11-026" }
+  ] },
+  { code: "Q12", label: "Impression / marquage", hint: "Jauge, type, longueur, identification câble", isTest: false, objects: [
+    { sub: "Q12-001", label: "Erreur de jauge câble", detail: "G20, G18", sev: 4, rpn: 80, cdve: "Q12-007" },
+    { sub: "Q12-002", label: "Erreur type de câble", detail: "DR, AD", sev: 4, rpn: 120, cdve: "Q12-008" },
+    { sub: "Q12-003", label: "Erreur longueur de câble", detail: "Trop court, trop long", sev: 4, rpn: 60, cdve: null },
+    { sub: "Q12-004", label: "Identification de câble", detail: "Lisibilité, erreur numéro d'ID", sev: 4, rpn: 80, cdve: null },
+    { sub: "Q12-005", label: "Identification", detail: "Manchon, plaque, étiquette - lisibilité", sev: 3, rpn: 45, cdve: null },
+    { sub: "Q12-006", label: "Barre VT", detail: "Erreur d'identification de module, référence de module", sev: 3, rpn: 63, cdve: null }
+  ] },
+  { code: "Q13", label: "Dossier de fabrication", hint: "Opération, tampon, traçabilité, doc", isTest: false, objects: [
+    { sub: "Q13-001", label: "Opération", detail: "Non badgé, ordre des opérations non respecté", sev: 3, rpn: 72, cdve: null },
+    { sub: "Q13-002", label: "Tampon", detail: "Non apposé sur fiche suiveuse, partiellement visible", sev: 3, rpn: 36, cdve: null },
+    { sub: "Q13-003", label: "Étiquette de traçabilité", detail: "CT176 non complété, CT129D non complété", sev: 4, rpn: 64, cdve: null },
+    { sub: "Q13-004", label: "Documentation", detail: "Manquante, non conforme", sev: 4, rpn: 80, cdve: null },
+    { sub: "Q13-005", label: "Entrée outillage", detail: "Non effectuée, erreur trousse à outils", sev: 4, rpn: 48, cdve: null }
+  ] },
+  { code: "Q16", label: "FOD", hint: "Corps étranger", isTest: false, objects: [
+    { sub: "Q16-001", label: "Outils", detail: "Lampe torche, miroir, clé, tournevis", sev: 8, rpn: 96, cdve: null },
+    { sub: "Q16-002", label: "Attaches et pièces avion", detail: "Boulons, rondelles, écrous", sev: 8, rpn: 96, cdve: null },
+    { sub: "Q16-003", label: "Effets personnels", detail: "Badge, lunettes, téléphone, ordinateur", sev: 8, rpn: 96, cdve: null },
+    { sub: "Q16-004", label: "Débris industriels", detail: "Copeaux, poussière, isolation", sev: 8, rpn: 128, cdve: null },
+    { sub: "Q16-005", label: "Éléments supplémentaires", detail: "Consommables, bouchons, fiche d'instruction", sev: 8, rpn: 128, cdve: null },
+    { sub: "Q16-006", label: "Maintenance", detail: "Objet laissé dans la zone, atelier, couloir", sev: 4, rpn: 48, cdve: null }
+  ] },
+  { code: "T01", label: "Câble manquant (test)", hint: "", isTest: true, objects: [
+    { sub: "T01", label: "Câble manquant", detail: "Cuivre, aluminium, fibre optique", sev: 8, rpn: 80, cdve: null }
+  ] },
+  { code: "T02", label: "Erreur de branchement (test)", hint: "", isTest: true, objects: [
+    { sub: "T02", label: "Erreur de connexion", detail: "Cuivre, aluminium, fibre optique", sev: 8, rpn: 96, cdve: null }
+  ] },
+  { code: "T03", label: "Shunt manquant (test)", hint: "", isTest: true, objects: [
+    { sub: "T03", label: "Shunt manquant", detail: "Électrique, Mécanique", sev: 8, rpn: 96, cdve: null }
+  ] },
+  { code: "T04", label: "Inversion de branchement (test)", hint: "", isTest: true, objects: [
+    { sub: "T04", label: "Inversion de connexion", detail: "Cuivre, Aluminium, Fibre optique", sev: 8, rpn: 96, cdve: null }
+  ] },
+  { code: "T05", label: "Câble non connecté (test)", hint: "", isTest: true, objects: [
+    { sub: "T05", label: "Câble non connecté", detail: "Cuivre, aluminium, fibre optique", sev: 8, rpn: 200, cdve: null }
+  ] },
+  { code: "T06", label: "Perte optique NC (test)", hint: "", isTest: true, objects: [
+    { sub: "T06", label: "Mesure de perte d'insertion sur liaisons optiques non conformes", detail: "", sev: 6, rpn: 72, cdve: null }
+  ] },
+  { code: "T07", label: "Résistance métallisation NC (test)", hint: "", isTest: true, objects: [
+    { sub: "T07", label: "Mesure de résistance sur métallisation non conforme", detail: "VN, VG, VH", sev: 6, rpn: 36, cdve: "T07-CDVE" }
+  ] },
+  { code: "T08", label: "Résistance linéique NC (test)", hint: "", isTest: true, objects: [
+    { sub: "T08", label: "Mesure de résistance linéique non conforme", detail: "Gaine EMI, surtressage", sev: 6, rpn: 36, cdve: "T08-CDVE" }
+  ] }
+];
+
+var PRODUITS = ["MIP A350", "MIP 400M", "740VU", "PTVU", "300VU", "OHP", "E Rudder", "MFRL", "MDCD", "Autre"];
+var DETECTIONS = ["Poste", "Test", "Contrôle Final", "Réception", "Client", "Autre"];
+var FIN_GLOBAL_SUGGEST = ["740VU", "300VT101", "300VT400", "9KS", "115VM", "3RN1A", "3RN3B", "51CV", "300VT301", "3CB"];
+var FIN_MAPPING = {
+  "Q01": ["100VG301", "300VT103", "100VG430", "300VG131", "300VG101", "300VT400"],
+  "Q03": ["3CBB", "1608VC087A", "20TC2", "24XE", "4XC", "103PHD01"],
+  "Q04": ["300VT400", "1608VC101A", "1608VC006A", "1610VC043", "10REA", "1610VC049"],
+  "Q05": ["300VG105", "150RH", "740VU", "300VT101", "300VT400", "9KS"],
+  "Q06": ["653VT", "1608VC082A", "703VT15", "740VU", "300VT101", "300VT400"],
+  "Q07": ["115VMA", "1608VC097A", "300VT200", "1608VC019", "38JY", "302VMB"],
+  "Q08": ["1610VC049", "1608VC076A", "3RN2B", "6TCB", "1608VC087A", "1WK03A"],
+  "Q09": ["740VU", "300VT101", "300VT400", "9KS", "115VM", "3RN1A"],
+  "Q10": ["30CE", "3DB2", "430HC", "740VU", "300VT101", "300VT400"],
+  "Q11": ["23FP", "1WK11A", "14PHB", "2WTA", "105SG1", "1DG1"],
+  "Q12": ["729VN", "740VU", "300VT101", "300VT400", "9KS", "115VM"],
+  "Q13": ["740VU", "300VT101", "300VT400", "9KS", "115VM", "3RN1A"],
+  "Q16": ["740VU", "300VT101", "300VT400", "9KS", "115VM", "3RN1A"],
+  "T01": ["18RN", "15RN", "19RN", "3RN2A", "37WE1", "260VT"],
+  "T02": ["3RN3A", "3RN1A", "1WK22A", "3RN1B", "3RN2A", "3RN3B"],
+  "T03": ["3RN1A", "3RN1", "8GD", "3WX", "651VT3", "29FPA"],
+  "T04": ["300VT101", "1608VC070A", "3RN1B", "1608VC020A", "10FC1A", "1608VC097A"],
+  "T05": ["3RN2B", "115VMB", "3RN2A", "115VMA", "1PH", "5QJ2"],
+  "T06": ["740VU", "300VT101", "300VT400", "9KS", "115VM", "3RN1A"],
+  "T07": ["740VU", "300VT101", "300VT400", "9KS", "115VM", "3RN1A"],
+  "T08": ["740VU", "300VT101", "300VT400", "9KS", "115VM", "3RN1A"]
+};
+// </DATA>
+
+var CTX_OPTIONS = [
+  "",
+  "Lors de l'inspection du montage",
+  "Lors du contrôle final",
+  "Lors du contrôle après test",
+  "Sur la ligne de production, nous constatons"
+];
+var ACT_OPTIONS = [
+  "",
+  "Nous demandons la re-fabrication",
+  "Merci de remettre en conformité",
+  "Nous demandons le remplacement de l'équipement",
+  "Veuillez s'il vous plait procéder à son remplacement"
+];
+var DEFAULT_HEADER = { msn: "", produit: "MIP A350", detection: "Poste" };
+var COMMENT_MAX = 200;
+
+// --- PURE HELPERS (same output as the Python app) ---
+
+function genLine(seq, sub, qty, loc, objLabel, detail, comment) {
+  var bits = [loc ? loc : "-", objLabel];
+  if (detail) bits.push(detail);
+  if (comment) bits.push(comment);
+  var qtyStr = qty > 1 ? " - QTE " + qty : "";
+  return "DEF " + seq + " - " + sub + qtyStr + " : " + bits.join(" — ");
+}
+
+function defectLine(d, i) {
+  return genLine(i + 1, d.sub, d.qty, d.loc, d.objLabel, d.detail, d.comment);
+}
+
+function totalQty(defects) {
+  return defects.reduce(function (s, d) { return s + d.qty; }, 0);
+}
+
+function buildSapText(header, ctxCombo, ctxText, defects, actCombo, actText) {
+  var t = "### DEFAUTS v1 | PRODUIT: " + header.produit + " | DETECTION: " + header.detection.toUpperCase() + "\n\n";
+  var ctx = (ctxCombo + " " + ctxText).trim();
+  if (ctx) t += ctx + "\n\n";
+  defects.forEach(function (d, i) { t += defectLine(d, i) + "\n"; });
+  var act = (actCombo + " " + actText).trim();
+  if (act) t += "\n" + act + "\n";
+  return t + "\n### TOTAL: " + totalQty(defects);
+}
+
+function autoSeverity(sevNum) { return sevNum >= 8 ? "MAJEURE" : "MINEURE"; }
+
+function findNature(code) {
+  for (var i = 0; i < NATURES.length; i++) if (NATURES[i].code === code) return NATURES[i];
+  return null;
+}
+
+function findObject(nature, sub) {
+  for (var i = 0; i < nature.objects.length; i++) if (nature.objects[i].sub === sub) return nature.objects[i];
+  return null;
+}
+
+// test natures first when the NC was found at test, as in the Python app (stable sort)
+function sortedNatures(isTest) {
+  return NATURES.map(function (n, i) { return { n: n, i: i }; })
+    .sort(function (a, b) { return ((a.n.isTest === isTest ? 0 : 1) - (b.n.isTest === isTest ? 0 : 1)) || a.i - b.i; })
+    .map(function (x) { return x.n; });
+}
+
+function fold(s) {
+  return s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
+}
+
+// accents ignored, so "element" finds "Élément"
+function searchObjects(query) {
+  var q = fold(query.trim());
+  if (q.length < 2) return null;
+  var hits = [];
+  NATURES.forEach(function (n) {
+    n.objects.forEach(function (o) {
+      if (fold(n.code + " " + n.label + " " + o.label + " " + o.detail + " " + o.sub).indexOf(q) !== -1) hits.push({ n: n, o: o });
+    });
+  });
+  return hits;
+}
+
+function suggestedFins(code) {
+  var list = (FIN_MAPPING[code] || FIN_GLOBAL_SUGGEST).slice();
+  if (list.indexOf("Autre") === -1) list.push("Autre");
+  return list;
+}
+
+function pad(n) { return (n < 10 ? "0" : "") + n; }
+
+function formatTimestamp(d) {
+  return d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate()) + " " +
+    pad(d.getHours()) + ":" + pad(d.getMinutes()) + ":" + pad(d.getSeconds());
+}
+
+function newId(d) {
+  var stamp = formatTimestamp(d).replace(/\D/g, "");
+  return "NCW-" + stamp + "-" + Math.random().toString(36).slice(2, 8).toUpperCase();
+}
+
+// one row per NC: the six columns of nc_writer_dataset, plus an id and the defects as JSON
+function buildRow(header, ctxCombo, ctxText, defects, actCombo, actText, now) {
+  return {
+    submission_id: newId(now),
+    timestamp: formatTimestamp(now),
+    msn: header.msn,
+    produit: header.produit,
+    detection: header.detection,
+    total_defauts: totalQty(defects),
+    texte_sap: buildSapText(header, ctxCombo, ctxText, defects, actCombo, actText),
+    defauts_json: JSON.stringify(defects.map(function (d, i) {
+      return { seq: i + 1, code: d.code, sub: d.sub, cdve: d.cdve, loc: d.loc, objet: d.objLabel, precision: d.detail,
+        qte: d.qty, severite: d.sev, sev_num: d.sevNum, complement: d.comment, ligne: defectLine(d, i) };
+    }))
+  };
+}
+
+function csvCell(v) {
+  var s = String(v);
+  return /[";\n\r]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+}
+
+function rowToCsv(row) {
+  var keys = Object.keys(row);
+  return "﻿" + keys.join(";") + "\r\n" + keys.map(function (k) { return csvCell(row[k]); }).join(";") + "\r\n";
+}
+
+// --- SLATE BRIDGE: the only place that talks to Slate ---
+
+function slateApi() {
+  if (root.SlateFunctions) return root.SlateFunctions;
+  /* global SlateFunctions */
+  return typeof SlateFunctions !== "undefined" ? SlateFunctions : null;
+}
+
+function sendToSlate(row) {
+  var sf = slateApi();
+  if (!sf) return "standalone";
+  if (typeof sf.setState !== "function" || typeof sf.triggerEvent !== "function")
+    throw new Error("SlateFunctions.setState / triggerEvent introuvables dans ce widget.");
+  var state = {};
+  state[CONFIG.stateKey] = row;
+  sf.setState(state);
+  sf.triggerEvent(CONFIG.eventName);
+  return "slate";
+}
+
+// --- STATE ---
+
+var S;
+function resetState() {
+  S = {
+    screen: "header",
+    header: { msn: DEFAULT_HEADER.msn, produit: DEFAULT_HEADER.produit, detection: DEFAULT_HEADER.detection },
+    hd: null,             // header form while on the header screen
+    defects: [],
+    ctxCombo: "", ctxText: "", actCombo: "", actText: "",
+    natCode: null, objSub: null,
+    editIdx: null, dupFrom: null,
+    query: "",
+    fd: null,             // defect form while on the detail screen
+    sending: false, error: "",
+    done: null            // {row, mode} after "Soumettre"
+  };
+}
+
+function isTest() { return S.header.detection === "Test"; }
+
+// --- RENDERING ---
+
+var app = null;
+
+function esc(s) {
+  return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
+    return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+  });
+}
+
+function options(list, selected, labels) {
+  return list.map(function (v, i) {
+    return '<option value="' + esc(v) + '"' + (v === selected ? " selected" : "") + ">" + esc(labels ? labels[i] : v) + "</option>";
+  }).join("");
+}
+
+function btn(act, label, cls, extra) {
+  return '<button type="button" class="btn ' + (cls || "") + '" data-act="' + act + '"' + (extra || "") + ">" + label + "</button>";
+}
+
+function sevBadge(sev) {
+  return '<span class="badge ' + (sev === "MAJEURE" ? "maj" : "min") + '">' + sev + "</span>";
+}
+
+function go(screen) {
+  S.screen = screen;
+  S.error = "";
+  if (screen === "header") {
+    var h = S.header;
+    S.hd = {
+      msn: h.msn,
+      produitSel: PRODUITS.indexOf(h.produit) !== -1 ? h.produit : "Autre",
+      produitCustom: PRODUITS.indexOf(h.produit) !== -1 ? "" : h.produit,
+      detectionSel: DETECTIONS.indexOf(h.detection) !== -1 ? h.detection : "Autre",
+      detectionCustom: DETECTIONS.indexOf(h.detection) !== -1 ? "" : h.detection
+    };
+  }
+  if (screen === "nature") S.query = "";
+  render();
+  try { window.scrollTo(0, 0); } catch (e) { /* scrolling can be refused in a sandbox */ }
+}
+
+function headerValues() {
+  var d = S.hd;
+  return {
+    msn: d.msn.trim(),
+    produit: (d.produitSel === "Autre" ? d.produitCustom : d.produitSel).trim(),
+    detection: (d.detectionSel === "Autre" ? d.detectionCustom : d.detectionSel).trim()
+  };
+}
+
+function headerComplete() {
+  var v = headerValues();
+  return !!(v.msn && v.produit && v.detection);
+}
+
+function renderHeader() {
+  var d = S.hd;
+  return '<section class="card"><h2>Nouvelle NC</h2>' +
+    '<label class="field"><span>MSN</span><input type="text" data-field="hd.msn" value="' + esc(d.msn) + '" placeholder="ex. 2160" autocomplete="off"></label>' +
+    '<label class="field"><span>Produit</span><select data-field="hd.produitSel">' + options(PRODUITS, d.produitSel) + "</select></label>" +
+    (d.produitSel === "Autre" ? '<label class="field"><span>Préciser le produit</span><input type="text" data-field="hd.produitCustom" value="' + esc(d.produitCustom) + '"></label>' : "") +
+    '<label class="field"><span>Détection</span><select data-field="hd.detectionSel">' + options(DETECTIONS, d.detectionSel) + "</select></label>" +
+    (d.detectionSel === "Autre" ? '<label class="field"><span>Préciser la détection</span><input type="text" data-field="hd.detectionCustom" value="' + esc(d.detectionCustom) + '"></label>' : "") +
+    '<div class="actions">' + btn("header-continue", "Continuer", "primary", headerComplete() ? "" : " disabled") + "</div></section>";
+}
+
+function templateBlock(title, comboField, comboVal, textField, textVal, list, placeholder) {
+  return '<section class="card"><h2>' + title + '</h2><div class="split">' +
+    '<label class="field"><span>Modèles</span><select data-field="' + comboField + '">' + options(list, comboVal, list.map(function (v) { return v || "—"; })) + "</select></label>" +
+    '<label class="field grow"><span>Suite du texte</span><textarea rows="3" data-field="' + textField + '" placeholder="' + placeholder + '">' + esc(textVal) + "</textarea></label>" +
+    "</div></section>";
+}
+
+function renderList() {
+  var h = '<div class="stack">' +
+    templateBlock("Contexte de découverte", "ctxCombo", S.ctxCombo, "ctxText", S.ctxText, CTX_OPTIONS, "Saisir la suite du contexte ici...");
+  h += '<section class="card"><div class="card-head"><h2>Défauts de la NC</h2>' + btn("edit-header", "Modifier les infos de la NC", "ghost") + "</div>";
+  if (!S.defects.length) {
+    h += '<p class="warn">Aucun défaut enregistré pour l\'instant.</p>';
+  } else {
+    S.defects.forEach(function (d, i) {
+      h += '<article class="defect"><div class="defect-main">' +
+        '<div class="defect-title"><strong>Défaut ' + (i + 1) + "</strong> · " + esc(d.natureLabel) + ' <code>' + esc(d.sub) + "</code></div>" +
+        '<div class="badges">' + sevBadge(d.sev) + (d.cdve ? '<span class="badge cdve">CDVE</span>' : "") + (d.qty > 1 ? '<span class="badge qty">×' + d.qty + "</span>" : "") + "</div>" +
+        '<pre class="line">' + esc(defectLine(d, i)) + "</pre></div>" +
+        '<div class="defect-btns">' + btn("edit-defect", "Modifier", "", ' data-i="' + i + '"') + btn("delete-defect", "Supprimer", "danger", ' data-i="' + i + '"') + "</div></article>";
+    });
+  }
+  h += '<div class="actions">' + btn("add-defect", "+ Ajouter", "primary") + btn("duplicate-last", "Dupliquer le dernier", "", S.defects.length ? "" : " disabled") + "</div></section>";
+  h += templateBlock("Action demandée", "actCombo", S.actCombo, "actText", S.actText, ACT_OPTIONS, "Saisir la suite de l'action ici...");
+  h += btn("finish", "Terminer", "primary wide", S.defects.length ? "" : " disabled") + "</div>";
+  return h;
+}
+
+function renderNatureResults() {
+  var hits = searchObjects(S.query);
+  if (hits) {
+    if (!hits.length) return '<p class="muted">Aucun code ne correspond.</p>';
+    return '<div class="results">' + hits.map(function (x) {
+      return '<button type="button" class="pick" data-act="pick-object" data-code="' + x.n.code + '" data-sub="' + x.o.sub + '">' +
+        "<strong>" + esc(x.o.label) + '</strong> <code>' + x.o.sub + '</code><span class="muted">' + esc(x.n.label) + "</span></button>";
+    }).join("") + "</div>";
+  }
+  return '<div class="tiles">' + sortedNatures(isTest()).map(function (n) {
+    return '<button type="button" class="tile' + (n.isTest ? " test" : "") + '" data-act="pick-nature" data-code="' + n.code + '">' +
+      '<span class="tile-code">' + n.code + '</span><strong>' + esc(n.label) + "</strong>" + (n.hint ? '<span class="muted">' + esc(n.hint) + "</span>" : "") + "</button>";
+  }).join("") + "</div>";
+}
+
+function renderNature() {
+  return btn("back", "← Retour", "ghost", ' data-to="list"') +
+    '<section class="card"><h2>Étape 1 — Nature du défaut</h2>' +
+    '<label class="field"><span>Recherche rapide (ex. « contact », « T04 »)</span><input type="search" data-field="query" value="' + esc(S.query) + '" autocomplete="off"></label>' +
+    '<div id="ncw-results">' + renderNatureResults() + "</div></section>";
+}
+
+function renderObject() {
+  var n = findNature(S.natCode);
+  return btn("back", "← Retour Natures", "ghost", ' data-to="nature"') +
+    '<section class="card"><h2>Étape 2 — ' + esc(n.label) + " (" + n.code + ")</h2><div class=\"results\">" +
+    n.objects.map(function (o) {
+      return '<button type="button" class="pick" data-act="pick-object" data-code="' + n.code + '" data-sub="' + o.sub + '">' +
+        "<strong>" + esc(o.label) + '</strong> <code>' + o.sub + "</code>" + (o.cdve ? '<span class="badge cdve">CDVE possible</span>' : "") +
+        (o.detail ? '<span class="muted">' + esc(o.detail) + "</span>" : "") + "</button>";
+    }).join("") + "</div></section>";
+}
+
+function detailContext() {
+  var n = findNature(S.natCode), o = findObject(n, S.objSub), f = S.fd;
+  var sevNum = f.cdve ? 10 : o.sev;
+  var loc = f.locCustom.trim() || (f.locSel === "Autre" ? "" : f.locSel);
+  var seq = S.editIdx !== null ? S.editIdx + 1 : S.defects.length + 1;
+  var qty = /^\d+$/.test(String(f.qty).trim()) ? parseInt(f.qty, 10) : NaN;
+  var errors = [];
+  if (!(qty >= 1)) errors.push("La quantité doit être un nombre entier supérieur ou égal à 1.");
+  if (f.locSel === "Autre" && !f.locCustom.trim()) errors.push("« Autre » choisi : saisir la localisation manuellement.");
+  return {
+    n: n, o: o, sevNum: sevNum, loc: loc, qty: qty, errors: errors,
+    sub: f.cdve ? o.cdve : o.sub,
+    line: genLine(seq, f.cdve ? o.cdve : o.sub, qty >= 1 ? qty : 1, loc, o.label, f.detail.trim(), f.comment.trim())
+  };
+}
+
+function initDetailForm() {
+  var n = findNature(S.natCode), o = findObject(n, S.objSub);
+  var src = S.editIdx !== null ? S.defects[S.editIdx] : S.dupFrom !== null ? S.defects[S.dupFrom] : null;
+  var fins = suggestedFins(n.code);
+  var loc = src ? src.loc : "";
+  S.fd = {
+    cdve: src ? !!src.cdve && !!o.cdve : false,
+    locSel: loc && fins.indexOf(loc) !== -1 ? loc : "",
+    locCustom: loc && fins.indexOf(loc) === -1 ? loc : "",
+    detail: src ? src.detail : "",
+    qty: src ? String(src.qty) : "1",
+    comment: src ? src.comment : "",
+    sev: src ? src.sev : autoSeverity(o.sev),
+    sevTouched: !!src
+  };
+}
+
+function renderDetail() {
+  var c = detailContext(), f = S.fd, o = c.o;
+  var fins = suggestedFins(c.n.code);
+  var h = btn("cancel-detail", "← Annuler", "ghost") +
+    '<section class="card"><h2>Détails : ' + esc(o.label) + '</h2><p class="muted">' + esc(c.n.label) + " · <code>" + o.sub + "</code>" +
+    (S.editIdx !== null ? " · modification du défaut " + (S.editIdx + 1) : "") + "</p>";
+  if (o.cdve) {
+    h += '<div class="info"><strong>Option CDVE disponible</strong><label class="check"><input type="checkbox" data-field="fd.cdve"' + (f.cdve ? " checked" : "") +
+      "> Circuit Commandes de Vol (bascule vers code " + o.cdve + ")</label></div>";
+  }
+  h += '<div class="split"><label class="field"><span>Localisation (FIN / Zone)</span><select data-field="fd.locSel">' +
+    options([""].concat(fins), f.locSel, ["— choisir —"].concat(fins)) + "</select></label>" +
+    '<label class="field grow"><span>Ou saisir manuellement</span><input type="text" data-field="fd.locCustom" value="' + esc(f.locCustom) + '" autocomplete="off"></label></div>' +
+    '<label class="field"><span>Précision (optionnel)</span><input type="text" data-field="fd.detail" value="' + esc(f.detail) + '" placeholder="' + esc(o.detail) + '"></label>' +
+    '<div class="split"><label class="field"><span>Quantité</span><input type="number" min="1" step="1" data-field="fd.qty" value="' + esc(f.qty) + '"></label>' +
+    '<label class="field"><span>Sévérité</span><select data-field="fd.sev">' + options(["MINEURE", "MAJEURE"], f.sev) + "</select></label></div>" +
+    '<label class="field"><span>Complément libre (optionnel) <span class="muted" id="ncw-count">' + f.comment.length + "/" + COMMENT_MAX + "</span></span>" +
+    '<textarea rows="3" maxlength="' + COMMENT_MAX + '" data-field="fd.comment">' + esc(f.comment) + "</textarea></label>" +
+    '<div class="preview"><span>Aperçu texte généré</span><pre class="line" id="ncw-preview">' + esc(c.line) + "</pre></div>" +
+    '<ul class="errors" id="ncw-errors">' + c.errors.map(function (e) { return "<li>" + esc(e) + "</li>"; }).join("") + "</ul>" +
+    '<div class="actions">' + btn("save-defect", "Enregistrer le défaut", "primary", c.errors.length ? " disabled" : "") + "</div></section>";
+  return h;
+}
+
+function sapText() {
+  return buildSapText(S.header, S.ctxCombo, S.ctxText, S.defects, S.actCombo, S.actText);
+}
+
+function renderReview() {
+  return btn("back", "← Retour à la liste", "ghost", ' data-to="list"') +
+    '<section class="card"><h2>Bilan &amp; Soumission</h2>' +
+    '<p class="muted">' + S.defects.length + " ligne(s) de défaut · total " + totalQty(S.defects) + "</p>" +
+    '<div class="preview"><div class="card-head"><span>Texte SAP final</span>' + btn("copy", "Copier", "ghost small") + '</div><pre class="sap" id="ncw-sap">' + esc(sapText()) + "</pre></div>" +
+    (S.error ? '<p class="error">' + esc(S.error) + "</p>" : "") +
+    '<div class="actions">' + btn("submit", S.sending ? "Envoi…" : "Soumettre la NC", "primary", S.sending ? " disabled" : "") + "</div></section>";
+}
+
+function renderDone() {
+  var r = S.done.row, slate = S.done.mode === "slate";
+  return '<section class="card">' +
+    (slate ? '<p class="ok">NC transmise à Slate (' + esc(r.submission_id) + ").</p>"
+           : '<p class="warn">Hors Slate : rien n\'a été enregistré. Copiez le texte ou téléchargez la ligne.</p>') +
+    '<div class="preview"><div class="card-head"><span>Texte SAP</span>' + btn("copy", "Copier", "ghost small") + '</div><pre class="sap" id="ncw-sap">' + esc(r.texte_sap) + "</pre></div>" +
+    '<div class="actions">' + btn("new-nc", "Nouvelle NC", "primary") + (slate ? "" : btn("download", "Télécharger la ligne (CSV)")) + "</div></section>";
+}
+
+function render() {
+  var s = S.screen, body;
+  if (s === "header") body = renderHeader();
+  else if (s === "list") body = renderList();
+  else if (s === "nature") body = renderNature();
+  else if (s === "object") body = renderObject();
+  else if (s === "detail") body = renderDetail();
+  else if (s === "review") body = renderReview();
+  else body = renderDone();
+  var h = S.header;
+  app.innerHTML = '<header class="bar"><h1>NC · Saisie structurée</h1>' +
+    (s !== "header" && s !== "done" ? '<div class="nc-info"><strong>MSN ' + esc(h.msn) + "</strong> | " + esc(h.produit) + " | " + esc(h.detection) + "</div>" : "") +
+    "</header>" + body + '<div class="toast" id="ncw-toast" role="status"></div>';
+  var first = app.querySelector("[data-field='query'], [data-field='hd.msn']");
+  if (first && !first.value) try { first.focus(); } catch (e) { /* focus can be refused in an iframe */ }
+}
+
+// partial refreshes, so typing never loses the cursor
+function refreshHeaderButton() {
+  var b = app.querySelector("[data-act='header-continue']");
+  if (b) b.disabled = !headerComplete();
+}
+
+function refreshDetail() {
+  var c = detailContext();
+  app.querySelector("#ncw-preview").textContent = c.line;
+  app.querySelector("#ncw-count").textContent = S.fd.comment.length + "/" + COMMENT_MAX;
+  app.querySelector("#ncw-errors").innerHTML = c.errors.map(function (e) { return "<li>" + esc(e) + "</li>"; }).join("");
+  app.querySelector("[data-act='save-defect']").disabled = c.errors.length > 0;
+}
+
+function toast(msg) {
+  var t = app.querySelector("#ncw-toast");
+  if (!t) return;
+  t.textContent = msg;
+  t.className = "toast show";
+  clearTimeout(toast.timer);
+  toast.timer = setTimeout(function () { t.className = "toast"; }, 2200);
+}
+
+// --- ACTIONS ---
+
+function saveDefect() {
+  var c = detailContext(), f = S.fd;
+  if (c.errors.length) return;
+  var entry = {
+    code: c.n.code, natureLabel: c.n.label, sub: c.sub, baseSub: c.o.sub, objLabel: c.o.label,
+    detail: f.detail.trim(), loc: c.loc, qty: c.qty, sev: f.sev, comment: f.comment.trim(),
+    sevNum: c.sevNum, cdve: f.cdve
+  };
+  if (S.editIdx !== null) S.defects[S.editIdx] = entry; else S.defects.push(entry);
+  S.editIdx = null;
+  S.dupFrom = null;
+  go("list");
+}
+
+function openDetail(code, sub, editIdx, dupFrom) {
+  S.natCode = code;
+  S.objSub = sub;
+  S.editIdx = editIdx;
+  S.dupFrom = dupFrom;
+  initDetailForm();
+  go("detail");
+}
+
+function copyText(text) {
+  function fallback() {
+    var ta = document.createElement("textarea");
+    ta.value = text;
+    ta.setAttribute("readonly", "");
+    ta.style.position = "fixed";
+    ta.style.opacity = "0";
+    document.body.appendChild(ta);
+    ta.select();
+    var ok = false;
+    try { ok = document.execCommand("copy"); } catch (e) { ok = false; }
+    document.body.removeChild(ta);
+    if (ok) { toast("Texte copié"); return; }
+    var pre = app.querySelector("#ncw-sap"), range = document.createRange();
+    range.selectNodeContents(pre);
+    var sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
+    toast("Texte sélectionné : Ctrl+C pour copier");
+  }
+  try {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(function () { toast("Texte copié"); }, fallback);
+      return;
+    }
+  } catch (e) { /* blocked in some sandboxes */ }
+  fallback();
+}
+
+function download(row) {
+  try {
+    var blob = new Blob([rowToCsv(row)], { type: "text/csv;charset=utf-8" });
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "nc_" + row.submission_id + ".csv";
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(function () { URL.revokeObjectURL(a.href); document.body.removeChild(a); }, 0);
+  } catch (e) {
+    toast("Téléchargement impossible ici");
+  }
+}
+
+function submit() {
+  if (S.sending || !S.defects.length) return;
+  var row = buildRow(S.header, S.ctxCombo, S.ctxText, S.defects, S.actCombo, S.actText, new Date());
+  S.sending = true;
+  S.error = "";
+  try {
+    var mode = sendToSlate(row);
+    S.done = { row: row, mode: mode };
+    S.sending = false;
+    S.screen = "done";
+  } catch (e) {
+    S.sending = false;
+    S.error = "Envoi impossible : " + (e && e.message ? e.message : e) + " La NC n'est pas perdue : copiez le texte ou réessayez.";
+  }
+  render();
+}
+
+function onClick(e) {
+  var el = e.target.closest ? e.target.closest("[data-act]") : null;
+  if (!el || el.disabled || !app.contains(el)) return;
+  var act = el.getAttribute("data-act"), i = parseInt(el.getAttribute("data-i"), 10);
+  if (act === "header-continue") {
+    if (!headerComplete()) return;
+    S.header = headerValues();
+    go("list");
+  } else if (act === "back") go(el.getAttribute("data-to"));
+  else if (act === "edit-header") go("header");
+  else if (act === "add-defect") { S.editIdx = null; S.dupFrom = null; go("nature"); }
+  else if (act === "duplicate-last") {
+    var last = S.defects[S.defects.length - 1];
+    openDetail(last.code, last.baseSub, null, S.defects.length - 1);
+  } else if (act === "edit-defect") openDetail(S.defects[i].code, S.defects[i].baseSub, i, null);
+  else if (act === "delete-defect") { S.defects.splice(i, 1); render(); toast("Défaut " + (i + 1) + " supprimé"); }
+  else if (act === "finish") go("review");
+  else if (act === "pick-nature") { S.natCode = el.getAttribute("data-code"); go("object"); }
+  else if (act === "pick-object") openDetail(el.getAttribute("data-code"), el.getAttribute("data-sub"), null, null);
+  else if (act === "cancel-detail") {
+    var back = S.editIdx !== null || S.dupFrom !== null ? "list" : "object";
+    S.editIdx = null;
+    S.dupFrom = null;
+    go(back);
+  } else if (act === "save-defect") saveDefect();
+  else if (act === "copy") copyText(S.screen === "done" ? S.done.row.texte_sap : sapText());
+  else if (act === "submit") submit();
+  else if (act === "download") download(S.done.row);
+  else if (act === "new-nc") { resetState(); go("header"); }
+}
+
+function onInput(e) {
+  var el = e.target, field = el.getAttribute && el.getAttribute("data-field");
+  if (!field) return;
+  var val = el.type === "checkbox" ? el.checked : el.value;
+  var parts = field.split(".");
+  if (parts.length === 2) S[parts[0]][parts[1]] = val; else S[field] = val;
+  if (parts[0] === "hd") {
+    if (field === "hd.produitSel" || field === "hd.detectionSel") render(); else refreshHeaderButton();
+  } else if (parts[0] === "fd") {
+    if (field === "fd.sev") S.fd.sevTouched = true;
+    if (field === "fd.cdve") {
+      var o = findObject(findNature(S.natCode), S.objSub);
+      if (!S.fd.sevTouched) S.fd.sev = autoSeverity(S.fd.cdve ? 10 : o.sev);
+      render();
+    } else refreshDetail();
+  } else if (field === "query") {
+    app.querySelector("#ncw-results").innerHTML = renderNatureResults();
+  }
+}
+
+function isChoice(el) { return el.tagName === "SELECT" || el.type === "checkbox"; }
+
+function init() {
+  app = document.getElementById("nc-writer");
+  if (!app) {
+    app = document.createElement("div");
+    app.id = "nc-writer";
+    document.body.appendChild(app);
+  }
+  app.className = "ncw";
+  resetState();
+  app.addEventListener("click", onClick);
+  // text fields on "input", selects and checkboxes on "change" (some browsers fire both for a select)
+  app.addEventListener("input", function (e) { if (!isChoice(e.target)) onInput(e); });
+  app.addEventListener("change", function (e) { if (isChoice(e.target)) onInput(e); });
+  go("header");
+}
+
+if (typeof module === "object" && module.exports) {
+  module.exports = { NATURES: NATURES, PRODUITS: PRODUITS, DETECTIONS: DETECTIONS, FIN_MAPPING: FIN_MAPPING, FIN_GLOBAL_SUGGEST: FIN_GLOBAL_SUGGEST,
+    CTX_OPTIONS: CTX_OPTIONS, ACT_OPTIONS: ACT_OPTIONS, CONFIG: CONFIG, genLine: genLine, buildSapText: buildSapText, buildRow: buildRow,
+    searchObjects: searchObjects, sortedNatures: sortedNatures, suggestedFins: suggestedFins, rowToCsv: rowToCsv, formatTimestamp: formatTimestamp };
+} else if (typeof document !== "undefined") {
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init); else init();
+}
+})(typeof window !== "undefined" ? window : this);

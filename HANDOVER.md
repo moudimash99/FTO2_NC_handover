@@ -267,7 +267,7 @@ Full detail: `03_reports/dossier_stage_NC.md` (French master dossier) and `NC_de
 | `05_outputs/` | Defect table xlsx; parsed defects v4.8 (CSV) and v4.1–v4.7; NC table v4.7; LLM sub-codes; human-review list; v4.7 group changes; cable review files; count disagreements; NC review list |
 | `06_input_data/` | Inputs Mohammad uploaded: dashboard export, missing IDs, nc-rec, REC tracker, cable team tracker, MFT action trackers (A330/A350), pipeline notebook, earlier REC note, sample NC text, code sheet text |
 | `07_scripts/` | `rec_checks.py`, `cable_check.py`, `build_defect_table.py` (+ older working scripts in `archive/`) |
-| `08_tools/` | NC entry tool prototypes (JSX), logic flow (Mermaid), old Slate SQL and preview |
+| `08_tools/` | NC entry tool prototypes (JSX), logic flow (Mermaid), old Slate SQL and preview; `nc_writer_slate/`: the Streamlit NC writing tool rebuilt as HTML/CSS/JS for a Slate Code Sandbox widget (README has the Slate setup) |
 | `cnq_handoever/` | CNQ model (pipeline step, Slate queries, offline dashboard, tests); README_handover.md section 4 lists the 19 Oct changes |
 | `CNQ_CHANGES.md` | Every CNQ change: applied, decided, kept for later, needed from the pipeline team |
 | `05_outputs/CNQ_investigation_checklist.html` | Offline checklist of open CNQ checks; click a check to open its list; answers kept in the browser, CSV export |

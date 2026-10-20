@@ -1,0 +1,108 @@
+/* NC FTO2 · Saisie structurée: CSS tab of the Slate Code Sandbox widget. Same palette as the CNQ dashboard. */
+.ncw {
+  --navy: #0c2340; --on-navy: #ffffff; --on-navy-muted: #b9c6d6;
+  --bg: #ffffff; --tint: #f4f6f9; --ink: #132238; --muted: #5d6d7e; --line: #d5dce4;
+  --accent: #1d5fb0; --accent-ink: #ffffff;
+  --maj: #a32b2b; --maj-bg: #fbe9e9; --min: #8a5a00; --min-bg: #fff1d6;
+  --cdve: #6a4bb0; --cdve-bg: #efe9fa; --ok: #1e7a45; --ok-bg: #e5f4ea;
+  --warn-bg: #fff4cc; --warn-ink: #6b4e00; --err: #a32b2b;
+  box-sizing: border-box;
+  max-width: 780px; margin: 0 auto; padding: 0 16px 32px;
+  background: var(--bg); color: var(--ink);
+  font-family: "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Roboto, Arial, sans-serif;
+  font-size: 15px; line-height: 1.5;
+  font-variant-ligatures: none; /* "<->" stays three characters, as it will be in SAP */
+}
+.ncw *, .ncw *::before, .ncw *::after { box-sizing: inherit; }
+.ncw h1 { font-size: 20px; font-weight: 600; margin: 0; }
+.ncw h2 { font-size: 17px; font-weight: 600; margin: 0 0 12px; }
+.ncw code { font-family: Consolas, "SFMono-Regular", Menlo, monospace; font-size: 13px; background: var(--tint); padding: 1px 5px; border-radius: 4px; }
+.ncw .muted { color: var(--muted); font-size: 13px; }
+
+.ncw .bar { background: var(--navy); color: var(--on-navy); margin: 0 -16px 16px; padding: 14px 16px; }
+.ncw .nc-info { color: var(--on-navy-muted); font-size: 14px; margin-top: 4px; }
+.ncw .nc-info strong { color: var(--on-navy); }
+
+.ncw .stack > * + * { margin-top: 14px; }
+.ncw .card { border: 1px solid var(--line); border-radius: 10px; padding: 16px; background: var(--bg); }
+.ncw .card + .card { margin-top: 14px; }
+.ncw .card-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; }
+.ncw .card-head h2 { margin: 0; }
+
+.ncw .field { display: block; margin-bottom: 12px; }
+.ncw .field > span { display: block; font-size: 13px; font-weight: 600; color: var(--muted); margin-bottom: 4px; }
+.ncw input[type="text"], .ncw input[type="search"], .ncw input[type="number"], .ncw select, .ncw textarea {
+  width: 100%; font: inherit; font-variant-ligatures: none; color: var(--ink); background: var(--bg);
+  border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; min-height: 40px;
+}
+.ncw textarea { min-height: 80px; resize: vertical; }
+.ncw input:focus, .ncw select:focus, .ncw textarea:focus, .ncw button:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.ncw .split { display: flex; gap: 12px; flex-wrap: wrap; }
+.ncw .split > .field { flex: 1 1 200px; }
+.ncw .split > .field.grow { flex: 2 1 280px; }
+.ncw .check { display: flex; align-items: center; gap: 8px; margin-top: 6px; cursor: pointer; }
+.ncw .check input { width: 18px; height: 18px; }
+
+.ncw .btn {
+  font: inherit; font-weight: 600; min-height: 40px; padding: 8px 16px; border-radius: 8px; cursor: pointer;
+  border: 1px solid var(--line); background: var(--bg); color: var(--ink);
+}
+.ncw .btn:hover:not(:disabled) { background: var(--tint); }
+.ncw .btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.ncw .btn.primary:hover:not(:disabled) { background: #174f94; }
+.ncw .btn.danger { color: var(--maj); }
+.ncw .btn.ghost { border-color: transparent; color: var(--accent); padding-left: 6px; padding-right: 6px; }
+.ncw .btn.small { min-height: 32px; padding: 4px 10px; font-size: 14px; }
+.ncw .btn.wide { width: 100%; margin-top: 14px; }
+.ncw .btn:disabled { opacity: .45; cursor: not-allowed; }
+.ncw > .btn.ghost { margin-bottom: 8px; }
+.ncw .actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
+
+.ncw .badges { display: flex; gap: 6px; flex-wrap: wrap; margin: 6px 0; }
+.ncw .badge { display: inline-block; font-size: 12px; font-weight: 700; padding: 2px 8px; border-radius: 999px; letter-spacing: .02em; }
+.ncw .badge.maj { background: var(--maj-bg); color: var(--maj); }
+.ncw .badge.min { background: var(--min-bg); color: var(--min); }
+.ncw .badge.cdve { background: var(--cdve-bg); color: var(--cdve); }
+.ncw .badge.qty { background: var(--tint); color: var(--muted); }
+
+.ncw .defect { display: flex; gap: 12px; border: 1px solid var(--line); border-radius: 8px; padding: 12px; margin-bottom: 10px; }
+.ncw .defect-main { flex: 1; min-width: 0; }
+.ncw .defect-btns { display: flex; flex-direction: column; gap: 6px; }
+.ncw pre.line, .ncw pre.sap {
+  margin: 0; padding: 10px 12px; background: var(--tint); border-radius: 6px;
+  font-family: Consolas, "SFMono-Regular", Menlo, monospace; font-size: 13px; white-space: pre-wrap; word-break: break-word;
+}
+.ncw pre.sap { max-height: 420px; overflow: auto; }
+.ncw .preview { margin: 6px 0 4px; }
+.ncw .preview > span, .ncw .preview .card-head span { font-size: 13px; font-weight: 600; color: var(--muted); display: block; margin-bottom: 4px; }
+.ncw .preview .card-head { margin-bottom: 4px; }
+
+.ncw .tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px; }
+.ncw .tile, .ncw .pick {
+  display: flex; flex-direction: column; align-items: flex-start; gap: 2px; text-align: left; width: 100%;
+  font: inherit; color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 8px;
+  padding: 10px 12px; cursor: pointer;
+}
+.ncw .tile:hover, .ncw .pick:hover { border-color: var(--accent); background: var(--tint); }
+.ncw .tile-code { font-size: 12px; font-weight: 700; color: var(--accent); }
+.ncw .tile.test .tile-code { color: var(--cdve); }
+.ncw .results { display: flex; flex-direction: column; gap: 8px; }
+.ncw .pick code { margin-left: 0; }
+
+.ncw .info { background: var(--cdve-bg); border-radius: 8px; padding: 10px 12px; margin-bottom: 12px; }
+.ncw .warn { background: var(--warn-bg); color: var(--warn-ink); border-radius: 8px; padding: 10px 12px; margin: 0 0 10px; }
+.ncw .ok { background: var(--ok-bg); color: var(--ok); border-radius: 8px; padding: 10px 12px; margin: 0 0 12px; font-weight: 600; }
+.ncw .error { color: var(--err); font-weight: 600; }
+.ncw .errors { color: var(--err); margin: 6px 0 0; padding-left: 20px; font-size: 14px; }
+.ncw .errors:empty { display: none; }
+
+.ncw .toast {
+  position: fixed; left: 50%; bottom: 20px; transform: translateX(-50%); background: var(--navy); color: var(--on-navy);
+  padding: 8px 16px; border-radius: 8px; font-size: 14px; opacity: 0; pointer-events: none; transition: opacity .2s;
+}
+.ncw .toast.show { opacity: 1; }
+
+@media (max-width: 520px) {
+  .ncw .defect { flex-direction: column; }
+  .ncw .defect-btns { flex-direction: row; }
+}
