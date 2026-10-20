@@ -8,7 +8,7 @@ The same file runs in two places:
       fto2_dashboard_data_missing_ids that the pipeline notebook already writes.
 The NC selection is the pipeline's: nothing here adds or removes an NC (the scope columns only label them).
 
-    nc_t, def_t, info = fto2_core.build(frames, labels, ref_dir)
+    nc_t, def_t, info, to_label = fto2_core.build(frames, labels, ref_dir)
 
 frames   the NC exports (standard + missing IDs) as pandas DataFrames, with the pipeline's columns
 labels   root-cause labels per defect line (04_reference/llm_labels_longtext.csv; a dataset in Skywise)
@@ -104,11 +104,31 @@ DEF_COLUMNS = [
 
 
 # ============================================================ 1. exports -> one row per NC
+def as_export(x):
+    """A dataset read in Skywise, put in the form of the CSV exports the build was written and tested on: list columns as
+    '[a, b]', timestamps as ISO text ending in Z. Text columns are left as they are."""
+    x = x.copy()
+    for c in x.columns:
+        s = x[c]
+        if pd.api.types.is_datetime64_any_dtype(s):
+            t = pd.to_datetime(s, utc=True)
+            x[c] = t.dt.strftime("%Y-%m-%dT%H:%M:%SZ").where(t.notna(), None)
+        elif s.dtype == object:
+            seq = s.map(lambda v: isinstance(v, (list, tuple, np.ndarray)))
+            if seq.any():
+                x[c] = [("[" + ", ".join(str(e) for e in v) + "]") if f else v for v, f in zip(s, seq)]
+            ts = s.map(lambda v: isinstance(v, (pd.Timestamp, np.datetime64)) or hasattr(v, "isoformat") and not isinstance(v, str))
+            if ts.any():
+                t = pd.to_datetime(s.where(ts), utc=True, errors="coerce")
+                x[c] = np.where(ts, t.dt.strftime("%Y-%m-%dT%H:%M:%SZ"), x[c])
+    return x
+
+
 def merge_exports(frames):
     """The NC exports (standard + missing IDs) merged; when an NC is in several, the most recently changed row wins."""
     out = []
     for i, x in enumerate(frames):
-        x = x.copy()
+        x = as_export(x)
         if "_source" not in x.columns:
             x["_source"] = "export_%d" % (i + 1)
         out.append(x)
@@ -343,7 +363,7 @@ def tables(d, nc, lt, created_to):
 
 
 def build(frames, labels, ref_dir):
-    """Everything in one call, as the Skywise notebook uses it: (nc_t, def_t, info)."""
+    """Everything in one call, as the Skywise notebook uses it: (nc_t, def_t, info, to_label)."""
     x, info = merge_exports(frames)
     p = prepare(x, labels, ref_dir)
     nc_t, def_t = tables(p["d"], p["nc"], p["lt"], info["created_to"])
@@ -351,10 +371,14 @@ def build(frames, labels, ref_dir):
     info.update(p["report"])
     info.update({"nc_table": int(len(nc_t)), "defect_table": int(len(def_t)), "level3_aec": round(float(aec.cnq_cost_total.sum()), 2),
                  "to_label": int((def_t.label_src == "parser").sum())})
-    return nc_t, def_t, info
+    return nc_t, def_t, info, lines_to_label(p["d"], p["lt"])
 
 
-def lines_to_label(def_t, d=None):
-    """Defect lines that have no stored root-cause label yet, for the periodic AI pass (one CSV row per line)."""
-    t = def_t[def_t.label_src == "parser"][["nc", "seq", "text", "sub"]].rename(columns={"nc": "notification_number", "sub": "parser_sous_categorie"})
-    return t.reset_index(drop=True)
+def lines_to_label(d, lt):
+    """Defect lines without a usable stored label (new, or text changed since it was labelled), for the periodic AI pass.
+    snippet is the line's full text: a label is used only while the line's text stays the same as its snippet."""
+    t = d[d.llm_status != "ok"]
+    out = pd.DataFrame({"notification_number": t.notification_number, "seq": t.seq, "snippet": t.text.fillna(""),
+                        "parser_sous_categorie": t.sous_groupe, "ligne": t.ligne, "date_creation": t.date_creation,
+                        "long_text": t.notification_number.map(lambda n: (lt.get(n, "") or "")[:4000])})
+    return out.reset_index(drop=True)

@@ -1,0 +1,128 @@
+sous_code,sous_categorie,groupe,rca_type,rca_mode,object_desc,severity,rpn,priority
+T04,Inversion,Branchement,INVERSION_BRANCHEMENT,SELECTION,"Connection reversal (Copper, Aluminum, Fiber optic)",8.0,96.0,Average
+T02,Erreur de branchement,Branchement,ERREUR_BRANCHEMENT,SELECTION,"Connection error (Copper, aluminum, fiber optic)",8.0,96.0,Average
+Q01-001,Déverrouillage,Branchement,OUBLI_VERROUILLAGE,OMISSION,"Contact (Copper, aluminum, fiber optic)",7.0,245.0,Average
+Q01-002,Déverrouillage,Branchement,OUBLI_VERROUILLAGE,OMISSION,False contact (Not locked),3.0,120.0,Average
+Q01-003,Déverrouillage,Branchement,OUBLI_VERROUILLAGE,OMISSION,"CDVE Contact (Copper, aluminum, fiber optic)",10.0,70.0,High
+T05,Non connecté,Branchement,NON_CONNECTE,OMISSION,"Unconnected cable (Copper, aluminum, fiber optic)",8.0,200.0,Average
+Q05-004,Frettage / colliers – pose,Câblage,MEO_FRETTAGE_COLLIER,EXECUTION,"Frettage (Plastic collar, string fret)",4.0,120.0,Average
+Q06-006,Frettage / colliers – pose,Câblage,MEO_FRETTAGE_COLLIER,EXECUTION,"Incorrect positioning of shrink ring (Plastic collar, string)",3.0,60.0,Average
+Q06-011,Frettage / colliers – pose,Câblage,MEO_FRETTAGE_COLLIER,EXECUTION,"Frettage implementation (double capstan knot, fret length cut, ferrule clamp)",3.0,90.0,Average
+Q06-012,Frettage / colliers – pose,Câblage,MEO_FRETTAGE_COLLIER,EXECUTION,Implementation of connections in Band-it collar,5.0,60.0,Average
+Q05-001,Serrage électrique,Câblage,MEO_SERRAGE,EXECUTION,"Electrical element (Rear connection, connector, VG module, terminal, circuit breaker - over/under/loose)",8.0,480.0,High
+Q05-005,Serrage électrique,Câblage,MEO_SERRAGE,EXECUTION,"CDVE Electrical components (rear connection, connector, VG module, terminal, circuit breaker)",10.0,600.0,High
+Q05-002,Serrage mécanique,Câblage,MEO_SERRAGE,EXECUTION,"Mechanical (screws, safety wire, frangible paint, clamp, diode block, BAND-IT, VT bar, standoff, sleeve, light, switch, relay)",4.0,160.0,Average
+Q05-003,Serrage mécanique,Câblage,MEO_SERRAGE,EXECUTION,Rope collar (Over/under/loose screws),4.0,240.0,Average
+Q06-001,Cheminement – longueur / tension,Câblage,MEO_CHEMINEMENT,EXECUTION,"Harness (Routing, cable management, under/overlength, wrong destination, not in collar, V-support, pinched)",4.0,96.0,Average
+Q06-004,Cheminement – clash,Câblage,MEO_CHEMINEMENT,EXECUTION,"Cable in contact with structural element (Clash with plate, ramp, pipe, screw, connecting rod)",5.0,120.0,Average
+Q06-005,Cheminement – clash,Câblage,MEO_CHEMINEMENT,EXECUTION,"Cable in contact with electrical component (Clash with VG, connector)",5.0,80.0,Average
+Q06-002,Gainage / protection,Câblage,MEO_GAINAGE,EXECUTION,"Poor sheathing installation (Visible line, incorrect twist, branch, sock)",4.0,96.0,Average
+Q06-003,Gainage / protection,Câblage,MEO_GAINAGE,EXECUTION,"Combining tape/amalgamant (Overlap, permitted overlap)",3.0,75.0,Average
+Q06-007,Gainage / protection,Câblage,MEO_GAINAGE,EXECUTION,"Fringing on rear connection (Sheath not secured, sheath too short)",3.0,90.0,Average
+Q06-008,Gainage / protection,Câblage,MEO_GAINAGE,EXECUTION,"Sheathing (Too short, in contact with grommet, not secured to rear connector)",4.0,96.0,Average
+Q06-010,Identification – positionnement,Câblage,MEO_FINITION,EXECUTION,"Identification (Positioning flame, plate, sleeve - offset, not specified, too short/long, illegible)",4.0,80.0,Average
+Q06-009,Câblage non terminé,Câblage,MEO_FINITION,EXECUTION,Route not resumed after test (Cabling not completed),3.0,60.0,Average
+Q07-001,Sertissage,Câblage,MEO_SERTISSAGE_STANDARD,EXECUTION,"Aluminum contact (Stripping, Crimping)",9.0,135.0,Average
+Q07-002,Sertissage,Câblage,MEO_SERTISSAGE_STANDARD,EXECUTION,"Copper contact (Stripping, Crimping)",9.0,180.0,Average
+Q07-003,Sertissage,Câblage,MEO_SERTISSAGE_STANDARD,EXECUTION,"Self-welding sleeve (Deformation, overheating)",9.0,180.0,Average
+Q07-004,Sertissage,Câblage,MEO_SERTISSAGE_STANDARD,EXECUTION,"Copper lug (Stripping, Crimping)",9.0,135.0,Average
+Q07-005,Sertissage,Câblage,MEO_SERTISSAGE_STANDARD,EXECUTION,"Aluminum lug (Stripping, Crimping)",9.0,135.0,Average
+Q07-006,Sertissage,Câblage,MEO_SERTISSAGE_STANDARD,EXECUTION,"CDVE Aluminum contact (Stripping, Crimping)",9.0,27.0,Low
+Q07-007,Sertissage,Câblage,MEO_SERTISSAGE_STANDARD,EXECUTION,"CDVE Copper contact (Stripping, Crimping)",9.0,36.0,Low
+Q07-008,Sertissage,Câblage,MEO_SERTISSAGE_STANDARD,EXECUTION,"CDVE Self-welding sleeve (Deformation, overheating)",9.0,36.0,Low
+Q07-009,Sertissage,Câblage,MEO_SERTISSAGE_STANDARD,EXECUTION,"CDVE Copper lug (Stripping, Crimping)",9.0,27.0,Low
+Q07-010,Sertissage,Câblage,MEO_SERTISSAGE_STANDARD,EXECUTION,"CDVE Aluminum lug (Stripping, Crimping)",9.0,27.0,Low
+Q08-001,Sertissage spécifique,Câblage,MEO_SERTISSAGE_SPECIFIQUE,EXECUTION,"QUADRAX contact (Stripping, Crimping)",9.0,27.0,Low
+Q08-002,Sertissage spécifique,Câblage,MEO_SERTISSAGE_SPECIFIQUE,EXECUTION,"TWINAX contact (Stripping, Crimping)",9.0,27.0,Low
+Q08-003,Sertissage spécifique,Câblage,MEO_SERTISSAGE_SPECIFIQUE,EXECUTION,"TRIAXIAL contact (Stripping, Crimping)",9.0,27.0,Low
+Q08-004,Sertissage spécifique,Câblage,MEO_SERTISSAGE_SPECIFIQUE,EXECUTION,"BUSCAN contact (Stripping, Crimping)",9.0,27.0,Low
+Q08-005,Sertissage spécifique,Câblage,MEO_SERTISSAGE_SPECIFIQUE,EXECUTION,"Coax contact (Stripping, Crimping)",9.0,27.0,Low
+Q08-006,Sertissage spécifique,Câblage,MEO_SERTISSAGE_SPECIFIQUE,EXECUTION,"Optical fiber contact (Stripping, gluing)",6.0,18.0,Low
+Q08-007,Sertissage spécifique,Câblage,MEO_SERTISSAGE_SPECIFIQUE,EXECUTION,Brazing (Non-compliant weld),9.0,135.0,Average
+T06,Mesure hors tolérance,Câblage,MESURE_NON_CONFORME,EXECUTION,Insertion loss measurement on non-compliant optical links,6.0,72.0,Average
+T08,Mesure hors tolérance,Câblage,MESURE_NON_CONFORME,EXECUTION,"Non-compliant linear resistance measurement (EMI sheath, overbraiding)",6.0,36.0,Low
+T08-CDVE,Mesure hors tolérance,Câblage,MESURE_NON_CONFORME,EXECUTION,CDVE Non-compliant linear resistance measurement,8.0,48.0,Low
+Q04-007,Mauvaise réf. – colliers / frettage,Câblage,ERREUR_REF_HABILLAGE,SELECTION,"Plastic routing collar (Reference, size, orientation)",3.0,75.0,Average
+Q04-008,Mauvaise réf. – colliers / frettage,Câblage,ERREUR_REF_HABILLAGE,SELECTION,"Metal routing collar (Reference, size, orientation)",3.0,45.0,Low
+Q04-014,Mauvaise réf. – colliers / frettage,Câblage,ERREUR_REF_HABILLAGE,SELECTION,"Frettage (Reference plastic fret collar, reference string fret)",3.0,60.0,Average
+Q04-013,Mauvaise réf. – identification,Câblage,ERREUR_REF_HABILLAGE,SELECTION,"Identification plate (plate, function label, adhesive END, flame, sleeve - ref/identification/reversal)",3.0,72.0,Average
+Q04-003,Mauvaise réf. – mécanique,Câblage,ERREUR_REF_HABILLAGE,SELECTION,"Mechanical (Screw, washer, nut, spacer, V-bracket, structure, VT bar - ref/size/orientation)",4.0,128.0,Average
+Q04-006,Mauvaise réf. – mécanique,Câblage,ERREUR_REF_HABILLAGE,SELECTION,Lock wire (Reference),3.0,54.0,Low
+Q04-001,Mauvaise réf. – obturation / thermo,Câblage,ERREUR_REF_HABILLAGE,SELECTION,"Shutter (Reference, mounting direction)",3.0,72.0,Average
+Q04-002,Mauvaise réf. – obturation / thermo,Câblage,ERREUR_REF_HABILLAGE,SELECTION,"Heat shrink tubing (Reference, size)",3.0,72.0,Average
+Q04-010,Mauvaise réf. – obturation / thermo,Câblage,ERREUR_REF_HABILLAGE,SELECTION,Ventilation hole protective caps (Reference),3.0,36.0,Low
+Q04-012,Mauvaise réf. – obturation / thermo,Câblage,ERREUR_REF_HABILLAGE,SELECTION,"Socket protective cap (Reference, size)",3.0,36.0,Low
+Q04-004,Mauvaise réf. – électrique / détrompage,Câblage,ERREUR_REF_ELECTRIQUE,SELECTION,"Contact (Reference, copper, aluminum)",9.0,216.0,Average
+Q04-005,Mauvaise réf. – électrique / détrompage,Câblage,ERREUR_REF_ELECTRIQUE,SELECTION,"Resistor, connector, circuit breaker, relay, switch, rear connection (Ref, mounting, orientation)",3.0,63.0,Average
+Q04-009,Mauvaise réf. – électrique / détrompage,Câblage,ERREUR_REF_ELECTRIQUE,SELECTION,"Error correction/detrompage (Coding key, ARINC plug pin, polarization key)",4.0,80.0,Average
+Q04-011,Mauvaise réf. – électrique / détrompage,Câblage,ERREUR_REF_ELECTRIQUE,SELECTION,"Electrical element (Ground braid, terminal, indicator light - ref/orientation/charging)",4.0,96.0,Average
+Q03-006,Manquant – colliers,Dommage & manquant,MANQUANT_HABILLAGE,OMISSION,"Collar/collier (routing, plastic shrink, string shrink, V-support, plastic, metal)",3.0,108.0,Average
+Q03-002,Manquant – gaine / thermo,Dommage & manquant,MANQUANT_HABILLAGE,OMISSION,"Heat shrink tubing (Low temp, high temp)",3.0,72.0,Average
+Q03-010,Manquant – gaine / thermo,Dommage & manquant,MANQUANT_HABILLAGE,OMISSION,"Sheathing/gaine (Textile, corrugated, EMI, spare)",4.0,72.0,Average
+Q03-003,Manquant – mécanique / freinage,Dommage & manquant,MANQUANT_HABILLAGE,OMISSION,"Mechanical element (Screw, washer, nut, spacer)",4.0,96.0,Average
+Q03-005,Manquant – mécanique / freinage,Dommage & manquant,MANQUANT_HABILLAGE,OMISSION,"Braking/freinage (Brake wire, glue, frangible paint line)",3.0,48.0,Low
+Q03-001,Manquant – obturateurs / bouchons,Dommage & manquant,MANQUANT_OBTURATION,OMISSION,"Shutter/obturateur (Circular, rectangular, VT module, ventilation hole)",3.0,72.0,Average
+Q03-007,Manquant – obturateurs / bouchons,Dommage & manquant,MANQUANT_OBTURATION,OMISSION,"Protective caps (Ventilation hole, open hole)",3.0,60.0,Average
+Q03-008,Manquant – obturateurs / bouchons,Dommage & manquant,MANQUANT_OBTURATION,OMISSION,"End protection (Socket plug, plastic bag)",3.0,72.0,Average
+Q03-004,Manquant – câble / shunt / élément,Dommage & manquant,MANQUANT_CABLE_ELEMENT,OMISSION,"Electrical element (Cable, contact, diode, resistor, connector, VG module, rear connector)",4.0,64.0,Average
+T01,Manquant – câble / shunt / élément,Dommage & manquant,MANQUANT_CABLE_ELEMENT,OMISSION,"Missing cable (Copper, aluminum, fiber optic)",8.0,80.0,Average
+T03,Manquant – câble / shunt / élément,Dommage & manquant,MANQUANT_CABLE_ELEMENT,OMISSION,"Missing shunt (Electrical, Mechanical)",8.0,96.0,Average
+Q03-009,Manquant – identification,Dommage & manquant,MANQUANT_IDENTIFICATION,OMISSION,"Tamper-evident label (Furniture door lock, cut-off socket)",3.0,36.0,Low
+Q03-011,Manquant – identification,Dommage & manquant,MANQUANT_IDENTIFICATION,OMISSION,"Identification plate/sleeve/flag (END, route, cable number, clamp, ramp)",3.0,48.0,Low
+Q03-012,Manquant – identification,Dommage & manquant,MANQUANT_IDENTIFICATION,OMISSION,"Identification label (FIN, MSN)",3.0,60.0,Average
+Q11-001,Dommage – câble,Dommage & manquant,DOMMAGE_CABLE,MANIPULATION,Cable cut,8.0,48.0,Low
+Q11-014,Dommage – câble,Dommage & manquant,DOMMAGE_CABLE,MANIPULATION,"Scratched, damaged cable",8.0,480.0,High
+Q11-003,Dommage – composant cassé,Dommage & manquant,DOMMAGE_COMPOSANT,MANIPULATION,"Component (VG module, circuit breaker, VT strip module, connector, rear fitting, lighting plate)",4.0,168.0,Average
+Q11-005,Dommage – composant cassé,Dommage & manquant,DOMMAGE_COMPOSANT,MANIPULATION,"Lug (copper, aluminum)",4.0,140.0,Average
+Q11-006,Dommage – composant cassé,Dommage & manquant,DOMMAGE_COMPOSANT,MANIPULATION,"Contact (Copper, aluminum)",9.0,189.0,Average
+Q11-012,Dommage – composant cassé,Dommage & manquant,DOMMAGE_COMPOSANT,MANIPULATION,"VT strip (Damaged module, deformed rail)",3.0,60.0,Average
+Q11-016,Dommage – composant cassé,Dommage & manquant,DOMMAGE_COMPOSANT,MANIPULATION,CDVE Component,4.0,48.0,Low
+Q11-018,Dommage – composant cassé,Dommage & manquant,DOMMAGE_COMPOSANT,MANIPULATION,CDVE Lug,4.0,40.0,Low
+Q11-019,Dommage – composant cassé,Dommage & manquant,DOMMAGE_COMPOSANT,MANIPULATION,CDVE Contact,9.0,54.0,Low
+Q11-009,Dommage – tresse de masse,Dommage & manquant,DOMMAGE_COMPOSANT,MANIPULATION,Ground braid metallization (Broken strands),4.0,60.0,Average
+Q11-022,Dommage – tresse de masse,Dommage & manquant,DOMMAGE_COMPOSANT,MANIPULATION,CDVE Ground braid metallization,4.0,24.0,Low
+Q11-002,Dommage – identification,Dommage & manquant,DOMMAGE_HABILLAGE,MANIPULATION,"Identification (Wave, label, sleeve - torn, soiled)",3.0,72.0,Average
+Q11-004,Dommage – habillage,Dommage & manquant,DOMMAGE_HABILLAGE,MANIPULATION,"Protective sheath (Textile, corrugated, EMI)",4.0,96.0,Average
+Q11-007,Dommage – habillage,Dommage & manquant,DOMMAGE_HABILLAGE,MANIPULATION,"Amalgamating tape (Torn, soiled)",3.0,45.0,Low
+Q11-008,Dommage – habillage,Dommage & manquant,DOMMAGE_HABILLAGE,MANIPULATION,"Heat shrink tubing (Torn, soiled)",3.0,45.0,Low
+Q11-010,Dommage – habillage,Dommage & manquant,DOMMAGE_HABILLAGE,MANIPULATION,"Cable collar (Plastic, metal, V-bracket)",3.0,60.0,Average
+Q11-011,Dommage – habillage,Dommage & manquant,DOMMAGE_HABILLAGE,MANIPULATION,"BAND-IT clamp (Metal clamp, PTFE tape)",5.0,40.0,Low
+Q11-013,Dommage – habillage,Dommage & manquant,DOMMAGE_HABILLAGE,MANIPULATION,Damaged sealing sleeves,4.0,112.0,Average
+Q11-026,Dommage – habillage,Dommage & manquant,DOMMAGE_HABILLAGE,MANIPULATION,CDVE Damaged sealing sleeves,4.0,32.0,Low
+Q10-001,Dommage – structure,Dommage & manquant,DOMMAGE_STRUCTURE,MANIPULATION,"Damaged plate (Impact, scratch, bent, soiling)",4.0,120.0,Average
+Q10-002,Dommage – structure,Dommage & manquant,DOMMAGE_STRUCTURE,MANIPULATION,"Damaged structure (Impact, scratch, soiling)",4.0,120.0,Average
+Q10-003,Dommage – structure,Dommage & manquant,DOMMAGE_STRUCTURE,MANIPULATION,"Damaged handrail (Impact, scratch, bent, soiled)",4.0,100.0,Average
+Q10-004,Dommage – structure,Dommage & manquant,DOMMAGE_STRUCTURE,MANIPULATION,"Column (Impact, scratch, soiling)",4.0,80.0,Average
+Q10-005,Dommage – structure,Dommage & manquant,DOMMAGE_STRUCTURE,MANIPULATION,"Damaged piping (Impact, scratch, soiling)",4.0,80.0,Average
+Q10-006,Dommage – structure,Dommage & manquant,DOMMAGE_STRUCTURE,MANIPULATION,"Mechanism (Insert, screws - damaged threads, broken screws inside)",4.0,160.0,Average
+Q09-001,Bleu non appliqué,Métallisation,MEO_METALLISATION,EXECUTION,"Protection not applied (Petroleum jelly, protective paint)",6.0,42.0,Low
+Q09-004,Bleu non appliqué,Métallisation,MEO_METALLISATION,EXECUTION,CDVE Protection not applied,6.0,42.0,Low
+Q09-002,Bleu mal appliqué / débordant,Métallisation,MEO_METALLISATION,EXECUTION,"Application of protection (Partially applied, metallization visible)",6.0,42.0,Low
+Q09-005,Bleu mal appliqué / débordant,Métallisation,MEO_METALLISATION,EXECUTION,CDVE Application of protection,6.0,42.0,Low
+Q09-003,Point de masse / mesure,Métallisation,MEO_METALLISATION,EXECUTION,"Ground point (Oxidation, non-compliant brush diameter, non-compliant measurement)",6.0,42.0,Low
+Q09-006,Point de masse / mesure,Métallisation,MEO_METALLISATION,EXECUTION,CDVE Ground point,6.0,42.0,Low
+T07,Point de masse / mesure,Métallisation,MEO_METALLISATION,EXECUTION,"Resistance measurement on non-conforming metallization (VN, VG, VH)",6.0,36.0,Low
+T07-CDVE,Point de masse / mesure,Métallisation,MEO_METALLISATION,EXECUTION,CDVE Resistance measurement on non-conforming metallization,8.0,48.0,Low
+Q12-001,Amont · Câble,Amont,AMONT_IMPRESSION,AMONT,"Cable gauge error (G20, G18)",4.0,80.0,Average
+Q12-002,Amont · Câble,Amont,AMONT_IMPRESSION,AMONT,"Cable type error (DR, AD)",4.0,120.0,Average
+Q12-003,Amont · Câble,Amont,AMONT_IMPRESSION,AMONT,"Cable length error (Too short, too long)",4.0,60.0,Average
+Q12-004,Amont · Câble,Amont,AMONT_IMPRESSION,AMONT,"Cable identification (Readability, ID number error, marking characteristics)",4.0,80.0,Average
+Q12-007,Amont · Câble,Amont,AMONT_IMPRESSION,AMONT,CDVE Cable gauge error,,0.0,
+Q12-008,Amont · Câble,Amont,AMONT_IMPRESSION,AMONT,CDVE Cable type error,,0.0,
+Q12-005,Amont · Identification / barrette VT,Amont,AMONT_IMPRESSION,AMONT,"Identification (Sleeve, plate, label - legibility, incorrect reference, color)",3.0,45.0,Low
+Q12-006,Amont · Identification / barrette VT,Amont,AMONT_IMPRESSION,AMONT,"VT bar (Module identification error, module reference, rail size)",3.0,63.0,Average
+Q13-001,Dossier,Dossier,PROCESS_DOSSIER,PROCESS,"Operation (Not badged, order of operations not respected)",3.0,72.0,Average
+Q13-002,Dossier,Dossier,PROCESS_DOSSIER,PROCESS,"Stamp (Not affixed to tracking sheet, partially visible)",3.0,36.0,Low
+Q13-003,Dossier,Dossier,PROCESS_DOSSIER,PROCESS,"Traceability label (CT176 not completed, CT129D not completed)",4.0,64.0,Average
+Q13-004,Dossier,Dossier,PROCESS_DOSSIER,PROCESS,"Documentation (Missing, non-compliant)",4.0,80.0,Average
+Q13-005,Dossier,Dossier,PROCESS_DOSSIER,PROCESS,"Tool entry (Not performed, tool kit error)",4.0,48.0,Low
+Q16-001,FOD,FOD,FOD,OMISSION,"Tools (Flashlight, mirror, wrench, screwdriver, Allen key)",8.0,96.0,Average
+Q16-002,FOD,FOD,FOD,OMISSION,"Fasteners and aircraft parts (Bolts, washers, nuts)",8.0,96.0,Average
+Q16-003,FOD,FOD,FOD,OMISSION,"Personal effects (ID badge, glasses, phone, laptop, tablet)",8.0,96.0,Average
+Q16-004,FOD,FOD,FOD,OMISSION,"Industrial debris (Silver filings, dust, insulation, metal chips)",8.0,128.0,Average
+Q16-005,FOD,FOD,FOD,OMISSION,"Additional items (Consumables, caps, plugs, work order)",8.0,128.0,Average
+Q16-006,FOD,FOD,FOD,OMISSION,"Maintenance (Item left in work area, workshop, workstation, corridor)",4.0,48.0,Low
+(exception),Câble à refaire (ligne),Câblage,MEO_CHEMINEMENT,EXECUTION,E1: part of Q06-001,,,
+(exception),Composant HS,Dommage & manquant,DOMMAGE_COMPOSANT,MANIPULATION,E2: part of Q11 component codes,,,
+(exception),Composant – cause non écrite,Dommage & manquant,DOMMAGE_COMPOSANT,MANIPULATION,E2: part of Q11 component codes,,,
+(exception),Non classé,Non classé,AUTRE,NON_CLASSE,no code written and nothing usable in the text,,,

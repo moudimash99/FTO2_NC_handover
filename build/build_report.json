@@ -86,5 +86,17 @@
     "nc": 1127,
     "defects": 3098
   },
+  "skywise": {
+    "level1": {
+      "ncs": 713,
+      "defects": 1463,
+      "js_kb": 1104
+    },
+    "level23_js_kb": 540,
+    "level4": [
+      "FTO2_NC_Dashboard_level2.slate.json",
+      "FTO2_NC_Dashboard_level3.slate.json"
+    ]
+  },
   "review_disagreements": 301
 }

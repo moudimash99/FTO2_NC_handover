@@ -293,6 +293,8 @@ def build_dashboard(d, nc, lt):
     _page("dashboard.html", data, "FTO2_Suivi_Hebdo.html", page="suivi")
     slate_pack(data)
     slate_pack(data, page="suivi")
+    import skywise_pack   # the four Skywise migration levels (03_reports/skywise): build/skywise_pack.py
+    REPORT["skywise"] = skywise_pack.build(src["ref"], ROOT, _scope_css, say)
 
 
 def colmajor(df):

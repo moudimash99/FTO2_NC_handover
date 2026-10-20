@@ -1,0 +1,316 @@
+{
+ "nc": [
+  {
+   "name": "nc",
+   "type": "text",
+   "meaning": "NC number"
+  },
+  {
+   "name": "created",
+   "type": "date",
+   "meaning": "creation date"
+  },
+  {
+   "name": "line",
+   "type": "text",
+   "meaning": "aircraft line: A350, A330, A320, A400M, Autre"
+  },
+  {
+   "name": "plant_scope",
+   "type": "text",
+   "meaning": "perimetre: FTO2, Retour client, Fournisseur, Supprimée, Hors périmètre"
+  },
+  {
+   "name": "plant",
+   "type": "text",
+   "meaning": "plant of the NC"
+  },
+  {
+   "name": "on_aec",
+   "type": "int",
+   "meaning": "1 when AEC (FTO2) is in the liability, so the NC is costed"
+  },
+  {
+   "name": "rule",
+   "type": "text",
+   "meaning": "CNQ rule: RWK, REJ, REJ_RW, EXC, SCR, DQN, ..., DELETED"
+  },
+  {
+   "name": "decision_label",
+   "type": "text",
+   "meaning": "CNQ rule label"
+  },
+  {
+   "name": "where_found",
+   "type": "text",
+   "meaning": "where the NC was found (CNQ model)"
+  },
+  {
+   "name": "cost_airbus",
+   "type": "num",
+   "meaning": "CNQ level 1, Airbus standard (EUR)"
+  },
+  {
+   "name": "cost_global",
+   "type": "num",
+   "meaning": "CNQ level 2, average times (EUR)"
+  },
+  {
+   "name": "cost_total",
+   "type": "num",
+   "meaning": "CNQ level 3, per defect (EUR): the dashboard's cost"
+  },
+  {
+   "name": "cost_admin",
+   "type": "num",
+   "meaning": "level 3: alert, writing, support, re-check (EUR)"
+  },
+  {
+   "name": "cost_work",
+   "type": "num",
+   "meaning": "level 3: setup and hands-on work (EUR)"
+  },
+  {
+   "name": "cost_material",
+   "type": "num",
+   "meaning": "level 3: material (EUR)"
+  },
+  {
+   "name": "cost_engineering",
+   "type": "num",
+   "meaning": "level 3: engineering (EUR)"
+  },
+  {
+   "name": "cable",
+   "type": "int",
+   "meaning": "1 when a defect line is a cable defect (root-cause labels)"
+  },
+  {
+   "name": "defect_lines",
+   "type": "int",
+   "meaning": "number of defect lines"
+  },
+  {
+   "name": "title",
+   "type": "text",
+   "meaning": "NC title (80 characters)"
+  },
+  {
+   "name": "scope",
+   "type": "text",
+   "meaning": "report scope: serie, client, or empty (outside the report)"
+  },
+  {
+   "name": "phase",
+   "type": "text",
+   "meaning": "production type: SERIE, REC, FTI"
+  },
+  {
+   "name": "msn",
+   "type": "text",
+   "meaning": "aircraft MSN"
+  },
+  {
+   "name": "product",
+   "type": "text",
+   "meaning": "product family (Produit_auto)"
+  },
+  {
+   "name": "station",
+   "type": "text",
+   "meaning": "station description"
+  },
+  {
+   "name": "hour",
+   "type": "int",
+   "meaning": "creation hour, Paris time (-1 if unknown)"
+  },
+  {
+   "name": "lead_days",
+   "type": "num",
+   "meaning": "days to close (empty while open)"
+  },
+  {
+   "name": "is_open",
+   "type": "int",
+   "meaning": "1 while the NC is open"
+  },
+  {
+   "name": "age_days",
+   "type": "num",
+   "meaning": "days open at the data date (empty when closed)"
+  },
+  {
+   "name": "closed",
+   "type": "date",
+   "meaning": "closure date (empty while open)"
+  },
+  {
+   "name": "type_nc",
+   "type": "text",
+   "meaning": "NC type: CABLES, TEST, INTERNE, CONTROLE FINAL, NC Interne, FOURNISSEUR, ..."
+  },
+  {
+   "name": "liability",
+   "type": "text",
+   "meaning": "liability"
+  },
+  {
+   "name": "sap_defect",
+   "type": "text",
+   "meaning": "SAP defect code"
+  },
+  {
+   "name": "sap_cause_group",
+   "type": "text",
+   "meaning": "SAP cause group"
+  },
+  {
+   "name": "sap_cause",
+   "type": "text",
+   "meaning": "SAP cause"
+  },
+  {
+   "name": "status",
+   "type": "text",
+   "meaning": "open, closed, deleted"
+  },
+  {
+   "name": "source",
+   "type": "text",
+   "meaning": "sky (Skywise only), gps (also in the GPS register), test (also in the Test list)"
+  },
+  {
+   "name": "min_alert",
+   "type": "num",
+   "meaning": "CNQ minutes: alert"
+  },
+  {
+   "name": "min_writing",
+   "type": "num",
+   "meaning": "CNQ minutes: writing the NC"
+  },
+  {
+   "name": "min_support",
+   "type": "num",
+   "meaning": "CNQ minutes: technical support"
+  },
+  {
+   "name": "min_setup",
+   "type": "num",
+   "meaning": "CNQ minutes: around the job"
+  },
+  {
+   "name": "min_hands_on",
+   "type": "num",
+   "meaning": "CNQ minutes: hands-on work"
+  },
+  {
+   "name": "min_recheck",
+   "type": "num",
+   "meaning": "CNQ minutes: re-check and closing"
+  },
+  {
+   "name": "hours_engineering",
+   "type": "num",
+   "meaning": "CNQ engineering hours"
+  },
+  {
+   "name": "final_inspection",
+   "type": "int",
+   "meaning": "1 when found at final inspection"
+  },
+  {
+   "name": "long_text",
+   "type": "text",
+   "meaning": "NC long text, customer returns only (2,500 characters)"
+  }
+ ],
+ "defects": [
+  {
+   "name": "nc",
+   "type": "text",
+   "meaning": "NC number"
+  },
+  {
+   "name": "seq",
+   "type": "int",
+   "meaning": "defect line number in the NC"
+  },
+  {
+   "name": "cat",
+   "type": "text",
+   "meaning": "category (root-cause labels)"
+  },
+  {
+   "name": "rca",
+   "type": "text",
+   "meaning": "root cause"
+  },
+  {
+   "name": "sub",
+   "type": "text",
+   "meaning": "sub-category"
+  },
+  {
+   "name": "minor",
+   "type": "int",
+   "meaning": "1 for a minor defect (tie-wrap, cap, ...)"
+  },
+  {
+   "name": "cable",
+   "type": "int",
+   "meaning": "1 for a cable defect"
+  },
+  {
+   "name": "cost_alloc",
+   "type": "num",
+   "meaning": "the NC's level-3 cost shared on this line (EUR)"
+  },
+  {
+   "name": "qty",
+   "type": "int",
+   "meaning": "quantity written on the line"
+  },
+  {
+   "name": "text",
+   "type": "text",
+   "meaning": "defect text (220 characters)"
+  },
+  {
+   "name": "subcode",
+   "type": "text",
+   "meaning": "official sub-code"
+  },
+  {
+   "name": "fin",
+   "type": "text",
+   "meaning": "FIN read by the parser"
+  },
+  {
+   "name": "label_src",
+   "type": "text",
+   "meaning": "ai (stored root-cause label) or parser (no label yet)"
+  },
+  {
+   "name": "ai_conf",
+   "type": "text",
+   "meaning": "confidence of the stored label: high, medium, low"
+  },
+  {
+   "name": "cr_nature",
+   "type": "text",
+   "meaning": "customer returns: damage type (phys, hs, nc, recu)"
+  },
+  {
+   "name": "cr_detection",
+   "type": "text",
+   "meaning": "customer returns: moment of detection"
+  },
+  {
+   "name": "cr_symptom",
+   "type": "text",
+   "meaning": "customer returns: observed symptom"
+  }
+ ]
+}
