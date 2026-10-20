@@ -782,7 +782,7 @@ function fto2FromTables(ncIn, defIn, ref, disIn) {
 
   // ---------------------------------------------------------------- 1. Overview: headline figures, each chart counts NCs of the selection
   // NC row extras: [32] closure date, [33] NC type, [34] liability, [35] SAP defect code, [36] SAP cause group, [37] SAP cause, [38] status
-  var PROG_COL = { A350: 'var(--l1)', A330: 'var(--l2)', A320: 'var(--l3)', A400M: 'var(--l4)' };   // slate shades: blue and green are the categories' (20 Oct)
+  var PROG_COL = { A350: 'var(--l1)', A330: 'var(--l2)', A320: 'var(--l3)', A400M: 'var(--l4)' };   // no blue or green: those are the categories' (20 Oct)
   function lineCol(l) { return PROG_COL[l] || 'var(--dim)'; }   // one colour per line on every chart
   var TYPE_ALIAS = { 'NC Interne': 'INTERNE', 'NC Retour client': 'RETOUR CLIENT', 'CLIENT': 'RETOUR CLIENT' };
   function ncType(n) { var t = String(n[33] || '').trim(); return TYPE_ALIAS[t] || t; }

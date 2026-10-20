@@ -29,7 +29,7 @@
   --down: #1d6b52;
   --focus: #1d6b52;
   --c1: #2a78d6; --c2: #1baf7a; --c3: #eda100; --c4: #e87ba4; --c5: #008300; --c6: #6250d6; --seq: #1d6b52;
-  --l1: #1c2631; --l2: #47535f; --l3: #75818c; --l4: #a4aeb8;   /* the lines, dark to light: hue is kept for the defect categories */
+  --l1: #7e3fb0; --l2: #e57a24; --l3: #cf3f7a; --l4: #95561c;   /* the lines (A350 purple, A330 orange, A320 raspberry, A400M brown): no blue or green, those are the categories' */
   --on0: #15171a; --on1: #ffffff; --on2: #15171a; --on3: #15171a; --on4: #15171a; --on5: #ffffff; --on6: #ffffff;
   --font-ui: "Hanken Grotesk", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
   --font-data: "Hanken Grotesk", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
@@ -42,7 +42,7 @@
     --s1: #5cc29b; --s1-soft: rgba(92,194,155,0.14); --s1-ret: #2f6b55; --s2: #f0a04b; --dim: #4a524d; --ref: #eef1ee;
     --up: #e07a68; --down: #5cc29b; --focus: #5cc29b;
     --c1: #3987e5; --c2: #199e70; --c3: #c98500; --c4: #d55181; --c5: #008300; --c6: #9085e9; --seq: #5cc29b;
-    --l1: #e6ebf0; --l2: #b8c2cc; --l3: #8a95a1; --l4: #5f6a76;
+    --l1: #9a66d6; --l2: #d97a2c; --l3: #da5384; --l4: #93571b;
     --on0: #eef1ee; --on1: #111413; --on2: #111413; --on3: #111413; --on4: #111413; --on5: #ffffff; --on6: #111413;
     color-scheme: dark;
   }
@@ -53,7 +53,7 @@
   --s1: #5cc29b; --s1-soft: rgba(92,194,155,0.14); --s1-ret: #2f6b55; --s2: #f0a04b; --dim: #4a524d; --ref: #eef1ee;
   --up: #e07a68; --down: #5cc29b; --focus: #5cc29b;
   --c1: #3987e5; --c2: #199e70; --c3: #c98500; --c4: #d55181; --c5: #008300; --c6: #9085e9; --seq: #5cc29b;
-  --l1: #e6ebf0; --l2: #b8c2cc; --l3: #8a95a1; --l4: #5f6a76;
+  --l1: #9a66d6; --l2: #d97a2c; --l3: #da5384; --l4: #93571b;
   --on0: #eef1ee; --on1: #111413; --on2: #111413; --on3: #111413; --on4: #111413; --on5: #ffffff; --on6: #111413;
   color-scheme: dark;
 }
@@ -694,6 +694,10 @@ body.mk-on .wrap { padding-bottom: 90px; }
 #p-ov[data-lay] .v2stats b { font-size: 24px; min-width: 0; }
 #p-ov[data-lay="5"] { grid-template-columns: repeat(3, minmax(0, 1fr)); grid-template-areas: "lead lead lead" "figs figs figs" "trend trend tgt" "pie delay delay" "cost cost cost" "ctl ctl ctl" "more more more" "table table table"; align-items: stretch; }
 #p-ov[data-lay="5"] .v2ov > .card { align-content: start; }   /* cards side by side share one height; their content stays at the top */
+@media (max-width: 900px) {   /* one column: the cards placed by area name stacked on one another (20 Oct) */
+  #pgl > [data-card], #kgl > [data-card], #pgl > [data-v2], #kgl > [data-v2], #p-where .v2mag > .wl-chap { grid-area: auto; }
+  #p-ov[data-lay="5"] { grid-template-columns: minmax(0, 1fr); grid-template-areas: "lead" "figs" "trend" "tgt" "pie" "delay" "cost" "ctl" "more" "table"; }
+}
 @media (max-width: 900px) {
   #p-ov[data-lay] { grid-template-columns: minmax(0, 1fr) !important; grid-template-areas: none !important; }
   #p-ov[data-lay] > *, #p-ov[data-lay] .v2ov > .card { grid-area: auto !important; position: static !important; }
@@ -1830,7 +1834,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
 
   // ---------------------------------------------------------------- 1. Overview: headline figures, each chart counts NCs of the selection
   // NC row extras: [32] closure date, [33] NC type, [34] liability, [35] SAP defect code, [36] SAP cause group, [37] SAP cause, [38] status
-  var PROG_COL = { A350: 'var(--l1)', A330: 'var(--l2)', A320: 'var(--l3)', A400M: 'var(--l4)' };   // slate shades: blue and green are the categories' (20 Oct)
+  var PROG_COL = { A350: 'var(--l1)', A330: 'var(--l2)', A320: 'var(--l3)', A400M: 'var(--l4)' };   // no blue or green: those are the categories' (20 Oct)
   function lineCol(l) { return PROG_COL[l] || 'var(--dim)'; }   // one colour per line on every chart
   var TYPE_ALIAS = { 'NC Interne': 'INTERNE', 'NC Retour client': 'RETOUR CLIENT', 'CLIENT': 'RETOUR CLIENT' };
   function ncType(n) { var t = String(n[33] || '').trim(); return TYPE_ALIAS[t] || t; }

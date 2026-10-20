@@ -36,7 +36,7 @@
   --down: #1d6b52;
   --focus: #1d6b52;
   --c1: #2a78d6; --c2: #1baf7a; --c3: #eda100; --c4: #e87ba4; --c5: #008300; --c6: #6250d6; --seq: #1d6b52;
-  --l1: #1c2631; --l2: #47535f; --l3: #75818c; --l4: #a4aeb8;   
+  --l1: #7e3fb0; --l2: #e57a24; --l3: #cf3f7a; --l4: #95561c;   
   --on0: #15171a; --on1: #ffffff; --on2: #15171a; --on3: #15171a; --on4: #15171a; --on5: #ffffff; --on6: #ffffff;
   --font-ui: "Hanken Grotesk", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
   --font-data: "Hanken Grotesk", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
@@ -730,6 +730,10 @@
 .fto2 #p-ov[data-lay] .v2stats b { font-size: 24px; min-width: 0; }
 .fto2 #p-ov[data-lay="5"] { grid-template-columns: repeat(3, minmax(0, 1fr)); grid-template-areas: "lead lead lead" "figs figs figs" "trend trend tgt" "pie delay delay" "cost cost cost" "ctl ctl ctl" "more more more" "table table table"; align-items: stretch; }
 .fto2 #p-ov[data-lay="5"] .v2ov > .card { align-content: start; }
+@media (max-width: 900px) {
+.fto2 #pgl > [data-card], .fto2 #kgl > [data-card], .fto2 #pgl > [data-v2], .fto2 #kgl > [data-v2], .fto2 #p-where .v2mag > .wl-chap { grid-area: auto; }
+.fto2 #p-ov[data-lay="5"] { grid-template-columns: minmax(0, 1fr); grid-template-areas: "lead" "figs" "trend" "tgt" "pie" "delay" "cost" "ctl" "more" "table"; }
+}
 @media (max-width: 900px) {
 .fto2 #p-ov[data-lay] { grid-template-columns: minmax(0, 1fr) !important; grid-template-areas: none !important; }
 .fto2 #p-ov[data-lay] > *, .fto2 #p-ov[data-lay] .v2ov > .card { grid-area: auto !important; position: static !important; }
@@ -1804,7 +1808,7 @@ window.DASH = {"defects":[["216055047",1,"2026-01-06","2026-W02","A350","",0,0,0
 
   // ---------------------------------------------------------------- 1. Overview: headline figures, each chart counts NCs of the selection
   // NC row extras: [32] closure date, [33] NC type, [34] liability, [35] SAP defect code, [36] SAP cause group, [37] SAP cause, [38] status
-  var PROG_COL = { A350: 'var(--l1)', A330: 'var(--l2)', A320: 'var(--l3)', A400M: 'var(--l4)' };   // slate shades: blue and green are the categories' (20 Oct)
+  var PROG_COL = { A350: 'var(--l1)', A330: 'var(--l2)', A320: 'var(--l3)', A400M: 'var(--l4)' };   // no blue or green: those are the categories' (20 Oct)
   function lineCol(l) { return PROG_COL[l] || 'var(--dim)'; }   // one colour per line on every chart
   var TYPE_ALIAS = { 'NC Interne': 'INTERNE', 'NC Retour client': 'RETOUR CLIENT', 'CLIENT': 'RETOUR CLIENT' };
   function ncType(n) { var t = String(n[33] || '').trim(); return TYPE_ALIAS[t] || t; }
