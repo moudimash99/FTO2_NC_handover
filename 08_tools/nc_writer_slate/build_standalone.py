@@ -17,7 +17,6 @@ page = """<!DOCTYPE html>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>NC FTO2 · Saisie</title>
 <style>
-body {{ margin: 0; background: #ffffff; }}
 {css}</style>
 </head>
 <body>

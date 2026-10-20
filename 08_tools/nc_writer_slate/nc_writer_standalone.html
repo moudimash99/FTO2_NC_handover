@@ -5,114 +5,285 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>NC FTO2 · Saisie</title>
 <style>
-body { margin: 0; background: #ffffff; }
-/* NC FTO2 · Saisie structurée: CSS tab of the Slate Code Sandbox widget. Same palette as the CNQ dashboard. */
+/* NC FTO2 · Saisie structurée: CSS tab of the Slate Code Sandbox widget.
+   Laid out for a 1316 px wide widget: steps on the left, live SAP text on the right. */
+html, body { margin: 0; background: #f3f5f9; }
 .ncw {
-  --navy: #0c2340; --on-navy: #ffffff; --on-navy-muted: #b9c6d6;
-  --bg: #ffffff; --tint: #f4f6f9; --ink: #132238; --muted: #5d6d7e; --line: #d5dce4;
-  --accent: #1d5fb0; --accent-ink: #ffffff;
-  --maj: #a32b2b; --maj-bg: #fbe9e9; --min: #8a5a00; --min-bg: #fff1d6;
-  --cdve: #6a4bb0; --cdve-bg: #efe9fa; --ok: #1e7a45; --ok-bg: #e5f4ea;
-  --warn-bg: #fff4cc; --warn-ink: #6b4e00; --err: #a32b2b;
+  --canvas: #f3f5f9; --card: #ffffff; --ink: #14213d; --ink-2: #3b4a63; --muted: #6b7a90;
+  --line: #e3e8ef; --line-2: #cfd7e3; --hover: #f6f8fb;
+  --navy: #00205b; --navy-2: #0b2f73; --on-navy-muted: #a9b8d6;
+  --accent: #0a5cd6; --accent-hover: #084bb0; --accent-soft: #e8f0fd; --accent-line: #b9d0f6;
+  --maj: #b42318; --maj-bg: #fdecea; --maj-line: #f5c2bc;
+  --min: #8a5300; --min-bg: #fff4e0; --min-line: #f3d29b;
+  --cdve: #5b3cc4; --cdve-bg: #f0ebfd;
+  --ok: #157347; --ok-bg: #e6f4ec; --warn-bg: #fff6d6; --warn-ink: #6b4e00;
+  --code-bg: #0f1d33; --code-ink: #dce6f5;
+  --shadow: 0 1px 2px rgba(16, 24, 40, .05), 0 1px 3px rgba(16, 24, 40, .08);
+  --mono: Consolas, "SFMono-Regular", Menlo, "Liberation Mono", monospace;
   box-sizing: border-box;
-  max-width: 780px; margin: 0 auto; padding: 0 16px 32px;
-  background: var(--bg); color: var(--ink);
+  width: 100%; max-width: 1316px; min-height: 100vh; margin: 0 auto; padding: 20px 24px 32px;
+  background: var(--canvas); color: var(--ink);
   font-family: "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Roboto, Arial, sans-serif;
-  font-size: 15px; line-height: 1.5;
+  font-size: 14px; line-height: 1.5;
   font-variant-ligatures: none; /* "<->" stays three characters, as it will be in SAP */
 }
 .ncw *, .ncw *::before, .ncw *::after { box-sizing: inherit; }
-.ncw h1 { font-size: 20px; font-weight: 600; margin: 0; }
-.ncw h2 { font-size: 17px; font-weight: 600; margin: 0 0 12px; }
-.ncw code { font-family: Consolas, "SFMono-Regular", Menlo, monospace; font-size: 13px; background: var(--tint); padding: 1px 5px; border-radius: 4px; }
-.ncw .muted { color: var(--muted); font-size: 13px; }
+.ncw h1, .ncw h2, .ncw h3, .ncw p, .ncw dl, .ncw dd, .ncw ol, .ncw ul { margin: 0; }
+.ncw button { font: inherit; color: inherit; }
+.ncw svg { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.ncw .muted { color: var(--muted); }
+.ncw .small { font-size: 12px; }
 
-.ncw .bar { background: var(--navy); color: var(--on-navy); margin: 0 -16px 16px; padding: 14px 16px; }
-.ncw .nc-info { color: var(--on-navy-muted); font-size: 14px; margin-top: 4px; }
-.ncw .nc-info strong { color: var(--on-navy); }
+/* top bar */
+.ncw .top {
+  display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap;
+  background: var(--navy); color: #fff; border-radius: 12px; padding: 16px 22px; margin-bottom: 20px;
+}
+.ncw .brand { display: flex; align-items: center; gap: 14px; }
+.ncw .logo {
+  width: 40px; height: 40px; border-radius: 10px; display: grid; place-items: center;
+  background: rgba(255, 255, 255, .12); font-weight: 700; letter-spacing: .04em;
+}
+.ncw .top h1 { font-size: 18px; font-weight: 600; line-height: 1.3; }
+.ncw .top p { color: var(--on-navy-muted); font-size: 13px; }
+.ncw .ident { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.ncw .id { background: rgba(255, 255, 255, .1); border-radius: 8px; padding: 5px 12px; line-height: 1.25; }
+.ncw .id span { display: block; font-size: 11px; color: var(--on-navy-muted); text-transform: uppercase; letter-spacing: .06em; }
+.ncw .id b { font-weight: 600; }
 
-.ncw .stack > * + * { margin-top: 14px; }
-.ncw .card { border: 1px solid var(--line); border-radius: 10px; padding: 16px; background: var(--bg); }
-.ncw .card + .card { margin-top: 14px; }
-.ncw .card-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; }
-.ncw .card-head h2 { margin: 0; }
+/* two columns */
+.ncw .layout { display: grid; grid-template-columns: minmax(0, 1fr) 400px; gap: 20px; align-items: start; }
+.ncw .main { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+.ncw .side { position: sticky; top: 16px; }
 
-.ncw .field { display: block; margin-bottom: 12px; }
-.ncw .field > span { display: block; font-size: 13px; font-weight: 600; color: var(--muted); margin-bottom: 4px; }
+/* cards */
+.ncw .card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 20px 22px; box-shadow: var(--shadow); }
+.ncw .card-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; margin-bottom: 16px; }
+.ncw .card-head h2 { font-size: 16px; font-weight: 600; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.ncw .sub { color: var(--muted); font-size: 13px; margin-top: 2px; }
+.ncw .card-foot { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--line); }
+.ncw .head-actions { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+.ncw .opt { font-size: 11px; font-weight: 500; color: var(--muted); background: var(--canvas); border-radius: 999px; padding: 1px 8px; }
+.ncw .count { font-size: 12px; font-weight: 600; color: var(--accent); background: var(--accent-soft); border-radius: 999px; padding: 1px 9px; }
+.ncw .tag { font-size: 12px; font-weight: 600; color: var(--accent); background: var(--accent-soft); border-radius: 6px; padding: 4px 10px; white-space: nowrap; }
+
+/* form */
+.ncw .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.ncw .field { display: block; margin-bottom: 16px; min-width: 0; }
+.ncw .label { display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 600; color: var(--ink-2); margin-bottom: 6px; }
+.ncw .counter { margin-left: auto; font-weight: 500; color: var(--muted); }
 .ncw input[type="text"], .ncw input[type="search"], .ncw input[type="number"], .ncw select, .ncw textarea {
-  width: 100%; font: inherit; font-variant-ligatures: none; color: var(--ink); background: var(--bg);
-  border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; min-height: 40px;
+  display: block; width: 100%; font: inherit; font-variant-ligatures: none; color: var(--ink); background: var(--card);
+  border: 1px solid var(--line-2); border-radius: 8px; padding: 8px 12px; min-height: 40px;
+  transition: border-color .15s, box-shadow .15s;
 }
-.ncw textarea { min-height: 80px; resize: vertical; }
-.ncw input:focus, .ncw select:focus, .ncw textarea:focus, .ncw button:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
-.ncw .split { display: flex; gap: 12px; flex-wrap: wrap; }
-.ncw .split > .field { flex: 1 1 200px; }
-.ncw .split > .field.grow { flex: 2 1 280px; }
-.ncw .check { display: flex; align-items: center; gap: 8px; margin-top: 6px; cursor: pointer; }
-.ncw .check input { width: 18px; height: 18px; }
+.ncw textarea { resize: vertical; min-height: 64px; margin-top: 12px; }
+.ncw .field textarea { margin-top: 0; }
+.ncw .big { min-height: 44px; font-size: 15px; }
+.ncw .under { margin-top: 8px; }
+.ncw .narrow { max-width: 320px; }
+.ncw .qty { max-width: 160px; }
+.ncw input:hover, .ncw select:hover, .ncw textarea:hover { border-color: #b3bfd0; }
+.ncw input:focus, .ncw select:focus, .ncw textarea:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+.ncw button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.ncw ::placeholder { color: #9aa6b8; }
 
+/* buttons */
 .ncw .btn {
-  font: inherit; font-weight: 600; min-height: 40px; padding: 8px 16px; border-radius: 8px; cursor: pointer;
-  border: 1px solid var(--line); background: var(--bg); color: var(--ink);
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  min-height: 38px; padding: 8px 16px; border-radius: 8px; border: 1px solid transparent;
+  font-weight: 600; cursor: pointer; white-space: nowrap; transition: background .15s, border-color .15s, color .15s;
 }
-.ncw .btn:hover:not(:disabled) { background: var(--tint); }
-.ncw .btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
-.ncw .btn.primary:hover:not(:disabled) { background: #174f94; }
-.ncw .btn.danger { color: var(--maj); }
-.ncw .btn.ghost { border-color: transparent; color: var(--accent); padding-left: 6px; padding-right: 6px; }
-.ncw .btn.small { min-height: 32px; padding: 4px 10px; font-size: 14px; }
-.ncw .btn.wide { width: 100%; margin-top: 14px; }
+.ncw .btn.primary { background: var(--accent); color: #fff; }
+.ncw .btn.primary:hover:not(:disabled) { background: var(--accent-hover); }
+.ncw .btn.secondary { background: var(--card); border-color: var(--line-2); color: var(--ink); }
+.ncw .btn.secondary:hover:not(:disabled) { background: var(--hover); }
+.ncw .btn.ghost { background: transparent; color: var(--accent); }
+.ncw .btn.ghost:hover:not(:disabled) { background: var(--accent-soft); }
+.ncw .btn.on-dark { background: rgba(255, 255, 255, .14); color: #fff; }
+.ncw .btn.on-dark:hover { background: rgba(255, 255, 255, .24); }
+.ncw .btn.small { min-height: 30px; padding: 4px 10px; font-size: 13px; }
+.ncw .btn.block { width: 100%; margin-top: 10px; }
 .ncw .btn:disabled { opacity: .45; cursor: not-allowed; }
-.ncw > .btn.ghost { margin-bottom: 8px; }
-.ncw .actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
+.ncw .icon-btn {
+  width: 34px; height: 34px; display: grid; place-items: center; border-radius: 8px; cursor: pointer;
+  background: transparent; border: 1px solid transparent; color: var(--muted);
+}
+.ncw .icon-btn:hover { background: var(--hover); border-color: var(--line); color: var(--accent); }
+.ncw .icon-btn.danger:hover { color: var(--maj); background: var(--maj-bg); border-color: var(--maj-line); }
 
-.ncw .badges { display: flex; gap: 6px; flex-wrap: wrap; margin: 6px 0; }
-.ncw .badge { display: inline-block; font-size: 12px; font-weight: 700; padding: 2px 8px; border-radius: 999px; letter-spacing: .02em; }
+/* chips: templates and detection */
+.ncw .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.ncw .chip {
+  border: 1px solid var(--line-2); background: var(--card); color: var(--ink-2); border-radius: 999px;
+  padding: 6px 14px; cursor: pointer; text-align: left; line-height: 1.35; transition: all .15s;
+}
+.ncw .chip:hover { border-color: var(--accent-line); background: var(--accent-soft); color: var(--accent); }
+.ncw .chip[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 600; }
+
+/* codes and badges */
+.ncw .code {
+  display: inline-block; font-family: var(--mono); font-size: 12px; font-weight: 600; color: var(--navy);
+  background: #e9eef8; border-radius: 6px; padding: 2px 8px; white-space: nowrap;
+}
+.ncw .badge { display: inline-block; font-size: 11px; font-weight: 700; padding: 2px 9px; border-radius: 999px; text-transform: uppercase; letter-spacing: .04em; white-space: nowrap; }
 .ncw .badge.maj { background: var(--maj-bg); color: var(--maj); }
 .ncw .badge.min { background: var(--min-bg); color: var(--min); }
 .ncw .badge.cdve { background: var(--cdve-bg); color: var(--cdve); }
-.ncw .badge.qty { background: var(--tint); color: var(--muted); }
 
-.ncw .defect { display: flex; gap: 12px; border: 1px solid var(--line); border-radius: 8px; padding: 12px; margin-bottom: 10px; }
-.ncw .defect-main { flex: 1; min-width: 0; }
-.ncw .defect-btns { display: flex; flex-direction: column; gap: 6px; }
-.ncw pre.line, .ncw pre.sap {
-  margin: 0; padding: 10px 12px; background: var(--tint); border-radius: 6px;
-  font-family: Consolas, "SFMono-Regular", Menlo, monospace; font-size: 13px; white-space: pre-wrap; word-break: break-word;
+/* defect list */
+.ncw .defects { display: flex; flex-direction: column; gap: 10px; }
+.ncw .defect { display: flex; gap: 14px; align-items: flex-start; border: 1px solid var(--line); border-radius: 10px; padding: 14px; transition: border-color .15s; }
+.ncw .defect:hover { border-color: var(--line-2); }
+.ncw .num { width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; background: var(--navy); color: #fff; font-weight: 700; font-size: 13px; flex: none; }
+.ncw .defect-body { flex: 1; min-width: 0; }
+.ncw .defect-top { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.ncw .defect-top strong { font-weight: 600; }
+.ncw .defect-meta { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin: 6px 0 10px; }
+.ncw .meta { font-size: 13px; color: var(--muted); margin-left: 6px; }
+.ncw .meta b { color: var(--ink); font-weight: 600; }
+.ncw .defect-actions { display: flex; gap: 4px; }
+.ncw pre.line {
+  margin: 0; padding: 8px 12px; background: var(--canvas); border: 1px solid var(--line); border-radius: 8px;
+  font-family: var(--mono); font-size: 12.5px; color: var(--ink-2); white-space: pre-wrap; word-break: break-word;
 }
-.ncw pre.sap { max-height: 420px; overflow: auto; }
-.ncw .preview { margin: 6px 0 4px; }
-.ncw .preview > span, .ncw .preview .card-head span { font-size: 13px; font-weight: 600; color: var(--muted); display: block; margin-bottom: 4px; }
-.ncw .preview .card-head { margin-bottom: 4px; }
+.ncw pre.line.big { font-size: 13px; padding: 12px 14px; background: var(--accent-soft); border-color: var(--accent-line); color: var(--navy); }
+.ncw .empty {
+  display: flex; flex-direction: column; align-items: center; gap: 4px; text-align: center;
+  border: 1.5px dashed var(--line-2); border-radius: 10px; padding: 28px 16px; color: var(--muted);
+}
+.ncw .empty svg { width: 28px; height: 28px; color: var(--line-2); margin-bottom: 4px; }
+.ncw .empty b { color: var(--ink-2); }
+.ncw .empty.small { padding: 20px 16px; }
 
-.ncw .tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px; }
+/* wizard: steps */
+.ncw .steps { display: flex; align-items: center; gap: 10px; list-style: none; padding: 0; }
+.ncw .steps li { display: flex; align-items: center; gap: 8px; color: var(--muted); font-weight: 600; font-size: 13px; }
+.ncw .steps li.sep { flex: 0 0 40px; height: 2px; background: var(--line-2); border-radius: 2px; }
+.ncw .dot { width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; font-size: 12px; background: var(--card); border: 1.5px solid var(--line-2); }
+.ncw .dot svg { width: 13px; height: 13px; stroke-width: 3; }
+.ncw .steps li.cur { color: var(--ink); }
+.ncw .steps li.cur .dot { background: var(--accent); border-color: var(--accent); color: #fff; }
+.ncw .steps li.done { color: var(--ok); }
+.ncw .steps li.done .dot { background: var(--ok-bg); border-color: var(--ok); color: var(--ok); }
+
+/* wizard: nature, object, search */
+.ncw .search { display: flex; align-items: center; gap: 10px; border: 1px solid var(--line-2); border-radius: 10px; padding: 0 14px; margin-bottom: 18px; background: var(--card); transition: border-color .15s, box-shadow .15s; }
+.ncw .search:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+.ncw .search svg { color: var(--muted); width: 18px; height: 18px; }
+.ncw .search input { border: 0; box-shadow: none !important; padding: 10px 0; min-height: 46px; font-size: 15px; }
+.ncw .group { font-size: 12px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; margin: 18px 0 10px; }
+.ncw .group:first-of-type { margin-top: 0; }
+.ncw .tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 10px; }
+.ncw .objects { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 10px; }
 .ncw .tile, .ncw .pick {
-  display: flex; flex-direction: column; align-items: flex-start; gap: 2px; text-align: left; width: 100%;
-  font: inherit; color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 8px;
-  padding: 10px 12px; cursor: pointer;
+  display: flex; flex-direction: column; align-items: flex-start; gap: 4px; text-align: left; width: 100%;
+  background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; cursor: pointer;
+  transition: border-color .15s, box-shadow .15s, transform .15s;
 }
-.ncw .tile:hover, .ncw .pick:hover { border-color: var(--accent); background: var(--tint); }
-.ncw .tile-code { font-size: 12px; font-weight: 700; color: var(--accent); }
-.ncw .tile.test .tile-code { color: var(--cdve); }
-.ncw .results { display: flex; flex-direction: column; gap: 8px; }
-.ncw .pick code { margin-left: 0; }
+.ncw .tile:hover, .ncw .pick:hover { border-color: var(--accent); box-shadow: 0 4px 12px rgba(10, 92, 214, .12); transform: translateY(-1px); }
+.ncw .tile strong, .ncw .pick strong { font-weight: 600; }
+.ncw .tile .muted, .ncw .pick .muted { font-size: 13px; line-height: 1.4; }
+.ncw .tile-top, .ncw .pick-top { display: flex; align-items: center; gap: 8px; width: 100%; margin-bottom: 2px; }
+.ncw .tile-top .small { margin-left: auto; }
+.ncw .rows { display: flex; flex-direction: column; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; margin-top: 8px; }
+.ncw .row {
+  display: grid; grid-template-columns: 90px minmax(0, 1fr) auto 16px; align-items: center; gap: 14px; text-align: left;
+  background: var(--card); border: 0; border-bottom: 1px solid var(--line); padding: 10px 14px; cursor: pointer;
+}
+.ncw .row:last-child { border-bottom: 0; }
+.ncw .row:hover { background: var(--accent-soft); }
+.ncw .row-main { display: flex; flex-direction: column; min-width: 0; }
+.ncw .row-main .muted { font-size: 12.5px; }
+.ncw .row > .muted { font-size: 12.5px; text-align: right; }
+.ncw .row svg { color: var(--muted); }
 
-.ncw .info { background: var(--cdve-bg); border-radius: 8px; padding: 10px 12px; margin-bottom: 12px; }
-.ncw .warn { background: var(--warn-bg); color: var(--warn-ink); border-radius: 8px; padding: 10px 12px; margin: 0 0 10px; }
-.ncw .ok { background: var(--ok-bg); color: var(--ok); border-radius: 8px; padding: 10px 12px; margin: 0 0 12px; font-weight: 600; }
-.ncw .error { color: var(--err); font-weight: 600; }
-.ncw .errors { color: var(--err); margin: 6px 0 0; padding-left: 20px; font-size: 14px; }
+/* wizard: detail */
+.ncw .switch-row {
+  display: flex; align-items: center; gap: 12px; padding: 12px 14px; margin-bottom: 16px; cursor: pointer;
+  background: var(--cdve-bg); border-radius: 10px;
+}
+.ncw .switch-row b { display: block; color: var(--cdve); }
+.ncw .switch-row small { color: var(--ink-2); font-size: 12.5px; }
+.ncw .switch {
+  appearance: none; -webkit-appearance: none; width: 40px; height: 22px; border-radius: 999px; background: #c9c2e6;
+  position: relative; cursor: pointer; flex: none; margin: 0; transition: background .15s;
+}
+.ncw .switch::after { content: ""; position: absolute; top: 3px; left: 3px; width: 16px; height: 16px; border-radius: 50%; background: #fff; transition: transform .15s; box-shadow: 0 1px 2px rgba(0, 0, 0, .2); }
+.ncw .switch:checked { background: var(--cdve); }
+.ncw .switch:checked::after { transform: translateX(18px); }
+.ncw .seg { display: inline-flex; border: 1px solid var(--line-2); border-radius: 8px; padding: 3px; gap: 3px; background: var(--canvas); }
+.ncw .seg button { border: 0; background: transparent; border-radius: 6px; padding: 6px 18px; min-height: 32px; font-weight: 600; color: var(--muted); cursor: pointer; }
+.ncw .seg button:hover { color: var(--ink); }
+.ncw .seg button.min[aria-pressed="true"] { background: var(--card); color: var(--min); box-shadow: 0 0 0 1px var(--min-line), var(--shadow); }
+.ncw .seg button.maj[aria-pressed="true"] { background: var(--card); color: var(--maj); box-shadow: 0 0 0 1px var(--maj-line), var(--shadow); }
+.ncw .preview { margin-top: 4px; }
+.ncw .errors { color: var(--maj); margin: 10px 0 0; padding-left: 20px; font-size: 13px; }
 .ncw .errors:empty { display: none; }
 
-.ncw .toast {
-  position: fixed; left: 50%; bottom: 20px; transform: translateX(-50%); background: var(--navy); color: var(--on-navy);
-  padding: 8px 16px; border-radius: 8px; font-size: 14px; opacity: 0; pointer-events: none; transition: opacity .2s;
-}
-.ncw .toast.show { opacity: 1; }
+/* review and done */
+.ncw .facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; margin-bottom: 16px; }
+.ncw .facts > div { background: var(--canvas); border-radius: 8px; padding: 10px 14px; }
+.ncw .facts dt { font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
+.ncw .facts dd { margin-top: 2px; }
+.ncw .recap { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+.ncw .recap th { text-align: left; font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; padding: 8px 10px; border-bottom: 1px solid var(--line-2); }
+.ncw .recap td { padding: 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+.ncw .recap tr:last-child td { border-bottom: 0; }
+.ncw .recap .r { text-align: right; }
+.ncw .done-card { text-align: center; padding: 36px 28px; }
+.ncw .done-card h2 { font-size: 20px; margin-bottom: 10px; }
+.ncw .done-card .facts { text-align: left; margin: 20px 0 0; }
+.ncw .done-icon { width: 56px; height: 56px; border-radius: 50%; display: grid; place-items: center; margin: 0 auto 14px; background: var(--ok-bg); color: var(--ok); }
+.ncw .done-icon svg { width: 28px; height: 28px; stroke-width: 2.5; }
+.ncw .done-icon.warn-icon { background: var(--warn-bg); color: var(--warn-ink); }
+.ncw .ok, .ncw .warn { display: inline-block; border-radius: 8px; padding: 8px 14px; }
+.ncw .ok { background: var(--ok-bg); color: var(--ok); font-weight: 600; }
+.ncw .warn { background: var(--warn-bg); color: var(--warn-ink); }
+.ncw .error { color: var(--maj); background: var(--maj-bg); border-radius: 8px; padding: 10px 12px; font-size: 13px; margin-top: 12px; }
 
-@media (max-width: 520px) {
-  .ncw .defect { flex-direction: column; }
-  .ncw .defect-btns { flex-direction: row; }
+/* right panel */
+.ncw .panel { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 18px; box-shadow: var(--shadow); }
+.ncw .panel h3 { font-size: 15px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+.ncw .panel h3 svg { color: var(--accent); }
+.ncw .panel-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.ncw .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 12px; }
+.ncw .stats > div { background: var(--canvas); border-radius: 8px; padding: 8px 10px; }
+.ncw .stats b { display: block; font-size: 20px; font-weight: 700; line-height: 1.2; }
+.ncw .stats span { font-size: 12px; color: var(--muted); }
+.ncw .stats .has-maj b { color: var(--maj); }
+.ncw pre.sap {
+  margin: 0; padding: 14px 16px; background: var(--code-bg); color: var(--code-ink); border-radius: 10px;
+  font-family: var(--mono); font-size: 12px; line-height: 1.6; white-space: pre-wrap; word-break: break-word;
+  min-height: 160px; max-height: 460px; overflow: auto;
+}
+.ncw .note { color: var(--muted); font-size: 12.5px; text-align: center; margin-top: 10px; }
+.ncw .how { list-style: none; padding: 0; margin-top: 14px; counter-reset: how; display: flex; flex-direction: column; gap: 14px; }
+.ncw .how li { counter-increment: how; display: grid; grid-template-columns: 28px 1fr; column-gap: 12px; }
+.ncw .how li::before {
+  content: counter(how); grid-row: span 2; width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center;
+  background: var(--accent-soft); color: var(--accent); font-weight: 700; font-size: 13px;
+}
+.ncw .how span { color: var(--muted); font-size: 13px; }
+
+.ncw .toast {
+  position: fixed; left: 50%; bottom: 24px; transform: translate(-50%, 8px); background: var(--navy); color: #fff;
+  padding: 10px 18px; border-radius: 10px; font-size: 13.5px; font-weight: 500; opacity: 0; pointer-events: none;
+  transition: opacity .2s, transform .2s; box-shadow: 0 8px 24px rgba(0, 32, 91, .25); z-index: 10;
+}
+.ncw .toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+/* narrower widget */
+@media (max-width: 1000px) {
+  .ncw .layout { grid-template-columns: minmax(0, 1fr); }
+  .ncw .side { position: static; }
+}
+@media (max-width: 640px) {
+  .ncw { padding: 12px; }
+  .ncw .grid2 { grid-template-columns: 1fr; gap: 0; }
+  .ncw .card-head { flex-direction: column; }
+  .ncw .row { grid-template-columns: 80px minmax(0, 1fr) 16px; }
+  .ncw .row > .muted { display: none; }
 }
 </style>
 </head>
@@ -488,6 +659,20 @@ function esc(s) {
   });
 }
 
+function svg(d) { return '<svg viewBox="0 0 24 24" aria-hidden="true">' + d + "</svg>"; }
+var ICON = {
+  edit: svg('<path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/>'),
+  trash: svg('<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/>'),
+  copy: svg('<rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a1 1 0 0 1 1-1h10"/>'),
+  plus: svg('<path d="M12 5v14M5 12h14"/>'),
+  dup: svg('<rect x="8" y="8" width="12" height="12" rx="2"/><path d="M4 16V5a1 1 0 0 1 1-1h11"/>'),
+  search: svg('<circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/>'),
+  back: svg('<path d="M15 6l-6 6 6 6"/>'),
+  next: svg('<path d="M9 6l6 6-6 6"/>'),
+  check: svg('<path d="M5 12.5l4.5 4.5L19 7.5"/>'),
+  doc: svg('<path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5M10 13h6M10 17h6"/>')
+};
+
 function options(list, selected, labels) {
   return list.map(function (v, i) {
     return '<option value="' + esc(v) + '"' + (v === selected ? " selected" : "") + ">" + esc(labels ? labels[i] : v) + "</option>";
@@ -498,9 +683,21 @@ function btn(act, label, cls, extra) {
   return '<button type="button" class="btn ' + (cls || "") + '" data-act="' + act + '"' + (extra || "") + ">" + label + "</button>";
 }
 
-function sevBadge(sev) {
-  return '<span class="badge ' + (sev === "MAJEURE" ? "maj" : "min") + '">' + sev + "</span>";
+function iconBtn(act, icon, title, i, cls) {
+  return '<button type="button" class="icon-btn ' + (cls || "") + '" data-act="' + act + '" data-i="' + i + '" title="' + title + '" aria-label="' + title + '">' + icon + "</button>";
 }
+
+function chips(act, list, selected) {
+  return '<div class="chips">' + list.filter(Boolean).map(function (v) {
+    return '<button type="button" class="chip" data-act="' + act + '" data-v="' + esc(v) + '" aria-pressed="' + (v === selected) + '">' + esc(v) + "</button>";
+  }).join("") + "</div>";
+}
+
+function sevBadge(sev) {
+  return '<span class="badge ' + (sev === "MAJEURE" ? "maj" : "min") + '">' + (sev === "MAJEURE" ? "Majeure" : "Mineure") + "</span>";
+}
+
+function cdveBadge(label) { return '<span class="badge cdve">' + (label || "CDVE") + "</span>"; }
 
 function go(screen) {
   S.screen = screen;
@@ -534,75 +731,161 @@ function headerComplete() {
   return !!(v.msn && v.produit && v.detection);
 }
 
-function renderHeader() {
-  var d = S.hd;
-  return '<section class="card"><h2>Nouvelle NC</h2>' +
-    '<label class="field"><span>MSN</span><input type="text" data-field="hd.msn" value="' + esc(d.msn) + '" placeholder="ex. 2160" autocomplete="off"></label>' +
-    '<label class="field"><span>Produit</span><select data-field="hd.produitSel">' + options(PRODUITS, d.produitSel) + "</select></label>" +
-    (d.produitSel === "Autre" ? '<label class="field"><span>Préciser le produit</span><input type="text" data-field="hd.produitCustom" value="' + esc(d.produitCustom) + '"></label>' : "") +
-    '<label class="field"><span>Détection</span><select data-field="hd.detectionSel">' + options(DETECTIONS, d.detectionSel) + "</select></label>" +
-    (d.detectionSel === "Autre" ? '<label class="field"><span>Préciser la détection</span><input type="text" data-field="hd.detectionCustom" value="' + esc(d.detectionCustom) + '"></label>' : "") +
-    '<div class="actions">' + btn("header-continue", "Continuer", "primary", headerComplete() ? "" : " disabled") + "</div></section>";
+function sapText() {
+  return buildSapText(S.header, S.ctxCombo, S.ctxText, S.defects, S.actCombo, S.actText);
 }
 
-function templateBlock(title, comboField, comboVal, textField, textVal, list, placeholder) {
-  return '<section class="card"><h2>' + title + '</h2><div class="split">' +
-    '<label class="field"><span>Modèles</span><select data-field="' + comboField + '">' + options(list, comboVal, list.map(function (v) { return v || "—"; })) + "</select></label>" +
-    '<label class="field grow"><span>Suite du texte</span><textarea rows="3" data-field="' + textField + '" placeholder="' + placeholder + '">' + esc(textVal) + "</textarea></label>" +
-    "</div></section>";
+// top bar: title, and once the header is known, the NC's identity
+function renderTop() {
+  var h = S.header, s = S.screen;
+  var ident = s !== "header" && s !== "done" ?
+    '<div class="ident">' +
+      '<div class="id"><span>MSN</span><b>' + esc(h.msn) + "</b></div>" +
+      '<div class="id"><span>Produit</span><b>' + esc(h.produit) + "</b></div>" +
+      '<div class="id"><span>Détection</span><b>' + esc(h.detection) + "</b></div>" +
+      (s === "list" ? btn("edit-header", ICON.edit + "Modifier", "on-dark small") : "") +
+    "</div>" : "";
+  return '<header class="top"><div class="brand"><div class="logo">NC</div><div><h1>Saisie structurée de NC</h1>' +
+    "<p>FTO2 · texte au format DEFAUTS v1</p></div></div>" + ident + "</header>";
+}
+
+function stepper(cur) {
+  return '<ol class="steps">' + ["Nature", "Objet", "Détails"].map(function (s, i) {
+    var n = i + 1, st = n < cur ? "done" : n === cur ? "cur" : "";
+    return '<li class="' + st + '"><span class="dot">' + (n < cur ? ICON.check : n) + "</span>" + s + "</li>";
+  }).join('<li class="sep" aria-hidden="true"></li>') + "</ol>";
+}
+
+function statsHtml() {
+  var maj = S.defects.filter(function (d) { return d.sev === "MAJEURE"; }).length;
+  return '<div><b>' + S.defects.length + "</b><span>défaut" + (S.defects.length > 1 ? "s" : "") + "</span></div>" +
+    "<div><b>" + totalQty(S.defects) + "</b><span>quantité totale</span></div>" +
+    '<div class="' + (maj ? "has-maj" : "") + '"><b>' + maj + "</b><span>majeure" + (maj > 1 ? "s" : "") + "</span></div>";
+}
+
+// right column: the SAP text as it builds up, and the way forward
+function renderPanel() {
+  var s = S.screen;
+  if (s === "header") {
+    return '<aside class="side"><div class="panel"><h3>Comment ça marche</h3><ol class="how">' +
+      "<li><b>En-tête</b><span>MSN, produit et étape où le défaut a été vu.</span></li>" +
+      "<li><b>Défauts</b><span>Une ligne par défaut, choisie dans la grille officielle des codes. Le texte se construit tout seul.</span></li>" +
+      "<li><b>Vérification</b><span>Relecture du texte SAP, puis soumission de la NC.</span></li>" +
+      "</ol></div></aside>";
+  }
+  var wizard = s === "nature" || s === "object" || s === "detail";
+  var foot = "";
+  if (s === "list") {
+    foot = btn("finish", "Vérifier et soumettre" + ICON.next, "primary block", S.defects.length ? "" : " disabled") +
+      (S.defects.length ? "" : '<p class="note">Ajoutez au moins un défaut pour continuer.</p>');
+  } else if (s === "review") {
+    foot = (S.error ? '<p class="error">' + esc(S.error) + "</p>" : "") +
+      btn("submit", S.sending ? "Envoi…" : ICON.check + "Soumettre la NC", "primary block", S.sending ? " disabled" : "") +
+      btn("back", ICON.back + "Retour aux défauts", "ghost block", ' data-to="list"');
+  } else if (s === "done") {
+    foot = btn("new-nc", ICON.plus + "Nouvelle NC", "primary block") +
+      (S.done.mode === "slate" ? "" : btn("download", "Télécharger la ligne (CSV)", "secondary block"));
+  } else if (wizard) {
+    foot = '<p class="note">Enregistrez ou annulez le défaut en cours pour revenir à la liste.</p>';
+  }
+  return '<aside class="side"><div class="panel">' +
+    '<div class="panel-head"><h3>' + ICON.doc + "Texte SAP</h3>" + btn("copy", ICON.copy + "Copier", "ghost small") + "</div>" +
+    (s === "done" ? "" : '<div class="stats" id="ncw-stats">' + statsHtml() + "</div>") +
+    '<pre class="sap" id="ncw-sap">' + esc(s === "done" ? S.done.row.texte_sap : sapText()) + "</pre>" + foot + "</div></aside>";
+}
+
+function renderHeader() {
+  var d = S.hd;
+  return '<section class="card"><div class="card-head"><div><h2>Nouvelle NC</h2>' +
+    '<p class="sub">Ces informations ouvrent le texte SAP.</p></div></div>' +
+    '<div class="grid2">' +
+      '<label class="field"><span class="label">MSN</span><input type="text" class="big" data-field="hd.msn" value="' + esc(d.msn) + '" placeholder="ex. 2160" autocomplete="off"></label>' +
+      '<div class="field"><label><span class="label">Produit</span><select class="big" data-field="hd.produitSel">' + options(PRODUITS, d.produitSel) + "</select></label>" +
+        (d.produitSel === "Autre" ? '<input type="text" class="under" data-field="hd.produitCustom" value="' + esc(d.produitCustom) + '" placeholder="Préciser le produit" aria-label="Préciser le produit">' : "") +
+      "</div>" +
+    "</div>" +
+    '<div class="field"><span class="label">Détection</span>' + chips("pick-detection", DETECTIONS, d.detectionSel) +
+      (d.detectionSel === "Autre" ? '<input type="text" class="under narrow" data-field="hd.detectionCustom" value="' + esc(d.detectionCustom) + '" placeholder="Préciser la détection" aria-label="Préciser la détection">' : "") +
+    "</div>" +
+    '<div class="card-foot">' + btn("header-continue", "Continuer" + ICON.next, "primary", headerComplete() ? "" : " disabled") + "</div></section>";
+}
+
+function templateCard(title, sub, act, list, combo, field, text, placeholder) {
+  return '<section class="card"><div class="card-head"><div><h2>' + title + '<span class="opt">optionnel</span></h2>' +
+    '<p class="sub">' + sub + "</p></div></div>" + chips(act, list, combo) +
+    '<textarea rows="2" data-field="' + field + '" placeholder="' + placeholder + '" aria-label="' + title + '">' + esc(text) + "</textarea></section>";
+}
+
+function renderDefect(d, i) {
+  return '<article class="defect"><div class="num">' + (i + 1) + "</div>" +
+    '<div class="defect-body">' +
+      '<div class="defect-top"><span class="code">' + esc(d.sub) + "</span><strong>" + esc(d.objLabel) + '</strong><span class="muted">' + esc(d.natureLabel) + "</span></div>" +
+      '<div class="defect-meta">' + sevBadge(d.sev) + (d.cdve ? cdveBadge() : "") +
+        '<span class="meta">FIN <b>' + esc(d.loc || "—") + '</b></span><span class="meta">Qté <b>' + d.qty + "</b></span></div>" +
+      '<pre class="line">' + esc(defectLine(d, i)) + "</pre>" +
+    "</div>" +
+    '<div class="defect-actions">' + iconBtn("edit-defect", ICON.edit, "Modifier", i) + iconBtn("delete-defect", ICON.trash, "Supprimer", i, "danger") + "</div></article>";
 }
 
 function renderList() {
-  var h = '<div class="stack">' +
-    templateBlock("Contexte de découverte", "ctxCombo", S.ctxCombo, "ctxText", S.ctxText, CTX_OPTIONS, "Saisir la suite du contexte ici...");
-  h += '<section class="card"><div class="card-head"><h2>Défauts de la NC</h2>' + btn("edit-header", "Modifier les infos de la NC", "ghost") + "</div>";
-  if (!S.defects.length) {
-    h += '<p class="warn">Aucun défaut enregistré pour l\'instant.</p>';
-  } else {
-    S.defects.forEach(function (d, i) {
-      h += '<article class="defect"><div class="defect-main">' +
-        '<div class="defect-title"><strong>Défaut ' + (i + 1) + "</strong> · " + esc(d.natureLabel) + ' <code>' + esc(d.sub) + "</code></div>" +
-        '<div class="badges">' + sevBadge(d.sev) + (d.cdve ? '<span class="badge cdve">CDVE</span>' : "") + (d.qty > 1 ? '<span class="badge qty">×' + d.qty + "</span>" : "") + "</div>" +
-        '<pre class="line">' + esc(defectLine(d, i)) + "</pre></div>" +
-        '<div class="defect-btns">' + btn("edit-defect", "Modifier", "", ' data-i="' + i + '"') + btn("delete-defect", "Supprimer", "danger", ' data-i="' + i + '"') + "</div></article>";
-    });
-  }
-  h += '<div class="actions">' + btn("add-defect", "+ Ajouter", "primary") + btn("duplicate-last", "Dupliquer le dernier", "", S.defects.length ? "" : " disabled") + "</div></section>";
-  h += templateBlock("Action demandée", "actCombo", S.actCombo, "actText", S.actText, ACT_OPTIONS, "Saisir la suite de l'action ici...");
-  h += btn("finish", "Terminer", "primary wide", S.defects.length ? "" : " disabled") + "</div>";
+  var n = S.defects.length;
+  var h = templateCard("Contexte de découverte", "Choisissez un début de phrase, puis complétez si besoin.", "pick-ctx",
+    CTX_OPTIONS, S.ctxCombo, "ctxText", S.ctxText, "Compléter la phrase…");
+  h += '<section class="card"><div class="card-head"><div><h2>Défauts<span class="count">' + n + "</span></h2>" +
+    '<p class="sub">Une ligne par défaut. L\'ordre est celui du texte SAP.</p></div>' +
+    '<div class="head-actions">' + btn("duplicate-last", ICON.dup + "Dupliquer le dernier", "secondary", n ? "" : " disabled") +
+    btn("add-defect", ICON.plus + "Ajouter un défaut", "primary") + "</div></div>";
+  h += n ? '<div class="defects">' + S.defects.map(renderDefect).join("") + "</div>"
+         : '<div class="empty">' + ICON.doc + "<b>Aucun défaut pour l'instant</b><span>Ajoutez le premier défaut constaté sur ce produit.</span></div>";
+  h += "</section>";
+  h += templateCard("Action demandée", "Ce qui est attendu pour solder la NC.", "pick-act",
+    ACT_OPTIONS, S.actCombo, "actText", S.actText, "Compléter la demande…");
   return h;
+}
+
+function natureTile(n) {
+  var hint = n.hint || n.objects[0].detail;
+  return '<button type="button" class="tile" data-act="pick-nature" data-code="' + n.code + '">' +
+    '<span class="tile-top"><span class="code tile-code">' + n.code + '</span><span class="muted small">' + n.objects.length + " objet" + (n.objects.length > 1 ? "s" : "") + "</span></span>" +
+    "<strong>" + esc(n.label) + "</strong>" + (hint ? '<span class="muted">' + esc(hint) + "</span>" : "") + "</button>";
 }
 
 function renderNatureResults() {
   var hits = searchObjects(S.query);
   if (hits) {
-    if (!hits.length) return '<p class="muted">Aucun code ne correspond.</p>';
-    return '<div class="results">' + hits.map(function (x) {
-      return '<button type="button" class="pick" data-act="pick-object" data-code="' + x.n.code + '" data-sub="' + x.o.sub + '">' +
-        "<strong>" + esc(x.o.label) + '</strong> <code>' + x.o.sub + '</code><span class="muted">' + esc(x.n.label) + "</span></button>";
-    }).join("") + "</div>";
+    if (!hits.length) return '<div class="empty small">' + ICON.search + "<b>Aucun code ne correspond</b><span>Essayez un autre mot, ou parcourez les natures.</span></div>";
+    return '<p class="muted small">' + hits.length + " résultat" + (hits.length > 1 ? "s" : "") + "</p>" +
+      '<div class="rows">' + hits.map(function (x) {
+        return '<button type="button" class="row" data-act="pick-object" data-code="' + x.n.code + '" data-sub="' + x.o.sub + '">' +
+          '<span class="code">' + x.o.sub + "</span><span class=\"row-main\"><strong>" + esc(x.o.label) + "</strong>" +
+          (x.o.detail ? '<span class="muted">' + esc(x.o.detail) + "</span>" : "") + "</span>" +
+          '<span class="muted">' + esc(x.n.label) + "</span>" + ICON.next + "</button>";
+      }).join("") + "</div>";
   }
-  return '<div class="tiles">' + sortedNatures(isTest()).map(function (n) {
-    return '<button type="button" class="tile' + (n.isTest ? " test" : "") + '" data-act="pick-nature" data-code="' + n.code + '">' +
-      '<span class="tile-code">' + n.code + '</span><strong>' + esc(n.label) + "</strong>" + (n.hint ? '<span class="muted">' + esc(n.hint) + "</span>" : "") + "</button>";
-  }).join("") + "</div>";
+  var groups = [[true, "Défauts constatés au test"], [false, "Défauts constatés à l'inspection"]];
+  if (!isTest()) groups.reverse();
+  return groups.map(function (g) {
+    return '<h3 class="group">' + g[1] + '</h3><div class="tiles">' +
+      NATURES.filter(function (n) { return n.isTest === g[0]; }).map(natureTile).join("") + "</div>";
+  }).join("");
 }
 
 function renderNature() {
-  return btn("back", "← Retour", "ghost", ' data-to="list"') +
-    '<section class="card"><h2>Étape 1 — Nature du défaut</h2>' +
-    '<label class="field"><span>Recherche rapide (ex. « contact », « T04 »)</span><input type="search" data-field="query" value="' + esc(S.query) + '" autocomplete="off"></label>' +
+  return stepper(1) + '<section class="card"><div class="card-head"><div><h2>Nature du défaut</h2>' +
+    '<p class="sub">Recherchez un mot ou un code, ou parcourez les familles.</p></div>' + btn("back", ICON.back + "Retour", "ghost", ' data-to="list"') + "</div>" +
+    '<label class="search">' + ICON.search + '<input type="search" data-field="query" value="' + esc(S.query) +
+    '" placeholder="contact, obturateur, T04, gaine…" autocomplete="off" aria-label="Recherche rapide"></label>' +
     '<div id="ncw-results">' + renderNatureResults() + "</div></section>";
 }
 
 function renderObject() {
   var n = findNature(S.natCode);
-  return btn("back", "← Retour Natures", "ghost", ' data-to="nature"') +
-    '<section class="card"><h2>Étape 2 — ' + esc(n.label) + " (" + n.code + ")</h2><div class=\"results\">" +
-    n.objects.map(function (o) {
+  return stepper(2) + '<section class="card"><div class="card-head"><div><h2><span class="code">' + n.code + "</span>" + esc(n.label) + "</h2>" +
+    '<p class="sub">Choisissez l\'élément concerné.</p></div>' + btn("back", ICON.back + "Natures", "ghost", ' data-to="nature"') + "</div>" +
+    '<div class="objects">' + n.objects.map(function (o) {
       return '<button type="button" class="pick" data-act="pick-object" data-code="' + n.code + '" data-sub="' + o.sub + '">' +
-        "<strong>" + esc(o.label) + '</strong> <code>' + o.sub + "</code>" + (o.cdve ? '<span class="badge cdve">CDVE possible</span>' : "") +
-        (o.detail ? '<span class="muted">' + esc(o.detail) + "</span>" : "") + "</button>";
+        '<span class="pick-top"><span class="code">' + o.sub + "</span>" + sevBadge(autoSeverity(o.sev)) + (o.cdve ? cdveBadge("CDVE possible") : "") + "</span>" +
+        "<strong>" + esc(o.label) + "</strong>" + (o.detail ? '<span class="muted">' + esc(o.detail) + "</span>" : "") + "</button>";
     }).join("") + "</div></section>";
 }
 
@@ -639,50 +922,62 @@ function initDetailForm() {
   };
 }
 
+function errorsHtml(errors) {
+  return errors.map(function (e) { return "<li>" + esc(e) + "</li>"; }).join("");
+}
+
 function renderDetail() {
   var c = detailContext(), f = S.fd, o = c.o;
   var fins = suggestedFins(c.n.code);
-  var h = btn("cancel-detail", "← Annuler", "ghost") +
-    '<section class="card"><h2>Détails : ' + esc(o.label) + '</h2><p class="muted">' + esc(c.n.label) + " · <code>" + o.sub + "</code>" +
-    (S.editIdx !== null ? " · modification du défaut " + (S.editIdx + 1) : "") + "</p>";
+  var h = stepper(3) + '<section class="card"><div class="card-head"><div><h2><span class="code" id="ncw-sub">' + c.sub + "</span>" + esc(o.label) + "</h2>" +
+    '<p class="sub">' + esc(c.n.label) + (o.detail ? " · " + esc(o.detail) : "") + "</p></div>" +
+    (S.editIdx !== null ? '<span class="tag">Modification du défaut ' + (S.editIdx + 1) + "</span>" : S.dupFrom !== null ? '<span class="tag">Copie du défaut ' + (S.dupFrom + 1) + "</span>" : "") + "</div>";
   if (o.cdve) {
-    h += '<div class="info"><strong>Option CDVE disponible</strong><label class="check"><input type="checkbox" data-field="fd.cdve"' + (f.cdve ? " checked" : "") +
-      "> Circuit Commandes de Vol (bascule vers code " + o.cdve + ")</label></div>";
+    h += '<label class="switch-row"><input type="checkbox" class="switch" data-field="fd.cdve"' + (f.cdve ? " checked" : "") + ">" +
+      "<span><b>Circuit Commandes de Vol (CDVE)</b><small>Le code devient " + o.cdve + " et la sévérité passe à majeure.</small></span></label>";
   }
-  h += '<div class="split"><label class="field"><span>Localisation (FIN / Zone)</span><select data-field="fd.locSel">' +
-    options([""].concat(fins), f.locSel, ["— choisir —"].concat(fins)) + "</select></label>" +
-    '<label class="field grow"><span>Ou saisir manuellement</span><input type="text" data-field="fd.locCustom" value="' + esc(f.locCustom) + '" autocomplete="off"></label></div>' +
-    '<label class="field"><span>Précision (optionnel)</span><input type="text" data-field="fd.detail" value="' + esc(f.detail) + '" placeholder="' + esc(o.detail) + '"></label>' +
-    '<div class="split"><label class="field"><span>Quantité</span><input type="number" min="1" step="1" data-field="fd.qty" value="' + esc(f.qty) + '"></label>' +
-    '<label class="field"><span>Sévérité</span><select data-field="fd.sev">' + options(["MINEURE", "MAJEURE"], f.sev) + "</select></label></div>" +
-    '<label class="field"><span>Complément libre (optionnel) <span class="muted" id="ncw-count">' + f.comment.length + "/" + COMMENT_MAX + "</span></span>" +
-    '<textarea rows="3" maxlength="' + COMMENT_MAX + '" data-field="fd.comment">' + esc(f.comment) + "</textarea></label>" +
-    '<div class="preview"><span>Aperçu texte généré</span><pre class="line" id="ncw-preview">' + esc(c.line) + "</pre></div>" +
-    '<ul class="errors" id="ncw-errors">' + c.errors.map(function (e) { return "<li>" + esc(e) + "</li>"; }).join("") + "</ul>" +
-    '<div class="actions">' + btn("save-defect", "Enregistrer le défaut", "primary", c.errors.length ? " disabled" : "") + "</div></section>";
+  h += '<div class="grid2">' +
+      '<div class="field"><label><span class="label">Localisation (FIN / zone)</span><select data-field="fd.locSel">' +
+        options([""].concat(fins), f.locSel, ["— Choisir dans la liste —"].concat(fins)) + "</select></label>" +
+        '<input type="text" class="under" data-field="fd.locCustom" value="' + esc(f.locCustom) + '" placeholder="ou saisir un autre FIN / une zone" aria-label="Saisir manuellement" autocomplete="off"></div>' +
+      '<label class="field"><span class="label">Précision <span class="opt">optionnel</span></span><input type="text" data-field="fd.detail" value="' + esc(f.detail) + '" placeholder="' + esc(o.detail || "ex. bornes concernées") + '"></label>' +
+    "</div>" +
+    '<div class="grid2">' +
+      '<label class="field"><span class="label">Quantité</span><input type="number" class="qty" min="1" step="1" data-field="fd.qty" value="' + esc(f.qty) + '"></label>' +
+      '<div class="field"><span class="label">Sévérité</span><div class="seg" role="group" aria-label="Sévérité">' +
+        ["MINEURE", "MAJEURE"].map(function (v) {
+          return '<button type="button" class="' + (v === "MAJEURE" ? "maj" : "min") + '" data-act="set-sev" data-v="' + v + '" aria-pressed="' + (f.sev === v) + '">' + (v === "MAJEURE" ? "Majeure" : "Mineure") + "</button>";
+        }).join("") + "</div></div>" +
+    "</div>" +
+    '<label class="field"><span class="label">Complément libre <span class="opt">optionnel</span><span class="counter" id="ncw-count">' + f.comment.length + " / " + COMMENT_MAX + "</span></span>" +
+    '<textarea rows="2" maxlength="' + COMMENT_MAX + '" data-field="fd.comment">' + esc(f.comment) + "</textarea></label>" +
+    '<div class="preview"><span class="label">Ligne générée</span><pre class="line big" id="ncw-preview">' + esc(c.line) + "</pre></div>" +
+    '<ul class="errors" id="ncw-errors">' + errorsHtml(c.errors) + "</ul>" +
+    '<div class="card-foot">' + btn("cancel-detail", "Annuler", "ghost") + btn("save-defect", ICON.check + "Enregistrer le défaut", "primary", c.errors.length ? " disabled" : "") + "</div></section>";
   return h;
 }
 
-function sapText() {
-  return buildSapText(S.header, S.ctxCombo, S.ctxText, S.defects, S.actCombo, S.actText);
-}
-
 function renderReview() {
-  return btn("back", "← Retour à la liste", "ghost", ' data-to="list"') +
-    '<section class="card"><h2>Bilan &amp; Soumission</h2>' +
-    '<p class="muted">' + S.defects.length + " ligne(s) de défaut · total " + totalQty(S.defects) + "</p>" +
-    '<div class="preview"><div class="card-head"><span>Texte SAP final</span>' + btn("copy", "Copier", "ghost small") + '</div><pre class="sap" id="ncw-sap">' + esc(sapText()) + "</pre></div>" +
-    (S.error ? '<p class="error">' + esc(S.error) + "</p>" : "") +
-    '<div class="actions">' + btn("submit", S.sending ? "Envoi…" : "Soumettre la NC", "primary", S.sending ? " disabled" : "") + "</div></section>";
+  var ctx = (S.ctxCombo + " " + S.ctxText).trim(), act = (S.actCombo + " " + S.actText).trim();
+  return '<section class="card"><div class="card-head"><div><h2>Vérification</h2>' +
+    '<p class="sub">Relisez avant de soumettre. Le texte de droite est exactement celui qui sera envoyé.</p></div></div>' +
+    '<dl class="facts"><div><dt>Contexte</dt><dd>' + (ctx ? esc(ctx) : '<span class="muted">—</span>') + "</dd></div>" +
+    "<div><dt>Action demandée</dt><dd>" + (act ? esc(act) : '<span class="muted">—</span>') + "</dd></div></dl>" +
+    '<table class="recap"><thead><tr><th>#</th><th>Code</th><th>Objet</th><th>FIN / zone</th><th class="r">Qté</th><th>Sévérité</th></tr></thead><tbody>' +
+    S.defects.map(function (d, i) {
+      return "<tr><td>" + (i + 1) + '</td><td><span class="code">' + esc(d.sub) + "</span></td><td>" + esc(d.objLabel) +
+        (d.detail ? '<span class="muted"> · ' + esc(d.detail) + "</span>" : "") + "</td><td>" + esc(d.loc || "—") + '</td><td class="r">' + d.qty +
+        "</td><td>" + sevBadge(d.sev) + (d.cdve ? " " + cdveBadge() : "") + "</td></tr>";
+    }).join("") + "</tbody></table></section>";
 }
 
 function renderDone() {
   var r = S.done.row, slate = S.done.mode === "slate";
-  return '<section class="card">' +
-    (slate ? '<p class="ok">NC transmise à Slate (' + esc(r.submission_id) + ").</p>"
-           : '<p class="warn">Hors Slate : rien n\'a été enregistré. Copiez le texte ou téléchargez la ligne.</p>') +
-    '<div class="preview"><div class="card-head"><span>Texte SAP</span>' + btn("copy", "Copier", "ghost small") + '</div><pre class="sap" id="ncw-sap">' + esc(r.texte_sap) + "</pre></div>" +
-    '<div class="actions">' + btn("new-nc", "Nouvelle NC", "primary") + (slate ? "" : btn("download", "Télécharger la ligne (CSV)")) + "</div></section>";
+  return '<section class="card done-card"><div class="done-icon' + (slate ? "" : " warn-icon") + '">' + (slate ? ICON.check : ICON.doc) + "</div>" +
+    (slate ? "<h2>NC soumise</h2><p class=\"ok\">NC transmise à Slate (" + esc(r.submission_id) + ").</p>"
+           : "<h2>NC prête</h2><p class=\"warn\">Hors Slate : rien n'a été enregistré. Copiez le texte ou téléchargez la ligne.</p>") +
+    '<dl class="facts"><div><dt>MSN</dt><dd>' + esc(r.msn) + "</dd></div><div><dt>Produit</dt><dd>" + esc(r.produit) + "</dd></div>" +
+    "<div><dt>Détection</dt><dd>" + esc(r.detection) + "</dd></div><div><dt>Quantité totale</dt><dd>" + r.total_defauts + "</dd></div></dl></section>";
 }
 
 function render() {
@@ -694,10 +989,8 @@ function render() {
   else if (s === "detail") body = renderDetail();
   else if (s === "review") body = renderReview();
   else body = renderDone();
-  var h = S.header;
-  app.innerHTML = '<header class="bar"><h1>NC · Saisie structurée</h1>' +
-    (s !== "header" && s !== "done" ? '<div class="nc-info"><strong>MSN ' + esc(h.msn) + "</strong> | " + esc(h.produit) + " | " + esc(h.detection) + "</div>" : "") +
-    "</header>" + body + '<div class="toast" id="ncw-toast" role="status"></div>';
+  app.innerHTML = renderTop() + '<div class="layout"><main class="main">' + body + "</main>" + renderPanel() + "</div>" +
+    '<div class="toast" id="ncw-toast" role="status"></div>';
   var first = app.querySelector("[data-field='query'], [data-field='hd.msn']");
   if (first && !first.value) try { first.focus(); } catch (e) { /* focus can be refused in an iframe */ }
 }
@@ -708,11 +1001,17 @@ function refreshHeaderButton() {
   if (b) b.disabled = !headerComplete();
 }
 
+function refreshPanel() {
+  var pre = app.querySelector("#ncw-sap"), st = app.querySelector("#ncw-stats");
+  if (pre && S.screen !== "done") pre.textContent = sapText();
+  if (st) st.innerHTML = statsHtml();
+}
+
 function refreshDetail() {
   var c = detailContext();
   app.querySelector("#ncw-preview").textContent = c.line;
-  app.querySelector("#ncw-count").textContent = S.fd.comment.length + "/" + COMMENT_MAX;
-  app.querySelector("#ncw-errors").innerHTML = c.errors.map(function (e) { return "<li>" + esc(e) + "</li>"; }).join("");
+  app.querySelector("#ncw-count").textContent = S.fd.comment.length + " / " + COMMENT_MAX;
+  app.querySelector("#ncw-errors").innerHTML = errorsHtml(c.errors);
   app.querySelector("[data-act='save-defect']").disabled = c.errors.length > 0;
 }
 
@@ -735,10 +1034,12 @@ function saveDefect() {
     detail: f.detail.trim(), loc: c.loc, qty: c.qty, sev: f.sev, comment: f.comment.trim(),
     sevNum: c.sevNum, cdve: f.cdve
   };
+  var saved = S.editIdx !== null ? S.editIdx + 1 : S.defects.length + 1;
   if (S.editIdx !== null) S.defects[S.editIdx] = entry; else S.defects.push(entry);
   S.editIdx = null;
   S.dupFrom = null;
   go("list");
+  toast("Défaut " + saved + " enregistré");
 }
 
 function openDetail(code, sub, editIdx, dupFrom) {
@@ -813,12 +1114,15 @@ function submit() {
 function onClick(e) {
   var el = e.target.closest ? e.target.closest("[data-act]") : null;
   if (!el || el.disabled || !app.contains(el)) return;
-  var act = el.getAttribute("data-act"), i = parseInt(el.getAttribute("data-i"), 10);
+  var act = el.getAttribute("data-act"), i = parseInt(el.getAttribute("data-i"), 10), v = el.getAttribute("data-v");
   if (act === "header-continue") {
     if (!headerComplete()) return;
     S.header = headerValues();
     go("list");
-  } else if (act === "back") go(el.getAttribute("data-to"));
+  } else if (act === "pick-detection") { S.hd.detectionSel = v; render(); }
+  else if (act === "pick-ctx") { S.ctxCombo = S.ctxCombo === v ? "" : v; render(); }
+  else if (act === "pick-act") { S.actCombo = S.actCombo === v ? "" : v; render(); }
+  else if (act === "back") go(el.getAttribute("data-to"));
   else if (act === "edit-header") go("header");
   else if (act === "add-defect") { S.editIdx = null; S.dupFrom = null; go("nature"); }
   else if (act === "duplicate-last") {
@@ -829,6 +1133,7 @@ function onClick(e) {
   else if (act === "finish") go("review");
   else if (act === "pick-nature") { S.natCode = el.getAttribute("data-code"); go("object"); }
   else if (act === "pick-object") openDetail(el.getAttribute("data-code"), el.getAttribute("data-sub"), null, null);
+  else if (act === "set-sev") { S.fd.sev = v; S.fd.sevTouched = true; render(); }
   else if (act === "cancel-detail") {
     var back = S.editIdx !== null || S.dupFrom !== null ? "list" : "object";
     S.editIdx = null;
@@ -848,9 +1153,8 @@ function onInput(e) {
   var parts = field.split(".");
   if (parts.length === 2) S[parts[0]][parts[1]] = val; else S[field] = val;
   if (parts[0] === "hd") {
-    if (field === "hd.produitSel" || field === "hd.detectionSel") render(); else refreshHeaderButton();
+    if (field === "hd.produitSel") render(); else refreshHeaderButton();
   } else if (parts[0] === "fd") {
-    if (field === "fd.sev") S.fd.sevTouched = true;
     if (field === "fd.cdve") {
       var o = findObject(findNature(S.natCode), S.objSub);
       if (!S.fd.sevTouched) S.fd.sev = autoSeverity(S.fd.cdve ? 10 : o.sev);
@@ -858,6 +1162,8 @@ function onInput(e) {
     } else refreshDetail();
   } else if (field === "query") {
     app.querySelector("#ncw-results").innerHTML = renderNatureResults();
+  } else if (field === "ctxText" || field === "actText") {
+    refreshPanel();
   }
 }
 

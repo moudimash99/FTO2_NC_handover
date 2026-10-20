@@ -366,6 +366,20 @@ function esc(s) {
   });
 }
 
+function svg(d) { return '<svg viewBox="0 0 24 24" aria-hidden="true">' + d + "</svg>"; }
+var ICON = {
+  edit: svg('<path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/>'),
+  trash: svg('<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/>'),
+  copy: svg('<rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a1 1 0 0 1 1-1h10"/>'),
+  plus: svg('<path d="M12 5v14M5 12h14"/>'),
+  dup: svg('<rect x="8" y="8" width="12" height="12" rx="2"/><path d="M4 16V5a1 1 0 0 1 1-1h11"/>'),
+  search: svg('<circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/>'),
+  back: svg('<path d="M15 6l-6 6 6 6"/>'),
+  next: svg('<path d="M9 6l6 6-6 6"/>'),
+  check: svg('<path d="M5 12.5l4.5 4.5L19 7.5"/>'),
+  doc: svg('<path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5M10 13h6M10 17h6"/>')
+};
+
 function options(list, selected, labels) {
   return list.map(function (v, i) {
     return '<option value="' + esc(v) + '"' + (v === selected ? " selected" : "") + ">" + esc(labels ? labels[i] : v) + "</option>";
@@ -376,9 +390,21 @@ function btn(act, label, cls, extra) {
   return '<button type="button" class="btn ' + (cls || "") + '" data-act="' + act + '"' + (extra || "") + ">" + label + "</button>";
 }
 
-function sevBadge(sev) {
-  return '<span class="badge ' + (sev === "MAJEURE" ? "maj" : "min") + '">' + sev + "</span>";
+function iconBtn(act, icon, title, i, cls) {
+  return '<button type="button" class="icon-btn ' + (cls || "") + '" data-act="' + act + '" data-i="' + i + '" title="' + title + '" aria-label="' + title + '">' + icon + "</button>";
 }
+
+function chips(act, list, selected) {
+  return '<div class="chips">' + list.filter(Boolean).map(function (v) {
+    return '<button type="button" class="chip" data-act="' + act + '" data-v="' + esc(v) + '" aria-pressed="' + (v === selected) + '">' + esc(v) + "</button>";
+  }).join("") + "</div>";
+}
+
+function sevBadge(sev) {
+  return '<span class="badge ' + (sev === "MAJEURE" ? "maj" : "min") + '">' + (sev === "MAJEURE" ? "Majeure" : "Mineure") + "</span>";
+}
+
+function cdveBadge(label) { return '<span class="badge cdve">' + (label || "CDVE") + "</span>"; }
 
 function go(screen) {
   S.screen = screen;
@@ -412,75 +438,161 @@ function headerComplete() {
   return !!(v.msn && v.produit && v.detection);
 }
 
-function renderHeader() {
-  var d = S.hd;
-  return '<section class="card"><h2>Nouvelle NC</h2>' +
-    '<label class="field"><span>MSN</span><input type="text" data-field="hd.msn" value="' + esc(d.msn) + '" placeholder="ex. 2160" autocomplete="off"></label>' +
-    '<label class="field"><span>Produit</span><select data-field="hd.produitSel">' + options(PRODUITS, d.produitSel) + "</select></label>" +
-    (d.produitSel === "Autre" ? '<label class="field"><span>Préciser le produit</span><input type="text" data-field="hd.produitCustom" value="' + esc(d.produitCustom) + '"></label>' : "") +
-    '<label class="field"><span>Détection</span><select data-field="hd.detectionSel">' + options(DETECTIONS, d.detectionSel) + "</select></label>" +
-    (d.detectionSel === "Autre" ? '<label class="field"><span>Préciser la détection</span><input type="text" data-field="hd.detectionCustom" value="' + esc(d.detectionCustom) + '"></label>' : "") +
-    '<div class="actions">' + btn("header-continue", "Continuer", "primary", headerComplete() ? "" : " disabled") + "</div></section>";
+function sapText() {
+  return buildSapText(S.header, S.ctxCombo, S.ctxText, S.defects, S.actCombo, S.actText);
 }
 
-function templateBlock(title, comboField, comboVal, textField, textVal, list, placeholder) {
-  return '<section class="card"><h2>' + title + '</h2><div class="split">' +
-    '<label class="field"><span>Modèles</span><select data-field="' + comboField + '">' + options(list, comboVal, list.map(function (v) { return v || "—"; })) + "</select></label>" +
-    '<label class="field grow"><span>Suite du texte</span><textarea rows="3" data-field="' + textField + '" placeholder="' + placeholder + '">' + esc(textVal) + "</textarea></label>" +
-    "</div></section>";
+// top bar: title, and once the header is known, the NC's identity
+function renderTop() {
+  var h = S.header, s = S.screen;
+  var ident = s !== "header" && s !== "done" ?
+    '<div class="ident">' +
+      '<div class="id"><span>MSN</span><b>' + esc(h.msn) + "</b></div>" +
+      '<div class="id"><span>Produit</span><b>' + esc(h.produit) + "</b></div>" +
+      '<div class="id"><span>Détection</span><b>' + esc(h.detection) + "</b></div>" +
+      (s === "list" ? btn("edit-header", ICON.edit + "Modifier", "on-dark small") : "") +
+    "</div>" : "";
+  return '<header class="top"><div class="brand"><div class="logo">NC</div><div><h1>Saisie structurée de NC</h1>' +
+    "<p>FTO2 · texte au format DEFAUTS v1</p></div></div>" + ident + "</header>";
+}
+
+function stepper(cur) {
+  return '<ol class="steps">' + ["Nature", "Objet", "Détails"].map(function (s, i) {
+    var n = i + 1, st = n < cur ? "done" : n === cur ? "cur" : "";
+    return '<li class="' + st + '"><span class="dot">' + (n < cur ? ICON.check : n) + "</span>" + s + "</li>";
+  }).join('<li class="sep" aria-hidden="true"></li>') + "</ol>";
+}
+
+function statsHtml() {
+  var maj = S.defects.filter(function (d) { return d.sev === "MAJEURE"; }).length;
+  return '<div><b>' + S.defects.length + "</b><span>défaut" + (S.defects.length > 1 ? "s" : "") + "</span></div>" +
+    "<div><b>" + totalQty(S.defects) + "</b><span>quantité totale</span></div>" +
+    '<div class="' + (maj ? "has-maj" : "") + '"><b>' + maj + "</b><span>majeure" + (maj > 1 ? "s" : "") + "</span></div>";
+}
+
+// right column: the SAP text as it builds up, and the way forward
+function renderPanel() {
+  var s = S.screen;
+  if (s === "header") {
+    return '<aside class="side"><div class="panel"><h3>Comment ça marche</h3><ol class="how">' +
+      "<li><b>En-tête</b><span>MSN, produit et étape où le défaut a été vu.</span></li>" +
+      "<li><b>Défauts</b><span>Une ligne par défaut, choisie dans la grille officielle des codes. Le texte se construit tout seul.</span></li>" +
+      "<li><b>Vérification</b><span>Relecture du texte SAP, puis soumission de la NC.</span></li>" +
+      "</ol></div></aside>";
+  }
+  var wizard = s === "nature" || s === "object" || s === "detail";
+  var foot = "";
+  if (s === "list") {
+    foot = btn("finish", "Vérifier et soumettre" + ICON.next, "primary block", S.defects.length ? "" : " disabled") +
+      (S.defects.length ? "" : '<p class="note">Ajoutez au moins un défaut pour continuer.</p>');
+  } else if (s === "review") {
+    foot = (S.error ? '<p class="error">' + esc(S.error) + "</p>" : "") +
+      btn("submit", S.sending ? "Envoi…" : ICON.check + "Soumettre la NC", "primary block", S.sending ? " disabled" : "") +
+      btn("back", ICON.back + "Retour aux défauts", "ghost block", ' data-to="list"');
+  } else if (s === "done") {
+    foot = btn("new-nc", ICON.plus + "Nouvelle NC", "primary block") +
+      (S.done.mode === "slate" ? "" : btn("download", "Télécharger la ligne (CSV)", "secondary block"));
+  } else if (wizard) {
+    foot = '<p class="note">Enregistrez ou annulez le défaut en cours pour revenir à la liste.</p>';
+  }
+  return '<aside class="side"><div class="panel">' +
+    '<div class="panel-head"><h3>' + ICON.doc + "Texte SAP</h3>" + btn("copy", ICON.copy + "Copier", "ghost small") + "</div>" +
+    (s === "done" ? "" : '<div class="stats" id="ncw-stats">' + statsHtml() + "</div>") +
+    '<pre class="sap" id="ncw-sap">' + esc(s === "done" ? S.done.row.texte_sap : sapText()) + "</pre>" + foot + "</div></aside>";
+}
+
+function renderHeader() {
+  var d = S.hd;
+  return '<section class="card"><div class="card-head"><div><h2>Nouvelle NC</h2>' +
+    '<p class="sub">Ces informations ouvrent le texte SAP.</p></div></div>' +
+    '<div class="grid2">' +
+      '<label class="field"><span class="label">MSN</span><input type="text" class="big" data-field="hd.msn" value="' + esc(d.msn) + '" placeholder="ex. 2160" autocomplete="off"></label>' +
+      '<div class="field"><label><span class="label">Produit</span><select class="big" data-field="hd.produitSel">' + options(PRODUITS, d.produitSel) + "</select></label>" +
+        (d.produitSel === "Autre" ? '<input type="text" class="under" data-field="hd.produitCustom" value="' + esc(d.produitCustom) + '" placeholder="Préciser le produit" aria-label="Préciser le produit">' : "") +
+      "</div>" +
+    "</div>" +
+    '<div class="field"><span class="label">Détection</span>' + chips("pick-detection", DETECTIONS, d.detectionSel) +
+      (d.detectionSel === "Autre" ? '<input type="text" class="under narrow" data-field="hd.detectionCustom" value="' + esc(d.detectionCustom) + '" placeholder="Préciser la détection" aria-label="Préciser la détection">' : "") +
+    "</div>" +
+    '<div class="card-foot">' + btn("header-continue", "Continuer" + ICON.next, "primary", headerComplete() ? "" : " disabled") + "</div></section>";
+}
+
+function templateCard(title, sub, act, list, combo, field, text, placeholder) {
+  return '<section class="card"><div class="card-head"><div><h2>' + title + '<span class="opt">optionnel</span></h2>' +
+    '<p class="sub">' + sub + "</p></div></div>" + chips(act, list, combo) +
+    '<textarea rows="2" data-field="' + field + '" placeholder="' + placeholder + '" aria-label="' + title + '">' + esc(text) + "</textarea></section>";
+}
+
+function renderDefect(d, i) {
+  return '<article class="defect"><div class="num">' + (i + 1) + "</div>" +
+    '<div class="defect-body">' +
+      '<div class="defect-top"><span class="code">' + esc(d.sub) + "</span><strong>" + esc(d.objLabel) + '</strong><span class="muted">' + esc(d.natureLabel) + "</span></div>" +
+      '<div class="defect-meta">' + sevBadge(d.sev) + (d.cdve ? cdveBadge() : "") +
+        '<span class="meta">FIN <b>' + esc(d.loc || "—") + '</b></span><span class="meta">Qté <b>' + d.qty + "</b></span></div>" +
+      '<pre class="line">' + esc(defectLine(d, i)) + "</pre>" +
+    "</div>" +
+    '<div class="defect-actions">' + iconBtn("edit-defect", ICON.edit, "Modifier", i) + iconBtn("delete-defect", ICON.trash, "Supprimer", i, "danger") + "</div></article>";
 }
 
 function renderList() {
-  var h = '<div class="stack">' +
-    templateBlock("Contexte de découverte", "ctxCombo", S.ctxCombo, "ctxText", S.ctxText, CTX_OPTIONS, "Saisir la suite du contexte ici...");
-  h += '<section class="card"><div class="card-head"><h2>Défauts de la NC</h2>' + btn("edit-header", "Modifier les infos de la NC", "ghost") + "</div>";
-  if (!S.defects.length) {
-    h += '<p class="warn">Aucun défaut enregistré pour l\'instant.</p>';
-  } else {
-    S.defects.forEach(function (d, i) {
-      h += '<article class="defect"><div class="defect-main">' +
-        '<div class="defect-title"><strong>Défaut ' + (i + 1) + "</strong> · " + esc(d.natureLabel) + ' <code>' + esc(d.sub) + "</code></div>" +
-        '<div class="badges">' + sevBadge(d.sev) + (d.cdve ? '<span class="badge cdve">CDVE</span>' : "") + (d.qty > 1 ? '<span class="badge qty">×' + d.qty + "</span>" : "") + "</div>" +
-        '<pre class="line">' + esc(defectLine(d, i)) + "</pre></div>" +
-        '<div class="defect-btns">' + btn("edit-defect", "Modifier", "", ' data-i="' + i + '"') + btn("delete-defect", "Supprimer", "danger", ' data-i="' + i + '"') + "</div></article>";
-    });
-  }
-  h += '<div class="actions">' + btn("add-defect", "+ Ajouter", "primary") + btn("duplicate-last", "Dupliquer le dernier", "", S.defects.length ? "" : " disabled") + "</div></section>";
-  h += templateBlock("Action demandée", "actCombo", S.actCombo, "actText", S.actText, ACT_OPTIONS, "Saisir la suite de l'action ici...");
-  h += btn("finish", "Terminer", "primary wide", S.defects.length ? "" : " disabled") + "</div>";
+  var n = S.defects.length;
+  var h = templateCard("Contexte de découverte", "Choisissez un début de phrase, puis complétez si besoin.", "pick-ctx",
+    CTX_OPTIONS, S.ctxCombo, "ctxText", S.ctxText, "Compléter la phrase…");
+  h += '<section class="card"><div class="card-head"><div><h2>Défauts<span class="count">' + n + "</span></h2>" +
+    '<p class="sub">Une ligne par défaut. L\'ordre est celui du texte SAP.</p></div>' +
+    '<div class="head-actions">' + btn("duplicate-last", ICON.dup + "Dupliquer le dernier", "secondary", n ? "" : " disabled") +
+    btn("add-defect", ICON.plus + "Ajouter un défaut", "primary") + "</div></div>";
+  h += n ? '<div class="defects">' + S.defects.map(renderDefect).join("") + "</div>"
+         : '<div class="empty">' + ICON.doc + "<b>Aucun défaut pour l'instant</b><span>Ajoutez le premier défaut constaté sur ce produit.</span></div>";
+  h += "</section>";
+  h += templateCard("Action demandée", "Ce qui est attendu pour solder la NC.", "pick-act",
+    ACT_OPTIONS, S.actCombo, "actText", S.actText, "Compléter la demande…");
   return h;
+}
+
+function natureTile(n) {
+  var hint = n.hint || n.objects[0].detail;
+  return '<button type="button" class="tile" data-act="pick-nature" data-code="' + n.code + '">' +
+    '<span class="tile-top"><span class="code tile-code">' + n.code + '</span><span class="muted small">' + n.objects.length + " objet" + (n.objects.length > 1 ? "s" : "") + "</span></span>" +
+    "<strong>" + esc(n.label) + "</strong>" + (hint ? '<span class="muted">' + esc(hint) + "</span>" : "") + "</button>";
 }
 
 function renderNatureResults() {
   var hits = searchObjects(S.query);
   if (hits) {
-    if (!hits.length) return '<p class="muted">Aucun code ne correspond.</p>';
-    return '<div class="results">' + hits.map(function (x) {
-      return '<button type="button" class="pick" data-act="pick-object" data-code="' + x.n.code + '" data-sub="' + x.o.sub + '">' +
-        "<strong>" + esc(x.o.label) + '</strong> <code>' + x.o.sub + '</code><span class="muted">' + esc(x.n.label) + "</span></button>";
-    }).join("") + "</div>";
+    if (!hits.length) return '<div class="empty small">' + ICON.search + "<b>Aucun code ne correspond</b><span>Essayez un autre mot, ou parcourez les natures.</span></div>";
+    return '<p class="muted small">' + hits.length + " résultat" + (hits.length > 1 ? "s" : "") + "</p>" +
+      '<div class="rows">' + hits.map(function (x) {
+        return '<button type="button" class="row" data-act="pick-object" data-code="' + x.n.code + '" data-sub="' + x.o.sub + '">' +
+          '<span class="code">' + x.o.sub + "</span><span class=\"row-main\"><strong>" + esc(x.o.label) + "</strong>" +
+          (x.o.detail ? '<span class="muted">' + esc(x.o.detail) + "</span>" : "") + "</span>" +
+          '<span class="muted">' + esc(x.n.label) + "</span>" + ICON.next + "</button>";
+      }).join("") + "</div>";
   }
-  return '<div class="tiles">' + sortedNatures(isTest()).map(function (n) {
-    return '<button type="button" class="tile' + (n.isTest ? " test" : "") + '" data-act="pick-nature" data-code="' + n.code + '">' +
-      '<span class="tile-code">' + n.code + '</span><strong>' + esc(n.label) + "</strong>" + (n.hint ? '<span class="muted">' + esc(n.hint) + "</span>" : "") + "</button>";
-  }).join("") + "</div>";
+  var groups = [[true, "Défauts constatés au test"], [false, "Défauts constatés à l'inspection"]];
+  if (!isTest()) groups.reverse();
+  return groups.map(function (g) {
+    return '<h3 class="group">' + g[1] + '</h3><div class="tiles">' +
+      NATURES.filter(function (n) { return n.isTest === g[0]; }).map(natureTile).join("") + "</div>";
+  }).join("");
 }
 
 function renderNature() {
-  return btn("back", "← Retour", "ghost", ' data-to="list"') +
-    '<section class="card"><h2>Étape 1 — Nature du défaut</h2>' +
-    '<label class="field"><span>Recherche rapide (ex. « contact », « T04 »)</span><input type="search" data-field="query" value="' + esc(S.query) + '" autocomplete="off"></label>' +
+  return stepper(1) + '<section class="card"><div class="card-head"><div><h2>Nature du défaut</h2>' +
+    '<p class="sub">Recherchez un mot ou un code, ou parcourez les familles.</p></div>' + btn("back", ICON.back + "Retour", "ghost", ' data-to="list"') + "</div>" +
+    '<label class="search">' + ICON.search + '<input type="search" data-field="query" value="' + esc(S.query) +
+    '" placeholder="contact, obturateur, T04, gaine…" autocomplete="off" aria-label="Recherche rapide"></label>' +
     '<div id="ncw-results">' + renderNatureResults() + "</div></section>";
 }
 
 function renderObject() {
   var n = findNature(S.natCode);
-  return btn("back", "← Retour Natures", "ghost", ' data-to="nature"') +
-    '<section class="card"><h2>Étape 2 — ' + esc(n.label) + " (" + n.code + ")</h2><div class=\"results\">" +
-    n.objects.map(function (o) {
+  return stepper(2) + '<section class="card"><div class="card-head"><div><h2><span class="code">' + n.code + "</span>" + esc(n.label) + "</h2>" +
+    '<p class="sub">Choisissez l\'élément concerné.</p></div>' + btn("back", ICON.back + "Natures", "ghost", ' data-to="nature"') + "</div>" +
+    '<div class="objects">' + n.objects.map(function (o) {
       return '<button type="button" class="pick" data-act="pick-object" data-code="' + n.code + '" data-sub="' + o.sub + '">' +
-        "<strong>" + esc(o.label) + '</strong> <code>' + o.sub + "</code>" + (o.cdve ? '<span class="badge cdve">CDVE possible</span>' : "") +
-        (o.detail ? '<span class="muted">' + esc(o.detail) + "</span>" : "") + "</button>";
+        '<span class="pick-top"><span class="code">' + o.sub + "</span>" + sevBadge(autoSeverity(o.sev)) + (o.cdve ? cdveBadge("CDVE possible") : "") + "</span>" +
+        "<strong>" + esc(o.label) + "</strong>" + (o.detail ? '<span class="muted">' + esc(o.detail) + "</span>" : "") + "</button>";
     }).join("") + "</div></section>";
 }
 
@@ -517,50 +629,62 @@ function initDetailForm() {
   };
 }
 
+function errorsHtml(errors) {
+  return errors.map(function (e) { return "<li>" + esc(e) + "</li>"; }).join("");
+}
+
 function renderDetail() {
   var c = detailContext(), f = S.fd, o = c.o;
   var fins = suggestedFins(c.n.code);
-  var h = btn("cancel-detail", "← Annuler", "ghost") +
-    '<section class="card"><h2>Détails : ' + esc(o.label) + '</h2><p class="muted">' + esc(c.n.label) + " · <code>" + o.sub + "</code>" +
-    (S.editIdx !== null ? " · modification du défaut " + (S.editIdx + 1) : "") + "</p>";
+  var h = stepper(3) + '<section class="card"><div class="card-head"><div><h2><span class="code" id="ncw-sub">' + c.sub + "</span>" + esc(o.label) + "</h2>" +
+    '<p class="sub">' + esc(c.n.label) + (o.detail ? " · " + esc(o.detail) : "") + "</p></div>" +
+    (S.editIdx !== null ? '<span class="tag">Modification du défaut ' + (S.editIdx + 1) + "</span>" : S.dupFrom !== null ? '<span class="tag">Copie du défaut ' + (S.dupFrom + 1) + "</span>" : "") + "</div>";
   if (o.cdve) {
-    h += '<div class="info"><strong>Option CDVE disponible</strong><label class="check"><input type="checkbox" data-field="fd.cdve"' + (f.cdve ? " checked" : "") +
-      "> Circuit Commandes de Vol (bascule vers code " + o.cdve + ")</label></div>";
+    h += '<label class="switch-row"><input type="checkbox" class="switch" data-field="fd.cdve"' + (f.cdve ? " checked" : "") + ">" +
+      "<span><b>Circuit Commandes de Vol (CDVE)</b><small>Le code devient " + o.cdve + " et la sévérité passe à majeure.</small></span></label>";
   }
-  h += '<div class="split"><label class="field"><span>Localisation (FIN / Zone)</span><select data-field="fd.locSel">' +
-    options([""].concat(fins), f.locSel, ["— choisir —"].concat(fins)) + "</select></label>" +
-    '<label class="field grow"><span>Ou saisir manuellement</span><input type="text" data-field="fd.locCustom" value="' + esc(f.locCustom) + '" autocomplete="off"></label></div>' +
-    '<label class="field"><span>Précision (optionnel)</span><input type="text" data-field="fd.detail" value="' + esc(f.detail) + '" placeholder="' + esc(o.detail) + '"></label>' +
-    '<div class="split"><label class="field"><span>Quantité</span><input type="number" min="1" step="1" data-field="fd.qty" value="' + esc(f.qty) + '"></label>' +
-    '<label class="field"><span>Sévérité</span><select data-field="fd.sev">' + options(["MINEURE", "MAJEURE"], f.sev) + "</select></label></div>" +
-    '<label class="field"><span>Complément libre (optionnel) <span class="muted" id="ncw-count">' + f.comment.length + "/" + COMMENT_MAX + "</span></span>" +
-    '<textarea rows="3" maxlength="' + COMMENT_MAX + '" data-field="fd.comment">' + esc(f.comment) + "</textarea></label>" +
-    '<div class="preview"><span>Aperçu texte généré</span><pre class="line" id="ncw-preview">' + esc(c.line) + "</pre></div>" +
-    '<ul class="errors" id="ncw-errors">' + c.errors.map(function (e) { return "<li>" + esc(e) + "</li>"; }).join("") + "</ul>" +
-    '<div class="actions">' + btn("save-defect", "Enregistrer le défaut", "primary", c.errors.length ? " disabled" : "") + "</div></section>";
+  h += '<div class="grid2">' +
+      '<div class="field"><label><span class="label">Localisation (FIN / zone)</span><select data-field="fd.locSel">' +
+        options([""].concat(fins), f.locSel, ["— Choisir dans la liste —"].concat(fins)) + "</select></label>" +
+        '<input type="text" class="under" data-field="fd.locCustom" value="' + esc(f.locCustom) + '" placeholder="ou saisir un autre FIN / une zone" aria-label="Saisir manuellement" autocomplete="off"></div>' +
+      '<label class="field"><span class="label">Précision <span class="opt">optionnel</span></span><input type="text" data-field="fd.detail" value="' + esc(f.detail) + '" placeholder="' + esc(o.detail || "ex. bornes concernées") + '"></label>' +
+    "</div>" +
+    '<div class="grid2">' +
+      '<label class="field"><span class="label">Quantité</span><input type="number" class="qty" min="1" step="1" data-field="fd.qty" value="' + esc(f.qty) + '"></label>' +
+      '<div class="field"><span class="label">Sévérité</span><div class="seg" role="group" aria-label="Sévérité">' +
+        ["MINEURE", "MAJEURE"].map(function (v) {
+          return '<button type="button" class="' + (v === "MAJEURE" ? "maj" : "min") + '" data-act="set-sev" data-v="' + v + '" aria-pressed="' + (f.sev === v) + '">' + (v === "MAJEURE" ? "Majeure" : "Mineure") + "</button>";
+        }).join("") + "</div></div>" +
+    "</div>" +
+    '<label class="field"><span class="label">Complément libre <span class="opt">optionnel</span><span class="counter" id="ncw-count">' + f.comment.length + " / " + COMMENT_MAX + "</span></span>" +
+    '<textarea rows="2" maxlength="' + COMMENT_MAX + '" data-field="fd.comment">' + esc(f.comment) + "</textarea></label>" +
+    '<div class="preview"><span class="label">Ligne générée</span><pre class="line big" id="ncw-preview">' + esc(c.line) + "</pre></div>" +
+    '<ul class="errors" id="ncw-errors">' + errorsHtml(c.errors) + "</ul>" +
+    '<div class="card-foot">' + btn("cancel-detail", "Annuler", "ghost") + btn("save-defect", ICON.check + "Enregistrer le défaut", "primary", c.errors.length ? " disabled" : "") + "</div></section>";
   return h;
 }
 
-function sapText() {
-  return buildSapText(S.header, S.ctxCombo, S.ctxText, S.defects, S.actCombo, S.actText);
-}
-
 function renderReview() {
-  return btn("back", "← Retour à la liste", "ghost", ' data-to="list"') +
-    '<section class="card"><h2>Bilan &amp; Soumission</h2>' +
-    '<p class="muted">' + S.defects.length + " ligne(s) de défaut · total " + totalQty(S.defects) + "</p>" +
-    '<div class="preview"><div class="card-head"><span>Texte SAP final</span>' + btn("copy", "Copier", "ghost small") + '</div><pre class="sap" id="ncw-sap">' + esc(sapText()) + "</pre></div>" +
-    (S.error ? '<p class="error">' + esc(S.error) + "</p>" : "") +
-    '<div class="actions">' + btn("submit", S.sending ? "Envoi…" : "Soumettre la NC", "primary", S.sending ? " disabled" : "") + "</div></section>";
+  var ctx = (S.ctxCombo + " " + S.ctxText).trim(), act = (S.actCombo + " " + S.actText).trim();
+  return '<section class="card"><div class="card-head"><div><h2>Vérification</h2>' +
+    '<p class="sub">Relisez avant de soumettre. Le texte de droite est exactement celui qui sera envoyé.</p></div></div>' +
+    '<dl class="facts"><div><dt>Contexte</dt><dd>' + (ctx ? esc(ctx) : '<span class="muted">—</span>') + "</dd></div>" +
+    "<div><dt>Action demandée</dt><dd>" + (act ? esc(act) : '<span class="muted">—</span>') + "</dd></div></dl>" +
+    '<table class="recap"><thead><tr><th>#</th><th>Code</th><th>Objet</th><th>FIN / zone</th><th class="r">Qté</th><th>Sévérité</th></tr></thead><tbody>' +
+    S.defects.map(function (d, i) {
+      return "<tr><td>" + (i + 1) + '</td><td><span class="code">' + esc(d.sub) + "</span></td><td>" + esc(d.objLabel) +
+        (d.detail ? '<span class="muted"> · ' + esc(d.detail) + "</span>" : "") + "</td><td>" + esc(d.loc || "—") + '</td><td class="r">' + d.qty +
+        "</td><td>" + sevBadge(d.sev) + (d.cdve ? " " + cdveBadge() : "") + "</td></tr>";
+    }).join("") + "</tbody></table></section>";
 }
 
 function renderDone() {
   var r = S.done.row, slate = S.done.mode === "slate";
-  return '<section class="card">' +
-    (slate ? '<p class="ok">NC transmise à Slate (' + esc(r.submission_id) + ").</p>"
-           : '<p class="warn">Hors Slate : rien n\'a été enregistré. Copiez le texte ou téléchargez la ligne.</p>') +
-    '<div class="preview"><div class="card-head"><span>Texte SAP</span>' + btn("copy", "Copier", "ghost small") + '</div><pre class="sap" id="ncw-sap">' + esc(r.texte_sap) + "</pre></div>" +
-    '<div class="actions">' + btn("new-nc", "Nouvelle NC", "primary") + (slate ? "" : btn("download", "Télécharger la ligne (CSV)")) + "</div></section>";
+  return '<section class="card done-card"><div class="done-icon' + (slate ? "" : " warn-icon") + '">' + (slate ? ICON.check : ICON.doc) + "</div>" +
+    (slate ? "<h2>NC soumise</h2><p class=\"ok\">NC transmise à Slate (" + esc(r.submission_id) + ").</p>"
+           : "<h2>NC prête</h2><p class=\"warn\">Hors Slate : rien n'a été enregistré. Copiez le texte ou téléchargez la ligne.</p>") +
+    '<dl class="facts"><div><dt>MSN</dt><dd>' + esc(r.msn) + "</dd></div><div><dt>Produit</dt><dd>" + esc(r.produit) + "</dd></div>" +
+    "<div><dt>Détection</dt><dd>" + esc(r.detection) + "</dd></div><div><dt>Quantité totale</dt><dd>" + r.total_defauts + "</dd></div></dl></section>";
 }
 
 function render() {
@@ -572,10 +696,8 @@ function render() {
   else if (s === "detail") body = renderDetail();
   else if (s === "review") body = renderReview();
   else body = renderDone();
-  var h = S.header;
-  app.innerHTML = '<header class="bar"><h1>NC · Saisie structurée</h1>' +
-    (s !== "header" && s !== "done" ? '<div class="nc-info"><strong>MSN ' + esc(h.msn) + "</strong> | " + esc(h.produit) + " | " + esc(h.detection) + "</div>" : "") +
-    "</header>" + body + '<div class="toast" id="ncw-toast" role="status"></div>';
+  app.innerHTML = renderTop() + '<div class="layout"><main class="main">' + body + "</main>" + renderPanel() + "</div>" +
+    '<div class="toast" id="ncw-toast" role="status"></div>';
   var first = app.querySelector("[data-field='query'], [data-field='hd.msn']");
   if (first && !first.value) try { first.focus(); } catch (e) { /* focus can be refused in an iframe */ }
 }
@@ -586,11 +708,17 @@ function refreshHeaderButton() {
   if (b) b.disabled = !headerComplete();
 }
 
+function refreshPanel() {
+  var pre = app.querySelector("#ncw-sap"), st = app.querySelector("#ncw-stats");
+  if (pre && S.screen !== "done") pre.textContent = sapText();
+  if (st) st.innerHTML = statsHtml();
+}
+
 function refreshDetail() {
   var c = detailContext();
   app.querySelector("#ncw-preview").textContent = c.line;
-  app.querySelector("#ncw-count").textContent = S.fd.comment.length + "/" + COMMENT_MAX;
-  app.querySelector("#ncw-errors").innerHTML = c.errors.map(function (e) { return "<li>" + esc(e) + "</li>"; }).join("");
+  app.querySelector("#ncw-count").textContent = S.fd.comment.length + " / " + COMMENT_MAX;
+  app.querySelector("#ncw-errors").innerHTML = errorsHtml(c.errors);
   app.querySelector("[data-act='save-defect']").disabled = c.errors.length > 0;
 }
 
@@ -613,10 +741,12 @@ function saveDefect() {
     detail: f.detail.trim(), loc: c.loc, qty: c.qty, sev: f.sev, comment: f.comment.trim(),
     sevNum: c.sevNum, cdve: f.cdve
   };
+  var saved = S.editIdx !== null ? S.editIdx + 1 : S.defects.length + 1;
   if (S.editIdx !== null) S.defects[S.editIdx] = entry; else S.defects.push(entry);
   S.editIdx = null;
   S.dupFrom = null;
   go("list");
+  toast("Défaut " + saved + " enregistré");
 }
 
 function openDetail(code, sub, editIdx, dupFrom) {
@@ -691,12 +821,15 @@ function submit() {
 function onClick(e) {
   var el = e.target.closest ? e.target.closest("[data-act]") : null;
   if (!el || el.disabled || !app.contains(el)) return;
-  var act = el.getAttribute("data-act"), i = parseInt(el.getAttribute("data-i"), 10);
+  var act = el.getAttribute("data-act"), i = parseInt(el.getAttribute("data-i"), 10), v = el.getAttribute("data-v");
   if (act === "header-continue") {
     if (!headerComplete()) return;
     S.header = headerValues();
     go("list");
-  } else if (act === "back") go(el.getAttribute("data-to"));
+  } else if (act === "pick-detection") { S.hd.detectionSel = v; render(); }
+  else if (act === "pick-ctx") { S.ctxCombo = S.ctxCombo === v ? "" : v; render(); }
+  else if (act === "pick-act") { S.actCombo = S.actCombo === v ? "" : v; render(); }
+  else if (act === "back") go(el.getAttribute("data-to"));
   else if (act === "edit-header") go("header");
   else if (act === "add-defect") { S.editIdx = null; S.dupFrom = null; go("nature"); }
   else if (act === "duplicate-last") {
@@ -707,6 +840,7 @@ function onClick(e) {
   else if (act === "finish") go("review");
   else if (act === "pick-nature") { S.natCode = el.getAttribute("data-code"); go("object"); }
   else if (act === "pick-object") openDetail(el.getAttribute("data-code"), el.getAttribute("data-sub"), null, null);
+  else if (act === "set-sev") { S.fd.sev = v; S.fd.sevTouched = true; render(); }
   else if (act === "cancel-detail") {
     var back = S.editIdx !== null || S.dupFrom !== null ? "list" : "object";
     S.editIdx = null;
@@ -726,9 +860,8 @@ function onInput(e) {
   var parts = field.split(".");
   if (parts.length === 2) S[parts[0]][parts[1]] = val; else S[field] = val;
   if (parts[0] === "hd") {
-    if (field === "hd.produitSel" || field === "hd.detectionSel") render(); else refreshHeaderButton();
+    if (field === "hd.produitSel") render(); else refreshHeaderButton();
   } else if (parts[0] === "fd") {
-    if (field === "fd.sev") S.fd.sevTouched = true;
     if (field === "fd.cdve") {
       var o = findObject(findNature(S.natCode), S.objSub);
       if (!S.fd.sevTouched) S.fd.sev = autoSeverity(S.fd.cdve ? 10 : o.sev);
@@ -736,6 +869,8 @@ function onInput(e) {
     } else refreshDetail();
   } else if (field === "query") {
     app.querySelector("#ncw-results").innerHTML = renderNatureResults();
+  } else if (field === "ctxText" || field === "actText") {
+    refreshPanel();
   }
 }
 

@@ -19,7 +19,7 @@ const FAKE_SLATE = `window.__calls = [];
 const BROKEN_SLATE = `window.SlateFunctions = { setState: function () {} };`;
 
 async function open(browser, initScript) {
-  const page = await browser.newPage({ viewport: { width: 820, height: 900 }, acceptDownloads: true });
+  const page = await browser.newPage({ viewport: { width: 1316, height: 900 }, acceptDownloads: true });
   const errors = [];
   page.on("pageerror", (e) => errors.push(e.message));
   page.on("console", (m) => { if (m.type() === "error") errors.push(m.text()); });
@@ -31,13 +31,14 @@ async function open(browser, initScript) {
 const act = (page, name) => page.click(`[data-act="${name}"]`);
 const field = (name) => `[data-field="${name}"]`;
 const text = (page, sel) => page.textContent(sel);
+const sev = (page) => page.getAttribute('[data-act="set-sev"][aria-pressed="true"]', "data-v");
 async function shot(page, name) { if (SHOTS) await page.screenshot({ path: path.join(SHOTS, name + ".png"), fullPage: true }); }
 
 async function header(page, msn, detection) {
   assert.ok(await page.isDisabled('[data-act="header-continue"]'), "Continuer is off until the header is filled");
   await page.type(field("hd.msn"), msn);  // key by key: the field must keep the focus
   assert.strictEqual(await page.inputValue(field("hd.msn")), msn);
-  await page.selectOption(field("hd.detectionSel"), detection);
+  await page.click(`[data-act="pick-detection"][data-v="${detection}"]`);
   await shot(page, "1_header");
   await act(page, "header-continue");
 }
@@ -45,23 +46,25 @@ async function header(page, msn, detection) {
 async function fullFlow(browser) {
   const { page, errors } = await open(browser, FAKE_SLATE);
   await header(page, "2160", "Test");
-  assert.match(await text(page, ".nc-info"), /MSN 2160 \| MIP A350 \| Test/);
+  assert.match(await text(page, ".ident"), /MSN\s*2160\s*Produit\s*MIP A350\s*Détection\s*Test/);
 
-  await page.selectOption(field("ctxCombo"), "Lors du contrôle après test");
+  await page.click('[data-act="pick-ctx"][data-v="Lors du contrôle après test"]');
   await page.fill(field("ctxText"), "sur le banc 3,");
 
   // defect 1: search a test code, pick a suggested FIN
   await act(page, "add-defect");
   assert.match(await text(page, ".tile-code"), /^T01$/, "test natures come first when found at test");
+  await shot(page, "2a_nature");
   await page.type(field("query"), "element");
-  assert.ok((await page.locator(".pick").count()) > 0, "search ignores accents (Élément)");
+  assert.ok((await page.locator(".rows .row").count()) > 0, "search ignores accents (Élément)");
+  await shot(page, "2c_search");
   await page.fill(field("query"), "T04");
   await page.click('[data-act="pick-object"][data-sub="T04"]');
   assert.strictEqual(await page.inputValue(field("fd.locSel")), "", "no FIN is chosen for the operator");
   await page.selectOption(field("fd.locSel"), "3RN1B");
   await page.type(field("fd.detail"), "J <-> H");
   await page.fill(field("fd.qty"), "2");
-  assert.strictEqual(await page.inputValue(field("fd.sev")), "MAJEURE");
+  assert.strictEqual(await sev(page), "MAJEURE");
   assert.strictEqual(await text(page, "#ncw-preview"), "DEF 1 - T04 - QTE 2 : 3RN1B — Inversion de connexion — J <-> H");
   await shot(page, "2_detail");
   await act(page, "save-defect");
@@ -69,10 +72,12 @@ async function fullFlow(browser) {
   // defect 2: browse nature -> object, CDVE switch, "Autre" needs a typed location
   await act(page, "add-defect");
   await page.click('[data-act="pick-nature"][data-code="Q01"]');
+  await shot(page, "2b_object");
   await page.click('[data-act="pick-object"][data-sub="Q01-001"]');
-  assert.strictEqual(await page.inputValue(field("fd.sev")), "MINEURE");
+  assert.strictEqual(await sev(page), "MINEURE");
   await page.check(field("fd.cdve"));
-  assert.strictEqual(await page.inputValue(field("fd.sev")), "MAJEURE", "CDVE raises severity to 10");
+  assert.strictEqual(await sev(page), "MAJEURE", "CDVE raises severity to 10");
+  assert.strictEqual(await text(page, "#ncw-sub"), "Q01-003");
   await page.selectOption(field("fd.locSel"), "Autre");
   assert.ok(await page.isDisabled('[data-act="save-defect"]'), "Autre without a typed location is refused");
   await page.type(field("fd.locCustom"), "100VG999");
@@ -87,6 +92,11 @@ async function fullFlow(browser) {
   await page.fill(field("fd.qty"), "0");
   assert.ok(await page.isDisabled('[data-act="save-defect"]'));
   await page.fill(field("fd.qty"), "3");
+  await page.click('[data-act="set-sev"][data-v="MINEURE"]');
+  await page.uncheck(field("fd.cdve"));
+  await page.check(field("fd.cdve"));
+  assert.strictEqual(await sev(page), "MINEURE", "a severity chosen by hand is kept");
+  await page.click('[data-act="set-sev"][data-v="MAJEURE"]');
   await page.fill(field("fd.comment"), "même défaut, autre connecteur");
   await act(page, "save-defect");
   assert.strictEqual(await page.locator(".defect").count(), 3);
@@ -110,7 +120,10 @@ async function fullFlow(browser) {
 
   // the context typed before survived all the screens
   assert.strictEqual(await page.inputValue(field("ctxText")), "sur le banc 3,");
-  await page.selectOption(field("actCombo"), "Merci de remettre en conformité");
+  await page.fill(field("ctxText"), "sur le banc 3,");  // typing updates the SAP text on the right
+  assert.match(await text(page, "#ncw-sap"), /Lors du contrôle après test sur le banc 3,/);
+  await page.click('[data-act="pick-act"][data-v="Merci de remettre en conformité"]');
+  await shot(page, "3b_list_bottom");
   await act(page, "finish");
 
   const sap = await text(page, "#ncw-sap");
