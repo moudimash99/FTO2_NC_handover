@@ -33,6 +33,7 @@ Read sections 1, 2 and 9 first. Everything else is reference. Every number below
 | CNQ reconciliation (predecessor files vs official method M1888 / UG2600252) | Mentioned by Mohammad, **not started here** | — |
 | CNQ model | Version cnq-2026.10.19: 7 rule changes from SAP rework orders and MES aléas, approved 19 Oct | `cnq_handoever/`, `CNQ_CHANGES.md` |
 | Work orders, MES aléas, 2025 NCs (uploaded 19 Oct) | Analysed; investigation checklist for Mohammad, **checks pending** | `05_outputs/CNQ_investigation_checklist.html`, `07_scripts/wo_disruption/` |
+| New Pôle Élec Quality Hub (Slate home page) | 5 templates built 20 Oct, **choice pending**; real URLs and the 2 tiles cut off in his photo still needed | `09_pole_elec_hub/` |
 
 ---
 
@@ -225,6 +226,7 @@ Full detail: `03_reports/dossier_stage_NC.md` (French master dossier) and `NC_de
 ## 9. Next steps, in priority order
 
 0. **CNQ checks (19 Oct):** go through `05_outputs/CNQ_investigation_checklist.html` with Mohammad (H1-H7 are high). Apply what he decides; the list of changes done, decided and kept for later is `CNQ_CHANGES.md`. Scope decided: REC and ERMA out; disruption block (quality aléas with no NC) shown beside the NC cost.
+0b. **Hub:** get Mohammad's choice among the 5 templates in `09_pole_elec_hub/` and the real Skywise URLs; then prepare the chosen one for Slate (he installs it).
 1. **Cable defence:** get Mohammad's choice among options A–D and the "cable problem" definition; then produce the slide numbers (by defect and by NC). Nothing in the parser has been changed for this yet.
 2. **REC:** get the definition decision; ask for the precision query result and REC's roster; then write the final rule spec for the pipeline team (columns `rec_written`, `rec_fixed`, `imputation`).
 3. **Pack v4.8:** apply the two pending fixes (MT → A400M in `LINES`; drop A400M chart) when he asks; confirm whether the pack was installed.
@@ -273,3 +275,4 @@ Full detail: `03_reports/dossier_stage_NC.md` (French master dossier) and `NC_de
 | `05_outputs/CNQ_investigation_checklist.html` | Offline checklist of open CNQ checks; click a check to open its list; answers kept in the browser, CSV export |
 | `06_input_data/work_orders_disruptions_nc2025.rar` | Upload of 19 Oct: SAP work-order operations (Sept 2026), MES aléas (Jan-Sep 2026), Skywise NCs 2025 |
 | `07_scripts/wo_disruption/` | Scripts behind every number of the 19 Oct analysis, README with run order |
+| `09_pole_elec_hub/` | Five templates for the new hub page, one link list (`hub_links.json`), build and screenshot scripts, README |

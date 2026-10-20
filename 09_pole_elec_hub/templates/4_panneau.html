@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pôle Élec Hub · Panneau</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=B612:wght@400;700&family=B612+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* Template 4 "Panneau": the hub as a cockpit overhead panel with illuminated push-buttons and two display units.
+   Dark cockpit: nothing is lit unless it needs attention. Deliberately dark only. */
+:root{
+  --cabin:#121519; --panel:#4a5a6a; --panel-hi:#62738440; --panel-lo:#2c3742; --legend:#f3f5f6; --legend-2:#cdd5dc;
+  --face:#0a0c0f; --unlit:#262d33;
+  --green:#35ec74; --blue:#47b2ff; --amber:#ffae3d; --cyan:#3ad9ee; --white:#f4f6f7;
+  --crt:#020509; --bezel:#1d2227;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--cabin) radial-gradient(1200px 500px at 50% -10%,#232a32,transparent 70%) no-repeat;color:var(--legend);
+  font:14px/1.4 "B612","Segoe UI",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1560px;margin:0 auto;padding-block:20px 18px;padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:16px}
+
+/* panels */
+.pnl{position:relative;border-radius:7px;padding:26px 20px 20px;
+  background:linear-gradient(180deg,#5b6c7d 0,var(--panel) 5px,var(--panel) calc(100% - 5px),#36434f 100%);
+  box-shadow:0 0 0 1px #07090b,0 12px 26px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.12)}
+.dz{position:absolute;width:14px;height:14px;border-radius:50%;background:radial-gradient(circle at 36% 30%,#e6eaee,#8f99a3 55%,#46505a);
+  box-shadow:0 1px 1px rgba(0,0,0,.65),inset 0 0 0 1px rgba(0,0,0,.3)}
+.dz::after{content:"";position:absolute;left:2px;right:2px;top:50%;height:2.2px;margin-top:-1.1px;border-radius:1px;background:#3a424a;transform:rotate(var(--r,0deg))}
+.dz.tl{left:7px;top:7px}.dz.tr{right:7px;top:7px}.dz.bl{left:7px;bottom:7px}.dz.br{right:7px;bottom:7px}
+
+.hdr{display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap;padding:16px 34px}
+.hdr h1{margin:0;font:700 24px/1 "B612",sans-serif;letter-spacing:.14em;text-transform:uppercase}
+.hdr h1 span{font-weight:400;color:var(--legend-2);margin-left:10px}
+.hdr .site{font:400 12px/1 "B612 Mono",monospace;letter-spacing:.16em;color:var(--legend-2)}
+.ann{display:flex;align-items:center;gap:12px}
+.ann .t{font:700 11px/1 "B612",sans-serif;letter-spacing:.14em}
+.sw{all:unset;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;font:700 9.5px/1 "B612",sans-serif;letter-spacing:.1em;color:var(--legend-2)}
+.sw .slot{position:relative;width:16px;height:30px;border-radius:8px;background:#0b0e11;box-shadow:inset 0 1px 3px rgba(0,0,0,.9),0 0 0 1px rgba(255,255,255,.08)}
+.sw .lever{position:absolute;left:2px;width:12px;height:12px;border-radius:50%;bottom:2px;background:radial-gradient(circle at 35% 30%,#f2f4f6,#9aa4ae 60%,#58616a);transition:bottom .15s}
+.sw[aria-pressed="true"] .lever{bottom:16px}
+.sw:focus-visible{outline:2px solid var(--cyan);outline-offset:4px;border-radius:4px}
+
+.deck{display:flex;flex-wrap:wrap;gap:16px}
+.deck>.pnl{flex:var(--n) 1 auto;padding:26px 16px 18px}
+.grp{position:relative;border:1.6px solid rgba(244,246,247,.82);border-radius:3px;padding:22px 10px 12px;display:flex;justify-content:space-evenly;gap:8px;height:100%}
+.grp .ttl{position:absolute;top:-11px;left:50%;transform:translateX(-50%);padding:0 9px;background:var(--panel);white-space:nowrap;font:700 14px/20px "B612",sans-serif;letter-spacing:.16em}
+
+/* push-button units */
+.pbu{display:flex;flex-direction:column;align-items:center;gap:8px;width:100px;color:var(--legend);text-decoration:none;outline:none}
+.lbl{min-height:2.4em;display:flex;align-items:flex-end;justify-content:center;text-align:center;font:700 12.5px/1.2 "B612",sans-serif;letter-spacing:.05em;text-transform:uppercase}
+.pb-btn{display:grid;grid-template-rows:1fr 1fr;gap:4px;width:74px;height:74px;padding:6px;border-radius:6px;
+  background:linear-gradient(180deg,#30373e,#15191d);box-shadow:0 0 0 2px #090b0d,0 4px 0 #090b0d,0 7px 12px rgba(0,0,0,.55);transition:transform .08s,box-shadow .08s}
+.lt{display:grid;place-items:center;border-radius:3px;background:var(--face);box-shadow:inset 0 1px 2px rgba(0,0,0,.9);
+  font:700 12px/1 "B612 Mono",monospace;letter-spacing:.06em;color:var(--unlit);transition:color .12s,text-shadow .12s,background .12s}
+.lt.lit,.deck.test .lt{color:var(--lc);text-shadow:0 0 5px var(--lc),0 0 12px color-mix(in srgb,var(--lc) 55%,transparent);
+  background:radial-gradient(ellipse at center,color-mix(in srgb,var(--lc) 20%,var(--face)),var(--face) 78%)}
+.lt.bot{--lc:var(--green)}
+.pbu:hover .lt.bot,.pbu:focus-visible .lt.bot{color:var(--green);text-shadow:0 0 5px var(--green),0 0 12px color-mix(in srgb,var(--green) 55%,transparent);
+  background:radial-gradient(ellipse at center,color-mix(in srgb,var(--green) 20%,var(--face)),var(--face) 78%)}
+.pbu:hover .pb-btn,.pbu:focus-visible .pb-btn{transform:translateY(2px);box-shadow:0 0 0 2px #090b0d,0 2px 0 #090b0d,0 4px 8px rgba(0,0,0,.55)}
+.pbu:active .pb-btn{transform:translateY(4px);box-shadow:0 0 0 2px #090b0d,0 0 0 #090b0d,0 2px 4px rgba(0,0,0,.55)}
+.pbu:focus-visible .pb-btn{outline:2px solid var(--cyan);outline-offset:4px}
+.cap{text-align:center;font:400 12px/1.3 "B612",sans-serif;color:var(--legend-2);max-width:100px}
+
+/* display units */
+.dus{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.25fr);gap:16px}
+.du{padding:18px}
+.du .scr{position:relative;height:100%;min-height:270px;border-radius:5px;background:var(--crt);padding:14px 18px;
+  box-shadow:0 0 0 3px #0b0d10,inset 0 0 40px rgba(40,90,160,.08),inset 0 0 0 1px rgba(255,255,255,.04);font:400 13.5px/1.45 "B612 Mono",monospace}
+.du .scr::after{content:"";position:absolute;inset:0;border-radius:5px;pointer-events:none;background:linear-gradient(160deg,rgba(255,255,255,.05),transparent 35%)}
+.du .name{position:absolute;left:50%;bottom:4px;transform:translateX(-50%);font:700 10px/1 "B612",sans-serif;letter-spacing:.2em;color:var(--legend-2)}
+.pg{display:inline-block;color:var(--white);font:700 15px/1 "B612 Mono",monospace;letter-spacing:.08em;border-bottom:2px solid var(--white);padding-bottom:3px}
+.memo{list-style:none;margin:14px 0 0;padding:0;display:flex;flex-direction:column;gap:10px}
+.memo li{display:grid;grid-template-columns:auto 1fr;gap:12px;color:var(--green)}
+.memo time{color:var(--cyan)}
+.docs{margin-top:16px;padding-top:12px;border-top:1px solid rgba(244,246,247,.35)}
+.pg.sm{font-size:12.5px;border-bottom-width:1.5px}
+.docs ul{list-style:none;margin:10px 0 0;padding:0;display:flex;flex-direction:column;gap:6px}
+.docs a{color:var(--cyan);text-decoration:none}
+.docs a::before{content:"\25B8  ";color:var(--white)}
+.docs a:hover,.docs a:focus-visible{color:var(--white);outline:none;text-decoration:underline}
+.g{fill:var(--green)}.c{fill:var(--cyan)}.w{fill:var(--white)}.a{fill:var(--amber)}
+.syn text{font-family:"B612 Mono",monospace}
+.syn .bx{fill:none;stroke:var(--white);stroke-width:1.6}
+.syn .fl{fill:none;stroke:var(--green);stroke-width:2.4}
+.syn .ar{fill:var(--green)}
+.syn .pulse{fill:none;stroke:#d6ffe4;stroke-width:2.4;stroke-dasharray:3 22;animation:flow 1.4s linear infinite}
+@keyframes flow{to{stroke-dashoffset:-25}}
+.foot{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;font:400 11px/1 "B612 Mono",monospace;letter-spacing:.08em;color:#6b7782}
+
+@media (prefers-reduced-motion:reduce){.syn .pulse{display:none}}
+@media (max-width:1359px){
+  .deck>.pnl{flex-basis:calc(50% - 8px)}
+}
+@media (max-width:1100px){
+  .dus{grid-template-columns:minmax(0,1fr)}
+}
+@media (max-width:720px){
+  .deck>.pnl{flex-basis:100%}
+  .hdr{padding:16px 22px}
+  .hdr h1{font-size:20px}
+  .hdr h1 span{display:block;margin:6px 0 0}
+  .pbu{width:96px}
+  .grp{flex-wrap:wrap}
+  .du .scr{min-height:0;overflow-x:auto}
+  .syn{min-width:520px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="pnl hdr">
+    <i class="dz tl" style="--r:20deg"></i><i class="dz tr" style="--r:-35deg"></i><i class="dz bl" style="--r:70deg"></i><i class="dz br" style="--r:5deg"></i>
+    <div>
+      <h1 id="title"></h1>
+    </div>
+    <div class="site" id="site"></div>
+    <div class="ann">
+      <span class="t">ANN LT</span>
+      <button class="sw" id="annlt" type="button" aria-pressed="false" title="Test des voyants"><span>TEST</span><span class="slot"><i class="lever"></i></span><span>BRT</span></button>
+    </div>
+  </header>
+
+  <main class="deck" id="deck"></main>
+
+  <section class="dus">
+    <div class="pnl du"><i class="dz tl" style="--r:40deg"></i><i class="dz tr" style="--r:-10deg"></i><i class="dz bl" style="--r:85deg"></i><i class="dz br" style="--r:-60deg"></i>
+      <div class="scr"><span class="pg">MEMO</span><ol class="memo" id="memo"></ol><div class="docs"><span class="pg sm">DOCUMENTS</span><ul id="docs"></ul></div></div><span class="name">DU 1 · NOUVEAUTÉS</span></div>
+    <div class="pnl du"><i class="dz tl" style="--r:-25deg"></i><i class="dz tr" style="--r:50deg"></i><i class="dz bl" style="--r:12deg"></i><i class="dz br" style="--r:-80deg"></i>
+      <div class="scr"><span class="pg">QUALITÉ</span><svg class="syn" id="syn" viewBox="0 0 600 236" role="img" aria-label="Flux des données qualité"></svg></div><span class="name">DU 2 · SYNOPTIQUE</span></div>
+  </section>
+
+  <footer class="foot"><span>Voyants : NEW bleu = nouvel outil · ALERT ambre = à surveiller · OPEN vert = ouverture. ANN LT TEST allume tout.</span><span>Maquette 4/5 « Panneau » · liens à compléter</span></footer>
+</div>
+
+<script>
+const HUB=/*__HUB__*/null, ICONS=/*__ICONS__*/null;
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+$("#title").innerHTML=esc(HUB.title)+"<span>"+esc(HUB.subtitle)+"</span>";
+$("#site").textContent=HUB.site.toUpperCase();
+
+const rot=()=>Math.round(Math.random()*180-90)+"deg";
+const dz=()=>["tl","tr","bl","br"].map(k=>'<i class="dz '+k+'" style="--r:'+rot()+'"></i>').join("");
+$("#deck").innerHTML=HUB.sections.map(s=>'<section class="pnl" style="--n:'+s.items.length+'">'+dz()+'<div class="grp"><span class="ttl">'+esc(s.code)+'</span>'
+  +s.items.map(it=>{
+    const top=it.new?['NEW','var(--blue)',1]:it.alert?['ALERT','var(--amber)',1]:it.tag?[it.tag.toUpperCase(),'var(--white)',0]:['','var(--white)',0];
+    return '<a class="pbu" href="'+esc(it.url)+'" data-id="'+it.id+'" title="'+esc(it.name)+' : '+esc(it.desc)+'">'
+      +'<span class="lbl">'+esc(it.name)+'</span>'
+      +'<span class="pb-btn"><span class="lt top'+(top[2]?' lit':'')+'" style="--lc:'+top[1]+'">'+esc(top[0])+'</span><span class="lt bot">OPEN</span></span>'
+      +'<span class="cap">'+esc(it.desc)+'</span></a>';
+  }).join("")+'</div></section>').join("");
+
+$("#docs").innerHTML=HUB.docs.map(d=>'<li><a href="'+esc(d.url)+'">'+esc(d.name)+'</a></li>').join("");
+$("#memo").innerHTML=HUB.news.map(x=>'<li><time>'+esc(x.date.slice(0,5))+'</time><span>'+esc(x.text)+'</span></li>').join("");
+
+// synoptic: NC data -> parser -> Pareto / CNQ, with the date and time line at the bottom
+function syn(){
+  const box=(x,y,w,h,l1,v,u)=>'<rect class="bx" x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" rx="3"/>'
+    +'<text class="w" x="'+(x+w/2)+'" y="'+(y+24)+'" text-anchor="middle" font-size="15" letter-spacing="1">'+l1+'</text>'
+    +'<text x="'+(x+w/2)+'" y="'+(y+46)+'" text-anchor="middle" font-size="15"><tspan class="g">'+v+'</tspan><tspan class="c" dx="6">'+u+'</tspan></text>';
+  const arrow=(x,y)=>'<path class="ar" d="M'+x+' '+y+' l-10 -6 v12 z"/>';
+  const now=new Date(), hh=String(now.getHours()).padStart(2,"0"), mm=String(now.getMinutes()).padStart(2,"0");
+  $("#syn").innerHTML=
+     box(8,40,128,58,"SKYWISE","NC","SAP")
+    +'<path class="fl" d="M136 69H206"/><path class="pulse" d="M136 69H206"/>'+arrow(214,69)
+    +box(214,40,150,58,"PARSER","v4.8","42 CL")
+    +'<path class="fl" d="M364 69H428"/><path class="pulse" d="M364 69H428"/>'+arrow(436,69)
+    +box(436,40,152,58,"PARETO","9","CAT")
+    +'<path class="fl" d="M289 98V152H428"/><path class="pulse" d="M289 98V152H428"/>'+arrow(436,152)
+    +box(436,123,152,58,"CNQ","3","NIV")
+    +'<text class="c" x="210" y="146" text-anchor="middle" font-size="12">MODÈLE CNQ</text><text class="g" x="210" y="166" text-anchor="middle" font-size="13">'+'2026.10.19'+'</text>'
+    +'<path d="M0 204H600" stroke="#f4f6f7" stroke-width="1.2" opacity=".85"/>'
+    +'<text x="8" y="228" font-size="13"><tspan class="w">SITE</tspan><tspan class="g" dx="8">FTO2</tspan></text>'
+    +'<text x="300" y="228" font-size="13" text-anchor="middle"><tspan class="g">'+HUB.updated+'</tspan></text>'
+    +'<text x="592" y="228" font-size="13" text-anchor="end"><tspan class="g">'+hh+'</tspan><tspan class="c"> H </tspan><tspan class="g">'+mm+'</tspan></text>';
+}
+syn(); setInterval(syn,30000);
+
+// annunciator light test
+const deck=$("#deck"), sw=$("#annlt");
+sw.addEventListener("click",()=>{const on=sw.getAttribute("aria-pressed")!=="true"; sw.setAttribute("aria-pressed",String(on)); deck.classList.toggle("test",on);});
+</script>
+</body>
+</html>

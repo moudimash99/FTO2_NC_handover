@@ -1,0 +1,277 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pôle Élec Hub · Faisceau</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Overpass:wght@400;600;700;800&family=Overpass+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+/* Template 5 "Faisceau": a light, corporate hub with a harness in the hero and a wired terminal on each card. */
+:root{
+  --bg:#f2f4f7; --surface:#ffffff; --surface-2:#f7f8fa; --line:#e1e6ed; --line-2:#cfd7e1;
+  --text:#14202f; --muted:#56657a; --faint:#8592a5;
+  --copper:#b5602b; --copper-soft:#f7e8dd; --copper-ink:#7a3d14;
+  --c-prod:#cf8212; --c-nc:#d23f3f; --c-cnq:#1f8f57; --c-qa:#2c6ad3;
+  --shadow:0 1px 2px rgba(16,24,40,.05),0 10px 26px -14px rgba(16,24,40,.22);
+  --shadow-hi:0 2px 4px rgba(16,24,40,.06),0 22px 40px -18px rgba(16,24,40,.32);
+  --braid-a:#3b4552; --braid-b:#232a33; --braid-bg:#151a20;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){--bg:#0d1218;--surface:#141b24;--surface-2:#18202a;--line:#232e3c;--line-2:#2e3b4c;--text:#e6edf5;--muted:#9eabbd;--faint:#6f7d91;
+    --copper:#e5965f;--copper-soft:#2b2019;--copper-ink:#f2b58a;--c-prod:#f2a33a;--c-nc:#ef5a57;--c-cnq:#3ec27f;--c-qa:#5b9bf8;
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 12px 28px -14px rgba(0,0,0,.6);--shadow-hi:0 2px 4px rgba(0,0,0,.35),0 24px 44px -18px rgba(0,0,0,.75);color-scheme:dark}
+}
+:root[data-theme="dark"]{--bg:#0d1218;--surface:#141b24;--surface-2:#18202a;--line:#232e3c;--line-2:#2e3b4c;--text:#e6edf5;--muted:#9eabbd;--faint:#6f7d91;
+  --copper:#e5965f;--copper-soft:#2b2019;--copper-ink:#f2b58a;--c-prod:#f2a33a;--c-nc:#ef5a57;--c-cnq:#3ec27f;--c-qa:#5b9bf8;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 12px 28px -14px rgba(0,0,0,.6);--shadow-hi:0 2px 4px rgba(0,0,0,.35),0 24px 44px -18px rgba(0,0,0,.75);color-scheme:dark}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--text);font:15px/1.5 "Overpass","Segoe UI",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1480px;margin:0 auto;padding-block:16px 26px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:22px}
+.mono{font-family:"Overpass Mono",Consolas,monospace}
+
+.bar{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:0 4px}
+.brand{display:flex;align-items:center;gap:11px;font-weight:800;font-size:18px;letter-spacing:.01em}
+.brand svg{width:34px;height:34px}
+.brand span{font-weight:600;color:var(--muted)}
+.bar-r{display:flex;align-items:center;gap:14px;font:600 12px/1 "Overpass Mono",Consolas,monospace;letter-spacing:.06em;color:var(--faint)}
+.theme{all:unset;cursor:pointer;display:grid;place-items:center;width:36px;height:36px;border-radius:10px;border:1px solid var(--line-2);color:var(--muted);background:var(--surface)}
+.theme:hover{color:var(--text)}
+.theme:focus-visible{outline:2px solid var(--copper);outline-offset:2px}
+.theme svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+
+.hero{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:12px 28px;align-items:center;padding:30px 34px;border-radius:20px;
+  background:radial-gradient(700px 300px at 85% 50%,color-mix(in srgb,var(--copper) 8%,transparent),transparent 70%),linear-gradient(135deg,var(--surface),var(--surface-2));
+  border:1px solid var(--line);box-shadow:var(--shadow);overflow:hidden}
+.eyebrow{font:600 12px/1 "Overpass Mono",Consolas,monospace;letter-spacing:.14em;text-transform:uppercase;color:var(--copper)}
+h1{margin:12px 0 10px;font:800 48px/1.02 "Overpass","Segoe UI",sans-serif;letter-spacing:-.01em;text-wrap:balance}
+h1 span{display:block;color:var(--muted);font-weight:600}
+.lead{margin:0 0 20px;color:var(--muted);max-width:46ch;font-size:16px}
+.search{display:flex;align-items:center;gap:10px;max-width:440px;padding:0 12px;height:46px;border-radius:12px;background:var(--surface);border:1px solid var(--line-2);box-shadow:0 1px 0 rgba(16,24,40,.03)}
+.search:focus-within{border-color:var(--copper);box-shadow:0 0 0 3px color-mix(in srgb,var(--copper) 20%,transparent)}
+.search svg{width:19px;height:19px;flex:none;fill:none;stroke:var(--faint);stroke-width:1.8;stroke-linecap:round}
+.search input{all:unset;flex:1;min-width:0;font:15px "Overpass",sans-serif;color:var(--text)}
+.search input::placeholder{color:var(--faint)}
+.search kbd{font:600 11px/1 "Overpass Mono",monospace;color:var(--faint);border:1px solid var(--line-2);border-radius:5px;padding:4px 6px}
+.harness{width:100%;height:auto;display:block;overflow:visible}
+.harness a{cursor:pointer}
+.harness .tagt{font:600 12px "Overpass Mono",monospace;letter-spacing:.08em;fill:#fff}
+.hw path{fill:none;stroke-linecap:round}
+.hw .o{stroke:rgba(0,0,0,.38);stroke-width:5.4}
+.hw .b{stroke:var(--w);stroke-width:3.8;transition:stroke-width .2s}
+.hw .h{stroke:rgba(255,255,255,.45);stroke-width:.9}
+.hw .p{stroke:#fff;stroke-width:2.4;stroke-dasharray:3 70;opacity:.95;animation:run var(--d,2.6s) linear infinite;animation-delay:var(--dl,0s)}
+.hw{transition:opacity .2s}
+.harness.live .hw:not(.on){opacity:.3}
+.hw.on .b{stroke-width:4.6}
+.hw.on .p{stroke-dasharray:3 13;animation-duration:.6s}
+@keyframes run{to{stroke-dashoffset:-73}}
+.hw.on .p{animation-name:run2}
+@keyframes run2{to{stroke-dashoffset:-16}}
+
+.groups{display:grid;grid-template-columns:minmax(0,3fr) minmax(0,2fr);grid-template-areas:"prod qa" "nc cnq";gap:30px 30px}
+.grp{min-width:0}
+.g-hd{display:flex;align-items:center;gap:12px;margin:0 0 14px}
+.code{font:600 11.5px/1 "Overpass Mono",monospace;letter-spacing:.08em;padding:6px 8px 5px;border-radius:5px;color:var(--c);background:color-mix(in srgb,var(--c) 12%,var(--surface));border:1px solid color-mix(in srgb,var(--c) 30%,transparent)}
+.g-hd h2{margin:0;font:700 18px/1.2 "Overpass",sans-serif;white-space:nowrap}
+.rule{flex:1;height:3px;border-radius:2px;background:linear-gradient(90deg,var(--c),color-mix(in srgb,var(--c) 0%,transparent))}
+.n{font:600 12px/1 "Overpass Mono",monospace;color:var(--faint);white-space:nowrap}
+.cards{display:grid;grid-template-columns:repeat(var(--cols),minmax(0,1fr));gap:16px}
+
+.card{position:relative;display:flex;flex-direction:column;gap:6px;min-height:178px;padding:18px 18px 16px;border-radius:14px;overflow:hidden;
+  background:var(--surface);border:1px solid var(--line);box-shadow:var(--shadow);color:inherit;text-decoration:none;
+  transition:transform .18s,box-shadow .18s,border-color .18s}
+.card:hover,.card:focus-visible{outline:none;transform:translateY(-3px);box-shadow:var(--shadow-hi);border-color:color-mix(in srgb,var(--c) 50%,var(--line))}
+.card:focus-visible{box-shadow:var(--shadow-hi),0 0 0 3px color-mix(in srgb,var(--c) 35%,transparent)}
+.c-top{display:flex;align-items:center;margin-left:-18px}
+.wire{position:relative;width:34px;height:7px;border-radius:0 2px 2px 0;background:var(--w);overflow:hidden;
+  box-shadow:inset 0 1.5px 0 rgba(255,255,255,.45),inset 0 -1.5px 0 rgba(0,0,0,.2)}
+.wire.st{background:repeating-linear-gradient(115deg,var(--w) 0 7px,var(--s) 7px 9px)}
+.wire::after{content:"";position:absolute;top:0;bottom:0;width:12px;left:-14px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.95),transparent)}
+.card:hover .wire::after,.card:focus-visible .wire::after{animation:zap .8s linear infinite}
+@keyframes zap{to{left:40px}}
+.collar{width:8px;height:13px;border-radius:2px;background:color-mix(in srgb,var(--w) 80%,#000);box-shadow:inset 0 1px 0 rgba(255,255,255,.3)}
+.ferr{width:13px;height:7px;border-radius:0 1px 1px 0;background:linear-gradient(180deg,#f8fafc,#a6b1bc 55%,#5d6975)}
+.card:hover .ferr,.card:focus-visible .ferr{box-shadow:0 0 8px 1px color-mix(in srgb,var(--c) 70%,transparent)}
+.ib{margin-left:3px;display:grid;place-items:center;width:44px;height:44px;border-radius:12px;color:var(--c);
+  background:color-mix(in srgb,var(--c) 11%,var(--surface));border:1px solid color-mix(in srgb,var(--c) 28%,transparent)}
+.ib svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.badge{margin-left:auto;font:600 11px/1 "Overpass Mono",monospace;letter-spacing:.06em;padding:5px 8px 4px;border-radius:20px;background:var(--copper-soft);color:var(--copper-ink)}
+.badge.alt{background:transparent;border:1px solid var(--line-2);color:var(--muted)}
+.card h3{margin:10px 0 0;font:700 19px/1.2 "Overpass",sans-serif}
+.card p{margin:0;color:var(--muted);font-size:14.5px;line-height:1.4}
+.open{margin-top:auto;padding-top:10px;display:flex;align-items:center;gap:6px;font:700 13.5px/1 "Overpass",sans-serif;color:var(--c)}
+.open svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;transition:transform .18s}
+.card:hover .open svg,.card:focus-visible .open svg{transform:translateX(4px)}
+.empty{display:none;padding:22px;border-radius:14px;border:1px dashed var(--line-2);color:var(--muted);text-align:center}
+.empty.show{display:block}
+
+.band{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr);gap:22px}
+.panel{padding:20px 22px;border-radius:16px;background:var(--surface);border:1px solid var(--line);box-shadow:var(--shadow)}
+.panel h2{margin:0 0 16px;font:700 17px/1.2 "Overpass",sans-serif}
+.tl{list-style:none;margin:0;padding:24px 0 0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px;position:relative}
+.tl::before{content:"";position:absolute;left:0;right:0;top:5px;height:3px;border-radius:2px;background:linear-gradient(90deg,var(--copper),color-mix(in srgb,var(--copper) 25%,transparent))}
+.tl li{position:relative;font-size:14.5px;line-height:1.45}
+.tl li::before{content:"";position:absolute;left:0;top:-24px;width:13px;height:13px;border-radius:50%;background:var(--surface);border:3px solid var(--copper)}
+.tl time{display:block;margin-bottom:4px;font:600 12px/1 "Overpass Mono",monospace;color:var(--copper)}
+.docs{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+.docs a{display:flex;align-items:center;gap:10px;padding:9px 6px;border-radius:8px;color:inherit;text-decoration:none;font-size:14.5px}
+.docs li+li a{border-top:1px solid var(--line)}
+.docs a:hover,.docs a:focus-visible{outline:none;background:var(--surface-2);color:var(--copper)}
+.docs svg{width:18px;height:18px;flex:none;fill:none;stroke:var(--faint);stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.foot{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;font:400 12px/1.4 "Overpass Mono",monospace;color:var(--faint);padding:0 4px}
+
+@media (prefers-reduced-motion:reduce){.hw .p{display:none}.card,.card .open svg{transition:none}.card:hover{transform:none}}
+@media (max-width:1180px){
+  .hero{grid-template-columns:minmax(0,1fr)}
+  .groups{grid-template-columns:minmax(0,1fr);grid-template-areas:"prod" "nc" "cnq" "qa"}
+  .band{grid-template-columns:minmax(0,1fr)}
+}
+@media (max-width:760px){
+  .cards{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+  h1{font-size:38px}
+  .hero{padding:22px 20px}
+  .tl{grid-template-columns:minmax(0,1fr);padding:0 0 0 22px;gap:14px}
+  .tl::before{left:5px;right:auto;top:4px;bottom:4px;width:3px;height:auto}
+  .tl li::before{left:-22px;top:2px}
+}
+@media (max-width:520px){
+  .cards{grid-template-columns:minmax(0,1fr)}
+  .card{min-height:0}
+  .g-hd .n{display:none}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="bar">
+    <div class="brand"><svg viewBox="0 0 34 34" aria-hidden="true"><circle cx="17" cy="17" r="15" fill="var(--copper)"/><circle cx="17" cy="17" r="10.5" fill="var(--surface)"/>
+      <circle cx="17" cy="11.6" r="2.2" fill="var(--copper)"/><circle cx="12.3" cy="19.7" r="2.2" fill="var(--copper)"/><circle cx="21.7" cy="19.7" r="2.2" fill="var(--copper)"/></svg>
+      <div id="brand"></div></div>
+    <div class="bar-r"><span id="site"></span>
+      <button class="theme" id="theme" type="button" aria-label="Changer de thème"><svg viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg></button></div>
+  </div>
+
+  <section class="hero">
+    <div>
+      <div class="eyebrow">Pôle électrique · Qualité</div>
+      <h1 id="title"></h1>
+      <p class="lead">Tous les outils qualité du pôle électrique, branchés au même endroit.</p>
+      <label class="search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.3"/><path d="M15.4 15.4l5 5"/></svg>
+        <input type="search" id="q" placeholder="Rechercher un outil : CNQ, FOD, Pareto…" autocomplete="off" aria-label="Rechercher un outil"><kbd>/</kbd></label>
+    </div>
+    <svg class="harness" id="harness" viewBox="0 0 720 260" role="img" aria-label="Faisceau : un connecteur, une dérivation par famille d'outils"></svg>
+  </section>
+
+  <main class="groups" id="groups"></main>
+  <div class="empty" id="empty">Aucun outil ne correspond à cette recherche.</div>
+
+  <section class="band">
+    <div class="panel"><h2>Nouveautés</h2><ol class="tl" id="news"></ol></div>
+    <div class="panel"><h2>Documents</h2><ul class="docs" id="docs"></ul></div>
+  </section>
+
+  <footer class="foot"><span id="upd"></span><span>Maquette 5/5 « Faisceau » · liens à compléter</span></footer>
+</div>
+
+<script>
+const HUB={"title":"Pôle Élec","subtitle":"Quality Hub","site":"FTO2 · OLME · Toulouse","drawing":"QH-FTO2-001","revision":"C","updated":"20/10/2026","sections":[{"id":"prod","code":"PROD","name":"Production & suivi","color":"#f2a33a","items":[{"id":"pps","name":"PPS","desc":"Practical Problem Solving","icon":"target","wire":"#f2a33a","url":"#"},{"id":"serie","name":"Serie Follow-up","desc":"Suivi de la série","icon":"follow","wire":"#f4d35e","stripe":"#1b1d20","url":"#"},{"id":"fod","name":"FOD","desc":"Foreign Object Debris","icon":"fod","wire":"#e8743b","stripe":"#ffffff","url":"#"}]},{"id":"nc","code":"NC","name":"Non-conformités","color":"#ef5350","items":[{"id":"ncw","name":"NC Writing","desc":"Rédiger une NC · standard DEFAUTS v1","icon":"pen","wire":"#ef5350","url":"#"},{"id":"ncd","name":"NC Dashboard","desc":"Pareto des défauts · 9 catégories","icon":"pareto","wire":"#ec5f9b","stripe":"#ffffff","tag":"v4.8","url":"#"},{"id":"alert","name":"Alert Quality","desc":"Alertes qualité","icon":"alert","wire":"#a77bf3","alert":true,"url":"#"}]},{"id":"cnq","code":"CNQ","name":"Coût de non-qualité","color":"#3ec27f","items":[{"id":"cnqd","name":"CNQ Dashboard","desc":"Coût des NC sur 3 niveaux","icon":"euro","wire":"#3ec27f","new":true,"url":"#"},{"id":"cnqc","name":"CNQ Checklist","desc":"Vérifications à mener","icon":"check","wire":"#9bd64b","stripe":"#1b1d20","new":true,"url":"#"}]},{"id":"qa","code":"QA","name":"Assurance qualité","color":"#4a90f7","items":[{"id":"qcm","name":"QCM","desc":"NC Eradication","icon":"quiz","wire":"#4a90f7","url":"#"},{"id":"qam","name":"QA Management","desc":"Gestion QA","icon":"stamp","wire":"#36c2d6","stripe":"#ffffff","url":"#"}]}],"news":[{"date":"20/10/2026","text":"Nouveau hub Pôle Élec : tous les outils qualité au même endroit."},{"date":"19/10/2026","text":"Coût de non-qualité : modèle mis à jour (cnq-2026.10.19) et checklist d'investigation."},{"date":"07/10/2026","text":"Pareto des défauts v4.8 : 9 catégories validées."}],"docs":[{"name":"Standard de rédaction DEFAUTS v1","url":"#"},{"name":"Taxonomie Pareto v4.8","url":"#"},{"name":"Modèle CNQ : changements du 19/10","url":"#"}]}, ICONS={"target":"<circle cx=\"12\" cy=\"12\" r=\"8.5\"/><circle cx=\"12\" cy=\"12\" r=\"4.5\"/><circle cx=\"12\" cy=\"12\" r=\"1\" fill=\"currentColor\"/>","follow":"<path d=\"M3.5 3.5v17h17\"/><path d=\"M7 15.5l4-4.5 3 2.5 5.5-6.5\"/><circle cx=\"19.5\" cy=\"7\" r=\"1.2\"/>","fod":"<path d=\"M12 2.8l8 4.6v9.2l-8 4.6-8-4.6V7.4z\"/><circle cx=\"12\" cy=\"12\" r=\"3.3\"/>","pen":"<path d=\"M4 20h4.2L19.4 8.8a2 2 0 0 0 0-2.8l-1.4-1.4a2 2 0 0 0-2.8 0L4 15.8z\"/><path d=\"M13.6 6.2l4.2 4.2\"/>","pareto":"<path d=\"M4 20.5V9h3.6v11.5M10.2 20.5V13h3.6v7.5M16.4 20.5V16.5H20v4\"/><path d=\"M3.5 6.5C9 6 13.5 4.6 20.5 3.5\"/>","alert":"<path d=\"M10.3 4.2L2.6 17.6A2 2 0 0 0 4.3 20.6h15.4a2 2 0 0 0 1.7-3L13.7 4.2a2 2 0 0 0-3.4 0z\"/><path d=\"M12 9.5v4.5\"/><path d=\"M12 17.2v.3\"/>","euro":"<path d=\"M17.5 6.6A7.2 7.2 0 1 0 17.5 17.4\"/><path d=\"M4 10.2h9.5M4 13.8h9.5\"/>","check":"<rect x=\"5\" y=\"4\" width=\"14\" height=\"17\" rx=\"2\"/><path d=\"M9 4V2.8h6V4\"/><path d=\"M8.8 12.6l2.2 2.2 4.4-4.6\"/>","quiz":"<rect x=\"4\" y=\"3\" width=\"16\" height=\"18\" rx=\"2\"/><path d=\"M7.5 8.2l1.5 1.5 2.6-2.8M13.8 8.6h3M7.5 14.6l1.5 1.5 2.6-2.8M13.8 15h3\"/>","stamp":"<path d=\"M10 3.2h4a1.2 1.2 0 0 1 1.2 1.2v2.4c0 1.8-1.3 2.6-1.3 4.6h-3.8c0-2-1.3-2.8-1.3-4.6V4.4A1.2 1.2 0 0 1 10 3.2z\"/><path d=\"M4.5 12.8h15v4h-15z\"/><path d=\"M6.5 20.3h11\"/>","doc":"<path d=\"M6 2.8h8l4.5 4.5v13.9H6z\"/><path d=\"M14 2.8v4.5h4.5M9 12h6M9 15.5h6\"/>","search":"<circle cx=\"10.8\" cy=\"10.8\" r=\"6.3\"/><path d=\"M15.4 15.4l5 5\"/>","arrow":"<path d=\"M5 12h13M13 6.5l5.5 5.5-5.5 5.5\"/>"};
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const svgI=k=>'<svg viewBox="0 0 24 24" aria-hidden="true">'+(ICONS[k]||"")+'</svg>';
+const CV={prod:"var(--c-prod)",nc:"var(--c-nc)",cnq:"var(--c-cnq)",qa:"var(--c-qa)"};
+
+$("#brand").innerHTML=esc(HUB.title)+' <span>'+esc(HUB.subtitle)+'</span>';
+$("#site").textContent=HUB.site.toUpperCase();
+$("#title").innerHTML=esc(HUB.title)+'<span>'+esc(HUB.subtitle)+'</span>';
+$("#upd").textContent="Mise à jour "+HUB.updated;
+
+// groups and cards
+$("#groups").innerHTML=HUB.sections.map(s=>'<section class="grp" id="g-'+s.id+'" style="grid-area:'+s.id+';--c:'+(CV[s.id]||s.color)+'">'
+  +'<header class="g-hd"><span class="code">'+esc(s.code)+'</span><h2>'+esc(s.name)+'</h2><span class="rule"></span><span class="n">'+s.items.length+' outils</span></header>'
+  +'<div class="cards" style="--cols:'+s.items.length+'">'+s.items.map(it=>'<a class="card" href="'+esc(it.url)+'" data-id="'+it.id+'" style="--w:'+it.wire+(it.stripe?';--s:'+it.stripe:'')+'">'
+    +'<span class="c-top"><i class="wire'+(it.stripe?' st':'')+'"></i><i class="collar"></i><i class="ferr"></i><span class="ib">'+svgI(it.icon)+'</span>'
+    +(it.new?'<span class="badge">Nouveau</span>':it.tag?'<span class="badge alt">'+esc(it.tag)+'</span>':'')+'</span>'
+    +'<h3>'+esc(it.name)+'</h3><p>'+esc(it.desc)+'</p><span class="open">Ouvrir '+svgI("arrow")+'</span></a>').join("")+'</div></section>').join("");
+
+$("#news").innerHTML=HUB.news.map(x=>'<li><time>'+esc(x.date)+'</time>'+esc(x.text)+'</li>').join("");
+$("#docs").innerHTML=HUB.docs.map(d=>'<li><a href="'+esc(d.url)+'">'+svgI("doc")+'<span>'+esc(d.name)+'</span></a></li>').join("");
+
+// hero harness: connector, sleeve and tie-wraps on the trunk, one branch per section
+(function harness(){
+  const items=HUB.sections.flatMap(s=>s.items), N=items.length, G=5.2, Y=128, X0=96, XB=392, XE=596;
+  const lane=i=>Y+(i-(N-1)/2)*G;
+  const by=HUB.sections.map((s,i)=>34+i*(196/(HUB.sections.length-1)));
+  let g='<defs><pattern id="braid" width="7" height="7" patternUnits="userSpaceOnUse"><rect width="7" height="7" fill="var(--braid-bg)"/>'
+    +'<path d="M-1,1 L1,-1 M0,7 L7,0 M6,8 L8,6" stroke="var(--braid-a)" stroke-width="2"/><path d="M0,0 L7,7 M-1,6 L1,8 M6,-1 L8,1" stroke="var(--braid-b)" stroke-width="2"/></pattern>'
+    +'<linearGradient id="al" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e9eef2"/><stop offset=".45" stop-color="#a2adb8"/><stop offset="1" stop-color="#55606b"/></linearGradient>'
+    +'<linearGradient id="nut" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#b9c3cc"/><stop offset=".5" stop-color="#76828e"/><stop offset="1" stop-color="#3f4952"/></linearGradient>'
+    +'<linearGradient id="boot" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#454c55"/><stop offset=".35" stop-color="#22272d"/><stop offset="1" stop-color="#101316"/></linearGradient></defs>';
+  let i=0, wires="", ends="";
+  HUB.sections.forEach((s,si)=>{
+    const k=s.items.length;
+    s.items.forEach((it,j)=>{
+      const y0=lane(i), y1=by[si]+(j-(k-1)/2)*G;
+      const d="M"+X0+","+y0+" H"+XB+" C"+(XB+96)+","+y0+" "+(XE-104)+","+y1+" "+(XE-10)+","+y1+" H"+(XE+12);
+      wires+='<g class="hw" id="hw-'+it.id+'" style="--w:'+it.wire+';--d:'+(2.2+((i*7)%5)*.35).toFixed(2)+'s;--dl:-'+((i*0.37)%2).toFixed(2)+'s">'
+        +'<path class="o" d="'+d+'"/><path class="b" d="'+d+'"/><path class="h" d="'+d+'" transform="translate(-.6 -.7)"/><path class="p" d="'+d+'"/></g>';
+      i++;
+    });
+    const h=k*G+14, top=by[si]-h/2;
+    ends+='<a href="#g-'+s.id+'" aria-label="'+esc(s.name)+'">'
+      +'<rect x="'+(XE-6)+'" y="'+(top+3)+'" width="22" height="'+(h-6)+'" rx="5" fill="url(#boot)"/>'
+      +'<rect x="'+(XE+14)+'" y="'+top+'" width="36" height="'+h+'" rx="4" fill="url(#al)" stroke="#4b5560" stroke-width=".8"/>'
+      +'<rect x="'+(XE+50)+'" y="'+(top+4)+'" width="6" height="'+(h-8)+'" rx="1.5" fill="#3a434c"/>'
+      +'<rect x="'+(XE+62)+'" y="'+(by[si]-11)+'" width="'+(s.code.length*8.4+16)+'" height="22" rx="5" fill="'+(CV[s.id]||s.color)+'"/>'
+      +'<text class="tagt" x="'+(XE+70)+'" y="'+(by[si]+4.5)+'">'+esc(s.code)+'</text></a>';
+  });
+  const t0=lane(0)-5, t1=lane(N-1)+5, yc=Y;
+  const tie=x=>'<rect x="'+(x-3.5)+'" y="'+(t0-1)+'" width="7" height="'+(t1-t0+2)+'" rx="2" fill="#1d2228"/><rect x="'+(x-5.5)+'" y="'+(t0-9)+'" width="11" height="9" rx="2" fill="#2a3037"/>';
+  const conn='<rect x="6" y="'+(yc-44)+'" width="32" height="88" rx="5" fill="url(#nut)" stroke="#3a434c"/>'
+    +Array.from({length:9},(_,n)=>'<path d="M'+(10+n*3.2)+','+(yc-40)+' V'+(yc+40)+'" stroke="rgba(0,0,0,.22)"/>').join("")
+    +'<rect x="38" y="'+(yc-36)+'" width="28" height="72" rx="3" fill="url(#al)" stroke="#4b5560"/>'
+    +'<path d="M66,'+(yc-34)+' L90,'+(yc-31)+' V'+(yc+31)+' L66,'+(yc+34)+' Z" fill="url(#al)" stroke="#4b5560"/>'
+    +'<rect x="84" y="'+(yc-33)+'" width="36" height="66" rx="9" fill="url(#boot)"/>';
+  const sleeve='<rect x="150" y="'+t0+'" width="196" height="'+(t1-t0)+'" rx="6" fill="url(#braid)"/>'
+    +'<rect x="145" y="'+(t0-2)+'" width="12" height="'+(t1-t0+4)+'" rx="3" fill="url(#boot)"/><rect x="340" y="'+(t0-2)+'" width="12" height="'+(t1-t0+4)+'" rx="3" fill="url(#boot)"/>';
+  $("#harness").innerHTML=g+wires+sleeve+tie(132)+tie(370)+conn+ends;
+})();
+
+// a card lights its own wire in the harness
+const hs=$("#harness");
+function lit(id,on){const w=document.getElementById("hw-"+id); if(w){w.classList.toggle("on",on); hs.classList.toggle("live",on);}}
+const groups=$("#groups");
+groups.addEventListener("pointerover",e=>{const c=e.target.closest(".card"); if(c) lit(c.dataset.id,true);});
+groups.addEventListener("pointerout",e=>{const c=e.target.closest(".card"); if(c&&!c.contains(e.relatedTarget)) lit(c.dataset.id,false);});
+groups.addEventListener("focusin",e=>{const c=e.target.closest(".card"); if(c) lit(c.dataset.id,true);});
+groups.addEventListener("focusout",e=>{const c=e.target.closest(".card"); if(c) lit(c.dataset.id,false);});
+
+// search
+const q=$("#q"), norm=s=>s.normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase();
+q.addEventListener("input",()=>{
+  const t=norm(q.value.trim()); let any=false;
+  document.querySelectorAll(".grp").forEach(g=>{
+    const sec=HUB.sections.find(s=>"g-"+s.id===g.id); let n=0;
+    g.querySelectorAll(".card").forEach(c=>{
+      const it=sec.items.find(x=>x.id===c.dataset.id);
+      const ok=!t||norm(it.name+" "+it.desc+" "+sec.name+" "+sec.code+" "+(it.tag||"")).includes(t);
+      c.hidden=!ok; if(ok) n++;
+    });
+    g.hidden=n===0; if(n) any=true;
+  });
+  $("#empty").classList.toggle("show",!any);
+});
+addEventListener("keydown",e=>{if(e.key==="/"&&document.activeElement!==q){e.preventDefault();q.focus();}});
+
+// theme
+const root=document.documentElement;
+function setTheme(t){root.setAttribute("data-theme",t); try{localStorage.setItem("qh.faisceau.theme",t);}catch(e){}}
+let saved=null; try{saved=localStorage.getItem("qh.faisceau.theme");}catch(e){}
+if(saved) root.setAttribute("data-theme",saved);
+$("#theme").addEventListener("click",()=>{const dark=root.getAttribute("data-theme")==="dark"||(!root.getAttribute("data-theme")&&matchMedia("(prefers-color-scheme:dark)").matches); setTheme(dark?"light":"dark");});
+</script>
+</body>
+</html>

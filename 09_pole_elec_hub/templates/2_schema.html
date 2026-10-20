@@ -1,0 +1,266 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pôle Élec Hub · Schéma</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* Template 2 "Schéma": the hub as a wiring diagram sheet. Light = paper print, dark = blueprint. */
+:root{
+  --paper:#f4f1e8; --grid:#e8e2d4; --grid2:#ddd5c2; --ink:#1c2a3e; --ink2:#46566b; --ink3:#7d8a9b;
+  --fill:#fffdf7; --hot:#c62f3a; --hot-soft:rgba(198,47,58,.07);
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){--paper:#0e3964;--grid:#154675;--grid2:#1c5185;--ink:#eaf2fb;--ink2:#bfd2e8;--ink3:#8faccd;--fill:#103f6e;--hot:#ffd34d;--hot-soft:rgba(255,211,77,.09);color-scheme:dark}
+}
+:root[data-theme="dark"]{--paper:#0e3964;--grid:#154675;--grid2:#1c5185;--ink:#eaf2fb;--ink2:#bfd2e8;--ink3:#8faccd;--fill:#103f6e;--hot:#ffd34d;--hot-soft:rgba(255,211,77,.09);color-scheme:dark}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{
+  background-color:var(--paper);color:var(--ink);
+  background-image:linear-gradient(var(--grid2) 1px,transparent 1px),linear-gradient(90deg,var(--grid2) 1px,transparent 1px),
+                   linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:50px 50px,50px 50px,10px 10px,10px 10px;
+  font:15px/1.45 "IBM Plex Sans","Segoe UI",system-ui,sans-serif;-webkit-font-smoothing:antialiased;
+  padding-block:18px 24px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+}
+.mono{font-family:"IBM Plex Mono",Consolas,monospace}
+
+/* sheet frame with zone references */
+.sheet{position:relative;max-width:1640px;margin:0 auto;border:2px solid var(--ink);padding:20px}
+.z{position:absolute;display:flex;font:500 10.5px/1 "IBM Plex Mono",Consolas,monospace;color:var(--ink2)}
+.z span{flex:1;display:grid;place-items:center}
+.zt,.zb{left:20px;right:20px;height:20px}.zt{top:0}.zb{bottom:0}
+.zl,.zr{top:20px;bottom:20px;width:20px;flex-direction:column}.zl{left:0}.zr{right:0}
+.zt span+span,.zb span+span{border-left:1px solid var(--ink)}
+.zl span+span,.zr span+span{border-top:1px solid var(--ink)}
+.inner{border:1.5px solid var(--ink);padding:22px 26px 24px}
+
+/* header: title + revision table */
+.hd{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:20px 36px;align-items:start}
+.eyebrow{font:500 12px/1 "IBM Plex Mono",Consolas,monospace;letter-spacing:.1em;color:var(--ink2)}
+h1{margin:10px 0 6px;font:700 40px/1.02 "IBM Plex Sans Condensed","Arial Narrow",sans-serif;letter-spacing:.02em;text-transform:uppercase;text-wrap:balance}
+.sub{margin:0;color:var(--ink2);max-width:62ch}
+.view{display:inline-flex;margin-top:14px;border:1.5px solid var(--ink);font:500 11.5px/1 "IBM Plex Mono",Consolas,monospace}
+.view button{all:unset;cursor:pointer;padding:6px 10px;letter-spacing:.04em;color:var(--ink)}
+.view button+button{border-left:1.5px solid var(--ink)}
+.view button[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+.view button:focus-visible{outline:2px solid var(--hot);outline-offset:2px}
+table{border-collapse:collapse}
+.revs{min-width:520px;background:var(--fill);font-size:13.5px}
+.revs caption{text-align:left;font:600 11px/1 "IBM Plex Mono",Consolas,monospace;letter-spacing:.12em;padding-bottom:6px;color:var(--ink2)}
+.revs th,.revs td{border:1.5px solid var(--ink);padding:5px 9px;text-align:left;vertical-align:top}
+.revs th{font:600 10.5px/1.2 "IBM Plex Mono",Consolas,monospace;letter-spacing:.1em;text-transform:uppercase}
+.revs td:first-child,.revs td:nth-child(2){font-family:"IBM Plex Mono",Consolas,monospace;font-size:12.5px;white-space:nowrap}
+.revs td:first-child{text-align:center;font-weight:600}
+
+/* the circuit: source + bus row, then one functional block per section */
+.circuit{--gap:22px;--net:24px;--sy:36px;display:grid;grid-template-columns:118px repeat(4,minmax(0,1fr));column-gap:var(--gap);margin-top:22px}
+.src{position:relative;height:60px}
+.src .box{position:absolute;left:0;top:10px;width:96px;height:40px;border:2px solid var(--ink);background:var(--fill);display:grid;place-items:center;font:600 13px/1 "IBM Plex Sans Condensed",sans-serif;letter-spacing:.08em}
+.src .rd{position:absolute;left:0;top:-6px;font:500 11px/1 "IBM Plex Mono",Consolas,monospace;color:var(--ink3)}
+.src .ln{position:absolute;left:96px;right:0;top:29px;border-top:2.5px solid var(--ink)}
+.bcell{position:relative;height:60px}
+.bcell .b-in{position:absolute;left:calc(-1*var(--gap));width:calc(var(--gap) + var(--net));top:29px;border-top:2.5px solid var(--ink)}
+.bcell .b-out{position:absolute;left:var(--net);right:0;top:29px;border-top:2.5px solid var(--ink)}
+.bcell.last .b-out{right:16px}
+.bcell .dp{position:absolute;left:calc(var(--net) - 1px);top:31px;bottom:0;border-left:2px solid var(--ink)}
+.jd{position:absolute;width:9px;height:9px;border-radius:50%;background:var(--ink)}
+.bcell .jd{left:calc(var(--net) - 4.5px);top:26.75px}
+.bcell .wl{position:absolute;left:calc(var(--net) + 7px);top:38px;font:500 10px/1 "IBM Plex Mono",Consolas,monospace;color:var(--ink3);letter-spacing:.04em}
+.res{position:absolute;right:2px;top:24px;width:13px;height:13px;border-radius:50%;border:2px solid var(--ink);background:var(--paper)}
+.res-t{position:absolute;right:0;top:6px;font:500 10px/1 "IBM Plex Mono",Consolas,monospace;color:var(--ink2);letter-spacing:.08em}
+
+.legend{padding-top:44px;display:flex;flex-direction:column;gap:9px;font-size:12.5px;color:var(--ink2)}
+.legend h3{margin:0 0 2px;font:600 10.5px/1 "IBM Plex Mono",Consolas,monospace;letter-spacing:.12em;color:var(--ink2)}
+.legend span{display:flex;align-items:center;gap:8px}
+.legend svg{width:22px;height:14px;flex:none;overflow:visible}
+
+.blk{position:relative;border:2px dashed var(--ink2);padding:36px 16px 18px 46px;align-self:start}
+.blk .tag{position:absolute;top:-11px;left:calc(var(--net) + 12px);max-width:calc(100% - var(--net) - 24px);display:flex;gap:8px;align-items:baseline;white-space:nowrap;overflow:hidden;background:var(--paper);padding:0 6px}
+.blk .tag b{font:600 12px/1.6 "IBM Plex Mono",Consolas,monospace;letter-spacing:.02em}
+.blk .tag span{font:600 13px/1.6 "IBM Plex Sans Condensed",sans-serif;letter-spacing:.08em;text-transform:uppercase;color:var(--ink2);text-overflow:ellipsis;overflow:hidden}
+.row{position:relative;padding-bottom:16px}
+.row:last-child{padding-bottom:0}
+.n-up,.n-dn{position:absolute;left:-25px;border-left:2px solid var(--ink)}
+.n-up{top:0;height:calc(var(--sy) + 1px)}
+.tag+.row .n-up{top:-38px;height:calc(var(--sy) + 39px)}
+.n-dn{top:var(--sy);bottom:0}
+.row:last-child .n-dn,.row:last-child .jd{display:none}
+.row .jd{left:-28.5px;top:calc(var(--sy) - 3.5px)}
+.stub{position:absolute;left:-24px;width:24px;top:var(--sy);border-top:2px solid var(--ink)}
+.wn{position:absolute;left:-21px;top:calc(var(--sy) - 14px);font:500 9.5px/1 "IBM Plex Mono",Consolas,monospace;color:var(--ink3)}
+
+.comp{position:relative;display:flex;flex-direction:column;gap:3px;min-height:104px;padding:9px 13px 11px;border:2px solid var(--ink);background:var(--fill);color:inherit;text-decoration:none;transition:background .15s}
+.comp .rd{display:flex;align-items:center;justify-content:space-between;gap:8px;font:500 11px/1.2 "IBM Plex Mono",Consolas,monospace;color:var(--ink3)}
+.comp .nm{font:600 19px/1.15 "IBM Plex Sans Condensed","Arial Narrow",sans-serif;letter-spacing:.02em;text-transform:uppercase}
+.comp .sym{display:flex;align-items:center;gap:6px}
+.comp .sym>svg:last-child{width:18px;height:18px;flex:none;fill:none;stroke:var(--ink2);stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.comp .ds{font-size:13.5px;line-height:1.35;color:var(--ink2)}
+.off{align-self:flex-end;margin-top:auto;display:inline-flex;align-items:center;height:21px;padding:0 15px 0 8px;background:var(--ink);color:var(--fill);
+  font:500 10.5px/1 "IBM Plex Mono",Consolas,monospace;letter-spacing:.08em;clip-path:polygon(0 0,calc(100% - 9px) 0,100% 50%,calc(100% - 9px) 100%,0 100%)}
+.rv{width:22px;height:19px;color:var(--hot);flex:none}
+.rv text{font:600 10px "IBM Plex Mono",Consolas,monospace;fill:currentColor}
+
+/* live path: from the source to the hovered component */
+.hot .ln,.hot .b-in,.hot .b-out,.hot .dp,.hot .n-up,.hot .n-dn,.hot .stub,.hot.src .box{border-color:var(--hot)}
+.hot>.jd,.thru>.jd{background:var(--hot)}
+.bcell.hot .b-out{border-color:var(--ink)}
+.row.hot .n-dn{border-color:var(--ink)}
+.row.hot>.jd{background:var(--hot)}
+.row.hot .wn{color:var(--hot)}
+.thru .b-in,.thru .b-out,.thru .n-up,.thru .n-dn{border-color:var(--hot)}
+.comp:hover,.comp:focus-visible,.row.hot .comp{outline:none;border-color:var(--hot);background:color-mix(in srgb,var(--hot) 7%,var(--fill))}
+.row.hot .off,.comp:hover .off,.comp:focus-visible .off{background:var(--hot);color:var(--paper)}
+
+/* notes + title block */
+.ft{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:24px 36px;align-items:end;margin-top:26px}
+.notes h3{margin:0 0 8px;font:600 11px/1 "IBM Plex Mono",Consolas,monospace;letter-spacing:.12em;color:var(--ink2)}
+.notes ol{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:4px;font-size:13.5px;color:var(--ink2);max-width:72ch}
+.cart{display:grid;grid-template-columns:repeat(4,auto);gap:1.5px;background:var(--ink);border:2px solid var(--ink);min-width:540px}
+.cart>div{background:var(--fill);padding:6px 10px 7px;display:flex;flex-direction:column;gap:2px;font:500 13px/1.25 "IBM Plex Mono",Consolas,monospace}
+.cart .k{font:500 9.5px/1 "IBM Plex Mono",Consolas,monospace;letter-spacing:.12em;text-transform:uppercase;color:var(--ink3)}
+.cart .t{grid-column:span 2}
+.cart .t b{font:700 17px/1.1 "IBM Plex Sans Condensed",sans-serif;letter-spacing:.03em;text-transform:uppercase}
+.cart .t em{font:400 12.5px/1.3 "IBM Plex Sans",sans-serif;font-style:normal;color:var(--ink2)}
+.cart .big b{font:600 22px/1 "IBM Plex Mono",Consolas,monospace}
+.cart .w2{grid-column:span 2}
+.mock{margin-top:10px;text-align:right;font:500 11px/1 "IBM Plex Mono",Consolas,monospace;color:var(--ink3)}
+
+@media (max-width:1299px){
+  .sheet{padding:0;border:0}
+  .z{display:none}
+  .inner{padding:20px 18px}
+  .circuit{grid-template-columns:repeat(2,minmax(0,1fr));row-gap:34px;margin-top:34px}
+  .src,.bcell,.legend{display:none}
+}
+@media (max-width:980px){
+  .hd,.ft{grid-template-columns:minmax(0,1fr)}
+  .revs,.cart{min-width:0;width:100%}
+  .revwrap{overflow-x:auto}
+}
+@media (max-width:640px){
+  .circuit{grid-template-columns:minmax(0,1fr)}
+  h1{font-size:32px}
+  .inner{padding:16px 12px;border:0}
+  .cart{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+</style>
+</head>
+<body>
+<div class="sheet">
+  <div class="z zt" aria-hidden="true"></div><div class="z zb" aria-hidden="true"></div>
+  <div class="z zl" aria-hidden="true"></div><div class="z zr" aria-hidden="true"></div>
+  <div class="inner">
+    <header class="hd">
+      <div>
+        <div class="eyebrow" id="eyebrow"></div>
+        <h1 id="title"></h1>
+        <p class="sub">Schéma de liaison des outils qualité. Chaque composant renvoie vers son outil dans Skywise.</p>
+        <div class="view" role="group" aria-label="Affichage">
+          <button type="button" data-t="light">Papier</button><button type="button" data-t="dark">Calque bleu</button>
+        </div>
+      </div>
+      <div class="revwrap"><table class="revs" id="revs"><caption>TABLEAU DES RÉVISIONS</caption>
+        <thead><tr><th>Rév.</th><th>Date</th><th>Description</th></tr></thead><tbody></tbody></table></div>
+    </header>
+
+    <main class="circuit" id="circuit"></main>
+
+    <footer class="ft">
+      <div class="notes">
+        <h3>NOTES</h3>
+        <ol>
+          <li>Cliquer sur un composant ouvre l'outil dans Skywise (renvoi ▷).</li>
+          <li>Repérage selon IEC 81346 : « = » fonction, « - » produit, « + » lieu.</li>
+          <li>△ : composant modifié à la révision indiquée, voir le tableau des révisions.</li>
+          <li>Réserve : emplacement prévu pour un prochain outil.</li>
+        </ol>
+      </div>
+      <div class="cart" id="cart"></div>
+    </footer>
+    <div class="mock">Maquette 2/5 « Schéma » · liens à compléter</div>
+  </div>
+</div>
+
+<script>
+const HUB=/*__HUB__*/null, ICONS=/*__ICONS__*/null;
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const icon=k=>'<svg viewBox="0 0 24 24" aria-hidden="true">'+(ICONS[k]||"")+'</svg>';
+
+// zone references
+$(".zt").innerHTML=$(".zb").innerHTML=[1,2,3,4,5,6,7,8].map(i=>"<span>"+i+"</span>").join("");
+$(".zl").innerHTML=$(".zr").innerHTML="ABCDEF".split("").map(c=>"<span>"+c+"</span>").join("");
+
+$("#eyebrow").textContent="+FTO2  =QH  ·  "+HUB.site.replace("FTO2 · ","");
+$("#title").textContent=HUB.title+" — "+HUB.subtitle;
+
+// revisions: oldest news = A
+const L=HUB.news.length, revOf=i=>String.fromCharCode(65+L-1-i);
+$("#revs tbody").innerHTML=HUB.news.map((x,i)=>"<tr><td>"+revOf(i)+"</td><td>"+esc(x.date)+"</td><td>"+esc(x.text)+"</td></tr>").join("");
+const REV_NEW=revOf(1), REV_TAG=revOf(2);   // 19/10 (CNQ) and 07/10 (Pareto v4.8)
+const tri=r=>'<svg class="rv" viewBox="0 0 22 19" aria-label="Révision '+r+'"><path d="M11 1.5 20.5 17.5H1.5Z" fill="none" stroke="currentColor" stroke-width="1.5"/><text x="11" y="15" text-anchor="middle">'+r+'</text></svg>';
+
+// circuit
+const C=$("#circuit"); let h='<div class="src" data-k="src"><span class="rd">-X0</span><span class="box">SKYWISE</span><span class="ln"></span></div>';
+HUB.sections.forEach((s,i)=>{
+  h+='<div class="bcell'+(i===HUB.sections.length-1?' last':'')+'" data-b="'+i+'"><i class="b-in"></i><i class="b-out"></i><i class="dp"></i><i class="jd"></i>'
+    +(i===HUB.sections.length-1?'<i class="res" title="Réserve"></i><span class="res-t">RÉSERVE</span>':'')+'</div>';
+});
+h+='<div class="legend" aria-hidden="true"><h3>SYMBOLES</h3>'
+  +'<span><svg viewBox="0 0 22 14"><path d="M0 7H22M11 7V14" stroke="currentColor" stroke-width="2"/><circle cx="11" cy="7" r="3.6" fill="currentColor"/></svg>Jonction</span>'
+  +'<span><svg viewBox="0 0 22 14"><path d="M0 2H15L21 7 15 12H0Z" fill="currentColor"/></svg>Renvoi Skywise</span>'
+  +'<span><svg viewBox="0 0 22 14"><path d="M11 1 19 13H3Z" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>Révision</span>'
+  +'<span><svg viewBox="0 0 22 14"><rect x="1" y="2" width="20" height="10" fill="none" stroke="currentColor" stroke-width="1.5" stroke-dasharray="3 2"/></svg>Bloc fonction</span>'
+  +'<span><svg viewBox="0 0 22 14"><path d="M0 7H14" stroke="currentColor" stroke-width="2"/><circle cx="17" cy="7" r="4" fill="none" stroke="currentColor" stroke-width="2"/></svg>Réserve</span></div>';
+let x=0, w=0;
+HUB.sections.forEach((s,i)=>{
+  h+='<section class="blk" data-b="'+i+'"><div class="tag"><b>='+esc(s.code)+'</b><span>'+esc(s.name)+'</span></div>'
+    +s.items.map(it=>{
+      x++;
+      const r=it.new?REV_NEW:it.tag?REV_TAG:"";
+      return '<div class="row" data-id="'+it.id+'"><i class="n-up"></i><i class="n-dn"></i><i class="stub"></i><i class="jd"></i><span class="wn">W'+x+'</span>'
+        +'<a class="comp" href="'+esc(it.url)+'"><span class="rd"><span>-X'+x+'</span><span class="sym">'+(r?tri(r):"")+icon(it.icon)+'</span></span>'
+        +'<span class="nm">'+esc(it.name)+'</span><span class="ds">'+esc(it.desc)+'</span>'
+        +'<span class="off">SKYWISE</span></a></div>';
+    }).join("")+'</section>';
+});
+C.innerHTML=h;
+
+// title block
+$("#cart").innerHTML=
+  '<div class="t"><span class="k">Titre</span><b>'+esc(HUB.title)+' — '+esc(HUB.subtitle)+'</b><em>Schéma de liaison des outils qualité</em></div>'
+ +'<div class="big"><span class="k">Folio</span><b>1/1</b></div><div class="big"><span class="k">Rév.</span><b>'+esc(HUB.revision)+'</b></div>'
+ +'<div><span class="k">Établi</span>Qualité Pôle Élec</div><div><span class="k">Vérifié</span>—</div>'
+ +'<div><span class="k">Date</span>'+esc(HUB.updated)+'</div><div><span class="k">N° de plan</span>'+esc(HUB.drawing)+'</div>'
+ +'<div class="w2"><span class="k">Lieu</span>+FTO2 · OLME Toulouse</div><div><span class="k">Échelle</span>Sans</div><div><span class="k">Format</span>A3</div>';
+
+// live path from the source to the hovered component
+function live(row,on){
+  document.querySelectorAll(".hot,.thru").forEach(e=>e.classList.remove("hot","thru"));
+  if(!on) return;
+  const blk=row.closest(".blk"), b=+blk.dataset.b;
+  row.classList.add("hot");
+  let p=row.previousElementSibling; while(p){ if(p.classList.contains("row")) p.classList.add("thru"); p=p.previousElementSibling; }
+  document.querySelectorAll(".bcell").forEach(c=>{const i=+c.dataset.b; if(i<b) c.classList.add("thru"); else if(i===b) c.classList.add("hot");});
+  $(".src").classList.add("hot");
+}
+C.addEventListener("pointerover",e=>{const r=e.target.closest(".row"); if(r) live(r,true);});
+C.addEventListener("pointerout",e=>{const r=e.target.closest(".row"); if(r&&!r.contains(e.relatedTarget)) live(r,false);});
+C.addEventListener("focusin",e=>{const r=e.target.closest(".row"); if(r) live(r,true);});
+C.addEventListener("focusout",e=>{const r=e.target.closest(".row"); if(r) live(r,false);});
+
+// paper / blueprint
+const root=document.documentElement;
+function setView(t){ root.setAttribute("data-theme",t); document.querySelectorAll(".view button").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.t===t))); try{localStorage.setItem("qh.schema.view",t);}catch(e){} }
+document.querySelectorAll(".view button").forEach(b=>b.addEventListener("click",()=>setView(b.dataset.t)));
+let saved=null; try{saved=localStorage.getItem("qh.schema.view");}catch(e){}
+setView(saved||(matchMedia("(prefers-color-scheme:dark)").matches?"dark":"light"));
+</script>
+</body>
+</html>
