@@ -1,6 +1,20 @@
-# Pôle Élec Quality Hub: five templates
+# Pôle Élec Quality Hub
 
-New home page for the Pôle Élec quality tools, to replace the current "Pole Elec Quality HUB" Slate app. Five designs, all with the same links. Pick one; it then gets prepared for Slate.
+New home page for the Pôle Élec quality tools, to replace the current "Pole Elec Quality HUB" Slate app.
+
+## Chosen design: template 5 (20 Oct)
+
+The page to use is `hub/pole_elec_hub.html` (preview: `screenshots/hub_final.png`). Everything on it comes from `hub/hub_config.js`, the only file to edit:
+
+- paste each Skywise link where it says `A_COMPLETER`; until then the card shows "Lien à compléter" and cannot be clicked;
+- names, short descriptions, icons and colours are in the same file;
+- keep the two files in the same folder, save, refresh the page.
+
+Content is what the current hub shows, no more: PPS, Serie Follow Up, FOD, Alert Quality, NC Dashboard, NC Writing, the two tiles of its third row (names to fill in), QCM with NC Eradication, and QA Management (content to fill in). The two tabs of the current hub become two small groups on the right, so everything is visible at once on a 1440 × 900 screen.
+
+## The five templates (design round of 20 Oct)
+
+Kept as the record of the choice. They still carry the earlier content (with the CNQ tools and news) and are not the page to install.
 
 `screenshots/overview.png` shows the five side by side.
 
@@ -14,7 +28,7 @@ New home page for the Pôle Élec quality tools, to replace the current "Pole El
 
 All five work on a wide screen, a laptop and a phone, can be used with the keyboard, and stop their animations when the computer asks for reduced motion.
 
-## Changing a link or a label
+## Changing a link or a label in the five templates
 
 1. Edit `hub_links.json` (sections, tools, URLs, news, documents).
 2. Run `python build_hub.py`. The five pages are rebuilt with the same content.
@@ -23,13 +37,12 @@ All five work on a wide screen, a laptop and a phone, can be used with the keybo
 
 ## Still needed
 
-- The real Skywise URL of each tool (all links are `#` for now).
-- The two tiles cut off on the third row of the current hub (name and URL), if they should stay.
-- Short descriptions for **QCM** and **QA Management** (now "NC Eradication" and "Gestion QA").
-- Whether new tools should come in (for example the cable defects follow-up); the diagram template already shows a spare terminal for one.
+- The Skywise link of each tool (Mohammad pastes them in `hub/hub_config.js`).
+- Name and icon of the two tiles on the third row of the current hub (hidden behind its scroll).
+- What the "QA Managment" tab of the current hub contains (one line per tile in the config).
 
 ## Moving the chosen one into Slate (to check with whoever builds the Slate app)
 
-- These pages build the tiles and draw the wires with JavaScript. For Slate, the chosen design can be turned into plain HTML and CSS with the links written in, or rebuilt with Slate's own widgets and the app stylesheet. Which one depends on what the Slate app accepts (HTML widget, custom CSS, inline SVG): to confirm in Skywise.
+- The page builds the cards and draws the wires with JavaScript, and reads `hub_config.js` next to it. Inside Slate the links would have to live in Slate itself (for example a variable), not in a separate file. For Slate, the chosen design can be turned into plain HTML and CSS with the links written in, or rebuilt with Slate's own widgets and the app stylesheet. Which one depends on what the Slate app accepts (HTML widget, custom CSS, inline SVG): to confirm in Skywise.
 - Fonts come from Google Fonts. If Skywise blocks them, the pages fall back to Bahnschrift / Segoe UI / Consolas, which are on Windows PCs.
 - No Airbus or Skywise logo is used.
