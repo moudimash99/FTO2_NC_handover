@@ -165,11 +165,11 @@ function fto2FromTables(ncIn, defIn, ref, disIn) {
       unit: 'Qualité', title: 'Non-conformités FTO2', period: 'NC créées du {from} au {to}',
       minorLabel: 'Défauts mineurs', minorIn: 'Inclus', minorOut: 'Exclus',
       tabPareto: 'Pareto', tabCost: 'Pareto des coûts', tabWeek: 'Pareto hebdomadaire', tabCnq: 'Coût de non-qualité', tabClient: 'Retours clients', tabRca: 'Définitions', tabPplan: 'Production',
-      serieSub: 'NC émises à FTO2, toutes : supprimées et hors responsabilité FTO2 comprises.', serieSubAll: 'Toutes les NC, émises à FTO2 ou dans d’autres usines (retours clients compris).',
+      serieSub: 'NC émises à FTO2 (plant FTO2), toutes : supprimées et hors responsabilité FTO2 comprises.', serieSubAll: 'Toutes les NC, émises à FTO2 ou dans d’autres usines (retours clients compris).',
       infoBtn: 'Comment la sélection est faite', inf_title: 'Ce que chaque filtre retire, dans l’ordre', inf_out: 'Retirées', inf_left: 'Restent',
       inf_start: 'NC fournies par le pipeline', inf_startS: '{a} sortie normale · {b} IDs manquants ; le tableau n’en retire aucune d’office',
       inf_period: 'Période', inf_phase: 'Type de production', inf_line: 'Avion', inf_src: 'Source des données', inf_org: 'Origine (pipeline)', inf_plant: 'Usine FTO2 uniquement (plant = FTO2 ou FT02)', inf_pick: 'Clic sur un graphique',
-      inf_all: 'tout (non appliqué)', inf_phaseS: 'retire {v}', inf_plantS: 'retire les NC dont le plant n’est pas FTO2 : {c} retours clients · {o} autres{p}{m}', inf_plantM: ', dont {n} venues des listes d’IDs manquants',
+      inf_all: 'tout (non appliqué)', inf_phaseS: 'retire {v}', inf_plantS: 'retire les NC dont le plant n’est pas FTO2 : {c} retours clients · {o} autres{p}',
       inf_plantNo: 'non : les retours clients et les NC des autres usines restent', inf_end: 'Sélection', inf_endS: '{d} défauts',
       inf_cost: 'Coût : compté seulement là où FTO2 est responsable. {n} NC de la sélection comptent comme NC avec un coût de 0 € (leur traitement selon le modèle : {e}).',
       inf_minor: 'Défauts mineurs {v} : ce choix change le nombre de défauts, pas le nombre de NC.', inf_nodef: '{n} NC de la sélection n’ont aucune ligne de défaut lisible : comptées en NC et en coût, pas en défauts.',
@@ -219,7 +219,7 @@ function fto2FromTables(ncIn, defIn, ref, disIn) {
       nKR: 'NC par MSN', nKRs: 'NC ÷ MSN produits', ovMore: 'Autres listes et graphiques', cnqMore: 'Autres graphiques du coût', parMore: 'Autres graphiques', whereMore: 'Autres graphiques',
       allLines: 'Toutes lignes', v2Tgt: 'Objectif', v2VsTgt: 'vs objectif', v2Above: 'Au-dessus de l’objectif', v2Below: 'Sous l’objectif', v2TgtPh: 'Objectif (fictif)', v2Ph: 'fictif',
       v2Ph25: '2025 fictif (= 2026)', v2Y25b: '2025, même filtre', v2Y25c: '2025 à la même date', v2Y25at: '2025 à la même date : {v}', v2TgtCumR: 'Objectif cumulé (2025 − 25 %)', v2StTgtR: 'objectif de l’année (2025 − 25 %)', v2StBudR: 'budget de l’année (2025 − 25 %)', v2StTgtL: 'objectif de l’année, somme des lignes', v2StBudL: 'budget de l’année, somme des lignes', v2TgtCumL: 'Objectif cumulé, ligne par ligne', v2BudL: 'Budget cumulé, ligne par ligne', v2TgtBar: 'Objectif', v2BudBar: 'Budget', v2TgtN: '{a} NC pour un objectif de {t} NC (somme des lignes)', v2Mix: 'taux 2025 au mix 2026 : {v}', v2BudR: 'Budget au prorata (coût 2025 − 25 %)', v2TgtR: 'Objectif : taux 2025 − 25 %', v2NoCli25: '2025 sans retours client (absents de l’extraction 2025)', v2Rate25: '2025 : {v} NC par produit livré', v2Rate25s: 'Taux 2025', v2BudR2: 'budget', v2MTgt: 'objectif mensuel {v} (fictif)', v2BudPh: 'Budget au prorata (fictif)', v2Y25: '2025', v2Y26: '2026 prévu', v2Flat: 'Stable', 
-      vpFc: 'Fait et prévision', vpMsn: 'Par MSN', vpFcK: 'Volumes', vpFcT: 'NC, défauts et coût attendus d’ici décembre, produit par produit', vpFcS: 'Réalisé, puis prévision : volume de la période par MSN × MSN prévus jusqu’à décembre.', vpFcH: 'fait → fin décembre', vpDec: 'Prévu à fin décembre', xPartial: 'Semaine en cours non tracée (incomplète) : {n} NC', vpOutRow: 'Hors plan', vpNoFc: 'pas de prévision', vpOut: '{n} NC dont le produit n’est pas dans le plan de production ({p}) : pas de volume, donc ni taux ni prévision ; comptées dans le total.', dType: 'Répartition du coût par type de NC', typeSub: 'Type de la NC, là où elle a été trouvée ; « NC câbles » = NC du type Câbles ; 100 % = coût de la sélection.', ty_cab: 'NC câbles', ty_fin: 'Contrôle final', ty_test: 'Test', ty_int: 'Interne', ty_sup: 'Fournisseurs', ty_oth: 'Autres', wlCh_prod: 'Produits', wlCh_ac: 'Avions', wlCh_st: 'Postes', wlChs_prod: 'Taux, carte mensuelle, précision, projection et coût, produit par produit.', wlChs_ac: 'Coût par avion et FIN qui reviennent.', wlChs_st: 'Défauts par poste de rédaction de la NC.',
+      vpFc: 'Fait et prévision', vpMsn: 'Par MSN', vpFcK: 'Volumes', vpFcT: 'NC, défauts et coût attendus d’ici décembre, produit par produit', vpFcS: 'Réalisé, puis prévision : volume de la période par MSN × MSN prévus jusqu’à décembre.', vpFcH: 'fait → fin décembre', vpDec: 'Prévu à fin décembre', xPartial: 'Semaine en cours non tracée (incomplète) : {n} NC', vpOutRow: 'Hors plan', vpNoFc: 'pas de prévision', vpOwnPace: 'à son rythme', vpOut: '{n} NC dont le produit n’est pas dans le plan de production ({p}) : pas de volume, donc pas de taux ; prévues à leur rythme mensuel ; comptées dans le total.', dType: 'Répartition du coût par type de NC', typeSub: 'Type de la NC, là où elle a été trouvée ; « NC câbles » = NC du type Câbles ; 100 % = coût de la sélection.', ty_cab: 'NC câbles', ty_fin: 'Contrôle final', ty_test: 'Test', ty_int: 'Interne', ty_sup: 'Fournisseurs', ty_oth: 'Autres', wlCh_prod: 'Produits', wlCh_ac: 'Avions', wlCh_st: 'Postes', wlChs_prod: 'Taux, carte mensuelle, précision, projection et coût, produit par produit.', wlChs_ac: 'Coût par avion et FIN qui reviennent.', wlChs_st: 'Défauts par poste de rédaction de la NC.',
       v2MonTgt: 'objectif du mois {v}', v2Cum: '{v} NC cumulées', v2Fc: 'prévues', v2TgtShort: 'objectif', v2Under: 'Mois sous son objectif', v2Over: 'Mois au-dessus de son objectif', v2CumLeg: 'NC cumulées', v2TgtCum: 'Objectif cumulé (fictif)', v2Summer: 'Juillet et août comptent pour 60 % d’un mois.', v2ObjH: 'Objectif par ligne · NC par MSN', v2ObjC: 'Objectifs fictifs en attendant les chiffres 2025 : taux 2026 moins 25 %.', v2PerMsnV: '{v} par MSN', v2StNow: 'NC depuis le début de la période', v2StFc: 'prévus à fin décembre', v2StTgt: 'objectif de l’année (fictif)', v2StCost: 'cumulés sur la période', v2StBud: 'budget de l’année (fictif)', v2QPer: 'Par MSN produit : la fermeture d’août ne pèse pas.', v2Q25: '2025 : défauts par produit livré (causes lues par le parseur) ; 2026 : par MSN produit.', v2Avg25: 'Moyenne 2025 (par produit livré)', v2QMonth: 'Moyenne par mois.', v2PerMsn: 'par MSN', v2Ac: '{n} avions',
       scVol: 'Volume par mois', scTot: 'Total', scRate: 'Par MSN, par mois', scRateP: 'Par MSN', scLast3: '3 derniers mois', scNc: 'NC', scDef: 'Défauts', scCost: 'Coût',
       scNote: 'Par MSN : NC, défauts et coût des produits rattachés au fichier de production. Petit chiffre : écart des 3 derniers mois à la période.',
@@ -286,7 +286,7 @@ function fto2FromTables(ncIn, defIn, ref, disIn) {
       stepCode: 'sous-codes officiels', stepSub: 'sous-catégories', stepRca: 'causes (RCA)', stepCat: 'catégories du Pareto',
       subsTitle: 'Sous-catégories et codes officiels', exTitle: 'Exemples', minorTag: 'mineur', noEx: 'Pas d’exemple sur la période.',
       foot1: 'Source : extraction SAP Skywise, NC créées du {from} au {to}.',
-      foot2: 'NC FTO2 : NC émises à FTO2 sous responsabilité FTO2, hors NC supprimées. Retours clients : NC émises hors FTO2 sous responsabilité FTO2. Les défauts sont classés par cause à partir du texte complet de chaque NC.',
+      foot2: 'NC FTO2 : plant FTO2 ou FT02 (une NC du registre GPS ou de la liste Test aussi, seulement si elle est à ce plant) ; toutes comptent, supprimées comprises. Retours clients : type « NC Retour client » du pipeline avec FTO2 dans la responsabilité. Coût : seulement là où FTO2 est responsable. Les défauts sont classés par cause à partir du texte complet de chaque NC.',
       foot3: 'Les {n} NC sans ligne de défaut lisible (A400M sans texte, NC supprimées…) sont comptées en NC et en coût mais pas en défauts. Les {o} NC dont FTO2 n’est pas responsable comptent comme NC avec un coût de 0 pour FTO2 (leur traitement selon le modèle : {oe}).',
       foot4: 'Semaines de fermeture (moins de 10 défauts) exclues des moyennes hebdomadaires. Défauts mineurs : tyrap, frette, ficelle, capuchon, cerise ou bouchon manquant. Coût : chaque étape au taux de qui la fait (production 123 €/h, qualité 107 €/h, ME 76 €/h ; ingénierie 78,16 €/h), temps du processus estimés par l’équipe ; la valeur des pièces rebutées n’est pas incluse. Coût des défauts câble : coût des NC concernées ; quand une NC contient aussi d’autres défauts, son coût est partagé entre ses défauts.'
     },
@@ -353,11 +353,11 @@ function fto2FromTables(ncIn, defIn, ref, disIn) {
       unit: 'Quality', title: 'FTO2 Non-conformities', period: 'NCs created {from} to {to}',
       minorLabel: 'Minor defects', minorIn: 'Included', minorOut: 'Excluded',
       tabPareto: 'Pareto', tabCost: 'Cost Pareto', tabWeek: 'Weekly Pareto', tabCnq: 'Cost of non-quality', tabClient: 'Customer returns', tabRca: 'Definitions', tabPplan: 'Production',
-      serieSub: 'Every NC raised at FTO2, deleted and not-liable ones included.', serieSubAll: 'Every NC, raised at FTO2 or at other plants (customer returns included).',
+      serieSub: 'Every NC raised at FTO2 (plant FTO2), deleted and not-liable ones included.', serieSubAll: 'Every NC, raised at FTO2 or at other plants (customer returns included).',
       infoBtn: 'How the selection is made', inf_title: 'What each filter removes, in order', inf_out: 'Removed', inf_left: 'Left',
       inf_start: 'NCs from the pipeline', inf_startS: '{a} normal output · {b} missing IDs; the page drops none of them by itself',
       inf_period: 'Period', inf_phase: 'Production type', inf_line: 'Aircraft', inf_src: 'Data source', inf_org: 'Origin (pipeline)', inf_plant: 'FTO2 plant only (plant = FTO2 or FT02)', inf_pick: 'Click on a chart',
-      inf_all: 'all (not applied)', inf_phaseS: 'removes {v}', inf_plantS: 'removes NCs whose plant is not FTO2: {c} customer returns · {o} others{p}{m}', inf_plantM: ', {n} of them from the missing-ID lists',
+      inf_all: 'all (not applied)', inf_phaseS: 'removes {v}', inf_plantS: 'removes NCs whose plant is not FTO2: {c} customer returns · {o} others{p}',
       inf_plantNo: 'off: customer returns and other plants’ NCs stay', inf_end: 'Selection', inf_endS: '{d} defects',
       inf_cost: 'Cost: counted only where FTO2 is liable. {n} NCs of the selection count as NCs with a cost of €0 (their handling in the model: {e}).',
       inf_minor: 'Minor defects {v}: this changes the number of defects, not the number of NCs.', inf_nodef: '{n} NCs of the selection have no readable defect line: counted as NCs and in the cost, not as defects.',
@@ -407,7 +407,7 @@ function fto2FromTables(ncIn, defIn, ref, disIn) {
       nKR: 'NCs per MSN', nKRs: 'NCs ÷ MSN built', ovMore: 'Other lists and charts', cnqMore: 'Other cost charts', parMore: 'Other charts', whereMore: 'Other charts',
       allLines: 'All lines', v2Tgt: 'Target', v2VsTgt: 'vs target', v2Above: 'Above target', v2Below: 'Below target', v2TgtPh: 'Target (placeholder)', v2Ph: 'placeholder',
       v2Ph25: '2025 placeholder (= 2026)', v2Y25b: '2025, same filter', v2Y25c: '2025 at the same date', v2Y25at: '2025 at the same date: {v}', v2TgtCumR: 'Cumulative target (2025 − 25%)', v2StTgtR: 'target for the year (2025 − 25%)', v2StBudR: 'budget for the year (2025 − 25%)', v2StTgtL: 'target for the year, sum of the lines', v2StBudL: 'budget for the year, sum of the lines', v2TgtCumL: 'Cumulative target, line by line', v2BudL: 'Cumulative budget, line by line', v2TgtBar: 'Target', v2BudBar: 'Budget', v2TgtN: '{a} NCs against a target of {t} NCs (sum of the lines)', v2Mix: '2025 rate at the 2026 mix: {v}', v2BudR: 'Pro-rata budget (2025 cost − 25%)', v2TgtR: 'Target: 2025 rate − 25%', v2NoCli25: '2025 without customer returns (not in the 2025 extract)', v2Rate25: '2025: {v} NCs per product delivered', v2Rate25s: '2025 rate', v2BudR2: 'budget', v2MTgt: 'monthly target {v} (placeholder)', v2BudPh: 'Pro-rata budget (placeholder)', v2Y25: '2025', v2Y26: '2026 forecast', v2Flat: 'Flat', 
-      vpFc: 'Done and forecast', vpMsn: 'Per MSN', vpFcK: 'Volumes', vpFcT: 'NCs, defects and cost expected by December, product by product', vpFcS: 'Actual, then the forecast: the period’s volume per MSN × the MSN planned to December.', vpFcH: 'done → end of December', vpDec: 'Expected by end of December', xPartial: 'Running week not drawn (incomplete): {n} NCs', vpOutRow: 'Out of plan', vpNoFc: 'no forecast', vpOut: '{n} NCs whose product is not in the production plan ({p}): no volume, so no rate and no forecast; counted in the total.', dType: 'Cost split by NC type', typeSub: 'NC type, where it was found; “Cable NCs” = NCs of the Cables type; 100% = the cost of the selection.', ty_cab: 'Cable NCs', ty_fin: 'Final inspection', ty_test: 'Test', ty_int: 'In-house', ty_sup: 'Suppliers', ty_oth: 'Other', wlCh_prod: 'Products', wlCh_ac: 'Aircraft', wlCh_st: 'Stations', wlChs_prod: 'Rates, monthly map, precision, forecast and cost, product by product.', wlChs_ac: 'Cost per aircraft and FINs that come back.', wlChs_st: 'Defects by the station where the NC was written.',
+      vpFc: 'Done and forecast', vpMsn: 'Per MSN', vpFcK: 'Volumes', vpFcT: 'NCs, defects and cost expected by December, product by product', vpFcS: 'Actual, then the forecast: the period’s volume per MSN × the MSN planned to December.', vpFcH: 'done → end of December', vpDec: 'Expected by end of December', xPartial: 'Running week not drawn (incomplete): {n} NCs', vpOutRow: 'Out of plan', vpNoFc: 'no forecast', vpOwnPace: 'at its own pace', vpOut: '{n} NCs whose product is not in the production plan ({p}): no volume, so no rate; forecast at their monthly pace; counted in the total.', dType: 'Cost split by NC type', typeSub: 'NC type, where it was found; “Cable NCs” = NCs of the Cables type; 100% = the cost of the selection.', ty_cab: 'Cable NCs', ty_fin: 'Final inspection', ty_test: 'Test', ty_int: 'In-house', ty_sup: 'Suppliers', ty_oth: 'Other', wlCh_prod: 'Products', wlCh_ac: 'Aircraft', wlCh_st: 'Stations', wlChs_prod: 'Rates, monthly map, precision, forecast and cost, product by product.', wlChs_ac: 'Cost per aircraft and FINs that come back.', wlChs_st: 'Defects by the station where the NC was written.',
       v2MonTgt: 'month target {v}', v2Cum: '{v} NCs to date', v2Fc: 'expected', v2TgtShort: 'target', v2Under: 'Month under its target', v2Over: 'Month above its target', v2CumLeg: 'Cumulative NCs', v2TgtCum: 'Cumulative target (placeholder)', v2Summer: 'July and August count as 60% of a month.', v2ObjH: 'Target per line · NCs per MSN', v2ObjC: 'Placeholder targets until the 2025 figures come: 2026 rate minus 25%.', v2PerMsnV: '{v} per MSN', v2StNow: 'NCs since the start of the period', v2StFc: 'expected by end of December', v2StTgt: 'target for the year (placeholder)', v2StCost: 'so far in the period', v2StBud: 'budget for the year (placeholder)', v2QPer: 'Per MSN built: the August shutdown does not weigh.', v2Q25: '2025: defects per product delivered (causes read by the parser); 2026: per MSN built.', v2Avg25: '2025 average (per product delivered)', v2QMonth: 'Monthly average.', v2PerMsn: 'per MSN', v2Ac: '{n} aircraft',
       scVol: 'Volume per month', scTot: 'Total', scRate: 'Per MSN, per month', scRateP: 'Per MSN', scLast3: 'Last 3 months', scNc: 'NCs', scDef: 'Defects', scCost: 'Cost',
       scNote: 'Per MSN: NCs, defects and cost of the products matched to the production file. Small figure: last 3 months against the period.',
@@ -474,7 +474,7 @@ function fto2FromTables(ncIn, defIn, ref, disIn) {
       stepCode: 'official sub-codes', stepSub: 'sub-categories', stepRca: 'root causes (RCA)', stepCat: 'Pareto categories',
       subsTitle: 'Sub-categories and official codes', exTitle: 'Examples', minorTag: 'minor', noEx: 'No example over the period.',
       foot1: 'Source: Skywise SAP extract, NCs created {from} to {to}.',
-      foot2: 'FTO2 NCs: NCs raised at FTO2 that FTO2 is liable for, deleted NCs excluded. Customer returns: NCs raised outside FTO2 that FTO2 is liable for. Defects are classified by root cause from the full text of each NC. NC texts and sub-categories stay in French.',
+      foot2: 'FTO2 NCs: plant FTO2 or FT02 (an NC of the GPS register or the Test list too, only if at that plant); all count, deleted ones included. Customer returns: the pipeline’s “NC Retour client” type with FTO2 in the liability. Cost: only where FTO2 is liable. Defects are classified by root cause from the full text of each NC. NC texts and sub-categories stay in French.',
       foot3: 'The {n} NCs with no readable defect line (A400M with no text, deleted NCs…) are counted as NCs and in the cost but not as defects. The {o} NCs FTO2 is not liable for count as NCs with a cost of 0 for FTO2 (their handling in the model: {oe}).',
       foot4: 'Shutdown weeks (fewer than 10 defects) are left out of weekly averages. Minor defects: a missing tyrap, frette, ficelle, cap, cerise or plug. Cost: each step at the rate of who does it (production 123 €/h, quality 107 €/h, ME 76 €/h; engineering 78.16 €/h), process times estimated by the team; the value of scrapped parts is not included. Cost of cable defects: cost of the NCs concerned; when an NC also has other defects, its cost is shared among its defects.'
     }
@@ -608,15 +608,15 @@ function fto2FromTables(ncIn, defIn, ref, disIn) {
     var el = e.target.closest && e.target.closest('[data-pick]'); if (!el) return;
     var s2 = el.getAttribute('data-pick'), i = s2.indexOf('|'); pickSet(s2.slice(0, i), s2.slice(i + 1));
   });
-  function atHome(n) { var p = String(n[42] || '').trim().toUpperCase(); return p === 'FTO2' || p === 'FT02'; }   // [42] plant; FT02 as in the pipeline's Type_NC_auto
-  function gScope(n) { return !GF.fto2 || atHome(n); }   // FTO2 plant only: the plant column, nothing else
-  // the selection: SEL follows every filter; SER (raised at FTO2) and CLI (customer returns) ignore the plant switch, for the tabs that show both apart
+  function ours(n) { var p = String(n[42] || '').trim().toUpperCase(); return p === 'FTO2' || p === 'FT02'; }   // FTO2's NCs: [42] plant FTO2 / FT02 (as Type_NC_auto); on a GPS / Test list too only if at that plant (Mohammad, 20 Oct)
+  function gScope(n) { return !GF.fto2 || ours(n); }   // FTO2 plant only: the plant column, nothing else
+  // the selection: SEL follows every filter; SER = SEL's FTO2 NCs without the customer returns; CLI = the customer returns, whatever the switch (the tabs that show both apart)
   var SEL_NC = [], SER_NC = [], CLI_NC = [], SEL = {}, SER = {}, CLI = {};
   function ids(a) { var o = {}; a.forEach(function (n) { o[n[0]] = 1; }); return o; }
   function select() {
     if (GF.preset !== 'custom') { var r = presetRange(GF.preset); GF.from = r[0]; GF.to = r[1]; }
     SEL_NC = REP.filter(function (n) { return gNc(n) && gScope(n); });
-    SER_NC = SEL_NC.filter(atHome);
+    SER_NC = SEL_NC.filter(function (n) { return ours(n) && n[23] !== 'client'; });   // FTO2's, without the customer returns (shown apart, never counted twice)
     CLI_NC = REP.filter(function (n) { return n[23] === 'client' && gNc(n); });
     SEL = ids(SEL_NC); SER = ids(SER_NC); CLI = ids(CLI_NC);
   }
@@ -628,7 +628,7 @@ function fto2FromTables(ncIn, defIn, ref, disIn) {
   function isoDay(dt) { return dt.toISOString().slice(0, 10); }
   function isoWeekOf(dt) { var th = new Date(dt); th.setUTCDate(th.getUTCDate() + 3); var y = th.getUTCFullYear(), j4 = new Date(Date.UTC(y, 0, 4)), dow = (j4.getUTCDay() + 6) % 7, m1 = new Date(j4); m1.setUTCDate(j4.getUTCDate() - dow); return y + '-W' + String(Math.floor((dt - m1) / 604800000) + 1).padStart(2, '0'); }
   var WEEKS = (function () {
-    var ws = REP.filter(atHome).map(function (n) { return n[2]; }).filter(function (w) { return w >= D.meta.from.slice(0, 4); }).sort(), out = [];
+    var ws = REP.filter(ours).map(function (n) { return n[2]; }).filter(function (w) { return w >= D.meta.from.slice(0, 4); }).sort(), out = [];
     if (!ws.length) return out;
     var cur = isoMonday(ws[0]), last = isoMonday(ws[ws.length - 1]);
     while (cur <= last) { out.push(isoWeekOf(new Date(cur))); cur.setUTCDate(cur.getUTCDate() + 7); }
@@ -961,7 +961,7 @@ function fto2FromTables(ncIn, defIn, ref, disIn) {
   function lvlOf(lvl, r) { return lvl === 'cat' ? dCat(r) : lvl === 'rca' ? dRca(r) : dCode(r); }
   function lvlGet(r) { return lvlOf(W.lvl, r); }
   function lvlName(lvl, v) { return lvl === 'code' ? codeName(v) : L(v); }
-  var WEEK_ALL = {}; D.defects.forEach(function (r) { if (atHome(NC[r[0]])) WEEK_ALL[r[3]] = (WEEK_ALL[r[3]] || 0) + 1; });  // shutdown weeks: fewer than 10 defects
+  var WEEK_ALL = {}; D.defects.forEach(function (r) { if (ours(NC[r[0]])) WEEK_ALL[r[3]] = (WEEK_ALL[r[3]] || 0) + 1; });  // shutdown weeks: fewer than 10 defects
   var weekly = Board({
     grid: 'wg', chips: 'wc', search: 'wq', count: 'wn', thead: 'wth', tbody: 'wtb', more: 'wm', kicker: 'kmDef',
     rows: function () { var set = toSet(winWeeks()); return wBase().filter(function (r) { return set[r[3]]; }); },
@@ -3767,12 +3767,11 @@ function fto2FromTables(ncIn, defIn, ref, disIn) {
     step(S('inf_line'), !!GF.line, GF.line, function (n) { return n[3] === GF.line; });
     step(S('inf_src'), GF.src !== 'all', selText('gSrc'), function (n) { return GF.src === 'man' ? n[39] !== 'sky' : n[39] === GF.src; });
     step(S('inf_org'), !!GF.org, selText('gOrg'), function (n) { return (n[41] || 'normal') === GF.org; });
-    step(S('inf_plant'), !!GF.fto2, S('fYes'), atHome, function (g) {
+    step(S('inf_plant'), !!GF.fto2, S('fYes'), ours, function (g) {
       var cli = g.filter(function (n) { return n[23] === 'client'; }).length, oth = g.filter(function (n) { return n[23] !== 'client'; }), pl = {};
       oth.forEach(function (n) { var k = n[42] || '—'; pl[k] = (pl[k] || 0) + 1; });
       var top = Object.keys(pl).sort(function (a, b) { return pl[b] - pl[a]; }).slice(0, 4).map(function (k) { return k + ' ' + num(pl[k]); }).join(', ');
-      var miss = oth.filter(function (n) { return n[41] === 'missing_ids'; }).length;
-      return S('inf_plantS', { c: num(cli), o: num(oth.length), p: top ? ' (' + top + ')' : '', m: miss ? S('inf_plantM', { n: num(miss) }) : '' }); }, S('inf_plantNo'));
+      return S('inf_plantS', { c: num(cli), o: num(oth.length), p: top ? ' (' + top + ')' : '' }); }, S('inf_plantNo'));
     step(S('inf_pick'), !!GF.pick, GF.pick ? pickLabel(GF.pick) : '', function (n) { return pickNc(n); });
     var set = ids(cur), nd = D.defects.filter(function (r) { return set[r[0]] && keepMinor(r); }).length;
     var zero = cur.filter(function (n) { return n[5] !== 1; }), zeroE = sumA(zero.map(function (n) { return n[43] || 0; }));
@@ -4356,13 +4355,25 @@ function fto2FromTables(ncIn, defIn, ref, disIn) {
     return { act: a, fc: fc };
   }
   function v2Plan(m) { if (!PD) return null; var i = PD.months.indexOf(m); return i < 0 ? null : sumA(PD.prods.map(function (p) { return PD.prod[p][i] || 0; })); }
-  // monthly sums of f over the selection; forecast months = the period's value per planned MSN × the MSN planned that month (else the last 3 months' mean)
+  // the forecast, the same on every chart (20 Oct): product by product, the product's value per MSN built in the period × its MSN planned
+  // that month, plus the NCs out of the production plan at their own monthly pace (July and August as V2W). A single overall pace over-
+  // forecasts: A320's planned volume grows at the end of the year while A320 has few NCs per unit. null without the real production plan.
+  function v2Fc(f, M) {
+    var E = pSrc(); if (!PD || !PA || !E || E !== D.eqmsn) return null;
+    var byP = {}, out = 0, w = function (m) { return V2W[+m.slice(5, 7)] || 1; };
+    SEL_NC.forEach(function (n) { var p = E.map[String(n[26] || '').toUpperCase()], v = f(n); if (p && PA[p] && PA[p].EQ >= 0.5) byP[p] = (byP[p] || 0) + v; else out += v; });
+    var wA = sumA(M.act.map(w)), pace = wA ? out / wA : 0, res = {};
+    M.fc.forEach(function (m) { var i = PD.months.indexOf(m);
+      res[m] = sumA(Object.keys(byP).map(function (p) { return i < 0 ? 0 : byP[p] / PA[p].EQ * (PD.prod[p][i] || 0); })) + pace * w(m); });
+    return { m: res, out: out, outFc: pace * sumA(M.fc.map(w)) };
+  }
+  // monthly sums of f over the selection; forecast months: v2Fc (else the period's value per planned MSN × the MSN planned that month, else the last 3 months' mean)
   function v2Series(f) {
     var M = v2Months(), by = {}; SEL_NC.forEach(function (n) { var m = n[1].slice(0, 7); by[m] = (by[m] || 0) + f(n); });
     var act = M.act.map(function (m) { return { m: m, v: by[m] || 0 }; }), pa = 0, va = 0;
     act.forEach(function (x) { var p = v2Plan(x.m); if (p) { pa += p; va += x.v; } });
     var l3 = act.slice(-3), m3 = l3.length ? sumA(l3.map(function (x) { return x.v; })) / l3.length : 0;
-    var fc = M.fc.map(function (m) { var p = v2Plan(m); return { m: m, v: pa && p != null ? va / pa * p : m3, f: true }; });
+    var F = v2Fc(f, M), fc = M.fc.map(function (m) { var p = v2Plan(m); return { m: m, v: F ? F.m[m] : pa && p != null ? va / pa * p : m3, f: true }; });
     return { act: act, fc: fc, tot: sumA(act.map(function (x) { return x.v; })), ftot: sumA(fc.map(function (x) { return x.v; })) };
   }
   // 2025 under the same filters (plant switch, phase, line); null when there is no 2025 block, the data-source filter is on (the
@@ -4693,7 +4704,7 @@ function fto2FromTables(ncIn, defIn, ref, disIn) {
   }
   function v2Unplanned() {
     var E = pSrc(), map = (E && E.map) || {}, ids0 = {}, top = {}, o = { n: 0, d: 0, c: 0, top: [] };
-    SEL_NC.forEach(function (n) { if (map[String(n[26] || '').toUpperCase()]) return; ids0[n[0]] = 1; o.n++; o.c += n[12]; var p = n[26] || 'Other'; top[p] = (top[p] || 0) + 1; });
+    SEL_NC.forEach(function (n) { var pp = map[String(n[26] || '').toUpperCase()]; if (pp && (!PA || (PA[pp] && PA[pp].EQ >= 0.5))) return; ids0[n[0]] = 1; o.n++; o.c += n[12]; var p = n[26] || 'Other'; top[p] = (top[p] || 0) + 1; });
     v2Defs().forEach(function (r) { if (ids0[r[0]]) o.d++; });
     o.top = Object.keys(top).sort(function (a, b) { return top[b] - top[a]; }).slice(0, 4).map(function (p) { return prodName(p) + ' ' + num(top[p]); });
     return o;
@@ -4717,11 +4728,12 @@ function fto2FromTables(ncIn, defIn, ref, disIn) {
     });
     os.forEach(function (r, i) { g += tx(lab - 10, top + i * rh + 16, r.o.p, 'ink', 'end'); });
     // two more rows so the columns add up to the selection: the NCs out of the production plan (done only), then the total
-    var u = v2Unplanned(), uv = [u.n, u.d, u.c], yU = top + os.length * rh, yT = yU + (u.n ? rh : 0) + 6;
+    var u = v2Unplanned(), uv = [u.n, u.d, u.c], yU = top + os.length * rh, yT = yU + (u.n ? rh : 0) + 6, M2 = v2Months(), ww = function (m) { return V2W[+m.slice(5, 7)] || 1; };
+    var kf = sumA(M2.act.map(ww)) ? sumA(M2.fc.map(ww)) / sumA(M2.act.map(ww)) : 0, uf = uv.map(function (v) { return v * kf; });   // out of plan: its own monthly pace (v2Fc)
     if (u.n) { g += tx(lab - 10, yU + 16, S('vpOutRow'), 'mu', 'end');
-      ms.forEach(function (m, j) { var x0 = lab + j * (cw + gapC); g += tx(x0, yU + 16, m[2](uv[j]) + ' · ' + S('vpNoFc'), 'mu', null, ' style="font-size:11.5px"'); }); }
+      ms.forEach(function (m, j) { var x0 = lab + j * (cw + gapC); g += tx(x0, yU + 16, m[2](uv[j]) + ' → ' + m[2](uv[j] + uf[j]) + ' · ' + S('vpOwnPace'), 'mu', null, ' style="font-size:11.5px"'); }); }
     g += '<line x1="0" x2="' + W0 + '" y1="' + (yT - 2) + '" y2="' + (yT - 2) + '" stroke="var(--grid)"/>' + tx(lab - 10, yT + 16, S('total'), 'ink b', 'end');
-    ms.forEach(function (m, j) { var x0 = lab + j * (cw + gapC), a = sumA(os.map(function (r) { return r.v[j][0]; })) + uv[j], f = sumA(os.map(function (r) { return r.v[j][1]; }));
+    ms.forEach(function (m, j) { var x0 = lab + j * (cw + gapC), a = sumA(os.map(function (r) { return r.v[j][0]; })) + uv[j], f = sumA(os.map(function (r) { return r.v[j][1]; })) + uf[j];
       g += tx(x0, yT + 16, m[2](a) + ' → ' + m[2](a + f), 'ink b'); });
     H = yT + rh + 4;
     gSet(k, svg(W0, H, g, S('vpFcT')), sw('var(--ink-2)', gx('actLeg')) + '<span><i class="sw" style="background:none;border:1.2px dashed var(--ink-2)"></i>' + esc(S('vpDec')) + '</span>' + v2UnplannedNote());

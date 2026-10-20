@@ -351,7 +351,8 @@ def prepare(x, lab, ref_dir, ops=None, dis=None, say=None):
     nc_ref["long_text"] = nc_ref.notification_number.map(lt)
     # where the NC was raised, only from the pipeline's columns. Every NC of the pipeline's selection counts (deleted, supplier
     # and not-liable ones included, decided 20 Oct); the cost is FTO2's only where FTO2 is liable.
-    #   serie  = plant FTO2 or FT02 (the pipeline's own plant test, Type_NC_auto)
+    #   serie  = plant FTO2 or FT02 (the pipeline's own plant test, Type_NC_auto); an NC of the GPS register or the Test list is
+    #            FTO2's only when it is at that plant (Mohammad, 20 Oct)
     #   client = customer return (customer_return above)
     #   autre  = the rest: raised at another plant, not a customer return
     home = nc_ref["plant"].fillna("").astype(str).str.strip().str.upper().isin(HOME_PLANTS)
