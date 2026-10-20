@@ -1,0 +1,1148 @@
+{
+  "document": {
+    "upgradeVersion": 35,
+    "queries": {},
+    "partials": {},
+    "globalPageId": "7550fc00-2d95-440a-aab4-45e3d68a233a",
+    "routes": {},
+    "showShellSidebarInViewMode": true,
+    "projectScopeEnabled": false,
+    "pages": {
+      "7550fc00-2d95-440a-aab4-45e3d68a233a": {
+        "partials": {},
+        "queries": {},
+        "model": {
+          "canvas": {
+            "children": []
+          },
+          "foundryFunctionInfos": [],
+          "objectContexts": [],
+          "objectSets": [],
+          "functionInfos": [],
+          "variables": {},
+          "events": {},
+          "folderGroups": {}
+        }
+      }
+    },
+    "isTitaniumModeEnabled": false,
+    "showActionsMenuInViewMode": true,
+    "model": {
+      "canvas": {
+        "children": [
+          {
+            "children": [
+              {
+                "id": "w_text_hearder",
+                "layout": {
+                  "autoHeight": false,
+                  "height": 111,
+                  "width": 800,
+                  "x": 0,
+                  "y": 0
+                },
+                "locked": false,
+                "model": {
+                  "clickEvents": [],
+                  "markupLanguage": "html",
+                  "selectedValues": [],
+                  "selectionRequired": false,
+                  "selectionType": "none",
+                  "text": "<section>\n\t<header class=\"ds-header-app\">\n       <div class=\"ds-header-app__brand\">\n         <a href=\"#\" class=\"ds-header-app__logo\">\n           <img width=\"160\" src=\"https://core.skywise.com/blobster/api/salt/ri.blobster.main.image.c2c82fba-32ef-4cb1-938b-2ee2a75db676\">\n         </a>\n\t\n\t\n",
+                  "tooltipsEnabled": false
+                },
+                "movable": true,
+                "resizable": true,
+                "styles": {
+                  "css": "/*\n * Copyright 2015-present Palantir Technologies, Inc. All rights reserved.\n */\n___id-placeholder___ {\n  width: 100%;\n  Height: 10%;\n}\n",
+                  "less": "width: 100%;\nHeight:10%;",
+                  "slateCss": {
+                    "alignSelf": "flex-start",
+                    "height": {
+                      "rawValue": "111px",
+                      "suffix": "px",
+                      "value": 111
+                    },
+                    "left": {
+                      "rawValue": "0px",
+                      "suffix": "px",
+                      "value": 0
+                    },
+                    "top": {
+                      "rawValue": "0px",
+                      "suffix": "px",
+                      "value": 0
+                    },
+                    "width": {
+                      "rawValue": "800px",
+                      "suffix": "px",
+                      "value": 800
+                    }
+                  }
+                },
+                "template": {
+                  "clickEvents": [],
+                  "markupLanguage": "html",
+                  "selectedValues": [],
+                  "selectionRequired": false,
+                  "selectionType": "none",
+                  "text": "<section>\n\t<header class=\"ds-header-app\">\n       <div class=\"ds-header-app__brand\">\n         <a href=\"#\" class=\"ds-header-app__logo\">\n           <img width=\"160\" src=\"https://core.skywise.com/blobster/api/salt/ri.blobster.main.image.c2c82fba-32ef-4cb1-938b-2ee2a75db676\">\n         </a>\n\t\n\t\n",
+                  "tooltipsEnabled": false
+                },
+                "type": "sl-text",
+                "upgradeVersion": 10
+              },
+              {
+                "id": "w_text_header_title",
+                "layout": {
+                  "autoHeight": false,
+                  "height": 90,
+                  "width": 925,
+                  "x": 0,
+                  "y": 7.984375
+                },
+                "locked": false,
+                "model": {
+                  "clickEvents": [],
+                  "markupLanguage": "markdown",
+                  "selectedValues": [],
+                  "selectionRequired": false,
+                  "selectionType": "none",
+                  "tooltipsEnabled": false
+                },
+                "movable": true,
+                "resizable": true,
+                "styles": {
+                  "css": "/*\n * Copyright 2015-present Palantir Technologies, Inc. All rights reserved.\n */\n___id-placeholder___ {\n  color: white !important;\n  MARGIN-left: 25%;\n  Height: 10% !important;\n  WIDTH: 50%;\n}\n",
+                  "less": "color : white !important;\nMARGIN-left:25%;\nHeight:10% !important;\nWIDTH:50%;",
+                  "slateCss": {
+                    "height": {
+                      "rawValue": "90px",
+                      "suffix": "px",
+                      "value": 90
+                    },
+                    "left": {
+                      "rawValue": "0px",
+                      "suffix": "px",
+                      "value": 0
+                    },
+                    "top": {
+                      "rawValue": "7.984375px",
+                      "suffix": "px",
+                      "value": 7.984375
+                    },
+                    "width": {
+                      "rawValue": "925px",
+                      "suffix": "px",
+                      "value": 925
+                    }
+                  }
+                },
+                "template": {
+                  "clickEvents": [],
+                  "markupLanguage": "markdown",
+                  "selectedValues": [],
+                  "selectionRequired": false,
+                  "selectionType": "none",
+                  "text": "<center><h1>\n\t\nPole Elec Quality HUB </h1>\n\n<center>{{user.firstName}}, bienvenue sur le dashboard de la qualité Pole Elec",
+                  "tooltipsEnabled": false
+                },
+                "type": "sl-text",
+                "upgradeVersion": 10
+              },
+              {
+                "children": [
+                  {
+                    "children": [],
+                    "id": "w_container_PICTURE",
+                    "layout": {
+                      "height": 886,
+                      "width": 407.672,
+                      "x": 3,
+                      "y": 2
+                    },
+                    "locked": false,
+                    "model": {
+                      "flex": false,
+                      "lazyRenderingEnabled": false,
+                      "maximizeOptions": {
+                        "enabled": false,
+                        "minimizeOnBackdropClick": false,
+                        "minimizeOnEscapeKey": false
+                      },
+                      "repeating": false,
+                      "scrollProperties": {
+                        "left": 0,
+                        "top": 0
+                      },
+                      "scrollingEnabled": false,
+                      "selectedTabIndex": 0,
+                      "sl": {
+                        "spinnersConsolidatedTimeout": 2000
+                      },
+                      "splitDirection": null,
+                      "splitMovableInConsumerMode": false,
+                      "splitPanel": false,
+                      "tabTitles": [],
+                      "titlesEnabled": false
+                    },
+                    "movable": true,
+                    "resizable": true,
+                    "styles": {
+                      "css": "/*\n * Copyright 2015-present Palantir Technologies, Inc. All rights reserved.\n */\n___id-placeholder___ {\n  background-image: url('https://core.skywise.com/blobster/api/salt/ri.blobster.main.image.ceac6b4c-80da-450b-a269-298d794022fa');\n  background-size: cover;\n  /* L’image couvre tout le container */\n  background-position: center;\n  /* L’image est centrée */\n  background-repeat: no-repeat;\n  /* Pas de répétition */\n  height: 100%;\n  width: 49%;\n}\n",
+                      "less": "background-image: url('https://core.skywise.com/blobster/api/salt/ri.blobster.main.image.ceac6b4c-80da-450b-a269-298d794022fa');\n    background-size: cover;         /* L’image couvre tout le container */\n    background-position: center;    /* L’image est centrée */\n    background-repeat: no-repeat;   /* Pas de répétition */\nheight: 100%;\nwidth: 49%",
+                      "slateCss": {
+                        "alignSelf": "flex-start",
+                        "height": {
+                          "rawValue": "886px",
+                          "suffix": "px",
+                          "value": 886
+                        },
+                        "left": {
+                          "rawValue": "3px",
+                          "suffix": "px",
+                          "value": 3
+                        },
+                        "top": {
+                          "rawValue": "2px",
+                          "suffix": "px",
+                          "value": 2
+                        },
+                        "width": {
+                          "rawValue": "407.672px",
+                          "suffix": "px",
+                          "value": 407.672
+                        }
+                      }
+                    },
+                    "template": {
+                      "flex": false,
+                      "lazyRenderingEnabled": false,
+                      "maximizeOptions": {
+                        "enabled": false,
+                        "minimizeOnBackdropClick": false,
+                        "minimizeOnEscapeKey": false
+                      },
+                      "repeating": false,
+                      "scrollingEnabled": false,
+                      "selectedTabIndex": 0,
+                      "sl": {
+                        "spinnersConsolidatedTimeout": 2000
+                      },
+                      "splitDirection": null,
+                      "splitMovableInConsumerMode": false,
+                      "splitPanel": false,
+                      "tabTitles": [],
+                      "titlesEnabled": false
+                    },
+                    "type": "sl-app-container",
+                    "upgradeVersion": 12
+                  },
+                  {
+                    "children": [
+                      {
+                        "children": [
+                          {
+                            "id": "w_text_2",
+                            "layout": {
+                              "autoHeight": false,
+                              "height": 262,
+                              "width": 1305.98,
+                              "x": 0,
+                              "y": 123.00347900390625
+                            },
+                            "locked": false,
+                            "model": {
+                              "clickEvents": [],
+                              "markupLanguage": "html",
+                              "selectedValues": [],
+                              "selectionRequired": false,
+                              "selectionType": "none",
+                              "sl": {
+                                "cssClasses": ""
+                              },
+                              "text": "<div class=\"responsive-buttons-grid\">\n  <!-- 1. PPS -->\n  <a href=\"https://drive.google.com/drive/folders/1XOzZbgKoalRyJSpLXolOK-w0mou9FcQQ\" target=\"_blank\" class=\"round-button-wrapper btn-green\">\n    <button class=\"custom-round-button pt-icon-timeline-line-chart\"></button>\n    <div class=\"button-label\">PPS</div>\n  </a>\n\n  <!-- 2. SERIE FOLLOW UP -->\n  <a href=\"https://docs.google.com/spreadsheets/d/1ZiR6qiyPivrTtRxDHg43n0SApw3LIw15SGXKZb51e4c/edit?gid=0#gid=0\" target=\"_blank\" class=\"round-button-wrapper btn-purple\">\n    <button class=\"custom-round-button pt-icon-th\"></button>\n    <div class=\"button-label\" style=\"white-space: normal;\">SERIE FOLLOW UP</div>\n  </a>\n\n  <!-- 3. FOD -->\n  <a href=\"https://drive.google.com/drive/folders/1Pc0LTYiEtla2-yroxx3rk49TaeUyyb8j\" target=\"_blank\" class=\"round-button-wrapper btn-redfod\">\n    <button class=\"custom-round-button pt-icon-disable\"></button>\n    <div class=\"button-label\">FOD</div>\n  </a>\n\n  <!-- 4. ALERT QUALITY -->\n  <a href=\"https://drive.google.com/drive/folders/1jhbOjOa39LHXJM7v8tTE-_2Mv_f4RSuG\" target=\"_blank\" class=\"round-button-wrapper btn-red\">\n    <button class=\"custom-round-button pt-icon-warning-sign\"></button>\n    <div class=\"button-label\" style=\"white-space: normal;\">ALERT QUALITY</div>\n  </a>\n\n  <!-- 5. NC DASHBOARD -->\n  <a href=\"https://core.skywise.com/workspace/foundry-slate/app/ttttteqwffadsdasadsad/home\" target=\"_blank\" class=\"round-button-wrapper btn-blue\">\n    <button class=\"custom-round-button pt-icon-timeline-bar-chart\"></button>\n    <div class=\"button-label\" style=\"white-space: normal;\">NC DASHBOARD</div>\n  </a>\n\n  <!-- 6. NC WRITING TOOL -->\n  <a href=\"https://core.skywise.com/workspace/code-workspaces/ri.foundry-container-service.main.container.fbafad4a-153e-476b-a137-69793a2112e3\" target=\"_blank\" class=\"round-button-wrapper btn-cyan\">\n    <button class=\"custom-round-button pt-icon-edit\"></button>\n    <div class=\"button-label\" style=\"white-space: normal;\">NC WRITING</div>\n  </a>\n\n  <!-- 7. CPB -->\n  <a href=\"https://drive.google.com/drive/folders/1L9W2W8j5fqVKlQuw7skTLHCQ2S9oHP0K\" target=\"_blank\" class=\"round-button-wrapper btn-waterfall\">\n    <button class=\"custom-round-button pt-icon-folder-open\"></button>\n    <div class=\"button-label\">CPB</div>\n  </a>\n\n  <!-- 8. PROJETS ET AMELIORATION -->\n  <a href=\"https://drive.google.com/drive/folders/1N-L9s0Y1SpDH0I0hNf145ZOVnRkdxNrd\" target=\"_blank\" class=\"round-button-wrapper\">\n    <button class=\"custom-round-button pt-icon-trending-up\" style=\"color: #00B3A4 !important; background-color: #FFFFFF !important;\"></button>\n    <div class=\"button-label\" style=\"white-space: normal;\">PROJETS &<br>AMELIORATION</div>\n  </a>\n</div>",
+                              "tooltipsEnabled": false
+                            },
+                            "movable": true,
+                            "resizable": true,
+                            "styles": {
+                              "css": "/*\n * Copyright 2015-present Palantir Technologies, Inc. All rights reserved.\n */\n___id-placeholder___ {\n  WIDTH: 100%;\n  height: 100%;\n}\n",
+                              "less": "WIDTH: 100%;\nheight:100%;",
+                              "slateCss": {
+                                "alignSelf": "center",
+                                "flexBasis": "auto",
+                                "flexGrow": 0,
+                                "flexShrink": 0,
+                                "height": {
+                                  "rawValue": "262px",
+                                  "suffix": "px",
+                                  "value": 262
+                                },
+                                "left": {
+                                  "rawValue": "0px",
+                                  "suffix": "px",
+                                  "value": 0
+                                },
+                                "position": "static",
+                                "top": {
+                                  "rawValue": "123.00347900390625px",
+                                  "suffix": "px",
+                                  "value": 123.00347900390625
+                                },
+                                "width": {
+                                  "rawValue": "1305.98px",
+                                  "suffix": "px",
+                                  "value": 1305.98
+                                }
+                              }
+                            },
+                            "template": {
+                              "clickEvents": [],
+                              "markupLanguage": "html",
+                              "selectedValues": [],
+                              "selectionRequired": false,
+                              "selectionType": "none",
+                              "sl": {
+                                "cssClasses": ""
+                              },
+                              "text": "<div class=\"responsive-buttons-grid\">\n  <!-- 1. PPS -->\n  <a href=\"https://drive.google.com/drive/folders/1XOzZbgKoalRyJSpLXolOK-w0mou9FcQQ\" target=\"_blank\" class=\"round-button-wrapper btn-green\">\n    <button class=\"custom-round-button pt-icon-timeline-line-chart\"></button>\n    <div class=\"button-label\">PPS</div>\n  </a>\n\n  <!-- 2. SERIE FOLLOW UP -->\n  <a href=\"https://docs.google.com/spreadsheets/d/1ZiR6qiyPivrTtRxDHg43n0SApw3LIw15SGXKZb51e4c/edit?gid=0#gid=0\" target=\"_blank\" class=\"round-button-wrapper btn-purple\">\n    <button class=\"custom-round-button pt-icon-th\"></button>\n    <div class=\"button-label\" style=\"white-space: normal;\">SERIE FOLLOW UP</div>\n  </a>\n\n  <!-- 3. FOD -->\n  <a href=\"https://drive.google.com/drive/folders/1Pc0LTYiEtla2-yroxx3rk49TaeUyyb8j\" target=\"_blank\" class=\"round-button-wrapper btn-redfod\">\n    <button class=\"custom-round-button pt-icon-disable\"></button>\n    <div class=\"button-label\">FOD</div>\n  </a>\n\n  <!-- 4. ALERT QUALITY -->\n  <a href=\"https://drive.google.com/drive/folders/1jhbOjOa39LHXJM7v8tTE-_2Mv_f4RSuG\" target=\"_blank\" class=\"round-button-wrapper btn-red\">\n    <button class=\"custom-round-button pt-icon-warning-sign\"></button>\n    <div class=\"button-label\" style=\"white-space: normal;\">ALERT QUALITY</div>\n  </a>\n\n  <!-- 5. NC DASHBOARD -->\n  <a href=\"https://core.skywise.com/workspace/foundry-slate/app/ttttteqwffadsdasadsad/home\" target=\"_blank\" class=\"round-button-wrapper btn-blue\">\n    <button class=\"custom-round-button pt-icon-timeline-bar-chart\"></button>\n    <div class=\"button-label\" style=\"white-space: normal;\">NC DASHBOARD</div>\n  </a>\n\n  <!-- 6. NC WRITING TOOL -->\n  <a href=\"https://core.skywise.com/workspace/code-workspaces/ri.foundry-container-service.main.container.fbafad4a-153e-476b-a137-69793a2112e3\" target=\"_blank\" class=\"round-button-wrapper btn-cyan\">\n    <button class=\"custom-round-button pt-icon-edit\"></button>\n    <div class=\"button-label\" style=\"white-space: normal;\">NC WRITING</div>\n  </a>\n\n  <!-- 7. CPB -->\n  <a href=\"https://drive.google.com/drive/folders/1L9W2W8j5fqVKlQuw7skTLHCQ2S9oHP0K\" target=\"_blank\" class=\"round-button-wrapper btn-waterfall\">\n    <button class=\"custom-round-button pt-icon-folder-open\"></button>\n    <div class=\"button-label\">CPB</div>\n  </a>\n\n  <!-- 8. PROJETS ET AMELIORATION -->\n  <a href=\"https://drive.google.com/drive/folders/1N-L9s0Y1SpDH0I0hNf145ZOVnRkdxNrd\" target=\"_blank\" class=\"round-button-wrapper\">\n    <button class=\"custom-round-button pt-icon-trending-up\" style=\"color: #00B3A4 !important; background-color: #FFFFFF !important;\"></button>\n    <div class=\"button-label\" style=\"white-space: normal;\">PROJETS &<br>AMELIORATION</div>\n  </a>\n</div>",
+                              "tooltipsEnabled": false
+                            },
+                            "type": "sl-text",
+                            "upgradeVersion": 10
+                          }
+                        ],
+                        "id": "w_container_apps1",
+                        "layout": {
+                          "height": 573,
+                          "width": 800,
+                          "x": 0,
+                          "y": 1.000007629395
+                        },
+                        "locked": false,
+                        "model": {
+                          "flex": true,
+                          "flexOptions": {
+                            "flexDirection": "column",
+                            "flexWrap": "nowrap",
+                            "justifyContent": "center"
+                          },
+                          "lazyRenderingEnabled": false,
+                          "maximizeOptions": {
+                            "enabled": false,
+                            "minimizeOnBackdropClick": false,
+                            "minimizeOnEscapeKey": false
+                          },
+                          "repeating": false,
+                          "scrollProperties": {
+                            "left": 0,
+                            "top": 0
+                          },
+                          "scrollingEnabled": false,
+                          "selectedTabIndex": 0,
+                          "sl": {
+                            "cssClasses": "",
+                            "spinnersConsolidatedTimeout": 2000
+                          },
+                          "splitDirection": null,
+                          "splitMovableInConsumerMode": false,
+                          "splitPanel": false,
+                          "tabTitles": [],
+                          "titlesEnabled": false
+                        },
+                        "movable": true,
+                        "resizable": true,
+                        "styles": {
+                          "css": "/*\n * Copyright 2015-present Palantir Technologies, Inc. All rights reserved.\n */\n___id-placeholder___ {\n  display: flex;\n  flex-direction: column;\n  border-radius: 16px;\n  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);\n  background: rgba(255, 255, 255, 0.7);\n  backdrop-filter: blur(4px);\n  padding: 24px;\n  overflow: auto;\n  /* Permet le scroll si le contenu déborde */\n  min-height: 0;\n  /* Important pour le flexbox */\n  border: 1px solid rgba(255, 255, 255, 0.3);\n  box-sizing: border-box;\n  /* Pour éviter les débordements liés au padding */\n  justify-content: flex-start;\n  /* Le contenu commence en haut */\n  align-items: center;\n  HEIGHT: 63%;\n  width: 49%;\n  margin-left: 50%;\n}\n",
+                          "less": "display: flex;\nflex-direction: column;\nborder-radius: 16px;\nbox-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);\nbackground: rgba(255, 255, 255, 0.7);\nbackdrop-filter: blur(4px);\npadding: 24px;\noverflow: auto;           /* Permet le scroll si le contenu déborde */\nmin-height: 0;            /* Important pour le flexbox */\n\nborder: 1px solid rgba(255,255,255,0.3);\nbox-sizing: border-box;   /* Pour éviter les débordements liés au padding */\njustify-content: flex-start; /* Le contenu commence en haut */\nalign-items: center; \nHEIGHT: 63%;\nwidth:49%;\nmargin-left:50%",
+                          "slateCss": {
+                            "alignSelf": "flex-start",
+                            "flexBasis": "auto",
+                            "flexGrow": 0,
+                            "flexShrink": 0,
+                            "height": {
+                              "rawValue": "573px",
+                              "suffix": "px",
+                              "value": 573
+                            },
+                            "left": {
+                              "rawValue": "0px",
+                              "suffix": "px",
+                              "value": 0
+                            },
+                            "position": "static",
+                            "top": {
+                              "rawValue": "1.000007629395px",
+                              "suffix": "px",
+                              "value": 1.000007629395
+                            },
+                            "width": {
+                              "rawValue": "800px",
+                              "suffix": "px",
+                              "value": 800
+                            }
+                          }
+                        },
+                        "template": {
+                          "flex": true,
+                          "flexOptions": {
+                            "flexDirection": "column",
+                            "flexWrap": "nowrap",
+                            "justifyContent": "center"
+                          },
+                          "lazyRenderingEnabled": false,
+                          "maximizeOptions": {
+                            "enabled": false,
+                            "minimizeOnBackdropClick": false,
+                            "minimizeOnEscapeKey": false
+                          },
+                          "repeating": false,
+                          "scrollingEnabled": false,
+                          "selectedTabIndex": 0,
+                          "sl": {
+                            "cssClasses": "",
+                            "spinnersConsolidatedTimeout": 2000
+                          },
+                          "splitDirection": null,
+                          "splitMovableInConsumerMode": false,
+                          "splitPanel": false,
+                          "tabTitles": [],
+                          "titlesEnabled": false
+                        },
+                        "type": "sl-app-container",
+                        "upgradeVersion": 12
+                      },
+                      {
+                        "children": [
+                          {
+                            "children": [
+                              {
+                                "id": "w_text_3",
+                                "layout": {
+                                  "autoHeight": false,
+                                  "height": 150,
+                                  "width": 1200,
+                                  "x": 64.8785400390625,
+                                  "y": 50.8680419921875
+                                },
+                                "locked": false,
+                                "model": {
+                                  "clickEvents": [],
+                                  "markupLanguage": "html",
+                                  "selectedValues": [],
+                                  "selectionRequired": false,
+                                  "selectionType": "none",
+                                  "text": "<div class=\"responsive-buttons-row\" style=\"display: flex; flex-direction: row; justify-content: space-around; align-items: flex-start; width: 100%; height: auto; margin: 0; padding: 0; box-sizing: border-box; transform: scale(0.88); transform-origin: top center;\">\n  \n  <div class=\"round-button-wrapper btn-blue_era\" style=\"display: flex; flex-direction: column; align-items: center; width: 35%; max-width: 140px; text-align: center;\">\n    <a href=\"https://core.skywise.com/workspace/module/view/latest/ri.workshop.main.module.fe9aa8c0-22d4-4533-a04e-527c485347d1/similarityexplorer\" target=\"_blank\" class=\"nc-link\" style=\"text-decoration: none; display: flex; flex-direction: column; align-items: center; width: 100%;\">\n      <button class=\"custom-round-button pt-icon-trending-down\" style=\"flex-shrink: 0; margin-bottom: 8px;\"></button>\n      <div class=\"button-label\" style=\"color: #333; font-size: 13px; font-weight: 600; line-height: 1.2; white-space: normal; width: 100%; margin-bottom: 8px;\">NC Eradication</div>\n    </a>\n    <a href=\"https://sites.google.com/airbus.com/faq-nc-eradication/accueil\" target=\"_blank\" class=\"user-guide-link\" style=\"text-decoration: none;\">\n      <button type=\"button\" class=\"user-guide-btn\" style=\"padding: 4px 8px; font-size: 11px; white-space: nowrap;\">\n        <span>&#128214;</span> User Guide\n      </button>\n    </a>\n  </div>\n\n</div>",
+                                  "tooltipsEnabled": false
+                                },
+                                "movable": true,
+                                "resizable": true,
+                                "styles": {
+                                  "css": "/*\n * Copyright 2015-present Palantir Technologies, Inc. All rights reserved.\n */\n___id-placeholder___ {\n  WIDTH: 90%;\n  height: 100%;\n}\n",
+                                  "less": "WIDTH:90%;\nheight:100%;",
+                                  "slateCss": {
+                                    "alignSelf": "flex-start",
+                                    "flexBasis": "auto",
+                                    "flexGrow": 0,
+                                    "height": {
+                                      "rawValue": "150px",
+                                      "suffix": "px",
+                                      "value": 150
+                                    },
+                                    "left": {
+                                      "rawValue": "64.8785400390625px",
+                                      "suffix": "px",
+                                      "value": 64.8785400390625
+                                    },
+                                    "position": "static",
+                                    "top": {
+                                      "rawValue": "50.8680419921875px",
+                                      "suffix": "px",
+                                      "value": 50.8680419921875
+                                    },
+                                    "width": {
+                                      "rawValue": "1200px",
+                                      "suffix": "px",
+                                      "value": 1200
+                                    }
+                                  }
+                                },
+                                "template": {
+                                  "clickEvents": [],
+                                  "markupLanguage": "html",
+                                  "selectedValues": [],
+                                  "selectionRequired": false,
+                                  "selectionType": "none",
+                                  "text": "<div class=\"responsive-buttons-row\" style=\"display: flex; flex-direction: row; justify-content: space-around; align-items: flex-start; width: 100%; height: auto; margin: 0; padding: 0; box-sizing: border-box; transform: scale(0.88); transform-origin: top center;\">\n  \n  <div class=\"round-button-wrapper btn-blue_era\" style=\"display: flex; flex-direction: column; align-items: center; width: 35%; max-width: 140px; text-align: center;\">\n    <a href=\"https://core.skywise.com/workspace/module/view/latest/ri.workshop.main.module.fe9aa8c0-22d4-4533-a04e-527c485347d1/similarityexplorer\" target=\"_blank\" class=\"nc-link\" style=\"text-decoration: none; display: flex; flex-direction: column; align-items: center; width: 100%;\">\n      <button class=\"custom-round-button pt-icon-trending-down\" style=\"flex-shrink: 0; margin-bottom: 8px;\"></button>\n      <div class=\"button-label\" style=\"color: #333; font-size: 13px; font-weight: 600; line-height: 1.2; white-space: normal; width: 100%; margin-bottom: 8px;\">NC Eradication</div>\n    </a>\n    <a href=\"https://sites.google.com/airbus.com/faq-nc-eradication/accueil\" target=\"_blank\" class=\"user-guide-link\" style=\"text-decoration: none;\">\n      <button type=\"button\" class=\"user-guide-btn\" style=\"padding: 4px 8px; font-size: 11px; white-space: nowrap;\">\n        <span>&#128214;</span> User Guide\n      </button>\n    </a>\n  </div>\n\n</div>",
+                                  "tooltipsEnabled": false
+                                },
+                                "type": "sl-text",
+                                "upgradeVersion": 10
+                              }
+                            ],
+                            "id": "w_container_4",
+                            "layout": {
+                              "height": 0,
+                              "width": 0,
+                              "x": 409.9756774902344,
+                              "y": 0
+                            },
+                            "locked": true,
+                            "model": {
+                              "flex": true,
+                              "flexOptions": {
+                                "flexDirection": "row",
+                                "flexWrap": "wrap",
+                                "justifyContent": "flex-start"
+                              },
+                              "lazyRenderingEnabled": false,
+                              "maximizeOptions": {
+                                "enabled": false,
+                                "minimizeOnBackdropClick": false,
+                                "minimizeOnEscapeKey": false
+                              },
+                              "repeating": false,
+                              "scrollProperties": {
+                                "left": 0,
+                                "top": 0
+                              },
+                              "scrollingEnabled": false,
+                              "selectedTabIndex": 0,
+                              "sl": {
+                                "spinnersConsolidatedTimeout": 2000
+                              },
+                              "splitDirection": null,
+                              "splitMovableInConsumerMode": false,
+                              "splitPanel": true,
+                              "tabTitles": [],
+                              "titlesEnabled": false
+                            },
+                            "movable": false,
+                            "resizable": false,
+                            "styles": {
+                              "css": "/*\n * Copyright 2015-present Palantir Technologies, Inc. All rights reserved.\n */\n",
+                              "less": "",
+                              "slateCss": {
+                                "height": {
+                                  "rawValue": "100%",
+                                  "suffix": "%",
+                                  "value": 100
+                                },
+                                "left": {
+                                  "rawValue": "0px",
+                                  "suffix": "px",
+                                  "value": 0
+                                },
+                                "top": {
+                                  "rawValue": "0px",
+                                  "suffix": "px",
+                                  "value": 0
+                                },
+                                "width": {
+                                  "rawValue": "100%",
+                                  "suffix": "%",
+                                  "value": 100
+                                }
+                              }
+                            },
+                            "template": {
+                              "flex": true,
+                              "flexOptions": {
+                                "flexDirection": "row",
+                                "flexWrap": "wrap",
+                                "justifyContent": "flex-start"
+                              },
+                              "lazyRenderingEnabled": false,
+                              "maximizeOptions": {
+                                "enabled": false,
+                                "minimizeOnBackdropClick": false,
+                                "minimizeOnEscapeKey": false
+                              },
+                              "repeating": false,
+                              "scrollingEnabled": false,
+                              "selectedTabIndex": 0,
+                              "sl": {
+                                "spinnersConsolidatedTimeout": 2000
+                              },
+                              "splitDirection": null,
+                              "splitMovableInConsumerMode": false,
+                              "splitPanel": true,
+                              "tabTitles": [],
+                              "titlesEnabled": false
+                            },
+                            "type": "sl-app-container",
+                            "upgradeVersion": 12
+                          },
+                          {
+                            "children": [
+                              {
+                                "id": "w_text_1",
+                                "layout": {
+                                  "autoHeight": false,
+                                  "height": 150,
+                                  "width": 1200,
+                                  "x": 28.5308837890625,
+                                  "y": 60.8680419921875
+                                },
+                                "locked": false,
+                                "model": {
+                                  "clickEvents": [],
+                                  "markupLanguage": "html",
+                                  "selectedValues": [],
+                                  "selectionRequired": false,
+                                  "selectionType": "none",
+                                  "text": "<div class=\"responsive-buttons-row\">\n  <!-- Form -->\n  <a href=\"https://demat.intra.corp/DEMAT/#/\" class=\"round-button-wrapper btn-green\" target=\"_blank\" rel=\"noopener\">\n    <button class=\"custom-round-button pt-icon-form\"></button>\n    <div class=\"button-label\">Form</div>\n  </a>\n  <!-- MyQA -->\n  <a href=\"https://sites.google.com/airbus.com/myqa-tool-fr/accueil\" class=\"round-button-wrapper btn-cyan\" target=\"_blank\" rel=\"noopener\">\n    <button class=\"custom-round-button\" style=\"padding: 0; overflow: hidden;\">\n      <img \n        src=\"https://core.skywise.com/blobster/api/salt/ri.blobster.main.image.3f480df9-03f9-477c-9b16-53b75e970ec3\"\n        alt=\"MyQA\"\n        style=\"width: 200%; height: 200%; border-radius: 50%; object-fit: cover; display: block;\"\n      />\n    </button>\n    <div class=\"button-label\">MyQA</div>\n  </a>\n</div>",
+                                  "tooltipsEnabled": false
+                                },
+                                "movable": true,
+                                "resizable": true,
+                                "styles": {
+                                  "css": "/*\n * Copyright 2015-present Palantir Technologies, Inc. All rights reserved.\n */\n___id-placeholder___ {\n  WIDTH: 90%;\n  height: 100%;\n}\n",
+                                  "less": "WIDTH:90%;\nheight:100%;",
+                                  "slateCss": {
+                                    "height": {
+                                      "rawValue": "150px",
+                                      "suffix": "px",
+                                      "value": 150
+                                    },
+                                    "left": {
+                                      "rawValue": "28.5308837890625px",
+                                      "suffix": "px",
+                                      "value": 28.5308837890625
+                                    },
+                                    "top": {
+                                      "rawValue": "60.8680419921875px",
+                                      "suffix": "px",
+                                      "value": 60.8680419921875
+                                    },
+                                    "width": {
+                                      "rawValue": "1200px",
+                                      "suffix": "px",
+                                      "value": 1200
+                                    }
+                                  }
+                                },
+                                "template": {
+                                  "clickEvents": [],
+                                  "markupLanguage": "html",
+                                  "selectedValues": [],
+                                  "selectionRequired": false,
+                                  "selectionType": "none",
+                                  "text": "<div class=\"responsive-buttons-row\">\n  <!-- Form -->\n  <a href=\"https://demat.intra.corp/DEMAT/#/\" class=\"round-button-wrapper btn-green\" target=\"_blank\" rel=\"noopener\">\n    <button class=\"custom-round-button pt-icon-form\"></button>\n    <div class=\"button-label\">Form</div>\n  </a>\n  <!-- MyQA -->\n  <a href=\"https://sites.google.com/airbus.com/myqa-tool-fr/accueil\" class=\"round-button-wrapper btn-cyan\" target=\"_blank\" rel=\"noopener\">\n    <button class=\"custom-round-button\" style=\"padding: 0; overflow: hidden;\">\n      <img \n        src=\"https://core.skywise.com/blobster/api/salt/ri.blobster.main.image.3f480df9-03f9-477c-9b16-53b75e970ec3\"\n        alt=\"MyQA\"\n        style=\"width: 200%; height: 200%; border-radius: 50%; object-fit: cover; display: block;\"\n      />\n    </button>\n    <div class=\"button-label\">MyQA</div>\n  </a>\n</div>",
+                                  "tooltipsEnabled": false
+                                },
+                                "type": "sl-text",
+                                "upgradeVersion": 10
+                              }
+                            ],
+                            "id": "w_container_5",
+                            "layout": {
+                              "height": 0,
+                              "width": 0,
+                              "x": 409.9756774902344,
+                              "y": 0
+                            },
+                            "locked": true,
+                            "model": {
+                              "flex": true,
+                              "flexOptions": {
+                                "flexDirection": "column",
+                                "flexWrap": "wrap",
+                                "justifyContent": "flex-start"
+                              },
+                              "lazyRenderingEnabled": false,
+                              "maximizeOptions": {
+                                "enabled": false,
+                                "minimizeOnBackdropClick": false,
+                                "minimizeOnEscapeKey": false
+                              },
+                              "repeating": false,
+                              "scrollProperties": {
+                                "left": 0,
+                                "top": 0
+                              },
+                              "scrollingEnabled": false,
+                              "selectedTabIndex": 0,
+                              "sl": {
+                                "spinnersConsolidatedTimeout": 2000
+                              },
+                              "splitDirection": null,
+                              "splitMovableInConsumerMode": false,
+                              "splitPanel": true,
+                              "tabTitles": [],
+                              "titlesEnabled": false
+                            },
+                            "movable": false,
+                            "resizable": false,
+                            "styles": {
+                              "css": "/*\n * Copyright 2015-present Palantir Technologies, Inc. All rights reserved.\n */\n",
+                              "less": "",
+                              "slateCss": {
+                                "height": {
+                                  "rawValue": "100%",
+                                  "suffix": "%",
+                                  "value": 100
+                                },
+                                "left": {
+                                  "rawValue": "0px",
+                                  "suffix": "px",
+                                  "value": 0
+                                },
+                                "top": {
+                                  "rawValue": "0px",
+                                  "suffix": "px",
+                                  "value": 0
+                                },
+                                "width": {
+                                  "rawValue": "100%",
+                                  "suffix": "%",
+                                  "value": 100
+                                }
+                              }
+                            },
+                            "template": {
+                              "flex": true,
+                              "flexOptions": {
+                                "flexDirection": "column",
+                                "flexWrap": "wrap",
+                                "justifyContent": "flex-start"
+                              },
+                              "lazyRenderingEnabled": false,
+                              "maximizeOptions": {
+                                "enabled": false,
+                                "minimizeOnBackdropClick": false,
+                                "minimizeOnEscapeKey": false
+                              },
+                              "repeating": false,
+                              "scrollingEnabled": false,
+                              "selectedTabIndex": 0,
+                              "sl": {
+                                "spinnersConsolidatedTimeout": 2000
+                              },
+                              "splitDirection": null,
+                              "splitMovableInConsumerMode": false,
+                              "splitPanel": true,
+                              "tabTitles": [],
+                              "titlesEnabled": false
+                            },
+                            "type": "sl-app-container",
+                            "upgradeVersion": 12
+                          }
+                        ],
+                        "id": "w_container_apps2",
+                        "layout": {
+                          "height": 270,
+                          "width": 805,
+                          "x": 0,
+                          "y": 527
+                        },
+                        "locked": false,
+                        "model": {
+                          "flex": false,
+                          "lazyRenderingEnabled": true,
+                          "maximizeOptions": {
+                            "enabled": false,
+                            "minimizeOnBackdropClick": false,
+                            "minimizeOnEscapeKey": false
+                          },
+                          "repeating": false,
+                          "scrollProperties": {
+                            "left": 0,
+                            "top": 0
+                          },
+                          "scrollingEnabled": false,
+                          "selectedTabIndex": 0,
+                          "sl": {
+                            "cssClasses": "",
+                            "spinnersConsolidatedTimeout": 2000
+                          },
+                          "splitDirection": null,
+                          "splitMovableInConsumerMode": false,
+                          "splitPanel": false,
+                          "tabTitles": [
+                            {
+                              "title": "QCM"
+                            },
+                            {
+                              "title": "QA Managment"
+                            }
+                          ],
+                          "titlesEnabled": true
+                        },
+                        "movable": true,
+                        "resizable": true,
+                        "styles": {
+                          "css": "/*\n * Copyright 2015-present Palantir Technologies, Inc. All rights reserved.\n */\n___id-placeholder___ {\n  display: flex;\n  flex-direction: column;\n  border-radius: 16px;\n  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);\n  background: rgba(255, 255, 255, 0.7);\n  backdrop-filter: blur(4px);\n  padding: 24px;\n  /* 1. LA SÉCURITÉ : On vire le hidden qui coupait tes titres */\n  overflow: visible !important;\n  border: 1px solid rgba(255, 255, 255, 0.3);\n  box-sizing: border-box;\n  justify-content: flex-start;\n  align-items: center;\n  /* 2. LE CORRECTIF : On remplace le height: 30% (qui plantait) par une hauteur minimale adaptative */\n  min-height: 160px !important;\n  width: 49%;\n  margin-left: 50%;\n}\n",
+                          "less": "display: flex;\nflex-direction: column;\nborder-radius: 16px;\nbox-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);\nbackground: rgba(255, 255, 255, 0.7);\nbackdrop-filter: blur(4px);\npadding: 24px;\n\n/* 1. LA SÉCURITÉ : On vire le hidden qui coupait tes titres */\noverflow: visible !important; \n\nborder: 1px solid rgba(255,255,255,0.3);\nbox-sizing: border-box;\njustify-content: flex-start;\nalign-items: center;\n\n/* 2. LE CORRECTIF : On remplace le height: 30% (qui plantait) par une hauteur minimale adaptative */\nmin-height: 160px !important;\n\nwidth: 49%;\nmargin-left: 50%;",
+                          "slateCss": {
+                            "alignSelf": "flex-start",
+                            "flexBasis": "auto",
+                            "flexGrow": 0,
+                            "flexShrink": 0,
+                            "height": {
+                              "rawValue": "270px",
+                              "suffix": "px",
+                              "value": 270
+                            },
+                            "left": {
+                              "rawValue": "0px",
+                              "suffix": "px",
+                              "value": 0
+                            },
+                            "position": "static",
+                            "top": {
+                              "rawValue": "527px",
+                              "suffix": "px",
+                              "value": 527
+                            },
+                            "width": {
+                              "rawValue": "805px",
+                              "suffix": "px",
+                              "value": 805
+                            }
+                          }
+                        },
+                        "template": {
+                          "flex": false,
+                          "lazyRenderingEnabled": true,
+                          "maximizeOptions": {
+                            "enabled": false,
+                            "minimizeOnBackdropClick": false,
+                            "minimizeOnEscapeKey": false
+                          },
+                          "repeating": false,
+                          "scrollingEnabled": false,
+                          "selectedTabIndex": 0,
+                          "sl": {
+                            "cssClasses": "",
+                            "spinnersConsolidatedTimeout": 2000
+                          },
+                          "splitDirection": null,
+                          "splitMovableInConsumerMode": false,
+                          "splitPanel": false,
+                          "tabTitles": [
+                            {
+                              "title": "QCM"
+                            },
+                            {
+                              "title": "QA Managment"
+                            }
+                          ],
+                          "titlesEnabled": true
+                        },
+                        "type": "sl-app-container",
+                        "upgradeVersion": 12
+                      }
+                    ],
+                    "id": "w_container_1",
+                    "layout": {
+                      "height": 909,
+                      "width": -828,
+                      "x": 0,
+                      "y": 1
+                    },
+                    "locked": false,
+                    "model": {
+                      "flex": true,
+                      "flexOptions": {
+                        "flexDirection": "column",
+                        "flexWrap": "nowrap",
+                        "justifyContent": "space-around"
+                      },
+                      "lazyRenderingEnabled": false,
+                      "maximizeOptions": {
+                        "enabled": false,
+                        "minimizeOnBackdropClick": false,
+                        "minimizeOnEscapeKey": false
+                      },
+                      "repeating": false,
+                      "scrollProperties": {
+                        "left": 0,
+                        "top": 0
+                      },
+                      "scrollingEnabled": false,
+                      "selectedTabIndex": 0,
+                      "sl": {
+                        "cssClasses": "",
+                        "spinnersConsolidatedTimeout": 2000
+                      },
+                      "splitDirection": null,
+                      "splitMovableInConsumerMode": false,
+                      "splitPanel": false,
+                      "tabTitles": [],
+                      "titlesEnabled": false
+                    },
+                    "movable": true,
+                    "resizable": true,
+                    "styles": {
+                      "css": "/*\n * Copyright 2015-present Palantir Technologies, Inc. All rights reserved.\n */\n___id-placeholder___ {\n  width: 100%;\n  height: 100%;\n}\n",
+                      "less": "width : 100%;\nheight: 100%",
+                      "slateCss": {
+                        "height": {
+                          "rawValue": "909px",
+                          "suffix": "px",
+                          "value": 909
+                        },
+                        "left": {
+                          "rawValue": "0px",
+                          "suffix": "px",
+                          "value": 0
+                        },
+                        "top": {
+                          "rawValue": "1px",
+                          "suffix": "px",
+                          "value": 1
+                        },
+                        "width": {
+                          "rawValue": "-828px",
+                          "suffix": "px",
+                          "value": -828
+                        }
+                      }
+                    },
+                    "template": {
+                      "flex": true,
+                      "flexOptions": {
+                        "flexDirection": "column",
+                        "flexWrap": "nowrap",
+                        "justifyContent": "space-around"
+                      },
+                      "lazyRenderingEnabled": false,
+                      "maximizeOptions": {
+                        "enabled": false,
+                        "minimizeOnBackdropClick": false,
+                        "minimizeOnEscapeKey": false
+                      },
+                      "repeating": false,
+                      "scrollingEnabled": false,
+                      "selectedTabIndex": 0,
+                      "sl": {
+                        "cssClasses": "",
+                        "spinnersConsolidatedTimeout": 2000
+                      },
+                      "splitDirection": null,
+                      "splitMovableInConsumerMode": false,
+                      "splitPanel": false,
+                      "tabTitles": [],
+                      "titlesEnabled": false
+                    },
+                    "type": "sl-app-container",
+                    "upgradeVersion": 12
+                  }
+                ],
+                "id": "w_container_all_apps",
+                "layout": {
+                  "height": 477,
+                  "width": 882,
+                  "x": 0,
+                  "y": 99
+                },
+                "locked": false,
+                "model": {
+                  "contentPadding": {
+                    "bottom": 20,
+                    "left": 20,
+                    "right": 20,
+                    "top": 20
+                  },
+                  "flex": false,
+                  "lazyRenderingEnabled": false,
+                  "maximizeOptions": {
+                    "enabled": false,
+                    "minimizeOnBackdropClick": false,
+                    "minimizeOnEscapeKey": false
+                  },
+                  "repeating": false,
+                  "scrollProperties": {
+                    "left": 0,
+                    "top": 0
+                  },
+                  "scrollingEnabled": false,
+                  "selectedTabIndex": 0,
+                  "sl": {
+                    "cssClasses": "",
+                    "spinnersConsolidatedTimeout": 2000
+                  },
+                  "splitDirection": null,
+                  "splitMovableInConsumerMode": false,
+                  "splitPanel": false,
+                  "tabTitles": [],
+                  "titlesEnabled": false
+                },
+                "movable": true,
+                "resizable": true,
+                "styles": {
+                  "css": "/*\n * Copyright 2015-present Palantir Technologies, Inc. All rights reserved.\n */\n___id-placeholder___ {\n  WIDTH: 100%;\n  height: 89%;\n}\n",
+                  "less": "WIDTH:100%;\nheight:89%",
+                  "slateCss": {
+                    "height": {
+                      "rawValue": "477px",
+                      "suffix": "px",
+                      "value": 477
+                    },
+                    "left": {
+                      "rawValue": "0px",
+                      "suffix": "px",
+                      "value": 0
+                    },
+                    "top": {
+                      "rawValue": "99px",
+                      "suffix": "px",
+                      "value": 99
+                    },
+                    "width": {
+                      "rawValue": "882px",
+                      "suffix": "px",
+                      "value": 882
+                    }
+                  }
+                },
+                "template": {
+                  "contentPadding": {
+                    "bottom": 20,
+                    "left": 20,
+                    "right": 20,
+                    "top": 20
+                  },
+                  "flex": false,
+                  "lazyRenderingEnabled": false,
+                  "maximizeOptions": {
+                    "enabled": false,
+                    "minimizeOnBackdropClick": false,
+                    "minimizeOnEscapeKey": false
+                  },
+                  "repeating": false,
+                  "scrollingEnabled": false,
+                  "selectedTabIndex": 0,
+                  "sl": {
+                    "cssClasses": "",
+                    "spinnersConsolidatedTimeout": 2000
+                  },
+                  "splitDirection": null,
+                  "splitMovableInConsumerMode": false,
+                  "splitPanel": false,
+                  "tabTitles": [],
+                  "titlesEnabled": false
+                },
+                "type": "sl-app-container",
+                "upgradeVersion": 12
+              }
+            ],
+            "id": "w_container_app",
+            "layout": {
+              "height": -215,
+              "width": 500,
+              "x": 280,
+              "y": 352
+            },
+            "locked": false,
+            "model": {
+              "flex": false,
+              "lazyRenderingEnabled": false,
+              "maximizeOptions": {
+                "enabled": false,
+                "minimizeOnBackdropClick": false,
+                "minimizeOnEscapeKey": false
+              },
+              "repeating": false,
+              "scrollProperties": {
+                "left": 0,
+                "top": 0
+              },
+              "scrollingEnabled": false,
+              "selectedTabIndex": 0,
+              "sl": {
+                "cssClasses": "",
+                "spinnersConsolidatedTimeout": 2000
+              },
+              "splitDirection": null,
+              "splitMovableInConsumerMode": false,
+              "splitPanel": false,
+              "tabTitles": [],
+              "titlesEnabled": false
+            },
+            "movable": true,
+            "resizable": true,
+            "styles": {
+              "css": "/*\n * Copyright 2015-present Palantir Technologies, Inc. All rights reserved.\n */\n___id-placeholder___ {\n  top: 0px;\n  left: 0px;\n  height: 100%;\n  width: 100%;\n  background-image: url('https://core.skywise.com/blobster/api/salt/ri.blobster.main.image.056b369e-f57a-4f39-9336-68fc5123be83');\n}\n",
+              "less": "top:0px;\nleft:0px;\nheight:100%;\nwidth:100%;\nbackground-image: url('https://core.skywise.com/blobster/api/salt/ri.blobster.main.image.056b369e-f57a-4f39-9336-68fc5123be83');\n",
+              "slateCss": {
+                "height": {
+                  "rawValue": "-215px",
+                  "suffix": "px",
+                  "value": -215
+                },
+                "left": {
+                  "rawValue": "280px",
+                  "suffix": "px",
+                  "value": 280
+                },
+                "top": {
+                  "rawValue": "352px",
+                  "suffix": "px",
+                  "value": 352
+                },
+                "width": {
+                  "rawValue": "500px",
+                  "suffix": "px",
+                  "value": 500
+                }
+              }
+            },
+            "template": {
+              "flex": false,
+              "lazyRenderingEnabled": false,
+              "maximizeOptions": {
+                "enabled": false,
+                "minimizeOnBackdropClick": false,
+                "minimizeOnEscapeKey": false
+              },
+              "repeating": false,
+              "scrollingEnabled": false,
+              "selectedTabIndex": 0,
+              "sl": {
+                "cssClasses": "",
+                "spinnersConsolidatedTimeout": 2000
+              },
+              "splitDirection": null,
+              "splitMovableInConsumerMode": false,
+              "splitPanel": false,
+              "tabTitles": [],
+              "titlesEnabled": false
+            },
+            "type": "sl-app-container",
+            "upgradeVersion": 12
+          }
+        ],
+        "width": 1060
+      },
+      "customStylesheets": [],
+      "datasetInfos": [],
+      "events": {},
+      "folderGroups": {},
+      "foundryFunctionInfos": [],
+      "functionInfos": [],
+      "functionLibraries": [],
+      "objectContexts": [],
+      "objectSets": [],
+      "styles": {
+        "css": "/*\n * Copyright 2015-present Palantir Technologies, Inc. All rights reserved.\n */\n.container-widget {\n  height: 100%;\n  display: flex;\n  flex-direction: column;\n  justify-content: space-between;\n  padding: 0 24px;\n}\n.responsive-buttons-grid .button-label {\n  font-weight: bold !important;\n}\n.button-label {\n  font-weight: bold !important;\n}\n/* Grille 2 lignes x 3 colonnes (CORRIGÉ) */\n.responsive-buttons-grid {\n  display: grid;\n  grid-template-columns: repeat(3, 1fr);\n  /* ✅ Harmonisé à 3 colonnes */\n  grid-template-rows: repeat(2, auto);\n  gap: 1vw;\n  width: 100%;\n  box-sizing: border-box;\n  padding: 1vw;\n}\n/* Suppression des styles QSR (btn-pink) */\n/* Rangée horizontale pour les autres boutons */\n.responsive-buttons-row {\n  display: flex;\n  flex-direction: row;\n  align-items: stretch;\n  gap: 1vw;\n  width: 100%;\n  height: 100%;\n  box-sizing: border-box;\n  padding: 1vw;\n  padding-top: 20px !important;\n  /* overflow: hidden; <-- Supprimé */\n}\n.responsive-buttons-grid {\n  grid-template-rows: repeat(2, 1fr);\n}\n.responsive-buttons-row {\n  grid-template-rows: 1fr;\n}\n.responsive-buttons-grid .round-button-wrapper,\n.responsive-buttons-row .round-button-wrapper {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  min-width: 0;\n  min-height: 0;\n  width: 100%;\n  height: 100%;\n  overflow: hidden;\n}\n/* Boutons parfaitement ronds et adaptatifs */\n.responsive-buttons-grid .custom-round-button,\n.responsive-buttons-row .custom-round-button {\n  aspect-ratio: 1;\n  width: 60%;\n  max-width: 80px;\n  min-width: 32px;\n  height: auto;\n  border-radius: 50%;\n  font-size: 2vw;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  margin-bottom: 0.5vw;\n  transition: width 0.2s, font-size 0.2s;\n  box-sizing: border-box;\n  overflow: hidden;\n}\n/* Labels adaptatifs */\n.responsive-buttons-grid .button-label,\n.responsive-buttons-row .button-label {\n  font-size: 1vw;\n  min-font-size: 10px;\n  max-font-size: 16px;\n  font-weight: 500;\n  word-break: break-word;\n  text-align: center;\n  line-height: 1.1;\n}\n/* User guide button adaptatif */\n.user-guide-link {\n  margin-top: 0.5vw;\n  text-decoration: none;\n}\n.user-guide-btn {\n  background-color: #111;\n  color: #fff;\n  border: none;\n  border-radius: 24px;\n  padding: 0.3vw 1vw;\n  font-size: 1vw;\n  font-weight: 500;\n  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);\n  cursor: pointer;\n  transition: background 0.2s;\n  outline: none;\n  display: flex;\n  align-items: center;\n}\n.user-guide-btn:hover {\n  background-color: #222;\n}\n/* Responsive pour très petits écrans */\n@media (max-width: 700px) {\n  .responsive-buttons-grid,\n  .responsive-buttons-row {\n    gap: 0.5vw;\n    padding: 0.5vw;\n  }\n  .responsive-buttons-grid .custom-round-button,\n  .responsive-buttons-row .custom-round-button {\n    width: 80%;\n    max-width: 48px;\n    font-size: 3vw;\n  }\n  .responsive-buttons-grid .button-label,\n  .responsive-buttons-row .button-label {\n    font-size: 2.5vw;\n  }\n  .user-guide-btn {\n    font-size: 2vw;\n    padding: 0.2vw 0.5vw;\n  }\n}\n.top-buttons,\n.bottom-buttons {\n  display: flex;\n  justify-content: center;\n  gap: 99px;\n}\n.round-button-wrapper {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  gap: 6px;\n  text-decoration: none;\n  color: inherit;\n}\n.custom-round-button {\n  width: 60px;\n  height: 60px;\n  border-radius: 50%;\n  background-color: #137cbd;\n  color: white;\n  font-size: 22px;\n  border: none;\n  cursor: pointer;\n  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  transition: background-color 0.3s ease;\n}\n.custom-round-button:hover {\n  background-color: #106ba3;\n}\n.button-label {\n  font-size: 13px;\n  text-align: center;\n  color: #333;\n}\n.ds-header-app {\n  display: flex;\n  position: fixed;\n  top: 0;\n  right: 0;\n  left: 0;\n  min-height: 100px;\n  justify-content: space-between;\n  background: linear-gradient(90deg, rgba(218, 24, 132, 0.65) 0, rgba(1, 17, 51, 0.65) 20%);\n}\n.ds-header-app.ds-header-app__menu-mobile--open .ds-header-app__logo {\n  visibility: visible;\n  display: inline-block;\n}\n.ds-header-app.ds-header-app__menu-mobile--open .ds-header-app__name {\n  opacity: 0;\n}\n.ds-header-app.ds-header-app__menu-mobile--open .ds-header-app__panel {\n  visibility: visible;\n  pointer-events: auto;\n  height: calc(100vh - 70px);\n  transition: height 0.35s ease-out, visibility 0.4s ease-out;\n}\n.ds-header-app__brand {\n  display: flex;\n}\n.ds-header-app__logo {\n  display: none;\n  padding: 0 16px 0 25px;\n}\n.ds-header-app__logo img {\n  display: block;\n  height: 100%;\n}\n.ds-header-app__logo {\n  visibility: visible;\n  display: inline-block;\n  padding: 0 16px;\n}\n.ds-header-app__name {\n  opacity: 1;\n  position: relative;\n  padding: 18px 60px;\n  font-size: 2.7rem;\n  color: #fff;\n  background: linear-gradient(90deg, rgba(218, 24, 132, 0.65) 0, rgba(1, 17, 51, 0.65) 90%);\n}\n.ds-header-app {\n  position: inherit;\n}\nh1 {\n  color: #f5f8fa;\n}\nh1 {\n  color: #f5f8fa;\n}\n/*********USEFULL CSS********/\nsl-app-canvas .canvas-body {\n  width: auto !important;\n  background: #F8F8F8;\n}\nsl-app-container {\n  border: none !important;\n  background: none;\n}\nh4,\nh2 {\n  color: white!important;\n}\n.header_style {\n  height: 70px;\n  width: 100%;\n  left: 0px;\n  top: 0px;\n}\n.title_style {\n  font-family: Arial!important;\n  font-size: 46px!important;\n  color: white;\n}\n.sub_title {\n  font-weight: bold!important;\n  letter-spacing: 0.04em !important;\n}\n.invisible_container .ng-scope.ng-isolate-scope {\n  border: 0px;\n}\n.card_header {\n  Background-color: #137cbd;\n  border-radius: 15px 15px 0px 0px;\n}\n.card_content {\n  border-color: #CED9E0;\n  background-color: white;\n  margin-top: 10px;\n  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);\n  border-radius: 15px;\n}\n.filter_css {\n  box-shadow: 6px 6px 6px 6px rgba(0, 0, 0, 0.2);\n  background-color: #F0F3F6;\n}\n.export_button {\n  background-color: rgba(40, 0, 130, 0.7) !important;\n}\n/***************END**************/\n/*********Button CSS********/\n#widget-w_container_graphs {\n  width: 0%!important;\n}\n#widget-w_container_contour {\n  width: 0%!important;\n}\n#widget-w_container_content #widget-w_container_filter {\n  z-index: 40;\n  transition: all ease 0.5s;\n  top: 0%;\n  left: 0%;\n  height: 100%;\n  width: 20%;\n  background: #eff1f4;\n  box-shadow: 0 0 10px #ccc;\n  transform: scale(1, 1);\n  transform-origin: top left;\n}\n#widget-w_container_content .hide-filter #widget-w_container_filter {\n  transform: scale(0, 1);\n  width: 3%!important;\n}\n#widget-w_container_content .hide-filter #widget-w_container_all_tables {\n  width: 97%;\n}\n#widget-w_container_content .show-graph #widget-w_container_all_tables {\n  transform: scale(0, 1);\n  width: 0%!important;\n}\n#widget-w_container_content .show-graph #widget-w_container_graphs {\n  width: 97%!important;\n}\n#widget-w_container_content .show-contour #widget-w_container_all_tables {\n  transform: scale(0, 1);\n  width: 0%!important;\n}\n#widget-w_container_content .show-contour #widget-w_container_contour {\n  width: 97%!important;\n}\n.ds-header-app {\n  display: flex;\n  position: fixed;\n  top: 0;\n  right: 0;\n  left: 0;\n  min-height: 100px;\n  justify-content: space-between;\n  background: linear-gradient(90deg, rgba(218, 24, 132, 0.65) 0, rgba(1, 17, 51, 0.65) 20%);\n}\n.ds-header-app.ds-header-app__menu-mobile--open .ds-header-app__logo {\n  visibility: visible;\n  display: inline-block;\n}\n.ds-header-app.ds-header-app__menu-mobile--open .ds-header-app__name {\n  opacity: 0;\n}\n.ds-header-app.ds-header-app__menu-mobile--open .ds-header-app__panel {\n  visibility: visible;\n  pointer-events: auto;\n  height: calc(100vh - 70px);\n  transition: height 0.35s ease-out, visibility 0.4s ease-out;\n}\n.ds-header-app__brand {\n  display: flex;\n}\n.ds-header-app__logo {\n  display: none;\n  padding: 0 16px 0 25px;\n}\n.ds-header-app__logo img {\n  display: block;\n  height: 100%;\n}\n.ds-header-app__logo {\n  visibility: visible;\n  display: inline-block;\n  padding: 0 16px;\n}\n.ds-header-app__name {\n  opacity: 1;\n  position: relative;\n  padding: 18px 60px;\n  font-size: 2.7rem;\n  color: #fff;\n  background: linear-gradient(90deg, rgba(218, 24, 132, 0.65) 0, rgba(1, 17, 51, 0.65) 90%);\n}\n.ds-header-app {\n  position: inherit;\n}\n.custom-round-button {\n  background-color: white;\n  border-radius: 50%;\n  width: 80px;\n  height: 80px;\n  border: none;\n  font-size: 33px;\n  transition: box-shadow 0.3s ease;\n}\n.round-button-wrapper {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  margin: 10px;\n}\n.button-label {\n  font-size: 20px;\n  margin-top: 5px;\n  font-weight: bold;\n}\n/* Couleurs personnalisées pour chaque bouton */\n.btn-red .custom-round-button,\n.btn-red .button-label {\n  color: #CC0000;\n}\n.btn-redfod .custom-round-button,\n.btn-redfod .button-label {\n  color: #FF5349;\n}\n.btn-blue_era .custom-round-button,\n.btn-blue_era .button-label {\n  color: #0F056B;\n}\n.btn-blue .custom-round-button,\n.btn-blue .button-label {\n  color: #038A9D;\n}\n.btn-green .custom-round-button,\n.btn-green .button-label {\n  color: green;\n}\n.btn-purple .custom-round-button,\n.btn-purple .button-label {\n  color: purple;\n}\n.btn-red .custom-round-button:hover {\n  box-shadow: 0 0 10px #BE0A6E;\n}\n.btn-blue .custom-round-button:hover {\n  box-shadow: 0 0 10px #038A9D;\n}\n.btn-redfod .custom-round-button:hover {\n  box-shadow: 0 0 10px #B00626;\n}\n.btn-green .custom-round-button:hover {\n  box-shadow: 0 0 10px green;\n}\n.btn-purple .custom-round-button:hover {\n  box-shadow: 0 0 10px purple;\n}\n.custom-round-button:hover {\n  outline: none;\n  background-color: white !important;\n}\n.round-button-wrapper {\n  text-decoration: none;\n}\n.round-button-wrapper:hover {\n  text-decoration: none;\n}\n.btn-waterfall .custom-round-button,\n.btn-waterfall .button-label {\n  color: #00208b;\n}\n.btn-waterfall .custom-round-button:hover {\n  box-shadow: 0 0 10px #00208b;\n}\n.btn-cyan .custom-round-button,\n.btn-cyan .button-label {\n  color: #2c97a4;\n  /* Un cyan plus doux */\n}\n.btn-cyan .custom-round-button:hover {\n  box-shadow: 0 0 10px #2c97a4;\n}\n.btn-blue_era a:hover .custom-round-button,\n.btn-blue_era .custom-round-button:hover {\n  box-shadow: 0 0 10px #0F056B;\n  background-color: #f0f4ff;\n}\n#w_container_4 {\n  overflow: visible !important;\n}\n",
+        "darkThemeEnabled": false,
+        "less": ".container-widget {\r\n  height: 100%;\r\n  display: flex;\r\n  flex-direction: column;\r\n  justify-content: space-between;\r\n  padding: 0 24px;\r\n}\r\n\r\n\r\n//Bouton gras\r\n.responsive-buttons-grid .button-label {\r\n  font-weight: bold !important;\r\n}\r\n.button-label {\r\n  font-weight: bold !important;\r\n}\r\n\r\n\r\n/* Grille 2 lignes x 3 colonnes (CORRIGÉ) */\r\n.responsive-buttons-grid {\r\n  display: grid;\r\n  grid-template-columns: repeat(3, 1fr); /* ✅ Harmonisé à 3 colonnes */\r\n  grid-template-rows: repeat(2, auto);\r\n  gap: 1vw;\r\n  width: 100%;\r\n  box-sizing: border-box;\r\n  padding: 1vw;\r\n}\r\n\r\n/* Suppression des styles QSR (btn-pink) */\r\n\r\n/* Rangée horizontale pour les autres boutons */\r\n.responsive-buttons-row {\r\n  display: flex;\r\n  flex-direction: row;\r\n  align-items: stretch;\r\n  gap: 1vw;\r\n  width: 100%;\r\n  height: 100%;\r\n  box-sizing: border-box;\r\n  padding: 1vw;\r\n  padding-top: 20px !important;\r\n  /* overflow: hidden; <-- Supprimé */\r\n}\r\n\r\n.responsive-buttons-grid {\r\n  grid-template-rows: repeat(2, 1fr);\r\n}\r\n\r\n.responsive-buttons-row {\r\n  grid-template-rows: 1fr;\r\n}\r\n\r\n.responsive-buttons-grid .round-button-wrapper,\r\n.responsive-buttons-row .round-button-wrapper {\r\n  display: flex;\r\n  flex-direction: column;\r\n  align-items: center;\r\n  justify-content: center;\r\n  min-width: 0;\r\n  min-height: 0;\r\n  width: 100%;\r\n  height: 100%;\r\n  overflow: hidden;\r\n}\r\n\r\n/* Boutons parfaitement ronds et adaptatifs */\r\n.responsive-buttons-grid .custom-round-button,\r\n.responsive-buttons-row .custom-round-button {\r\n  aspect-ratio: 1 / 1;\r\n  width: 60%;\r\n  max-width: 80px;\r\n  min-width: 32px;\r\n  height: auto;\r\n  border-radius: 50%;\r\n  font-size: 2vw;\r\n  display: flex;\r\n  align-items: center;\r\n  justify-content: center;\r\n  margin-bottom: 0.5vw;\r\n  transition: width 0.2s, font-size 0.2s;\r\n  box-sizing: border-box;\r\n  overflow: hidden;\r\n}\r\n\r\n/* Labels adaptatifs */\r\n.responsive-buttons-grid .button-label,\r\n.responsive-buttons-row .button-label {\r\n  font-size: 1vw;\r\n  min-font-size: 10px;\r\n  max-font-size: 16px;\r\n  font-weight: 500;\r\n  word-break: break-word;\r\n  text-align: center;\r\n  line-height: 1.1;\r\n}\r\n\r\n/* User guide button adaptatif */\r\n.user-guide-link {\r\n  margin-top: 0.5vw;\r\n  text-decoration: none;\r\n}\r\n.user-guide-btn {\r\n  background-color: #111;\r\n  color: #fff;\r\n  border: none;\r\n  border-radius: 24px;\r\n  padding: 0.3vw 1vw;\r\n  font-size: 1vw;\r\n  font-weight: 500;\r\n  box-shadow: 0 1px 4px rgba(0,0,0,0.15);\r\n  cursor: pointer;\r\n  transition: background 0.2s;\r\n  outline: none;\r\n  display: flex;\r\n  align-items: center;\r\n}\r\n.user-guide-btn:hover {\r\n  background-color: #222;\r\n}\r\n\r\n/* Responsive pour très petits écrans */\r\n@media (max-width: 700px) {\r\n  .responsive-buttons-grid,\r\n  .responsive-buttons-row {\r\n    gap: 0.5vw;\r\n    padding: 0.5vw;\r\n  }\r\n  .responsive-buttons-grid .custom-round-button,\r\n  .responsive-buttons-row .custom-round-button {\r\n    width: 80%;\r\n    max-width: 48px;\r\n    font-size: 3vw;\r\n  }\r\n  .responsive-buttons-grid .button-label,\r\n  .responsive-buttons-row .button-label {\r\n    font-size: 2.5vw;\r\n  }\r\n  .user-guide-btn {\r\n    font-size: 2vw;\r\n    padding: 0.2vw 0.5vw;\r\n  }\r\n}\r\n\r\n\r\n.top-buttons,\r\n.bottom-buttons {\r\n  display: flex;\r\n  justify-content: center;\r\n  gap: 99px;\r\n}\r\n\r\n.round-button-wrapper {\r\n  display: flex;\r\n  flex-direction: column;\r\n  align-items: center;\r\n  gap: 6px;\r\n  text-decoration: none;\r\n  color: inherit;\r\n}\r\n\r\n.custom-round-button {\r\n  width: 60px;\r\n  height: 60px;\r\n  border-radius: 50%;\r\n  background-color: #137cbd;\r\n  color: white;\r\n  font-size: 22px;\r\n  border: none;\r\n  cursor: pointer;\r\n  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);\r\n  display: flex;\r\n  align-items: center;\r\n  justify-content: center;\r\n  transition: background-color 0.3s ease;\r\n}\r\n\r\n.custom-round-button:hover {\r\n  background-color: #106ba3;\r\n}\r\n\r\n.button-label {\r\n  font-size: 13px;\r\n  text-align: center;\r\n  color: #333;\r\n}\r\n\r\n.ds-header-app{display:flex; position:fixed; top:0; right:0; left:0; min-height:100px; justify-content: space-between; background: linear-gradient(90deg, rgba(218, 24, 132, .65) 0, rgba(1, 17, 51, .65) 20%)}\r\n.ds-header-app.ds-header-app__menu-mobile--open .ds-header-app__logo{visibility: visible; display: inline-block}\r\n.ds-header-app.ds-header-app__menu-mobile--open .ds-header-app__name{opacity: 0}\r\n.ds-header-app.ds-header-app__menu-mobile--open .ds-header-app__panel{visibility: visible; pointer-events: auto; height: calc(100vh - 70px); transition: height .35s ease-out,visibility .4s ease-out}\r\n\r\n.ds-header-app__brand{display: flex}\r\n\r\n.ds-header-app__logo{display: none; padding: 0 16px 0 25px}\r\n.ds-header-app__logo img{display: block; height: 100%}\r\n.ds-header-app__logo{visibility:visible; display:inline-block; padding:0 16px}\r\n\r\n.ds-header-app__name{opacity:1; position:relative; padding: 18px 60px;font-size: 2.7rem;color: #fff; background: linear-gradient(90deg, rgba(218, 24, 132, .65) 0, rgba(1, 17, 51, .65) 90%)}\r\n.ds-header-app{position: inherit}\r\n\r\nh1 {\r\n    //toolbar primary text\r\n    color: @LightLightGray; \r\n  }\r\n\r\n\r\n\r\n\r\n  //Color variables\r\n@DarkGray: @dark-gray4; \r\n@MyGray: @gray4;\r\n@LightGray: @light-gray3;\r\n@LightLightGray: @light-gray5;\r\n@FirstColor: @red4;\r\n@SecondColor: @blue1;\r\n@ThirdColor: @turquoise4;\r\n@FourthColor: @gold4;\r\n\r\n\r\n  h1 {\r\n    //toolbar primary text\r\n    color: @LightLightGray; \r\n  }\r\n\r\n/*********USEFULL CSS********/\r\n@airbus_color:#1f497D;\r\n\r\n//Adapt the Dashboard's size to the windows's size\r\nsl-app-canvas .canvas-body {\r\n  width : auto !important;\r\n  background: #F8F8F8\r\n}\r\n\r\nsl-app-container{\r\n    border: none !important;\r\n  background: none;\r\n}\r\n\r\nh4,h2 {\r\n  color:white!important;\r\n}\r\n\r\n//Header style\r\n.header_style {\r\n  height:70px;\r\n  width:100%;\r\n  left:0px;\r\n  top:0px;\r\n  \r\n}\r\n\r\n//Main title style\r\n.title_style {\r\n  font-family:Arial!important;\r\n  font-size:46px!important;\r\n  color:white;\r\n}\r\n\r\n//Subtitles style\r\n.sub_title {\r\n  font-weight:bold!important;\r\n  letter-spacing:0.04em!important;\r\n}\r\n\r\n// Make borders invisibles\r\n.invisible_container {\r\n  .ng-scope.ng-isolate-scope{\r\n    border:0px;\r\n  }\r\n}\r\n\r\n// Change chart tooltip max-width:\r\n// .sl-chart-tooltip .pt-popover-content {\r\n//  max-width: 300px;\r\n// }\r\n\r\n.card_header {\r\n  Background-color:#137cbd;\r\n  border-radius:15px 15px 0px 0px;\r\n}\r\n\r\n.card_content {\r\n  border-color:#CED9E0;\r\n  background-color:white;\r\n  margin-top:10px;\r\n  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);\r\n  border-radius:15px;\r\n}\r\n\r\n.filter_css {\r\n  box-shadow: 6px 6px 6px 6px rgba(0,0,0,0.2);\r\n  background-color:#F0F3F6;\r\n}\r\n\r\n.export_button {\r\n  //background-color:#3498db!important;\r\n  background-color:rgba(40,0,130, 0.7)!important;\r\n}\r\n/***************END**************/\r\n\r\n\r\n/*********Button CSS********/\r\n@delete_color:#137cbd;\r\n@favorite_color:#137cbd;\r\n@excel_color:#16a085;\r\n@minitab_color:#16a085;\r\n@close_color:#e74c3c;\r\n@validate_color:#27ae60;\r\n@information_color:#16a085;\r\n@error_color:#c0392b;\r\n\r\n// #widget-w_container_content {\r\n//  #widget-w_container_filter {\r\n\r\n//    .hide-filter{\r\n//      #widget-w_container_filter{\r\n//        width: 0%!important;\r\n//      }\r\n    \r\n//  }\r\n    \r\n//  }\r\n\r\n\r\n// }\r\n\r\n#widget-w_container_graphs{\r\n     width: 0%!important;\r\n   }\r\n\r\n#widget-w_container_contour{\r\n     width: 0%!important;\r\n   }\r\n\r\n#widget-w_container_content{\r\n  #widget-w_container_filter{\r\n    z-index:40;\r\n    transition: all ease 0.5s;\r\n    top:0%;\r\n    left:0%;\r\n    height: 100%;\r\n    width:20%;\r\n    background:#eff1f4;\r\n    box-shadow: 0 0 10px #ccc;\r\n    transform:scale(1,1);\r\n    transform-origin: top left;\r\n\r\n  }\r\n  .hide-filter{\r\n    \r\n    #widget-w_container_filter{\r\n      transform:scale(0,1);\r\n      width: 3%!important;\r\n    }\r\n\r\n    #widget-w_container_all_tables{\r\n      width: 97%;\r\n    }\r\n  }\r\n\r\n  .show-graph{\r\n    \r\n    #widget-w_container_all_tables{\r\n      transform:scale(0,1);\r\n      width: 0%!important;\r\n    }\r\n\r\n    #widget-w_container_graphs{\r\n      width: 97%!important;\r\n    }\r\n  }\r\n\r\n  .show-contour{\r\n    \r\n    #widget-w_container_all_tables{\r\n      transform:scale(0,1);\r\n      width: 0%!important;\r\n    }\r\n\r\n    #widget-w_container_contour{\r\n      width: 97%!important;\r\n    }\r\n  }\r\n\r\n\r\n}\r\n\r\n\r\n\r\n.ds-header-app{display:flex; position:fixed; top:0; right:0; left:0; min-height:100px; justify-content: space-between; background: linear-gradient(90deg, rgba(218, 24, 132, .65) 0, rgba(1, 17, 51, .65) 20%)}\r\n.ds-header-app.ds-header-app__menu-mobile--open .ds-header-app__logo{visibility: visible; display: inline-block}\r\n.ds-header-app.ds-header-app__menu-mobile--open .ds-header-app__name{opacity: 0}\r\n.ds-header-app.ds-header-app__menu-mobile--open .ds-header-app__panel{visibility: visible; pointer-events: auto; height: calc(100vh - 70px); transition: height .35s ease-out,visibility .4s ease-out}\r\n\r\n.ds-header-app__brand{display: flex}\r\n\r\n.ds-header-app__logo{display: none; padding: 0 16px 0 25px}\r\n.ds-header-app__logo img{display: block; height: 100%}\r\n.ds-header-app__logo{visibility:visible; display:inline-block; padding:0 16px}\r\n\r\n.ds-header-app__name{opacity:1; position:relative; padding: 18px 60px;font-size: 2.7rem;color: #fff; background: linear-gradient(90deg, rgba(218, 24, 132, .65) 0, rgba(1, 17, 51, .65) 90%)}\r\n.ds-header-app{position: inherit}\r\n\r\n.custom-round-button {\r\n    background-color: white;\r\n    border-radius: 50%;\r\n    width: 80px;\r\n    height: 80px;\r\n    border: none;\r\n    font-size: 33px;\r\n  transition: box-shadow 0.3s ease;\r\n\r\n  }\r\n\r\n  .round-button-wrapper {\r\n    display: flex;\r\n    flex-direction: column;\r\n    align-items: center;\r\n    margin: 10px;\r\n  }\r\n\r\n  .button-label {\r\n    font-size: 20px;\r\n    margin-top: 5px;\r\n    font-weight: bold;\r\n  }\r\n\r\n  /* Couleurs personnalisées pour chaque bouton */\r\n  .btn-red .custom-round-button,\r\n  .btn-red .button-label {\r\n    color: #CC0000;\r\n  }\r\n\r\n  .btn-redfod .custom-round-button,\r\n  .btn-redfod .button-label {\r\n    color: #FF5349;\r\n  }\r\n\r\n  .btn-blue_era .custom-round-button,\r\n  .btn-blue_era .button-label {\r\n    color: #0F056B;\r\n  }\r\n  .btn-blue .custom-round-button,\r\n  .btn-blue .button-label {\r\n    color: #038A9D;\r\n  }\r\n\r\n  .btn-green .custom-round-button,\r\n  .btn-green .button-label {\r\n    color: green;\r\n  }\r\n\r\n  .btn-purple .custom-round-button,\r\n  .btn-purple .button-label {\r\n    color: purple;\r\n  }\r\n\r\n    .btn-red .custom-round-button:hover {\r\n    box-shadow: 0 0 10px #BE0A6E;\r\n  }\r\n\r\n  .btn-blue .custom-round-button:hover {\r\n    box-shadow: 0 0 10px #038A9D;\r\n  }\r\n\r\n  .btn-redfod .custom-round-button:hover {\r\n    box-shadow: 0 0 10px #B00626;\r\n  }\r\n\r\n  .btn-green .custom-round-button:hover {\r\n    box-shadow: 0 0 10px green;\r\n  }\r\n\r\n  .btn-purple .custom-round-button:hover {\r\n    box-shadow: 0 0 10px purple;\r\n  }\r\n\r\n  .custom-round-button:hover {\r\n    outline: none;\r\n    background-color: white !important;\r\n  }\r\n\r\n  .round-button-wrapper {\r\n    text-decoration: none;\r\n  }\r\n\r\n  .round-button-wrapper:hover {\r\n    text-decoration: none;\r\n  }\r\n\r\n\r\n.btn-waterfall .custom-round-button,\r\n.btn-waterfall .button-label {\r\n    color: #00208b;\r\n}\r\n\r\n\r\n.btn-waterfall .custom-round-button:hover {\r\n    box-shadow: 0 0 10px #00208b;\r\n}\r\n\r\n.btn-cyan .custom-round-button,\r\n.btn-cyan .button-label {\r\n    color: #2c97a4; /* Un cyan plus doux */\r\n}\r\n\r\n.btn-cyan .custom-round-button:hover {\r\n    box-shadow: 0 0 10px #2c97a4;\r\n}\r\n\r\n.btn-blue_era a:hover .custom-round-button,\r\n.btn-blue_era .custom-round-button:hover {\r\n  box-shadow: 0 0 10px #0F056B;\r\n  background-color: #f0f4ff;\r\n}\r\n\r\n#w_container_4 {\r\n  overflow: visible !important;\r\n}",
+        "slateCss": {}
+      },
+      "toolbar": {
+        "children": [],
+        "height": 0
+      },
+      "variables": {}
+    },
+    "showAppHeaderInViewMode": false,
+    "foundryDatasets": []
+  },
+  "name": "A30 Quality Hub",
+  "lastModifiedDate": "2026-09-01T07:20:34.708Z",
+  "lastModifiedBy": "5c507b30-ad85-44e0-9342-ef8c9a0c44a0",
+  "permalink": "a30-quality-hub"
+}

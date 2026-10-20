@@ -33,7 +33,7 @@ Read sections 1, 2 and 9 first. Everything else is reference. Every number below
 | CNQ reconciliation (predecessor files vs official method M1888 / UG2600252) | Mentioned by Mohammad, **not started here** | — |
 | CNQ model | Version cnq-2026.10.19: 7 rule changes from SAP rework orders and MES aléas, approved 19 Oct | `cnq_handoever/`, `CNQ_CHANGES.md` |
 | Work orders, MES aléas, 2025 NCs (uploaded 19 Oct) | Analysed; investigation checklist for Mohammad, **checks pending** | `05_outputs/CNQ_investigation_checklist.html`, `07_scripts/wo_disruption/` |
-| New Pôle Élec Quality Hub (Slate home page) | Template 5 chosen 20 Oct. Page `hub/pole_elec_hub.html`, links in `hub/hub_config.js` (placeholders he fills). Content = current hub only; the 2 hidden third-row tiles and the QA Management card have **placeholder names** (Audits, Documentation, Habilitations QA) until he gives the real ones | `09_pole_elec_hub/` |
+| New Pôle Élec Quality Hub (Slate home page) | Template 5 chosen 20 Oct. Page `hub/pole_elec_hub.html`, everything in `hub/hub_config.js` with the real links from his Slate export; QSR and Operational Surveillance added (links to fill in), CPB removed, NC Eradication shown as coming soon. Slate port not done | `09_pole_elec_hub/`, export in `06_input_data/slate_hub_export_2026-10-20.json` |
 
 ---
 
@@ -226,7 +226,7 @@ Full detail: `03_reports/dossier_stage_NC.md` (French master dossier) and `NC_de
 ## 9. Next steps, in priority order
 
 0. **CNQ checks (19 Oct):** go through `05_outputs/CNQ_investigation_checklist.html` with Mohammad (H1-H7 are high). Apply what he decides; the list of changes done, decided and kept for later is `CNQ_CHANGES.md`. Scope decided: REC and ERMA out; disruption block (quality aléas with no NC) shown beside the NC cost.
-0b. **Hub:** template 5 chosen; get the names of the 2 hidden third-row tiles and the QA Management tab content, then prepare the page for Slate (he installs it and pastes the links). Content must stay exactly what the current hub has.
+0b. **Hub:** template 5 chosen and filled from his Slate export; get the QSR and Operational Surveillance links, confirm "capri" = CPB, then prepare the page for Slate (he installs it). Content = the current app plus his listed changes, nothing else.
 1. **Cable defence:** get Mohammad's choice among options A–D and the "cable problem" definition; then produce the slide numbers (by defect and by NC). Nothing in the parser has been changed for this yet.
 2. **REC:** get the definition decision; ask for the precision query result and REC's roster; then write the final rule spec for the pipeline team (columns `rec_written`, `rec_fixed`, `imputation`).
 3. **Pack v4.8:** apply the two pending fixes (MT → A400M in `LINES`; drop A400M chart) when he asks; confirm whether the pack was installed.

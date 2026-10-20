@@ -6,11 +6,17 @@ New home page for the Pôle Élec quality tools, to replace the current "Pole El
 
 The page to use is `hub/pole_elec_hub.html` (preview: `screenshots/hub_final.png`). Everything on it comes from `hub/hub_config.js`, the only file to edit:
 
-- paste each Skywise link where it says `A_COMPLETER`; until then the card shows "Lien à compléter" and cannot be clicked;
-- names, short descriptions, icons and colours are in the same file;
-- keep the two files in the same folder, save, refresh the page.
+- links, names, short descriptions, icons and colours are all there; a link still set to `A_COMPLETER` shows "Lien à compléter" and cannot be clicked;
+- `soon: true` shows a tool as "Bientôt disponible" (not clickable); `guide:` adds a "Guide utilisateur" link;
+- keep the two files in the same folder, save, refresh the page. Links open in a new tab, as in the current app.
 
-Content is what the current hub shows, no more: PPS, Serie Follow Up, FOD, Alert Quality, NC Dashboard, NC Writing, the two tiles of its third row, QCM with NC Eradication, and QA Management. The third-row tiles and the QA Management card carry placeholder names for now (Audits, Documentation, Habilitations QA), marked as such in the config. The two tabs of the current hub become two small groups on the right, so everything is visible at once on a 1440 × 900 screen.
+Content (from the Slate export of the current app, `06_input_data/slate_hub_export_2026-10-20.json`, with Mohammad's changes of 20 Oct):
+
+- **Outils qualité:** PPS, Serie Follow Up, FOD, Alert Quality, NC Dashboard, NC Writing, Projets & Amélioration, plus **QSR** and **Operational Surveillance** (new, links to fill in). **CPB** removed (kept as a commented line in the config).
+- **QCM:** NC Eradication, shown as "Bientôt disponible" until it goes live; its link and user guide are already in the config.
+- **QA Management:** Form (DEMAT), MyQA.
+
+The current app's tabs become two small groups on the right, so everything is visible at once on a 1440 × 900 screen.
 
 ## The five templates (design round of 20 Oct)
 
@@ -37,9 +43,9 @@ All five work on a wide screen, a laptop and a phone, can be used with the keybo
 
 ## Still needed
 
-- The Skywise link of each tool (Mohammad pastes them in `hub/hub_config.js`).
-- The real names of the two tiles on the third row of the current hub (hidden behind its scroll); "Audits" and "Documentation" are placeholders.
-- What the "QA Managment" tab of the current hub contains; "Habilitations QA" is a placeholder (one line per tile in the config).
+- Links for QSR and Operational Surveillance (and a short description for QSR).
+- Confirm that "capri" meant CPB: it is the only tile of the current app close to that name.
+- The NC Dashboard link in the current app points to a Slate app named `ttttteqwffadsdasadsad`: worth checking it is the right one.
 
 ## Moving the chosen one into Slate (to check with whoever builds the Slate app)
 
