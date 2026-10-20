@@ -19,6 +19,7 @@
       <h2 class="fb-title" id="fbLab" data-t="fbTitle"></h2>
       <div class="fb-row">
         <div class="fb"><label for="gSrc" data-t="fSrc"></label><select id="gSrc"></select></div>
+        <div class="fb"><label for="gOrg" data-t="fOrg"></label><select id="gOrg"></select></div>
         <div class="fb" id="gPlantBox"><span id="gPlantLab" data-t="fPlant"></span><button type="button" role="switch" class="switch" id="gPlant" aria-labelledby="gPlantLab"><i aria-hidden="true"></i><b id="gPlantTxt"></b></button><small class="fb-note" id="gPlantNote" hidden></small></div>
         <div class="fb"><span id="gPhLab" data-t="fPhase"></span><div class="seg" role="radiogroup" aria-labelledby="gPhLab" id="gPhase"></div></div>
         <div class="fb"><label for="gLine" data-t="fLine"></label><select id="gLine"></select></div>
@@ -167,6 +168,14 @@
       <div class="levels" id="cLevels"></div>
       <p class="sub" data-t="cLevelsSub"></p>
     </div>
+    <section class="dis" id="cDis" aria-labelledby="disH" hidden>
+      <div class="dis-head"><span class="kicker" data-t="disK"></span><h3 id="disH" data-t="disH"></h3><p class="sub" data-t="disS"></p></div>
+      <div class="dis-figs" id="disFigs"></div>
+      <div class="dis-chart"><h4 data-t="disMonth"></h4><div id="disMonth"></div></div>
+      <div class="dis-chart"><h4 data-t="disLine"></h4><div id="disLines"></div></div>
+      <div class="dis-notes" id="disNotes"></div>
+      <details class="vdata dis-list" id="disListBox"><summary id="disListSum"></summary><div class="table-wrap" id="disList"></div></details>
+    </section>
     <details class="explain" id="cx">
       <summary data-t="cxSum"></summary>
       <div class="cx-in">

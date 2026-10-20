@@ -239,6 +239,21 @@
    "name": "rework_orders",
    "type": "text",
    "meaning": "rework order numbers (S03) linked to the NC, space-separated"
+  },
+  {
+   "name": "alert_source",
+   "type": "text",
+   "meaning": "alert step: alea (declared time of the quality aléas that led to the NC), flat (the model's time), empty (not charged)"
+  },
+  {
+   "name": "aleas",
+   "type": "text",
+   "meaning": "quality aléas (MES disruptions) that led to the NC, space-separated"
+  },
+  {
+   "name": "origin",
+   "type": "text",
+   "meaning": "pipeline output the NC comes from: normal (fto2_dashboard_data) or missing_ids (fto2_dashboard_data_missing_ids)"
   }
  ],
  "defects": [
@@ -326,6 +341,58 @@
    "name": "cr_symptom",
    "type": "text",
    "meaning": "customer returns: observed symptom"
+  }
+ ],
+ "disruptions": [
+  {
+   "name": "id",
+   "type": "text",
+   "meaning": "aléa (MES disruption) number"
+  },
+  {
+   "name": "opened",
+   "type": "date",
+   "meaning": "day the aléa opened, Paris time"
+  },
+  {
+   "name": "line",
+   "type": "text",
+   "meaning": "aircraft line, from the aléa's programme: A350, A330, A320, Autre"
+  },
+  {
+   "name": "station",
+   "type": "text",
+   "meaning": "physical station"
+  },
+  {
+   "name": "work_order",
+   "type": "text",
+   "meaning": "work order of the aléa"
+  },
+  {
+   "name": "minutes",
+   "type": "num",
+   "meaning": "time lost, typed by the operator (minutes)"
+  },
+  {
+   "name": "in_block",
+   "type": "int",
+   "meaning": "1 when counted in the disruption block; 0 for the possible ERMA aléas (MIP / 1101VB), out until checked"
+  },
+  {
+   "name": "reason",
+   "type": "text",
+   "meaning": "why out of the block: erma, or empty"
+  },
+  {
+   "name": "status",
+   "type": "text",
+   "meaning": "status of the aléa in MES"
+  },
+  {
+   "name": "comment",
+   "type": "text",
+   "meaning": "what the operator wrote (200 characters)"
   }
  ]
 }

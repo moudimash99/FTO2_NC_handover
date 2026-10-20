@@ -77,6 +77,17 @@ def load_orders():
     return pd.concat(frames, ignore_index=True)
 
 
+def load_disruptions():
+    """MES disruptions (aléas) at plant FTO2: 06_input_data/mes_disruptions_fto2_*.csv.gz. Today Jan-Sep 2026, extracted from main's
+    upload (2,500 rows: possibly cut at an export limit, check H7). None when there is no file."""
+    files = sorted(glob.glob(os.path.join(ROOT, "06_input_data", "mes_disruptions_fto2_*.csv.gz")))
+    if not files:
+        return None
+    frames = [pd.read_csv(f, dtype=str, keep_default_na=False, na_values=[""]) for f in files]
+    REPORT["disruption_inputs"] = {os.path.basename(f): len(t) for f, t in zip(files, frames)}
+    return pd.concat(frames, ignore_index=True).drop_duplicates("disruption_id")
+
+
 def year_2025(x):
     """2025 for the year comparisons: the raw Skywise NC extract of 2025 (06_input_data/nc_2025_skywise_fto2.csv.gz) through the
     pipeline's rules, the parser and the CNQ model, summed per month, scope, phase, line and product; and the 2025 deliveries per
@@ -106,15 +117,15 @@ def year_2025(x):
 def main():
     x = load_exports()
     say("exports:", REPORT["inputs"], "->", len(x), "NCs")
-    ops = load_orders()
+    ops, dis = load_orders(), load_disruptions()
     lab = pd.read_csv(os.path.join(ROOT, "04_reference", "llm_labels_longtext.csv"), dtype={"notification_number": str}, encoding="utf-8-sig")
     y25 = year_2025(x.copy())
     say("2025:", REPORT.get("y2025"))
-    p = core.prepare(x, lab, os.path.join(ROOT, "04_reference"), ops)   # parser, labels, CNQ, rework orders, scope: build/fto2_core.py
+    p = core.prepare(x, lab, os.path.join(ROOT, "04_reference"), ops, dis)   # parser, labels, CNQ, rework orders, aléas, scope: build/fto2_core.py
     d, nc_ref, lt, nc_in = p["d"], p["nc"], p["lt"], p["nc_in"]
     nl_, dl_ = p["nc_llm"], p["def_llm"]
     CODE_DESC.update(p["codes"])
-    REPORT.update({k: p["report"][k] for k in ("labels", "subcodes", "unknown_cnq_classes", "rework_orders")})
+    REPORT.update({k: p["report"][k] for k in ("labels", "subcodes", "unknown_cnq_classes", "rework_orders", "aleas") if k in p["report"]})
     say("parser v4.8:", p["report"]["parser"]["defect_lines"], "defect lines in", p["report"]["parser"]["ncs"], "NCs")
     say("labels:", REPORT["labels"])
     d.to_csv(os.path.join(OUT, "fto2_defects.csv"), index=False, encoding="utf-8-sig")
@@ -142,7 +153,7 @@ def main():
     # ======================================================== 4a. CNQ package: same data, same totals
     refresh_cnq_package(nc_in, d)
     # ======================================================== 4b. pages and workbooks
-    build_dashboard(d, nc_ref, lt, y25)
+    build_dashboard(d, nc_ref, lt, y25, core.dis_table(p["dis"]))
     build_review(d, lt)
     build_detail(d, nc_ref, x)
     json.dump(REPORT, open(os.path.join(ROOT, "build", "build_report.json"), "w"), indent=2, ensure_ascii=False, default=str)
@@ -280,7 +291,7 @@ def slate_pack(data, template="dashboard.html", page="main"):
     say("slate pack:", {f: os.path.getsize(os.path.join(out, f)) // 1024 for f in os.listdir(out)}, "KB")
 
 
-def build_dashboard(d, nc, lt, y25=None):
+def build_dashboard(d, nc, lt, y25=None, dis_t=None):
     rca = lambda t: L.RCA_NAMES.get(t, t)
     ncd = nc.set_index("notification_number")
     defs = []
@@ -318,13 +329,16 @@ def build_dashboard(d, nc, lt, y25=None):
     import dummy_data
     data["eqmsn"] = eqmsn(nc)
     data["y25"] = y25
+    dis_t = dis_t if dis_t is not None else core.dis_table(None)
+    data["dis"] = [[None if (isinstance(v, float) and np.isnan(v)) else v for v in r] for r in dis_t.values.tolist()]   # as the JS adapter gives it
     local = dict(data, dummy=dummy_data.make(ROOT))
     # the main page goes through the two tables, as in Skywise: the JS (fto2FromTables) rebuilds the page's data from them
     nc_t, def_t = core.tables(d, nc, lt, REPORT["created_to"])
     nc_t.to_csv(os.path.join(OUT, "fto2_dash_nc.csv"), index=False, encoding="utf-8-sig")
     def_t.to_csv(os.path.join(OUT, "fto2_dash_defects.csv"), index=False, encoding="utf-8-sig")
-    REPORT["dash_tables"] = {"nc": int(len(nc_t)), "defects": int(len(def_t))}
-    src = {"tables": {"nc": colmajor(nc_t), "def": colmajor(def_t)}, "ref": reference_block(data)}
+    dis_t.to_csv(os.path.join(OUT, "fto2_dash_disruptions.csv"), index=False, encoding="utf-8-sig")
+    REPORT["dash_tables"] = {"nc": int(len(nc_t)), "defects": int(len(def_t)), "disruptions": int(len(dis_t))}
+    src = {"tables": {"nc": colmajor(nc_t), "def": colmajor(def_t), "dis": colmajor(dis_t)}, "ref": reference_block(data)}
     _page("dashboard.html", src, "FTO2_NC_Dashboard.html")
     # the proposed final layout, chart by chart, with the choices to make (review page, local only)
     _page("dashboard.html", local, "FTO2_Revue_Proposition.html", page="review")
@@ -399,7 +413,8 @@ def cnq_explain(d):
                   "noDefect": P.MIN_HANDS_ON_NO_DEFECT, "writeGlobal": P.MIN_WRITE_NC_GLOBAL, "workGlobal": P.MIN_WORK_GLOBAL,
                   "defDefault": P.MIN_DEFAULT_DEFECT, "crExtra": P.CUSTOMER_RETURN_EXTRA, "version": P.MODEL_VERSION,
                   "connNext": P.MIN_CONNECTION_NEXT, "connCls": list(P.CONNECTION_CLASSES), "intTypes": list(P.INTERNAL_TYPES),
-                  "intFactor": P.INTERNAL_WORK_FACTOR, "noAlert": list(P.NO_ALERT_TYPES), "orderTime": bool(getattr(P, "USE_ORDER_TIME", False))},
+                  "intFactor": P.INTERNAL_WORK_FACTOR, "noAlert": list(P.NO_ALERT_TYPES), "orderTime": bool(getattr(P, "USE_ORDER_TIME", False)),
+                  "aleaTime": bool(getattr(P, "USE_ALEA_TIME", False)), "aleaHours": list(getattr(P, "ALEA_LINK_HOURS", (-2, 72)))},
             "rules": {k: list(v[:8]) + [kind(v[8])] for k, v in P.RULES.items()},
             "cls": {k: [v[0], v[1], v[2], kind(v[4])] for k, v in P.DEFECT_TIMES.items()},
             "airbus": P.AIRBUS_STANDARD,

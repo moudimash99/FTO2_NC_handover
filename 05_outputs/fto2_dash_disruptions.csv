@@ -1,0 +1,109 @@
+﻿id,opened,line,station,work_order,minutes,in_block,reason,status,comment
+OZ1780938,2026-01-05,A350,INTEG2,1027044105,60,1,,Closed,Impossibilité de monter la Pipe V2511259700000 suite a un montage non conforme fournisseur.
+OZ1783404,2026-01-06,A350,HARNAIS_MDCD,1027383554,360,1,,Closed,"2 formations réalisé , mesure lineique , recherche de gamme"
+OZ1785059,2026-01-07,A330,INTE 740VU,1027341953,72,1,,Closed,Changement de deux câbles sur la platine relais temps perdu 2h
+OZ1785431,2026-01-07,A350,HARNAIS_MDCD,1027383554,330,1,,Closed,Recherche de gamme
+OZ1788106,2026-01-08,A350,HARNAIS_MDCD,1027383554,330,1,,Closed,recherche de gamme et manque de temps
+OZ1790476,2026-01-09,A350,INTEG2,1027175460,60,1,,Closed,Manque câble : AD22 : 3422-0191 ET AD22 : 3422-0190 (INFO longueur etc : VOIR IMAGES)
+OZ1793801,2026-01-12,A330,CHEMINE SHUNT 740VU,1027542382,7,1,,Closed,Manchon imprimé MSN : 2145 OF : 1027542382 Numéro : 2458-0158 Qté : 1 Type : Manchon numéro de câble
+OZ1799496,2026-01-14,A350,INTEG1,1027315420,120,1,,Closed,"Bonjour, j'ai eu un problème sur mon OP, voir deux... 1) Plusieurs mauvais sertissages ( que j'ai repris ) 2) Recherche dans la S.O.I pour trouver la bonne fixation à appliquer sur les VN & (torquage)"
+OZ1806056,2026-01-19,A350,INTEG1,1027320098,60,1,,Closed,Colonnette endommagé sur la prise 3CB-A MSN817 poste Inté1
+OZ1806552,2026-01-19,A350,SSENS4,1027717179,90,1,,Closed,Bonsoir MSN : 846 RT 1 R OF : 1027717179 Cable abimée AD 24 longueur 232 CM MERCI .
+OZ1819701,2026-01-26,A350,INTEG1,1027399407,13,1,,Closed,"Bonsoir, Merci de bien vouloir créer une NC svp suite à une colonnette qui a cédé lors du torquage de la prise 3CB-A du MIP 819, En vous remerciant,"
+OZ1822351,2026-01-27,A330,MECANIQUE,1027711744,7,1,,Closed,"Rail VT tordu, suite à l'alerte Qualité faut-il faire une CT129 ?"
+OZ1826935,2026-01-29,A330,MECANIQUE,1027711844,7,1,,Closed,Un équipement à été servis avec les 19 autres et il a la même ref ABS0064-01 et cms 7388650204 mais n'a pas le même disign (pointe sur le dessus) que tous les autres puis il a aussi des différences su
+OZ1828564,2026-01-30,A320,FAISCEAU RECHANGE_A320,,60,1,,Closed,Etiquettes autocollantes 40x46 mm utilisées notamment pour les faisceaux F900.00954.888.95 et F900.00954.887.95 ne collent pas assez et se détachent.
+OZ1848430,2026-02-10,A330,MECANIQUE,1027849736,6,1,,Closed,"prise hs, changer (le TL m'en a apporter un nouveau)"
+OZ1851957,2026-02-11,A350,MECA,1027848096,0,1,,Closed,ON NE PEUT TOUJOURS PAS FAIRE LA SAISIE D OUTIL DEPUIS MSN823
+OZ1852109,2026-02-11,A330,MECANIQUE,1028218156,7,1,,Closed,peinture bleu face avant écaillée au trou VN
+OZ1861152,2026-02-17,A350,INTEG1,1028305007,120,1,,Closed,Changement de support route 2M MSN 831 Remise au propre des câbles.
+OZ1868168,2026-02-20,A330,ETIQUETTES + MANCHONS_A330,,60,1,,Closed,Faisceaux rechanges F900.00954.888.95I et F900.00954.887.95I Les étiquettes autocollantes positionnées sur les câbles se décollent et tombent.
+OZ1875389,2026-02-25,A350,MECA,1028041621,60,1,,Closed,Platine V9241920800000 A00 endommagé prélevé sur MSN834 NC en cours
+OZ1890013,2026-03-04,A350,SSENS_S1,1028259874,60,1,,Closed,CABLE ABIME PAR TETE A ERMA PRISE 1608VC019 NC PRISE EN COMPTE PAR ERMA
+OZ1897602,2026-03-09,A350,MECA,1028259713,60,1,,Closed,NON METALISE
+OZ1909961,2026-03-15,A350,INTEG2,1027963079,0,1,,Closed,"Suite a Aléa OZ1897649, la qualité a t'elle statué? Constat de désaffleurement sur le rivet à frapper au niveau de la plage de la 300VN359 (voir pièce jointe). Attente statut pour installer la VN. Acc"
+OZ1915409,2026-03-17,A350,INTEG1,1028434441,0,1,,Closed,"bonjour, la nouvelle livraison de plaquettes présente une différence sur les plaquettes d'ensemble notées ""V92931101000 WF201/1101VB SER"". Le SER est placé à gauche de la dernière ligne alors qu'il ét"
+OZ1916115,2026-03-18,A350,INTEG1,1028139158,15,1,,Closed,"Bonjour, Merci de bien vouloir créer une NC suite à une erreur de vis, un écrou riveté est endommagé sur le MIP 835 intégration 1, Merci,"
+OZ1923144,2026-03-20,A350,INTEG1,1028259994,0,1,,Closed,Tuyauterie endommagé au montage prélevée pour MSN 834.
+OZ1927807,2026-03-24,A350,MECA,1028041859,60,1,,Closed,rail de vt défectueux tordu V92931101000 PRELEVE SUR MSN844 POUR MSN835
+OZ1937210,2026-03-28,A330,MECANIQUE,1028739402,7,1,,Closed,pas l outillage nécessaire pour torquer les lampes E0430-02
+OZ1948066,2026-04-02,A350,MECA,1028522326,60,1,,Closed,NON METALLISEES comme l avion precedent vu avec manu la fois d avant
+OZ1948068,2026-04-02,A350,MECA,1028522338,60,1,,Closed,Le support sur la rampe mal serti comme l autre fois a croire que c est la meme rampe qui est revenue sur l avion d apres....
+OZ1950308,2026-04-03,A330,TA 742VU,1028821309,7,1,,Closed,Raison: mauvaise jauge de câble. 2434-0002 DRC12 300cm
+OZ1950989,2026-04-05,A350,INTEG2,1028041917,3,1,,Closed,"Tuyauterie fournisseur au dessus de la 1WK12-A étiquette référence et stamp décollé. Demande avis QLS. Rail 500VT200 déformé, demande avis qualité également."
+OZ1955084,2026-04-08,A330,MECANIQUE,1028960434,7,1,,Closed,Pas d'outils pour torquer à la valeur nominale 0.225
+OZ1957281,2026-04-09,A330,INTE 740VU,1028572610,0,1,,Closed,TEST
+OZ1957798,2026-04-09,A320,TETE A_A320,1029074623,11,1,,Closed,"Pour la mise en œuvre des auto soudeurs sur les câbles blindés, sur la traçabilité des outils on ne nous demande pas l'infrarouge. Voir pour le faire rajouter svp. Merci."
+OZ1958836,2026-04-09,A350,INTEG2,1028434456,60,1,,Closed,Problème sur toutes les plaquettes 1WK mauvais marquage de plaquette
+OZ1961259,2026-04-10,A350,MECA,1028348065,60,1,,Closed,"Bonjour. A quand de montage des éléments dans le platine V9241959500000, je remarque que la même il' Ya 2 petites impacte au niveau da RAMP. Voici la photo annexé pour meilleur voir. Merci et bonne jo"
+OZ1969972,2026-04-15,A350,INTEG2,1028522354,30,1,,Closed,"bonjour, nous avons une colonnette HS dans le pylone route 2M, merci d'avance. cordialement"
+OZ1971413,2026-04-16,A330,FABRICATION 743VU,1028937784,7,1,,Closed,temp perdu 1H cause équerre mal montée sur le 743VU MSN 2140
+OZ1979538,2026-04-21,A350,SSENS1,1028934928,60,1,,Closed,"Bonjour. Quand je positionne la prise 1706VC001, da route 1R, MSN 847, je me suis aperçu que les auto-soudeurs da même sont fait a 8cm au lieu de 11 cm. SVP de regarde a fin de la faire bien a 11cm po"
+OZ1992065,2026-04-28,A330,FABRICATION 743VU,1029062553,7,1,,Closed,Platine VG défectueuse réf F9251529400000 la VG ne se monte pas car filetage endommagé
+OZ1995533,2026-04-30,A330,MECANIQUE 740VU,1029148710,15,1,,Closed,Disjoncteur EN3661-005A35AB reçu sans écrou ni rondelle Kanban 26F-PW740 Casier 38 CMS 7173240039
+OZ1995563,2026-04-30,A330,CHEMINEMENT 742VU,1029148722,7,1,,Closed,Cable manquant livraison. 2424-0053 DR24 200cm
+OZ1996292,2026-04-30,A350,INTEG1,1028657632,8,1,,Closed,"Bonjour, Suite câbles abîmés, merci ce bien vouloir créer une NC afin de faire le remplacement des câbles svp, route 2S MIP 844, DR20 2781-0065 longueur 130 cms DR24 2751-0970 longueur 135 cms DR24 27"
+OZ1997045,2026-04-30,A330,CHEMINEMENT 742VU,1029148722,7,1,,Closed,MSN:2140 ( 742 VU ) OF: 109148722 cable manquant dr 20 longueur 240 2829-0030
+OZ2002831,2026-05-06,A350,SSENS4,1028998503,0,1,,Deleted,Cable trop court Cable DRB 24 numéros: 3313-0124 Longueur: 520
+OZ2003175,2026-05-06,A320,FABRICATION_A320,1029305294,0,1,,Closed,"Par la présente, nous réitérons l’urgence absolue concernant le remplacement des contreprises et des connecteurs sur les équipements RUDDER et MFRL. Malgré nos précédents signalements, la situation a "
+OZ2005623,2026-05-07,A350,TETEA1,,36,1,,Closed,"Bonjour , j'ai une prise rectangle endommager , il est impossible d'enficher .Ref équipement :2306E12FP1A5"
+OZ2006595,2026-05-09,A330,MECANIQUE,1029282394,0,1,,Closed,Etiquette autocollante 590VC abimée
+OZ2010276,2026-05-12,A350,INTEG1,1028745430,60,1,,Closed,Bonjour. Suite casse back Shell 3CB-A ref. E0684E05FBN merci de bien vouloir crée une NC pour replacement prise prélevé du chariot du MSN 857.
+OZ2011668,2026-05-12,A320,FABRICATION_A320,1029305376,24,1,,Closed,NETTOYAGE DES CONTRES PRISES SUR TABLE DE CHEMINEMENT
+OZ2020544,2026-05-20,A350,TRESSE DE MASSE,,30,1,,Closed,"20/05/2026 Poste Pièces élémentaires. Pour la fabrication des câbles de Masses Alu grosses sections. Deux câbles fournis sont endommagés et inutilisables pour l’OF concerné. Câbles Alu, Type AD3, de l"
+OZ2027531,2026-05-22,A350,INTEG2,1028998899,30,1,,Closed,Pipe endommagée au montage sur le MSN 848 prélevée sur le MSN 851. Pipe endommagée déposée sur bureau QLS Es-Salehy.R
+OZ2027570,2026-05-22,A330,CS 742VU,1029361317,14,1,,Closed,"Sur porte 742VU, MSN2162. Port de branchement ""B"" H.S de a barette 709VT, module 1. Demande : Changement du module."
+OZ2027591,2026-05-22,A350,SSENS2,1029207721,60,1,,Closed,"Bonjour, Câble coupé trop court sur la 20TC2A Câble N°4612-0350 KL24 Longueur : 320CM"
+OZ2027685,2026-05-23,A350,SSENS4,1028998503,60,1,,Closed,Cable coupé trop court par l'operateur sur la 2M CDVE DR 24 Numéros: 2797-0602 Longueur : 540 Merci
+OZ2027875,2026-05-25,A350,SSENS_S1,1029207701,0,0,erma,Closed,"Pièce manquante bonjour, les plaquettes des prises 7DG1-A et 8DG1-A (ref. E0248A2-6H9 ), imprimées afin de palier à la non-conformité des lots reçus, sont épuisées. Il est nécessaire d'en imprimer de "
+OZ2030680,2026-05-26,A330,MECANIQUE 740VU,1029361481,14,1,,Closed,Pièce manquante msn 2163 of 1029361481 740vu ref f113.120123.000.00 probleme sur 5 lot etiquette manque 1er page etiquette de 2pc a 5xb .
+OZ2030717,2026-05-26,A330,CHEMINEMENT 742VU,1029361543,7,1,,Closed,MSN 2163 OF: 1029361543 742 VU PORTE CABLE MANQUANT DR 24 2911-0447 LONGUEUR: 220
+OZ2034049,2026-05-28,A320,SIMU_A320,,15,1,,Closed,"Pour les 59 VU, OF: 57499773 et 57513681 Il manque dans les blisters 1 support équipé D925.20133.000 Nous avons regardé L' ENS. Structure D925.20536.000.60, et il y est. Donc il manque 2 supports équi"
+OZ2044597,2026-06-03,A350,SSENS1,1029210892,60,1,,Closed,Pièce manquante BONJOUR OF:1029210892 MSN:855 ROUTE 1R PLAQUETTE DE LA PRISE 1706VC001 MANQUANTE (PRELEVEE POUR UN AUTRE MSN ET PAS REMPLACEE)
+OZ2048057,2026-06-04,A330,MECANIQUE,1029399691,0,1,,Closed,Test olivier et Marc
+OZ2059347,2026-06-10,A330,CONDITIONNEMENT 740VU,1029237370,14,1,,Closed,Câble à recommander : Numéro : 2434-0003 Type : DG 4 Longueur : 80 Raison : Mise en œuvre incorrect. MSN : 2161
+OZ2061700,2026-06-11,A350,SSENS4,1029324529,0,0,erma,Closed,"bonjour, backshell cassé lors du torquage de la prise Réf. raccord : ABS1896A08E Merci"
+OZ2071840,2026-06-16,A350,TETEA1,1029637798,120,0,erma,Closed,"Bonjour. Suite a mauvais identification de certains câbles, il avez de câbles da prise 1608VC070 A identifie comme câbles da prise 1608VC066 A et le contraire aussi Save-dire câbles da 1608VC066 A dan"
+OZ2073378,2026-06-17,A350,SSENS4,1029554910,30,0,erma,Closed,Manque prise 20TC2 A Réf. équipement : ABS2306E08FR1A1 Réf. raccord : EN3545-007SCE Merci
+OZ2076534,2026-06-18,A350,SSENS3,1029574118,90,0,erma,Deleted,Bonjour câble KL mauvaises sens numero : 4612-0371 ET 4612-370 MSN : 861 2M LIGNE : 3 OF: 1029574118 MERCI
+OZ2078766,2026-06-18,A350,MECA,1029377348,60,1,,Closed,"La structure MSN 857, les étiquettes autocollantes ne sont pas installées pour l'identification des prises Arinc et 3CB A/B."
+OZ2078821,2026-06-19,A350,MECA,1029376652,60,1,,Closed,Bonjour. Sur le MSN 856 ils sont pas installe les 6 étiquette autocollante de repère des prises arinc plus le 2 de prise 3CB A/B. Merci de vérifier et de le remettre en conformité Bonne Journée.
+OZ2088070,2026-06-24,A320,FOMAX_A320,57590665,9,1,,Closed,"Fomax 786-95 OF 57590665 apparemment, 1 étiquette rapidshare a dû tomber. L'étiquette pour le KL 24 n°4626-7114 est manquante Besoin d'une réimpression. Merci d'avance"
+OZ2088755,2026-06-24,A350,SSENS4,1029554905,60,0,erma,Closed,BONSOIR OF 1029554905 MSN 8S0 ROUITE 2M CDVE LE BACKSHELL DE LA PRISE 9KS J14 S'EST CASSE EN TORQUANT REFERENCE ABS1896A09P MERCI
+OZ2095101,2026-06-29,A350,INTEG1,1029377424,150,0,erma,Closed,"Bonjour, Nous avons une étiquette auto-collant manquant sur une prise NON CDVE 1608VC021 A, route 1S, poste TEST 1. Pourriez vous nous fournir pour qu'elle soit conformité. Merci! Cordialement, Vaness"
+OZ2097291,2026-06-29,A350,MECA,1029574611,60,1,,Closed,"Bonjour. Le MIP MSN 861, les étiquettes autocollantes de repère de prise arinc plus des deux prise 3CB-A/B sont pas installer. SVP de passer sur poste pour vérifier et demande de installer les mêmes é"
+OZ2107275,2026-07-03,A320,FABRICATION_A320,1029958964,186,1,,Closed,attente d'un controle sertissage cdve depuis 7H30
+OZ2108613,2026-07-03,A350,TETEA1,1030138820,59,0,erma,Closed,"Bonjour, MSN 859 ULR Connecteur : 20TC2 A L2 2M Présence de feutre noir sur le connecteur. Prélèvement fait sur le MSN 867 Merci."
+OZ2109398,2026-07-06,A350,FO A350,1030238752,24,1,,Closed,Les postes de travails pour les opérations 20 30 et 40 ne peuvent pas être badgés car il n y a de QA associé ( 4VEF702). Merci de prendre le point.
+OZ2116698,2026-07-08,A330,RMAX_A330,57580106,69,1,,Closed,RMAX A330 PN 872-95 et 873-95 les plaquettes repère n'apparaissent pas sur le plan de câblage. Faut-il les ajouter sachant qu'au moins 1 des 3 est présente sur la planche qui se trouve en page 9 de la
+OZ2117932,2026-07-08,A350,MECA,1029637876,67,0,erma,Closed,Pièce manquante pas de brossage et pas de vaseline non conforme
+OZ2117941,2026-07-08,A350,MECA,1029638120,120,0,erma,Closed,Pièce manquante NON CONFORME
+OZ2117961,2026-07-08,A350,MECA,1029638900,66,0,erma,Closed,NON CONFORME
+OZ2130029,2026-07-16,A330,FINITION 740VU,1029734826,7,1,,Closed,"Bonjour, Suite à la détérioration (déchirure) du grommet de notre raccord arrière, nous sollicitons la servitude d'un raccord neuf référence NSA938025A12M, dans le but d'y prélever le grommet de recha"
+OZ2131583,2026-07-17,A330,RMAX_A330,57600569,0,1,,Closed,RMAX A330 PN 888-95 OF 57600569 PB survenu lors de la mise en œuvre de la gaine thermo haute température. La gaine du DR24 en sortie a fait une bulle qui a éclaté. Vérification du réglage de la tempér
+OZ2131597,2026-07-17,A330,RMAX_A330,57600569,60,1,,Closed,RMAX A330 PN 888-95 OF 57600569 PB survenu lors de la mise en œuvre de la gaine thermo haute température. La gaine du DR24 en sortie a fait une bulle qui a éclaté. Vérification du réglage de la tempér
+OZ2137377,2026-07-21,A350,SSENS_S1,1029638829,0,0,erma,Closed,"probleme avec la prise ne se torque pas, tourne sur elle meme"
+OZ2139044,2026-07-22,A350,SSENS2,1029638884,30,0,erma,Closed,"Bonjour, Sur la route 2M du MSN 866, le backshell ABS1896A08E de la prise 52CV-A s'est abimé lors du torquage. Merci d'en fournir un autre. Ref: ABS1896A08E"
+OZ2142810,2026-07-23,A350,MECA,1029638460,120,1,,Closed,MSN 864 et 865 impossible de badger les op10
+OZ2150862,2026-08-18,A320,DEBIT SUR STOCKS_A320,57461975,120,1,,Closed,Problème de serrage tyrap sur les gaines de réserve rigides. L'AIPS indique un serrage à 2.50. Mais selon les pistolets ce serrage est trop lâche. Après vérification il serait plus adapté d'appliquer 
+OZ2151820,2026-08-18,A350,MECA,1029638982,90,1,,Closed,IMPOSSIBLE DE VALIDER LES NUMEROS DE SERIE
+OZ2153845,2026-08-19,A350,INTEG2,1029637895,60,0,erma,Closed,"Bonjour, Nous avons bien reçu la platine V924.19534.000. Cependant, les métallisations à brosser n'ont pas été réalisées. Les séries concernées (MSN) sont les 863, 864 et 865. Merci de bien vouloir tr"
+OZ2155816,2026-08-20,A330,MECANIQUE,1030067907,7,1,,Closed,Plaquette 34CE 2 mal imprimée (écrit 34) plusieurs cas comme ça sur cet avion
+OZ2155834,2026-08-20,A330,MECANIQUE,1030068580,7,1,,Closed,"Plaquette 34CE 1 mal imprimée (écrit ""34"") plusieurs cas similaires sur cet avion"
+OZ2156839,2026-08-20,A320,FABRICATION_A320,1030259828,9,1,,Closed,ABSENCE DE LA QUALITER SUR LE POSTE A320
+OZ2160067,2026-08-24,A350,CONDITIONNEMENT,1030699917,7,1,,Closed,Câble trop court de l'impression ( TETE A ) 2R MSN 871 VNC24 Numéro 2351-3348 LONG: 260
+OZ2166780,2026-08-26,A350,SSENS1,1030167753,480,0,erma,Closed,Perte de temps suite a une erreur de gainage/frettage des MV/MG
+OZ2181890,2026-09-02,A330,MECANIQUE,1030183058,14,1,,Closed,"Problème sur les vis NAS1635-04-6, elles casses pendant le torquage."
+OZ2185072,2026-09-03,A350,INTEG2,1029638929,4,0,erma,Closed,MODULE ABIME REF ABS 1569ME2002 (Module déjà changé)
+OZ2186752,2026-09-03,A330,CHEMINEMENT 742VU,1030470824,14,1,,Closed,A330 PORTE 742 VU MSN: 2171 OF: 1030470824 CABLES NON IMPRIMES DR 24 4942-0001 LONG 204 3523-0001 LONG 196 3121-0019 LONG 207 3121-0020 LONG 207 3261-0197 LONG 177 3162-0286 LONG 204 3162-0334 LONG 20
+OZ2208614,2026-09-14,A330,MECANIQUE,1030599514,36,1,,Closed,manque rampe
+OZ2217354,2026-09-17,A330,MECANIQUE,1030736589,14,1,,Closed,impossible de rentrer le n°série du 430HC voir photo en pj
+OZ2223327,2026-09-21,A350,MECA,1030169567,120,1,,Closed,Bonjour je ne peux faire la saisie d outil sur MES car ce n est pas les bons qui sont préenregistrés et manuellement on ne peut pas le saisir Merci car gamme bloquée
+OZ2224069,2026-09-21,A350,INTEG2,1030139756,90,0,erma,Closed,absence de manchon Draw-Wire en bout de gaine de réserve numéro : V924.19589.000.00
+OZ2231766,2026-09-23,A350,SSENS3,1031021237,0,1,,Closed,Connecteur endommagé Merci
+OZ2233438,2026-09-23,A350,TETEA1,1030812179,15,0,erma,Closed,"Pour la 1608VC046A, câble coupé par le rapid share 2792-0424, AD24, L620 Merci"
+OZ2235348,2026-09-24,A330,MECANIQUE,1030909341,22,1,,Closed,"MSN 2171 212VU OF1030909341 Bonjour, Les plaquettes roses pour les CDVE ne sont pas bonnes. Cela concerne tout le MSN 2171 !! Merci"
+OZ2237997,2026-09-25,A320,SIMU_A320,,15,1,,Closed,"Pour l'équipement Rotary Optical Encoder ABS1650-02, il y a eu une fiche alerte ME sur la ligne A330 pour le montage. Nous n'avons pas eu de fiche alerte, alors que nous le montons sur le 301 VU et 50"
+OZ2241541,2026-09-28,A350,SSENS2,1030355832,15,0,erma,Closed,Bonjour suite à une mauvaise chauffe du manchon rétractable j'ai détérioré le câbles du MSN 873 L:235 type WX26 numéro 3161-0347
+OZ2241626,2026-09-28,A330,CHEMINE SHUNT 740VU,1030830205,22,1,,Closed,Bonjour câbles CDVE manquant. Numéro : 2792-1024 Type : DR16 Longueur : 116 Numéro : 2792-1277 Type : DR16 Longueur : 120 Numéro : 2792-1278 Type : DR16 Longueur : 120 Numéro : 2792-1654 Type : DR16 L
+OZ2241695,2026-09-28,A330,CHEMINE SHUNT 740VU,1030830205,0,1,,Closed,Bonjour câbles CDVE manquant. Numéro : 2792-1041 Type : DR24 Longueur : 110 Numéro : 2792-3053 Type : DR24 Longueur : 110 Numéro : 2792-3190 Type : DR22 Longueur : 120 Numéro : 2792-3202 Type : DR22 L

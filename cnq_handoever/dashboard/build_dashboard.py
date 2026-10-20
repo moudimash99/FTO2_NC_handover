@@ -65,7 +65,8 @@ data = {
     "nc": [[int(r.notification_number), nn(r.cnq_month), nn(r.programme), nn(r.get("produit")), r.cnq_rule, int(r.cnq_on_aec), r.cnq_liability_group,
             int(r.cnq_final_inspection), int(r.cnq_customer_return), r.cnq_where_found, nn(r.statut),
             int(r.cnq_alert_raised), int(r.cnq_work_factor != 1),
-            [float(r.order_minutes_setup), float(r.order_minutes_work), str(r.rework_orders)] if r.get("cnq_work_source") == "order" else None]
+            [float(r.order_minutes_setup), float(r.order_minutes_work), str(r.rework_orders)] if r.get("cnq_work_source") == "order" else None,
+            float(r.cnq_min_alert) if r.get("cnq_alert_source") == "alea" else None]
            for _, r in nc.iterrows()],
     # same line order as the pipeline (the first connection error of an NC is the first in this order)
     "lines": [[idx[r.notification_number], cidx[r.sous_groupe], int(r.qty) if "qty" in d.columns and not pd.isna(r.qty) else 1,
@@ -76,7 +77,7 @@ base_min = {k: v[0] for k, v in P.DEFECT_TIMES.items()}
 p = {"rate": P.RATE_STANDARD, "rateEng": P.RATE_ENGINEERING, "alert": P.MIN_ALERT, "write": P.MIN_WRITE_NC, "writeFinal": P.MIN_WRITE_NC_FINAL,
      "support": P.MIN_SUPPORT, "setup": P.MIN_SETUP, "floor": P.MIN_WORK_FLOOR, "recheck": P.MIN_RECHECK_CLOSE, "noDefect": P.MIN_HANDS_ON_NO_DEFECT,
      "writeGlobal": P.MIN_WRITE_NC_GLOBAL, "workGlobal": P.MIN_WORK_GLOBAL, "crExtra": P.CUSTOMER_RETURN_EXTRA, "airbus": dict(P.AIRBUS_STANDARD),
-     "connNext": P.MIN_CONNECTION_NEXT, "internalFactor": P.INTERNAL_WORK_FACTOR, "orderTime": bool(getattr(P, "USE_ORDER_TIME", False)),
+     "connNext": P.MIN_CONNECTION_NEXT, "internalFactor": P.INTERNAL_WORK_FACTOR, "orderTime": bool(getattr(P, "USE_ORDER_TIME", False)), "aleaTime": bool(getattr(P, "USE_ALEA_TIME", False)),
      "classes": [{"min": base_min[k], "mat": P.DEFECT_TIMES[k][1], "conn": k in P.CONNECTION_CLASSES,
                   "of": cidx[P.DERIVED_TIMES[k][0]] if k in P.DERIVED_TIMES else None,
                   "factor": P.DERIVED_TIMES[k][1] if k in P.DERIVED_TIMES else None} for k in classes]}

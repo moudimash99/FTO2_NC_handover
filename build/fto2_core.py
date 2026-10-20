@@ -8,14 +8,18 @@ The same file runs in two places:
       fto2_dashboard_data_missing_ids that the pipeline notebook already writes.
 The NC selection is the pipeline's: nothing here adds or removes an NC (the scope columns only label them).
 
-    nc_t, def_t, info, to_label = fto2_core.build(frames, labels, ref_dir)
+    nc_t, def_t, dis_t, info, to_label = fto2_core.build(frames, labels, ref_dir, ops, dis)
 
 frames   the NC exports (standard + missing IDs) as pandas DataFrames, with the pipeline's columns
 labels   root-cause labels per defect line (04_reference/llm_labels_longtext.csv; a dataset in Skywise)
 ref_dir  folder holding reference_souscodes_pareto.csv and souscodes_fr.csv (04_reference/)
 
+ops      the rework orders' operations (Work_Order_Operation, S03 at FTO2), or None: the model's work times
+dis      the MES disruptions (MES Disruptions, plant FTO2), or None: the flat alert time and no disruption block
+
 nc_t     one row per NC, columns NC_COLUMNS          -> dataset fto2_dash_nc
 def_t    one row per defect line, columns DEF_COLUMNS -> dataset fto2_dash_defects
+dis_t    one row per quality aléa that led to no NC, columns DIS_COLUMNS -> dataset fto2_dash_disruptions
 
 Needs on the import path: fto2_logic.py and nc_defect_parser.py (02_dashboard_pack/.../1_pipeline) and the cnq package
 (cnq_handoever/cnq). The dashboard's JavaScript (fto2FromTables) turns the two tables back into the page's data.
@@ -30,6 +34,7 @@ import fto2_logic as L
 import nc_defect_parser as PARSER
 from cnq.cnq_core import compute_cnq
 from cnq.cnq_orders import nc_order_times
+from cnq.cnq_disruptions import nc_alea_times
 import cnq.cnq_params as CNQP
 
 S_ = lambda v: "" if v is None or (isinstance(v, float) and np.isnan(v)) else str(v)
@@ -85,6 +90,9 @@ NC_COLUMNS = [
     ("work_source", "text", "where the setup and hands-on minutes come from: order (planned time of the rework orders), model, or empty (no work)"),
     ("order_state", "text", "rework orders: used, open (not closed yet), no_time, not_found (not in the operations), empty (no link or no operations)"),
     ("rework_orders", "text", "rework order numbers (S03) linked to the NC, space-separated"),
+    ("alert_source", "text", "alert step: alea (declared time of the quality aléas that led to the NC), flat (the model's time), empty (not charged)"),
+    ("aleas", "text", "quality aléas (MES disruptions) that led to the NC, space-separated"),
+    ("origin", "text", "pipeline output the NC comes from: normal (fto2_dashboard_data) or missing_ids (fto2_dashboard_data_missing_ids)"),
 ]
 DEF_COLUMNS = [
     ("nc", "text", "NC number"),
@@ -104,6 +112,18 @@ DEF_COLUMNS = [
     ("cr_nature", "text", "customer returns: damage type (phys, hs, nc, recu)"),
     ("cr_detection", "text", "customer returns: moment of detection"),
     ("cr_symptom", "text", "customer returns: observed symptom"),
+]
+DIS_COLUMNS = [
+    ("id", "text", "aléa (MES disruption) number"),
+    ("opened", "date", "day the aléa opened, Paris time"),
+    ("line", "text", "aircraft line, from the aléa's programme: A350, A330, A320, Autre"),
+    ("station", "text", "physical station"),
+    ("work_order", "text", "work order of the aléa"),
+    ("minutes", "num", "time lost, typed by the operator (minutes)"),
+    ("in_block", "int", "1 when counted in the disruption block; 0 for the possible ERMA aléas (MIP / 1101VB), out until checked"),
+    ("reason", "text", "why out of the block: erma, or empty"),
+    ("status", "text", "status of the aléa in MES"),
+    ("comment", "text", "what the operator wrote (200 characters)"),
 ]
 
 
@@ -129,7 +149,9 @@ def as_export(x):
 
 
 def merge_exports(frames):
-    """The NC exports (standard + missing IDs) merged; when an NC is in several, the most recently changed row wins."""
+    """The NC exports (standard + missing IDs) merged; when an NC is in several, the most recently changed row wins. _origin says
+    which pipeline output the NC comes from: missing_ids when its export's name (_source) holds "missing", else normal; an NC in both
+    outputs is normal (the pipeline's standard selection has it)."""
     out = []
     for i, x in enumerate(frames):
         x = as_export(x)
@@ -138,6 +160,8 @@ def merge_exports(frames):
         out.append(x)
     x = pd.concat(out, ignore_index=True)
     x["notification_number"] = x["notification_number"].astype(str).str.strip().str.replace(r"\.0$", "", regex=True)
+    normal = set(x.loc[~x["_source"].astype(str).str.contains("missing", case=False), "notification_number"])
+    x["_origin"] = np.where(x["notification_number"].isin(normal), "normal", "missing_ids")
     x["_changed"] = pd.to_datetime(x["changed_time"], errors="coerce", utc=True)
     x = x.sort_values("_changed").drop_duplicates("notification_number", keep="last").reset_index(drop=True)
     created = pd.to_datetime(x["creation_time"], errors="coerce", utc=True)
@@ -193,11 +217,12 @@ def official_subcode(d, ref_dir):
 
 
 # ============================================================ 3. parser, labels, CNQ
-def prepare(x, lab, ref_dir, ops=None):
+def prepare(x, lab, ref_dir, ops=None, dis=None):
     """Steps 1-3 of the build: parser v4.8, the stored root-cause labels, the CNQ model for both classifications, the report
     scope. ops: the rework orders' operations (SAP order type S03), or None; an NC whose rework orders are closed and planned
-    gets their planned time instead of the model's setup and hands-on. Returns a dict: d (one row per defect), nc (one row
-    per NC), lt (long texts), nc_in (the model's NC input), codes (sub-code descriptions) and report (counts)."""
+    gets their planned time instead of the model's setup and hands-on. dis: the MES disruptions, or None; an NC that a quality
+    aléa led to gets that aléa's declared time for the alert step. Returns a dict: d (one row per defect), nc (one row per NC),
+    lt (long texts), nc_in (the model's NC input), dis (the quality aléas with no NC), codes (sub-code descriptions) and report."""
     report = {}
     defects = L.build_defects(x)
     nc = L.build_nc(x, defects)
@@ -213,7 +238,8 @@ def prepare(x, lab, ref_dir, ops=None):
             "Type_NC_auto": "type_nc_auto", "GPS_Type_NC": "gps_type_nc", "Programme_auto": "phase", "Produit_auto": "produit",
             "Origin_auto": "origin_auto", "Ext_Source": "ext_source", "defect_code_description_en": "sap_defect_code",
             "cause_group_description_en": "sap_cause_group", "cause_code_description_en": "sap_cause_code", "creation_time": "creation_ts", "_source": "source_file",
-            "linked_document": "linked_document", "work_order": "work_order"}   # the CNQ model's rejection-with-rework-order rule reads these two
+            "linked_document": "linked_document", "work_order": "work_order",   # the CNQ model's rejection-with-rework-order rule reads these two
+            "_origin": "origin"}
     for c in keep:   # a column the export lacks stays empty rather than failing
         if c not in x.columns:
             x[c] = None
@@ -229,6 +255,16 @@ def prepare(x, lab, ref_dir, ops=None):
     report["rework_orders"] = {"ncs_with_link": int((nc.rework_orders != "").sum()),
                                "operations": int(len(ops)) if ops is not None else 0,
                                "state": nc.loc[nc.rework_orders != "", "order_state"].value_counts().to_dict()}
+    # MES aléas: the declared time of the quality aléas that led to each NC, and those that led to none (cnq/cnq_disruptions.py)
+    block = None
+    if dis is not None:
+        at, block = nc_alea_times(nc[["notification_number", "work_order", "creation_ts"]].rename(columns={"creation_ts": "creation_time"}), dis)
+        nc = nc.merge(at, on="notification_number", how="left")
+        report["aleas"] = {"rows": int(len(dis)), "ncs_with_alea": int(len(at)), "quality_without_nc": int(len(block)),
+                           "block": int(block.in_block.sum()), "block_hours": round(float(pd.to_numeric(block.loc[block.in_block, "time_lost"], errors="coerce").sum()) / 60, 1)}
+    else:
+        nc["aleas"], nc["alea_minutes"] = None, np.nan
+    nc["aleas"] = nc["aleas"].fillna("")
 
     # long-text labels; a line whose text changed or that is new is marked "to label" and keeps the parser label
     lab = lab.copy()
@@ -255,7 +291,7 @@ def prepare(x, lab, ref_dir, ops=None):
     # CNQ, both classifications
     nc_in = nc[["notification_number", "statut", "decision_status", "liability", "date_creation", "type_nc", "produit",
                 "responsabilite", "perimetre", "programme", "plant", "linked_document", "work_order",
-                "rework_orders", "order_state", "order_minutes_setup", "order_minutes_work"]].copy()
+                "rework_orders", "order_state", "order_minutes_setup", "order_minutes_work", "aleas", "alea_minutes"]].copy()
     runs = {}
     for key, sub, cab in (("parser", "sous_groupe", "defaut_cable"), ("llm", "llm_sous_categorie", "llm_defaut_cable")):
         dd = d[["notification_number", "seq", "qty", sub, cab]].rename(columns={sub: "sous_groupe", cab: "cable"})
@@ -295,7 +331,7 @@ def prepare(x, lab, ref_dir, ops=None):
     nc_ref["scope"] = np.select([(nc_ref.perimetre == "FTO2") & liab_f, nc_ref.perimetre == "Retour client"], ["serie", "client"], default="")
     d["scope"] = d.notification_number.map(nc_ref.set_index("notification_number")["scope"]).fillna("")
     d["phase"] = d.notification_number.map(nc_ref.set_index("notification_number")["phase"]).fillna("")
-    return {"d": d, "nc": nc_ref, "lt": lt, "nc_in": nc_in, "nc_parser": np_, "nc_llm": nl_, "def_llm": dl_, "codes": codes, "report": report}
+    return {"d": d, "nc": nc_ref, "lt": lt, "nc_in": nc_in, "nc_parser": np_, "nc_llm": nl_, "def_llm": dl_, "dis": block, "codes": codes, "report": report}
 
 
 # ============================================================ 4. the page's NC fields and customer-return fields
@@ -304,7 +340,8 @@ def nc_extras(r, created_to):
     days to close (None while open), open, age in days if open, closure date, NC type, liability, SAP defect code, SAP cause group,
     SAP cause, status, data source, CNQ steps]. CNQ steps = the model's minutes [alert, writing, support, setup, hands-on, re-check],
     engineering hours, the final-inspection flag, then where the work minutes come from (order / model), the rework orders' state and
-    numbers, for the "explain the calculation" part. SAP labels lose their brackets. Data source: every NC comes from Skywise; Ext_Source says whether it
+    numbers, where the alert time comes from (alea / flat) and the aléas, for the "explain the calculation" part; then the pipeline
+    output the NC comes from (normal / missing_ids). SAP labels lose their brackets. Data source: every NC comes from Skywise; Ext_Source says whether it
     is also in a manual list (gps = GPS register, test = Test list) or only in Skywise (sky)."""
     msn = S_(r.msn)
     msn = msn[:-2] if msn.endswith(".0") else msn
@@ -321,7 +358,7 @@ def nc_extras(r, created_to):
             sap(r.sap_cause_group), sap(r.sap_cause_code), S_(r.statut), {"GPS": "gps", "Test": "test"}.get(S_(r.ext_source).strip(), "sky"),
             [round(float(x or 0), 1) for x in (r.cnq_min_alert, r.cnq_min_writing, r.cnq_min_support, r.cnq_min_setup, r.cnq_min_hands_on,
                                                 r.cnq_min_recheck, r.cnq_hours_engineering)] + [int(r.cnq_final_inspection or 0)]
-            + [S_(r.cnq_work_source), S_(r.order_state), S_(r.rework_orders)]]
+            + [S_(r.cnq_work_source), S_(r.order_state), S_(r.rework_orders), S_(r.cnq_alert_source), S_(r.aleas)], S_(r.origin) or "normal"]
 
 
 def customer_return_extras(d, nc, lt):
@@ -365,7 +402,7 @@ def tables(d, nc, lt, created_to):
                      r.cnq_decision_label, r.cnq_where_found, round(r.cnq_cost_airbus, 2), round(r.cnq_cost_global, 2), round(r.cnq_cost_total, 2),
                      round(r.cnq_cost_admin, 2), round(r.cnq_cost_work, 2), round(r.cnq_cost_material, 2), round(r.cnq_cost_engineering, 2),
                      int(r.nc_cable_llm), int(r.cnq_defect_lines), S_(r.description_short)[:80], r.scope, S_(r.phase)]
-                    + e[:15] + e[15][:8] + [(lt.get(r.notification_number, "") or "")[:2500] if r.scope == "client" else ""] + e[15][8:])
+                    + e[:15] + e[15][:8] + [(lt.get(r.notification_number, "") or "")[:2500] if r.scope == "client" else ""] + e[15][8:] + [e[16]])
     nc_t = pd.DataFrame(rows, columns=[c[0] for c in NC_COLUMNS])
     rows = []
     for r in d.itertuples():
@@ -378,16 +415,38 @@ def tables(d, nc, lt, created_to):
     return nc_t, def_t
 
 
-def build(frames, labels, ref_dir, ops=None):
-    """Everything in one call, as the Skywise notebook uses it: (nc_t, def_t, info, to_label). ops: rework-order operations or None."""
+LINES = {"A350": "A350", "A330": "A330", "A320": "A320", "A400M": "A400M", "MT": "A400M"}
+
+
+def dis_table(block):
+    """The disruption block's table (DIS_COLUMNS): the quality aléas that led to no NC, those counted and the possible ERMA ones."""
+    if block is None or not len(block):
+        return pd.DataFrame(columns=[c[0] for c in DIS_COLUMNS])
+    b = block.sort_values("opened")
+    paris = b["opened"].dt.tz_convert("Europe/Paris")
+    one = lambda v: " ".join(S_(v).split())[:200]
+    return pd.DataFrame({"id": b["disruption_id"].astype(str), "opened": paris.dt.strftime("%Y-%m-%d").fillna(""),
+                         "line": b.get("program", pd.Series("", index=b.index)).map(lambda v: LINES.get(S_(v).strip().upper(), "Autre")),
+                         "station": b.get("physical_station", pd.Series("", index=b.index)).map(S_),
+                         "work_order": b["work_order"].map(S_).str.replace(r"\.0$", "", regex=True),
+                         "minutes": pd.to_numeric(b["time_lost"], errors="coerce").fillna(0.0).round(1),
+                         "in_block": b["in_block"].astype(int), "reason": b["reason"],
+                         "status": b.get("status", pd.Series("", index=b.index)).map(S_), "comment": b.get("comment", pd.Series("", index=b.index)).map(one)})
+
+
+def build(frames, labels, ref_dir, ops=None, dis=None):
+    """Everything in one call, as the Skywise notebook uses it: (nc_t, def_t, dis_t, info, to_label). ops: rework-order operations or
+    None; dis: MES disruptions or None."""
     x, info = merge_exports(frames)
-    p = prepare(x, labels, ref_dir, ops)
+    p = prepare(x, labels, ref_dir, ops, dis)
     nc_t, def_t = tables(p["d"], p["nc"], p["lt"], info["created_to"])
     aec = p["nc"][p["nc"].cnq_on_aec == 1]
     info.update(p["report"])
     info.update({"nc_table": int(len(nc_t)), "defect_table": int(len(def_t)), "level3_aec": round(float(aec.cnq_cost_total.sum()), 2),
                  "to_label": int((def_t.label_src == "parser").sum())})
-    return nc_t, def_t, info, lines_to_label(p["d"], p["lt"])
+    dis_t = dis_table(p["dis"])
+    info.update({"disruption_table": int(len(dis_t)), "origin": nc_t.origin.value_counts().to_dict()})
+    return nc_t, def_t, dis_t, info, lines_to_label(p["d"], p["lt"])
 
 
 def lines_to_label(d, lt):

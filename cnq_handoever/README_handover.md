@@ -35,13 +35,13 @@ classified by root cause from the full NC text (`04_reference/llm_labels_longtex
 |---|---|---|---|---|
 | 1. Airbus transnational | Each NC at the official Airbus standard cost for its decision. No material. | 403,489 EUR | 471 EUR | `cnq_cost_airbus` |
 | 2. Global average | Each NC at AEC's average times: 30 min to write the NC, 1 hour of work for a rework. Plus material. | 143,298 EUR | 167 EUR | `cnq_cost_global` |
-| 3. Per defect | AEC's steps, with the work built from each defect found, or the planned time of the NC's closed rework order. Plus material. | 177,436 EUR | 207 EUR | `cnq_cost_total` |
+| 3. Per defect | AEC's steps, with the work built from each defect found, or the planned time of the NC's closed rework order; the alert at the declared time of the aléa that led to the NC. Plus material. | 178,847 EUR | 209 EUR | `cnq_cost_total` |
 
 Level 3 is the reference. Levels 1 and 2 are there to compare: what the general Airbus model would
 say, and what a flat average would say. NCs on other plants or suppliers (271 NCs, 37,728 EUR of
 handling at level 3) are shown aside and are in none of the totals.
 
-Without the rework orders' planned time (section 4, 20 October) level 3 is 175,663 EUR. Before the changes of 19 October 2026 (section 4), on the same exports, level 3 was 181,405 EUR and level 2 144,265 EUR; on the smaller 19 October CNQ pack the changes took level 3 from 134,206 to 128,741 EUR.
+Without the changes of 20 October (section 4: rework orders' planned time, declared aléa time) level 3 is 175,663 EUR; with the orders only, 177,436 EUR. Before the changes of 19 October 2026 (section 4), on the same exports, level 3 was 181,405 EUR and level 2 144,265 EUR; on the smaller 19 October CNQ pack the changes took level 3 from 134,206 to 128,741 EUR.
 
 ## 3. How one NC is costed, with examples
 
@@ -203,6 +203,20 @@ closed and planned is costed with that time instead of the model's setup and han
   reworked NC would use its order.
 - `USE_ORDER_TIME = False` in `cnq_params.py` goes back to the model alone.
 
+### Change of 20 October 2026: the declared time of the aléa that led to the NC (same version)
+
+- An MES aléa leads to an NC when the NC is on the same work order and was created from 2 h before to 72 h after the
+  aléa opened (main's study: 214 of 322 quality aléas, Jan-Sep 2026). `cnq/cnq_disruptions.py`,
+  `nc_alea_times(nc, ds)`, returns per NC `aleas` (ids) and `alea_minutes` (declared time lost of its quality aléas).
+- When `alea_minutes` > 0, the alert step is that time instead of the flat 41 min, and it is charged even on NCs found
+  at test or final inspection (an aléa was raised). A declared 0 means not filled: the 41 min stay (25 NCs). Customer
+  returns keep the 41 min. Output column `cnq_alert_source`: `alea` or `flat`. `USE_ALEA_TIME = False` goes back.
+- On the dashboard data with the Jan-Sep 2026 aléas: 200 NCs have a linked quality aléa, 175 use its time (median 30
+  min, mean 50). Level 3 on AEC: 177,436 -> 178,847 EUR.
+- The same function returns the disruption block: quality aléas that led to no NC (108), of which 19 on the MIP /
+  1101VB (possible ERMA NC) left out until checked: 89 aléas, 66.9 h, 3,347 EUR. The dashboard shows it beside the
+  cost, never inside.
+
 ## 5. What is in the package
 
 | File | What it is |
@@ -210,6 +224,7 @@ closed and planned is costed with that time instead of the model's setup and han
 | `cnq/cnq_params.py` | Every time, rate and rule. The only file to edit when a number changes. |
 | `cnq/cnq_core.py` | The calculation, in pandas. No Foundry dependency. Tested. |
 | `cnq/cnq_orders.py` | The planned time of each NC's rework orders, from the SAP work-order operations (input to `cnq_core`). |
+| `cnq/cnq_disruptions.py` | The MES aléas: declared time of the aléa that led to each NC (input to `cnq_core`), and the disruption block. |
 | `cnq/foundry_transform.py` | Wrapper to run it as a Foundry transform. Template, not yet run in Foundry. |
 | `slate/slate_queries.sql` | 18 queries for the charts. Tested in SQLite on the sample outputs. |
 | `dashboard/cnq_dashboard.html` | Standalone dashboard, French / English, fully offline. One page: summary, how an NC is costed (steps, rules per decision, any real NC line by line), breakdown, customer returns, editable times, limits. |
@@ -258,6 +273,7 @@ Foundry build. The NC file must carry the columns of section 7; `build_all.py` t
 | `responsabilite` | splits the aside group into plant / supplier | yes |
 | `linked_document`, `work_order` | finds the NC's rework order (a rejection with a rework order is charged its work) | **no - add from Skywise**; without them every rejection is costed without work |
 | `order_state`, `order_minutes_setup`, `order_minutes_work` | the planned time of the NC's rework orders (`cnq_orders.nc_order_times`, from the S03 work-order operations) | no - optional; without them the model's times are used |
+| `alea_minutes` | declared time of the quality aléas that led to the NC (`cnq_disruptions.nc_alea_times`, from MES Disruptions) | no - optional; without it the flat 41 min are used |
 | `perimetre` | flags customer returns | yes |
 | `part_value` | value of a rejected or exchanged part, in EUR | no - optional, see section 9 |
 | `customer_return_cost` | real amount of a customer return, in EUR; replaces the estimate | no - optional |

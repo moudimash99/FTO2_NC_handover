@@ -76,6 +76,17 @@ ORDER_UNIT_MINUTES = {"IM": 0.6, "MIN": 1.0, "H": 60.0}   # SAP standard-value u
 ORDER_OP_KINDS = [("close", r"attestation|cl[ôo]ture|autoclos"), ("inspect", r"inspection|contr[ôo]l"),
                   ("prep", r"pr[ée]paration|analys"), ("test", r"test")]                         # else "work"
 ORDER_SETUP_KINDS = ["close", "inspect", "prep"]   # these go to the setup step, work and test to hands-on
+# MES aléas (disruptions). An aléa leads to an NC when the NC is on the same work order and was created between 2 h
+# before and 72 h after the aléa opened (an aléa goes to the first such NC): 214 of 322 quality aléas, Jan-Sep 2026.
+# When the NC dataset carries the declared time lost of the quality aléas that led to the NC (column alea_minutes, made
+# by cnq_disruptions.nc_alea_times), the alert step is that time instead of MIN_ALERT, and it is charged even on NCs
+# found at test or final inspection (an aléa was raised). A declared 0 means not filled: MIN_ALERT stays. Customer
+# returns keep MIN_ALERT (their aléa is at the customer). The quality aléas that led to no NC form the disruption
+# block, shown beside the cost and never added to it; possible ERMA aléas (MIP / 1101VB) are left out until checked.
+USE_ALEA_TIME = True        #                                                                               MES
+ALEA_TYPES = ["QLS"]        # type_desc prefix of the quality aléas ("QLS - Probleme qualite")
+ALEA_LINK_HOURS = (-2, 72)  # NC created from 2 h before to 72 h after the aléa
+ALEA_ERMA_DESIGNATION = r"1101VB|MIP"   # in wo_designation (or "1101" in ds_material): possible ERMA aléa, out of the block
 
 # ---------------------------------------------------------------- the two comparison levels shown next to the detailed cost
 # Level 2 "Global": every NC gets the average times, whatever its defects.

@@ -17,7 +17,10 @@ How one NC is costed
                   NC has a rework order (linked_document, see REWORK_ORDER_PREFIXES) becomes "REJ_RW"
   admin minutes = alert + writing the NC (longer at final inspection) + technical support + re-check/close
                   (each charged or not, according to the rule; the alert only when an operator raises one,
-                  i.e. not for NCs found at test or at final inspection; customer returns always get it)
+                  i.e. not for NCs found at test or at final inspection; customer returns always get it).
+                  When the NC dataset carries the declared time of the quality aléas that led to the NC
+                  (cnq_disruptions.nc_alea_times, column alea_minutes > 0): the alert is that time, charged
+                  whatever the NC type (USE_ALEA_TIME)
   work minutes  = if the rule includes work: fixed setup + sum of minutes of its defect lines
                   (flat figure when the NC has no defect line); the first connection error of an NC takes its
                   class time, each following one MIN_CONNECTION_NEXT; internal NCs x INTERNAL_WORK_FACTOR.
@@ -123,6 +126,10 @@ def compute_cnq(nc, defects, params=P):
     type_up = type_nc.str.upper()
     no_alert = type_up.isin([t.upper() for t in params.NO_ALERT_TYPES]).fillna(False) & (nc["cnq_customer_return"] == 0)
     nc["cnq_alert_raised"] = (~no_alert).astype(int)
+    # declared time of the quality aléas that led to the NC: an aléa was raised, whatever the NC type; 0 = not filled
+    a_min = pd.to_numeric(_first_present(nc, ["alea_minutes"]), errors="coerce").fillna(0.0)
+    use_alea = (a_min > 0) & (nc["cnq_customer_return"] == 0) & bool(getattr(params, "USE_ALEA_TIME", False))
+    nc.loc[use_alea, "cnq_alert_raised"] = 1
     internal = type_up.isin([t.upper() for t in params.INTERNAL_TYPES]).fillna(False)
     nc["cnq_work_factor"] = np.where(internal, params.INTERNAL_WORK_FACTOR, 1.0)
 
@@ -153,7 +160,8 @@ def compute_cnq(nc, defects, params=P):
     work = flag("work")
     nc["cnq_defect_lines"] = nc["_lines"].astype(int)
     alert = flag("alert") * nc["cnq_alert_raised"]
-    nc["cnq_min_alert"] = alert * params.MIN_ALERT
+    nc["cnq_min_alert"] = alert * np.where(use_alea, a_min, params.MIN_ALERT)
+    nc["cnq_alert_source"] = np.where(alert == 0, "", np.where(use_alea, "alea", "flat"))
     nc["cnq_min_writing"] = flag("write") * np.where(nc["cnq_final_inspection"] == 1, params.MIN_WRITE_NC_FINAL, params.MIN_WRITE_NC)
     nc["cnq_min_support"] = flag("support") * params.MIN_SUPPORT
     hands = np.where(nc["_lines"] == 0, params.MIN_HANDS_ON_NO_DEFECT, nc["_min"])

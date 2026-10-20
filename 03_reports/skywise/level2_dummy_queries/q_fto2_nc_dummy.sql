@@ -226,6 +226,9 @@ SELECT
          || chr(10) || 'Description : défaut constaté chez le client (donnée fictive).' ELSE '' END AS long_text,
     CASE WHEN m_setup + m_hands > 0 THEN 'model' ELSE '' END AS work_source,
     '' AS order_state,
-    '' AS rework_orders
+    '' AS rework_orders,
+    CASE WHEN m_alert > 0 THEN 'flat' ELSE '' END AS alert_source,
+    '' AS aleas,
+    CASE WHEN u_so >= 92 THEN 'missing_ids' ELSE 'normal' END AS origin
 FROM n4
 ORDER BY nc

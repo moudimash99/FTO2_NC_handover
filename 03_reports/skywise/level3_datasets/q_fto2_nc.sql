@@ -47,6 +47,9 @@ SELECT
     long_text,
     work_source,
     order_state,
-    rework_orders
+    rework_orders,
+    alert_source,
+    aleas,
+    origin
 FROM "foundry_sync"."fto2_dash_nc"
 ORDER BY created, nc

@@ -4,14 +4,14 @@ Fictitious FTO2 NC data for the Skywise migration checks (levels 1 and 2), in th
 
     python3 -I build/dummy_tables.py
 
-The data is written once, as two Postgres queries (level 2: Slate runs them, no dataset needed). The same queries, run on a
-local Postgres, give the two CSV snapshots that level 1 writes into the JavaScript, so both levels show the same data.
+The data is written once, as three Postgres queries (level 2: Slate runs them, no dataset needed). The same queries, run on a
+local Postgres, give the three CSV snapshots that level 1 writes into the JavaScript, so both levels show the same data.
 No real NC: numbers 900000001..., MSNs, FINs (X..VT) and texts are made up; only the category names, the cost rules and
 the code sheet are the real ones, so every chart and the "explain the calculation" part work as with real data.
 
 Writes:
-    03_reports/skywise/level2_dummy_queries/q_fto2_nc_dummy.sql, q_fto2_def_dummy.sql
-    build/dummy/fto2_dash_nc_dummy.csv, fto2_dash_defects_dummy.csv   (needs a local Postgres; skipped without one)
+    03_reports/skywise/level2_dummy_queries/q_fto2_nc_dummy.sql, q_fto2_def_dummy.sql, q_fto2_dis_dummy.sql
+    build/dummy/fto2_dash_nc_dummy.csv, fto2_dash_defects_dummy.csv, fto2_dash_disruptions_dummy.csv   (needs a local Postgres; skipped without one)
 """
 import os
 import shutil
@@ -28,7 +28,7 @@ sys.path.insert(0, os.path.join(ROOT, "build"))
 import fto2_logic as L                    # noqa: E402
 import nc_defect_parser as PARSER         # noqa: E402
 import cnq.cnq_params as P                # noqa: E402
-from fto2_core import NC_COLUMNS, DEF_COLUMNS   # noqa: E402
+from fto2_core import NC_COLUMNS, DEF_COLUMNS, DIS_COLUMNS   # noqa: E402
 
 SQL_DIR = os.path.join(ROOT, "03_reports", "skywise", "level2_dummy_queries")
 CSV_DIR = os.path.join(ROOT, "build", "dummy")
@@ -262,7 +262,10 @@ def nc_query():
          || chr(10) || 'Description : défaut constaté chez le client (donnée fictive).' ELSE '' END AS long_text,
     CASE WHEN m_setup + m_hands > 0 THEN 'model' ELSE '' END AS work_source,
     '' AS order_state,
-    '' AS rework_orders""" % dict(
+    '' AS rework_orders,
+    CASE WHEN m_alert > 0 THEN 'flat' ELSE '' END AS alert_source,
+    '' AS aleas,
+    CASE WHEN u_so >= 92 THEN 'missing_ids' ELSE 'normal' END AS origin""" % dict(
         alert=P.MIN_ALERT, wglob=P.MIN_WRITE_NC_GLOBAL, support=P.MIN_SUPPORT, wkglob=P.MIN_WORK_GLOBAL, recheck=P.MIN_RECHECK_CLOSE,
         rate=rate, eng=eng, st_case=" ".join("WHEN %s = %d THEN %s" % (H("i", "st", 6), k, q(s)) for k, s in enumerate(
             ["Poste câblage A", "Poste câblage B", "Sous-ensemble harnais", "Intégration", "Retouche ligne", "Finition"])))
@@ -306,6 +309,39 @@ FROM d2 JOIN n3 ON n3.i = d2.i
 ORDER BY d2.nc, d2.seq""" % dict(rate=rate, eng=P.RATE_ENGINEERING)
 
 
+def dis_query():
+    """Fictitious quality aléas with no NC (the disruption block), on the working days of the fictitious NCs."""
+    k, ln, st, mn, m2, m3, er, cm = (H("day", "dk", 10), H("i", "dl", 100), H("i", "ds", 6), H("i", "dm", 10), H("i", "dm2", 30),
+                                     H("i", "dm3", 120), H("i", "de", 100), H("i", "dc", 5))
+    return """-- MES disruptions are made up: ids OZ9..., stations and texts are fictitious. Same data at every run.
+WITH days AS (
+    SELECT g::date AS day
+    FROM generate_series(date '2026-01-05', date '2026-09-25', interval '1 day') AS t(g)
+    WHERE extract(isodow FROM g) < 6 AND NOT (g::date BETWEEN date '2026-08-03' AND date '2026-08-21')
+),
+counts AS (
+    SELECT day, CASE WHEN """ + k + """ < 4 THEN 1 WHEN """ + k + """ = 4 THEN 2 ELSE 0 END AS k FROM days
+),
+base AS (
+    SELECT row_number() OVER (ORDER BY c.day, s.j) AS i, c.day
+    FROM counts c CROSS JOIN LATERAL generate_series(1, c.k) AS s(j)
+)
+SELECT
+    'OZ9' || lpad(i::text, 6, '0') AS id,
+    to_char(day, 'YYYY-MM-DD') AS opened,
+    CASE WHEN """ + ln + """ < 60 THEN 'A350' WHEN """ + ln + """ < 90 THEN 'A330' ELSE 'A320' END AS line,
+    'Poste fictif ' || (1 + """ + st + """)::text AS station,
+    (1030000000 + i * 37)::text AS work_order,
+    (CASE WHEN """ + mn + """ < 5 THEN 30 WHEN """ + mn + """ < 8 THEN 15 + """ + m2 + """ ELSE 60 + """ + m3 + """ END)::double precision AS minutes,
+    CASE WHEN """ + er + """ < 18 THEN 0 ELSE 1 END AS in_block,
+    CASE WHEN """ + er + """ < 18 THEN 'erma' ELSE '' END AS reason,
+    'Closed' AS status,
+    'Fictif : ' || (ARRAY['câble abîmé au montage', 'connecteur endommagé', 'pièce non conforme reçue', 'repère manquant', 'gaine déchirée'])[1 + """ + cm + """]
+        || ', repris sur place sans NC.' AS comment
+FROM base
+ORDER BY id"""
+
+
 def run_postgres(queries):
     """Run the queries on a throw-away local Postgres (the binaries of /usr/lib/postgresql) and return DataFrames."""
     bins = sorted([os.path.join("/usr/lib/postgresql", v, "bin") for v in os.listdir("/usr/lib/postgresql")]) if os.path.isdir("/usr/lib/postgresql") else []
@@ -343,20 +379,23 @@ def main():
     head = ("-- FTO2 NC dashboard, level 2 (connection check): %s, generated by build/dummy_tables.py.\n"
             "-- Fictitious data made by the query itself: no dataset needed. Paste as a Slate query on the Postgres source\n"
             "-- (postgate-airbus-2), name it %s; the code sandbox's state reads it.\n")
-    qn, qd = nc_query(), def_query()
+    qn, qd, qs = nc_query(), def_query(), dis_query()
     open(os.path.join(SQL_DIR, "q_fto2_nc_dummy.sql"), "w", encoding="utf-8").write(head % ("one row per NC", "q_fto2_nc") + qn + "\n")
     open(os.path.join(SQL_DIR, "q_fto2_def_dummy.sql"), "w", encoding="utf-8").write(head % ("one row per defect line", "q_fto2_def") + qd + "\n")
-    print("SQL:", os.path.relpath(SQL_DIR, ROOT), len(qn), len(qd), "characters")
-    res = run_postgres([qn, qd])
+    open(os.path.join(SQL_DIR, "q_fto2_dis_dummy.sql"), "w", encoding="utf-8").write(head % ("one row per quality aléa with no NC", "q_fto2_dis") + qs + "\n")
+    print("SQL:", os.path.relpath(SQL_DIR, ROOT), len(qn), len(qd), len(qs), "characters")
+    res = run_postgres([qn, qd, qs])
     if res is None:
         return
-    nc, df = res
+    nc, df, ds = res
+    assert list(ds.columns) == [c[0] for c in DIS_COLUMNS], set(ds.columns) ^ {c[0] for c in DIS_COLUMNS}
     assert list(nc.columns) == [c[0] for c in NC_COLUMNS], set(nc.columns) ^ {c[0] for c in NC_COLUMNS}
     assert list(df.columns) == [c[0] for c in DEF_COLUMNS], set(df.columns) ^ {c[0] for c in DEF_COLUMNS}
     os.makedirs(CSV_DIR, exist_ok=True)
     nc.to_csv(os.path.join(CSV_DIR, "fto2_dash_nc_dummy.csv"), index=False, encoding="utf-8")
     df.to_csv(os.path.join(CSV_DIR, "fto2_dash_defects_dummy.csv"), index=False, encoding="utf-8")
-    print("dummy tables:", len(nc), "NCs,", len(df), "defect lines ->", os.path.relpath(CSV_DIR, ROOT))
+    ds.to_csv(os.path.join(CSV_DIR, "fto2_dash_disruptions_dummy.csv"), index=False, encoding="utf-8")
+    print("dummy tables:", len(nc), "NCs,", len(df), "defect lines,", len(ds), "aléas ->", os.path.relpath(CSV_DIR, ROOT))
 
 
 if __name__ == "__main__":

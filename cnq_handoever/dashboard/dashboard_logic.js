@@ -2,9 +2,10 @@
 // The pipeline (cnq_params.py + cnq_core.py) stays the reference; tests/test_dashboard.js checks both agree.
 
 // NC row layout in DATA.nc:     [number, month, programme, product, rule, onAec, liabilityGroup, final, customer, whereFound, status, alertRaised, internal,
-//                                rework order [setup minutes, work minutes, order numbers] when its planned time replaces the model's, else null]
+//                                rework order [setup minutes, work minutes, order numbers] when its planned time replaces the model's, else null,
+//                                declared aléa minutes when the alert step is the time of the quality aléas that led to the NC, else null]
 // line layout in DATA.lines:    [ncIndex, classIndex, qty, text], in line order within each NC
-var NC = { num: 0, month: 1, prog: 2, prod: 3, rule: 4, aec: 5, group: 6, fin: 7, cust: 8, where: 9, status: 10, alertOn: 11, internal: 12, order: 13 };
+var NC = { num: 0, month: 1, prog: 2, prod: 3, rule: 4, aec: 5, group: 6, fin: 7, cust: 8, where: 9, status: 10, alertOn: 11, internal: 12, order: 13, alea: 14 };
 
 function classMinutes(P) {
   // a derived class is always factor x its base class ("wrong reference = 2 x missing")
@@ -34,7 +35,7 @@ function computeAll(DATA, P, amounts) {
     var alert = f.alert * (r[NC.alertOn] ? 1 : 0), wf = r[NC.internal] ? P.internalFactor : 1;
     var o = P.orderTime !== false ? r[NC.order] : null;   // planned time of the rework order: no floor, no factor
     var s = {
-      alert: alert * P.alert,
+      alert: alert * (r[NC.alea] != null && P.aleaTime !== false ? r[NC.alea] : P.alert),
       writing: f.write * (r[NC.fin] ? P.writeFinal : P.write),
       support: f.support * P.support,
       setup: o ? f.work * o[0] : f.work * wf * Math.max(P.setup, P.floor - handsRaw),

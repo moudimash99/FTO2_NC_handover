@@ -3,11 +3,12 @@
 The dashboard for Skywise (Slate), in four levels, written to 03_reports/skywise/ by build/build_all.py.
 
     level1_dummy_in_js       CSS, HTML, JS for a Slate code sandbox; fictitious data written in the JS. Visual check only.
-    level2_dummy_queries     same CSS and HTML; the JS reads two Slate queries (q_fto2_nc, q_fto2_def) through the sandbox's
-                             state. The queries make fictitious data themselves (no dataset): checks the query -> page path.
-    level3_datasets          same JS as level 2; the queries read the datasets fto2_dash_nc and fto2_dash_defects, written by
-                             the Skywise notebook with notebook_kit/ (the same Python as the laptop build).
-    level4_import            a Slate app (JSON) with the sandbox and the two queries already set up, for levels 2 and 3.
+    level2_dummy_queries     same CSS and HTML; the JS reads three Slate queries (q_fto2_nc, q_fto2_def, and q_fto2_dis for the
+                             disruption block, optional) through the sandbox's state. The queries make fictitious data
+                             themselves (no dataset): checks the query -> page path.
+    level3_datasets          same JS as level 2; the queries read the datasets fto2_dash_nc, fto2_dash_defects and
+                             fto2_dash_disruptions, written by the Skywise notebook with notebook_kit/ (the laptop build's Python).
+    level4_import            a Slate app (JSON) with the sandbox and the three queries already set up, for levels 2 and 3.
 
 The fictitious data of levels 1 and 2 is the same: the level-2 queries (build/dummy_tables.py) run once on a local Postgres
 give the tables written into the level-1 JS (build/dummy/*.csv).
@@ -20,11 +21,11 @@ import uuid
 
 import pandas as pd
 
-ADAPTER_RUN = "if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.tables.nc, window.DASH.tables.def, window.DASH.ref);\n"
+ADAPTER_RUN = "if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.tables.nc, window.DASH.tables.def, window.DASH.ref, window.DASH.tables.dis);\n"
 EXTRA_CSS = (".fto2 .fto2-err { background: #fdecea; color: #8a1c12; border: 1px solid #f1b0a8; border-radius: 8px; padding: 10px 14px; font-size: 13px; margin: 12px 20px; }\n"
              ".fto2 .fto2-wait { background: #eef4f1; color: #1d6b52; border: 1px solid #b9d5ca; border-radius: 8px; padding: 10px 14px; font-size: 13px; margin: 12px 20px; }\n"
              ".fto2 .fto2-wait.warn { background: #fff5e6; color: #7a4a00; border-color: #f0c98a; }\n")
-STATE = {"nc": "{{q_fto2_nc}}", "def": "{{q_fto2_def}}"}
+STATE = {"nc": "{{q_fto2_nc}}", "def": "{{q_fto2_def}}", "dis": "{{q_fto2_dis}}"}
 
 JS_HEAD = """/* @@STAMP@@ */
 window.FTO2_EMBED = true;
@@ -48,13 +49,14 @@ JS_L1 = JS_HEAD + """window.FTO2_TABLES = @@TABLES@@;
   }
   function start() {
     if (!document.getElementById('tabs')) { showError('HTML part missing: paste the HTML part into the HTML box.'); return; }
-    try { window.DASH = fto2FromTables(window.FTO2_TABLES.nc, window.FTO2_TABLES.def, window.FTO2_REF); main(); }
+    try { window.DASH = fto2FromTables(window.FTO2_TABLES.nc, window.FTO2_TABLES.def, window.FTO2_REF, window.FTO2_TABLES.dis); main(); }
     catch (err) { showError((err && err.message) || String(err)); }
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start); else start();
 })();
 """
-# levels 2 and 3: the tables come from two Slate queries, through the code sandbox's state {"nc": "{{q_fto2_nc}}", "def": "{{q_fto2_def}}"}
+# levels 2 and 3: the tables come from Slate queries, through the code sandbox's state {"nc": "{{q_fto2_nc}}", "def": "{{q_fto2_def}}",
+# "dis": "{{q_fto2_dis}}"}. The third (disruption block) is optional: without it the page starts after a few seconds, without the block.
 JS_L23 = JS_HEAD + """@@ADAPTER@@
 (function () {
   var MSG = {
@@ -72,7 +74,7 @@ JS_L23 = JS_HEAD + """@@ADAPTER@@
   function main() {
 @@MAIN@@
   }
-  var got = {}, started = false, ready = false;
+  var got = {}, started = false, ready = false, disTimer = null;
   function parse(v) {   // a query result arrives as an object of columns; accept JSON text too
     if (typeof v !== 'string') return v;
     var s = v.trim(); if (!s) return null;
@@ -87,18 +89,20 @@ JS_L23 = JS_HEAD + """@@ADAPTER@@
   }
   function loaded(t) { return !!t && (Array.isArray(t) || Object.keys(t).length > 0); }   // a result with its columns, even with no row
   function tables() {
-    var nc = parse(got.nc), def = parse(got.def), tb = parse(got.tables);
-    if (tb) { nc = nc || tb.nc; def = def || tb.def; }
-    return [nc, def];
+    var nc = parse(got.nc), def = parse(got.def), dis = parse(got.dis), tb = parse(got.tables);
+    if (tb) { nc = nc || tb.nc; def = def || tb.def; dis = dis || tb.dis; }
+    return [nc, def, typeof dis === 'object' ? dis : null];
   }
   function tryStart() {
     if (started || !ready) return;
-    var t = tables(), nc = t[0], def = t[1], n1 = count(nc), n2 = count(def);
+    var t = tables(), nc = t[0], def = t[1], dis = t[2], n1 = count(nc), n2 = count(def);
     if (loaded(nc) && !n1) { status(MSG.empty, true); return; }
     if (!n1 || !loaded(def)) { status(MSG.wait); return; }   // both queries are needed: they can arrive one after the other
+    if (!loaded(dis) && !disTimer) { disTimer = setTimeout(function () { disTimer = 'over'; tryStart(); }, 4000); return; }   // the block's query: optional
+    if (!loaded(dis) && disTimer !== 'over') return;
     started = true;
     try {
-      window.DASH = fto2FromTables(nc, def, window.FTO2_REF);
+      window.DASH = fto2FromTables(nc, def, window.FTO2_REF, loaded(dis) ? dis : null);
       if (!window.DASH.ncs.length) {   // rows arrived but none could be read: say what came, to fix the query or the state
         var c = Array.isArray(nc) ? Object.keys(nc[0] || {}) : Object.keys(nc);
         showError('aucune NC lisible dans q_fto2_nc (colonnes reçues : ' + c.join(', ') + ') / no readable NC in q_fto2_nc (columns received: ' + c.join(', ') + ')');
@@ -110,11 +114,11 @@ JS_L23 = JS_HEAD + """@@ADAPTER@@
       if (lim.indexOf(n1) >= 0) warn.push(MSG.cut.replace('{n}', n1).replace('{q}', 'q_fto2_nc'));
       if (lim.indexOf(n2) >= 0) warn.push(MSG.cut.replace('{n}', n2).replace('{q}', 'q_fto2_def'));
       if (warn.length) status(warn.join(' '), true);
-      if (window.console) console.info('[FTO2 dashboard] rows received: NC ' + n1 + ', defect lines ' + n2);
+      if (window.console) console.info('[FTO2 dashboard] rows received: NC ' + n1 + ', defect lines ' + n2 + ', aléas ' + (loaded(dis) ? count(dis) : 'none (no q_fto2_dis)'));
     } catch (err) { showError((err && err.message) || String(err)); }
   }
   var api = window.SlateFunctions;
-  if (api && typeof api.watch === 'function') ['nc', 'def', 'tables'].forEach(function (k) { api.watch(k, function (v) { got[k] = v; tryStart(); }); });
+  if (api && typeof api.watch === 'function') ['nc', 'def', 'dis', 'tables'].forEach(function (k) { api.watch(k, function (v) { got[k] = v; tryStart(); }); });
   function boot() {
     ready = true;
     if (!document.getElementById('tabs')) { showError('HTML part missing: paste the HTML part into the HTML box.'); return; }
@@ -126,7 +130,7 @@ JS_L23 = JS_HEAD + """@@ADAPTER@@
       var t = tables(), miss = [];
       if (!count(t[0])) miss.push('q_fto2_nc');
       if (!loaded(t[1])) miss.push('q_fto2_def');
-      if (miss.length) status(MSG.slow.replace(/\{q\}/g, miss.join(', ')), true);
+      if (miss.length) status(MSG.slow.replace(/\\{q\\}/g, miss.join(', ')), true);
     }, 20000);
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot); else boot();
@@ -165,13 +169,13 @@ FAKE_SLATE = """<script>
 /* LOCAL PREVIEW ONLY - not for Slate. Stands in for Slate's SlateFunctions: the state starts empty, then the two query
    results arrive (one array per column, as Slate returns them). In Slate, this block does not exist. */
 window.SlateFunctions = (function () {
-  var cbs = {}, state = { nc: null, def: null };
+  var cbs = {}, state = { nc: null, def: null, dis: null };
   return {
     watch: function (k, cb) { (cbs[k] = cbs[k] || []).push(cb); cb(state[k], undefined); },
     _set: function (k, v) { var old = state[k]; state[k] = v; (cbs[k] || []).forEach(function (cb) { cb(v, old); }); }
   };
 })();
-setTimeout(function () { SlateFunctions._set('nc', @@NC@@); SlateFunctions._set('def', @@DEF@@); }, 800);
+setTimeout(function () { SlateFunctions._set('nc', @@NC@@); SlateFunctions._set('def', @@DEF@@); SlateFunctions._set('dis', @@DIS@@); }, 800);
 </script>
 """
 
@@ -244,7 +248,7 @@ def slate_app(name, css, html, js, queries, height=1400, width=1316):
     px = lambda v: {"rawValue": "%dpx" % v, "suffix": "px", "value": v}
     box = {"actions": [], "css": css, "cssLibraries": [], "events": [], "html": html, "js": js, "libraries": [], "sl": {"cssClasses": ""}}
     widget = {"id": "w_fto2_dashboard", "layout": {"height": height, "width": width, "x": 0, "y": 0}, "locked": False,
-              "model": dict(box, state={"nc": None, "def": None}), "movable": True, "resizable": True,
+              "model": dict(box, state={"nc": None, "def": None, "dis": None}), "movable": True, "resizable": True,
               "styles": {"css": "", "less": "", "slateCss": {"height": px(height), "left": px(0), "top": px(0), "width": px(width)}},
               "template": dict(box, state=dict(STATE)), "type": "sl-code-sandbox", "upgradeVersion": 1}
     q = {k: {"datasourceRid": "ri.slate.staging.datasource.postgate-airbus-2", "datasourceVersion": "V1", "condition": {"type": "AlwaysEnabledCondition"},
@@ -278,6 +282,7 @@ def notebook_kit(root, out):
                      (os.path.join(root, "cnq_handoever", "cnq", "cnq_core.py"), "cnq/cnq_core.py"),
                      (os.path.join(root, "cnq_handoever", "cnq", "cnq_params.py"), "cnq/cnq_params.py"),
                      (os.path.join(root, "cnq_handoever", "cnq", "cnq_orders.py"), "cnq/cnq_orders.py"),
+                     (os.path.join(root, "cnq_handoever", "cnq", "cnq_disruptions.py"), "cnq/cnq_disruptions.py"),
                      (os.path.join(root, "04_reference", "reference_souscodes_pareto.csv"), "ref/reference_souscodes_pareto.csv"),
                      (os.path.join(root, "04_reference", "souscodes_fr.csv"), "ref/souscodes_fr.csv"),
                      (os.path.join(root, "04_reference", "llm_labels_longtext.csv"), "fto2_ai_labels.csv")):
@@ -287,41 +292,54 @@ def notebook_kit(root, out):
     return k
 
 
-NOTEBOOK_CELL = '''# FTO2 NC dashboard, level 3: the two datasets the Slate dashboard reads.
-# Run after the pipeline notebook (same Code Workspace): it reads that notebook's two output datasets, so the NC selection
-# stays the pipeline's. Upload the folder notebook_kit next to the notebook (as nc_defect_parser.py already is).
+NOTEBOOK_CELL = '''# FTO2 NC dashboard, level 3: the three datasets the Slate dashboard reads.
+# Run after the pipeline notebook (same Code Workspace): it reads that notebook's two NC outputs, so the NC selection stays the
+# pipeline's. Upload the folder notebook_kit next to the notebook (as nc_defect_parser.py already is).
 #
-# Datasets to add in the workspace's Data panel (alias = name used below):
-#   read : fto2_dashboard_data, fto2_dashboard_data_missing_ids  (written by the pipeline notebook)
+# Datasets to add in the workspace's Data panel (the alias is the name used below; change the names here if yours differ):
+#   read : fto2_dashboard_data, fto2_dashboard_data_missing_ids  (written by the pipeline notebook; kept apart, each NC is tagged
+#          with its origin: normal / missing_ids)
 #          fto2_ai_labels  (upload notebook_kit/fto2_ai_labels.csv once as a dataset; append rows after each AI pass)
-#   write: fto2_dash_nc, fto2_dash_defects  (new; sync both to Postgres for Slate as foundry_sync.fto2_dash_nc / fto2_dash_defects)
-#   read, optional: the work-order operations dataset (SAP orders with their operations and planned times). Put its name in
-#          WO_OPERATIONS: an NC whose rework order (S03) is closed and planned is then costed with the order's planned time
-#          instead of the model's setup and hands-on. Empty: the model's times for every NC.
-WO_OPERATIONS = ""                           # name of the Skywise work-order operations dataset (to confirm), e.g. "work_order_operation"
+#          Work_Order_Operation  -> alias in WO_OPERATIONS: the rework orders' planned times (cost of the rework)
+#          MES Disruptions       -> alias in MES_DISRUPTIONS: the aléas (alert time of each NC, and the disruption block)
+#   write: fto2_dash_nc, fto2_dash_defects, fto2_dash_disruptions  (new; sync the three to Postgres for Slate, schema foundry_sync)
+# Leave WO_OPERATIONS or MES_DISRUPTIONS empty to run without them (the model's times; no disruption block).
+WO_OPERATIONS = "work_order_operation"
+MES_DISRUPTIONS = "mes_disruptions"
+SINCE = "2025-12-01 00:00:00"                # operations and aléas read from this date (the NCs start mid-December 2025)
 import sys
 sys.path.insert(0, "notebook_kit")           # our copies first (parser v4.8, CNQ model, the build's data steps)
 
 from foundry.transforms import Dataset, Column
 import fto2_core as core
 
-frames = [Dataset.get("fto2_dashboard_data").read_table(format="pandas"),
-          Dataset.get("fto2_dashboard_data_missing_ids").read_table(format="pandas")]
+frames = []
+for name in ("fto2_dashboard_data", "fto2_dashboard_data_missing_ids"):
+    f = Dataset.get(name).read_table(format="pandas")
+    f["_source"] = name                      # the origin of each NC: normal, or missing_ids when the name holds "missing"
+    frames.append(f)
 labels = Dataset.get("fto2_ai_labels").read_table(format="pandas")
-ops = None
+ops = dis = None
 if WO_OPERATIONS:
     ops = (Dataset.get(WO_OPERATIONS)
            .where((Column.get("plant") == "FTO2") & (Column.get("order_type") == "S03"))
            .select("order_number", "order_type", "operation_number", "operation_short_text", "plant", "labor_standard_value",
                    "unit_of_measure_for_the_standard_value_labor", "setup_standard_value", "unit_of_measure_for_the_standard_value_setup")
            .read_table(format="pandas"))
-nc_t, def_t, info, to_label = core.build(frames, labels, ref_dir="notebook_kit/ref", ops=ops)
+if MES_DISRUPTIONS:
+    dis = (Dataset.get(MES_DISRUPTIONS)
+           .where((Column.get("plant") == "FTO2") & (Column.get("open_date_time") >= SINCE))
+           .select("disruption_id", "plant", "physical_station", "work_order", "wo_designation", "ds_material", "type_desc", "open_date_time",
+                   "open_date_time_tz", "status", "time_lost", "program", "comment")
+           .read_table(format="pandas"))
+nc_t, def_t, dis_t, info, to_label = core.build(frames, labels, ref_dir="notebook_kit/ref", ops=ops, dis=dis)
 
 Dataset.get("fto2_dash_nc").write_table(nc_t)
 Dataset.get("fto2_dash_defects").write_table(def_t)
-print("FTO2 dashboard tables:", info["nc_table"], "NCs,", info["defect_table"], "defect lines; level-3 CNQ on AEC:", info["level3_aec"], "EUR")
-print("NCs created", info["created_from"], "to", info["created_to"], "| defect lines without an AI label (parser label used):", info["to_label"])
-print("rework orders:", info["rework_orders"])
+Dataset.get("fto2_dash_disruptions").write_table(dis_t)
+print("FTO2 dashboard tables:", info["nc_table"], "NCs,", info["defect_table"], "defect lines,", info["disruption_table"], "aléas; level-3 CNQ on AEC:", info["level3_aec"], "EUR")
+print("NCs created", info["created_from"], "to", info["created_to"], "| origin:", info["origin"], "| defect lines without an AI label (parser label used):", info["to_label"])
+print("rework orders:", info["rework_orders"], "| aléas:", info.get("aleas", "not read"))
 
 # lines for the next AI pass (once IT has approved the tool): a CSV to download from the workspace. Each line comes with its
 # full text (snippet) and the NC's long text; the labels go back into fto2_ai_labels with the same notification_number, seq, snippet.
@@ -337,29 +355,30 @@ def build(ref, root, scope_css, say):
     import sys
     if sys_path not in sys.path:
         sys.path.insert(0, sys_path)
-    from fto2_core import NC_COLUMNS, DEF_COLUMNS
+    from fto2_core import NC_COLUMNS, DEF_COLUMNS, DIS_COLUMNS
     report = {}
     ref_blob = _blob(ref)
 
     # level 1: fictitious tables in the JS
-    dn, dd = os.path.join(root, "build", "dummy", "fto2_dash_nc_dummy.csv"), os.path.join(root, "build", "dummy", "fto2_dash_defects_dummy.csv")
-    if os.path.exists(dn) and os.path.exists(dd):
+    dn, dd, ds = (os.path.join(root, "build", "dummy", f) for f in ("fto2_dash_nc_dummy.csv", "fto2_dash_defects_dummy.csv", "fto2_dash_disruptions_dummy.csv"))
+    if os.path.exists(dn) and os.path.exists(dd) and os.path.exists(ds):
         nc = _typed(pd.read_csv(dn, dtype=str, keep_default_na=False), NC_COLUMNS)
         df = _typed(pd.read_csv(dd, dtype=str, keep_default_na=False), DEF_COLUMNS)
-        tables = {"nc": _colmajor(nc), "def": _colmajor(df)}
-        stamp = "FTO2 NC dashboard, Skywise level 1 (visual check): FICTITIOUS data written in the JS (%d NCs, %d defect lines). Generated by build/build_all.py; do not edit by hand." % (len(nc), len(df))
+        dis = _typed(pd.read_csv(ds, dtype=str, keep_default_na=False), DIS_COLUMNS)
+        tables = {"nc": _colmajor(nc), "def": _colmajor(df), "dis": _colmajor(dis)}
+        stamp = "FTO2 NC dashboard, Skywise level 1 (visual check): FICTITIOUS data written in the JS (%d NCs, %d defect lines, %d aléas). Generated by build/build_all.py; do not edit by hand." % (len(nc), len(df), len(dis))
         js = _sub(JS_L1, stamp=stamp, ref=ref_blob, tables=_blob(tables), adapter=adapter, main=main)
         one = write_level(os.path.join(sky, "level1_dummy_in_js"), "fto2_level1", stamp, "FTO2 NC Dashboard - level 1", css, html, js)
         open(os.path.join(sky, "level1_dummy_in_js", "FTO2_Level1_Slate.html"), "w", encoding="utf-8").write(one)
-        report["level1"] = {"ncs": len(nc), "defects": len(df), "js_kb": len(js.encode()) // 1024}
+        report["level1"] = {"ncs": len(nc), "defects": len(df), "aleas": len(dis), "js_kb": len(js.encode()) // 1024}
         # level 2 local preview: the same tables handed over as Slate would
-        pre = FAKE_SLATE.replace("@@NC@@", _blob(tables["nc"])).replace("@@DEF@@", _blob(tables["def"]))
+        pre = FAKE_SLATE.replace("@@NC@@", _blob(tables["nc"])).replace("@@DEF@@", _blob(tables["def"])).replace("@@DIS@@", _blob(tables["dis"]))
     else:
         say("skywise: no build/dummy/*.csv (run build/dummy_tables.py): level 1 skipped")
         pre = None
 
     # levels 2 and 3: the same JS, data from the sandbox's state
-    stamp23 = "FTO2 NC dashboard, Skywise levels 2 and 3: data from the Slate queries q_fto2_nc and q_fto2_def through the code sandbox's state. Generated by build/build_all.py; do not edit by hand."
+    stamp23 = "FTO2 NC dashboard, Skywise levels 2 and 3: data from the Slate queries q_fto2_nc, q_fto2_def and q_fto2_dis (optional) through the code sandbox's state. Generated by build/build_all.py; do not edit by hand."
     js23 = _sub(JS_L23, stamp=stamp23, ref=ref_blob, adapter=adapter, main=main)
     l2, l3 = os.path.join(sky, "level2_dummy_queries"), os.path.join(sky, "level3_datasets")
     for out in (l2, l3):
@@ -371,19 +390,21 @@ def build(ref, root, scope_css, say):
                 one.replace("<!-- ===== HTML START ===== -->", pre + "<!-- ===== HTML START ===== -->", 1))
     report["level23_js_kb"] = len(js23.encode()) // 1024
     sql3 = (("q_fto2_nc", level3_sql("fto2_dash_nc", NC_COLUMNS, "FTO2 NC dashboard, level 3: one row per NC (dataset fto2_dash_nc, written by the Skywise notebook). Slate query q_fto2_nc.", "created, nc")),
-            ("q_fto2_def", level3_sql("fto2_dash_defects", DEF_COLUMNS, "FTO2 NC dashboard, level 3: one row per defect line (dataset fto2_dash_defects). Slate query q_fto2_def.", "nc, seq")))
+            ("q_fto2_def", level3_sql("fto2_dash_defects", DEF_COLUMNS, "FTO2 NC dashboard, level 3: one row per defect line (dataset fto2_dash_defects). Slate query q_fto2_def.", "nc, seq")),
+            ("q_fto2_dis", level3_sql("fto2_dash_disruptions", DIS_COLUMNS, "FTO2 NC dashboard, level 3: one row per quality aléa with no NC, the disruption block (dataset fto2_dash_disruptions). Slate query q_fto2_dis.", "opened, id")))
     for name, sql in sql3:
         open(os.path.join(l3, name + ".sql"), "w", encoding="utf-8").write(sql)
     notebook_kit(root, l3)
-    json.dump({"nc": [{"name": c, "type": t, "meaning": m} for c, t, m in NC_COLUMNS], "defects": [{"name": c, "type": t, "meaning": m} for c, t, m in DEF_COLUMNS]},
+    json.dump({"nc": [{"name": c, "type": t, "meaning": m} for c, t, m in NC_COLUMNS], "defects": [{"name": c, "type": t, "meaning": m} for c, t, m in DEF_COLUMNS],
+               "disruptions": [{"name": c, "type": t, "meaning": m} for c, t, m in DIS_COLUMNS]},
               open(os.path.join(l3, "columns.json"), "w", encoding="utf-8"), indent=1, ensure_ascii=False)
 
     # level 4: importable Slate apps
     l4 = os.path.join(sky, "level4_import")
     os.makedirs(l4, exist_ok=True)
-    q2 = [os.path.join(l2, "q_fto2_nc_dummy.sql"), os.path.join(l2, "q_fto2_def_dummy.sql")]
+    q2 = [os.path.join(l2, "q_fto2_%s_dummy.sql" % k) for k in ("nc", "def", "dis")]
     if all(os.path.exists(f) for f in q2):
-        sql2 = [("q_fto2_nc", open(q2[0], encoding="utf-8").read()), ("q_fto2_def", open(q2[1], encoding="utf-8").read())]
+        sql2 = [("q_fto2_" + k, open(f, encoding="utf-8").read()) for k, f in zip(("nc", "def", "dis"), q2)]
         app2 = slate_app("FTO2 NC Dashboard (level 2, fictitious data)", css, html, js23, sql2)
         json.dump(app2, open(os.path.join(l4, "FTO2_NC_Dashboard_level2.slate.json"), "w", encoding="utf-8"), ensure_ascii=False, indent=1)
     app3 = slate_app("FTO2 NC Dashboard", css, html, js23, sql3)

@@ -584,12 +584,26 @@ body.mk-on .wrap { padding-bottom: 90px; }
 #pg > [data-card="code"], #kg > [data-card="code"] { grid-area: code; } #pg > [data-card="fin"], #kg > [data-card="fin"] { grid-area: fin; }
 /* CNQ, Magazine: cost components beside the line and the costing methods, every NC across, the folds under the cards */
 #p-cnq { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; align-items: stretch;
-  grid-template-areas: "lead lead lead" "strip strip strip" "figs figs figs" "chips chips chips" "meth split split" "line cable rule" "comp comp month" "each each each" "cx cx cx" "table table table"; }
+  grid-template-areas: "lead lead lead" "strip strip strip" "figs figs figs" "chips chips chips" "meth split split" "line cable rule" "comp comp month" "dis dis dis" "each each each" "cx cx cx" "table table table"; }
 #p-cnq > * { min-width: 0; }
 #p-cnq > #cg, #p-cnq > .v2cq { display: contents; }
 #p-cnq > .lead { grid-area: lead; } #cStrip { grid-area: strip; } #p-cnq > .figs { grid-area: figs; } #cc { grid-area: chips; } #p-cnq > .card { grid-area: meth; }
 #cg > [data-card="line"] { grid-area: line; } #cg > [data-card="type"] { grid-area: split; } #cg > [data-card="cable"] { grid-area: cable; } #cg > [data-card="rule"] { grid-area: rule; } #cg > [data-card="month"] { grid-area: month; } #p-cnq [data-v2="VC"] { grid-area: comp; } #p-cnq [data-v2="VE"] { grid-area: each; }
-#cx { grid-area: cx; } #cgxBox { grid-area: more; } #p-cnq > details.detail:not(#cgxBox) { grid-area: table; }
+#cx { grid-area: cx; } #cgxBox { grid-area: more; } #cDis { grid-area: dis; }
+/* the disruption block, beside the cost: figures, hours per month, by line, then the list */
+.dis { background: var(--surface); border: 1px solid var(--ring); border-left: 3px solid var(--ink-2); border-radius: 10px; padding: 18px 20px 16px;
+  display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr) minmax(0, 1fr); gap: 14px 28px; align-items: start; }
+.dis[hidden] { display: none; }
+.dis-head { grid-column: 1 / -1; display: grid; gap: 4px; }
+.dis-head h3 { font-family: var(--font-display); font-weight: 400; font-size: clamp(20px, 2vw, 24px); line-height: 1.15; margin: 0; }
+.dis-figs { display: grid; gap: 10px; align-content: start; }
+.dis-figs div { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.dis-figs b { font-family: var(--font-display); font-weight: 400; font-size: 30px; line-height: 1; font-variant-numeric: tabular-nums; color: var(--ink); }
+.dis-figs span { font-size: 13px; color: var(--ink-2); }
+.dis-chart h4 { font-size: 12px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--muted); margin: 0 0 6px; }
+.dis-notes { grid-column: 1 / -1; display: grid; gap: 4px; font-size: 13px; color: var(--ink-2); }
+.dis-list { grid-column: 1 / -1; }
+@media (max-width: 900px) { .dis { grid-template-columns: minmax(0, 1fr); } } #p-cnq > details.detail:not(#cgxBox) { grid-area: table; }
 #p-cnq > .card, #cg > .card, #p-cnq .v2cq > .card { grid-template-columns: minmax(0, 1fr); background: var(--surface); border: 1px solid var(--ring); border-radius: 10px; padding: 18px 20px 16px; box-shadow: none; clip-path: none; row-gap: 12px; align-content: start; }
 #cg > .card > .bhead, #p-cnq .v2cq > .card > .bhead { position: static; grid-column: 1; gap: 6px; }
 #cg > .card > .bars, #cg > .card > .custom, #cg > .card > .cols-wrap, #p-cnq .v2cq > .card > .custom { grid-column: 1; grid-row: auto; }
@@ -689,6 +703,7 @@ footer p { max-width: none; }
       <h2 class="fb-title" id="fbLab" data-t="fbTitle"></h2>
       <div class="fb-row">
         <div class="fb"><label for="gSrc" data-t="fSrc"></label><select id="gSrc"></select></div>
+        <div class="fb"><label for="gOrg" data-t="fOrg"></label><select id="gOrg"></select></div>
         <div class="fb" id="gPlantBox"><span id="gPlantLab" data-t="fPlant"></span><button type="button" role="switch" class="switch" id="gPlant" aria-labelledby="gPlantLab"><i aria-hidden="true"></i><b id="gPlantTxt"></b></button><small class="fb-note" id="gPlantNote" hidden></small></div>
         <div class="fb"><span id="gPhLab" data-t="fPhase"></span><div class="seg" role="radiogroup" aria-labelledby="gPhLab" id="gPhase"></div></div>
         <div class="fb"><label for="gLine" data-t="fLine"></label><select id="gLine"></select></div>
@@ -837,6 +852,14 @@ footer p { max-width: none; }
       <div class="levels" id="cLevels"></div>
       <p class="sub" data-t="cLevelsSub"></p>
     </div>
+    <section class="dis" id="cDis" aria-labelledby="disH" hidden>
+      <div class="dis-head"><span class="kicker" data-t="disK"></span><h3 id="disH" data-t="disH"></h3><p class="sub" data-t="disS"></p></div>
+      <div class="dis-figs" id="disFigs"></div>
+      <div class="dis-chart"><h4 data-t="disMonth"></h4><div id="disMonth"></div></div>
+      <div class="dis-chart"><h4 data-t="disLine"></h4><div id="disLines"></div></div>
+      <div class="dis-notes" id="disNotes"></div>
+      <details class="vdata dis-list" id="disListBox"><summary id="disListSum"></summary><div class="table-wrap" id="disList"></div></details>
+    </section>
     <details class="explain" id="cx">
       <summary data-t="cxSum"></summary>
       <div class="cx-in">
@@ -963,7 +986,7 @@ window.FTO2_PAGE = window.FTO2_PAGE || '__PAGE__';
 // The page's data from its two tables, one row per NC and one row per defect line (columns: build/fto2_core.py, NC_COLUMNS and
 // DEF_COLUMNS), plus the fixed references (code sheet, MFT actions, cost parameters, production plan, root-cause tree).
 // A table comes as a Slate query result (one array per column) or as rows (an array of objects).
-function fto2FromTables(ncIn, defIn, ref) {
+function fto2FromTables(ncIn, defIn, ref, disIn) {
   ref = ref || {};
   function rows(t) {
     if (!t) return [];
@@ -997,7 +1020,7 @@ function fto2FromTables(ncIn, defIn, ref) {
       str(r.msn).replace(/\.0$/, ''), str(r.product) || 'Other', str(r.station), r.hour == null || r.hour === '' ? -1 : int(r.hour), numOrNull(r.lead_days), int(r.is_open),
       numOrNull(r.age_days), day(r.closed), str(r.type_nc), str(r.liability), str(r.sap_defect), str(r.sap_cause_group), str(r.sap_cause), str(r.status), str(r.source) || 'sky',
       [num(r.min_alert), num(r.min_writing), num(r.min_support), num(r.min_setup), num(r.min_hands_on), num(r.min_recheck), num(r.hours_engineering), int(r.final_inspection),
-        str(r.work_source), str(r.order_state), str(r.rework_orders)]];
+        str(r.work_source), str(r.order_state), str(r.rework_orders), str(r.alert_source), str(r.aleas)], str(r.origin) || 'normal'];
     ncs.push(a); byNc[id] = { a: a, plant: str(r.plant), lt: str(r.long_text) };
   });
   var defects = [], client = {}, lt = {}, qty = {}, pool = [];
@@ -1029,11 +1052,14 @@ function fto2FromTables(ncIn, defIn, ref) {
   ncs.forEach(function (a) { if (a[1] > to) to = a[1]; });
   var del = aec.filter(function (a) { return a[6] === 'DELETED'; }), oth = aec.filter(function (a) { return a[23] === '' && a[6] !== 'DELETED'; });
   var cnqp = {}; for (var k2 in (ref.cnqp || {})) cnqp[k2] = ref.cnqp[k2]; cnqp.qty = qty;
-  return { defects: defects, ncs: ncs, rca: rca, client: client, lt: lt, codes: ref.codes || {}, actions: ref.actions || [], cnqp: cnqp, eqmsn: eq, y25: ref.y25 || null,
+  // the disruption block (optional third table): quality aléas that led to no NC [id, opened, line, station, work order, minutes, in block, reason, status, comment]
+  var dis = disIn ? rows(disIn).map(function (r) { return [str(r.id), day(r.opened), str(r.line), str(r.station), str(r.work_order), num(r.minutes), int(r.in_block), str(r.reason), str(r.status), str(r.comment)]; })
+    .filter(function (a) { return a[0] && a[1]; }) : null;
+  return { defects: defects, ncs: ncs, rca: rca, client: client, lt: lt, codes: ref.codes || {}, actions: ref.actions || [], cnqp: cnqp, eqmsn: eq, y25: ref.y25 || null, dis: dis,
     meta: { from: ref.from || '2026-01-01', to: to, aside: { deleted: [del.length, sum(del)], other: [oth.length, sum(oth)] },
       noLine: ncs.filter(function (a) { return a[23] === 'serie' && a[21] === 0; }).length, modelTotal: sum(aec) } };
 }
-if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.tables.nc, window.DASH.tables.def, window.DASH.ref);
+if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.tables.nc, window.DASH.tables.def, window.DASH.ref, window.DASH.tables.dis);
 /* ===== ADAPTER END ===== */
 </script>
 <script>
@@ -1110,7 +1136,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
       minorLabel: 'Défauts mineurs', minorIn: 'Inclus', minorOut: 'Exclus',
       tabPareto: 'Pareto', tabCost: 'Pareto des coûts', tabWeek: 'Pareto hebdomadaire', tabCnq: 'Coût de non-qualité', tabClient: 'Retours clients', tabRca: 'Causes (RCA)',
       serieSub: 'NC émises à FTO2 sous responsabilité FTO2.', serieSubAll: 'NC sous responsabilité FTO2, émises à FTO2 ou hors FTO2 (retours clients).',
-      fbTitle: 'Filtres', fSrc: 'Source des données', src_all: 'Toutes les données', src_sky: 'Skywise uniquement', src_man: 'Listes manuelles (GPS ou Test)', src_gps: 'Registre GPS', src_test: 'Liste Test',
+      fbTitle: 'Filtres', fSrc: 'Source des données', fOrg: 'Origine (pipeline)', org_all: 'Les deux sorties', org_normal: 'Sortie normale', org_missing_ids: 'IDs manquants', src_all: 'Toutes les données', src_sky: 'Skywise uniquement', src_man: 'Listes manuelles (GPS ou Test)', src_gps: 'Registre GPS', src_test: 'Liste Test',
       fPlant: 'Usine FTO2 uniquement', fYes: 'Oui', fNo: 'Non', fPlantOff: 'Sans effet ici : l’onglet sépare déjà FTO2 et retours clients.',
       fPhase: 'Type de production', ph_all: 'Tous', ph_SERIE: 'Série', ph_REC: 'REC', ph_FTI: 'FTI', fLine: 'Avion', line_all: 'Tous les avions',
       fPeriod: 'Période', pr_ytd: 'Depuis le 1er janvier', pr_m1: 'Dernier mois', pr_m3: '3 derniers mois', pr_m6: '6 derniers mois', pr_m12: '12 derniers mois', pr_all: 'Toutes les dates', pr_custom: 'Dates choisies',
@@ -1173,7 +1199,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
       cs_alert: 'Aléa', cs_writing: 'Rédaction de la NC', cs_support: 'Support technique', cs_setup: 'Préparation', cs_hands: 'Intervention', cs_recheck: 'Recontrôle et clôture',
       cu_alert: 'l’opérateur signale le défaut', cu_writing: '{x} min au contrôle final', cu_support: 'vérification, estimation, ordre de travail',
       cu_setup: 'badgeage, approvisionnement, mise en place', cu_hands: 'minutes de chaque défaut relevé', cu_recheck: 'contrôle de la retouche, puis clôture',
-      cxModelH: 'Règles particulières du modèle {v}', cxR1: 'Pas d’alerte pour une NC trouvée au test ou au contrôle final ; un retour client a toujours l’alerte.', cxR2: 'Erreurs de connexion : la première d’une NC compte {a} min, chacune des suivantes {b} min.', cxR3: 'NC internes : préparation et intervention × {f}.', cxR4: 'Rejet avec un ordre de retouche : le travail est compté comme une retouche, plus la valeur de la pièce.', cxR5: 'Ordre de retouche clos et planifié : son temps prévu remplace préparation et intervention (sans la règle des connexions ni le × 2). {n} NC de la sélection.',
+      cxModelH: 'Règles particulières du modèle {v}', cxR1: 'Pas d’alerte pour une NC trouvée au test ou au contrôle final ; un retour client a toujours l’alerte.', cxR2: 'Erreurs de connexion : la première d’une NC compte {a} min, chacune des suivantes {b} min.', cxR3: 'NC internes : préparation et intervention × {f}.', cxR4: 'Rejet avec un ordre de retouche : le travail est compté comme une retouche, plus la valeur de la pièce.', cxR5: 'Ordre de retouche clos et planifié : son temps prévu remplace préparation et intervention (sans la règle des connexions ni le × 2). {n} NC de la sélection.', cxR6: 'Aléa qualité relié à la NC (même ordre de travail, NC créée de {a} h avant à {b} h après) : son temps perdu déclaré remplace les {x} min de l’alerte. {n} NC de la sélection.',
       cxPerNc: '{c} par NC', cxHandsV: 'selon les défauts', cxSel: 'Sur les NC filtrées : {c} au total · {p} du coût',
       cxEng: 'Étude d’ingénierie', cxEngV: 'DQN : {h} h × {r} €/h = {c}', cxMat: 'Matière', cxMatV: 'somme de la matière des défauts', cxTot: 'Total de la sélection', cxTotV: '{n} NC',
       cxFormula: 'Coût = total des minutes ÷ 60 × {r} €/h + ingénierie + matière. Préparation et intervention ne descendent jamais sous {f} min.',
@@ -1183,10 +1209,10 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
       bk_LOCAL: 'Processus décrit par AEC', bk_RULE: 'Règle AEC', bk_ASSUMED: 'Hypothèse', bk_OFFICIAL: 'Officiel Airbus', bk_TEAM: 'Table de l’équipe', bk_BORROWED: 'Emprunté', bk_DERIVED: 'Règle de l’équipe',
       cxNcT: 'Le calcul sur une NC réelle', cxNum: 'Numéro de NC', cxShow: 'Afficher', cxNone: 'Aucune NC ne porte ce numéro dans les données. Choisir un numéro dans la liste.',
       ex_one: 'Retouche à un défaut', ex_many: 'Retouche à plusieurs défauts', ex_final: 'Retouche au contrôle final', ex_noline: 'Retouche sans ligne de défaut',
-      ex_rej: 'Rejet', ex_rejrw: 'Rejet avec ordre de retouche', ex_order: 'Temps de l’ordre de retouche', fx_order: 'Ordre de retouche', os_used: 'temps prévu utilisé', os_open: 'pas encore clos : temps du modèle', os_no_time: 'clos sans temps prévu : temps du modèle', os_not_found: 'hors des opérations disponibles : temps du modèle', os_none: 'opérations non chargées : temps du modèle', n_ordSetup: 'Temps prévu des opérations de préparation, contrôle et clôture de l’ordre de retouche', n_ordWork: 'Temps prévu des opérations de travail et de test de l’ordre de retouche, à la place du modèle', dl_ord: 'Temps du modèle, pour information (l’intervention comptée est celle de l’ordre) ; la matière est reprise ci-dessus', ex_exc: 'Échange', ex_dqn: 'Demande de DQN', ex_cli: 'Retour client',
+      ex_rej: 'Rejet', ex_rejrw: 'Rejet avec ordre de retouche', ex_order: 'Temps de l’ordre de retouche', fx_org: 'Origine', fx_order: 'Ordre de retouche', os_used: 'temps prévu utilisé', os_open: 'pas encore clos : temps du modèle', os_no_time: 'clos sans temps prévu : temps du modèle', os_not_found: 'hors des opérations disponibles : temps du modèle', os_none: 'opérations non chargées : temps du modèle', n_ordSetup: 'Temps prévu des opérations de préparation, contrôle et clôture de l’ordre de retouche', n_ordWork: 'Temps prévu des opérations de travail et de test de l’ordre de retouche, à la place du modèle', dl_ord: 'Temps du modèle, pour information (l’intervention comptée est celle de l’ordre) ; la matière est reprise ci-dessus', ex_exc: 'Échange', ex_dqn: 'Demande de DQN', ex_cli: 'Retour client',
       fx_nc: 'NC', fx_date: 'Créée le', fx_line: 'Ligne', fx_dec: 'Décision', fx_where: 'Détection', fx_lines: 'Lignes de défaut',
       cxH: ['Étape', 'Calcul', 'Minutes', 'Coût à {r} €/h'],
-      n_once: '{x} min, une fois par NC', n_noalert: 'pas d’alerte : NC trouvée au test ou au contrôle final', n_x2: '{s} · × {f} (NC interne)', n_plain: '{x} min', n_final: '{x} min car détectée au contrôle final',
+      n_once: '{x} min, une fois par NC', n_alea: 'temps perdu déclaré sur l’aléa qualité {a}, qui a mené à la NC', ex_alea: 'Temps de l’aléa déclaré', n_noalert: 'pas d’alerte : NC trouvée au test ou au contrôle final', n_x2: '{s} · × {f} (NC interne)', n_plain: '{x} min', n_final: '{x} min car détectée au contrôle final',
       n_floor: 'relevée de {a} à {b} min pour que préparation et intervention atteignent {f} min', n_noline: 'aucune ligne de défaut : forfait de {x} min',
       n_lines: '{n} ligne(s) de défaut, détaillées ci-dessous', n_off: 'non compté pour cette décision',
       r_eng: 'Étude d’ingénierie', r_eng_how: '{h} h à {r} €/h', r_mat: 'Matière', r_mat_how: 'somme de la matière des lignes de défaut',
@@ -1194,7 +1220,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
       x2_line: 'Niveau 2, moyenne globale : {m} min aux temps moyens, soit {c}.', x1_line: 'Niveau 1, standard Airbus : {c} pour une décision « {l} », quel que soit le nombre de défauts.',
       d_lines: 'Voir les {n} lignes de défaut de cette NC', dlH: ['#', 'Texte saisi', 'Classe (cause racine)', 'Minutes', 'Matière'],
       dl_on: 'Somme, reprise ci-dessus en intervention et matière', dl_off: 'Somme, non comptée : cette décision ne comporte pas de travail',
-      stripTotal: 'Total FTO2', stripSerie: 'Émises à FTO2', stripClient: 'Retours clients',
+      stripTotal: 'Total FTO2', stripSerie: 'Émises à FTO2', stripClient: 'Retours clients', stripDis: 'À côté, aléas qualité sans NC', disK: 'À côté du coût', disH: 'Aléas qualité sans NC', disS: 'Temps perdu déclaré dans MES sur les aléas qualité qui n’ont mené à aucune NC (même ordre de travail, de 2 h avant à 72 h après). Montré à côté du coût de non-qualité, jamais ajouté.', disEur: 'à {r} €/h', disHours: 'heures perdues', disN: 'aléas', disLed: '{n} NC de la sélection partent d’un aléa qualité : son temps déclaré est dans leur coût, à l’étape alerte.', disErma: '{n} aléas sur le MIP / 1101VB (NC ERMA possible) laissés de côté : {h} h, à vérifier.', disMonth: 'Heures perdues par mois', disLine: 'Par ligne', disList: 'Les {n} aléas, un par ligne', disCols: ['Aléa', 'Ouvert le', 'Ligne', 'Poste', 'Minutes', 'Ce que l’opérateur a écrit'], disNone: 'Aucun aléa qualité sans NC pour ce filtre.', disPhase: 'Les aléas sont ceux de l’atelier (série) : rien pour cette phase.', disOut: 'hors bloc (ERMA possible)', disMin: '{v} min',
       cTotal: 'Coût de non-qualité', cNcs: 'NC', cPerNc: 'Coût moyen par NC', cCable: 'Coût des défauts câble', cCableSub: '{p} du coût',
       cLevels: 'Comparaison des méthodes de chiffrage', cLevelsSub: 'Standard Airbus : coût forfaitaire par décision. Moyenne AEC : temps moyens par NC. Détail par défaut : étapes AEC et reprise calculée pour chaque défaut (méthode retenue).',
       lvl1: 'Standard Airbus', lvl2: 'Moyenne AEC', lvl3: 'Détail par défaut',
@@ -1277,7 +1303,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
       minorLabel: 'Minor defects', minorIn: 'Included', minorOut: 'Excluded',
       tabPareto: 'Pareto', tabCost: 'Cost Pareto', tabWeek: 'Weekly Pareto', tabCnq: 'Cost of non-quality', tabClient: 'Customer returns', tabRca: 'Root causes (RCA)',
       serieSub: 'NCs raised at FTO2 that FTO2 is liable for.', serieSubAll: 'NCs FTO2 is liable for, raised at FTO2 or outside it (customer returns).',
-      fbTitle: 'Filters', fSrc: 'Data source', src_all: 'All data', src_sky: 'Skywise only', src_man: 'Manual lists (GPS or Test)', src_gps: 'GPS register', src_test: 'Test list',
+      fbTitle: 'Filters', fSrc: 'Data source', fOrg: 'Origin (pipeline)', org_all: 'Both outputs', org_normal: 'Normal output', org_missing_ids: 'Missing IDs', src_all: 'All data', src_sky: 'Skywise only', src_man: 'Manual lists (GPS or Test)', src_gps: 'GPS register', src_test: 'Test list',
       fPlant: 'FTO2 plant only', fYes: 'Yes', fNo: 'No', fPlantOff: 'No effect here: this tab already shows FTO2 and customer returns apart.',
       fPhase: 'Production type', ph_all: 'All', ph_SERIE: 'Series', ph_REC: 'REC', ph_FTI: 'FTI', fLine: 'Aircraft', line_all: 'All aircraft',
       fPeriod: 'Period', pr_ytd: 'Year to date', pr_m1: 'Last month', pr_m3: 'Last 3 months', pr_m6: 'Last 6 months', pr_m12: 'Last 12 months', pr_all: 'All dates', pr_custom: 'Custom dates',
@@ -1340,7 +1366,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
       cs_alert: 'Alert', cs_writing: 'Writing the NC', cs_support: 'Technical support', cs_setup: 'Setup', cs_hands: 'Hands-on work', cs_recheck: 'Re-check and closing',
       cu_alert: 'the operator reports the defect', cu_writing: '{x} min at final inspection', cu_support: 'check, estimate, work order',
       cu_setup: 'badging, fetching, setting up', cu_hands: 'minutes of each defect found', cu_recheck: 'check of the rework, then closing',
-      cxModelH: 'Special rules of model {v}', cxR1: 'No alert for an NC found at test or final inspection; a customer return always has the alert.', cxR2: 'Connection errors: the first in an NC counts {a} min, each following one {b} min.', cxR3: 'Internal NCs: setup and hands-on work × {f}.', cxR4: 'Rejection with a rework order: the work is charged as for a rework, plus the value of the part.', cxR5: 'Rework order closed and planned: its planned time replaces setup and hands-on work (no connection rule, no × 2). {n} NCs in the selection.',
+      cxModelH: 'Special rules of model {v}', cxR1: 'No alert for an NC found at test or final inspection; a customer return always has the alert.', cxR2: 'Connection errors: the first in an NC counts {a} min, each following one {b} min.', cxR3: 'Internal NCs: setup and hands-on work × {f}.', cxR4: 'Rejection with a rework order: the work is charged as for a rework, plus the value of the part.', cxR5: 'Rework order closed and planned: its planned time replaces setup and hands-on work (no connection rule, no × 2). {n} NCs in the selection.', cxR6: 'Quality aléa linked to the NC (same work order, NC created from {a} h before to {b} h after): its declared time lost replaces the {x}-min alert. {n} NCs in the selection.',
       cxPerNc: '{c} per NC', cxHandsV: 'depends on the defects', cxSel: 'Filtered NCs: {c} in total · {p} of the cost',
       cxEng: 'Engineering study', cxEngV: 'Design query: {h} h × {r} EUR/h = {c}', cxMat: 'Material', cxMatV: 'sum of the material of the defects', cxTot: 'Selection total', cxTotV: '{n} NCs',
       cxFormula: 'Cost = total minutes ÷ 60 × {r} EUR/h + engineering + material. Setup and hands-on work are never under {f} min.',
@@ -1350,10 +1376,10 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
       bk_LOCAL: 'Process described by AEC', bk_RULE: 'AEC rule', bk_ASSUMED: 'Assumed', bk_OFFICIAL: 'Official Airbus', bk_TEAM: 'Team table', bk_BORROWED: 'Borrowed', bk_DERIVED: 'Team rule',
       cxNcT: 'The calculation on a real NC', cxNum: 'NC number', cxShow: 'Show', cxNone: 'No NC with that number in the data. Pick one from the list.',
       ex_one: 'Rework, one defect', ex_many: 'Rework, several defects', ex_final: 'Rework at final inspection', ex_noline: 'Rework, no defect line',
-      ex_rej: 'Rejection', ex_rejrw: 'Rejection with a rework order', ex_order: 'Rework order time', fx_order: 'Rework order', os_used: 'planned time used', os_open: 'not closed yet: model time', os_no_time: 'closed with no planned time: model time', os_not_found: 'not in the operations available: model time', os_none: 'operations not loaded: model time', n_ordSetup: 'Planned time of the rework order’s preparation, inspection and closing operations', n_ordWork: 'Planned time of the rework order’s work and test operations, instead of the model', dl_ord: 'Model times, for information (the hands-on work charged is the rework order’s); the material is used above', ex_exc: 'Exchange', ex_dqn: 'Design query', ex_cli: 'Customer return',
+      ex_rej: 'Rejection', ex_rejrw: 'Rejection with a rework order', ex_order: 'Rework order time', fx_org: 'Origin', fx_order: 'Rework order', os_used: 'planned time used', os_open: 'not closed yet: model time', os_no_time: 'closed with no planned time: model time', os_not_found: 'not in the operations available: model time', os_none: 'operations not loaded: model time', n_ordSetup: 'Planned time of the rework order’s preparation, inspection and closing operations', n_ordWork: 'Planned time of the rework order’s work and test operations, instead of the model', dl_ord: 'Model times, for information (the hands-on work charged is the rework order’s); the material is used above', ex_exc: 'Exchange', ex_dqn: 'Design query', ex_cli: 'Customer return',
       fx_nc: 'NC', fx_date: 'Created', fx_line: 'Line', fx_dec: 'Decision', fx_where: 'Found at', fx_lines: 'Defect lines',
       cxH: ['Step', 'How', 'Minutes', 'Cost at {r} EUR/h'],
-      n_once: '{x} min, once per NC', n_noalert: 'no alert: NC found at test or final inspection', n_x2: '{s} · × {f} (internal NC)', n_plain: '{x} min', n_final: '{x} min because it was found at final inspection',
+      n_once: '{x} min, once per NC', n_alea: 'time lost declared on quality aléa {a}, which led to the NC', ex_alea: 'Declared aléa time', n_noalert: 'no alert: NC found at test or final inspection', n_x2: '{s} · × {f} (internal NC)', n_plain: '{x} min', n_final: '{x} min because it was found at final inspection',
       n_floor: 'raised from {a} to {b} min so setup and hands-on work reach {f} min', n_noline: 'no defect line: flat {x} min',
       n_lines: '{n} defect line(s), listed below', n_off: 'not charged for this decision',
       r_eng: 'Engineering study', r_eng_how: '{h} h at {r} EUR/h', r_mat: 'Material', r_mat_how: 'sum of the material of the defect lines',
@@ -1361,7 +1387,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
       x2_line: 'Level 2, global average: {m} min at average times, which is {c}.', x1_line: 'Level 1, Airbus standard: {c} for a “{l}” decision, whatever the number of defects.',
       d_lines: 'Show the {n} defect lines of this NC', dlH: ['#', 'What was written', 'Class (root cause)', 'Minutes', 'Material'],
       dl_on: 'Sum, used above as hands-on work and material', dl_off: 'Sum, not charged: this decision has no work',
-      stripTotal: 'FTO2 total', stripSerie: 'Raised at FTO2', stripClient: 'Customer returns',
+      stripTotal: 'FTO2 total', stripSerie: 'Raised at FTO2', stripClient: 'Customer returns', stripDis: 'Beside it, quality aléas with no NC', disK: 'Beside the cost', disH: 'Quality aléas with no NC', disS: 'Time lost declared in MES on the quality aléas that led to no NC (same work order, from 2 h before to 72 h after). Shown beside the cost of non-quality, never added to it.', disEur: 'at {r} EUR/h', disHours: 'hours lost', disN: 'aléas', disLed: '{n} NCs in the selection start from a quality aléa: its declared time is in their cost, at the alert step.', disErma: '{n} aléas on the MIP / 1101VB (possible ERMA NC) left out: {h} h, to check.', disMonth: 'Hours lost per month', disLine: 'By line', disList: 'The {n} aléas, one per row', disCols: ['Aléa', 'Opened', 'Line', 'Station', 'Minutes', 'What the operator wrote'], disNone: 'No quality aléa without an NC for this filter.', disPhase: 'The aléas are the shop floor’s (series): none for this phase.', disOut: 'out of the block (possible ERMA)', disMin: '{v} min',
       cTotal: 'Cost of non-quality', cNcs: 'NCs', cPerNc: 'Average cost per NC', cCable: 'Cost of cable defects', cCableSub: '{p} of the cost',
       cLevels: 'Costing methods compared', cLevelsSub: 'Airbus standard: flat cost per decision. AEC average: average times per NC. Per defect: AEC steps with the rework built for each defect (method used).',
       lvl1: 'Airbus standard', lvl2: 'AEC average', lvl3: 'Per defect',
@@ -1459,7 +1485,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
   var REP = D.ncs.filter(function (n) { return n[23] === 'serie' || n[23] === 'client'; });
   var DMAX = D.meta.to, DMIN = REP.reduce(function (m, n) { return n[1] < m ? n[1] : m; }, DMAX);
   var LINES = lineOrder(REP.map(function (n) { return n[3]; }));
-  var GF0 = { src: 'all', fto2: true, phase: 'SERIE', line: '', preset: PAGE === 'suivi' ? 'all' : 'ytd', from: '', to: '' }, GF = Object.assign({}, GF0);
+  var GF0 = { src: 'all', org: '', fto2: true, phase: 'SERIE', line: '', preset: PAGE === 'suivi' ? 'all' : 'ytd', from: '', to: '' }, GF = Object.assign({}, GF0);
   var PRESETS = ['ytd', 'm1', 'm3', 'm6', 'm12', 'all', 'custom'];
   function plusDays(iso, k) { var d = new Date(iso + 'T12:00:00Z'); d.setUTCDate(d.getUTCDate() + k); return isoDay(d); }
   function minusMonths(iso, k) { var d = new Date(iso + 'T12:00:00Z'), dd = d.getUTCDate(); d.setUTCDate(1); d.setUTCMonth(d.getUTCMonth() - k); d.setUTCDate(Math.min(dd, new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth() + 1, 0)).getUTCDate())); return isoDay(d); }
@@ -1473,6 +1499,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
   function gNc(n, anyLine) {
     if (!n) return false;
     if (GF.src !== 'all' && (GF.src === 'man' ? n[39] === 'sky' : n[39] !== GF.src)) return false;
+    if (GF.org && (n[41] || 'normal') !== GF.org) return false;   // [41] the pipeline output the NC comes from: normal or missing_ids
     if (GF.phase && n[24] !== GF.phase) return false;
     if (GF.line && !anyLine && n[3] !== GF.line) return false;
     return n[1] >= GF.from && n[1] <= GF.to;
@@ -1927,7 +1954,9 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
       var t3 = sum(SEL_NC, function (n) { return n[12]; }), t1 = sum(SEL_NC, function (n) { return n[9]; }), t2 = sum(SEL_NC, function (n) { return n[10]; });
       var ts = sum(SER_NC, function (n) { return n[12]; }), tc = sum(CLI_NC, function (n) { return n[12]; });
       var cabAlloc = 0; b.base().forEach(function (u) { if (u.d && dCable(u.d)) cabAlloc += dAlloc(u.d); });
-      document.getElementById('cStrip').innerHTML = '<span>' + esc(S('stripTotal')) + ' <b>' + eur(ts + tc) + '</b></span><span>' + esc(S('stripSerie')) + ' <b>' + eur(ts) + '</b> · ' + num(SER_NC.length) + ' NC</span><span>' + esc(S('stripClient')) + ' <b>' + eur(tc) + '</b> · ' + num(CLI_NC.length) + ' NC</span>';
+      var dk = (disSel() || []).filter(function (a) { return a[6] === 1; });
+      document.getElementById('cStrip').innerHTML = '<span>' + esc(S('stripTotal')) + ' <b>' + eur(ts + tc) + '</b></span><span>' + esc(S('stripSerie')) + ' <b>' + eur(ts) + '</b> · ' + num(SER_NC.length) + ' NC</span><span>' + esc(S('stripClient')) + ' <b>' + eur(tc) + '</b> · ' + num(CLI_NC.length) + ' NC</span>' +
+        (D.dis ? '<span class="mu">' + esc(S('stripDis')) + ' <b>' + eur(sumA(dk.map(function (a) { return a[5]; })) / 60 * disRate()) + '</b> · ' + num(dk.length) + ' ' + esc(S('disN')) + '</span>' : '');
       document.getElementById('cf1').textContent = eur(t3);
       document.getElementById('cf2').textContent = num(SEL_NC.length);
       document.getElementById('cf3').textContent = SEL_NC.length ? eur(t3 / SEL_NC.length) : '—';
@@ -1941,7 +1970,8 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
   // ---------------------------------------------------------------- 4b. Explain the calculation (folded by default): the steps with their
   // time and cost per NC and over the selection, then one real NC worked out step by step. Every figure comes from the pipeline:
   // NC row [40] = the model's minutes [alert, writing, support, setup, hands-on, re-check], engineering hours, final-inspection flag,
-  // then where setup and hands-on come from ('order': planned time of the rework orders, 'model', '' no work), the orders' state, their numbers.
+  // then where setup and hands-on come from ('order': planned time of the rework orders, 'model', '' no work), the orders' state, their numbers,
+  // where the alert time comes from ('alea': declared on the quality aléas that led to the NC, 'flat', '' not charged) and those aléas.
   var CXP = D.cnqp || null, CX = { nc: null, lines: false };
   var CX_STEPS = [['alert', 'alert'], ['writing', 'write'], ['support', 'support'], ['setup', 'work'], ['hands', 'work'], ['recheck', 'recheck']];
   var CX_RF = { alert: 0, write: 1, support: 2, work: 3, recheck: 4, eng: 5, part: 6, label: 7, basis: 8 };
@@ -1973,6 +2003,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
     ['ex_rej', function (n) { return n[6] === 'REJ'; }],
     ['ex_rejrw', function (n) { return n[6] === 'REJ_RW'; }],
     ['ex_order', function (n) { return cxSteps(n)[8] === 'order'; }],
+    ['ex_alea', function (n) { return cxSteps(n)[11] === 'alea'; }],
     ['ex_exc', function (n) { return n[6] === 'EXC'; }],
     ['ex_dqn', function (n) { return n[6] === 'DQN'; }],
     ['ex_cli', function (n) { return n[23] === 'client'; }]
@@ -2003,9 +2034,9 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
       (Math.abs(other) >= 0.5 ? '<div><span class="cn">' + esc(S('r_adj')) + '</span><div class="sel">' + S('cxSel', { c: '<b>' + esc(eur(other)) + '</b>', p: esc(shr(other)) }) + '</div></div>' : '') +
       '<div class="tot"><span class="cn">' + esc(S('cxTot')) + '</span><span class="cv">' + esc(S('cxTotV', { n: num(SEL_NC.length) })) + '</span><div class="sel"><b>' + esc(eur(tot)) + '</b></div></div>';
     document.getElementById('cxFormula').textContent = S('cxFormula', { r: dec(r), f: num(P.floor) });
-    var nOrd = SEL_NC.filter(function (n) { return cxSteps(n)[8] === 'order'; }).length;
+    var nOrd = SEL_NC.filter(function (n) { return cxSteps(n)[8] === 'order'; }).length, nAlea = SEL_NC.filter(function (n) { return cxSteps(n)[11] === 'alea'; }).length;
     document.getElementById('cxModel').innerHTML = '<b>' + esc(S('cxModelH', { v: P.version || '' })) + '</b><ul>' + [S('cxR1'), S('cxR2', { a: num((CXP.cls[(P.connCls || [])[0]] || [P.defDefault])[0]), b: num(P.connNext || 0) }), S('cxR3', { f: dec(P.intFactor || 1) }), S('cxR4')]
-      .concat(P.orderTime ? [S('cxR5', { n: num(nOrd) })] : []).map(function (t) { return '<li>' + esc(t) + '</li>'; }).join('') + '</ul>';
+      .concat(P.orderTime ? [S('cxR5', { n: num(nOrd) })] : []).concat(P.aleaTime ? [S('cxR6', { a: num(-(P.aleaHours || [-2])[0]), b: num((P.aleaHours || [0, 72])[1]), x: num(P.alert), n: num(nAlea) })] : []).map(function (t) { return '<li>' + esc(t) + '</li>'; }).join('') + '</ul>';
     var setup = Math.max(P.setup, P.floor - 10), m = P.alert + P.write + P.support + setup + 10 + P.recheck;
     document.getElementById('cxExample').textContent = S('cxExample', { a: P.alert, b: P.write, c: P.support, d: setup, e: P.recheck, m: num(m), c2: eur2(m / 60 * r) });
     // what each decision charges
@@ -2033,8 +2064,9 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
     var h = '<div class="cx-facts">' + fact('fx_nc', n[0]) + fact('fx_date', shortDay(n[1])) + fact('fx_line', n[3] || '—') + fact('fx_dec', ruleName(n[7])) + fact('fx_where', whereName(n[8])) + fact('fx_lines', num(lines.length)) + '</div>';
     var ord = st[8] === 'order', fx = ord ? 1 : cxFactor(n), x2 = function (t) { return fx !== 1 ? S('n_x2', { s: t, f: dec(fx) }) : t; }, base = st[3] / fx;
     if (st[10]) h = h.replace('</div>', fact('fx_order', st[10] + ' · ' + S('os_' + (st[9] || 'none'))) + '</div>');
+    if (n[41] === 'missing_ids') h = h.replace('</div>', fact('fx_org', S('org_missing_ids')) + '</div>');
     var notes = {
-      alert: f[0] && !st[0] ? S('n_noalert') : S('n_once', { x: P.alert }), writing: fin ? S('n_final', { x: P.writeFinal }) : S('n_plain', { x: P.write }), support: S('n_once', { x: P.support }),
+      alert: st[11] === 'alea' ? S('n_alea', { a: st[12] }) : f[0] && !st[0] ? S('n_noalert') : S('n_once', { x: P.alert }), writing: fin ? S('n_final', { x: P.writeFinal }) : S('n_plain', { x: P.write }), support: S('n_once', { x: P.support }),
       setup: ord ? S('n_ordSetup') : x2(base > P.setup + 1e-6 ? S('n_floor', { a: P.setup, b: dec(base), f: P.floor }) : S('n_once', { x: P.setup })),
       hands: ord ? S('n_ordWork') : x2(!lines.length ? S('n_noline', { x: P.noDefect }) : S('n_lines', { n: num(lines.length) })), recheck: S('n_once', { x: P.recheck })
     };
@@ -2073,6 +2105,59 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
   document.getElementById('cxNum').addEventListener('keydown', function (e) { if (e.key === 'Enter') cxPick(e.target.value); });
   document.getElementById('cxEx').addEventListener('click', function (e) { var b2 = e.target.closest('[data-cxnc]'); if (b2) { document.getElementById('cxNum').value = ''; cxPick(b2.getAttribute('data-cxnc')); } });
   document.getElementById('cxOut').addEventListener('toggle', function (e) { if (e.target.id === 'cxLines') CX.lines = e.target.open; }, true);
+
+  // ---------------------------------------------------------------- 4c. The disruption block, beside the cost: quality aléas that led to no NC (MES).
+  // D.dis rows [id, opened, line, station, work order, minutes, in block, reason, status, comment]; the dates and the line follow the filters.
+  // The aléas are the shop floor's: none for REC or FTI. Never added to the cost of non-quality.
+  function disSel() {
+    if (!D.dis) return null;
+    if (GF.phase && GF.phase !== 'SERIE') return [];
+    return D.dis.filter(function (a) { return a[1] >= GF.from && a[1] <= GF.to && (!GF.line || a[2] === GF.line); });
+  }
+  function disRate() { return (CXP && CXP.p.rate) || 50; }
+  var DIS_WIRED = false;
+  function renderDis() {
+    var box = document.getElementById('cDis'); if (!box) return;
+    var all = disSel(); box.hidden = !all; if (!all) return;
+    if (!DIS_WIRED) { v2Wire(box); DIS_WIRED = true; }
+    var kept = all.filter(function (a) { return a[6] === 1; }), out = all.filter(function (a) { return a[6] !== 1; }), rate = disRate();
+    var mins = sumA(kept.map(function (a) { return a[5]; })), led = SEL_NC.filter(function (n) { return (n[40] || [])[11] === 'alea'; }).length;
+    document.getElementById('disFigs').innerHTML = '<div><b>' + esc(eur(mins / 60 * rate)) + '</b><span>' + esc(S('disEur', { r: num(rate) })) + '</span></div>' +
+      '<div><b>' + esc(f1(mins / 60)) + '</b><span>' + esc(S('disHours')) + '</span></div><div><b>' + esc(num(kept.length)) + '</b><span>' + esc(S('disN')) + '</span></div>';
+    var notes = [];
+    if (led) notes.push(S('disLed', { n: num(led) }));
+    if (out.length) notes.push(S('disErma', { n: num(out.length), h: f1(sumA(out.map(function (a) { return a[5]; })) / 60) }));
+    if (GF.phase && GF.phase !== 'SERIE') notes.push(S('disPhase')); else if (!kept.length) notes.push(S('disNone'));
+    document.getElementById('disNotes').innerHTML = notes.map(function (t) { return '<p>' + esc(t) + '</p>'; }).join('');
+    // hours per month: one column per month of the period
+    var M = [], d = new Date(GF.from.slice(0, 7) + '-01T00:00:00Z'), end = GF.to.slice(0, 7);
+    while (d.toISOString().slice(0, 7) <= end && M.length < 36) { M.push(d.toISOString().slice(0, 7)); d.setUTCMonth(d.getUTCMonth() + 1); }
+    var by = {}, nb = {}; kept.forEach(function (a) { var m = a[1].slice(0, 7); by[m] = (by[m] || 0) + a[5] / 60; nb[m] = (nb[m] || 0) + 1; });
+    var mc = document.getElementById('disMonth'), W = Math.max(220, (mc.clientWidth || 360)), H = 150, mb = 20, mt = 16, n = Math.max(1, M.length), bw = W / n;
+    var mx = Math.max.apply(null, M.map(function (m) { return by[m] || 0; }).concat([1e-9])), g = '';
+    M.forEach(function (m, i) {
+      var v = by[m] || 0, h = v / mx * (H - mb - mt), x = i * bw + bw * 0.18;
+      g += '<rect x="' + r1(x) + '" y="' + r1(H - mb - h) + '" width="' + r1(bw * 0.64) + '" height="' + r1(Math.max(v ? 1.5 : 0, h)) + '" rx="2" fill="var(--ink-2)"' +
+        tip(monthName(m) + ' ' + m.slice(0, 4), [f1(v) + ' h · ' + num(nb[m] || 0) + ' ' + S('disN'), eur(v * rate)]) + '/>';
+      if (v && bw >= 26) g += tx(x + bw * 0.32, H - mb - h - 4, f1(v), 'mu', 'middle');
+      g += tx(i * bw + bw / 2, H - 5, v2Mo(m, bw, i), 'mu', 'middle');
+    });
+    mc.innerHTML = svg(W, H, '<line x1="0" x2="' + W + '" y1="' + (H - mb) + '" y2="' + (H - mb) + '" stroke="var(--grid)"/>' + g, S('disMonth'));
+    // by line
+    var bl = {}; kept.forEach(function (a) { bl[a[2] || '—'] = (bl[a[2] || '—'] || 0) + a[5] / 60; });
+    var ls = lineOrder(Object.keys(bl)), lc = document.getElementById('disLines'), LW = Math.max(200, (lc.clientWidth || 260)), rh = 26, lmx = Math.max.apply(null, ls.map(function (l) { return bl[l]; }).concat([1e-9])), lg = '';
+    ls.forEach(function (l, i) {
+      var y = i * rh + 4, w = bl[l] / lmx * (LW - 120);
+      lg += tx(0, y + 13, l, 'ink') + '<rect x="56" y="' + (y + 4) + '" width="' + r1(Math.max(2, w)) + '" height="10" rx="3" fill="var(--ink-2)"' + tip(l, [f1(bl[l]) + ' h', eur(bl[l] * rate)]) + '/>' + tx(62 + w, y + 13, f1(bl[l]) + ' h', 'mu');
+    });
+    lc.innerHTML = ls.length ? svg(LW, ls.length * rh + 6, lg, S('disLine')) : '';
+    // the list
+    var H2 = S('disCols'), list = all.slice().sort(function (a, b2) { return a[1] < b2[1] ? 1 : a[1] > b2[1] ? -1 : 0; });
+    document.getElementById('disListSum').textContent = S('disList', { n: num(all.length) });
+    document.getElementById('disList').innerHTML = '<table class="cxt"><thead><tr>' + H2.map(function (h, j) { return '<th scope="col"' + (j === 4 ? ' class="r"' : '') + '>' + esc(h) + '</th>'; }).join('') + '</tr></thead><tbody>' +
+      list.map(function (a) { return '<tr' + (a[6] === 1 ? '' : ' class="off"') + '><td class="nc">' + esc(a[0]) + '</td><td class="num">' + esc(shortDay(a[1])) + '</td><td>' + esc(a[2]) + '</td><td>' + esc(a[3]) +
+        '</td><td class="num r">' + esc(num(a[5])) + '</td><td class="txt">' + esc(a[9]) + (a[6] === 1 ? '' : ' <span class="tag">' + esc(S('disOut')) + '</span>') + '</td></tr>'; }).join('') + '</tbody></table>';
+  }
 
   // ---------------------------------------------------------------- 4. Customer returns
   function cx(r) { return D.client[r[0] + '|' + r[1]] || ['', '', '', '', '', '']; }
@@ -4467,6 +4552,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
   function plantOff() { return G.tab === 'client' || G.tab === 'rca'; }
   function renderBar() {
     opts(document.getElementById('gSrc'), ['all', 'sky', 'man', 'gps', 'test'].map(function (k) { return [k, S('src_' + k)]; }), GF.src);
+    opts(document.getElementById('gOrg'), ['', 'normal', 'missing_ids'].map(function (k) { return [k, S('org_' + (k || 'all'))]; }), GF.org);
     opts(document.getElementById('gLine'), [['', S('line_all')]].concat(LINES.map(function (l) { return [l, l]; })), GF.line);
     opts(document.getElementById('gPreset'), PRESETS.map(function (k) { return [k, S('pr_' + k)]; }), GF.preset);
     document.getElementById('gPhase').innerHTML = [['', 'ph_all'], ['SERIE', 'ph_SERIE'], ['REC', 'ph_REC'], ['FTI', 'ph_FTI']].map(function (p) {
@@ -4477,13 +4563,14 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
     document.getElementById('gPlantTxt').textContent = S(GF.fto2 ? 'fYes' : 'fNo');
     ['gFrom', 'gTo'].forEach(function (id, i) { var el = document.getElementById(id); el.value = i ? GF.to : GF.from; el.min = DMIN; el.max = DMAX; });
     document.getElementById('gDateBox').hidden = PAGE === 'suivi';
-    document.getElementById('gReset').hidden = ['src', 'fto2', 'phase', 'line', 'preset'].every(function (k) { return GF[k] === GF0[k]; });
+    document.getElementById('gReset').hidden = ['src', 'org', 'fto2', 'phase', 'line', 'preset'].every(function (k) { return GF[k] === GF0[k]; });
     var cli = G.tab === 'client', nc = cli ? CLI_NC : SEL_NC, set = cli ? CLI : SEL;
     var nd = D.defects.filter(function (r) { return set[r[0]] && keepMinor(r); }).length;
     document.getElementById('fbSum').textContent = S(cli ? 'fbSumCli' : 'fbSum', { n: num(nc.length), d: num(nd) });
   }
   function setGF(ch) { Object.keys(ch).forEach(function (k) { GF[k] = ch[k]; }); select(); A.msn = null; renderAll(); }
   document.getElementById('gSrc').addEventListener('change', function (e) { setGF({ src: e.target.value }); });
+  document.getElementById('gOrg').addEventListener('change', function (e) { setGF({ org: e.target.value }); });
   document.getElementById('gLine').addEventListener('change', function (e) { setGF({ line: e.target.value }); });
   document.getElementById('gPreset').addEventListener('change', function (e) { setGF({ preset: e.target.value }); });
   document.getElementById('gPlant').addEventListener('click', function () { if (!plantOff()) setGF({ fto2: !GF.fto2 }); });
@@ -5043,10 +5130,10 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
     var fc = M.fc.map(function (m) { var p = v2Plan(m); return { m: m, v: pa && p != null ? va / pa * p : m3, f: true }; });
     return { act: act, fc: fc, tot: sumA(act.map(function (x) { return x.v; })), ftot: sumA(fc.map(function (x) { return x.v; })) };
   }
-  // 2025 under the same filters (plant switch, phase, line); null when there is no 2025 block or the data-source filter is on
-  // (the 2025 extract is not split by manual list). The 2025 extract holds no customer return.
+  // 2025 under the same filters (plant switch, phase, line); null when there is no 2025 block, the data-source filter is on (the
+  // 2025 extract is not split by manual list) or only the missing-ID NCs are shown. The 2025 extract holds no customer return.
   function y25Sel() {
-    var Y = D.y25; if (!Y || !Y.rows || GF.src !== 'all') return null;
+    var Y = D.y25; if (!Y || !Y.rows || GF.src !== 'all' || GF.org === 'missing_ids') return null;
     var c = {}; Y.cols.forEach(function (k, i) { c[k] = i; });
     return Y.rows.filter(function (r) { return (r[c.scope] === 'serie' || (!GF.fto2 && r[c.scope] === 'client')) && (!GF.phase || r[c.phase] === GF.phase) && (!GF.line || r[c.line] === GF.line); })
       .map(function (r) { return { m: r[c.month], line: r[c.line], p: r[c.product], nc: r[c.nc], def: G.minor ? r[c.def] : r[c.defMajor], cost: r[c.cost] }; });
@@ -5437,7 +5524,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
       document.getElementById('p-' + t).hidden = G.tab !== t;
     });
   }
-  function renderAll() { applyText(); showTab(); renderPMode(); ncBoard.render(); pareto.render(); costPareto.render(); weekly.render(); cnq.render(); renderCx(); client.render(); renderRca(); renderAna(); renderMft(); renderGal(); renderProd(); renderRev(); renderMock(); v2Render(); }
+  function renderAll() { applyText(); showTab(); renderPMode(); ncBoard.render(); pareto.render(); costPareto.render(); weekly.render(); cnq.render(); renderCx(); renderDis(); client.render(); renderRca(); renderAna(); renderMft(); renderGal(); renderProd(); renderRev(); renderMock(); v2Render(); }
   function setTab(t) { G.tab = t; if (!EMBED) { try { history.replaceState(null, '', '#' + t); } catch (x) {} } applyText(); showTab(); if (t === 'hebdo') weekly.render(); if (t === 'ov') ncBoard.render(); if (t === 'ana') renderAna(); if (t === 'mft') renderMft(); if (t === 'gal') renderGal(); if (t === 'prod') renderProd(); if (PAGE === 'mock') renderMock(); if (V2) v2Render(); if (t !== 'ana' && t !== 'mft') hideTip(); }
   document.getElementById('tabs').addEventListener('click', function (e) { var t = e.target.closest('[data-tab]'); if (t) setTab(t.getAttribute('data-tab')); });
   document.getElementById('tabs').addEventListener('keydown', function (e) {
