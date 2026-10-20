@@ -132,6 +132,7 @@
       "js_kb": 1167
     },
     "level23_js_kb": 567,
+    "pipeline_notebook": true,
     "level4": [
       "FTO2_NC_Dashboard_level2.slate.json",
       "FTO2_NC_Dashboard_level3.slate.json"

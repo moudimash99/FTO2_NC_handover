@@ -130,7 +130,8 @@ DIS_COLUMNS = [
 # ============================================================ 1. exports -> one row per NC
 def as_export(x):
     """A dataset read in Skywise, put in the form of the CSV exports the build was written and tested on: list columns as
-    '[a, b]', timestamps as ISO text ending in Z. Text columns are left as they are."""
+    '[a, b]', timestamps as ISO text ending in Z, and empty text as missing, as a CSV read gives it (the pipeline writes its
+    empty GPS / Test columns as ''; read as a value, '' would be taken for a GPS NC type)."""
     x = x.copy()
     for c in x.columns:
         s = x[c]
@@ -145,6 +146,10 @@ def as_export(x):
             if ts.any():
                 t = pd.to_datetime(s.where(ts), utc=True, errors="coerce")
                 x[c] = np.where(ts, t.dt.strftime("%Y-%m-%dT%H:%M:%SZ"), x[c])
+        if x[c].dtype == object or pd.api.types.is_string_dtype(x[c]):   # object (pandas 1-2) or str (pandas 3)
+            blank = x[c].map(lambda v: isinstance(v, str) and not v.strip())
+            if blank.any():
+                x[c] = x[c].where(~blank, None)
     return x
 
 

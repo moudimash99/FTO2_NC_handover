@@ -25,13 +25,9 @@ template or the build and rebuild.
   2025: update the files in `06_input_data` / `04_reference`, rebuild on the laptop, paste the new JS part.
 - **No JavaScript library to import.** The only outside link is the Google Fonts line at the top of the CSS; if Slate
   blocks it, the page uses Georgia and the system font.
-- **The NC selection is the pipeline's.** Level 3 reads the datasets the pipeline notebook already writes
-  (`fto2_dashboard_data`, `fto2_dashboard_data_missing_ids`); nothing adds or removes an NC. The two stay separate
-  datasets; each NC carries its origin (`origin` = normal or missing_ids), and the filter bar's "Origine" can show
-  one or the other.
-- **`fto2_parsed_defects` and `fto2_parsed_defects_missing_ids` are not read.** The notebook cell runs the same
-  parser v4.8 on the NC texts again, because it also needs the root-cause labels and the cost. Keep them for anything
-  else that uses them.
+- **The NC selection is the pipeline's.** Level 3 runs the pipeline notebook's own selection code, in one run with the
+  missing IDs (see level 3 A). Each NC carries its origin (`origin` = normal or missing_ids), and the filter bar's
+  "Origine" can show one or the other.
 
 ## Level 1: visual check (fictitious data in the JS)
 
@@ -78,33 +74,47 @@ If it does not work, the message in the green or orange box says why:
 
 ## Level 3: real data
 
-### A. In the Skywise notebook (the Code Workspace of the pipeline notebook)
+### A. In the Skywise notebook: one run (the Code Workspace of the pipeline notebook)
+
+`level3_datasets/fto2_pipeline_notebook.ipynb` (and the same as `.py`) replaces the pipeline notebook and the
+missing-ID generator. It is made by the build from `06_input_data/pipeline_notebook.py`: the NC selection, the
+`*_auto` columns and the GPS / Test merge are that notebook's code, unchanged. What changed:
+
+- **One run** does both selections: the standard one, then the NCs of the GPS / Test lists it does not catch. No
+  `RUN_MODE` to switch and no second run. Each NC keeps its origin (normal / missing_ids).
+- **The missing IDs are computed in the run**, as `missing_id_generator` did: the NC numbers of the GPS register and the
+  Test list dated 2026, minus the standard selection, fetched by number from `non_conformity`. No list to paste.
+- **No 1,000-row cap** on the standard selection (`ROW_CAP = None`; it was `head(1000)`). The cap had already dropped
+  1-19 January: 57 FTO2 NCs, of which 46 came back only because they are on the lists; 11 were lost.
+- **The run writes the dashboard's three tables.** While the current Slate app is in use, `KEEP_OLD_OUTPUTS = True` also
+  writes the four former outputs as before; set it to `False` once the new dashboard has replaced the old one.
+
+Steps:
 
 1. Upload the folder `level3_datasets/notebook_kit` next to the notebook, as `nc_defect_parser.py` is today. It holds
    the same Python as the laptop build: `fto2_core.py` (the data steps), the parser v4.8, the CNQ model
-   `cnq-2026.10.20` (with `cnq_orders.py` and `cnq_disruptions.py`), two reference files.
+   `cnq-2026.10.20` (with `cnq_orders.py` and `cnq_disruptions.py`), two reference files. The `data/` folder (station
+   mapping, GPS register, Test list) stays where it is.
 2. Upload `notebook_kit/fto2_ai_labels.csv` once as a dataset named **`fto2_ai_labels`** (the stored root-cause labels).
 3. In the workspace's Data panel:
 
-   | Dataset | Alias (name in the cell) | Use |
+   | Dataset | Alias (name in the notebook) | Use |
    |---|---|---|
-   | `fto2_dashboard_data` | `fto2_dashboard_data` | read: the pipeline's normal output |
-   | `fto2_dashboard_data_missing_ids` | `fto2_dashboard_data_missing_ids` | read: the missing-IDs output |
+   | Non Conformity | `non_conformity` | read, as today |
    | `fto2_ai_labels` | `fto2_ai_labels` | read: the stored root-cause labels |
    | Work_Order_Operation | `work_order_operation` | read: the rework orders' planned times |
    | MES Disruptions | `mes_disruptions` | read: the aléas |
    | new | `fto2_dash_nc`, `fto2_dash_defects`, `fto2_dash_disruptions` | write |
+   | yours, while the old app is used | `fto2_dashboard_data`, `fto2_dashboard_data_missing_ids`, `fto2_parsed_defects`, `fto2_parsed_defects_missing_ids` | write (`KEEP_OLD_OUTPUTS`) |
 
-   If you give the two Skywise datasets other aliases, change `WO_OPERATIONS` and `MES_DISRUPTIONS` at the top of
-   `notebook_cell.py`. Left empty, the cell runs without them: the model's work times, the flat 41-min alert, no
-   disruption block.
-4. Run the pipeline notebook as today (both RUN_MODE runs), then run `notebook_cell.py` (a new cell at the end, or a
-   second notebook in the same workspace).
-5. Expected print, on the data of 28 September 2026: **1,127 NCs, 3,098 defect lines**, origin 1,000 normal and 127
-   missing_ids. Level-3 CNQ on AEC: **175,663.09 EUR** without the two Skywise datasets; on the laptop, with the
-   September 2026 operations and the Jan-Sep 2026 aléas, **178,847.25 EUR** (71 NCs on their rework order's time, 175 on
-   their aléa's declared time) and 108 aléas in `fto2_dash_disruptions`. With the full history in Skywise more NCs use
-   their order, so the figure moves.
+   If you give the two Skywise datasets other aliases, change `WO_OPERATIONS` and `MES_DISRUPTIONS` in the first code
+   cell. Left empty, the run works without them: the model's work times, the flat 41-min alert, no disruption block.
+4. Run all cells once.
+5. Expected print: the standard selection's counts, then `GPS / Test lists: N NCs from 2026; M not in the standard
+   selection, fetched by number`, then the three tables. Tested here on a stand-in for Skywise built from the
+   September exports and the raw January 2026 NCs: 1,137 NCs (the 1,127 of today plus 11 of 9-19 January, minus one
+   FNZ1 NC whose list date is 2025), 1,062 normal and 75 missing_ids; the 1,126 NCs in both runs are identical in every
+   column. Level-3 CNQ on AEC there: 179,741 EUR.
 
 ### B. Sync the three datasets to Postgres
 
@@ -123,7 +133,7 @@ qualité sans NC": 3 347 €, 66,9 h, 89 aléas (19 possible ERMA aléas left ou
 
 ### Refresh
 
-Run the pipeline notebook, then `notebook_cell.py`; the dashboard shows the new data once the sync has run.
+Run `fto2_pipeline_notebook`; the dashboard shows the new data once the sync has run.
 
 ## Level 4: import a ready-made app (worth a try)
 
@@ -139,7 +149,7 @@ file or the page stays blank, do levels 2 and 3 by hand: nothing else depends on
 
 - A new defect line, or one whose text changed, gets the parser's label until it is labelled; the dashboard stays
   complete either way.
-- `notebook_cell.py` writes `fto2_lines_to_label.csv`: one row per line to label, with its full text (`snippet`) and the
+- `fto2_pipeline_notebook` writes `fto2_lines_to_label.csv`: one row per line to label, with its full text (`snippet`) and the
   NC's long text.
 - Once IT has approved a tool for the NC texts: label those lines with the same columns as `fto2_ai_labels`
   (`notification_number`, `seq`, `snippet`, `llm_sous_categorie`, `llm_sous_code`, `llm_confiance`, `llm_symptome`,
@@ -165,6 +175,10 @@ Tested here:
   as NULL). The page it gives has the same NCs, defect lines, aléas and figures as the laptop dashboard.
 - The notebook code on the exports read as Skywise gives datasets (timestamps, lists, numbers), with the work-order
   operations and the aléas typed as numbers and timestamps: identical tables, origin included.
+- The one-step notebook, run whole on a stand-in for Skywise (`non_conformity` rebuilt from the exports and the raw
+  January 2026 NCs, the GPS / Test lists rebuilt from the exports' columns): it runs end to end and gives the tables
+  described in level 3 A. This found and fixed one problem: the pipeline writes its empty GPS / Test columns as `''`,
+  which was read as a GPS NC type (423 NCs lost their type); empty text now counts as missing.
 - The messages for a missing query, an empty query, wrong columns, and a page opened outside Slate.
 
 Not testable here, to watch on the first try:
