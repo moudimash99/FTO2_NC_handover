@@ -898,7 +898,6 @@
       <div class="fig"><b id="cf1"></b><span data-t="cTotal"></span></div>
       <div class="fig"><b id="cf2"></b><span data-t="cNcs"></span></div>
       <div class="fig"><b id="cf3"></b><span data-t="cPerNc"></span></div>
-      <div class="fig"><b id="cf4"></b><span data-t="cCable"></span><small id="cf4s"></small></div>
     </div>
     <div class="card">
       <div class="card-head"><h3 data-t="cLevels"></h3></div>
@@ -1311,7 +1310,7 @@ function fto2FromTables(ncIn, defIn, ref, disIn) {
       foot1: 'Source : extraction SAP Skywise, NC créées du {from} au {to}.',
       foot2: 'NC FTO2 : NC émises à FTO2 sous responsabilité FTO2, hors NC supprimées. Retours clients : NC émises hors FTO2 sous responsabilité FTO2. Les défauts sont classés par cause à partir du texte complet de chaque NC.',
       foot3: 'Les {n} NC sans ligne de défaut lisible (A400M sans texte, NC supprimées…) sont comptées en NC et en coût mais pas en défauts. Les {o} NC dont FTO2 n’est pas responsable comptent comme NC avec un coût de 0 pour FTO2 (leur traitement selon le modèle : {oe}).',
-      foot4: 'Semaines de fermeture (moins de 10 défauts) exclues des moyennes hebdomadaires. Défauts mineurs : tyrap, frette, ficelle, capuchon, cerise ou bouchon manquant. Coût : 50 €/h, temps du processus estimés par l’équipe ; la valeur des pièces rebutées n’est pas incluse. Coût des défauts câble : coût des NC concernées ; quand une NC contient aussi d’autres défauts, son coût est partagé entre ses défauts.'
+      foot4: 'Semaines de fermeture (moins de 10 défauts) exclues des moyennes hebdomadaires. Défauts mineurs : tyrap, frette, ficelle, capuchon, cerise ou bouchon manquant. Coût : chaque étape au taux de qui la fait (production 123 €/h, qualité 107 €/h, ME 76 €/h ; ingénierie 78,16 €/h), temps du processus estimés par l’équipe ; la valeur des pièces rebutées n’est pas incluse. Coût des défauts câble : coût des NC concernées ; quand une NC contient aussi d’autres défauts, son coût est partagé entre ses défauts.'
     },
     en: {
       kmNc: 'Counted in NCs', kmDef: 'Counted in defects', kmEur: 'In euros',
@@ -1480,7 +1479,7 @@ function fto2FromTables(ncIn, defIn, ref, disIn) {
       foot1: 'Source: Skywise SAP extract, NCs created {from} to {to}.',
       foot2: 'FTO2 NCs: NCs raised at FTO2 that FTO2 is liable for, deleted NCs excluded. Customer returns: NCs raised outside FTO2 that FTO2 is liable for. Defects are classified by root cause from the full text of each NC. NC texts and sub-categories stay in French.',
       foot3: 'The {n} NCs with no readable defect line (A400M with no text, deleted NCs…) are counted as NCs and in the cost but not as defects. The {o} NCs FTO2 is not liable for count as NCs with a cost of 0 for FTO2 (their handling in the model: {oe}).',
-      foot4: 'Shutdown weeks (fewer than 10 defects) are left out of weekly averages. Minor defects: a missing tyrap, frette, ficelle, cap, cerise or plug. Cost: 50 €/h, process times estimated by the team; the value of scrapped parts is not included. Cost of cable defects: cost of the NCs concerned; when an NC also has other defects, its cost is shared among its defects.'
+      foot4: 'Shutdown weeks (fewer than 10 defects) are left out of weekly averages. Minor defects: a missing tyrap, frette, ficelle, cap, cerise or plug. Cost: each step at the rate of who does it (production 123 €/h, quality 107 €/h, ME 76 €/h; engineering 78.16 €/h), process times estimated by the team; the value of scrapped parts is not included. Cost of cable defects: cost of the NCs concerned; when an NC also has other defects, its cost is shared among its defects.'
     }
   };
   var EN = {
@@ -2046,7 +2045,6 @@ function fto2FromTables(ncIn, defIn, ref, disIn) {
     rows: selUnits, measure: uCost,
     dims: [
       { k: 'type', t: 'dType', sub: 'typeSub', custom: cnqSplit, get: function (u) { return ncType(u.n); }, show: function (v) { return S('ty_' + v); }, order: function (v) { return NCTYPES.filter(function (t) { return v.indexOf(t) >= 0; }); } },
-      { k: 'cable', t: 'dCable', sub: 'cableSubCnq', get: function (u) { return u.d && dCable(u.d) ? 'c' : 'n'; }, show: function (v) { return v === 'c' ? S('cable') : S('notCable'); }, order: function () { return ['c', 'n']; } },
       { k: 'rule', t: 'dRule', get: function (u) { return u.n[7]; }, show: ruleName },
       { k: 'line', t: 'dLine', get: function (u) { return u.n[3]; }, show: function (v) { return v; }, order: lineOrder },
       { k: 'month', t: 'dMonth', cols: true, get: function (u) { return u.n[1].slice(0, 7); }, show: monthName, order: function (v) { return v.sort(); } }
@@ -2060,15 +2058,12 @@ function fto2FromTables(ncIn, defIn, ref, disIn) {
     after: function (b) {
       var t3 = sum(SEL_NC, function (n) { return n[12]; }), t1 = sum(SEL_NC, function (n) { return n[9]; }), t2 = sum(SEL_NC, function (n) { return n[10]; });
       var ts = sum(SER_NC, function (n) { return n[12]; }), tc = sum(CLI_NC, function (n) { return n[12]; });
-      var cabAlloc = 0; b.base().forEach(function (u) { if (u.d && dCable(u.d)) cabAlloc += dAlloc(u.d); });
       var dk = (disSel() || []).filter(function (a) { return a[6] === 1; });
       document.getElementById('cStrip').innerHTML = '<span>' + esc(S('stripTotal')) + ' <b>' + eur(ts + tc) + '</b></span><span>' + esc(S('stripSerie')) + ' <b>' + eur(ts) + '</b> · ' + num(SER_NC.length) + ' NC</span><span>' + esc(S('stripClient')) + ' <b>' + eur(tc) + '</b> · ' + num(CLI_NC.length) + ' NC</span>' +
         (D.dis ? '<span class="mu">' + esc(S('stripDis')) + ' <b>' + eur(sumA(dk.map(function (a) { return a[5]; })) / 60 * disRate()) + '</b> · ' + num(dk.length) + ' ' + esc(S('disN')) + '</span>' : '');
       document.getElementById('cf1').textContent = eur(t3);
       document.getElementById('cf2').textContent = num(SEL_NC.length);
       document.getElementById('cf3').textContent = SEL_NC.length ? eur(t3 / SEL_NC.length) : '—';
-      document.getElementById('cf4').textContent = eur(cabAlloc);
-      document.getElementById('cf4s').textContent = t3 ? S('cCableSub', { p: pct(cabAlloc / t3 * 100) }) : '';
       var lv = [[S('lvl1'), t1, false], [S('lvl2'), t2, false], [S('lvl3'), t3, true]], mx = Math.max(t1, t2, t3, 1e-9);
       document.getElementById('cLevels').innerHTML = lv.map(function (l) { return '<div class="level' + (l[2] ? ' main' : '') + '"><span class="name">' + esc(l[0]) + '</span><span class="track"><span class="fill" style="width:' + (l[1] / mx * 100) + '%"></span></span><span class="val">' + eur(l[1]) + '</span></div>'; }).join('');
     }
