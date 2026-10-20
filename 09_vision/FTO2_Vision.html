@@ -592,6 +592,8 @@ body.presenting .wrap { max-width: 1440px; }
   function niceStep(v) { if (v <= 0) return 1; var p = Math.pow(10, Math.floor(Math.log10(v))), f = v / p; return (f <= 1 ? 1 : f <= 2 ? 2 : f <= 2.5 ? 2.5 : f <= 5 ? 5 : 10) * p; }
   function niceMax(v) { if (v <= 0) return 1; var st = niceStep(v / 4); return Math.ceil(v / st - 1e-9) * st; }
   function ticks(mx) { var st = niceStep(mx / 4), out = []; for (var v = 0; v <= mx + 1e-9; v += st) out.push(v); return out; }
+  function emptyNote(box, text) { box.textContent = ''; box.style.minWidth = ''; var p = document.createElement('p'); p.className = 'note'; p.textContent = text; box.appendChild(p); }
+  function noDefectsText() { return S.line === LINE.indexOf('A400M') ? L().h1noneA400 : L().h1none; }
   function cssv(name) { return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
   function ellipsis(s, n) { return s.length > n ? s.slice(0, n - 1) + '…' : s; }
 
@@ -906,6 +908,7 @@ body.presenting .wrap { max-width: 1440px; }
     txt('c1aT', t('c1aT')); txt('c1aN', t('c1aN', { d: dateTxt(ASOF).replace(/ \d{4}$/, '') }));
     // dumbbell: top 14 causes by size of the change
     var top = rows.slice().sort(function (x, y) { return Math.abs(y.d) - Math.abs(x.d); }).slice(0, 14).sort(function (x, y) { return y.d - x.d; });
+    if (!top.length) { emptyNote($('growChart'), noDefectsText()); emptyNote($('cableChart'), noDefectsText()); $('growLegend').textContent = ''; table('grow', [], []); table('cable', [], []); return; }
     var box = $('growChart'), w = width(box), rh = 26, m = { l: Math.min(230, w * 0.44), r: w < 500 ? 46 : 64, t: 18, b: 22 };
     var h = m.t + m.b + rh * top.length, svg = svgIn(box, w, h);
     var mx = niceMax(Math.max.apply(null, top.map(function (r) { return Math.max(r.a, r.b); }).concat([1])));
@@ -975,6 +978,8 @@ body.presenting .wrap { max-width: 1440px; }
     } else { txt('h2t', S.lang === 'fr' ? 'Où les défauts sont trouvés' : 'Where defects are found'); txt('h2s', ''); }
     txt('c2aT', t('c2aT')); txt('c2aN', t('c2aN'));
     // layout
+    if (!all) { var nb = $('netChart'); nb.parentNode.style.overflowX = 'visible'; nb.style.minWidth = '0'; emptyNote(nb, noDefectsText()); $('netLegend').textContent = ''; emptyNote($('escChart'), noDefectsText()); table('net', [], []); table('esc', [], []); return; }
+    $('netChart').style.minWidth = '620px'; $('netChart').parentNode.style.overflowX = '';
     var box = $('netChart'), w = Math.max(620, width(box)), h = 470, gap = 8, nodeW = 10;
     var svg = svgIn(box, w, h), lx = Math.min(200, w * 0.24), rx = w - Math.min(210, w * 0.27);
     var top = 16, bottom = h - 10, cliGap = 34;
@@ -1093,6 +1098,8 @@ body.presenting .wrap { max-width: 1440px; }
     txt('c3bT', t('c3bT')); txt('c3bN', t('c3bN'));
     var B = [[1, 1], [2, 3], [4, 10], [11, 1e9]].map(function (r) { return { lo: r[0], hi: r[1], nc: 0, def: 0, cost: 0 }; });
     list.forEach(function (j) { var nd = NC.nd[j]; if (nd < 1) return; B.forEach(function (b) { if (nd >= b.lo && nd <= b.hi) { b.nc++; b.def += nd; b.cost += NC.c[j]; } }); });
+    if (!B.some(function (b) { return b.nc; })) { emptyNote($('sizeChart'), noDefectsText()); table('size', [], []); }
+    else {
     var b2 = $('sizeChart'), w2 = width(b2), h2 = 210, svg2 = svgIn(b2, w2, h2), m2 = { l: 6, r: 6, t: 26, b: 40 };
     var vals = B.map(function (b) { return b.def ? b.cost / b.def : 0; }), mx2 = niceMax(Math.max.apply(null, vals.concat([1])));
     var bw = (w2 - m2.l - m2.r) / B.length, cw = Math.min(56, bw * 0.55);
@@ -1105,6 +1112,7 @@ body.presenting .wrap { max-width: 1440px; }
     });
     el('line', { x1: m2.l, x2: w2 - m2.r, y1: h2 - m2.b, y2: h2 - m2.b, class: 'base' }, svg2);
     table('size', [L().tbl.size, L().tbl.ncs, L().tbl.defects, L().tbl.cost, L().tbl.perDef], B.map(function (b, k) { return [L().size[k], num(b.nc), num(b.def), eur(Math.round(b.cost)), eur(Math.round(vals[k]))]; }), [1, 2, 3, 4]);
+    }
     // three methods
     txt('c3cT', t('c3cT')); txt('c3cN', t('c3cN'));
     var meth = [{ k: t('mAirbus'), v: sum(list, function (j) { return NC.cA[j]; }) }, { k: t('mDetail'), v: costSum, hot: 1 }, { k: t('mAec'), v: sum(list, function (j) { return NC.cG[j]; }) }];
@@ -1191,7 +1199,7 @@ body.presenting .wrap { max-width: 1440px; }
     txt('c4bT', t('c4bT')); txt('c4bN', t('c4bN'));
     var fins = Object.keys(perFin).map(function (f) { return { f: +f, k: Object.keys(perFin[f]).length }; }).sort(function (a, b) { return b.k - a.k; }).slice(0, 6);
     var pb = $('pinChart'); pb.textContent = '';
-    if (!fins.length) { var p1 = document.createElement('p'); p1.className = 'note'; p1.textContent = '—'; pb.appendChild(p1); table('pin', [], []); return; }
+    if (!fins.length) { emptyNote(pb, S.lang === 'fr' ? 'Aucune inversion avec ses deux broches écrites dans la sélection.' : 'No swapped wires with both pins written in the selection.'); $('pinLegend').textContent = ''; table('pin', [], []); return; }
     var wrapW = width(pb), cols = wrapW > 900 ? 3 : wrapW > 560 ? 2 : 1, cw = Math.floor((wrapW - (cols - 1) * 18) / cols);
     var gridDiv = document.createElement('div'); gridDiv.style.display = 'grid'; gridDiv.style.gridTemplateColumns = 'repeat(' + cols + ', minmax(0, 1fr))'; gridDiv.style.gap = '18px'; pb.appendChild(gridDiv);
     var trows = [];
@@ -1341,9 +1349,9 @@ body.presenting .wrap { max-width: 1440px; }
       b.addEventListener('click', function () { S.focusFin = S.focusFin === x.f ? -1 : x.f; render(); });
       fl.appendChild(b);
     });
-    var ct = document.createElement('h3'); ct.style.fontSize = '13px'; ct.style.margin = '14px 0 6px'; ct.textContent = L().pCauses; right.appendChild(ct);
     var cc = {}; p.nc.concat(p.cli).forEach(function (j) { (ncDefs[j] || []).forEach(function (k) { cc[DF.r[k]] = (cc[DF.r[k]] || 0) + 1; }); });
     var ck = Object.keys(cc).sort(function (a, b) { return cc[b] - cc[a]; }).slice(0, 6), cmax = ck.length ? cc[ck[0]] : 1;
+    if (ck.length) { var ct = document.createElement('h3'); ct.style.fontSize = '13px'; ct.style.margin = '14px 0 6px'; ct.textContent = L().pCauses; right.appendChild(ct); }
     var cl = document.createElement('div'); cl.className = 'finlist'; right.appendChild(cl);
     ck.forEach(function (r) {
       var row = document.createElement('div'); row.className = 'finrow'; row.style.gridTemplateColumns = 'minmax(0, 1.3fr) minmax(0, 1fr) 28px';
