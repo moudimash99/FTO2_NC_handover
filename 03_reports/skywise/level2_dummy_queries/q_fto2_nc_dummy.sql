@@ -223,6 +223,9 @@ SELECT
     eng_hours AS hours_engineering,
     CASE WHEN type_nc = 'CONTROLE FINAL' THEN 1 ELSE 0 END AS final_inspection,
     CASE WHEN scope = 'client' THEN 'Texte fictif de retour client.' || chr(10) || 'Moment of Detection : ' || coalesce(first_det, '')
-         || chr(10) || 'Description : défaut constaté chez le client (donnée fictive).' ELSE '' END AS long_text
+         || chr(10) || 'Description : défaut constaté chez le client (donnée fictive).' ELSE '' END AS long_text,
+    CASE WHEN m_setup + m_hands > 0 THEN 'model' ELSE '' END AS work_source,
+    '' AS order_state,
+    '' AS rework_orders
 FROM n4
 ORDER BY nc

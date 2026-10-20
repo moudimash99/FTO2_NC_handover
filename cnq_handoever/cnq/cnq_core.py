@@ -20,7 +20,10 @@ How one NC is costed
                   i.e. not for NCs found at test or at final inspection; customer returns always get it)
   work minutes  = if the rule includes work: fixed setup + sum of minutes of its defect lines
                   (flat figure when the NC has no defect line); the first connection error of an NC takes its
-                  class time, each following one MIN_CONNECTION_NEXT; internal NCs x INTERNAL_WORK_FACTOR
+                  class time, each following one MIN_CONNECTION_NEXT; internal NCs x INTERNAL_WORK_FACTOR.
+                  When the NC dataset carries the planned time of the NC's rework orders (cnq_orders.nc_order_times)
+                  and they are all closed and planned (order_state "used"): setup = the orders' preparation,
+                  inspection and closing operations, hands-on = their work and test operations (USE_ORDER_TIME)
   engineering   = hours from the rule (design queries)
   material      = sum of material of its defect lines, if the rule includes work
   part value    = `part_value` column if present and the rule counts the part (else 0)
@@ -157,6 +160,16 @@ def compute_cnq(nc, defects, params=P):
     nc["cnq_min_hands_on"] = work * nc["cnq_work_factor"] * hands
     # time around the job: the fixed setup, or more if needed so that the work is never under the floor (1 hour)
     nc["cnq_min_setup"] = work * nc["cnq_work_factor"] * np.maximum(params.MIN_SETUP, params.MIN_WORK_FLOOR - hands)
+    # planned time of the rework orders, when known, replaces the model's setup and hands-on (no connection rule, no factor)
+    state = _first_present(nc, ["order_state"]).astype("string")
+    use_order = (work == 1) & (state == "used").fillna(False) & bool(getattr(params, "USE_ORDER_TIME", False))
+    o_setup = pd.to_numeric(_first_present(nc, ["order_minutes_setup"]), errors="coerce").fillna(0.0)
+    o_work = pd.to_numeric(_first_present(nc, ["order_minutes_work"]), errors="coerce").fillna(0.0)
+    nc["cnq_work_source"] = np.where(work == 0, "", np.where(use_order, "order", "model"))
+    # the defect lines' own minutes follow the order's hands-on time, for sharing the cost among lines
+    nc["_k"] = np.where(use_order, np.where(nc["_min"] > 0, o_work / nc["_min"].where(nc["_min"] > 0, 1.0), 0.0), 1.0)
+    nc["cnq_min_hands_on"] = np.where(use_order, o_work, nc["cnq_min_hands_on"])
+    nc["cnq_min_setup"] = np.where(use_order, o_setup, nc["cnq_min_setup"])
     nc["cnq_min_recheck"] = flag("recheck") * params.MIN_RECHECK_CLOSE
     nc["cnq_hours_engineering"] = flag("eng_hours")
 
@@ -189,7 +202,7 @@ def compute_cnq(nc, defects, params=P):
     nc["cnq_cost_airbus"] = nc["cnq_rule"].map(params.AIRBUS_STANDARD).fillna(0.0).astype(float)
     nc["cnq_cost_aec"] = nc["cnq_cost_total"] * nc["cnq_on_aec"]
     nc["cnq_complete"] = np.select(
-        [~has_master, (part_flag == 1) & part_in.isna(), (work == 1) & (nc["_lines"] == 0)],
+        [~has_master, (part_flag == 1) & part_in.isna(), (work == 1) & (nc["_lines"] == 0) & ~use_order],
         ["No master data", "Part value unknown", "Work time is a flat estimate (no defect line)"], default="Complete")
 
     # ------------------------------------------------------------ NC: calendar helpers for the charts
@@ -198,7 +211,8 @@ def compute_cnq(nc, defects, params=P):
     nc["cnq_month"] = dt.dt.strftime("%Y-%m")
     nc["cnq_week"] = (iso["year"].astype("Int64").astype("string") + "-W" + iso["week"].astype("Int64").astype("string").str.zfill(2))
     nc["cnq_model_version"] = params.MODEL_VERSION
-    nc = nc.drop(columns=["_lines", "_min", "_mat"])
+    k_line = nc.set_index("notification_number")["_k"]
+    nc = nc.drop(columns=["_lines", "_min", "_mat", "_k"])
 
     # ------------------------------------------------------------ defect lines: what is actually charged
     back = nc.set_index("notification_number")
@@ -206,7 +220,7 @@ def compute_cnq(nc, defects, params=P):
     d["cnq_rule"] = d["notification_number"].map(back["cnq_rule"]).fillna("NO_DATA")
     d["cnq_work_costed"] = d["cnq_rule"].map(rules["work"]).fillna(0).astype(int)
     d["cnq_line_costed"] = d["cnq_on_aec"] * d["cnq_work_costed"]
-    d["cnq_min_hands_on"] = d["cnq_line_costed"] * d["_min"]
+    d["cnq_min_hands_on"] = d["cnq_line_costed"] * d["_min"] * d["notification_number"].map(k_line).fillna(1.0)
     d["cnq_cost_material"] = d["cnq_line_costed"] * d["_mat"]
     d["cnq_cost_hands_on"] = d["cnq_min_hands_on"] / 60.0 * r
     d["cnq_cost_direct"] = d["cnq_cost_hands_on"] + d["cnq_cost_material"]

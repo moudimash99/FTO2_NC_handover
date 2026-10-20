@@ -16,7 +16,7 @@ Every value carries a "basis" so a reader knows how far to trust it:
 Nothing in this file is a measured time.
 """
 
-MODEL_VERSION = "cnq-2026.10.19"
+MODEL_VERSION = "cnq-2026.10.20"
 
 # ---------------------------------------------------------------- who is "us"
 AEC_PLANT_CODE = "FTO2"            # liability == this code -> the NC is AEC non-quality
@@ -63,6 +63,19 @@ MIN_CONNECTION_NEXT = 15    # each connection error after the first one in the s
 # 11 complete Sept 2026 orders, per-NC median ratio 2.0. The work of these NCs is multiplied by this factor.
 INTERNAL_TYPES = ["INTERNE", "NC INTERNE"]
 INTERNAL_WORK_FACTOR = 2.0  #                                                                               WO
+# Planned time of the NC's rework order (SAP order type S03, linked through linked_document as above). When the NC
+# dataset carries it (columns order_state, order_minutes_setup, order_minutes_work, made by cnq_orders.nc_order_times
+# from the work-order operations), an NC whose rework orders are all closed and planned gets that time instead of
+# the model's setup + hands-on: no connection rule, no internal factor; alert, writing, support, re-check and material
+# stay. The planned time catches the exceptional NCs (34 h on one NC, Sept 2026). The quality re-check is not on the
+# order. Planned = confirmed for 98% of operations (no measured durations).
+USE_ORDER_TIME = True       #                                                                               WO
+ORDER_TYPES = ["S03"]       # rework orders ("Parasitic flow")
+ORDER_UNIT_MINUTES = {"IM": 0.6, "MIN": 1.0, "H": 60.0}   # SAP standard-value units: IM = 1/100 hour
+# kind of an operation, from its short text, first match wins; "close" also marks the order as finished
+ORDER_OP_KINDS = [("close", r"attestation|cl[ôo]ture|autoclos"), ("inspect", r"inspection|contr[ôo]l"),
+                  ("prep", r"pr[ée]paration|analys"), ("test", r"test")]                         # else "work"
+ORDER_SETUP_KINDS = ["close", "inspect", "prep"]   # these go to the setup step, work and test to hands-on
 
 # ---------------------------------------------------------------- the two comparison levels shown next to the detailed cost
 # Level 2 "Global": every NC gets the average times, whatever its defects.

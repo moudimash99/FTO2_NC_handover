@@ -29,6 +29,7 @@ import pandas as pd
 import fto2_logic as L
 import nc_defect_parser as PARSER
 from cnq.cnq_core import compute_cnq
+from cnq.cnq_orders import nc_order_times
 import cnq.cnq_params as CNQP
 
 S_ = lambda v: "" if v is None or (isinstance(v, float) and np.isnan(v)) else str(v)
@@ -81,6 +82,9 @@ NC_COLUMNS = [
     ("hours_engineering", "num", "CNQ engineering hours"),
     ("final_inspection", "int", "1 when found at final inspection"),
     ("long_text", "text", "NC long text, customer returns only (2,500 characters)"),
+    ("work_source", "text", "where the setup and hands-on minutes come from: order (planned time of the rework orders), model, or empty (no work)"),
+    ("order_state", "text", "rework orders: used, open (not closed yet), no_time, not_found (not in the operations), empty (no link or no operations)"),
+    ("rework_orders", "text", "rework order numbers (S03) linked to the NC, space-separated"),
 ]
 DEF_COLUMNS = [
     ("nc", "text", "NC number"),
@@ -189,10 +193,11 @@ def official_subcode(d, ref_dir):
 
 
 # ============================================================ 3. parser, labels, CNQ
-def prepare(x, lab, ref_dir):
+def prepare(x, lab, ref_dir, ops=None):
     """Steps 1-3 of the build: parser v4.8, the stored root-cause labels, the CNQ model for both classifications, the report
-    scope. Returns a dict: d (one row per defect), nc (one row per NC), lt (long texts), nc_in (the model's NC input),
-    codes (sub-code descriptions) and report (counts)."""
+    scope. ops: the rework orders' operations (SAP order type S03), or None; an NC whose rework orders are closed and planned
+    gets their planned time instead of the model's setup and hands-on. Returns a dict: d (one row per defect), nc (one row
+    per NC), lt (long texts), nc_in (the model's NC input), codes (sub-code descriptions) and report (counts)."""
     report = {}
     defects = L.build_defects(x)
     nc = L.build_nc(x, defects)
@@ -216,6 +221,14 @@ def prepare(x, lab, ref_dir):
     ex["type_nc"] = ex["gps_type_nc"].where(ex["gps_type_nc"].notna(), ex["type_nc_auto"])
     nc = nc.merge(ex, on="notification_number", how="left")
     lt = dict(zip(x.notification_number, x.description_long_text.map(clean_long_text)))
+    # rework orders: the links, and with the operations their state and planned minutes (cnq/cnq_orders.py)
+    ot = nc_order_times(nc, ops)
+    nc = nc.merge(ot, on="notification_number", how="left")
+    nc["rework_orders"] = nc["rework_orders"].fillna("")
+    nc["order_state"] = nc["order_state"].fillna("")
+    report["rework_orders"] = {"ncs_with_link": int((nc.rework_orders != "").sum()),
+                               "operations": int(len(ops)) if ops is not None else 0,
+                               "state": nc.loc[nc.rework_orders != "", "order_state"].value_counts().to_dict()}
 
     # long-text labels; a line whose text changed or that is new is marked "to label" and keeps the parser label
     lab = lab.copy()
@@ -241,7 +254,8 @@ def prepare(x, lab, ref_dir):
 
     # CNQ, both classifications
     nc_in = nc[["notification_number", "statut", "decision_status", "liability", "date_creation", "type_nc", "produit",
-                "responsabilite", "perimetre", "programme", "plant", "linked_document", "work_order"]].copy()
+                "responsabilite", "perimetre", "programme", "plant", "linked_document", "work_order",
+                "rework_orders", "order_state", "order_minutes_setup", "order_minutes_work"]].copy()
     runs = {}
     for key, sub, cab in (("parser", "sous_groupe", "defaut_cable"), ("llm", "llm_sous_categorie", "llm_defaut_cable")):
         dd = d[["notification_number", "seq", "qty", sub, cab]].rename(columns={sub: "sous_groupe", cab: "cable"})
@@ -289,7 +303,8 @@ def nc_extras(r, created_to):
     """NC fields for the aircraft, product, lead-time, time-of-day and NC charts: [msn, product family, station, creation hour (Paris),
     days to close (None while open), open, age in days if open, closure date, NC type, liability, SAP defect code, SAP cause group,
     SAP cause, status, data source, CNQ steps]. CNQ steps = the model's minutes [alert, writing, support, setup, hands-on, re-check],
-    engineering hours and the final-inspection flag, for the "explain the calculation" part. SAP labels lose their brackets. Data source: every NC comes from Skywise; Ext_Source says whether it
+    engineering hours, the final-inspection flag, then where the work minutes come from (order / model), the rework orders' state and
+    numbers, for the "explain the calculation" part. SAP labels lose their brackets. Data source: every NC comes from Skywise; Ext_Source says whether it
     is also in a manual list (gps = GPS register, test = Test list) or only in Skywise (sky)."""
     msn = S_(r.msn)
     msn = msn[:-2] if msn.endswith(".0") else msn
@@ -305,7 +320,8 @@ def nc_extras(r, created_to):
             closed.strftime("%Y-%m-%d") if pd.notna(closed) else "", S_(r.type_nc).strip(), sap(r.liability), sap(r.sap_defect_code),
             sap(r.sap_cause_group), sap(r.sap_cause_code), S_(r.statut), {"GPS": "gps", "Test": "test"}.get(S_(r.ext_source).strip(), "sky"),
             [round(float(x or 0), 1) for x in (r.cnq_min_alert, r.cnq_min_writing, r.cnq_min_support, r.cnq_min_setup, r.cnq_min_hands_on,
-                                                r.cnq_min_recheck, r.cnq_hours_engineering)] + [int(r.cnq_final_inspection or 0)]]
+                                                r.cnq_min_recheck, r.cnq_hours_engineering)] + [int(r.cnq_final_inspection or 0)]
+            + [S_(r.cnq_work_source), S_(r.order_state), S_(r.rework_orders)]]
 
 
 def customer_return_extras(d, nc, lt):
@@ -349,7 +365,7 @@ def tables(d, nc, lt, created_to):
                      r.cnq_decision_label, r.cnq_where_found, round(r.cnq_cost_airbus, 2), round(r.cnq_cost_global, 2), round(r.cnq_cost_total, 2),
                      round(r.cnq_cost_admin, 2), round(r.cnq_cost_work, 2), round(r.cnq_cost_material, 2), round(r.cnq_cost_engineering, 2),
                      int(r.nc_cable_llm), int(r.cnq_defect_lines), S_(r.description_short)[:80], r.scope, S_(r.phase)]
-                    + e[:15] + e[15] + [(lt.get(r.notification_number, "") or "")[:2500] if r.scope == "client" else ""])
+                    + e[:15] + e[15][:8] + [(lt.get(r.notification_number, "") or "")[:2500] if r.scope == "client" else ""] + e[15][8:])
     nc_t = pd.DataFrame(rows, columns=[c[0] for c in NC_COLUMNS])
     rows = []
     for r in d.itertuples():
@@ -362,10 +378,10 @@ def tables(d, nc, lt, created_to):
     return nc_t, def_t
 
 
-def build(frames, labels, ref_dir):
-    """Everything in one call, as the Skywise notebook uses it: (nc_t, def_t, info, to_label)."""
+def build(frames, labels, ref_dir, ops=None):
+    """Everything in one call, as the Skywise notebook uses it: (nc_t, def_t, info, to_label). ops: rework-order operations or None."""
     x, info = merge_exports(frames)
-    p = prepare(x, labels, ref_dir)
+    p = prepare(x, labels, ref_dir, ops)
     nc_t, def_t = tables(p["d"], p["nc"], p["lt"], info["created_to"])
     aec = p["nc"][p["nc"].cnq_on_aec == 1]
     info.update(p["report"])
@@ -382,3 +398,94 @@ def lines_to_label(d, lt):
                         "parser_sous_categorie": t.sous_groupe, "ligne": t.ligne, "date_creation": t.date_creation,
                         "long_text": t.notification_number.map(lambda n: (lt.get(n, "") or "")[:4000])})
     return out.reset_index(drop=True)
+
+
+# ============================================================ 7. a past year (2025): the pipeline's rules on a raw extract
+# The 2026 exports come out of the pipeline notebook with its selection and its *_auto columns. The 2025 extract is the raw Skywise
+# NC table (plant FTO2, Jan 2025 to Jan 2026), so it goes through the same rules here, copied from 06_input_data/pipeline_notebook.py
+# (STANDARD mode). Keep them in step with the notebook. The notebook's head(1000) is left out: it trims the dashboard's export, not a year.
+STATUT_MAP = {"RWK": "Rework", "REJ": "Reject", "EXC": "Echange", "NDC": "DQN", "SCR": "Scrap",
+              "ACC": "Accept as is i.a.w design criteria", "PNC": "Potential Non Conformity", "DQN": "Request for Design Change"}
+
+
+def pipeline_rules(raw, station_desc):
+    """The notebook's selection and *_auto columns on a raw extract. station_desc: {station: description} (the notebook reads
+    data/fto2_station_mapping.csv; on the laptop the pairs come from the 2026 exports)."""
+    df = raw.copy()
+    for c in ("decision_status", "workflow_list", "article_version_description", "user_department"):
+        df[c] = df[c].fillna("")
+    df = df[~df["user_department"].str.contains("ERMA", case=False)].copy()                       # ERMA out
+    deleted = df["status_open_closed"].fillna("").str.contains("Deleted", case=False)
+    df = df[~(deleted & (df["plant"] != "FTO2"))].copy()                                           # deleted NCs of other plants out
+    df["station_description"] = df["station"].map(station_desc)
+    wf = df["workflow_list"].fillna("")
+    df["Programme_auto"] = "SERIE"
+    df.loc[wf.str.contains(r"\bREC\b|-CRE|-PNC|A30-REJ-PVU2", case=False, regex=True), "Programme_auto"] = "REC"
+    df.loc[df["constituent_assembly"].fillna("").str.upper().str.startswith(("WY", "WA")), "Programme_auto"] = "FTI"
+    df["Statut_decision_auto"] = df["decision_status"].map(STATUT_MAP).fillna("Unknown")
+    df["Origin_auto"] = np.where(df["user_department"].str.strip().str.upper() == "OLMEP14/AIRBUS OPERATIONS SAS", "Test", "Qualite")
+    # NC type, in the notebook's priority order
+    is_rew = wf.str.startswith("REW-LIGNE")
+    deri = df["user_department"].str.contains("DERICHEBOURG", case=False)
+    dsh, art = df["description_short"].fillna(""), df["article_version_description"].fillna("")
+    label = dsh.str.contains(r"etiquette|plaquette", flags=re.I) | art.str.contains(r"etiquette|plaquette", flags=re.I)
+    cable_word = dsh.str.contains(r"c[aâ]ble|harnais|wire", flags=re.I) | art.str.contains(r"c[aâ]ble|harnais|wire", flags=re.I)
+    cables = (wf.str.contains(r"^R[E]?W-CA-IMP", flags=re.I) & ~label) | (cable_word & wf.str.startswith("REW-MP-IMP"))
+    conds = [df["status_open_closed"].fillna("").str.contains("Deleted", case=False) & (df["plant"] == "FTO2"),
+             df["Origin_auto"] == "Test",
+             ~df["plant"].fillna("").isin(["FTO2", "FT02"]),
+             (df["liability_description"].fillna("") == "[SUPPLIER]") | (df["responsible_defect_level1"].fillna("") == "Y4"),
+             cables,
+             wf.str.startswith("REJ-LO-BP") | (is_rew & deri),
+             wf.str.startswith("LIGNE-F-DQN"),
+             is_rew & ~deri,
+             wf.str.contains("TEST", case=False)]
+    df["Type_NC_auto"] = np.select(conds, ["QUALITE", "TEST", "NC Retour client", "NC Fournisseur", "CABLES", "NC Interne",
+                                           "DEMANDE DE DQN", "CONTROLE FINAL", "CONTROLE FINAL"], default="NC Interne")
+    # product: the article first, the station as a fallback
+    desc = df["article_version_description"].fillna("") + " | " + df["station_description"].fillna("")
+    a400 = df["programme"].fillna("").isin(["MT", "A400M"])
+    mip = desc.str.contains("MIP|1101VB|1212VB|2200VB", case=False, regex=True)
+    vbvu = desc.str.extract(r"(\d{3,4}V[UB])", expand=False, flags=re.I)
+    conds = [desc.str.contains("4714VB|4715VB|4716VB|4717VB|E-RUDDER", case=False, regex=True),
+             desc.str.contains("5883VB|5893VB|MDCD", case=False, regex=True),
+             desc.str.contains("OHP", case=False, regex=False),
+             desc.str.contains("30[0-5]VU|M8753254100000", case=False, regex=True),
+             desc.str.contains("WIRE BUNDLE|MFRL", case=False, regex=True),
+             desc.str.contains("ELEC ASSY", case=False, regex=False),
+             mip & a400, mip & ~a400, vbvu.notna()]
+    df["Produit_auto"] = np.select(conds, ["E-RUDDER", "MDCD", "OHP", "300VU", "MFRL", "PTVU", "MIP A400M", "MIP A350", vbvu], default="Other")
+    return df.reset_index(drop=True)
+
+
+def station_pairs(frames):
+    """{station: description} from exports that went through the pipeline (the notebook's station mapping, as it was applied)."""
+    s = pd.concat([f[["station", "station_description"]] for f in frames if "station_description" in f.columns], ignore_index=True)
+    s = s.dropna().astype(str)
+    s = s[s.station.str.strip() != ""]
+    return dict(s.drop_duplicates("station").values)
+
+
+def year_baseline(raw, station_desc, ref_dir, year):
+    """One year of NCs through the pipeline's rules, the parser and the CNQ model (no stored labels: parser classes), summed per
+    month, report scope, phase, line and product: [month, scope, phase, line, product, NCs, defect lines, major defect lines,
+    level-3 cost, level-2, level-1]. The work minutes are the model's (no rework-order operations for that year).
+    Same scope rule as the dashboard (serie = raised at FTO2 with FTO2 liable, not deleted; client = customer return)."""
+    x, _ = merge_exports([pipeline_rules(raw, station_desc)])
+    empty = pd.DataFrame(columns=["notification_number", "seq", "snippet", "llm_sous_categorie", "llm_sous_code", "llm_defaut_cable", "llm_confiance", "llm_symptome"])
+    p = prepare(x, empty, ref_dir)
+    nc, d = p["nc"], p["d"]
+    nc = nc[nc.date_creation.str.startswith(str(year)) & (nc.scope != "")].copy()
+    maj = d[~d.llm_mineur.astype(bool)].groupby("notification_number").size()
+    nc["major"] = nc.notification_number.map(maj).fillna(0).astype(int)
+    nc["month"] = nc.date_creation.str[:7]
+    nc["prod"] = nc.produit.fillna("").astype(str).replace("", "Other")
+    g = nc.groupby(["month", "scope", "phase", "ligne", "prod"], dropna=False).agg(
+        n=("notification_number", "size"), d=("cnq_defect_lines", "sum"), dm=("major", "sum"),
+        c3=("cnq_cost_total", "sum"), c2=("cnq_cost_global", "sum"), c1=("cnq_cost_airbus", "sum")).reset_index()
+    rows = [[r.month, r.scope, S_(r.phase), S_(r.ligne), r.prod, int(r.n), int(r.d), int(r.dm), round(float(r.c3), 2), round(float(r.c2), 2), round(float(r.c1), 2)]
+            for r in g.itertuples()]
+    aec = nc[nc.cnq_on_aec == 1]
+    info = {"ncs": int(len(nc)), "serie": int((nc.scope == "serie").sum()), "client": int((nc.scope == "client").sum()),
+            "level3_aec": round(float(aec.cnq_cost_total.sum()), 2), "created_from": nc.date_creation.min(), "created_to": nc.date_creation.max()}
+    return rows, info, p

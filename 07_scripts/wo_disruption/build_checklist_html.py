@@ -220,7 +220,7 @@ ITEMS = [
 
 # ------------------------------------------------------------------ changes (also written to CNQ_CHANGES.md)
 CHANGES = [
- ("Applied to the CNQ model (version cnq-2026.10.19)", [
+ ("Applied to the CNQ model (version cnq-2026.10.20)", [
   ("Operator alert only when an operator raises one: not for NCs found at test or at final inspection", "0 of 52 test NCs and 4 of 23 final-inspection NCs started with an aléa (Jul-Sep 2026)", "NO_ALERT_TYPES"),
   ("Customer returns always get the alert, whatever their NC type", "The customer's operator raises it; AEC is the direct cause", "cnq_core.compute_cnq"),
   ("Alert time 41 min instead of 30", "Mean time lost declared on the 214 quality aléas that led to an NC (median 30)", "MIN_ALERT"),
@@ -228,6 +228,7 @@ CHANGES = [
   ("Internal NCs: rework (setup + hands-on) x 2", "Planned 1,896 min against 951 in the model on 11 complete orders; per-NC median ratio 2.0", "INTERNAL_TYPES, INTERNAL_WORK_FACTOR"),
   ("Exchange: no rework, swapped part counted", "0 of 20 exchanges in 2026 had a rework order", "RULES['EXC']"),
   ("Rejection with a rework order: rework charged (rule REJ_RW)", "About half of rejections get a rework order (median 1 h 40 planned)", "REWORK_ORDER_PREFIXES, RULES['REJ_RW']"),
+  ("Rework orders: the planned time of the NC's closed rework order replaces the model's setup and hands-on (no connection rule, no x 2)", "Catches exceptional NCs (34 h on NC 218233692). 71 NCs have a closed, planned order in the Sept 2026 operations; AEC level 3 175,663 -> 177,436 EUR. Orders still open or without planned time keep the model", "USE_ORDER_TIME, cnq_orders.nc_order_times"),
  ]),
  ("Decided, outside the model", [
   ("Two calculations: the NC cost of non-quality, and a disruption block shown beside it, never added inside it", "The aléa that leads to an NC is inside the NC cost (alert step)", "-"),
@@ -236,6 +237,7 @@ CHANGES = [
   ("Scope: REC and ERMA are not included", "REC: 746 h of rework orders in Sept 2026. ERMA: 184 NCs in 2025, 46,158 EUR (new model)", "-"),
   ("Customer returns: count every cost we can find, including work done at the customer (AEC is the direct cause)", "Figures to collect in check H3", "-"),
   ("Year comparisons without ERMA", "The 2026 pipeline excludes ERMA", "-"),
+  ("Year comparisons and targets: 2025 from the 2025 Skywise extract through the pipeline's rules (ERMA out); target = 2025 - 25 %, cost budget = 2025 cost - 25 %", "2025, série raised at FTO2: 732 NCs, 170,433 EUR. Per line: NCs per product delivered (Livraisons 2025 sheet, 343 products)", "-"),
   ("Internal NCs always have an aléa, even when none is logged in MES: the alert step is charged on every internal NC", "Assumption (Mohammad, 19 Oct). Only 10 of 61 internal NCs (Jul-Sep 2026) have a logged aléa. Already how the model works; to investigate later (check L2)", "-"),
  ]),
  ("Kept for later (not applied)", [
@@ -243,7 +245,6 @@ CHANGES = [
   ("Customer returns: add the real costs (repair at the customer, analysis, transport, penalties)", "After check H3: per return in the customer_return_cost column, or a flat CUSTOMER_RETURN_EXTRA", "CUSTOMER_RETURN_EXTRA / customer_return_cost"),
   ("Use the declared aléa time of each NC instead of the flat 41 min", "Needs the aléa-NC link in the pipeline; also fixes the 4 final-inspection NCs that had an aléa but get no alert step", "pipeline"),
   ("Responders' time on aléas (quality, support, logistics answering)", "Not in 'time lost'; a flat time per aléa could be added to the disruption block", "to decide"),
-  ("Use the planned time of the NC's rework order when it exists", "Catches exceptional NCs (e.g. 34 h on one NC line); needs the order operations in the pipeline", "pipeline"),
   ("Re-check the WO rules on a full year of rework orders", "15 min per extra connection error, x2 on internal NCs, exchange, rejection: from one month (Sept 2026)", "WO parameters"),
   ("Decide from checks H1, H2, H4, H6", "Rework without an NC, quality team time, cable cutting, orders with no planned time", "to decide"),
  ]),
@@ -258,7 +259,7 @@ CHANGES = [
 
 # ------------------------------------------------------------------ figures
 nc_fig = [["2026 Feb-Sep, raised at FTO2 (695 NCs)", 149824], ["2025, raised at FTO2, without ERMA (818 NCs)", 178870], ["CNQ pack reference data, 5 Jan - 6 Jul 2026 (595 NCs)", 128741]]
-DATA = dict(meta=dict(built=datetime.date.today().isoformat(), rate=RATE, model="cnq-2026.10.19"), items=ITEMS, tables=T, changes=CHANGES,
+DATA = dict(meta=dict(built=datetime.date.today().isoformat(), rate=RATE, model="cnq-2026.10.20"), items=ITEMS, tables=T, changes=CHANGES,
             figures=dict(nc=nc_fig, cr_model=round(float(R["cr"].cnq_cost_total.sum())), rec_h=746, erma=46158))
 
 js = json.dumps(DATA, ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/")
@@ -271,7 +272,7 @@ md = ["# CNQ changes: done, decided and to do", "",
       "`cnq_handoever/README_handover.md`, section 4.", "",
       "Effect of the applied changes on level 3: 134,206 -> 128,741 EUR on the CNQ pack data; 151,093 -> 149,824 EUR on 2026 Feb-Sep; "
       "178,170 -> 178,870 EUR on 2025 without ERMA; customer returns 2026: 11,975 -> 12,577 EUR. The totals move little; the cost moves "
-      "between NC types (test NCs down, internal NCs and rejections with a rework order up).", ""]
+      "between NC types (test NCs down, internal NCs and rejections with a rework order up). Version cnq-2026.10.20 (planned time of the rework order): AEC level 3 on the dashboard data 175,663 -> 177,436 EUR.", ""]
 for sec, lst in CHANGES:
     md += [f"## {sec}", "", "| Change | Why / detail | Where |", "|---|---|---|"]
     md += [f"| {a} | {b} | `{c}` |" if c not in ("-", "to decide", "pipeline") else f"| {a} | {b} | {c} |" for a, b, c in lst]

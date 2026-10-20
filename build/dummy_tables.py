@@ -259,7 +259,10 @@ def nc_query():
     eng_hours AS hours_engineering,
     CASE WHEN type_nc = 'CONTROLE FINAL' THEN 1 ELSE 0 END AS final_inspection,
     CASE WHEN scope = 'client' THEN 'Texte fictif de retour client.' || chr(10) || 'Moment of Detection : ' || coalesce(first_det, '')
-         || chr(10) || 'Description : défaut constaté chez le client (donnée fictive).' ELSE '' END AS long_text""" % dict(
+         || chr(10) || 'Description : défaut constaté chez le client (donnée fictive).' ELSE '' END AS long_text,
+    CASE WHEN m_setup + m_hands > 0 THEN 'model' ELSE '' END AS work_source,
+    '' AS order_state,
+    '' AS rework_orders""" % dict(
         alert=P.MIN_ALERT, wglob=P.MIN_WRITE_NC_GLOBAL, support=P.MIN_SUPPORT, wkglob=P.MIN_WORK_GLOBAL, recheck=P.MIN_RECHECK_CLOSE,
         rate=rate, eng=eng, st_case=" ".join("WHEN %s = %d THEN %s" % (H("i", "st", 6), k, q(s)) for k, s in enumerate(
             ["Poste câblage A", "Poste câblage B", "Sous-ensemble harnais", "Intégration", "Retouche ligne", "Finition"])))

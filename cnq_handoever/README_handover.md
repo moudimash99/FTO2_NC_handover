@@ -1,6 +1,6 @@
 # Cost of non-quality (CNQ) for Airbus Electric Center - handover
 
-Version `cnq-2026.10.19`, updated 19 October 2026. Section 2 totals: this model on the current Skywise exports (856 AEC NCs, rebuilt 19 October 2026); the build recomputes them at every refresh (`build/build_report.json`, section 13). The worked examples in section 3 come from the 19 October CNQ pack.
+Version `cnq-2026.10.20`, updated 20 October 2026. Section 2 totals: this model on the current Skywise exports (856 AEC NCs, rebuilt 20 October 2026); the build recomputes them at every refresh (`build/build_report.json`, section 13). The worked examples in section 3 come from the 19 October CNQ pack.
 
 ## 1. What this is
 
@@ -35,13 +35,13 @@ classified by root cause from the full NC text (`04_reference/llm_labels_longtex
 |---|---|---|---|---|
 | 1. Airbus transnational | Each NC at the official Airbus standard cost for its decision. No material. | 403,489 EUR | 471 EUR | `cnq_cost_airbus` |
 | 2. Global average | Each NC at AEC's average times: 30 min to write the NC, 1 hour of work for a rework. Plus material. | 143,298 EUR | 167 EUR | `cnq_cost_global` |
-| 3. Per defect | AEC's steps, with the work built from each defect found. Plus material. | 175,663 EUR | 205 EUR | `cnq_cost_total` |
+| 3. Per defect | AEC's steps, with the work built from each defect found, or the planned time of the NC's closed rework order. Plus material. | 177,436 EUR | 207 EUR | `cnq_cost_total` |
 
 Level 3 is the reference. Levels 1 and 2 are there to compare: what the general Airbus model would
 say, and what a flat average would say. NCs on other plants or suppliers (271 NCs, 37,728 EUR of
 handling at level 3) are shown aside and are in none of the totals.
 
-Before the changes of 19 October 2026 (section 4), on the same exports, level 3 was 181,405 EUR and level 2 144,265 EUR; on the smaller 19 October CNQ pack the changes took level 3 from 134,206 to 128,741 EUR.
+Without the rework orders' planned time (section 4, 20 October) level 3 is 175,663 EUR. Before the changes of 19 October 2026 (section 4), on the same exports, level 3 was 181,405 EUR and level 2 144,265 EUR; on the smaller 19 October CNQ pack the changes took level 3 from 134,206 to 128,741 EUR.
 
 ## 3. How one NC is costed, with examples
 
@@ -181,12 +181,35 @@ and rejections with a rework order up. The WO figures come from one month of rew
 should be re-checked on a full year. The full list of changes, done and to do, is in
 `CNQ_CHANGES.md` at the root of the repository.
 
+### Change of 20 October 2026: the planned time of the NC's rework order (version cnq-2026.10.20)
+
+When the NC dataset carries the planned time of the NC's rework orders, an NC whose orders are all
+closed and planned is costed with that time instead of the model's setup and hands-on work:
+
+- setup = the planned time of the orders' preparation, inspection and closing operations; hands-on =
+  their work and test operations. No connection rule, no x 2 for internal NCs (the order is the real
+  plan). Alert, writing, support, re-check, material and engineering stay as before.
+- An order still open (no closing operation yet), closed without planned time, or not in the
+  operations keeps the model. A closing operation is one whose text holds "attestation", "clôture" or
+  "autoclos".
+- `cnq/cnq_orders.py` builds the input from the work-order operations: `nc_order_times(nc, ops)`
+  returns, per NC, `rework_orders`, `order_state` (used / open / no_time / not_found),
+  `order_minutes_setup` and `order_minutes_work`. Merge it into the NC dataset before
+  `compute_cnq`. The output column `cnq_work_source` says `order` or `model`.
+- On the dashboard data with the Sept 2026 operations (the only month extracted so far): 800 NCs
+  link to a rework order, 71 are costed on its planned time (13 closed without time, 17 still open,
+  699 orders outside the extract). Level 3 on AEC: 175,663 -> 177,436 EUR; most of the rise is NC
+  218233692 (34 h planned, +1,665 EUR). With the full order history in Skywise, nearly every
+  reworked NC would use its order.
+- `USE_ORDER_TIME = False` in `cnq_params.py` goes back to the model alone.
+
 ## 5. What is in the package
 
 | File | What it is |
 |---|---|
 | `cnq/cnq_params.py` | Every time, rate and rule. The only file to edit when a number changes. |
 | `cnq/cnq_core.py` | The calculation, in pandas. No Foundry dependency. Tested. |
+| `cnq/cnq_orders.py` | The planned time of each NC's rework orders, from the SAP work-order operations (input to `cnq_core`). |
 | `cnq/foundry_transform.py` | Wrapper to run it as a Foundry transform. Template, not yet run in Foundry. |
 | `slate/slate_queries.sql` | 18 queries for the charts. Tested in SQLite on the sample outputs. |
 | `dashboard/cnq_dashboard.html` | Standalone dashboard, French / English, fully offline. One page: summary, how an NC is costed (steps, rules per decision, any real NC line by line), breakdown, customer returns, editable times, limits. |
@@ -234,6 +257,7 @@ Foundry build. The NC file must carry the columns of section 7; `build_all.py` t
 | `produit` | product chart only | **no - add** |
 | `responsabilite` | splits the aside group into plant / supplier | yes |
 | `linked_document`, `work_order` | finds the NC's rework order (a rejection with a rework order is charged its work) | **no - add from Skywise**; without them every rejection is costed without work |
+| `order_state`, `order_minutes_setup`, `order_minutes_work` | the planned time of the NC's rework orders (`cnq_orders.nc_order_times`, from the S03 work-order operations) | no - optional; without them the model's times are used |
 | `perimetre` | flags customer returns | yes |
 | `part_value` | value of a rejected or exchanged part, in EUR | no - optional, see section 9 |
 | `customer_return_cost` | real amount of a customer return, in EUR; replaces the estimate | no - optional |
@@ -301,7 +325,8 @@ confirms or rejects any of these times. The only way to firm them up is to time 
 14. **Exceptional NCs are not visible.** One NC line can cover many items. NC 218233692 ("Câbles
     non lasérisés", Sept 2026) is one defect line in the model (about 1 hour) but its rework order
     plans 34 hours of reprinting cables for six routes. Only the planned time of the rework order
-    can show this; the model cannot.
+    can show this; the model cannot. Since cnq-2026.10.20 it does, when the order's operations are
+    loaded (section 4).
 
 ## 10. Recommended next step: time the work
 

@@ -1,9 +1,10 @@
 // Cost of non-quality: the same calculation as cnq_core.py, in the browser, so times can be changed live.
 // The pipeline (cnq_params.py + cnq_core.py) stays the reference; tests/test_dashboard.js checks both agree.
 
-// NC row layout in DATA.nc:     [number, month, programme, product, rule, onAec, liabilityGroup, final, customer, whereFound, status, alertRaised, internal]
+// NC row layout in DATA.nc:     [number, month, programme, product, rule, onAec, liabilityGroup, final, customer, whereFound, status, alertRaised, internal,
+//                                rework order [setup minutes, work minutes, order numbers] when its planned time replaces the model's, else null]
 // line layout in DATA.lines:    [ncIndex, classIndex, qty, text], in line order within each NC
-var NC = { num: 0, month: 1, prog: 2, prod: 3, rule: 4, aec: 5, group: 6, fin: 7, cust: 8, where: 9, status: 10, alertOn: 11, internal: 12 };
+var NC = { num: 0, month: 1, prog: 2, prod: 3, rule: 4, aec: 5, group: 6, fin: 7, cust: 8, where: 9, status: 10, alertOn: 11, internal: 12, order: 13 };
 
 function classMinutes(P) {
   // a derived class is always factor x its base class ("wrong reference = 2 x missing")
@@ -31,12 +32,13 @@ function computeAll(DATA, P, amounts) {
     var f = DATA.rules[r[NC.rule]] || { alert: 0, write: 0, support: 0, work: 0, recheck: 0, eng: 0, part: 0 };
     var handsRaw = lineCnt[i] === 0 ? P.noDefect : lineMin[i];
     var alert = f.alert * (r[NC.alertOn] ? 1 : 0), wf = r[NC.internal] ? P.internalFactor : 1;
+    var o = P.orderTime !== false ? r[NC.order] : null;   // planned time of the rework order: no floor, no factor
     var s = {
       alert: alert * P.alert,
       writing: f.write * (r[NC.fin] ? P.writeFinal : P.write),
       support: f.support * P.support,
-      setup: f.work * wf * Math.max(P.setup, P.floor - handsRaw),
-      hands: f.work * wf * handsRaw,
+      setup: o ? f.work * o[0] : f.work * wf * Math.max(P.setup, P.floor - handsRaw),
+      hands: o ? f.work * o[1] : f.work * wf * handsRaw,
       recheck: f.recheck * P.recheck
     };
     var engH = f.eng, eng = engH * P.rateEng, material = f.work * lineMat[i];
@@ -47,7 +49,7 @@ function computeAll(DATA, P, amounts) {
     var real = isReturn && amounts[r[NC.num]] != null && isFinite(amounts[r[NC.num]]) ? +amounts[r[NC.num]] : null;
     var l3 = real != null ? real : model + (isReturn ? (P.crExtra || 0) : 0);
     return {
-      i: i, f: f, steps: s, engH: engH, eng: eng, material: material, lines: lineCnt[i], lineMin: lineMin[i],
+      i: i, f: f, steps: s, order: o, engH: engH, eng: eng, material: material, lines: lineCnt[i], lineMin: lineMin[i],
       minutes3: minutes3, minutes2: minutes2, model: model, real: real, adjust: l3 - model, isReturn: isReturn,
       l3: l3,
       l2: minutes2 / 60 * P.rate + eng + material,

@@ -488,6 +488,8 @@ Object.assign(I, {
                "Cost = total minutes ÷ 60 × {r} €/h + material. Steps 4 and 5 are never under {f} min. Connection errors: the first one of the NC takes its class time, each following one {c} min. Internal NCs: steps 4 and 5 × {k}."],
   n_noalert: ["pas d'aléa opérateur : NC trouvée au test ou au contrôle final", "no operator alert: NC found at test or at final inspection"],
   n_internal: ["× {k} : NC interne, temps calé sur les ordres de retouche", "× {k}: internal NC, time set from the rework orders"],
+  n_order_setup: ["temps prévu de l'ordre de retouche {o} : préparation, contrôle, clôture", "planned time of rework order {o}: preparation, inspection, closing"],
+  n_order_work: ["temps prévu de l'ordre de retouche {o} : travail et tests, à la place du modèle", "planned time of rework order {o}: work and tests, instead of the model"],
   n_conn_next: ["dont {n} erreur(s) de branchement suivante(s) à {x} min", "of which {n} further connection error(s) at {x} min"],
   p_connNext: ["Chaque erreur de branchement suivante dans la même NC", "Each further connection error in the same NC"],
   p_internalFactor: ["NC internes : multiplicateur du temps de retouche (étapes 4 et 5)", "Internal NCs: rework time multiplier (steps 4 and 5)"],
@@ -642,8 +644,8 @@ function renderNC(i) {
   var wf = r[NC.internal] ? P.internalFactor : 1, wnote = wf !== 1 ? " · " + t("n_internal", { k: dec(wf) }) : "";
   var notes = {
     alert: t("n_once", { x: P.alert }), writing: r[NC.fin] ? t("n_final", { x: P.writeFinal }) : t("n_plain", { x: P.write }), support: t("n_once", { x: P.support }),
-    setup: (x.steps.setup > P.setup * wf ? t("n_floor", { a: P.setup, f: P.floor }) : t("n_once", { x: P.setup })) + wnote,
-    hands: (x.lines === 0 ? t("n_noline", { x: P.noDefect }) : t("n_lines", { n: int(x.lines) })) + wnote, recheck: t("n_once", { x: P.recheck })
+    setup: x.order ? t("n_order_setup", { o: x.order[2] }) : (x.steps.setup > P.setup * wf ? t("n_floor", { a: P.setup, f: P.floor }) : t("n_once", { x: P.setup })) + wnote,
+    hands: x.order ? t("n_order_work", { o: x.order[2] }) : (x.lines === 0 ? t("n_noline", { x: P.noDefect }) : t("n_lines", { n: int(x.lines) })) + wnote, recheck: t("n_once", { x: P.recheck })
   };
   var tb = '<div class="scroll"><table><thead><tr><th>' + t("h_step") + "</th><th>" + t("h_how") + '</th><th class="num">' + t("h_min") + '</th><th class="num">' + t("h_cost_at", { r: dec(P.rate) }) + "</th></tr></thead><tbody>";
   STEPS.forEach(function (s) {

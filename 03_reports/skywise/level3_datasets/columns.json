@@ -224,6 +224,21 @@
    "name": "long_text",
    "type": "text",
    "meaning": "NC long text, customer returns only (2,500 characters)"
+  },
+  {
+   "name": "work_source",
+   "type": "text",
+   "meaning": "where the setup and hands-on minutes come from: order (planned time of the rework orders), model, or empty (no work)"
+  },
+  {
+   "name": "order_state",
+   "type": "text",
+   "meaning": "rework orders: used, open (not closed yet), no_time, not_found (not in the operations), empty (no link or no operations)"
+  },
+  {
+   "name": "rework_orders",
+   "type": "text",
+   "meaning": "rework order numbers (S03) linked to the NC, space-separated"
   }
  ],
  "defects": [

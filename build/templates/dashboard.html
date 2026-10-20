@@ -996,7 +996,8 @@ function fto2FromTables(ncIn, defIn, ref) {
       0, int(r.cable), int(r.defect_lines), str(r.title), str(r.scope), str(r.phase),
       str(r.msn).replace(/\.0$/, ''), str(r.product) || 'Other', str(r.station), r.hour == null || r.hour === '' ? -1 : int(r.hour), numOrNull(r.lead_days), int(r.is_open),
       numOrNull(r.age_days), day(r.closed), str(r.type_nc), str(r.liability), str(r.sap_defect), str(r.sap_cause_group), str(r.sap_cause), str(r.status), str(r.source) || 'sky',
-      [num(r.min_alert), num(r.min_writing), num(r.min_support), num(r.min_setup), num(r.min_hands_on), num(r.min_recheck), num(r.hours_engineering), int(r.final_inspection)]];
+      [num(r.min_alert), num(r.min_writing), num(r.min_support), num(r.min_setup), num(r.min_hands_on), num(r.min_recheck), num(r.hours_engineering), int(r.final_inspection),
+        str(r.work_source), str(r.order_state), str(r.rework_orders)]];
     ncs.push(a); byNc[id] = { a: a, plant: str(r.plant), lt: str(r.long_text) };
   });
   var defects = [], client = {}, lt = {}, qty = {}, pool = [];
@@ -1028,7 +1029,7 @@ function fto2FromTables(ncIn, defIn, ref) {
   ncs.forEach(function (a) { if (a[1] > to) to = a[1]; });
   var del = aec.filter(function (a) { return a[6] === 'DELETED'; }), oth = aec.filter(function (a) { return a[23] === '' && a[6] !== 'DELETED'; });
   var cnqp = {}; for (var k2 in (ref.cnqp || {})) cnqp[k2] = ref.cnqp[k2]; cnqp.qty = qty;
-  return { defects: defects, ncs: ncs, rca: rca, client: client, lt: lt, codes: ref.codes || {}, actions: ref.actions || [], cnqp: cnqp, eqmsn: eq,
+  return { defects: defects, ncs: ncs, rca: rca, client: client, lt: lt, codes: ref.codes || {}, actions: ref.actions || [], cnqp: cnqp, eqmsn: eq, y25: ref.y25 || null,
     meta: { from: ref.from || '2026-01-01', to: to, aside: { deleted: [del.length, sum(del)], other: [oth.length, sum(oth)] },
       noLine: ncs.filter(function (a) { return a[23] === 'serie' && a[21] === 0; }).length, modelTotal: sum(aec) } };
 }
@@ -1141,7 +1142,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
       cnqSub: 'Estimation à partir des temps du processus AEC : alerte, rédaction, support technique, reprise et contrôle, chiffrés défaut par défaut.',
       nKR: 'NC par MSN', nKRs: 'NC ÷ MSN produits', ovMore: 'Autres listes et graphiques', cnqMore: 'Autres répartitions du coût', parMore: 'Autres graphiques de causes', whereMore: 'Autres graphiques',
       allLines: 'Toutes lignes', v2Tgt: 'Objectif', v2VsTgt: 'vs objectif', v2Above: 'Au-dessus de l’objectif', v2Below: 'Sous l’objectif', v2TgtPh: 'Objectif (fictif)', v2Ph: 'fictif',
-      v2Ph25: '2025 fictif (= 2026)', v2MTgt: 'objectif mensuel {v} (fictif)', v2BudPh: 'Budget au prorata (fictif)', v2Y25: '2025', v2Y26: '2026 prévu', v2Flat: 'Stable', 
+      v2Ph25: '2025 fictif (= 2026)', v2Y25b: '2025, même filtre', v2Y25c: '2025 à la même date', v2Y25at: '2025 à la même date : {v}', v2TgtCumR: 'Objectif cumulé (2025 − 25 %)', v2StTgtR: 'objectif de l’année (2025 − 25 %)', v2StBudR: 'budget de l’année (2025 − 25 %)', v2BudR: 'Budget au prorata (coût 2025 − 25 %)', v2TgtR: 'Objectif : taux 2025 − 25 %', v2NoCli25: '2025 sans retours client (absents de l’extraction 2025)', v2Rate25: '2025 : {v} NC par produit livré', v2Rate25s: 'Taux 2025', v2BudR2: 'budget', v2MTgt: 'objectif mensuel {v} (fictif)', v2BudPh: 'Budget au prorata (fictif)', v2Y25: '2025', v2Y26: '2026 prévu', v2Flat: 'Stable', 
       vpFc: 'Fait et prévision', vpMsn: 'Par MSN', vpFcK: 'Volumes', vpFcT: 'NC, défauts et coût attendus d’ici décembre, produit par produit', vpFcS: 'Réalisé, puis prévision : volume de la période par MSN × MSN prévus jusqu’à décembre.', vpFcH: 'fait → fin décembre', vpDec: 'Prévu à fin décembre', dType: 'Répartition du coût par type de NC', typeSub: 'Type de la NC, là où elle a été trouvée ; 100 % = coût de la sélection.', ty_cab: 'Câbles', ty_fin: 'Contrôle final', ty_test: 'Test', ty_int: 'Interne', ty_sup: 'Fournisseurs', ty_oth: 'Autres', wlCh_prod: 'Produits', wlCh_ac: 'Avions', wlCh_st: 'Postes', wlChs_prod: 'Taux, carte mensuelle, précision, projection et coût, produit par produit.', wlChs_ac: 'Coût par avion et FIN qui reviennent.', wlChs_st: 'Défauts par poste de rédaction de la NC.',
       v2MonTgt: 'objectif du mois {v}', v2Cum: '{v} NC cumulées', v2Fc: 'prévues', v2TgtShort: 'objectif', v2Under: 'Mois sous son objectif', v2Over: 'Mois au-dessus de son objectif', v2CumLeg: 'NC cumulées', v2TgtCum: 'Objectif cumulé (fictif)', v2Summer: 'Juillet et août comptent pour 60 % d’un mois.', v2ObjH: 'Objectif par ligne · NC par MSN', v2ObjC: 'Objectifs fictifs en attendant les chiffres 2025 : taux 2026 moins 25 %.', v2PerMsnV: '{v} par MSN', v2StNow: 'NC depuis le début de la période', v2StFc: 'prévus à fin décembre', v2StTgt: 'objectif de l’année (fictif)', v2StCost: 'cumulés sur la période', v2StBud: 'budget de l’année (fictif)', v2QPer: 'Par MSN produit : la fermeture d’août ne pèse pas.', v2QMonth: 'Moyenne par mois.', v2PerMsn: 'par MSN', v2Ac: '{n} avions',
       scVol: 'Volume par mois', scTot: 'Total', scRate: 'Par MSN, par mois', scRateP: 'Par MSN', scLast3: '3 derniers mois', scNc: 'NC', scDef: 'Défauts', scCost: 'Coût',
@@ -1172,7 +1173,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
       cs_alert: 'Aléa', cs_writing: 'Rédaction de la NC', cs_support: 'Support technique', cs_setup: 'Préparation', cs_hands: 'Intervention', cs_recheck: 'Recontrôle et clôture',
       cu_alert: 'l’opérateur signale le défaut', cu_writing: '{x} min au contrôle final', cu_support: 'vérification, estimation, ordre de travail',
       cu_setup: 'badgeage, approvisionnement, mise en place', cu_hands: 'minutes de chaque défaut relevé', cu_recheck: 'contrôle de la retouche, puis clôture',
-      cxModelH: 'Règles particulières du modèle {v}', cxR1: 'Pas d’alerte pour une NC trouvée au test ou au contrôle final ; un retour client a toujours l’alerte.', cxR2: 'Erreurs de connexion : la première d’une NC compte {a} min, chacune des suivantes {b} min.', cxR3: 'NC internes : préparation et intervention × {f}.', cxR4: 'Rebut avec un ordre de retouche : le travail est compté comme une retouche, plus la valeur de la pièce.',
+      cxModelH: 'Règles particulières du modèle {v}', cxR1: 'Pas d’alerte pour une NC trouvée au test ou au contrôle final ; un retour client a toujours l’alerte.', cxR2: 'Erreurs de connexion : la première d’une NC compte {a} min, chacune des suivantes {b} min.', cxR3: 'NC internes : préparation et intervention × {f}.', cxR4: 'Rejet avec un ordre de retouche : le travail est compté comme une retouche, plus la valeur de la pièce.', cxR5: 'Ordre de retouche clos et planifié : son temps prévu remplace préparation et intervention (sans la règle des connexions ni le × 2). {n} NC de la sélection.',
       cxPerNc: '{c} par NC', cxHandsV: 'selon les défauts', cxSel: 'Sur les NC filtrées : {c} au total · {p} du coût',
       cxEng: 'Étude d’ingénierie', cxEngV: 'DQN : {h} h × {r} €/h = {c}', cxMat: 'Matière', cxMatV: 'somme de la matière des défauts', cxTot: 'Total de la sélection', cxTotV: '{n} NC',
       cxFormula: 'Coût = total des minutes ÷ 60 × {r} €/h + ingénierie + matière. Préparation et intervention ne descendent jamais sous {f} min.',
@@ -1182,7 +1183,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
       bk_LOCAL: 'Processus décrit par AEC', bk_RULE: 'Règle AEC', bk_ASSUMED: 'Hypothèse', bk_OFFICIAL: 'Officiel Airbus', bk_TEAM: 'Table de l’équipe', bk_BORROWED: 'Emprunté', bk_DERIVED: 'Règle de l’équipe',
       cxNcT: 'Le calcul sur une NC réelle', cxNum: 'Numéro de NC', cxShow: 'Afficher', cxNone: 'Aucune NC ne porte ce numéro dans les données. Choisir un numéro dans la liste.',
       ex_one: 'Retouche à un défaut', ex_many: 'Retouche à plusieurs défauts', ex_final: 'Retouche au contrôle final', ex_noline: 'Retouche sans ligne de défaut',
-      ex_rej: 'Rejet', ex_rejrw: 'Rejet avec ordre de retouche', ex_exc: 'Échange', ex_dqn: 'Demande de DQN', ex_cli: 'Retour client',
+      ex_rej: 'Rejet', ex_rejrw: 'Rejet avec ordre de retouche', ex_order: 'Temps de l’ordre de retouche', fx_order: 'Ordre de retouche', os_used: 'temps prévu utilisé', os_open: 'pas encore clos : temps du modèle', os_no_time: 'clos sans temps prévu : temps du modèle', os_not_found: 'hors des opérations disponibles : temps du modèle', os_none: 'opérations non chargées : temps du modèle', n_ordSetup: 'Temps prévu des opérations de préparation, contrôle et clôture de l’ordre de retouche', n_ordWork: 'Temps prévu des opérations de travail et de test de l’ordre de retouche, à la place du modèle', dl_ord: 'Temps du modèle, pour information (l’intervention comptée est celle de l’ordre) ; la matière est reprise ci-dessus', ex_exc: 'Échange', ex_dqn: 'Demande de DQN', ex_cli: 'Retour client',
       fx_nc: 'NC', fx_date: 'Créée le', fx_line: 'Ligne', fx_dec: 'Décision', fx_where: 'Détection', fx_lines: 'Lignes de défaut',
       cxH: ['Étape', 'Calcul', 'Minutes', 'Coût à {r} €/h'],
       n_once: '{x} min, une fois par NC', n_noalert: 'pas d’alerte : NC trouvée au test ou au contrôle final', n_x2: '{s} · × {f} (NC interne)', n_plain: '{x} min', n_final: '{x} min car détectée au contrôle final',
@@ -1308,7 +1309,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
       cnqSub: 'Estimate from AEC process times: alert, writing, technical support, rework and check, costed defect by defect.',
       nKR: 'NCs per MSN', nKRs: 'NCs ÷ MSN built', ovMore: 'Other lists and charts', cnqMore: 'Other cost breakdowns', parMore: 'Other root-cause charts', whereMore: 'Other charts',
       allLines: 'All lines', v2Tgt: 'Target', v2VsTgt: 'vs target', v2Above: 'Above target', v2Below: 'Below target', v2TgtPh: 'Target (placeholder)', v2Ph: 'placeholder',
-      v2Ph25: '2025 placeholder (= 2026)', v2MTgt: 'monthly target {v} (placeholder)', v2BudPh: 'Pro-rata budget (placeholder)', v2Y25: '2025', v2Y26: '2026 forecast', v2Flat: 'Flat', 
+      v2Ph25: '2025 placeholder (= 2026)', v2Y25b: '2025, same filter', v2Y25c: '2025 at the same date', v2Y25at: '2025 at the same date: {v}', v2TgtCumR: 'Cumulative target (2025 − 25%)', v2StTgtR: 'target for the year (2025 − 25%)', v2StBudR: 'budget for the year (2025 − 25%)', v2BudR: 'Pro-rata budget (2025 cost − 25%)', v2TgtR: 'Target: 2025 rate − 25%', v2NoCli25: '2025 without customer returns (not in the 2025 extract)', v2Rate25: '2025: {v} NCs per product delivered', v2Rate25s: '2025 rate', v2BudR2: 'budget', v2MTgt: 'monthly target {v} (placeholder)', v2BudPh: 'Pro-rata budget (placeholder)', v2Y25: '2025', v2Y26: '2026 forecast', v2Flat: 'Flat', 
       vpFc: 'Done and forecast', vpMsn: 'Per MSN', vpFcK: 'Volumes', vpFcT: 'NCs, defects and cost expected by December, product by product', vpFcS: 'Actual, then the forecast: the period’s volume per MSN × the MSN planned to December.', vpFcH: 'done → end of December', vpDec: 'Expected by end of December', dType: 'Cost split by NC type', typeSub: 'NC type, where it was found; 100% = the cost of the selection.', ty_cab: 'Cables', ty_fin: 'Final inspection', ty_test: 'Test', ty_int: 'In-house', ty_sup: 'Suppliers', ty_oth: 'Other', wlCh_prod: 'Products', wlCh_ac: 'Aircraft', wlCh_st: 'Stations', wlChs_prod: 'Rates, monthly map, precision, forecast and cost, product by product.', wlChs_ac: 'Cost per aircraft and FINs that come back.', wlChs_st: 'Defects by the station where the NC was written.',
       v2MonTgt: 'month target {v}', v2Cum: '{v} NCs to date', v2Fc: 'expected', v2TgtShort: 'target', v2Under: 'Month under its target', v2Over: 'Month above its target', v2CumLeg: 'Cumulative NCs', v2TgtCum: 'Cumulative target (placeholder)', v2Summer: 'July and August count as 60% of a month.', v2ObjH: 'Target per line · NCs per MSN', v2ObjC: 'Placeholder targets until the 2025 figures come: 2026 rate minus 25%.', v2PerMsnV: '{v} per MSN', v2StNow: 'NCs since the start of the period', v2StFc: 'expected by end of December', v2StTgt: 'target for the year (placeholder)', v2StCost: 'so far in the period', v2StBud: 'budget for the year (placeholder)', v2QPer: 'Per MSN built: the August shutdown does not weigh.', v2QMonth: 'Monthly average.', v2PerMsn: 'per MSN', v2Ac: '{n} aircraft',
       scVol: 'Volume per month', scTot: 'Total', scRate: 'Per MSN, per month', scRateP: 'Per MSN', scLast3: 'Last 3 months', scNc: 'NCs', scDef: 'Defects', scCost: 'Cost',
@@ -1339,7 +1340,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
       cs_alert: 'Alert', cs_writing: 'Writing the NC', cs_support: 'Technical support', cs_setup: 'Setup', cs_hands: 'Hands-on work', cs_recheck: 'Re-check and closing',
       cu_alert: 'the operator reports the defect', cu_writing: '{x} min at final inspection', cu_support: 'check, estimate, work order',
       cu_setup: 'badging, fetching, setting up', cu_hands: 'minutes of each defect found', cu_recheck: 'check of the rework, then closing',
-      cxModelH: 'Special rules of model {v}', cxR1: 'No alert for an NC found at test or final inspection; a customer return always has the alert.', cxR2: 'Connection errors: the first in an NC counts {a} min, each following one {b} min.', cxR3: 'Internal NCs: setup and hands-on work × {f}.', cxR4: 'Rejection with a rework order: the work is charged as for a rework, plus the value of the part.',
+      cxModelH: 'Special rules of model {v}', cxR1: 'No alert for an NC found at test or final inspection; a customer return always has the alert.', cxR2: 'Connection errors: the first in an NC counts {a} min, each following one {b} min.', cxR3: 'Internal NCs: setup and hands-on work × {f}.', cxR4: 'Rejection with a rework order: the work is charged as for a rework, plus the value of the part.', cxR5: 'Rework order closed and planned: its planned time replaces setup and hands-on work (no connection rule, no × 2). {n} NCs in the selection.',
       cxPerNc: '{c} per NC', cxHandsV: 'depends on the defects', cxSel: 'Filtered NCs: {c} in total · {p} of the cost',
       cxEng: 'Engineering study', cxEngV: 'Design query: {h} h × {r} EUR/h = {c}', cxMat: 'Material', cxMatV: 'sum of the material of the defects', cxTot: 'Selection total', cxTotV: '{n} NCs',
       cxFormula: 'Cost = total minutes ÷ 60 × {r} EUR/h + engineering + material. Setup and hands-on work are never under {f} min.',
@@ -1349,7 +1350,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
       bk_LOCAL: 'Process described by AEC', bk_RULE: 'AEC rule', bk_ASSUMED: 'Assumed', bk_OFFICIAL: 'Official Airbus', bk_TEAM: 'Team table', bk_BORROWED: 'Borrowed', bk_DERIVED: 'Team rule',
       cxNcT: 'The calculation on a real NC', cxNum: 'NC number', cxShow: 'Show', cxNone: 'No NC with that number in the data. Pick one from the list.',
       ex_one: 'Rework, one defect', ex_many: 'Rework, several defects', ex_final: 'Rework at final inspection', ex_noline: 'Rework, no defect line',
-      ex_rej: 'Rejection', ex_rejrw: 'Rejection with a rework order', ex_exc: 'Exchange', ex_dqn: 'Design query', ex_cli: 'Customer return',
+      ex_rej: 'Rejection', ex_rejrw: 'Rejection with a rework order', ex_order: 'Rework order time', fx_order: 'Rework order', os_used: 'planned time used', os_open: 'not closed yet: model time', os_no_time: 'closed with no planned time: model time', os_not_found: 'not in the operations available: model time', os_none: 'operations not loaded: model time', n_ordSetup: 'Planned time of the rework order’s preparation, inspection and closing operations', n_ordWork: 'Planned time of the rework order’s work and test operations, instead of the model', dl_ord: 'Model times, for information (the hands-on work charged is the rework order’s); the material is used above', ex_exc: 'Exchange', ex_dqn: 'Design query', ex_cli: 'Customer return',
       fx_nc: 'NC', fx_date: 'Created', fx_line: 'Line', fx_dec: 'Decision', fx_where: 'Found at', fx_lines: 'Defect lines',
       cxH: ['Step', 'How', 'Minutes', 'Cost at {r} EUR/h'],
       n_once: '{x} min, once per NC', n_noalert: 'no alert: NC found at test or final inspection', n_x2: '{s} · × {f} (internal NC)', n_plain: '{x} min', n_final: '{x} min because it was found at final inspection',
@@ -1400,7 +1401,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
     'Customer return': 'Retour client', 'Design query request': 'Demande de DQN', 'Damage': 'Dommages', 'Breakage': 'Casse', 'Not recorded': 'Non renseigné',
     'TEST': 'Test', 'NC Retour client': 'Retour client', 'NC Interne': 'Interne', 'QUALITE': 'Qualité', 'NC Fournisseur': 'Fournisseur' };
   var WHERE_EN = { 'TEST': 'Test', 'NC Retour client': 'Customer return', 'NC Interne': 'In-process (internal)', 'QUALITE': 'Quality', 'NC Fournisseur': 'Supplier' };
-  var RULE_FR = { 'Rework to drawing': 'Retouche', 'Exchange': 'Échange', 'Rejection': 'Rebut / rejet', 'Scrap': 'Rebut', 'Request for design change': 'Demande de DQN',
+  var RULE_FR = { 'Rework to drawing': 'Retouche', 'Exchange': 'Échange', 'Rejection': 'Rebut / rejet', 'Rejection with a rework order': 'Rejet avec ordre de retouche', 'Scrap': 'Rebut', 'Request for design change': 'Demande de DQN',
     'Accept as is': 'Accepté en l’état', 'Potential non-conformity': 'NC potentielle', 'No decision': 'Sans décision', 'Deleted NC': 'NC supprimée', 'Unknown decision code': 'Décision inconnue' };
   var CAT_ORDER = ['MEO Câblage', 'Erreur Branchement', 'Élément Manquant', 'Élément Endommagé', 'Déverrouillage', 'Grounding/Bonding', 'Kitting Factory', 'FOD', 'Autre', 'Non classé'];
   var ASIDE = { 'Kitting Factory': 1, 'FOD': 1, 'Autre': 1, 'Non classé': 1, '__none': 1 };
@@ -1939,7 +1940,8 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
 
   // ---------------------------------------------------------------- 4b. Explain the calculation (folded by default): the steps with their
   // time and cost per NC and over the selection, then one real NC worked out step by step. Every figure comes from the pipeline:
-  // NC row [40] = the model's minutes [alert, writing, support, setup, hands-on, re-check], engineering hours, final-inspection flag.
+  // NC row [40] = the model's minutes [alert, writing, support, setup, hands-on, re-check], engineering hours, final-inspection flag,
+  // then where setup and hands-on come from ('order': planned time of the rework orders, 'model', '' no work), the orders' state, their numbers.
   var CXP = D.cnqp || null, CX = { nc: null, lines: false };
   var CX_STEPS = [['alert', 'alert'], ['writing', 'write'], ['support', 'support'], ['setup', 'work'], ['hands', 'work'], ['recheck', 'recheck']];
   var CX_RF = { alert: 0, write: 1, support: 2, work: 3, recheck: 4, eng: 5, part: 6, label: 7, basis: 8 };
@@ -1970,6 +1972,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
     ['ex_noline', function (n) { return n[6] === 'RWK' && n[21] === 0; }],
     ['ex_rej', function (n) { return n[6] === 'REJ'; }],
     ['ex_rejrw', function (n) { return n[6] === 'REJ_RW'; }],
+    ['ex_order', function (n) { return cxSteps(n)[8] === 'order'; }],
     ['ex_exc', function (n) { return n[6] === 'EXC'; }],
     ['ex_dqn', function (n) { return n[6] === 'DQN'; }],
     ['ex_cli', function (n) { return n[23] === 'client'; }]
@@ -2000,8 +2003,9 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
       (Math.abs(other) >= 0.5 ? '<div><span class="cn">' + esc(S('r_adj')) + '</span><div class="sel">' + S('cxSel', { c: '<b>' + esc(eur(other)) + '</b>', p: esc(shr(other)) }) + '</div></div>' : '') +
       '<div class="tot"><span class="cn">' + esc(S('cxTot')) + '</span><span class="cv">' + esc(S('cxTotV', { n: num(SEL_NC.length) })) + '</span><div class="sel"><b>' + esc(eur(tot)) + '</b></div></div>';
     document.getElementById('cxFormula').textContent = S('cxFormula', { r: dec(r), f: num(P.floor) });
+    var nOrd = SEL_NC.filter(function (n) { return cxSteps(n)[8] === 'order'; }).length;
     document.getElementById('cxModel').innerHTML = '<b>' + esc(S('cxModelH', { v: P.version || '' })) + '</b><ul>' + [S('cxR1'), S('cxR2', { a: num((CXP.cls[(P.connCls || [])[0]] || [P.defDefault])[0]), b: num(P.connNext || 0) }), S('cxR3', { f: dec(P.intFactor || 1) }), S('cxR4')]
-      .map(function (t) { return '<li>' + esc(t) + '</li>'; }).join('') + '</ul>';
+      .concat(P.orderTime ? [S('cxR5', { n: num(nOrd) })] : []).map(function (t) { return '<li>' + esc(t) + '</li>'; }).join('') + '</ul>';
     var setup = Math.max(P.setup, P.floor - 10), m = P.alert + P.write + P.support + setup + 10 + P.recheck;
     document.getElementById('cxExample').textContent = S('cxExample', { a: P.alert, b: P.write, c: P.support, d: setup, e: P.recheck, m: num(m), c2: eur2(m / 60 * r) });
     // what each decision charges
@@ -2027,11 +2031,12 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
     var P = CXP.p, r = P.rate, f = cxRule(n) || [0, 0, 0, 0, 0, 0, 0, n[7], ''], st = cxSteps(n), fin = st[7], lines = cxLines(n[0]), sep = G.lang === 'fr' ? ' : ' : ': ';
     var fact = function (k, v) { return '<span>' + esc(S(k)) + sep + '<b>' + esc(v) + '</b></span>'; };
     var h = '<div class="cx-facts">' + fact('fx_nc', n[0]) + fact('fx_date', shortDay(n[1])) + fact('fx_line', n[3] || '—') + fact('fx_dec', ruleName(n[7])) + fact('fx_where', whereName(n[8])) + fact('fx_lines', num(lines.length)) + '</div>';
-    var fx = cxFactor(n), x2 = function (t) { return fx !== 1 ? S('n_x2', { s: t, f: dec(fx) }) : t; }, base = st[3] / fx;
+    var ord = st[8] === 'order', fx = ord ? 1 : cxFactor(n), x2 = function (t) { return fx !== 1 ? S('n_x2', { s: t, f: dec(fx) }) : t; }, base = st[3] / fx;
+    if (st[10]) h = h.replace('</div>', fact('fx_order', st[10] + ' · ' + S('os_' + (st[9] || 'none'))) + '</div>');
     var notes = {
       alert: f[0] && !st[0] ? S('n_noalert') : S('n_once', { x: P.alert }), writing: fin ? S('n_final', { x: P.writeFinal }) : S('n_plain', { x: P.write }), support: S('n_once', { x: P.support }),
-      setup: x2(base > P.setup + 1e-6 ? S('n_floor', { a: P.setup, b: dec(base), f: P.floor }) : S('n_once', { x: P.setup })),
-      hands: x2(!lines.length ? S('n_noline', { x: P.noDefect }) : S('n_lines', { n: num(lines.length) })), recheck: S('n_once', { x: P.recheck })
+      setup: ord ? S('n_ordSetup') : x2(base > P.setup + 1e-6 ? S('n_floor', { a: P.setup, b: dec(base), f: P.floor }) : S('n_once', { x: P.setup })),
+      hands: ord ? S('n_ordWork') : x2(!lines.length ? S('n_noline', { x: P.noDefect }) : S('n_lines', { n: num(lines.length) })), recheck: S('n_once', { x: P.recheck })
     };
     var H = S('cxH'), totMin = 0;
     var tb = '<div class="table-wrap"><table class="cxt"><thead><tr><th scope="col">' + esc(H[0]) + '</th><th scope="col">' + esc(H[1]) + '</th><th scope="col" class="r">' + esc(H[2]) + '</th><th scope="col" class="r">' + esc(H[3].replace('{r}', dec(r))) + '</th></tr></thead><tbody>';
@@ -2054,7 +2059,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
       dl = '<details class="vdata" id="cxLines"' + (CX.lines ? ' open' : '') + '><summary>' + esc(S('d_lines', { n: num(lines.length) })) + '</summary><div class="table-wrap"><table class="cxt"><thead><tr>' +
         D2.map(function (x, j) { return '<th scope="col"' + (j >= 3 ? ' class="r"' : '') + '>' + esc(x) + '</th>'; }).join('') + '</tr></thead><tbody>' +
         lines.map(function (ln, j) { var c = cxLine(ln, seen); sm += c.m; sa += c.a; return '<tr><td>' + (j + 1) + '</td><td class="txt">' + esc(tidy(ln[18])) + '</td><td>' + esc(c.cls) + '</td><td class="r">' + esc(mn(c.m)) + '</td><td class="r">' + esc(eur2(c.a)) + '</td></tr>'; }).join('') +
-        '<tr class="total"><td></td><td>' + esc(f[3] ? x2(S('dl_on')) : S('dl_off')) + '</td><td></td><td class="r">' + esc(mn(sm)) + '</td><td class="r">' + esc(eur2(sa)) + '</td></tr></tbody></table></div></details>';
+        '<tr class="total"><td></td><td>' + esc(f[3] ? (ord ? S('dl_ord') : x2(S('dl_on'))) : S('dl_off')) + '</td><td></td><td class="r">' + esc(mn(sm)) + '</td><td class="r">' + esc(eur2(sa)) + '</td></tr></tbody></table></div></details>';
     }
     out.innerHTML = h + tb + lv + dl;
   }
@@ -4910,8 +4915,9 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
   // ---------------------------------------------------------------- Dashboard v2 (main page): layout A. Overview: header, target per line, NC trend,
   // programmes, cost against budget, time to close, volume-then-per-MSN scorecard, control chart. Pareto: bubble and flow on top, cause charts below.
   // Where: rates by product, FINs, aircraft, stations. Cost: what it is made of, every NC. The bands are today's cards, the rate charts, and charts
-  // rebuilt on the real NCs (keys V*). Placeholders until the 2025 figures come, marked on the page: 2025 = this year's forecast,
-  // target = 2025 - 25 %, budget = forecast - 25 %.
+  // rebuilt on the real NCs (keys V*). 2025 (D.y25): the 2025 extract through the pipeline's rules, the parser and the CNQ model, summed
+  // per month, scope, phase, line and product, and the 2025 deliveries per product. Target = 2025 - 25 %, budget = 2025 cost - 25 %.
+  // Without 2025 for the filter (data-source filter, no 2025 NC), the old placeholders come back, marked on the page.
   var V2 = PAGE === 'main', V2B = false, V2CUT = 0.75, V2BAND = {};
   var V2L = {
     ov: { top: ['VT', 'VN', 'VB', 'a:lead', 'VX'], fold: ['a:cal'] },
@@ -4921,12 +4927,12 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
   };
   var V2F = { VT: v2Target, VN: v2Trend, VB: v2Budget, VS: v2Score, VX: v2Xmr, VW: v2Waffle, VQ: v2Quarters, VP: v2Prod, VF: v2Fins, VI: v2Icons, VC: v2Comp, VE: v2Each };
   Object.assign(GSTR, {
-    VT: { fr: ['Objectif', 'Chaque ligne face à son objectif', 'NC par MSN produit ; trait : objectif. Objectifs fictifs en attendant 2025 : taux 2026 moins 25 %.', 'production MSN · NC'],
-          en: ['Target', 'Each line against its target', 'NCs per MSN built; tick: target. Placeholder targets until 2025: 2026 rate minus 25%.', 'MSN output · NCs'] },
-    VN: { fr: ['Tendance', 'NC cumulées sur l’année', 'Pointillé : prévision au taux de la période × production prévue ; tirets : objectif de fin d’année.', 'NC · production MSN prévue'],
-          en: ['Trend', 'Cumulative NCs over the year', 'Dotted: forecast at the period rate × planned output; dashed: year-end target.', 'NCs · planned MSN output'] },
-    VB: { fr: ['Coût', 'Coût de non-qualité cumulé', 'Pointillé : prévision ; tirets : budget au prorata.', 'coût CNQ · production MSN prévue'],
-          en: ['Cost', 'Cumulative cost of non-quality', 'Dotted: forecast; dashed: pro-rata budget.', 'CNQ cost · planned MSN output'] },
+    VT: { fr: ['Objectif', 'Chaque ligne face à son objectif', 'NC par MSN produit ; trait : objectif, le taux 2025 (NC par produit livré) moins 25 %.', 'production MSN · NC · livraisons 2025'],
+          en: ['Target', 'Each line against its target', 'NCs per MSN built; tick: target, the 2025 rate (NCs per product delivered) minus 25%.', 'MSN output · NCs · 2025 deliveries'] },
+    VN: { fr: ['Tendance', 'NC cumulées sur l’année', 'Pointillé : prévision au taux de la période × production prévue ; tirets : objectif de fin d’année, 2025 moins 25 %.', 'NC · production MSN prévue · NC 2025'],
+          en: ['Trend', 'Cumulative NCs over the year', 'Dotted: forecast at the period rate × planned output; dashed: year-end target, 2025 minus 25%.', 'NCs · planned MSN output · 2025 NCs'] },
+    VB: { fr: ['Coût', 'Coût de non-qualité cumulé', 'Pointillé : prévision ; tirets : budget au prorata, coût 2025 moins 25 %.', 'coût CNQ · production MSN prévue · coût 2025'],
+          en: ['Cost', 'Cumulative cost of non-quality', 'Dotted: forecast; dashed: pro-rata budget, 2025 cost minus 25%.', 'CNQ cost · planned MSN output · 2025 cost'] },
     VS: { fr: ['Volumes et taux', 'NC, défauts et coût : le volume, puis par MSN', 'Chaque ligne : le volume mois par mois, puis le même rapporté au nombre de MSN produits.', 'NC · défauts · coût · production MSN'],
           en: ['Volumes and rates', 'NCs, defects and cost: the volume, then per MSN', 'Each row: the volume month by month, then the same against the number of MSN built.', 'NCs · defects · cost · MSN output'] },
     VX: { fr: ['Maîtrise statistique', 'NC par semaine, avec leurs limites', 'Limites calculées sur la variation habituelle d’une semaine à l’autre. Un point dehors signale un vrai changement.', 'NC par semaine'],
@@ -5037,6 +5043,24 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
     var fc = M.fc.map(function (m) { var p = v2Plan(m); return { m: m, v: pa && p != null ? va / pa * p : m3, f: true }; });
     return { act: act, fc: fc, tot: sumA(act.map(function (x) { return x.v; })), ftot: sumA(fc.map(function (x) { return x.v; })) };
   }
+  // 2025 under the same filters (plant switch, phase, line); null when there is no 2025 block or the data-source filter is on
+  // (the 2025 extract is not split by manual list). The 2025 extract holds no customer return.
+  function y25Sel() {
+    var Y = D.y25; if (!Y || !Y.rows || GF.src !== 'all') return null;
+    var c = {}; Y.cols.forEach(function (k, i) { c[k] = i; });
+    return Y.rows.filter(function (r) { return (r[c.scope] === 'serie' || (!GF.fto2 && r[c.scope] === 'client')) && (!GF.phase || r[c.phase] === GF.phase) && (!GF.line || r[c.line] === GF.line); })
+      .map(function (r) { return { m: r[c.month], line: r[c.line], p: r[c.product], nc: r[c.nc], def: G.minor ? r[c.def] : r[c.defMajor], cost: r[c.cost] }; });
+  }
+  // a 2025 sum by month of the year ('01'..'12'), and its running total over the months shown (actual + forecast, 'YYYY-MM')
+  function y25Cum(Y, f, months) { var by = {}, c = 0; Y.forEach(function (x) { var k = x.m.slice(5, 7); by[k] = (by[k] || 0) + f(x); }); return [0].concat(months.map(function (m) { c += by[m.slice(5, 7)] || 0; return c; })); }
+  // 2025 NCs per product delivered, per line, on the products of the 2025 deliveries (Livraisons 2025) mapped as the 2026 production plan
+  function y25Lines() {
+    var Y = y25Sel(), L = D.y25 && D.y25.prod, E = pSrc(); if (!Y || !L || !PD || E !== D.eqmsn) return null;
+    var out = {}, has = function (p) { return L[p] && sumA(L[p]) > 0 && PD.prods.indexOf(p) >= 0; };
+    PD.prods.forEach(function (p) { if (!has(p)) return; var l = PD.line[p] || '—', a = out[l] || (out[l] = { nc: 0, eq: 0 }); a.eq += sumA(L[p]); });
+    Y.forEach(function (x) { var p = E.map[String(x.p || '').toUpperCase()]; if (p && has(p) && out[PD.line[p] || '—']) out[PD.line[p] || '—'].nc += x.nc; });
+    return out;
+  }
   // month label that fits a slot of w px: 'janv', then 'J', then every other month
   function v2Mo(m, w, i) { var t = monthName(m); return w >= 30 ? t.slice(0, 4) : w >= 12 ? t.charAt(0).toUpperCase() : i % 2 ? '' : t.charAt(0).toUpperCase(); }
   function v2Up(s2) { return ' style="fill:var(--up)"' + (s2 || ''); }
@@ -5084,32 +5108,44 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
     var rows = lineOrder(Object.keys(by)).map(function (l) { return by[l]; }).filter(function (a) { return a.eq >= 0.5; });
     if (!rows.length) { pEmpty(k); return; }
     if (rows.length > 1) rows.unshift({ l: S('allLines'), nc: sumA(rows.map(function (r) { return r.nc; })), eq: sumA(rows.map(function (r) { return r.eq; })), all: true });
-    rows.forEach(function (r) { r.v = r.nc / r.eq; r.t = r.v * V2CUT; });   // placeholder: 2025 not in the data, taken = 2026
+    var B = y25Lines(), bAll = { nc: 0, eq: 0 }, anyPh = false;
+    rows.forEach(function (r) { if (!r.all && B && B[r.l]) { bAll.nc += B[r.l].nc; bAll.eq += B[r.l].eq; } });
+    rows.forEach(function (r) {
+      var b = B && (r.all ? bAll : B[r.l]); r.v = r.nc / r.eq;
+      if (b && b.eq >= 0.5 && b.nc > 0) { r.b = b.nc / b.eq; r.t = r.b * V2CUT; } else { r.t = r.v * V2CUT; r.ph = true; anyPh = true; }   // no 2025 for that line: placeholder, 2026 - 25 %
+    });
+    var tipT = function (r) { return [gx('perEq', { v: f2(r.v) }), (r.ph ? S('v2TgtPh') : S('v2Tgt')) + ' : ' + f2(r.t), r.b != null ? S('v2Rate25', { v: f2(r.b) }) : S('v2Ph'), gx('ncEq', { n: num(r.nc), e: f1(r.eq) })]; };
+    var tick = function (r) { return '" stroke="var(--ink)" stroke-width="2"' + (r.ph ? ' stroke-dasharray="2 2"' : '') + '/>'; };
     var W0 = gWd(k, 200), stack = W0 < 440, narrow = W0 < 640, lab = stack ? 0 : narrow ? 104 : 112, mr = stack ? 0 : narrow ? 104 : 214, rh = stack ? 44 : 36, H = rows.length * rh + 6, pw = W0 - lab - mr, g = '';
     rows.forEach(function (r, i) {
-      var y = i * rh + (stack ? 22 : 8), mx = Math.max(r.v, r.t) * 1.18 || 1, X = function (v) { return lab + v / mx * pw; }, gap = r.v / r.t - 1;
+      var y = i * rh + (stack ? 22 : 8), mx = Math.max(r.v, r.t, r.b || 0) * 1.18 || 1, X = function (v) { return lab + v / mx * pw; }, gap = r.t ? r.v / r.t - 1 : null;   // no gap against a zero target
+      var gt = gap == null ? '—' : (gap > 0 ? '+' : '') + pct0(gap * 100), gs = ' style="fill:' + (gap == null ? 'var(--muted)' : gap > 0 ? 'var(--up)' : 'var(--down)') + '"';
+      var b25 = r.b != null ? '<circle cx="' + r1(X(r.b)) + '" cy="' + (y + 6) + '" r="3.5" fill="var(--surface)" stroke="var(--muted)" stroke-width="1.6"' + tip(r.l, tipT(r)) + '/>' : '';   // the 2025 rate
       if (stack) {   // narrow card: line name and figures on a row, the bar under them
-        g += tx(0, y - 6, r.l, r.all ? 'ink b' : 'ink') + tx(W0 - 46, y - 6, f2(r.v), 'ink b', 'end') + tx(W0 - 2, y - 6, (gap > 0 ? '+' : '') + pct0(gap * 100), 'b', 'end', ' style="fill:' + (gap > 0 ? 'var(--up)' : 'var(--down)') + '"');
-        g += '<rect x="0" y="' + (y + 2) + '" width="' + r1(pw) + '" height="8" rx="4" fill="var(--track)"/><rect x="0" y="' + (y + 2) + '" width="' + r1(Math.max(2, X(r.v))) + '" height="8" rx="4" fill="' + (r.all ? 'var(--ink)' : 'var(--ink-2)') + '"' + tip(r.l, [gx('perEq', { v: f2(r.v) }), S('v2Tgt') + ' : ' + f2(r.t), gx('ncEq', { n: num(r.nc), e: f1(r.eq) })]) + '/>' +
-          '<line x1="' + r1(X(r.t)) + '" x2="' + r1(X(r.t)) + '" y1="' + (y - 3) + '" y2="' + (y + 15) + '" stroke="var(--ink)" stroke-width="2"/>';
+        g += tx(0, y - 6, r.l, r.all ? 'ink b' : 'ink') + tx(W0 - 10 - gt.length * 7.5, y - 6, f2(r.v), 'ink b', 'end') + tx(W0 - 2, y - 6, gt, 'b', 'end', gs);
+        g += '<rect x="0" y="' + (y + 2) + '" width="' + r1(pw) + '" height="8" rx="4" fill="var(--track)"/><rect x="0" y="' + (y + 2) + '" width="' + r1(Math.max(2, X(r.v))) + '" height="8" rx="4" fill="' + (r.all ? 'var(--ink)' : 'var(--ink-2)') + '"' + tip(r.l, tipT(r)) + '/>' + b25 +
+          '<line x1="' + r1(X(r.t)) + '" x2="' + r1(X(r.t)) + '" y1="' + (y - 3) + '" y2="' + (y + 15) + tick(r);
         return;
       }
       g += tx(lab - 12, y + 10, r.l, r.all ? 'ink b' : 'ink', 'end');
       g += '<rect x="' + lab + '" y="' + (y + 2) + '" width="' + r1(pw) + '" height="8" rx="4" fill="var(--track)"/>';
-      g += '<rect x="' + lab + '" y="' + (y + 2) + '" width="' + r1(Math.max(2, X(r.v) - lab)) + '" height="8" rx="4" fill="' + (r.all ? 'var(--ink)' : 'var(--ink-2)') + '"' + tip(r.l, [gx('perEq', { v: f2(r.v) }), S('v2Tgt') + ' : ' + f2(r.t), gx('ncEq', { n: num(r.nc), e: f1(r.eq) })]) + '/>';
-      g += '<line x1="' + r1(X(r.t)) + '" x2="' + r1(X(r.t)) + '" y1="' + (y - 3) + '" y2="' + (y + 15) + '" stroke="var(--ink)" stroke-width="2"/>';
-      g += tx(lab + pw + 12, y + 10, f2(r.v), 'ink b') + (narrow ? '' : tx(lab + pw + 58, y + 10, S('v2Tgt').toLowerCase() + ' ' + f2(r.t), 'mu')) + tx(W0 - 2, y + 10, (gap > 0 ? '+' : '') + pct0(gap * 100), 'b', 'end', ' style="fill:' + (gap > 0 ? 'var(--up)' : 'var(--down)') + '"');
+      g += '<rect x="' + lab + '" y="' + (y + 2) + '" width="' + r1(Math.max(2, X(r.v) - lab)) + '" height="8" rx="4" fill="' + (r.all ? 'var(--ink)' : 'var(--ink-2)') + '"' + tip(r.l, tipT(r)) + '/>';
+      g += b25 + '<line x1="' + r1(X(r.t)) + '" x2="' + r1(X(r.t)) + '" y1="' + (y - 3) + '" y2="' + (y + 15) + tick(r);
+      g += tx(lab + pw + 12, y + 10, f2(r.v), 'ink b') + (narrow ? '' : tx(lab + pw + 58, y + 10, S('v2Tgt').toLowerCase() + ' ' + f2(r.t), 'mu')) + tx(W0 - 2, y + 10, gt, 'b', 'end', gs);
     });
-    gSet(k, svg(W0, H, g, gT(k)), sw('var(--ink-2)', S('nKR')) + '<span><i class="ln" style="width:2px;height:12px;background:var(--ink)"></i>' + esc(S('v2TgtPh')) + '</span>');
+    gSet(k, svg(W0, H, g, gT(k)), sw('var(--ink-2)', S('nKR')) + (rows.some(function (r) { return !r.ph; }) ? '<span><i class="ln" style="width:2px;height:12px;background:var(--ink)"></i>' + esc(S('v2TgtR')) + '</span>' : '') +
+      (anyPh ? '<span><i class="ln" style="width:0;height:12px;border-left:2px dotted var(--ink)"></i>' + esc(S('v2TgtPh')) + '</span>' : '') +
+      (rows.some(function (r) { return r.b != null; }) ? '<span><i class="sw" style="border-radius:50%;background:var(--surface);border:1.6px solid var(--muted)"></i>' + esc(S('v2Rate25s')) + '</span>' : ''));
   }
 
   var V2W = { 7: 0.6, 8: 0.6 };   // weight of a month in the monthly target: July and August are 60 % of a normal month (holidays)
   function v2Trend(k) {
     var S2 = v2Series(function () { return 1; }), all = S2.act.concat(S2.fc); if (!S2.act.length) { pEmpty(k); return; }
-    var year = S2.tot + S2.ftot, y25 = year, tgt = y25 * V2CUT;   // placeholders until the 2025 total comes: 2025 = this year, target = 2025 - 25 %
+    var R5 = y25Sel(), n25 = R5 ? sumA(R5.map(function (x) { return x.nc; })) : 0, real = n25 > 0;   // without 2025 for the filter: placeholder 2025 = this year
+    var year = S2.tot + S2.ftot, y25 = real ? n25 : year, tgt = y25 * V2CUT, c25 = real ? y25Cum(R5, function (x) { return x.nc; }, all.map(function (x) { return x.m; })) : null;
     var wsum = 0; for (var mm = 1; mm <= 12; mm++) wsum += V2W[mm] || 1;
     var mTgt = function (m) { return tgt * (V2W[+m.slice(5, 7)] || 1) / wsum; };
-    v2Stats(k, [[num(S2.tot), S('v2StNow')], [num(Math.round(year)), S('v2StFc')], [num(Math.round(tgt)), S('v2StTgt'), true]]);
+    v2Stats(k, [[num(S2.tot), S('v2StNow')], [num(Math.round(year)), S('v2StFc')], [num(Math.round(tgt)), S(real ? 'v2StTgtR' : 'v2StTgt'), !real]]);
     var cum = [0], ct = [0], c = 0, t = 0;
     all.forEach(function (x) { c += x.v; cum.push(c); t += mTgt(x.m); ct.push(t); });
     var W0 = gWd(k, 300), cp = W0 < 560, ml = cp ? 34 : 40, lb = cp ? 44 : 70, gap = cp ? 14 : 34, mr = cp ? 54 : 118, mt = 22, mb = 26, H = cp ? 260 : 300, ph = H - mt - mb, x1 = ml + lb + gap, pw = W0 - x1 - mr, n = all.length, na = S2.act.length;
@@ -5118,44 +5154,53 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
     for (var tk = 0; tk <= nt.top + 1e-9; tk += nt.step) g += '<line x1="' + ml + '" x2="' + r1(x1 + pw) + '" y1="' + r1(Y(tk)) + '" y2="' + r1(Y(tk)) + '" stroke="var(--grid)"/>' + tx(ml - 6, Y(tk) + 4, num(tk), 'mu', 'end');
     // 2025: one bar, same scale as the cumulative curve
     var bx = ml + (cp ? 8 : 14), bwd = lb - (cp ? 16 : 28);
-    g += '<rect x="' + bx + '" y="' + r1(Y(y25)) + '" width="' + bwd + '" height="' + r1(mt + ph - Y(y25)) + '" rx="2" fill="' + tint('--ink-2', 18) + '" stroke="var(--ink-2)" stroke-opacity=".5" stroke-dasharray="3 3"' + tip('2025', [gx('ncCount', { n: num(Math.round(y25)) }), S('v2Ph')]) + '/>' +
+    g += '<rect x="' + bx + '" y="' + r1(Y(y25)) + '" width="' + bwd + '" height="' + r1(mt + ph - Y(y25)) + '" rx="2" fill="' + tint('--ink-2', real ? 30 : 18) + '"' + (real ? '' : ' stroke="var(--ink-2)" stroke-opacity=".5" stroke-dasharray="3 3"') + tip('2025', [gx('ncCount', { n: num(Math.round(y25)) }), S(real ? 'v2Y25b' : 'v2Ph')]) + '/>' +
       tx(bx + bwd / 2, Y(y25) - 6, num(Math.round(y25)), 'ink b', 'middle') + tx(bx + bwd / 2, H - 6, '2025', 'ink', 'middle');
     all.forEach(function (x, i) { g += tx(X(i + 0.5), H - 6, v2Mo(x.m, pw / n, i), 'mu', 'middle'); });
     // actual, then the forecast
     g += '<path d="M' + r1(X(0)) + ',' + r1(Y(0)) + 'L' + cum.slice(0, na + 1).map(function (v, i) { return r1(X(i)) + ',' + r1(Y(v)); }).join('L') + 'L' + r1(X(na)) + ',' + r1(Y(0)) + 'Z" fill="' + tint('--s1', 10) + '"/>';
     g += '<path d="M' + cum.slice(0, na + 1).map(function (v, i) { return r1(X(i)) + ',' + r1(Y(v)); }).join('L') + '" fill="none" stroke="var(--s1)" stroke-width="2"/>';
     if (n > na) g += '<path d="M' + cum.slice(na).map(function (v, i) { return r1(X(na + i)) + ',' + r1(Y(v)); }).join('L') + '" fill="none" stroke="var(--s1)" stroke-width="2" stroke-dasharray="1 5" stroke-linecap="round"/>';
+    // 2025 at the same date, month by month
+    if (c25) g += '<path d="M' + c25.map(function (v, i) { return r1(X(i)) + ',' + r1(Y(v)); }).join('L') + '" fill="none" stroke="' + tint('--ink-2', 55) + '" stroke-width="1.5"/>';
     // year-end target, spread month by month (drawn over the shaded area)
     g += '<path d="M' + ct.map(function (v, i) { return r1(X(i)) + ',' + r1(Y(v)); }).join('L') + '" fill="none" stroke="var(--ink)" stroke-width="1.3" stroke-dasharray="5 4"/>';
     S2.act.forEach(function (x, i) { var over = x.v > mTgt(x.m);
       g += '<circle cx="' + r1(X(i + 1)) + '" cy="' + r1(Y(cum[i + 1])) + '" r="4.5" fill="' + (over ? 'var(--up)' : 'var(--down)') + '" stroke="var(--surface)" stroke-width="1.8"' +
-        tip(monthName(x.m) + ' ' + x.m.slice(0, 4), [gx('ncCount', { n: num(x.v) }) + ' · ' + S('v2MonTgt', { v: num(Math.round(mTgt(x.m))) }), S('v2Cum', { v: num(cum[i + 1]) })]) + '/>'; });
+        tip(monthName(x.m) + ' ' + x.m.slice(0, 4), [gx('ncCount', { n: num(x.v) }) + ' · ' + S('v2MonTgt', { v: num(Math.round(mTgt(x.m))) }), S('v2Cum', { v: num(cum[i + 1]) })].concat(c25 ? [S('v2Y25at', { v: num(c25[i + 1]) })] : [])) + '/>'; });
     if (n > na) g += '<circle cx="' + r1(X(n)) + '" cy="' + r1(Y(year)) + '" r="4" fill="var(--surface)" stroke="var(--s1)" stroke-width="2"' + tip(gx('fcLeg'), [num(Math.round(year))]) + '/>';
     var ly = spread([Y(year) + 4, Y(tgt) + 4], 16, mt + 6, mt + ph);
     g += tx(X(n) + 8, ly[0], num(Math.round(year)) + (cp ? '' : ' ' + S('v2Fc')), 'ink b') + tx(X(n) + 8, ly[1], num(Math.round(tgt)) + (cp ? '' : ' ' + S('v2TgtShort')), 'ink');
     gSet(k, svg(W0, H, g, gT(k)), '<span><i class="sw" style="background:var(--down);border-radius:50%"></i>' + esc(S('v2Under')) + '</span><span><i class="sw" style="background:var(--up);border-radius:50%"></i>' + esc(S('v2Over')) + '</span>' +
-      swl('var(--s1)', S('v2CumLeg')) + '<span><i class="dash" style="border-top:2px dotted var(--s1)"></i>' + esc(gx('fcLeg')) + '</span>' + swl('var(--ink)', S('v2TgtCum'), true) +
-      '<span><i class="sw" style="background:' + tint('--ink-2', 18) + ';border:1px dashed var(--ink-2)"></i>' + esc(S('v2Ph25')) + '</span><span class="mu">' + esc(S('v2Summer')) + '</span>');
+      swl('var(--s1)', S('v2CumLeg')) + '<span><i class="dash" style="border-top:2px dotted var(--s1)"></i>' + esc(gx('fcLeg')) + '</span>' + swl('var(--ink)', S(real ? 'v2TgtCumR' : 'v2TgtCum'), true) +
+      (real ? '<span><i class="sw" style="background:' + tint('--ink-2', 30) + '"></i>' + esc(S('v2Y25b')) + '</span>' + swl(tint('--ink-2', 55), S('v2Y25c'))
+        : '<span><i class="sw" style="background:' + tint('--ink-2', 18) + ';border:1px dashed var(--ink-2)"></i>' + esc(S('v2Ph25')) + '</span>') +
+      (real && !GF.fto2 ? '<span class="mu">' + esc(S('v2NoCli25')) + '</span>' : '') + '<span class="mu">' + esc(S('v2Summer')) + '</span>');
   }
 
   function v2Budget(k) {
     var S2 = v2Series(function (n) { return n[12]; }); if (!S2.act.length) { pEmpty(k); return; }
-    var all = S2.act.concat(S2.fc), year = S2.tot + S2.ftot, bud = year * V2CUT, cum = [0], c = 0;   // placeholder budget: forecast - 25 %
+    var R5 = y25Sel(), b25 = R5 ? sumA(R5.map(function (x) { return x.cost; })) : 0, real = b25 > 0;   // without 2025 for the filter: placeholder budget = forecast - 25 %
+    var all = S2.act.concat(S2.fc), year = S2.tot + S2.ftot, bud = (real ? b25 : year) * V2CUT, cum = [0], c = 0;
+    var c25 = real ? y25Cum(R5, function (x) { return x.cost; }, all.map(function (x) { return x.m; })) : null;
     all.forEach(function (x) { c += x.v; cum.push(c); });
-    v2Stats(k, [[kE(S2.tot), S('v2StCost')], [kE(year), S('v2StFc')], [kE(bud), S('v2StBud'), true]]);
-    var na = S2.act.length, n = all.length, W0 = gWd(k, 300), cp = W0 < 560, ml = cp ? 46 : 52, mr = cp ? 58 : 104, mt = 14, mb = 26, H = cp ? 250 : 280, pw = W0 - ml - mr, ph = H - mt - mb, nt = pNice(Math.max(year, bud) * 1.06), g = '';
+    v2Stats(k, [[kE(S2.tot), S('v2StCost')], [kE(year), S('v2StFc')], [kE(bud), S(real ? 'v2StBudR' : 'v2StBud'), !real]]);
+    var na = S2.act.length, n = all.length, W0 = gWd(k, 300), cp = W0 < 560, ml = cp ? 46 : 52, mr = cp ? 58 : 104, mt = 14, mb = 26, H = cp ? 250 : 280, pw = W0 - ml - mr, ph = H - mt - mb, nt = pNice(Math.max(year, bud, c25 ? c25[c25.length - 1] : 0) * 1.06), g = '';
     function X(i) { return ml + i / n * pw; } function Y(v) { return mt + ph - v / nt.top * ph; }
     g += pGridY(ml, pw, Y, nt, function (v) { return kE(v); });
     all.forEach(function (x, i) { g += tx(X(i + 0.5), H - 8, v2Mo(x.m, pw / n, i), 'mu', 'middle'); });
     var act = cum.slice(0, na + 1).map(function (v, i) { return r1(X(i)) + ',' + r1(Y(v)); });
+    g += '<path d="M' + r1(X(0)) + ',' + r1(Y(0)) + 'L' + act.join('L') + 'L' + r1(X(na)) + ',' + r1(Y(0)) + 'Z" fill="' + tint('--s1', 10) + '"/>';
     g += '<line x1="' + r1(X(0)) + '" y1="' + r1(Y(0)) + '" x2="' + r1(X(n)) + '" y2="' + r1(Y(bud)) + '" stroke="var(--ink-2)" stroke-width="1.4" stroke-dasharray="5 4"/>';
-    g += '<path d="M' + r1(X(0)) + ',' + r1(Y(0)) + 'L' + act.join('L') + 'L' + r1(X(na)) + ',' + r1(Y(0)) + 'Z" fill="' + tint('--s1', 10) + '"/><path d="M' + act.join('L') + '" fill="none" stroke="var(--s1)" stroke-width="1.8"/>';
+    if (c25) g += '<path d="M' + c25.map(function (v, i) { return r1(X(i)) + ',' + r1(Y(v)); }).join('L') + '" fill="none" stroke="' + tint('--ink-2', 55) + '" stroke-width="1.5"' + tip('2025', [kE(c25[c25.length - 1])]) + '/>';
+    g += '<path d="M' + act.join('L') + '" fill="none" stroke="var(--s1)" stroke-width="1.8"/>';
     if (n > na) g += '<path d="M' + cum.slice(na).map(function (v, i) { return r1(X(na + i)) + ',' + r1(Y(v)); }).join('L') + '" fill="none" stroke="var(--s1)" stroke-width="2.2" stroke-dasharray="1 5" stroke-linecap="round"/>';
     g += '<circle cx="' + r1(X(na)) + '" cy="' + r1(Y(cum[na])) + '" r="4.5" fill="var(--s1)" stroke="var(--surface)" stroke-width="2"' + tip(gx('cum'), [eur(cum[na])]) + '/>';
     g += '<circle cx="' + r1(X(n)) + '" cy="' + r1(Y(year)) + '" r="3.5" fill="var(--surface)" stroke="var(--s1)" stroke-width="2"' + tip(gx('proj'), [eur(year)]) + '/>';
     var ly = spread([Y(year) + 4, Y(bud) + 4], 16, mt + 6, mt + ph);
-    g += tx(X(n) + 8, ly[0], kE(year), 'ink b') + tx(X(n) + 8, ly[1], kE(bud) + (cp ? '' : ' ' + S('v2Ph')), 'mu') + tx(X(na) - 8, Y(cum[na]) - 10, kE(cum[na]), 'ink b', 'end');
-    gSet(k, svg(W0, H, g, gT(k)), swl('var(--s1)', gx('cum')) + '<span><i class="dash" style="border-top:2px dotted var(--s1)"></i>' + esc(gx('fcLeg')) + '</span>' + swl('var(--ink-2)', S('v2BudPh'), true));
+    g += tx(X(n) + 8, ly[0], kE(year), 'ink b') + tx(X(n) + 8, ly[1], kE(bud) + (cp ? '' : ' ' + S(real ? 'v2BudR2' : 'v2Ph')), 'mu') + tx(X(na) - 8, Y(cum[na]) - 10, kE(cum[na]), 'ink b', 'end');
+    gSet(k, svg(W0, H, g, gT(k)), swl('var(--s1)', gx('cum')) + '<span><i class="dash" style="border-top:2px dotted var(--s1)"></i>' + esc(gx('fcLeg')) + '</span>' + swl('var(--ink-2)', S(real ? 'v2BudR' : 'v2BudPh'), true) +
+      (c25 ? swl(tint('--ink-2', 55), S('v2Y25c')) : '') + (real && !GF.fto2 ? '<span class="mu">' + esc(S('v2NoCli25')) + '</span>' : ''));
   }
 
   function v2Score(k) {

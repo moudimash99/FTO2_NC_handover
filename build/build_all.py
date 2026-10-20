@@ -66,16 +66,55 @@ def load_exports():
 clean_long_text, week_of = core.clean_long_text, core.week_of
 
 
+def load_orders():
+    """Operations of the rework orders (SAP S03, plant FTO2): 06_input_data/wo_s03_operations_fto2_*.csv.gz. Today one month of
+    operations (confirmed Sept 2026), extracted from main's work-order upload. None when there is no file."""
+    files = sorted(glob.glob(os.path.join(ROOT, "06_input_data", "wo_s03_operations_fto2_*.csv.gz")))
+    if not files:
+        return None
+    frames = [pd.read_csv(f, dtype=str, keep_default_na=False, na_values=[""]) for f in files]
+    REPORT["order_inputs"] = {os.path.basename(f): len(t) for f, t in zip(files, frames)}
+    return pd.concat(frames, ignore_index=True)
+
+
+def year_2025(x):
+    """2025 for the year comparisons: the raw Skywise NC extract of 2025 (06_input_data/nc_2025_skywise_fto2.csv.gz) through the
+    pipeline's rules, the parser and the CNQ model, summed per month, scope, phase, line and product; and the 2025 deliveries per
+    product (06_input_data/Livraisons_MSN_2025.csv, the Livraisons 2025 sheet). None when the extract is missing."""
+    path = os.path.join(ROOT, "06_input_data", "nc_2025_skywise_fto2.csv.gz")
+    if not os.path.exists(path):
+        return None
+    raw = pd.read_csv(path, dtype=str, keep_default_na=False, na_values=[""])
+    rows, info, _ = core.year_baseline(raw, core.station_pairs([x]), os.path.join(ROOT, "04_reference"), 2025)
+    out = {"cols": ["month", "scope", "phase", "line", "product", "nc", "def", "defMajor", "cost", "cost2", "cost1"], "rows": rows,
+           "from": info["created_from"], "to": info["created_to"], "prod": None, "msn": None}
+    lv = os.path.join(ROOT, "06_input_data", "Livraisons_MSN_2025.csv")
+    if os.path.exists(lv):
+        t = pd.read_csv(lv, encoding="utf-8")
+        months = [c for c in t.columns if c.startswith("2025-")]
+        out["prod"] = {k: [float(v) for v in vals] for k, vals in zip(t.produit_eqmsn, t[months].values)}
+        out["months"] = months
+        ln = pd.read_csv(os.path.join(ROOT, "06_input_data", "Livraisons_MSN_2025_lignes.csv"), encoding="utf-8")
+        out["msn"] = dict(zip(ln.ligne, ln.msn_entiers_livres_2025.astype(int)))
+    s = [r for r in rows if r[1] == "serie" and r[2] == "SERIE"]
+    REPORT["y2025"] = dict(info, serie_SERIE={"ncs": sum(r[5] for r in s), "defects": sum(r[6] for r in s), "level3": round(sum(r[8] for r in s), 2)},
+                           deliveries=sum(sum(v) for v in (out["prod"] or {}).values()))
+    return out
+
+
 # ============================================================ main
 def main():
     x = load_exports()
     say("exports:", REPORT["inputs"], "->", len(x), "NCs")
+    ops = load_orders()
     lab = pd.read_csv(os.path.join(ROOT, "04_reference", "llm_labels_longtext.csv"), dtype={"notification_number": str}, encoding="utf-8-sig")
-    p = core.prepare(x, lab, os.path.join(ROOT, "04_reference"))   # parser, labels, CNQ, scope: build/fto2_core.py
+    y25 = year_2025(x.copy())
+    say("2025:", REPORT.get("y2025"))
+    p = core.prepare(x, lab, os.path.join(ROOT, "04_reference"), ops)   # parser, labels, CNQ, rework orders, scope: build/fto2_core.py
     d, nc_ref, lt, nc_in = p["d"], p["nc"], p["lt"], p["nc_in"]
     nl_, dl_ = p["nc_llm"], p["def_llm"]
     CODE_DESC.update(p["codes"])
-    REPORT.update({k: p["report"][k] for k in ("labels", "subcodes", "unknown_cnq_classes")})
+    REPORT.update({k: p["report"][k] for k in ("labels", "subcodes", "unknown_cnq_classes", "rework_orders")})
     say("parser v4.8:", p["report"]["parser"]["defect_lines"], "defect lines in", p["report"]["parser"]["ncs"], "NCs")
     say("labels:", REPORT["labels"])
     d.to_csv(os.path.join(OUT, "fto2_defects.csv"), index=False, encoding="utf-8-sig")
@@ -103,7 +142,7 @@ def main():
     # ======================================================== 4a. CNQ package: same data, same totals
     refresh_cnq_package(nc_in, d)
     # ======================================================== 4b. pages and workbooks
-    build_dashboard(d, nc_ref, lt)
+    build_dashboard(d, nc_ref, lt, y25)
     build_review(d, lt)
     build_detail(d, nc_ref, x)
     json.dump(REPORT, open(os.path.join(ROOT, "build", "build_report.json"), "w"), indent=2, ensure_ascii=False, default=str)
@@ -241,7 +280,7 @@ def slate_pack(data, template="dashboard.html", page="main"):
     say("slate pack:", {f: os.path.getsize(os.path.join(out, f)) // 1024 for f in os.listdir(out)}, "KB")
 
 
-def build_dashboard(d, nc, lt):
+def build_dashboard(d, nc, lt, y25=None):
     rca = lambda t: L.RCA_NAMES.get(t, t)
     ncd = nc.set_index("notification_number")
     defs = []
@@ -278,6 +317,7 @@ def build_dashboard(d, nc, lt):
     sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))   # -I leaves the script folder off the path
     import dummy_data
     data["eqmsn"] = eqmsn(nc)
+    data["y25"] = y25
     local = dict(data, dummy=dummy_data.make(ROOT))
     # the main page goes through the two tables, as in Skywise: the JS (fto2FromTables) rebuilds the page's data from them
     nc_t, def_t = core.tables(d, nc, lt, REPORT["created_to"])
@@ -303,12 +343,13 @@ def colmajor(df):
 
 
 def reference_block(data):
-    """What does not come from the two tables: code sheet, MFT actions, cost parameters, production plan, root-cause tree.
+    """What does not come from the two tables: code sheet, MFT actions, cost parameters, production plan, root-cause tree, 2025 (NCs
+    summed per month, scope, phase, line and product; deliveries per product).
     Written into the page (and into the Slate JS); the examples, quantities and product lines are rebuilt from the tables."""
     cq = {k: v for k, v in data["cnqp"].items() if k != "qty"}
     eq = {k: v for k, v in data["eqmsn"].items() if k != "line"} if data.get("eqmsn") else None
     return {"from": data["meta"]["from"], "codes": data["codes"], "actions": data["actions"], "cnqp": cq, "eqmsn": eq,
-            "rca": [dict(o, ex=[]) for o in data["rca"]]}
+            "rca": [dict(o, ex=[]) for o in data["rca"]], "y25": data.get("y25")}
 
 
 def eqmsn(nc):
@@ -358,7 +399,7 @@ def cnq_explain(d):
                   "noDefect": P.MIN_HANDS_ON_NO_DEFECT, "writeGlobal": P.MIN_WRITE_NC_GLOBAL, "workGlobal": P.MIN_WORK_GLOBAL,
                   "defDefault": P.MIN_DEFAULT_DEFECT, "crExtra": P.CUSTOMER_RETURN_EXTRA, "version": P.MODEL_VERSION,
                   "connNext": P.MIN_CONNECTION_NEXT, "connCls": list(P.CONNECTION_CLASSES), "intTypes": list(P.INTERNAL_TYPES),
-                  "intFactor": P.INTERNAL_WORK_FACTOR, "noAlert": list(P.NO_ALERT_TYPES)},
+                  "intFactor": P.INTERNAL_WORK_FACTOR, "noAlert": list(P.NO_ALERT_TYPES), "orderTime": bool(getattr(P, "USE_ORDER_TIME", False))},
             "rules": {k: list(v[:8]) + [kind(v[8])] for k, v in P.RULES.items()},
             "cls": {k: [v[0], v[1], v[2], kind(v[4])] for k, v in P.DEFECT_TIMES.items()},
             "airbus": P.AIRBUS_STANDARD,

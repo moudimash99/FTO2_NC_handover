@@ -44,6 +44,9 @@ SELECT
     min_recheck,
     hours_engineering,
     final_inspection,
-    long_text
+    long_text,
+    work_source,
+    order_state,
+    rework_orders
 FROM "foundry_sync"."fto2_dash_nc"
 ORDER BY created, nc

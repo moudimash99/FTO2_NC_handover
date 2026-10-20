@@ -6,6 +6,23 @@
   "nc_rows": 1127,
   "created_from": "2025-12-15",
   "created_to": "2026-09-28",
+  "order_inputs": {
+    "wo_s03_operations_fto2_sep2026.csv.gz": 2743
+  },
+  "y2025": {
+    "ncs": 750,
+    "serie": 750,
+    "client": 0,
+    "level3_aec": 174714.72,
+    "created_from": "2025-01-03",
+    "created_to": "2025-12-23",
+    "serie_SERIE": {
+      "ncs": 732,
+      "defects": 2931,
+      "level3": 170433.1
+    },
+    "deliveries": 343.0
+  },
   "labels": {
     "ok": 3098
   },
@@ -14,16 +31,26 @@
     "parent_or_none": 142
   },
   "unknown_cnq_classes": [],
+  "rework_orders": {
+    "ncs_with_link": 800,
+    "operations": 2743,
+    "state": {
+      "not_found": 699,
+      "used": 71,
+      "open": 17,
+      "no_time": 13
+    }
+  },
   "cnq": {
     "classification": "root cause (long text)",
     "nc_on_aec": 856,
     "level1": 403488.79,
     "level2": 143298.09,
-    "level3": 175663.09,
-    "cable_allocated": 44336.23,
-    "cable_share": 0.2524,
-    "level3_parser": 177109.42,
-    "cable_share_parser": 0.2501
+    "level3": 177435.59,
+    "cable_allocated": 45833.47,
+    "cable_share": 0.2583,
+    "level3_parser": 178885.25,
+    "cable_share_parser": 0.2561
   },
   "scope": {
     "FTO2": 786,
@@ -37,13 +64,13 @@
       "ncs": 727,
       "ncs_without_defect_line": 63,
       "defects": 2709,
-      "cnq": 159530.63
+      "cnq": 161373.97
     },
     "client": {
       "ncs": 69,
       "ncs_without_defect_line": 4,
       "defects": 69,
-      "cnq": 12449.95
+      "cnq": 12379.12
     }
   },
   "defects_by_scope": {
@@ -64,7 +91,7 @@
     "nc_no_master_data": 0,
     "level1_airbus_aec": 403488.79,
     "level2_global_aec": 143298.09,
-    "level3_detailed_aec": 175663.09
+    "level3_detailed_aec": 177435.59
   },
   "customer_returns": {
     "ncs": 69,
@@ -90,9 +117,9 @@
     "level1": {
       "ncs": 713,
       "defects": 1463,
-      "js_kb": 1104
+      "js_kb": 1131
     },
-    "level23_js_kb": 540,
+    "level23_js_kb": 557,
     "level4": [
       "FTO2_NC_Dashboard_level2.slate.json",
       "FTO2_NC_Dashboard_level3.slate.json"

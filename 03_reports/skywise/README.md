@@ -14,12 +14,13 @@ template or the build and rebuild.
 
 ## What the dashboard needs
 
-- **Two tables.** `fto2_dash_nc`: one row per NC, 45 columns. `fto2_dash_defects`: one row per defect line, 17 columns.
+- **Two tables.** `fto2_dash_nc`: one row per NC, 48 columns. `fto2_dash_defects`: one row per defect line, 17 columns.
   The list with the meaning of each column is in `level3_datasets/columns.json` (defined in `build/fto2_core.py`,
   `NC_COLUMNS` and `DEF_COLUMNS`). The JavaScript (`fto2FromTables`) rebuilds everything the page shows from them.
 - **Fixed references, written in the JS** (`window.FTO2_REF` at the top of the JS part): official code sheet, MFT
-  actions, CNQ parameters, EqMSN production plan, root-cause tree. To change the production plan or the MFT actions:
-  update the files in `06_input_data` / `04_reference`, rebuild on the laptop, paste the new JS part.
+  actions, CNQ parameters, EqMSN production plan, root-cause tree, and 2025 (the 2025 NCs summed per month, scope,
+  phase, line and product, and the 2025 deliveries per product). To change the production plan, the MFT actions or
+  2025: update the files in `06_input_data` / `04_reference`, rebuild on the laptop, paste the new JS part.
 - **No JavaScript library to import.** The only outside link is the Google Fonts line at the top of the CSS; if Slate
   blocks it, the page uses Georgia and the system font.
 - **The NC selection is the pipeline's.** Level 3 reads the datasets the pipeline notebook already writes
@@ -72,14 +73,19 @@ If it does not work, the message in the green or orange box says why:
 
 1. Upload the folder `level3_datasets/notebook_kit` next to the notebook, as `nc_defect_parser.py` is today. It holds
    the same Python as the laptop build: `fto2_core.py` (the data steps), the parser v4.8, the CNQ model
-   `cnq-2026.10.19`, two reference files.
+   `cnq-2026.10.20`, two reference files.
 2. Upload `notebook_kit/fto2_ai_labels.csv` once as a dataset named **`fto2_ai_labels`** (the stored root-cause labels).
 3. In the workspace's Data panel, add `fto2_dashboard_data`, `fto2_dashboard_data_missing_ids` and `fto2_ai_labels`
    (read), and create **`fto2_dash_nc`** and **`fto2_dash_defects`** (write).
-4. Run the pipeline notebook as today (both RUN_MODE runs), then run `notebook_cell.py` (a new cell at the end, or a
+4. Optional, the rework orders: add the Skywise work-order operations dataset (read) and put its name in
+   `WO_OPERATIONS` at the top of `notebook_cell.py`. The cell reads its S03 operations at plant FTO2; an NC whose rework
+   order is closed and planned is then costed with the order's planned time instead of the model's setup and
+   hands-on. Left empty: the model's times for every NC.
+5. Run the pipeline notebook as today (both RUN_MODE runs), then run `notebook_cell.py` (a new cell at the end, or a
    second notebook in the same workspace).
-5. Expected print, on the data of 28 September 2026: **1,127 NCs, 3,098 defect lines, level-3 CNQ on AEC 175,663.09
-   EUR**.
+6. Expected print, on the data of 28 September 2026: **1,127 NCs, 3,098 defect lines**; level-3 CNQ on AEC
+   **175,663.09 EUR** with `WO_OPERATIONS` empty. With the operations, more NCs use their order and the figure moves
+   (on the laptop, with the September 2026 operations only: 177,435.59 EUR, 71 NCs on their order's time).
 
 ### B. Sync the two datasets to Postgres
 
@@ -92,7 +98,8 @@ Replace the text of `q_fto2_nc` and `q_fto2_def` by `level3_datasets/q_fto2_nc.s
 CSS, HTML and state stay those of level 2.
 
 Expected: the real dashboard, same figures as the laptop build. Default view on the data of 28 September 2026:
-**722 NC, 2 704 défauts, 4,1 défauts par NC, 158,4 k€, 1,50 NC par MSN**.
+**722 NC, 2 704 défauts, 4,1 défauts par NC, 1,50 NC par MSN**, and **158,4 k€** without the work orders
+(**160,2 k€** with the September 2026 operations, as on the laptop).
 
 ### Refresh
 
@@ -135,7 +142,8 @@ Tested here:
 - The level-2 SQL on Postgres 16 (it made the level-1 data).
 - The level-3 SQL on Postgres 16, on the real tables loaded as a sync would store them (dates as dates, empty values
   as NULL). The page it gives has the same NCs, defect lines and figures as the laptop dashboard.
-- The notebook code on the exports read as Skywise gives datasets (timestamps, lists, numbers): identical tables.
+- The notebook code on the exports read as Skywise gives datasets (timestamps, lists, numbers), with the work-order
+  operations typed as numbers: identical tables.
 - The messages for a missing query, an empty query, wrong columns, and a page opened outside Slate.
 
 Not testable here, to watch on the first try:
@@ -144,3 +152,6 @@ Not testable here, to watch on the first try:
   Slate returns queries), a list of rows, or the same as JSON text.
 - Slate's row limits on queries (the page warns when a count looks cut).
 - Whether Slate accepts the level-4 file.
+- The name and columns of the Skywise work-order operations dataset. The cell needs `order_number`, `order_type`,
+  `plant`, `operation_short_text`, `labor_standard_value`, `setup_standard_value` and their two unit columns, as in
+  the September 2026 extract (unit IM = 1/100 hour).
