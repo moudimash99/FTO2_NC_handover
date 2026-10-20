@@ -201,6 +201,15 @@ One-step boolean version:
 
 Deliverable: Docs "REC NC Tagging – Findings".
 
+**Update 20 Oct — rule by writer department (replaces the four rules above).** Mohammad: 42RC and RECX/SUBR match far too much across Airbus; the author IDs work; the tracker is not a long-term source. Definition used: REC NC = written by REC.
+- Rule: `user_department` in `QRT/DERICHEBOURG AERONAUTICS`, `QR/DERICHEBOURG AERONAUTICS`, `OSOOM/DERICHEBOURG AERONAUTICS`, `QLOT/DERICHEBOURG AERONAUTICS`, `QLOT1/AIRBUS OPERATIONS SAS`, and either plant ≠ FTO2, or `workflow_list` starts `REC-` / `A30-REJ-PVU` / `RJ-PVU-REC` and `work_ctr` does not start `IEVB`. The same departments also write ordinary FTO2 shop NCs (QLOT1 ~950); those have FTO2 workflows (REW-*, REJ-LO-BP-*, LIGNE-*) and plant FTO2, so they stay out.
+- Why: station 42RC, RECX work centres and `REC-*` workflows say who **fixes** the NC; FAL and FTO2 methods (OLMEM, OLMEM4, Safran, KOHLMT) write NCs at 42RC for REC to fix. `user_department` is a column, never masked (author ID is `#UID~` on 33 of 116 tracker NCs), filled on every PEA NC.
+- Result (`07_scripts/rec_dept_rule.py`, 2,541 NCs: dashboard files, nc-rec, 2025 FTO2 NCs): tracker 115/115 (217022710 excluded: tracker says "non rédigé par le REC"); 57 hits not in tracker, none written outside the five departments: 20 by REC inspector IDs (mostly 2025, before the tracker filled up), 29 A330 VU follow-up NCs (3 of them by TO74350), 8 masked authors on `REC-RWK` at 42RC / F4F0xx. 42RC: 91/115 and 79 hits written by others; current workflow regex: 103/115 and 106; author IDs: 76/115. Dashboard files: 32 REC (all REC today too) vs 85 today; in GPS 2 vs 5.
+- `MCROIP8V` is not REC (only ever OLMEM/DAHER, decision maker; picked up when the creation line is missing). 217022710 is a FAL NC REC enriched.
+- `user_department` is the writer's **current** department (TO74350's 2025 NCs show QLOT1; headers show QRT3E → QRTE → QLOT1, renamed July 2026). Someone leaving REC changes their past NCs: store the flag at first run. Department list needs a check after reorgs or a new subcontractor.
+- Not verifiable from our files: NCs by these departments at FAL plants that are not FTO2-liable. In the notebook, `other_plant_df` filtered on the five departments should give ≥ 84 rows since 1 Jan 2026 (11 deleted), only 7 of them neither at 42RC nor on a `REC-` workflow (PNCs from REC interventions). Any other row = read it.
+- Decision needed: the 31 A330 VU follow-up NCs (A30-REJ-PVU2 / RJ-PVU-REC-F at F4F0xx, plant FTO2, written by FTO2 quality, "le travail sera fait par l'équipe REC"). Tracker lists 2 as REC; GPS lists 2 others (216165997, 216064934) as SERIE. Tagged REC today and by the rule.
+
 ---
 
 ## 8. Earlier work (Aug – Sep 2026, H1 data) — still valid background
@@ -226,7 +235,7 @@ Full detail: `03_reports/dossier_stage_NC.md` (French master dossier) and `NC_de
 
 0. **CNQ checks (19 Oct):** go through `05_outputs/CNQ_investigation_checklist.html` with Mohammad (H1-H7 are high). Apply what he decides; the list of changes done, decided and kept for later is `CNQ_CHANGES.md`. Scope decided: REC and ERMA out; disruption block (quality aléas with no NC) shown beside the NC cost.
 1. **Cable defence:** get Mohammad's choice among options A–D and the "cable problem" definition; then produce the slide numbers (by defect and by NC). Nothing in the parser has been changed for this yet.
-2. **REC:** get the definition decision; ask for the precision query result and REC's roster; then write the final rule spec for the pipeline team (columns `rec_written`, `rec_fixed`, `imputation`).
+2. **REC:** writer-department rule proposed (section 7, 20 Oct). Get the notebook check result (FAL-plant NCs by the five departments) and the A330 VU follow-up decision; then write the rule spec for the pipeline team (columns `rec_written`, `rec_fixed`, `imputation`).
 3. **Pack v4.8:** apply the two pending fixes (MT → A400M in `LINES`; drop A400M chart) when he asks; confirm whether the pack was installed.
 4. **Mohammad to check** the English RCA / category translations in the FR/EN dashboard.
 5. Human review of 185 low-confidence defects (`05_outputs/revue_humaine_souscodes.csv`, column `sous_code_correct` empty).
@@ -266,7 +275,7 @@ Full detail: `03_reports/dossier_stage_NC.md` (French master dossier) and `NC_de
 | `04_reference/` | Official codes, sub-category reference, mappings, codes to verify |
 | `05_outputs/` | Defect table xlsx; parsed defects v4.8 (CSV) and v4.1–v4.7; NC table v4.7; LLM sub-codes; human-review list; v4.7 group changes; cable review files; count disagreements; NC review list |
 | `06_input_data/` | Inputs Mohammad uploaded: dashboard export, missing IDs, nc-rec, REC tracker, cable team tracker, MFT action trackers (A330/A350), pipeline notebook, earlier REC note, sample NC text, code sheet text |
-| `07_scripts/` | `rec_checks.py`, `cable_check.py`, `build_defect_table.py` (+ older working scripts in `archive/`) |
+| `07_scripts/` | `rec_dept_rule.py` (REC rule, 20 Oct), `rec_checks.py`, `cable_check.py`, `build_defect_table.py` (+ older working scripts in `archive/`) |
 | `08_tools/` | NC entry tool prototypes (JSX), logic flow (Mermaid), old Slate SQL and preview |
 | `cnq_handoever/` | CNQ model (pipeline step, Slate queries, offline dashboard, tests); README_handover.md section 4 lists the 19 Oct changes |
 | `CNQ_CHANGES.md` | Every CNQ change: applied, decided, kept for later, needed from the pipeline team |
