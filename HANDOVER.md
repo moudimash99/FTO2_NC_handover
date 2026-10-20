@@ -33,7 +33,7 @@ Read sections 1, 2 and 9 first. Everything else is reference. Every number below
 | CNQ reconciliation (predecessor files vs official method M1888 / UG2600252) | Mentioned by Mohammad, **not started here** | — |
 | CNQ model | Version cnq-2026.10.19: 7 rule changes from SAP rework orders and MES aléas, approved 19 Oct | `cnq_handoever/`, `CNQ_CHANGES.md` |
 | Work orders, MES aléas, 2025 NCs (uploaded 19 Oct) | Analysed; investigation checklist for Mohammad, **checks pending** | `05_outputs/CNQ_investigation_checklist.html`, `07_scripts/wo_disruption/` |
-| New Pôle Élec Quality Hub (Slate home page) | Template 5 chosen 20 Oct. Page `hub/pole_elec_hub.html`, links in `hub/hub_config.js` (placeholders he fills). Content = current hub only; **names of the 2 hidden third-row tiles and the QA Management tab content still needed** | `09_pole_elec_hub/` |
+| New Pôle Élec Quality Hub (Slate home page) | Template 5 chosen 20 Oct. Page `hub/pole_elec_hub.html`, links in `hub/hub_config.js` (placeholders he fills). Content = current hub only; the 2 hidden third-row tiles and the QA Management card have **placeholder names** (Audits, Documentation, Habilitations QA) until he gives the real ones | `09_pole_elec_hub/` |
 
 ---
 

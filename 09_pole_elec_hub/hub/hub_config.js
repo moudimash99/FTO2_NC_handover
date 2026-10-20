@@ -34,9 +34,9 @@ window.HUB_CONFIG = {
         { name: "Alert Quality",   description: "Alertes qualité",           icon: "alert",    color: "#c4502a", link: "A_COMPLETER" },
         { name: "NC Dashboard",    description: "Tableau de bord des NC",    icon: "bars",     color: "#1f8f8a", link: "A_COMPLETER" },
         { name: "NC Writing",      description: "Rédaction des NC",          icon: "pen",      color: "#2b7fb0", link: "A_COMPLETER" },
-        // third row of the current hub (hidden behind the scroll): name, icon and link to fill in
-        { name: "À compléter",     description: "",                          icon: "link",     color: "#8592a5", link: "A_COMPLETER" },
-        { name: "À compléter",     description: "",                          icon: "link",     color: "#8592a5", link: "A_COMPLETER" }
+        // third row of the current hub (hidden behind its scroll): PLACEHOLDER names, replace with the real ones
+        { name: "Audits",          description: "Audits qualité",            icon: "check",    color: "#a0782b", link: "A_COMPLETER" },
+        { name: "Documentation",   description: "Documents qualité",         icon: "folder",   color: "#5a6b85", link: "A_COMPLETER" }
       ]
     },
     {
@@ -48,8 +48,8 @@ window.HUB_CONFIG = {
     {
       name: "QA Management", code: "QA", color: "#2c6ad3",
       tools: [
-        // one line per tile of the "QA Managment" tab of the current hub
-        { name: "À compléter",     description: "",                          icon: "shield",   color: "#8592a5", link: "A_COMPLETER" }
+        // one line per tile of the "QA Managment" tab of the current hub: PLACEHOLDER name, replace with the real one
+        { name: "Habilitations QA", description: "Suivi des habilitations",  icon: "people",   color: "#2c6ad3", link: "A_COMPLETER" }
       ]
     }
   ]

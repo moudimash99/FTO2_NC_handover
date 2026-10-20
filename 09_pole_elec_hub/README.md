@@ -10,7 +10,7 @@ The page to use is `hub/pole_elec_hub.html` (preview: `screenshots/hub_final.png
 - names, short descriptions, icons and colours are in the same file;
 - keep the two files in the same folder, save, refresh the page.
 
-Content is what the current hub shows, no more: PPS, Serie Follow Up, FOD, Alert Quality, NC Dashboard, NC Writing, the two tiles of its third row (names to fill in), QCM with NC Eradication, and QA Management (content to fill in). The two tabs of the current hub become two small groups on the right, so everything is visible at once on a 1440 × 900 screen.
+Content is what the current hub shows, no more: PPS, Serie Follow Up, FOD, Alert Quality, NC Dashboard, NC Writing, the two tiles of its third row, QCM with NC Eradication, and QA Management. The third-row tiles and the QA Management card carry placeholder names for now (Audits, Documentation, Habilitations QA), marked as such in the config. The two tabs of the current hub become two small groups on the right, so everything is visible at once on a 1440 × 900 screen.
 
 ## The five templates (design round of 20 Oct)
 
@@ -38,8 +38,8 @@ All five work on a wide screen, a laptop and a phone, can be used with the keybo
 ## Still needed
 
 - The Skywise link of each tool (Mohammad pastes them in `hub/hub_config.js`).
-- Name and icon of the two tiles on the third row of the current hub (hidden behind its scroll).
-- What the "QA Managment" tab of the current hub contains (one line per tile in the config).
+- The real names of the two tiles on the third row of the current hub (hidden behind its scroll); "Audits" and "Documentation" are placeholders.
+- What the "QA Managment" tab of the current hub contains; "Habilitations QA" is a placeholder (one line per tile in the config).
 
 ## Moving the chosen one into Slate (to check with whoever builds the Slate app)
 
