@@ -220,7 +220,7 @@ ITEMS = [
 
 # ------------------------------------------------------------------ changes (also written to CNQ_CHANGES.md)
 CHANGES = [
- ("Applied to the CNQ model (version cnq-2026.10.20)", [
+ ("Applied to the CNQ model (version cnq-2026.10.20b)", [
   ("Operator alert only when an operator raises one: not for NCs found at test or at final inspection", "0 of 52 test NCs and 4 of 23 final-inspection NCs started with an aléa (Jul-Sep 2026)", "NO_ALERT_TYPES"),
   ("Customer returns always get the alert, whatever their NC type", "The customer's operator raises it; AEC is the direct cause", "cnq_core.compute_cnq"),
   ("Alert time 41 min instead of 30", "Mean time lost declared on the 214 quality aléas that led to an NC (median 30)", "MIN_ALERT"),
@@ -230,6 +230,7 @@ CHANGES = [
   ("Rejection with a rework order: rework charged (rule REJ_RW)", "About half of rejections get a rework order (median 1 h 40 planned)", "REWORK_ORDER_PREFIXES, RULES['REJ_RW']"),
   ("Rework orders: the planned time of the NC's closed rework order replaces the model's setup and hands-on (no connection rule, no x 2)", "Catches exceptional NCs (34 h on NC 218233692). 71 NCs have a closed, planned order in the Sept 2026 operations; AEC level 3 175,663 -> 177,436 EUR. Orders still open or without planned time keep the model", "USE_ORDER_TIME, cnq_orders.nc_order_times"),
   ("Alert step: the declared time of the quality aléa that led to the NC replaces the flat 41 min, also on NCs found at test or final inspection when an aléa was raised", "Aléa linked to the NC: same work order, NC created from 2 h before to 72 h after. 175 NCs; a declared 0 means not filled and keeps 41 min. AEC level 3 177,436 -> 178,847 EUR", "USE_ALEA_TIME, cnq_disruptions.nc_alea_times"),
+  ("Rates per step (cnq-2026.10.20b): production 123 EUR/h for the alert, setup, hands-on work and aléa time; quality 107 EUR/h for writing, re-check and closing; ME 76 EUR/h for technical support. Engineering stays at the Airbus 78.16 EUR/h", "Given by the team on 20 Oct 2026; before, every step was at 50 EUR/h. AEC level 3 on the dashboard data 178,847 -> 376,511 EUR (856 AEC NCs); 2025 série 366,582 EUR", "RATES, STEP_WHO"),
  ]),
  ("Decided, outside the model", [
   ("Two calculations: the NC cost of non-quality, and a disruption block shown beside it, never added inside it", "The aléa that leads to an NC is inside the NC cost (alert step)", "-"),
@@ -259,7 +260,7 @@ CHANGES = [
 
 # ------------------------------------------------------------------ figures
 nc_fig = [["2026 Feb-Sep, raised at FTO2 (695 NCs)", 149824], ["2025, raised at FTO2, without ERMA (818 NCs)", 178870], ["CNQ pack reference data, 5 Jan - 6 Jul 2026 (595 NCs)", 128741]]
-DATA = dict(meta=dict(built=datetime.date.today().isoformat(), rate=RATE, model="cnq-2026.10.20"), items=ITEMS, tables=T, changes=CHANGES,
+DATA = dict(meta=dict(built=datetime.date.today().isoformat(), rate=RATE, model="cnq-2026.10.20b"), items=ITEMS, tables=T, changes=CHANGES,
             figures=dict(nc=nc_fig, cr_model=round(float(R["cr"].cnq_cost_total.sum())), rec_h=746, erma=46158))
 
 js = json.dumps(DATA, ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/")
@@ -272,7 +273,7 @@ md = ["# CNQ changes: done, decided and to do", "",
       "`cnq_handoever/README_handover.md`, section 4.", "",
       "Effect of the applied changes on level 3: 134,206 -> 128,741 EUR on the CNQ pack data; 151,093 -> 149,824 EUR on 2026 Feb-Sep; "
       "178,170 -> 178,870 EUR on 2025 without ERMA; customer returns 2026: 11,975 -> 12,577 EUR. The totals move little; the cost moves "
-      "between NC types (test NCs down, internal NCs and rejections with a rework order up). Version cnq-2026.10.20 (planned time of the rework order, then the declared aléa time): AEC level 3 on the dashboard data 175,663 -> 177,436 -> 178,847 EUR.", ""]
+      "between NC types (test NCs down, internal NCs and rejections with a rework order up). Version cnq-2026.10.20 (planned time of the rework order, then the declared aléa time): AEC level 3 on the dashboard data 175,663 -> 177,436 -> 178,847 EUR. Version cnq-2026.10.20b (rates per role, production 123, quality 107, ME 76 EUR/h instead of 50 for all): 178,847 -> 376,511 EUR.", ""]
 for sec, lst in CHANGES:
     md += [f"## {sec}", "", "| Change | Why / detail | Where |", "|---|---|---|"]
     md += [f"| {a} | {b} | `{c}` |" if c not in ("-", "to decide", "pipeline") else f"| {a} | {b} | {c} |" for a, b, c in lst]

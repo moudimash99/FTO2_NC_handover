@@ -1,6 +1,6 @@
 # Cost of non-quality (CNQ) for Airbus Electric Center - handover
 
-Version `cnq-2026.10.20`, updated 20 October 2026. Section 2 totals: this model on the current Skywise exports (856 AEC NCs, rebuilt 20 October 2026); the build recomputes them at every refresh (`build/build_report.json`, section 13). The worked examples in section 3 come from the 19 October CNQ pack.
+Version `cnq-2026.10.20b`, updated 20 October 2026 (rates per step: production 123 EUR/h, quality 107 EUR/h, ME 76 EUR/h; engineering stays at the Airbus 78.16 EUR/h). Section 2 totals: this model on the current Skywise exports (856 AEC NCs, rebuilt 20 October 2026); the build recomputes them at every refresh (`build/build_report.json`, section 13). The worked examples in section 3 come from the 19 October CNQ pack.
 
 ## 1. What this is
 
@@ -60,36 +60,48 @@ For a reworked NC:
 
 For internal NCs, the work (around the job + hands-on) is multiplied by 2.
 
-Cost = total minutes / 60 x 50 EUR, plus the material of each defect line.
+Cost = each step's minutes / 60 x the hourly rate of who does it, plus the material of each defect line:
+
+| Step | Who | Rate |
+|---|---|---|
+| Alert, setup (around the job), hands-on work, time lost on a declared aléa | Production | 123 EUR/h |
+| Writing the NC, re-check and closing | Quality | 107 EUR/h |
+| Technical support | ME | 76 EUR/h |
+| Engineering (design query) | Airbus engineering | 78.16 EUR/h |
+
+Before version `cnq-2026.10.20b` every step was at one rate of 50 EUR/h. The rates are in
+`cnq/cnq_params.py` (`RATES`, `STEP_WHO`) and can be changed on the check sheet.
 
 The work (around the job + hands-on) is never under 1 hour. If the defects add up to less than
 10 minutes, the time around the job is raised so the work reaches 60 minutes.
 
 **Example A - one defect, found in-process, internal NC (NC 216135746).** One defect, "bonding
 protection badly applied", 10 minutes. Work (50 + 10) x 2 = 120 minutes.
-41 + 30 + 60 + 120 + 30 = 281 minutes. 281 / 60 x 50 = **234.17 EUR**. No material.
+41 + 30 + 60 + 120 + 30 = 281 minutes. Production 41 + 120 = 161 min x 123 = 330.05, quality 30 + 30 = 60 min x 107 = 107.00,
+ME 60 min x 76 = 76.00: **513.05 EUR**. No material.
 
 **Example B - nine defects, found at final inspection (NC 216224176).** No operator alert.
 Hands-on: 6 connection errors (35 + 5 x 15 = 110 min) + 2 wrong electrical references x 30 min +
 1 component out of order x 30 min = 200 minutes.
-60 (final inspection) + 60 + 50 + 200 + 30 = 400 minutes. 400 / 60 x 50 = 333.33 EUR, plus
-0.36 EUR of material = **333.69 EUR**.
+60 (final inspection) + 60 + 50 + 200 + 30 = 400 minutes. Production 250 min = 512.50, quality 90 min = 160.50,
+ME 60 min = 76.00: 749.00 EUR, plus 0.36 EUR of material = **749.36 EUR**.
 
 **Example C - a one-minute defect, cable NC (NC 216573781).** Hands-on 1 minute. 50 + 1 = 51
 minutes of work is under the minimum, so the time around the job becomes 59 minutes.
-41 + 30 + 60 + 59 + 1 + 30 = 221 minutes = **184.17 EUR**. This applies to 128 AEC NCs.
+41 + 30 + 60 + 59 + 1 + 30 = 221 minutes. Production 101 min = 207.05, quality 60 min = 107.00, ME 60 min = 76.00:
+**390.05 EUR**. This applies to 128 AEC NCs.
 
 Other decisions:
 
 | Decision | What is charged | Example |
 |---|---|---|
-| Rejection, scrap | Alert, writing, technical support, closing. No work. Plus the value of the part. | NC 16995857 (a customer return): 41 + 30 + 60 + 30 = 161 min = **134.17 EUR**. Part: 0 EUR, no price in the data. |
+| Rejection, scrap | Alert, writing, technical support, closing. No work. Plus the value of the part. | NC 16995857 (a customer return): 41 + 30 + 60 + 30 = 161 min = **267.05 EUR**. Part: 0 EUR, no price in the data. |
 | Rejection with a rework order | Same as rework, plus the value of the part. A rejection whose NC has a rework order in `linked_document`. | NC 216052773 (internal): 41 + 30 + 60 + (50 + 20) x 2 + 30 = 301 min = 250.83 EUR + 0.85 material = **251.68 EUR** |
-| Exchange | Alert, writing, technical support, closing. No work (no rework order at FTO2). Plus the value of the swapped part. | NC 216037622: 161 min = **134.17 EUR** |
-| Deleted (any decision) | Alert and writing only | NC 216123618: 41 + 30 = 71 min = **59.17 EUR** |
-| Design query | Alert, writing, technical support, closing, plus 8 h of engineering at 78.16 EUR/h | NC 216733534: 134.17 + 625.28 = **759.45 EUR** |
-| Accept as is, potential NC | Alert, writing, technical support, closing | 134.17 EUR (100.00 EUR without alert) |
-| No decision | Alert and writing | 59.17 EUR |
+| Exchange | Alert, writing, technical support, closing. No work (no rework order at FTO2). Plus the value of the swapped part. | NC 216037622: 161 min = **267.05 EUR** |
+| Deleted (any decision) | Alert and writing only | NC 216123618: 41 + 30 = 71 min = **137.55 EUR** |
+| Design query | Alert, writing, technical support, closing, plus 8 h of engineering at 78.16 EUR/h | NC 216733534: 267.05 + 625.28 = **892.33 EUR** |
+| Accept as is, potential NC | Alert, writing, technical support, closing | 267.05 EUR (183.00 EUR without alert) |
+| No decision | Alert and writing | 137.55 EUR |
 
 Only the rework process was described by the team. Rejection and exchange were set from the
 September 2026 rework orders; the other rows are assumptions.
@@ -328,8 +340,10 @@ confirms or rejects any of these times. The only way to firm them up is to time 
    Reject and exchange were set from one month of rework orders; an exchange gets no work, although
    swapping the part may take time that is planned nowhere. Their level 1 match to the Airbus model
    is assumed.
-10. **One rate for everyone.** 50 EUR/h is the official France rate. Finance should supply AEC rates
-   for operators, inspectors and technical support.
+10. **Rates per role (since cnq-2026.10.20b).** Production 123 EUR/h, quality 107 EUR/h, ME 76 EUR/h, given
+   by the team on 20 October 2026; engineering stays at the Airbus 78.16 EUR/h. Other EUR figures in this
+   document that are not worked examples date from the single 50 EUR/h rate; the build recomputes the
+   totals (`build/build_report.json`, section 13).
 11. **The final-inspection flag is approximate.** The two type columns in the Skywise export often
     disagree.
 12. **The Foundry wrapper has not been run.** The calculation is tested on CSV files; the

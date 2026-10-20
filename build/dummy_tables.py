@@ -28,7 +28,7 @@ sys.path.insert(0, os.path.join(ROOT, "build"))
 import fto2_logic as L                    # noqa: E402
 import nc_defect_parser as PARSER         # noqa: E402
 import cnq.cnq_params as P                # noqa: E402
-from fto2_core import NC_COLUMNS, DEF_COLUMNS, DIS_COLUMNS   # noqa: E402
+from fto2_core import NC_COLUMNS, DEF_COLUMNS, DIS_COLUMNS, CAT_RENAME   # noqa: E402
 
 SQL_DIR = os.path.join(ROOT, "03_reports", "skywise", "level2_dummy_queries")
 CSV_DIR = os.path.join(ROOT, "build", "dummy")
@@ -60,7 +60,7 @@ def taxonomy():
         if n < 3:
             continue
         t = P.DEFECT_TIMES.get(sub, (P.MIN_DEFAULT_DEFECT, 0.0))
-        rows.append([sub, v[0], L.RCA_NAMES.get(v[1], "Non classé"), int(bool(PARSER.est_mineur(sub))), float(t[0]), float(t[1]),
+        rows.append([sub, CAT_RENAME.get(v[0], v[0]), L.RCA_NAMES.get(v[1], "Non classé"), int(bool(PARSER.est_mineur(sub))), float(t[0]), float(t[1]),
                      fallback.get(sub) or first.get(sub) or "Non codé", int(round(100 * float(cab.get(sub, 0)))), n])
     tot = sum(r[-1] for r in rows)
     lo = 0
@@ -201,7 +201,7 @@ n3 AS (
 
 
 def nc_query():
-    rate, eng = P.RATE_STANDARD, P.RATE_ENGINEERING
+    eng = P.RATE_ENGINEERING   # the steps: production, quality and ME rates (cnq_params.STEP_WHO)
     cols = """
     nc,
     to_char(day, 'YYYY-MM-DD') AS created,
@@ -216,11 +216,11 @@ def nc_query():
          WHEN type_nc = 'CASSE INTERNE' THEN 'Breakage' WHEN type_nc = 'DAMAGES' THEN 'Damage' WHEN type_nc = 'DEMANDE DE DQN' THEN 'Design query request'
          ELSE type_nc END AS where_found,
     airbus AS cost_airbus,
-    round(((alert * CASE WHEN m_alert > 0 THEN %(alert)s ELSE 0 END + write * %(wglob)s + support * %(support)s + work * %(wkglob)s + recheck * %(recheck)s) / 60.0 * %(rate)s
-           + eng_hours * %(eng)s + mat)::numeric, 2) AS cost_global,
-    round(((m_alert + m_write + m_support + m_setup + m_hands + m_recheck) / 60.0 * %(rate)s + eng_hours * %(eng)s + mat)::numeric, 2) AS cost_total,
-    round(((m_alert + m_write + m_support + m_recheck) / 60.0 * %(rate)s)::numeric, 2) AS cost_admin,
-    round(((m_setup + m_hands) / 60.0 * %(rate)s)::numeric, 2) AS cost_work,
+    round(((alert * CASE WHEN m_alert > 0 THEN %(alert)s ELSE 0 END * %(rp)s + write * %(wglob)s * %(rq)s + support * %(support)s * %(rm)s + work * %(wkglob)s * %(rp)s
+            + recheck * %(recheck)s * %(rq)s) / 60.0 + eng_hours * %(eng)s + mat)::numeric, 2) AS cost_global,
+    round(((m_alert * %(rp)s + m_write * %(rq)s + m_support * %(rm)s + (m_setup + m_hands) * %(rp)s + m_recheck * %(rq)s) / 60.0 + eng_hours * %(eng)s + mat)::numeric, 2) AS cost_total,
+    round(((m_alert * %(rp)s + m_write * %(rq)s + m_support * %(rm)s + m_recheck * %(rq)s) / 60.0)::numeric, 2) AS cost_admin,
+    round(((m_setup + m_hands) / 60.0 * %(rp)s)::numeric, 2) AS cost_work,
     round(mat::numeric, 2) AS cost_material,
     round((eng_hours * %(eng)s)::numeric, 2) AS cost_engineering,
     cable,
@@ -267,7 +267,7 @@ def nc_query():
     '' AS aleas,
     CASE WHEN u_so >= 92 THEN 'missing_ids' ELSE 'normal' END AS origin""" % dict(
         alert=P.MIN_ALERT, wglob=P.MIN_WRITE_NC_GLOBAL, support=P.MIN_SUPPORT, wkglob=P.MIN_WORK_GLOBAL, recheck=P.MIN_RECHECK_CLOSE,
-        rate=rate, eng=eng, st_case=" ".join("WHEN %s = %d THEN %s" % (H("i", "st", 6), k, q(s)) for k, s in enumerate(
+        rp=P.RATE_PROD, rq=P.RATE_QUALITY, rm=P.RATE_ME, eng=eng, st_case=" ".join("WHEN %s = %d THEN %s" % (H("i", "st", 6), k, q(s)) for k, s in enumerate(
             ["Poste câblage A", "Poste câblage B", "Sous-ensemble harnais", "Intégration", "Retouche ligne", "Finition"])))
     tail = """,
 n4 AS (
@@ -282,7 +282,6 @@ SELECT""" + cols + "\nFROM n4\nORDER BY nc"
 
 
 def def_query():
-    rate = P.RATE_STANDARD
     return generator() + """
 SELECT
     d2.nc,
@@ -292,7 +291,8 @@ SELECT
     d2.sub,
     d2.minor,
     d2.cable,
-    round(((n3.m_alert + n3.m_write + n3.m_support + n3.m_setup + n3.m_hands + n3.m_recheck) / 60.0 * %(rate)s + n3.eng_hours * %(eng)s + n3.mat)::numeric
+    round(((n3.m_alert * %(rp)s + n3.m_write * %(rq)s + n3.m_support * %(rm)s + (n3.m_setup + n3.m_hands) * %(rp)s + n3.m_recheck * %(rq)s) / 60.0
+           + n3.eng_hours * %(eng)s + n3.mat)::numeric
           / n3.lines, 2) AS cost_alloc,
     d2.qty,
     'Fictif : ' || lower(d2.sub) || CASE WHEN d2.fin <> '' THEN ' sur ' || d2.fin ELSE '' END || ', à reprendre selon le plan.' AS text,
@@ -306,7 +306,7 @@ SELECT
     d2.cr_detection,
     CASE WHEN d2.scope = 'client' THEN 'Fictif : ' || lower(d2.sub) ELSE '' END AS cr_symptom
 FROM d2 JOIN n3 ON n3.i = d2.i
-ORDER BY d2.nc, d2.seq""" % dict(rate=rate, eng=P.RATE_ENGINEERING)
+ORDER BY d2.nc, d2.seq""" % dict(rp=P.RATE_PROD, rq=P.RATE_QUALITY, rm=P.RATE_ME, eng=P.RATE_ENGINEERING)
 
 
 def dis_query():

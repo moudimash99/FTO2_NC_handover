@@ -16,7 +16,7 @@ Every value carries a "basis" so a reader knows how far to trust it:
 Nothing in this file is a measured time.
 """
 
-MODEL_VERSION = "cnq-2026.10.20"
+MODEL_VERSION = "cnq-2026.10.20b"
 
 # ---------------------------------------------------------------- who is "us"
 AEC_PLANT_CODE = "FTO2"            # liability == this code -> the NC is AEC non-quality
@@ -30,8 +30,15 @@ WHERE_FOUND_LABELS = {
 }
 
 # ---------------------------------------------------------------- rates (EUR per hour)
-RATE_STANDARD = 50.00       # operator, quality inspector, technical support. OFFICIAL (France rate) - to be replaced by AEC rates from Finance
-RATE_ENGINEERING = 78.16    # engineering study on design queries. OFFICIAL
+# AEC rates per function (Mohammad, 20 Oct 2026); each step of an NC is charged at the rate of who does it (STEP_RATES).
+RATES = {"prod": 123.00,     # production: the operator's alert, the setup and the hands-on rework; time lost on aléas.   AEC
+         "quality": 107.00,  # quality: writing the NC, re-check and closing.                                         AEC
+         "me": 76.00}        # ME (manufacturing engineering): technical support (checks, estimate, work order).      AEC
+STEP_WHO = {"alert": "prod", "writing": "quality", "support": "me", "setup": "prod", "hands_on": "prod", "recheck": "quality"}
+STEP_RATES = {step: RATES[who] for step, who in STEP_WHO.items()}
+RATE_PROD, RATE_QUALITY, RATE_ME = RATES["prod"], RATES["quality"], RATES["me"]
+RATE_ENGINEERING = 78.16    # engineering study on design queries: the Airbus rate, not ME's.                      OFFICIAL
+RATE_STANDARD = RATE_PROD   # the former single rate (50 until 20 Oct 2026); kept for readers that still use one rate
 
 # ---------------------------------------------------------------- fixed times per NC (minutes)
 MIN_ALERT = 41              # operator raises the alert (alea).                     MES (mean time lost declared on the 214 quality aléas

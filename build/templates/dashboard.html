@@ -100,6 +100,12 @@ input[type="date"] { font: inherit; font-size: 13.5px; padding: 4px 8px; border:
 .switch[aria-checked="true"] i::after { left: 16px; }
 .switch b { font-weight: 600; min-width: 2.2em; }
 .switch:disabled { opacity: .45; cursor: default; }
+/* a value picked in a chart: page-wide filter, shown as a chip */
+.fb-pick { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; background: var(--surface); border: 1px solid var(--s1); color: var(--ink); border-radius: 999px; padding: 4px 6px 4px 12px; }
+.fb-pick[hidden] { display: none; }
+.fb-pick button { font: inherit; border: 0; background: var(--track); border-radius: 999px; width: 22px; height: 22px; cursor: pointer; color: var(--ink); line-height: 1; }
+[data-pick] { cursor: pointer; } svg [data-pick]:hover { opacity: .78; }
+td.pickc { text-decoration: underline dotted var(--muted); text-underline-offset: 3px; } td.pickc:hover, td.nc[data-pick]:hover { color: var(--s1); }
 .fb-reset { font: inherit; font-size: 13px; color: var(--s1); background: none; border: 1px solid var(--ring); border-radius: 6px; padding: 5px 12px; cursor: pointer; }
 .fb-note { font-size: 11.5px; color: var(--muted); max-width: 16em; line-height: 1.3; }
 .fb-sum { font-size: 13px; color: var(--ink-2); font-variant-numeric: tabular-nums; max-width: none; }
@@ -711,6 +717,7 @@ footer p { max-width: none; }
           <div class="fb-dates"><select id="gPreset"></select><input type="date" id="gFrom" data-ta="fFrom"><span class="mu" aria-hidden="true">→</span><input type="date" id="gTo" data-ta="fTo"></div></div>
         <div class="fb" id="minorCtl"><span id="miLab" data-t="minorLabel"></span>
           <div class="seg" role="group" aria-labelledby="miLab"><button type="button" id="miIn" data-t="minorIn"></button><button type="button" id="miOut" data-t="minorOut"></button></div></div>
+        <span class="fb-pick" id="gPick" hidden><span id="gPickTxt"></span><button type="button" id="gPickX" aria-label="✕">✕</button></span>
         <button type="button" class="fb-reset" id="gReset" data-t="fReset" hidden></button>
       </div>
       <p class="fb-sum" id="fbSum" aria-live="polite"></p>
@@ -900,6 +907,13 @@ footer p { max-width: none; }
   <!-- Mock-up page only: products, lines, aircraft, stations -->
   <div class="panel" role="tabpanel" id="p-where" aria-labelledby="tab-where" hidden>
     <div class="lead"><h2 data-t="whereTitle"></h2><p class="sub" data-t="whereSub"></p></div>
+    <details class="detail" id="whBox"><summary><span data-t="tblWhere"></span><span class="count" id="whN"></span></summary>
+      <div class="inner">
+        <p class="sub" data-t="tblWhereSub"></p>
+        <input type="search" id="whQ" autocomplete="off">
+        <div class="table-wrap"><table><thead><tr id="whTh"></tr></thead><tbody id="whTb"></tbody></table></div>
+        <button type="button" class="more" id="whM" hidden></button>
+      </div></details>
   </div>
 
   <!-- 3b. Insights (series) -->
@@ -1142,7 +1156,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
       fPlant: 'Usine FTO2 uniquement', fYes: 'Oui', fNo: 'Non', fPlantOff: 'Sans effet ici : l’onglet sépare déjà FTO2 et retours clients.',
       fPhase: 'Type de production', ph_all: 'Tous', ph_SERIE: 'Série', ph_REC: 'REC', ph_FTI: 'FTI', fLine: 'Avion', line_all: 'Tous les avions',
       fPeriod: 'Période', pr_ytd: 'Depuis le 1er janvier', pr_m1: 'Dernier mois', pr_m3: '3 derniers mois', pr_m6: '6 derniers mois', pr_m12: '12 derniers mois', pr_all: 'Toutes les dates', pr_custom: 'Dates choisies',
-      fFrom: 'Du', fTo: 'Au', fReset: 'Réinitialiser', fbSum: '{n} NC · {d} défauts dans la sélection', fbSumCli: '{n} NC retours clients · {d} défauts dans la sélection',
+      fFrom: 'Du', fTo: 'Au', fReset: 'Réinitialiser', pkClear: 'Retirer ce filtre', pk_month: 'Mois', pk_week: 'Semaine', pk_day: 'Jour', pk_prod: 'Produit', pk_pprod: 'Produit', pk_msn: 'Avion (MSN)', pk_station: 'Poste', pk_type: 'Type de NC', pk_ntype: 'Type de NC', pk_rule: 'Décision', pk_where: 'Détection', pk_nc: 'NC', pk_hour: 'Heure', pk_cat: 'NC avec un défaut', pk_rca: 'NC avec la cause', pk_sub: 'NC avec le défaut', pk_fin: 'NC avec un défaut sur', pk_code: 'NC avec le sous-code', fbSum: '{n} NC · {d} défauts dans la sélection', fbSumCli: '{n} NC retours clients · {d} défauts dans la sélection',
       foot5: 'Source des données : toutes les NC viennent de Skywise ; « listes manuelles » : NC retrouvées aussi dans le registre GPS ou la liste Test (champ Ext_Source). Type de production : phase de la NC (Série, REC, FTI). Périodes comptées jusqu’à la dernière NC de l’extraction.',
       paretoTitle: 'Pareto des défauts', costTitle: 'Pareto des coûts de non-qualité',
       costSub: 'Le coût de chaque NC est réparti entre ses défauts ; les NC A400M sans texte forment une ligne à part.',
@@ -1151,10 +1165,12 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
       clientSub: 'NC émises hors de FTO2 (lignes d’assemblage, clients) sous responsabilité FTO2.',
       rcaTitle: 'Les causes des défauts (RCA)', rcaSub: 'Définition de chaque cause, sous-catégories et codes officiels, chiffres et exemples réels.',
       figDefects: 'Défauts', figNcs: 'NC', figPerNc: 'Défauts par NC (moyenne)', figTopRca: 'Première cause', topSub: '{n} défauts · {p}',
-      dCat: 'Catégorie', dRca: 'Cause (RCA)', dLine: 'Ligne', dMonth: 'Mois de création', dWhere: 'Où la NC a été trouvée', dRule: 'Décision', dCable: 'Défaut câble', cableSub: 'Le câble lui-même doit être refait ou refourni.', keyCable: 'Défauts câble', keyOther: 'Autres défauts', cCab: 'Câble', ofWhichCable: '{n} dont {c} câble', dPhase: 'Phase', dNat: 'Nature du dommage', dCode: 'Sous-code officiel', codeSub: 'Sous-codes de la fiche de codes officielle de retouche.', lvlCode: 'Sous-codes', cCode: 'Sous-code',
+      dCat: 'Catégorie', dRca: 'Cause (RCA)', dLine: 'Ligne', dMonth: 'Mois de création', dWhere: 'Où la NC a été trouvée', dRule: 'Décision', dCable: 'Défauts câble, toutes NC', cableSubCnq: 'Lignes de défaut où le câble lui-même est à refaire ou à refournir, quel que soit le type de la NC : un défaut câble trouvé au test compte ici, pas dans « NC câbles ».', cableSub: 'Le câble lui-même doit être refait ou refourni.', keyCable: 'Défauts câble', keyOther: 'Autres défauts', cCab: 'Câble', ofWhichCable: '{n} dont {c} câble', dPhase: 'Phase', dNat: 'Nature du dommage', dCode: 'Sous-code officiel', codeSub: 'Sous-codes de la fiche de codes officielle de retouche.', lvlCode: 'Sous-codes', cCode: 'Sous-code',
       natOnly: 'Défauts « Élément endommagé ».',
       paretoSub: 'Kitting Factory, FOD et Autre sont suivis à part.', aside: 'Suivi séparé',
       hint: 'Cliquez sur une barre pour filtrer les autres graphiques et le détail.', clearAll: 'Tout effacer', clear: 'Effacer',
+      tblWhere: 'Détail des NC : produit, avion, poste', tblWhereSub: 'Cliquez sur une ligne, un produit, un MSN ou un poste pour filtrer toute la page. Toutes les NC de la sélection, les plus récentes en premier.',
+      wtProd: 'Produit', wtMsn: 'MSN', wtSt: 'Poste', wtType: 'Type', wtCost: 'Coût', wtTitle: 'Titre',
       tblDefects: 'Détail des défauts', tblWeek: 'Détail des défauts de la période', tblNc: 'Détail des NC et de leur coût', tblClient: 'Détail des retours clients',
       tblClientSub: 'Cliquez sur une ligne pour lire le texte de la NC.',
       search: 'Rechercher (NC, texte, FIN…)', shown: '{n} sur {t}', more: 'Afficher {n} de plus',
@@ -1171,11 +1187,11 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
       nKR: 'NC par MSN', nKRs: 'NC ÷ MSN produits', ovMore: 'Autres listes et graphiques', cnqMore: 'Autres répartitions du coût', parMore: 'Autres graphiques de causes', whereMore: 'Autres graphiques',
       allLines: 'Toutes lignes', v2Tgt: 'Objectif', v2VsTgt: 'vs objectif', v2Above: 'Au-dessus de l’objectif', v2Below: 'Sous l’objectif', v2TgtPh: 'Objectif (fictif)', v2Ph: 'fictif',
       v2Ph25: '2025 fictif (= 2026)', v2Y25b: '2025, même filtre', v2Y25c: '2025 à la même date', v2Y25at: '2025 à la même date : {v}', v2TgtCumR: 'Objectif cumulé (2025 − 25 %)', v2StTgtR: 'objectif de l’année (2025 − 25 %)', v2StBudR: 'budget de l’année (2025 − 25 %)', v2BudR: 'Budget au prorata (coût 2025 − 25 %)', v2TgtR: 'Objectif : taux 2025 − 25 %', v2NoCli25: '2025 sans retours client (absents de l’extraction 2025)', v2Rate25: '2025 : {v} NC par produit livré', v2Rate25s: 'Taux 2025', v2BudR2: 'budget', v2MTgt: 'objectif mensuel {v} (fictif)', v2BudPh: 'Budget au prorata (fictif)', v2Y25: '2025', v2Y26: '2026 prévu', v2Flat: 'Stable', 
-      vpFc: 'Fait et prévision', vpMsn: 'Par MSN', vpFcK: 'Volumes', vpFcT: 'NC, défauts et coût attendus d’ici décembre, produit par produit', vpFcS: 'Réalisé, puis prévision : volume de la période par MSN × MSN prévus jusqu’à décembre.', vpFcH: 'fait → fin décembre', vpDec: 'Prévu à fin décembre', dType: 'Répartition du coût par type de NC', typeSub: 'Type de la NC, là où elle a été trouvée ; 100 % = coût de la sélection.', ty_cab: 'Câbles', ty_fin: 'Contrôle final', ty_test: 'Test', ty_int: 'Interne', ty_sup: 'Fournisseurs', ty_oth: 'Autres', wlCh_prod: 'Produits', wlCh_ac: 'Avions', wlCh_st: 'Postes', wlChs_prod: 'Taux, carte mensuelle, précision, projection et coût, produit par produit.', wlChs_ac: 'Coût par avion et FIN qui reviennent.', wlChs_st: 'Défauts par poste de rédaction de la NC.',
+      vpFc: 'Fait et prévision', vpMsn: 'Par MSN', vpFcK: 'Volumes', vpFcT: 'NC, défauts et coût attendus d’ici décembre, produit par produit', vpFcS: 'Réalisé, puis prévision : volume de la période par MSN × MSN prévus jusqu’à décembre.', vpFcH: 'fait → fin décembre', vpDec: 'Prévu à fin décembre', dType: 'Répartition du coût par type de NC', typeSub: 'Type de la NC, là où elle a été trouvée ; « NC câbles » = NC du type Câbles ; 100 % = coût de la sélection.', ty_cab: 'NC câbles', ty_fin: 'Contrôle final', ty_test: 'Test', ty_int: 'Interne', ty_sup: 'Fournisseurs', ty_oth: 'Autres', wlCh_prod: 'Produits', wlCh_ac: 'Avions', wlCh_st: 'Postes', wlChs_prod: 'Taux, carte mensuelle, précision, projection et coût, produit par produit.', wlChs_ac: 'Coût par avion et FIN qui reviennent.', wlChs_st: 'Défauts par poste de rédaction de la NC.',
       v2MonTgt: 'objectif du mois {v}', v2Cum: '{v} NC cumulées', v2Fc: 'prévues', v2TgtShort: 'objectif', v2Under: 'Mois sous son objectif', v2Over: 'Mois au-dessus de son objectif', v2CumLeg: 'NC cumulées', v2TgtCum: 'Objectif cumulé (fictif)', v2Summer: 'Juillet et août comptent pour 60 % d’un mois.', v2ObjH: 'Objectif par ligne · NC par MSN', v2ObjC: 'Objectifs fictifs en attendant les chiffres 2025 : taux 2026 moins 25 %.', v2PerMsnV: '{v} par MSN', v2StNow: 'NC depuis le début de la période', v2StFc: 'prévus à fin décembre', v2StTgt: 'objectif de l’année (fictif)', v2StCost: 'cumulés sur la période', v2StBud: 'budget de l’année (fictif)', v2QPer: 'Par MSN produit : la fermeture d’août ne pèse pas.', v2QMonth: 'Moyenne par mois.', v2PerMsn: 'par MSN', v2Ac: '{n} avions',
       scVol: 'Volume par mois', scTot: 'Total', scRate: 'Par MSN, par mois', scRateP: 'Par MSN', scLast3: '3 derniers mois', scNc: 'NC', scDef: 'Défauts', scCost: 'Coût',
       scNote: 'Par MSN : NC, défauts et coût des produits rattachés au fichier de production. Petit chiffre : écart des 3 derniers mois à la période.',
-      tabWhere: 'Où', whereTitle: 'Où sont les problèmes ?', whereSub: 'Produits, lignes, avions et postes, rapportés au volume produit quand c’est possible.', titleMock: 'Tableau de bord FTO2 : maquette à noter',
+      tabWhere: 'Localisation', whereTitle: 'Localisation des NC', whereSub: 'Produits, lignes, avions et postes, rapportés au volume produit quand c’est possible.', titleMock: 'Tableau de bord FTO2 : maquette à noter',
       mkScore: 'Note', mkOut: 'hors', mkIn: 'garde', mkOthers: 'Autres candidats', mkOthersSub: 'Proposés hors ; une note les fait revenir.', mkFigs: 'Chiffres clés', mkExplain: 'Expliquer le calcul (repliable)', mkTabScore: 'Cet onglet',
       mkBarAll: 'Notés {k} sur {n}', mkPreview: 'Aperçu final', mkCopy: 'Copier les notes', mkCopied: 'Notes copiées.', mkSaveDb: 'Enregistré sur la page', mkSaveLocal: 'Enregistré dans ce navigateur', mkSaving: 'Enregistrement…', mkSaveErr: 'Non enregistré',
       mkReal: 'Vraies données', mkFict: 'Fictif', mkTrioK: 'Trois mesures, côte à côte', mkTrioOv: 'NC, défauts et coût par avion produit, mois par mois', mkTrioOvS: 'Les trois mesures restent visibles sans interrupteur ; chacune se note à part.',
@@ -1204,7 +1220,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
       cxModelH: 'Règles particulières du modèle {v}', cxR1: 'Pas d’alerte pour une NC trouvée au test ou au contrôle final ; un retour client a toujours l’alerte.', cxR2: 'Erreurs de connexion : la première d’une NC compte {a} min, chacune des suivantes {b} min.', cxR3: 'NC internes : préparation et intervention × {f}.', cxR4: 'Rejet avec un ordre de retouche : le travail est compté comme une retouche, plus la valeur de la pièce.', cxR5: 'Ordre de retouche clos et planifié : son temps prévu remplace préparation et intervention (sans la règle des connexions ni le × 2). {n} NC de la sélection.', cxR6: 'Aléa qualité relié à la NC (même ordre de travail, NC créée de {a} h avant à {b} h après) : son temps perdu déclaré remplace les {x} min de l’alerte. {n} NC de la sélection.',
       cxPerNc: '{c} par NC', cxHandsV: 'selon les défauts', cxSel: 'Sur les NC filtrées : {c} au total · {p} du coût',
       cxEng: 'Étude d’ingénierie', cxEngV: 'DQN : {h} h × {r} €/h = {c}', cxMat: 'Matière', cxMatV: 'somme de la matière des défauts', cxTot: 'Total de la sélection', cxTotV: '{n} NC',
-      cxFormula: 'Coût = total des minutes ÷ 60 × {r} €/h + ingénierie + matière. Préparation et intervention ne descendent jamais sous {f} min.',
+      cxFormula: 'Coût = minutes de chaque étape ÷ 60 × le taux de qui la fait (production {p} €/h, qualité {q} €/h, ME {m} €/h) + ingénierie + matière. Préparation et intervention ne descendent jamais sous {f} min.', cxAtRate: 'à {r} €/h',
       cxExample: 'Exemple, une retouche avec un seul défaut de 10 min : {a} + {b} + {c} + {d} + 10 + {e} = {m} min, soit {c2}.',
       cxRulesSum: 'Voir ce qui est compté pour chaque décision',
       cxRuleH: ['Décision', 'NC', 'Aléa', 'Rédaction', 'Support', 'Travail et matière', 'Recontrôle', 'Ingénierie', 'Pièce', 'Standard Airbus', 'Origine'],
@@ -1213,7 +1229,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
       ex_one: 'Retouche à un défaut', ex_many: 'Retouche à plusieurs défauts', ex_final: 'Retouche au contrôle final', ex_noline: 'Retouche sans ligne de défaut',
       ex_rej: 'Rejet', ex_rejrw: 'Rejet avec ordre de retouche', r_notaec: 'Hors responsabilité FTO2', r_notaec_how: 'FTO2 n’est pas responsable de cette NC : elle compte comme NC, son coût pour FTO2 est 0', ex_order: 'Temps de l’ordre de retouche', fx_org: 'Origine', fx_order: 'Ordre de retouche', os_used: 'temps prévu utilisé', os_open: 'pas encore clos : temps du modèle', os_no_time: 'clos sans temps prévu : temps du modèle', os_not_found: 'hors des opérations disponibles : temps du modèle', os_none: 'opérations non chargées : temps du modèle', n_ordSetup: 'Temps prévu des opérations de préparation, contrôle et clôture de l’ordre de retouche', n_ordWork: 'Temps prévu des opérations de travail et de test de l’ordre de retouche, à la place du modèle', dl_ord: 'Temps du modèle, pour information (l’intervention comptée est celle de l’ordre) ; la matière est reprise ci-dessus', ex_exc: 'Échange', ex_dqn: 'Demande de DQN', ex_cli: 'Retour client',
       fx_nc: 'NC', fx_date: 'Créée le', fx_line: 'Ligne', fx_dec: 'Décision', fx_where: 'Détection', fx_lines: 'Lignes de défaut',
-      cxH: ['Étape', 'Calcul', 'Minutes', 'Coût à {r} €/h'],
+      cxH: ['Étape', 'Calcul', 'Minutes', 'Coût (taux de l’étape)'],
       n_once: '{x} min, une fois par NC', n_alea: 'temps perdu déclaré sur l’aléa qualité {a}, qui a mené à la NC', ex_alea: 'Temps de l’aléa déclaré', n_noalert: 'pas d’alerte : NC trouvée au test ou au contrôle final', n_x2: '{s} · × {f} (NC interne)', n_plain: '{x} min', n_final: '{x} min car détectée au contrôle final',
       n_floor: 'relevée de {a} à {b} min pour que préparation et intervention atteignent {f} min', n_noline: 'aucune ligne de défaut : forfait de {x} min',
       n_lines: '{n} ligne(s) de défaut, détaillées ci-dessous', n_off: 'non compté pour cette décision',
@@ -1223,7 +1239,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
       d_lines: 'Voir les {n} lignes de défaut de cette NC', dlH: ['#', 'Texte saisi', 'Classe (cause racine)', 'Minutes', 'Matière'],
       dl_on: 'Somme, reprise ci-dessus en intervention et matière', dl_off: 'Somme, non comptée : cette décision ne comporte pas de travail',
       stripTotal: 'Total FTO2', stripSerie: 'Émises à FTO2', stripClient: 'Retours clients', stripDis: 'À côté, aléas qualité sans NC', disK: 'À côté du coût', disH: 'Aléas qualité sans NC', disS: 'Temps perdu déclaré dans MES sur les aléas qualité qui n’ont mené à aucune NC (même ordre de travail, de 2 h avant à 72 h après). Montré à côté du coût de non-qualité, jamais ajouté.', disEur: 'à {r} €/h', disHours: 'heures perdues', disN: 'aléas', disLed: '{n} NC de la sélection partent d’un aléa qualité : son temps déclaré est dans leur coût, à l’étape alerte.', disErma: '{n} aléas sur le MIP / 1101VB (NC ERMA possible) laissés de côté : {h} h, à vérifier.', disMonth: 'Heures perdues par mois', disLine: 'Par ligne', disList: 'Les {n} aléas, un par ligne', disCols: ['Aléa', 'Ouvert le', 'Ligne', 'Poste', 'Minutes', 'Ce que l’opérateur a écrit'], disNone: 'Aucun aléa qualité sans NC pour ce filtre.', disPhase: 'Les aléas sont ceux de l’atelier (série) : rien pour cette phase.', disOut: 'hors bloc (ERMA possible)', disMin: '{v} min',
-      cTotal: 'Coût de non-qualité', cNcs: 'NC', cPerNc: 'Coût moyen par NC', cCable: 'Coût des défauts câble', cCableSub: '{p} du coût',
+      cTotal: 'Coût de non-qualité', cNcs: 'NC', cPerNc: 'Coût moyen par NC', cCable: 'Coût des défauts câble, toutes NC', cCableSub: '{p} du coût',
       cLevels: 'Comparaison des méthodes de chiffrage', cLevelsSub: 'Standard Airbus : coût forfaitaire par décision. Moyenne AEC : temps moyens par NC. Détail par défaut : étapes AEC et reprise calculée pour chaque défaut (méthode retenue).',
       lvl1: 'Standard Airbus', lvl2: 'Moyenne AEC', lvl3: 'Détail par défaut',
       cByCat: 'Coût par catégorie de défaut', cByCatSub: 'Coût de chaque NC réparti entre ses défauts.', noLine: 'NC A400M (sans texte)',
@@ -1309,7 +1325,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
       fPlant: 'FTO2 plant only', fYes: 'Yes', fNo: 'No', fPlantOff: 'No effect here: this tab already shows FTO2 and customer returns apart.',
       fPhase: 'Production type', ph_all: 'All', ph_SERIE: 'Series', ph_REC: 'REC', ph_FTI: 'FTI', fLine: 'Aircraft', line_all: 'All aircraft',
       fPeriod: 'Period', pr_ytd: 'Year to date', pr_m1: 'Last month', pr_m3: 'Last 3 months', pr_m6: 'Last 6 months', pr_m12: 'Last 12 months', pr_all: 'All dates', pr_custom: 'Custom dates',
-      fFrom: 'From', fTo: 'To', fReset: 'Reset', fbSum: '{n} NCs · {d} defects in the selection', fbSumCli: '{n} customer-return NCs · {d} defects in the selection',
+      fFrom: 'From', fTo: 'To', fReset: 'Reset', pkClear: 'Remove this filter', pk_month: 'Month', pk_week: 'Week', pk_day: 'Day', pk_prod: 'Product', pk_pprod: 'Product', pk_msn: 'Aircraft (MSN)', pk_station: 'Station', pk_type: 'NC type', pk_ntype: 'NC type', pk_rule: 'Decision', pk_where: 'Found at', pk_nc: 'NC', pk_hour: 'Hour', pk_cat: 'NCs with a defect', pk_rca: 'NCs with the cause', pk_sub: 'NCs with the defect', pk_fin: 'NCs with a defect on', pk_code: 'NCs with the sub-code', fbSum: '{n} NCs · {d} defects in the selection', fbSumCli: '{n} customer-return NCs · {d} defects in the selection',
       foot5: 'Data source: every NC comes from Skywise; “manual lists”: NCs also found in the GPS register or the Test list (Ext_Source field). Production type: the NC phase (Series, REC, FTI). Periods count up to the last NC of the extract.',
       paretoTitle: 'Defect Pareto', costTitle: 'Cost of non-quality Pareto',
       costSub: 'Each NC’s cost is shared among its defects; A400M NCs with no text form a row of their own.',
@@ -1318,10 +1334,12 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
       clientSub: 'NCs raised outside FTO2 (assembly lines, customers) that FTO2 is liable for.',
       rcaTitle: 'Root causes of defects (RCA)', rcaSub: 'Definition of each root cause, its sub-categories and official codes, figures and real examples.',
       figDefects: 'Defects', figNcs: 'NCs', figPerNc: 'Defects per NC (average)', figTopRca: 'Top root cause', topSub: '{n} defects · {p}',
-      dCat: 'Category', dRca: 'Root cause (RCA)', dLine: 'Line', dMonth: 'Month created', dWhere: 'Where the NC was found', dRule: 'Decision', dCable: 'Cable defect', cableSub: 'The cable itself has to be remade or resupplied.', keyCable: 'Cable defects', keyOther: 'Other defects', cCab: 'Cable', ofWhichCable: '{n}, of which {c} cable', dPhase: 'Phase', dNat: 'Type of damage', dCode: 'Official sub-code', codeSub: 'Sub-codes of the official code sheet.', lvlCode: 'Sub-codes', cCode: 'Sub-code',
+      dCat: 'Category', dRca: 'Root cause (RCA)', dLine: 'Line', dMonth: 'Month created', dWhere: 'Where the NC was found', dRule: 'Decision', dCable: 'Cable defects, all NCs', cableSubCnq: 'Defect lines where the cable itself has to be remade or resupplied, whatever the NC type: a cable defect found at test counts here, not in “Cable NCs”.', cableSub: 'The cable itself has to be remade or resupplied.', keyCable: 'Cable defects', keyOther: 'Other defects', cCab: 'Cable', ofWhichCable: '{n}, of which {c} cable', dPhase: 'Phase', dNat: 'Type of damage', dCode: 'Official sub-code', codeSub: 'Sub-codes of the official code sheet.', lvlCode: 'Sub-codes', cCode: 'Sub-code',
       natOnly: '“Damaged item” defects.',
       paretoSub: 'Kitting Factory, FOD and Other are tracked separately.', aside: 'Tracked separately',
       hint: 'Click a bar to filter the other charts and the detail.', clearAll: 'Clear all', clear: 'Clear',
+      tblWhere: 'NC detail: product, aircraft, station', tblWhereSub: 'Click a line, product, MSN or station to filter the whole page. Every NC of the selection, newest first.',
+      wtProd: 'Product', wtMsn: 'MSN', wtSt: 'Station', wtType: 'Type', wtCost: 'Cost', wtTitle: 'Title',
       tblDefects: 'Defect detail', tblWeek: 'Defect detail for the period', tblNc: 'NC and cost detail', tblClient: 'Customer return detail',
       tblClientSub: 'Click a row to read the NC text.',
       search: 'Search (NC, text, FIN…)', shown: '{n} of {t}', more: 'Show {n} more',
@@ -1338,11 +1356,11 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
       nKR: 'NCs per MSN', nKRs: 'NCs ÷ MSN built', ovMore: 'Other lists and charts', cnqMore: 'Other cost breakdowns', parMore: 'Other root-cause charts', whereMore: 'Other charts',
       allLines: 'All lines', v2Tgt: 'Target', v2VsTgt: 'vs target', v2Above: 'Above target', v2Below: 'Below target', v2TgtPh: 'Target (placeholder)', v2Ph: 'placeholder',
       v2Ph25: '2025 placeholder (= 2026)', v2Y25b: '2025, same filter', v2Y25c: '2025 at the same date', v2Y25at: '2025 at the same date: {v}', v2TgtCumR: 'Cumulative target (2025 − 25%)', v2StTgtR: 'target for the year (2025 − 25%)', v2StBudR: 'budget for the year (2025 − 25%)', v2BudR: 'Pro-rata budget (2025 cost − 25%)', v2TgtR: 'Target: 2025 rate − 25%', v2NoCli25: '2025 without customer returns (not in the 2025 extract)', v2Rate25: '2025: {v} NCs per product delivered', v2Rate25s: '2025 rate', v2BudR2: 'budget', v2MTgt: 'monthly target {v} (placeholder)', v2BudPh: 'Pro-rata budget (placeholder)', v2Y25: '2025', v2Y26: '2026 forecast', v2Flat: 'Flat', 
-      vpFc: 'Done and forecast', vpMsn: 'Per MSN', vpFcK: 'Volumes', vpFcT: 'NCs, defects and cost expected by December, product by product', vpFcS: 'Actual, then the forecast: the period’s volume per MSN × the MSN planned to December.', vpFcH: 'done → end of December', vpDec: 'Expected by end of December', dType: 'Cost split by NC type', typeSub: 'NC type, where it was found; 100% = the cost of the selection.', ty_cab: 'Cables', ty_fin: 'Final inspection', ty_test: 'Test', ty_int: 'In-house', ty_sup: 'Suppliers', ty_oth: 'Other', wlCh_prod: 'Products', wlCh_ac: 'Aircraft', wlCh_st: 'Stations', wlChs_prod: 'Rates, monthly map, precision, forecast and cost, product by product.', wlChs_ac: 'Cost per aircraft and FINs that come back.', wlChs_st: 'Defects by the station where the NC was written.',
+      vpFc: 'Done and forecast', vpMsn: 'Per MSN', vpFcK: 'Volumes', vpFcT: 'NCs, defects and cost expected by December, product by product', vpFcS: 'Actual, then the forecast: the period’s volume per MSN × the MSN planned to December.', vpFcH: 'done → end of December', vpDec: 'Expected by end of December', dType: 'Cost split by NC type', typeSub: 'NC type, where it was found; “Cable NCs” = NCs of the Cables type; 100% = the cost of the selection.', ty_cab: 'Cable NCs', ty_fin: 'Final inspection', ty_test: 'Test', ty_int: 'In-house', ty_sup: 'Suppliers', ty_oth: 'Other', wlCh_prod: 'Products', wlCh_ac: 'Aircraft', wlCh_st: 'Stations', wlChs_prod: 'Rates, monthly map, precision, forecast and cost, product by product.', wlChs_ac: 'Cost per aircraft and FINs that come back.', wlChs_st: 'Defects by the station where the NC was written.',
       v2MonTgt: 'month target {v}', v2Cum: '{v} NCs to date', v2Fc: 'expected', v2TgtShort: 'target', v2Under: 'Month under its target', v2Over: 'Month above its target', v2CumLeg: 'Cumulative NCs', v2TgtCum: 'Cumulative target (placeholder)', v2Summer: 'July and August count as 60% of a month.', v2ObjH: 'Target per line · NCs per MSN', v2ObjC: 'Placeholder targets until the 2025 figures come: 2026 rate minus 25%.', v2PerMsnV: '{v} per MSN', v2StNow: 'NCs since the start of the period', v2StFc: 'expected by end of December', v2StTgt: 'target for the year (placeholder)', v2StCost: 'so far in the period', v2StBud: 'budget for the year (placeholder)', v2QPer: 'Per MSN built: the August shutdown does not weigh.', v2QMonth: 'Monthly average.', v2PerMsn: 'per MSN', v2Ac: '{n} aircraft',
       scVol: 'Volume per month', scTot: 'Total', scRate: 'Per MSN, per month', scRateP: 'Per MSN', scLast3: 'Last 3 months', scNc: 'NCs', scDef: 'Defects', scCost: 'Cost',
       scNote: 'Per MSN: NCs, defects and cost of the products matched to the production file. Small figure: last 3 months against the period.',
-      tabWhere: 'Where', whereTitle: 'Where are the problems?', whereSub: 'Products, lines, aircraft and stations, against the volume built where possible.', titleMock: 'FTO2 dashboard: mock-up to score',
+      tabWhere: 'Location', whereTitle: 'NC location', whereSub: 'Products, lines, aircraft and stations, against the volume built where possible.', titleMock: 'FTO2 dashboard: mock-up to score',
       mkScore: 'Score', mkOut: 'out', mkIn: 'kept', mkOthers: 'Other candidates', mkOthersSub: 'Proposed out; a score brings them back.', mkFigs: 'Headline figures', mkExplain: 'Explain the calculation (folded)', mkTabScore: 'This tab',
       mkBarAll: 'Scored {k} of {n}', mkPreview: 'Final preview', mkCopy: 'Copy the scores', mkCopied: 'Scores copied.', mkSaveDb: 'Saved on the page', mkSaveLocal: 'Saved in this browser', mkSaving: 'Saving…', mkSaveErr: 'Not saved',
       mkReal: 'Real data', mkFict: 'Dummy', mkTrioK: 'Three measures, side by side', mkTrioOv: 'NCs, defects and cost per aircraft built, month by month', mkTrioOvS: 'All three stay visible with no switch; each is scored on its own.',
@@ -1371,7 +1389,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
       cxModelH: 'Special rules of model {v}', cxR1: 'No alert for an NC found at test or final inspection; a customer return always has the alert.', cxR2: 'Connection errors: the first in an NC counts {a} min, each following one {b} min.', cxR3: 'Internal NCs: setup and hands-on work × {f}.', cxR4: 'Rejection with a rework order: the work is charged as for a rework, plus the value of the part.', cxR5: 'Rework order closed and planned: its planned time replaces setup and hands-on work (no connection rule, no × 2). {n} NCs in the selection.', cxR6: 'Quality aléa linked to the NC (same work order, NC created from {a} h before to {b} h after): its declared time lost replaces the {x}-min alert. {n} NCs in the selection.',
       cxPerNc: '{c} per NC', cxHandsV: 'depends on the defects', cxSel: 'Filtered NCs: {c} in total · {p} of the cost',
       cxEng: 'Engineering study', cxEngV: 'Design query: {h} h × {r} EUR/h = {c}', cxMat: 'Material', cxMatV: 'sum of the material of the defects', cxTot: 'Selection total', cxTotV: '{n} NCs',
-      cxFormula: 'Cost = total minutes ÷ 60 × {r} EUR/h + engineering + material. Setup and hands-on work are never under {f} min.',
+      cxFormula: 'Cost = each step’s minutes ÷ 60 × the rate of who does it (production {p} EUR/h, quality {q} EUR/h, ME {m} EUR/h) + engineering + material. Setup and hands-on work are never under {f} min.', cxAtRate: 'at {r} EUR/h',
       cxExample: 'Example, a rework with a single 10-minute defect: {a} + {b} + {c} + {d} + 10 + {e} = {m} min, which is {c2}.',
       cxRulesSum: 'See what is charged for each decision',
       cxRuleH: ['Decision', 'NCs', 'Alert', 'Writing', 'Support', 'Work and material', 'Re-check', 'Engineering', 'Part', 'Airbus standard', 'Basis'],
@@ -1380,7 +1398,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
       ex_one: 'Rework, one defect', ex_many: 'Rework, several defects', ex_final: 'Rework at final inspection', ex_noline: 'Rework, no defect line',
       ex_rej: 'Rejection', ex_rejrw: 'Rejection with a rework order', r_notaec: 'Not FTO2’s liability', r_notaec_how: 'FTO2 is not liable for this NC: it counts as an NC, its cost for FTO2 is 0', ex_order: 'Rework order time', fx_org: 'Origin', fx_order: 'Rework order', os_used: 'planned time used', os_open: 'not closed yet: model time', os_no_time: 'closed with no planned time: model time', os_not_found: 'not in the operations available: model time', os_none: 'operations not loaded: model time', n_ordSetup: 'Planned time of the rework order’s preparation, inspection and closing operations', n_ordWork: 'Planned time of the rework order’s work and test operations, instead of the model', dl_ord: 'Model times, for information (the hands-on work charged is the rework order’s); the material is used above', ex_exc: 'Exchange', ex_dqn: 'Design query', ex_cli: 'Customer return',
       fx_nc: 'NC', fx_date: 'Created', fx_line: 'Line', fx_dec: 'Decision', fx_where: 'Found at', fx_lines: 'Defect lines',
-      cxH: ['Step', 'How', 'Minutes', 'Cost at {r} EUR/h'],
+      cxH: ['Step', 'How', 'Minutes', 'Cost (the step’s rate)'],
       n_once: '{x} min, once per NC', n_alea: 'time lost declared on quality aléa {a}, which led to the NC', ex_alea: 'Declared aléa time', n_noalert: 'no alert: NC found at test or final inspection', n_x2: '{s} · × {f} (internal NC)', n_plain: '{x} min', n_final: '{x} min because it was found at final inspection',
       n_floor: 'raised from {a} to {b} min so setup and hands-on work reach {f} min', n_noline: 'no defect line: flat {x} min',
       n_lines: '{n} defect line(s), listed below', n_off: 'not charged for this decision',
@@ -1390,7 +1408,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
       d_lines: 'Show the {n} defect lines of this NC', dlH: ['#', 'What was written', 'Class (root cause)', 'Minutes', 'Material'],
       dl_on: 'Sum, used above as hands-on work and material', dl_off: 'Sum, not charged: this decision has no work',
       stripTotal: 'FTO2 total', stripSerie: 'Raised at FTO2', stripClient: 'Customer returns', stripDis: 'Beside it, quality aléas with no NC', disK: 'Beside the cost', disH: 'Quality aléas with no NC', disS: 'Time lost declared in MES on the quality aléas that led to no NC (same work order, from 2 h before to 72 h after). Shown beside the cost of non-quality, never added to it.', disEur: 'at {r} EUR/h', disHours: 'hours lost', disN: 'aléas', disLed: '{n} NCs in the selection start from a quality aléa: its declared time is in their cost, at the alert step.', disErma: '{n} aléas on the MIP / 1101VB (possible ERMA NC) left out: {h} h, to check.', disMonth: 'Hours lost per month', disLine: 'By line', disList: 'The {n} aléas, one per row', disCols: ['Aléa', 'Opened', 'Line', 'Station', 'Minutes', 'What the operator wrote'], disNone: 'No quality aléa without an NC for this filter.', disPhase: 'The aléas are the shop floor’s (series): none for this phase.', disOut: 'out of the block (possible ERMA)', disMin: '{v} min',
-      cTotal: 'Cost of non-quality', cNcs: 'NCs', cPerNc: 'Average cost per NC', cCable: 'Cost of cable defects', cCableSub: '{p} of the cost',
+      cTotal: 'Cost of non-quality', cNcs: 'NCs', cPerNc: 'Average cost per NC', cCable: 'Cost of cable defects, all NCs', cCableSub: '{p} of the cost',
       cLevels: 'Costing methods compared', cLevelsSub: 'Airbus standard: flat cost per decision. AEC average: average times per NC. Per defect: AEC steps with the rework built for each defect (method used).',
       lvl1: 'Airbus standard', lvl2: 'AEC average', lvl3: 'Per defect',
       cByCat: 'Cost by defect category', cByCatSub: 'Each NC’s cost shared among its defects.', noLine: 'A400M NCs (no text)',
@@ -1411,7 +1429,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
     }
   };
   var EN = {
-    'MEO Câblage': 'Wiring workmanship', 'Erreur Branchement': 'Connection error', 'Élément Manquant': 'Missing item',
+    'MEO Facteur humain': 'Workmanship (human factor)', 'Erreur Branchement': 'Connection error', 'Élément Manquant': 'Missing item',
     'Élément Endommagé': 'Damaged item', 'Déverrouillage': 'Unlocked contact', 'Grounding/Bonding': 'Grounding/Bonding',
     'Kitting Factory': 'Kitting Factory', 'FOD': 'FOD', 'Autre': 'Other', 'Non classé': 'Not classified',
     'Inversion': 'Swapped wires', 'Mauvaise Borne': 'Wrong terminal', 'Non Connecté': 'Not connected',
@@ -1431,7 +1449,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
   var WHERE_EN = { 'TEST': 'Test', 'NC Retour client': 'Customer return', 'NC Interne': 'In-process (internal)', 'QUALITE': 'Quality', 'NC Fournisseur': 'Supplier' };
   var RULE_FR = { 'Rework to drawing': 'Retouche', 'Exchange': 'Échange', 'Rejection': 'Rebut / rejet', 'Rejection with a rework order': 'Rejet avec ordre de retouche', 'Scrap': 'Rebut', 'Request for design change': 'Demande de DQN',
     'Accept as is': 'Accepté en l’état', 'Potential non-conformity': 'NC potentielle', 'No decision': 'Sans décision', 'Deleted NC': 'NC supprimée', 'Unknown decision code': 'Décision inconnue' };
-  var CAT_ORDER = ['MEO Câblage', 'Erreur Branchement', 'Élément Manquant', 'Élément Endommagé', 'Déverrouillage', 'Grounding/Bonding', 'Kitting Factory', 'FOD', 'Autre', 'Non classé'];
+  var CAT_ORDER = ['MEO Facteur humain', 'Erreur Branchement', 'Élément Manquant', 'Élément Endommagé', 'Déverrouillage', 'Grounding/Bonding', 'Kitting Factory', 'FOD', 'Autre', 'Non classé'];
   var ASIDE = { 'Kitting Factory': 1, 'FOD': 1, 'Autre': 1, 'Non classé': 1, '__none': 1 };
 
   // two pages from one file: the dashboard, and the weekly follow-up (weekly Pareto, MFT actions)
@@ -1488,7 +1506,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
   var REP = D.ncs;
   var DMAX = D.meta.to, DMIN = REP.reduce(function (m, n) { return n[1] < m ? n[1] : m; }, DMAX);
   var LINES = lineOrder(REP.map(function (n) { return n[3]; }));
-  var GF0 = { src: 'all', org: '', fto2: true, phase: 'SERIE', line: '', preset: PAGE === 'suivi' ? 'all' : 'ytd', from: '', to: '' }, GF = Object.assign({}, GF0);
+  var GF0 = { pick: null, src: 'all', org: '', fto2: true, phase: 'SERIE', line: '', preset: PAGE === 'suivi' ? 'all' : 'ytd', from: '', to: '' }, GF = Object.assign({}, GF0);
   var PRESETS = ['ytd', 'm1', 'm3', 'm6', 'm12', 'all', 'custom'];
   function plusDays(iso, k) { var d = new Date(iso + 'T12:00:00Z'); d.setUTCDate(d.getUTCDate() + k); return isoDay(d); }
   function minusMonths(iso, k) { var d = new Date(iso + 'T12:00:00Z'), dd = d.getUTCDate(); d.setUTCDate(1); d.setUTCMonth(d.getUTCMonth() - k); d.setUTCDate(Math.min(dd, new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth() + 1, 0)).getUTCDate())); return isoDay(d); }
@@ -1503,10 +1521,41 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
     if (!n) return false;
     if (GF.src !== 'all' && (GF.src === 'man' ? n[39] === 'sky' : n[39] !== GF.src)) return false;
     if (GF.org && (n[41] || 'normal') !== GF.org) return false;   // [41] the pipeline output the NC comes from: normal or missing_ids
+    if (GF.pick && !pickNc(n)) return false;
     if (GF.phase && n[24] !== GF.phase) return false;
     if (GF.line && !anyLine && n[3] !== GF.line) return false;
     return n[1] >= GF.from && n[1] <= GF.to;
   }
+  // a value clicked in a chart filters every tab: GF.pick = {k: field, v: value}. NC fields are tested on the NC; category, cause,
+  // sub-category, FIN and sub-code mean "NCs with at least one such defect line" (PICK_NC, made when the pick changes)
+  var PICK_DEF = { cat: function (r) { return dCat(r); }, rca: function (r) { return dRca(r); }, sub: function (r) { return dSub(r); }, fin: function (r) { return dFin(r); }, code: function (r) { return dCode(r); } };
+  var PICK_NCF = { month: function (n) { return n[1].slice(0, 7); }, week: function (n) { return n[2]; }, day: function (n) { return n[1]; }, prod: function (n) { return n[26] || 'Other'; },
+    pprod: function (n) { return D.eqmsn && D.eqmsn.map ? D.eqmsn.map[String(n[26] || '').toUpperCase()] || '' : ''; }, msn: function (n) { return n[25]; }, station: function (n) { return n[27]; },
+    type: function (n) { return n[33]; }, ntype: function (n) { return ncType(n); }, rule: function (n) { return n[6]; }, where: function (n) { return n[8]; }, nc: function (n) { return String(n[0]); },
+    hour: function (n) { return String(n[28]); } };
+  var PICK_NC = null;
+  function pickNc(n) { var p = GF.pick; if (PICK_DEF[p.k]) return !!(PICK_NC && PICK_NC[n[0]]); var f = PICK_NCF[p.k]; return !f || String(f(n)) === String(p.v); }
+  function pickPrep() {
+    PICK_NC = null; var p = GF.pick; if (!p || !PICK_DEF[p.k]) return;
+    PICK_NC = {}; D.defects.forEach(function (r) { if (String(PICK_DEF[p.k](r)) === String(p.v)) PICK_NC[r[0]] = 1; });
+  }
+  function pk(k, v) { return v == null || v === '' ? '' : ' data-pick="' + esc(k + '|' + v) + '"'; }
+  function ppk(k, v) { return D.eqmsn && pSrc() === D.eqmsn ? pk(k, v) : ''; }   // NC-rate charts: only on the real production plan
+  function pickLabel(p) {
+    var v = p.k === 'month' ? monthName(p.v) + ' ' + p.v.slice(0, 4) : p.k === 'day' ? shortDay(p.v) : p.k === 'cat' ? L(p.v) : p.k === 'prod' ? prodName(p.v) : p.k === 'ntype' ? S('ty_' + p.v) : p.k === 'rule' ? ruleName(p.v) : p.k === 'where' ? whereName(p.v) : p.v;
+    return S('pk_' + p.k) + ' : ' + v;
+  }
+  function pickSet(k, v) {
+    if (k === 'line') { setGF({ line: GF.line === v ? '' : v }); return; }   // the line has its own filter
+    var same = GF.pick && GF.pick.k === k && String(GF.pick.v) === String(v);
+    var keep = k === 'msn' && !same && A.msn && A.msn.slice(A.msn.indexOf('|') + 1) === String(v) ? A.msn : null;   // the MSN chart keeps that MSN's NC list open
+    GF.pick = same ? null : { k: k, v: v }; pickPrep(); hideTip(); setGF({});
+    if (keep) { A.msn = keep; rvDraw('A:msn'); }
+  }
+  document.addEventListener('click', function (e) {
+    var el = e.target.closest && e.target.closest('[data-pick]'); if (!el) return;
+    var s2 = el.getAttribute('data-pick'), i = s2.indexOf('|'); pickSet(s2.slice(0, i), s2.slice(i + 1));
+  });
   function gScope(n) { return n[23] === 'serie' || !GF.fto2; }   // FTO2 plant only: the NCs raised at FTO2
   // the selection: SEL follows every filter; SER (raised at FTO2) and CLI (customer returns) ignore the plant switch, for the tabs that show both apart
   var SEL_NC = [], SER_NC = [], CLI_NC = [], SEL = {}, SER = {}, CLI = {};
@@ -1942,7 +1991,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
     rows: selUnits, measure: uCost,
     dims: [
       { k: 'type', t: 'dType', sub: 'typeSub', custom: cnqSplit, get: function (u) { return ncType(u.n); }, show: function (v) { return S('ty_' + v); }, order: function (v) { return NCTYPES.filter(function (t) { return v.indexOf(t) >= 0; }); } },
-      { k: 'cable', t: 'dCable', get: function (u) { return u.d && dCable(u.d) ? 'c' : 'n'; }, show: function (v) { return v === 'c' ? S('cable') : S('notCable'); }, order: function () { return ['c', 'n']; } },
+      { k: 'cable', t: 'dCable', sub: 'cableSubCnq', get: function (u) { return u.d && dCable(u.d) ? 'c' : 'n'; }, show: function (v) { return v === 'c' ? S('cable') : S('notCable'); }, order: function () { return ['c', 'n']; } },
       { k: 'rule', t: 'dRule', get: function (u) { return u.n[7]; }, show: ruleName },
       { k: 'line', t: 'dLine', get: function (u) { return u.n[3]; }, show: function (v) { return v; }, order: lineOrder },
       { k: 'month', t: 'dMonth', cols: true, get: function (u) { return u.n[1].slice(0, 7); }, show: monthName, order: function (v) { return v.sort(); } }
@@ -1982,10 +2031,13 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
   function dec(x) { return (+x).toLocaleString(loc(), { maximumFractionDigits: 2 }); }
   function mn(x) { return (Math.round(x * 10) / 10).toLocaleString(loc()) + ' min'; }
   function cxSteps(n) { return n[40] || [0, 0, 0, 0, 0, 0, 0, 0]; }
+  // EUR per hour of a step, by who does it (production, quality, ME); one rate before 20 Oct
+  function cxRate(k) { var P = CXP.p, R = P.rates || {}; return R[k] != null ? R[k] : P.rate; }
+  function cxEur(st) { return CX_STEPS.reduce(function (a, s2, j) { return a + (st[j] || 0) / 60 * cxRate(s2[0]); }, 0); }
   function cxRule(n) { return CXP.rules[n[6]] || null; }
   function cxAdj(n) {   // customer return: the flat extra or the real amount, i.e. what the level-3 cost holds beyond the steps (0 today)
     var f = cxRule(n), st = cxSteps(n); if (!f || n[5] !== 1) return 0;   // not FTO2's liability: cost 0, shown as its own line
-    var m = [f[0], f[1], f[2], f[3], f[3], f[4]].reduce(function (a, on, j) { return a + (on ? st[j] : 0); }, 0), d = n[12] - (m / 60 * CXP.p.rate + n[18] + n[17]);
+    var on = [f[0], f[1], f[2], f[3], f[3], f[4]], e = CX_STEPS.reduce(function (a, s2, j) { return a + (on[j] ? st[j] / 60 * cxRate(s2[0]) : 0); }, 0), d = n[12] - (e + n[18] + n[17]);
     return Math.abs(d) >= 0.05 ? d : 0;
   }
   function cxLines(nc) { return D.defects.filter(function (r) { return r[0] === nc; }).sort(function (a, b2) { return a[1] - b2[1]; }); }
@@ -2019,7 +2071,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
     var box = document.getElementById('cx'); if (!box) return;
     box.hidden = !CXP; if (!CXP) return;
     var P = CXP.p, r = P.rate, tot = sum(SEL_NC, function (n) { return n[12]; }) || 0;
-    var stepTot = CX_STEPS.map(function (st, j) { return sum(SEL_NC, function (n) { return cxSteps(n)[j]; }) / 60 * r; });
+    var stepTot = CX_STEPS.map(function (st, j) { return sum(SEL_NC, function (n) { return n[5] === 1 ? cxSteps(n)[j] : 0; }) / 60 * cxRate(st[0]); });   // FTO2's cost only
     var engTot = sum(SEL_NC, function (n) { return n[18]; }), matTot = sum(SEL_NC, function (n) { return n[17]; });
     var shr = function (v) { return tot ? pct(v / tot * 100) : '—'; };
     var vals = { alert: P.alert, writing: P.write, support: P.support, setup: P.setup, recheck: P.recheck };
@@ -2027,7 +2079,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
     document.getElementById('cxChain').innerHTML = CX_STEPS.map(function (st, j) {
       var k = st[0], v = vals[k];
       return '<li' + (k === 'hands' ? ' class="var"' : '') + '><div class="cn">' + esc(S('cs_' + k)) + '</div><div class="cv">' + (v != null ? esc(num(v)) + ' min' : 'Σ') + '</div>' +
-        '<div class="ce">' + esc(v != null ? '= ' + S('cxPerNc', { c: eur2(v / 60 * r) }) : S('cxHandsV')) + '</div><div class="cs">' + esc(subs[k]) + '</div>' +
+        '<div class="ce">' + esc(v != null ? '= ' + S('cxPerNc', { c: eur2(v / 60 * cxRate(k)) }) : S('cxHandsV')) + ' · ' + esc(S('cxAtRate', { r: dec(cxRate(k)) })) + '</div><div class="cs">' + esc(subs[k]) + '</div>' +
         '<div class="sel">' + S('cxSel', { c: '<b>' + esc(eur(stepTot[j])) + '</b>', p: esc(shr(stepTot[j])) }) + '</div></li>';
     }).join('');
     var dqn = CXP.rules.DQN, eh = dqn ? dqn[CX_RF.eng] : 0, other = sum(SEL_NC, cxAdj);
@@ -2036,12 +2088,12 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
       '<div><span class="cn">' + esc(S('cxMat')) + '</span><span class="cv">' + esc(S('cxMatV')) + '</span><div class="sel">' + S('cxSel', { c: '<b>' + esc(eur(matTot)) + '</b>', p: esc(shr(matTot)) }) + '</div></div>' +
       (Math.abs(other) >= 0.5 ? '<div><span class="cn">' + esc(S('r_adj')) + '</span><div class="sel">' + S('cxSel', { c: '<b>' + esc(eur(other)) + '</b>', p: esc(shr(other)) }) + '</div></div>' : '') +
       '<div class="tot"><span class="cn">' + esc(S('cxTot')) + '</span><span class="cv">' + esc(S('cxTotV', { n: num(SEL_NC.length) })) + '</span><div class="sel"><b>' + esc(eur(tot)) + '</b></div></div>';
-    document.getElementById('cxFormula').textContent = S('cxFormula', { r: dec(r), f: num(P.floor) });
+    document.getElementById('cxFormula').textContent = S('cxFormula', { p: dec(cxRate('hands')), q: dec(cxRate('writing')), m: dec(cxRate('support')), f: num(P.floor) });
     var nOrd = SEL_NC.filter(function (n) { return cxSteps(n)[8] === 'order'; }).length, nAlea = SEL_NC.filter(function (n) { return cxSteps(n)[11] === 'alea'; }).length;
     document.getElementById('cxModel').innerHTML = '<b>' + esc(S('cxModelH', { v: P.version || '' })) + '</b><ul>' + [S('cxR1'), S('cxR2', { a: num((CXP.cls[(P.connCls || [])[0]] || [P.defDefault])[0]), b: num(P.connNext || 0) }), S('cxR3', { f: dec(P.intFactor || 1) }), S('cxR4')]
       .concat(P.orderTime ? [S('cxR5', { n: num(nOrd) })] : []).concat(P.aleaTime ? [S('cxR6', { a: num(-(P.aleaHours || [-2])[0]), b: num((P.aleaHours || [0, 72])[1]), x: num(P.alert), n: num(nAlea) })] : []).map(function (t) { return '<li>' + esc(t) + '</li>'; }).join('') + '</ul>';
     var setup = Math.max(P.setup, P.floor - 10), m = P.alert + P.write + P.support + setup + 10 + P.recheck;
-    document.getElementById('cxExample').textContent = S('cxExample', { a: P.alert, b: P.write, c: P.support, d: setup, e: P.recheck, m: num(m), c2: eur2(m / 60 * r) });
+    document.getElementById('cxExample').textContent = S('cxExample', { a: P.alert, b: P.write, c: P.support, d: setup, e: P.recheck, m: num(m), c2: eur2(cxEur([P.alert, P.write, P.support, setup, 10, P.recheck])) });
     // what each decision charges
     var cnt = {}; SEL_NC.forEach(function (n) { cnt[n[6]] = (cnt[n[6]] || 0) + 1; });
     var yn = function (v) { return v ? '<span class="cx-yes">✓</span>' : '<span class="cx-no">–</span>'; }, H = S('cxRuleH');
@@ -2073,18 +2125,18 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
       setup: ord ? S('n_ordSetup') : x2(base > P.setup + 1e-6 ? S('n_floor', { a: P.setup, b: dec(base), f: P.floor }) : S('n_once', { x: P.setup })),
       hands: ord ? S('n_ordWork') : x2(!lines.length ? S('n_noline', { x: P.noDefect }) : S('n_lines', { n: num(lines.length) })), recheck: S('n_once', { x: P.recheck })
     };
-    var H = S('cxH'), totMin = 0;
-    var tb = '<div class="table-wrap"><table class="cxt"><thead><tr><th scope="col">' + esc(H[0]) + '</th><th scope="col">' + esc(H[1]) + '</th><th scope="col" class="r">' + esc(H[2]) + '</th><th scope="col" class="r">' + esc(H[3].replace('{r}', dec(r))) + '</th></tr></thead><tbody>';
+    var H = S('cxH'), totMin = 0, totEur = 0;
+    var tb = '<div class="table-wrap"><table class="cxt"><thead><tr><th scope="col">' + esc(H[0]) + '</th><th scope="col">' + esc(H[1]) + '</th><th scope="col" class="r">' + esc(H[2]) + '</th><th scope="col" class="r">' + esc(H[3]) + '</th></tr></thead><tbody>';
     CX_STEPS.forEach(function (s2, j) {
-      var on = !!f[CX_RF[s2[1]]], m = st[j]; if (on) totMin += m;
-      tb += '<tr' + (on ? '' : ' class="off"') + '><td>' + esc(S('cs_' + s2[0])) + '</td><td>' + esc(on ? notes[s2[0]] : S('n_off')) + '</td><td class="r">' + (on ? esc(mn(m)) : '–') + '</td><td class="r">' + (on ? esc(eur2(m / 60 * r)) : '–') + '</td></tr>';
+      var on = !!f[CX_RF[s2[1]]], m = st[j]; if (on) { totMin += m; totEur += m / 60 * cxRate(s2[0]); }
+      tb += '<tr' + (on ? '' : ' class="off"') + '><td>' + esc(S('cs_' + s2[0])) + '</td><td>' + esc(on ? notes[s2[0]] : S('n_off')) + '</td><td class="r">' + (on ? esc(mn(m)) : '–') + '</td><td class="r">' + (on ? esc(eur2(m / 60 * cxRate(s2[0]))) : '–') + '</td></tr>';
     });
     if (st[6]) tb += '<tr><td>' + esc(S('r_eng')) + '</td><td>' + esc(S('r_eng_how', { h: dec(st[6]), r: dec(P.rateEng) })) + '</td><td class="r">–</td><td class="r">' + esc(eur2(n[18])) + '</td></tr>';
     if (f[3]) tb += '<tr><td>' + esc(S('r_mat')) + '</td><td>' + esc(S('r_mat_how')) + '</td><td class="r">–</td><td class="r">' + esc(eur2(n[17])) + '</td></tr>';
     if (f[6]) tb += '<tr><td>' + esc(S('r_part')) + '</td><td>' + esc(S('r_part_how')) + '</td><td class="r">–</td><td class="r">' + esc(eur2(0)) + '</td></tr>';
     var adj = cxAdj(n);
     if (adj) tb += '<tr><td>' + esc(S('r_adj')) + '</td><td></td><td class="r">–</td><td class="r">' + esc(eur2(adj)) + '</td></tr>';
-    if (n[5] !== 1 && totMin) tb += '<tr><td>' + esc(S('r_notaec')) + '</td><td>' + esc(S('r_notaec_how')) + '</td><td class="r">–</td><td class="r">' + esc(eur2(-totMin / 60 * r)) + '</td></tr>';
+    if (n[5] !== 1 && totMin) tb += '<tr><td>' + esc(S('r_notaec')) + '</td><td>' + esc(S('r_notaec_how')) + '</td><td class="r">–</td><td class="r">' + esc(eur2(-totEur)) + '</td></tr>';
     tb += '<tr class="total"><td>' + esc(S('r_tot')) + '</td><td></td><td class="r">' + esc(mn(totMin)) + '</td><td class="r">' + esc(eur2(n[12])) + '</td></tr></tbody></table></div>';
     var m2 = (f[0] && st[0] ? P.alert : 0) + f[1] * P.writeGlobal + f[2] * P.support + f[3] * P.workGlobal + f[4] * P.recheck;
     var lv = '<div class="cx-lv"><div>' + esc(S('x2_line', { m: num(m2), c: '\u0001' })).replace('\u0001', '<b>' + esc(eur2(n[10])) + '</b>') + '</div><div>' +
@@ -2116,9 +2168,11 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
   function disSel() {
     if (!D.dis) return null;
     if (GF.phase && GF.phase !== 'SERIE') return [];
-    return D.dis.filter(function (a) { return a[1] >= GF.from && a[1] <= GF.to && (!GF.line || a[2] === GF.line); });
+    var P = GF.pick, f = !P ? null : P.k === 'month' ? function (a) { return a[1].slice(0, 7) === P.v; } : P.k === 'day' ? function (a) { return a[1].slice(0, 10) === P.v; } :
+      P.k === 'week' ? function (a) { return isoWeekOf(new Date(a[1].slice(0, 10) + 'T00:00:00Z')) === P.v; } : P.k === 'station' ? function (a) { return a[3] === P.v; } : null;   // other picks (category, product…) do not apply to an aléa
+    return D.dis.filter(function (a) { return a[1] >= GF.from && a[1] <= GF.to && (!GF.line || a[2] === GF.line) && (!f || f(a)); });
   }
-  function disRate() { return (CXP && CXP.p.rate) || 50; }
+  function disRate() { return (CXP && (CXP.p.rateProd || CXP.p.rate)) || 50; }   // time lost on the line: the production rate
   var DIS_WIRED = false;
   function renderDis() {
     var box = document.getElementById('cDis'); if (!box) return;
@@ -2142,7 +2196,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
     M.forEach(function (m, i) {
       var v = by[m] || 0, h = v / mx * (H - mb - mt), x = i * bw + bw * 0.18;
       g += '<rect x="' + r1(x) + '" y="' + r1(H - mb - h) + '" width="' + r1(bw * 0.64) + '" height="' + r1(Math.max(v ? 1.5 : 0, h)) + '" rx="2" fill="var(--ink-2)"' +
-        tip(monthName(m) + ' ' + m.slice(0, 4), [f1(v) + ' h · ' + num(nb[m] || 0) + ' ' + S('disN'), eur(v * rate)]) + '/>';
+        pk('month', m) + tip(monthName(m) + ' ' + m.slice(0, 4), [f1(v) + ' h · ' + num(nb[m] || 0) + ' ' + S('disN'), eur(v * rate)]) + '/>';
       if (v && bw >= 26) g += tx(x + bw * 0.32, H - mb - h - 4, f1(v), 'mu', 'middle');
       g += tx(i * bw + bw / 2, H - 5, v2Mo(m, bw, i), 'mu', 'middle');
     });
@@ -2152,7 +2206,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
     var ls = lineOrder(Object.keys(bl)), lc = document.getElementById('disLines'), LW = Math.max(200, (lc.clientWidth || 260)), rh = 26, lmx = Math.max.apply(null, ls.map(function (l) { return bl[l]; }).concat([1e-9])), lg = '';
     ls.forEach(function (l, i) {
       var y = i * rh + 4, w = bl[l] / lmx * (LW - 120);
-      lg += tx(0, y + 13, l, 'ink') + '<rect x="56" y="' + (y + 4) + '" width="' + r1(Math.max(2, w)) + '" height="10" rx="3" fill="var(--ink-2)"' + tip(l, [f1(bl[l]) + ' h', eur(bl[l] * rate)]) + '/>' + tx(62 + w, y + 13, f1(bl[l]) + ' h', 'mu');
+      lg += tx(0, y + 13, l, 'ink') + '<rect x="56" y="' + (y + 4) + '" width="' + r1(Math.max(2, w)) + '" height="10" rx="3" fill="var(--ink-2)"' + (l === '—' ? '' : pk('line', l)) + tip(l, [f1(bl[l]) + ' h', eur(bl[l] * rate)]) + '/>' + tx(62 + w, y + 13, f1(bl[l]) + ' h', 'mu');
     });
     lc.innerHTML = ls.length ? svg(LW, ls.length * rh + 6, lg, S('disLine')) : '';
     // the list
@@ -2162,6 +2216,26 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
       list.map(function (a) { return '<tr' + (a[6] === 1 ? '' : ' class="off"') + '><td class="nc">' + esc(a[0]) + '</td><td class="num">' + esc(shortDay(a[1])) + '</td><td>' + esc(a[2]) + '</td><td>' + esc(a[3]) +
         '</td><td class="num r">' + esc(num(a[5])) + '</td><td class="txt">' + esc(a[9]) + (a[6] === 1 ? '' : ' <span class="tag">' + esc(S('disOut')) + '</span>') + '</td></tr>'; }).join('') + '</tbody></table>';
   }
+
+  // ---------------------------------------------------------------- 4d. Localisation: every NC of the selection, newest first; line, product, MSN and station cells filter the page
+  var WT = { lim: 60 };
+  function renderWhereTbl() {
+    var tb = document.getElementById('whTb'); if (!tb) return;
+    var q = (document.getElementById('whQ').value || '').trim().toLowerCase();
+    var rs = SEL_NC.filter(function (n) { return !q || [n[0], n[3], n[22], n[25], n[26], n[27], n[33]].join(' ').toLowerCase().indexOf(q) >= 0; })
+      .sort(function (a, b) { return a[1] < b[1] ? 1 : a[1] > b[1] ? -1 : (b[0] > a[0] ? 1 : -1); });
+    document.getElementById('whN').textContent = num(rs.length);
+    document.getElementById('whTh').innerHTML = ['cNc', 'cDate', 'cLine', 'wtProd', 'wtMsn', 'wtSt', 'wtType', 'wtCost', 'wtTitle'].map(function (k, j) { return '<th scope="col"' + (j === 7 ? ' class="r"' : '') + '>' + esc(S(k)) + '</th>'; }).join('');
+    var cell = function (k, v, show) { return '<td' + (v ? pk(k, v) + ' class="pickc"' : '') + '>' + esc(show == null ? v || '—' : show) + '</td>'; };
+    tb.innerHTML = rs.slice(0, WT.lim).map(function (n) {
+      return '<tr><td class="nc"' + pk('nc', n[0]) + '>' + esc(n[0]) + '</td><td class="num">' + esc(shortDay(n[1])) + '</td>' + cell('line', n[3]) + cell('prod', n[26] || 'Other', prodName(n[26] || 'Other')) +
+        cell('msn', n[25]) + cell('station', n[27]) + cell('ntype', ncType(n), S('ty_' + ncType(n))) + '<td class="num r">' + esc(eur(n[12])) + '</td><td class="txt">' + esc(n[22] || '') + '</td></tr>';
+    }).join('');
+    var more = document.getElementById('whM'), rest = rs.length - WT.lim;
+    more.hidden = rest <= 0; if (rest > 0) more.textContent = S('more', { n: num(Math.min(200, rest)) });
+  }
+  document.getElementById('whQ').addEventListener('input', function () { WT.lim = 60; renderWhereTbl(); });
+  document.getElementById('whM').addEventListener('click', function () { WT.lim += 200; renderWhereTbl(); });
 
   // ---------------------------------------------------------------- 4. Customer returns
   function cx(r) { return D.client[r[0] + '|' + r[1]] || ['', '', '', '', '', '']; }
@@ -2235,7 +2309,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
   // ---------------------------------------------------------------- 5. Insights (selection)
   // Category colours: validated categorical order (blue, aqua, yellow, magenta, green, violet); orange stays reserved for cable.
   var A = { pin: null, top0: null, lor: null, km: null, msn: null };
-  var CATC = { 'MEO Câblage': 1, 'Erreur Branchement': 2, 'Élément Manquant': 3, 'Élément Endommagé': 4, 'Déverrouillage': 5, 'Grounding/Bonding': 6 };
+  var CATC = { 'MEO Facteur humain': 1, 'Erreur Branchement': 2, 'Élément Manquant': 3, 'Élément Endommagé': 4, 'Déverrouillage': 5, 'Grounding/Bonding': 6 };
   var MAIN_CATS = CAT_ORDER.filter(function (c) { return !ASIDE[c]; }).concat(['aside']);
   function catKey(c) { return ASIDE[c] ? 'aside' : c; }
   function catFill(c) { return CATC[c] ? 'var(--c' + CATC[c] + ')' : 'var(--dim)'; }
@@ -2304,7 +2378,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
         var n = per[iso] || 0, k = Object.keys(pnc[iso] || {}).length;
         if (n) { wdTot[i2] += n; wdDays[i2]++; }
         out += '<rect x="' + (lab + j * st) + '" y="' + (top + i2 * st) + '" width="' + cell + '" height="' + cell + '" rx="2" fill="' + (n ? shade(bin(n)) : 'var(--track)') + '"' +
-          tip(day(iso, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }), [n ? S('calTip', { n: num(n), k: num(k) }) : S('calNone')]) + '/>';
+          pk('day', iso) + tip(day(iso, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }), [n ? S('calTip', { n: num(n), k: num(k) }) : S('calNone')]) + '/>';
       }
     });
     var T = rs.length, wmax = Math.max.apply(null, wdTot.slice(0, nR));
@@ -2355,7 +2429,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
     function col(list, pos, tot, x, fill, name, side) {
       var ys = spread(list.map(function (q) { return pos[q].y + pos[q].h / 2 + 4; }), 15, top + 8, H - 2);
       list.forEach(function (q, i) {
-        nodes += '<rect class="node" x="' + x + '" y="' + r1(pos[q].y) + '" width="' + nw + '" height="' + r1(Math.max(pos[q].h, 2)) + '" rx="2" fill="' + fill(q) + '" data-node="' + side + ':' + q + '"' + tip(name(q), [S('nodeTip', { n: num(tot[q]), p: pct0(tot[q] / T * 100) })]) + '/>';
+        nodes += '<rect class="node" x="' + x + '" y="' + r1(pos[q].y) + '" width="' + nw + '" height="' + r1(Math.max(pos[q].h, 2)) + '" rx="2" fill="' + fill(q) + '" data-node="' + side + ':' + q + '"' + (side === 'M' && q !== 'aside' ? pk('cat', q) : '') + tip(name(q), [S('nodeTip', { n: num(tot[q]), p: pct0(tot[q] / T * 100) })]) + '/>';
         var lx = side === 'L' ? x - 8 : x + nw + 8, an = side === 'L' ? 'end' : null;
         labels += '<text class="halo" x="' + lx + '" y="' + r1(ys[i]) + '"' + (an ? ' text-anchor="end"' : '') + '><tspan class="ink">' + esc(name(q)) + '</tspan> <tspan class="mu">' + esc(num(tot[q])) + '</tspan></text>';
       });
@@ -2396,7 +2470,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
     });
     list.sort(function (a, b) { return b.c - a.c; });
     var dots = list.map(function (s) { var x = X(s.n), yy = Y(s.a), r = R(s.c), gray = ASIDE[s.cat];
-      return '<g class="bub"' + tip(L(s.k), [S('bubTip', { n: num(s.n), c: eur(s.c), a: eur(s.a) }), L(s.cat)]) + '><circle cx="' + r1(x) + '" cy="' + r1(yy) + '" r="' + r1(Math.max(r, 12)) + '" fill="transparent"/>' +
+      return '<g class="bub"' + pk('rca', s.k) + tip(L(s.k), [S('bubTip', { n: num(s.n), c: eur(s.c), a: eur(s.a) }), L(s.cat)]) + '><circle cx="' + r1(x) + '" cy="' + r1(yy) + '" r="' + r1(Math.max(r, 12)) + '" fill="transparent"/>' +
         '<circle class="dot" cx="' + r1(x) + '" cy="' + r1(yy) + '" r="' + r1(r) + '" fill="' + (gray ? 'var(--dim)' : 'var(--s1)') + '" fill-opacity=".28" stroke="' + (gray ? 'var(--muted)' : 'var(--s1)') + '" stroke-width="1.5"/></g>'; }).join('');
     // direct labels: the most expensive causes first, skipped when they would collide
     var placed = isoBox.slice(), labs = '';
@@ -2533,7 +2607,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
         var x = lab + j * step + 1, sel = A.msn === row.l + '|' + m.msn, rec = m.first >= recent, hs = m.s / top * ph, hc = m.c / top * ph;
         tot += m.s + m.c;
         var t2 = tip('MSN ' + m.msn + ' · ' + progName(row.l), [eur(m.s + m.c), S('msnTip', { n: num(m.ncs.length), s: eur(m.s), c: eur(m.c) }), S('msnFirst', { d: shortDay(m.first) }) + (rec ? ' · ' + S('msnRecent') : '')]);
-        g += '<g data-msn="' + esc(row.l + '|' + m.msn) + '"' + t2 + (A.msn && !sel ? ' opacity=".45"' : '') + '><rect x="' + r1(x - 1) + '" y="' + y0 + '" width="' + step + '" height="' + ph + '" fill="transparent"/>' +
+        g += '<g data-msn="' + esc(row.l + '|' + m.msn) + '"' + pk('msn', m.msn) + t2 + (A.msn && !sel ? ' opacity=".45"' : '') + '><rect x="' + r1(x - 1) + '" y="' + y0 + '" width="' + step + '" height="' + ph + '" fill="transparent"/>' +
           (hs ? '<rect x="' + r1(x) + '" y="' + r1(base - hs) + '" width="' + bw + '" height="' + r1(Math.max(hs, 1)) + '" rx="2" fill="' + (rec ? 'url(#hatchS1)' : 'var(--s1)') + '"' + (rec ? ' stroke="var(--s1)" stroke-width="1"' : '') + '/>' : '') +
           (hc ? '<rect x="' + r1(x) + '" y="' + r1(base - hs - hc - (hs ? 2 : 0)) + '" width="' + bw + '" height="' + r1(Math.max(hc, 1)) + '" rx="2" fill="var(--s1-ret)"/>' : '') +
           (sel ? '<rect x="' + r1(x - 2) + '" y="' + r1(base - hs - hc - 4) + '" width="' + (bw + 4) + '" height="' + r1(hs + hc + 6) + '" fill="none" stroke="var(--ink)" stroke-width="1.5" rx="3"/>' : '') + '</g>';
@@ -2576,7 +2650,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
     var cx = W0 - colW; cols.forEach(function (c) { cx += c[1]; g += tx(cx - 4, 12, c[0] === 'MSN' ? 'MSN' : S(c[0]), 'mu', 'end'); });
     list.forEach(function (m, i) {
       var y = top + i * rh, ws = m.s / mx * bwMax, wc = m.c / mx * bwMax, lbl = m.p === '__rest' ? S('prodRest', { n: m.nf }) : prodName(m.p);
-      g += '<g' + tip(lbl, [eur(m.t), S('prodTip', { s: eur(m.s), c: eur(m.c), n: num(m.n), k: num(m.k) })]) + '><rect x="0" y="' + y + '" width="' + W0 + '" height="' + rh + '" fill="transparent"/>' +
+      g += '<g' + (m.p !== '__rest' ? pk('prod', m.p) : '') + tip(lbl, [eur(m.t), S('prodTip', { s: eur(m.s), c: eur(m.c), n: num(m.n), k: num(m.k) })]) + '><rect x="0" y="' + y + '" width="' + W0 + '" height="' + rh + '" fill="transparent"/>' +
         tx(name, y + 17, lbl.length > (wide ? 18 : 14) ? lbl.slice(0, wide ? 17 : 13) + '…' : lbl, m.p === '__rest' ? 'mu' : 'ink', 'end') +
         '<rect x="' + bx + '" y="' + (y + 6) + '" width="' + r1(Math.max(Math.min(ws, bwMax), 1)) + '" height="14" rx="2" fill="' + (m.p === '__rest' ? 'var(--dim)' : 'var(--s1)') + '"/>' +
         (wc >= 1 ? '<rect x="' + r1(bx + Math.min(ws, bwMax) + 2) + '" y="' + (y + 6) + '" width="' + r1(Math.min(wc, bwMax)) + '" height="14" rx="2" fill="var(--s1-ret)"/>' : '') +
@@ -2662,7 +2736,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
       var y = top + i * rh, nm = s.length > maxCh ? s.slice(0, maxCh - 1) + '…' : s;
       g += '<text x="' + r1(lab - 8) + '" y="' + (y + 16) + '" text-anchor="end" class="ink"><title>' + esc(s) + '</title>' + esc(nm) + '</text>';
       cats.forEach(function (k, j) { var v = per[s][k] || 0, x = lab + j * cw;
-        g += '<rect x="' + (x + 1) + '" y="' + (y + 1) + '" width="' + (cw - 2) + '" height="' + (rh - 2) + '" rx="3" fill="' + (v ? tint('--seq', Math.round(14 + 86 * v / mx)) : 'var(--track)') + '"' + tip(s + ' · ' + catLabel(k), [S('stTip', { n: num(v), p: pct0(v / tot[s] * 100) })]) + '/>';
+        g += '<rect x="' + (x + 1) + '" y="' + (y + 1) + '" width="' + (cw - 2) + '" height="' + (rh - 2) + '" rx="3" fill="' + (v ? tint('--seq', Math.round(14 + 86 * v / mx)) : 'var(--track)') + '"' + pk('station', s === S('noStation') ? '' : s) + tip(s + ' · ' + catLabel(k), [S('stTip', { n: num(v), p: pct0(v / tot[s] * 100) })]) + '/>';
         if (v) g += tx(x + cw / 2, y + 16, num(v), v / mx > 0.55 ? 'b' : 'ink', 'middle', v / mx > 0.55 ? ' style="fill:var(--on1)"' : ''); });
       g += tx(lab + cats.length * cw + 48, y + 16, num(tot[s]), 'ink b', 'end');
     });
@@ -2766,10 +2840,11 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
   }
   function apLeave() { hideTip(); flowFocus(document.querySelector('svg.flow'), null, null); flowKey = null; }
   function apClick(e) {
+    var ms = e.target.closest('[data-msn]');   // an MSN: its NC list opens, and the page filters on it (pickSet)
+    if (ms) { var mk = ms.getAttribute('data-msn'); A.msn = A.msn === mk ? null : mk; hideTip(); if (!ms.hasAttribute('data-pick')) rvDraw('A:msn'); return; }
+    if (e.target.closest && e.target.closest('[data-pick]')) return;   // handled page-wide (pickSet)
     var s = e.target.closest('[data-aline]');
     if (s) { var v = s.getAttribute('data-aline'); hideTip(); setGF({ line: GF.line === v ? '' : v }); return; }
-    var ms = e.target.closest('[data-msn]');
-    if (ms) { var mk = ms.getAttribute('data-msn'); A.msn = A.msn === mk ? null : mk; hideTip(); rvDraw('A:msn'); return; }
     if (e.target.closest('[data-msnclose]')) { A.msn = null; rvDraw('A:msn'); return; }
     var p = e.target.closest('[data-pin]');
     if (p) { var a = p.getAttribute('data-pin'), cur = A.pin == null ? A.top0 : A.pin; A.pin = cur === a ? '' : a; renderAna(); v2Render(); }
@@ -4126,7 +4201,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
     rows.forEach(function (r, i) {
       var y = top + i * rh + rh / 2;
       g += tx(lab - 10, y, r.lab, 'ink', 'end') + tx(lab - 10, y + 13, r.sub || '', 'mu', 'end', ' style="font-size:10.5px"');
-      g += '<rect x="' + lab + '" y="' + (y - 8) + '" width="' + r1(Math.max(1.5, X(r.v) - lab)) + '" height="15" rx="2" fill="' + (r.col || 'var(--s1)') + '"' + tip(r.lab, r.tip || [fmt(r.v)]) + '/>' + tx(X(r.v) + 6, y + 4, fmt(r.v), 'ink');
+      g += '<rect x="' + lab + '" y="' + (y - 8) + '" width="' + r1(Math.max(1.5, X(r.v) - lab)) + '" height="15" rx="2" fill="' + (r.col || 'var(--s1)') + '"' + (r.pk || '') + tip(r.lab, r.tip || [fmt(r.v)]) + '/>' + tx(X(r.v) + 6, y + 4, fmt(r.v), 'ink');
     });
     gSet(k, svg(W0, H, g, gT(k)), leg || '');
   }
@@ -4143,7 +4218,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
     g += pGridY(ml, pw, Y, nt, fmt) + '<line x1="' + ml + '" x2="' + (ml + pw) + '" y1="' + r1(Y(mean)) + '" y2="' + r1(Y(mean)) + '" stroke="var(--ink-2)"/>';
     g += '<path d="' + roll.map(function (v, j) { return (j ? 'L' : 'M') + r1(X(j)) + ',' + r1(Y(v)); }).join('') + '" fill="none" stroke="var(--ink-2)" stroke-width="1.5" stroke-dasharray="4 3"/>';
     g += '<path d="' + r.map(function (v, j) { return (j ? 'L' : 'M') + r1(X(j)) + ',' + r1(Y(v)); }).join('') + '" fill="none" stroke="' + col + '" stroke-width="2.2"/>';
-    rows.forEach(function (x, j) { g += '<circle cx="' + r1(X(j)) + '" cy="' + r1(Y(r[j])) + '" r="4" fill="' + col + '" stroke="var(--surface)" stroke-width="1.5"' + tip(monthName(PD.months[x.i]), [unitTip(r[j]), gx('rollTip', { v: fmt(roll[j]) }), gx('eqTip', { v: f1(x.e) })]) + '/>' + tx(X(j), H - 6, monthName(PD.months[x.i]), 'mu', 'middle'); });
+    rows.forEach(function (x, j) { g += '<circle cx="' + r1(X(j)) + '" cy="' + r1(Y(r[j])) + '" r="4" fill="' + col + '" stroke="var(--surface)" stroke-width="1.5"' + ppk('month', PD.months[x.i]) + tip(monthName(PD.months[x.i]), [unitTip(r[j]), gx('rollTip', { v: fmt(roll[j]) }), gx('eqTip', { v: f1(x.e) })]) + '/>' + tx(X(j), H - 6, monthName(PD.months[x.i]), 'mu', 'middle'); });
     g += tx(ml + pw + 8, Y(mean) + 4, gx('mean') + ' ' + fmt(mean), 'mu');
     gSet(k, svg(W0, H, g, gT(k)), swl(col, gx('monthLeg')) + swl('var(--ink-2)', gx('mean')) + swl('var(--ink-2)', gx('roll3'), true));
   }
@@ -4173,7 +4248,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
     if (!rows.length) { pEmpty(k); return; }
     var W0 = gWd(k), lab = 196, mr = 56, rh = 24, H = rows.length * rh + 6, mx = c[rows[0]] / E0, pw = W0 - lab - mr, g = '';
     rows.forEach(function (r, i) { var y = i * rh + 4, v = c[r] / E0, w = v / mx * pw;
-      g += tx(lab - 10, y + 13, trunc(L(r), lab - 14), 'ink', 'end') + '<rect x="' + lab + '" y="' + (y + 3) + '" width="' + r1(Math.max(1.5, w)) + '" height="14" rx="2" fill="' + catFill(cat[r]) + '"' + tip(L(r), [gx('perEq', { v: f2(v) }), gx('defN', { n: num(c[r]) }), catLabel(cat[r])]) + '/>' + tx(lab + w + 6, y + 14, f2(v), 'ink'); });
+      g += tx(lab - 10, y + 13, trunc(L(r), lab - 14), 'ink', 'end') + '<rect x="' + lab + '" y="' + (y + 3) + '" width="' + r1(Math.max(1.5, w)) + '" height="14" rx="2" fill="' + catFill(cat[r]) + '"' + ppk('rca', r) + tip(L(r), [gx('perEq', { v: f2(v) }), gx('defN', { n: num(c[r]) }), catLabel(cat[r])]) + '/>' + tx(lab + w + 6, y + 14, f2(v), 'ink'); });
     gSet(k, svg(W0, H, g, gT(k)), MAIN_CATS.filter(function (cc) { return rows.some(function (r) { return cat[r] === cc; }); }).map(function (cc) { return sw(catFill(cc), catLabel(cc)); }).join(''));
   }
 
@@ -4188,7 +4263,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
       var x0 = (n % cols) * (pw + gap), y0 = Math.floor(n / cols) * cellH, top = Object.keys(o.rcas).sort(function (a, b) { return o.rcas[b] - o.rcas[a]; }).slice(0, 3), lw = Math.min(150, pw * 0.48);
       g += tx(x0, y0 + 14, o.p, 'ink b') + tx(x0 + pw, y0 + 14, gx('perEq', { v: f2(o.DEF / o.EQ) }), 'mu', 'end');
       top.forEach(function (r, j) { var y = y0 + 24 + j * 22, v = o.rcas[r] / o.EQ, w = v / mx * (pw - lw - 40);
-        g += tx(x0 + lw - 6, y + 12, trunc(L(r), lw - 8), 'ink', 'end', ' style="font-size:11.5px"') + '<rect x="' + r1(x0 + lw) + '" y="' + (y + 3) + '" width="' + r1(Math.max(1.5, w)) + '" height="12" rx="2" fill="' + catFill(cat[r]) + '"' + tip(o.p + ' · ' + L(r), [gx('perEq', { v: f2(v) }), gx('defN', { n: num(o.rcas[r]) })]) + '/>' + tx(x0 + lw + w + 5, y + 13, f2(v), 'mu', null, ' style="font-size:11px"'); });
+        g += tx(x0 + lw - 6, y + 12, trunc(L(r), lw - 8), 'ink', 'end', ' style="font-size:11.5px"') + '<rect x="' + r1(x0 + lw) + '" y="' + (y + 3) + '" width="' + r1(Math.max(1.5, w)) + '" height="12" rx="2" fill="' + catFill(cat[r]) + '"' + ppk('rca', r) + tip(o.p + ' · ' + L(r), [gx('perEq', { v: f2(v) }), gx('defN', { n: num(o.rcas[r]) })]) + '/>' + tx(x0 + lw + w + 5, y + 13, f2(v), 'mu', null, ' style="font-size:11px"'); });
     });
     gSet(k, svg(W0, H, g, gT(k)));
   }
@@ -4209,7 +4284,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
   }
 
   // 56-58. rates by product
-  function rateRows(f, fmt) { return pOk().map(function (o) { return { lab: o.p, sub: pSub(o), v: f(o), tip: [fmt(f(o)), pSub(o)].concat(o.line ? [gx('ofLine', { l: o.line })] : []) }; }).sort(function (a, b) { return b.v - a.v; }); }
+  function rateRows(f, fmt) { return pOk().map(function (o) { return { lab: o.p, pk: ppk('pprod', o.p), sub: pSub(o), v: f(o), tip: [fmt(f(o)), pSub(o)].concat(o.line ? [gx('ofLine', { l: o.line })] : []) }; }).sort(function (a, b) { return b.v - a.v; }); }
   function g56(k) { var f = function (o) { return o.NC / o.EQ; }; pBars(k, rateRows(f, f2), f2, pTot(function (o) { return o.NC; }) / pTot(function (o) { return o.EQ; })); }
   function g57(k) { var f = function (o) { return o.DEF / o.EQ; }; pBars(k, rateRows(f, f2), f2, pTot(function (o) { return o.DEF; }) / pTot(function (o) { return o.EQ; })); }
   function g58(k) { var f = function (o) { return o.COST / o.EQ; }; pBars(k, rateRows(f, eur), eur, pTot(function (o) { return o.COST; }) / pTot(function (o) { return o.EQ; })); }
@@ -4261,7 +4336,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
     os.forEach(function (o, r) {
       var y = top + r * rh; g += tx(lab - 8, y + 17, o.p, 'ink', 'end');
       idx.forEach(function (i, j) { var x = lab + j * cw, ok = o.eqm[i] >= 0.5, v = ok ? o.nc[i] / o.eqm[i] : 0, t = Math.round(8 + 92 * Math.min(1, v / cap));
-        g += '<rect x="' + r1(x + 1) + '" y="' + (y + 1) + '" width="' + r1(cw - 2) + '" height="' + (rh - 2) + '" rx="2" fill="' + (ok ? tint('--seq', t) : 'var(--track)') + '"' + tip(o.p + ' · ' + monthName(PD.months[i]), ok ? [gx('perEq', { v: f2(v) }), gx('ncEq', { n: num(o.nc[i]), e: f1(o.eqm[i]) })] : ['—']) + '/>';
+        g += '<rect x="' + r1(x + 1) + '" y="' + (y + 1) + '" width="' + r1(cw - 2) + '" height="' + (rh - 2) + '" rx="2" fill="' + (ok ? tint('--seq', t) : 'var(--track)') + '"' + ppk('pprod', o.p) + tip(o.p + ' · ' + monthName(PD.months[i]), ok ? [gx('perEq', { v: f2(v) }), gx('ncEq', { n: num(o.nc[i]), e: f1(o.eqm[i]) })] : ['—']) + '/>';
         if (cw > 30) g += tx(x + cw / 2, y + 17, ok ? f1(v) : '—', ok && t > 55 ? 'gk' : 'mu', 'middle', ' style="font-size:10.5px"'); });
     });
     gSet(k, svg(W0, H, g, gT(k)));
@@ -4319,7 +4394,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
     os.forEach(function (x, i) { var y = i * rh + rh / 2;
       g += tx(lab - 10, y + 4, x.o.p, 'ink', 'end') + '<line x1="' + r1(X(x.l)) + '" x2="' + r1(X(x.u)) + '" y1="' + y + '" y2="' + y + '" stroke="var(--ink-2)" stroke-width="2"/>';
       g += '<line x1="' + r1(X(x.l)) + '" x2="' + r1(X(x.l)) + '" y1="' + (y - 5) + '" y2="' + (y + 5) + '" stroke="var(--ink-2)" stroke-width="1.5"/><line x1="' + r1(X(x.u)) + '" x2="' + r1(X(x.u)) + '" y1="' + (y - 5) + '" y2="' + (y + 5) + '" stroke="var(--ink-2)" stroke-width="1.5"/>';
-      g += '<circle cx="' + r1(X(x.r)) + '" cy="' + y + '" r="5" fill="var(--s1)" stroke="var(--surface)" stroke-width="1.5"' + tip(x.o.p, [gx('perEq', { v: f2(x.r) }), gx('ciTip', { a: f2(x.l), b: f2(x.u) }), pSub(x.o)]) + '/>' + tx(lab + pw + 10, y + 4, f2(x.r), 'ink'); });
+      g += '<circle cx="' + r1(X(x.r)) + '" cy="' + y + '" r="5" fill="var(--s1)" stroke="var(--surface)" stroke-width="1.5"' + ppk('pprod', x.o.p) + tip(x.o.p, [gx('perEq', { v: f2(x.r) }), gx('ciTip', { a: f2(x.l), b: f2(x.u) }), pSub(x.o)]) + '/>' + tx(lab + pw + 10, y + 4, f2(x.r), 'ink'); });
     gSet(k, svg(W0, H, g, gT(k)));
   }
 
@@ -4461,7 +4536,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
     var W0 = gWd(k), lab = 96, mr = 56, rh = 28, H = rows.length * rh + 6, pw = W0 - lab - mr, mx = Math.max.apply(null, rows.map(function (r) { return sumA(r.v); })), g = '';
     rows.forEach(function (r, i) { var y = i * rh + 4, x = lab;
       g += tx(lab - 10, y + 14, r.o.p, 'ink', 'end');
-      r.v.forEach(function (v, j) { if (!v) return; var w = v / mx * pw; g += '<rect x="' + r1(x) + '" y="' + (y + 4) + '" width="' + r1(Math.max(1, w - 1.5)) + '" height="15" fill="' + tint('--c2', tints[j]) + '"' + tip(r.o.p + ' · ' + L(keys[j]), [gx('perEq', { v: f2(v) }), gx('defN', { n: num(r.o.conn[keys[j]] || 0) })]) + '/>'; x += w; });
+      r.v.forEach(function (v, j) { if (!v) return; var w = v / mx * pw; g += '<rect x="' + r1(x) + '" y="' + (y + 4) + '" width="' + r1(Math.max(1, w - 1.5)) + '" height="15" fill="' + tint('--c2', tints[j]) + '"' + ppk('pprod', r.o.p) + tip(r.o.p + ' · ' + L(keys[j]), [gx('perEq', { v: f2(v) }), gx('defN', { n: num(r.o.conn[keys[j]] || 0) })]) + '/>'; x += w; });
       g += tx(x + 6, y + 16, f2(sumA(r.v)), 'ink'); });
     gSet(k, svg(W0, H, g, gT(k)), keys.map(function (r, j) { return sw(tint('--c2', tints[j]), L(r)); }).join(''));
   }
@@ -4483,7 +4558,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
     g += tx(xa, 14, gx('q1s'), 'ink b', 'middle') + tx(xb, 14, gx('q3s'), 'ink b', 'middle') + '<line x1="' + xa + '" x2="' + xa + '" y1="' + mt + '" y2="' + (mt + ph) + '" stroke="var(--grid)"/><line x1="' + xb + '" x2="' + xb + '" y1="' + mt + '" y2="' + (mt + ph) + '" stroke="var(--grid)"/>';
     var la = spread(rows.map(function (r) { return Y(r.a) + 4; }), 15, mt, mt + ph + 4), lb = spread(rows.map(function (r) { return Y(r.b) + 4; }), 15, mt, mt + ph + 4);
     rows.forEach(function (r, i) { var col = r.b > r.a * 1.1 ? 'var(--up)' : r.b < r.a * 0.9 ? 'var(--down)' : 'var(--dim)';
-      g += '<line x1="' + xa + '" y1="' + r1(Y(r.a)) + '" x2="' + xb + '" y2="' + r1(Y(r.b)) + '" stroke="' + col + '" stroke-width="2.2"' + tip(r.o.p, [gx('q1s') + ' : ' + gx('perEq', { v: f2(r.a) }), gx('q3s') + ' : ' + gx('perEq', { v: f2(r.b) })]) + '/>';
+      g += '<line x1="' + xa + '" y1="' + r1(Y(r.a)) + '" x2="' + xb + '" y2="' + r1(Y(r.b)) + '" stroke="' + col + '" stroke-width="2.2"' + ppk('pprod', r.o.p) + tip(r.o.p, [gx('q1s') + ' : ' + gx('perEq', { v: f2(r.a) }), gx('q3s') + ' : ' + gx('perEq', { v: f2(r.b) })]) + '/>';
       g += '<circle cx="' + xa + '" cy="' + r1(Y(r.a)) + '" r="3.5" fill="' + col + '"/><circle cx="' + xb + '" cy="' + r1(Y(r.b)) + '" r="3.5" fill="' + col + '"/>' + tx(xa - 10, la[i], r.o.p + '  ' + f2(r.a), 'ink', 'end') + tx(xb + 10, lb[i], f2(r.b), 'ink'); });
     gSet(k, svg(W0, H, g, gT(k)), swl('var(--up)', gx('increase')) + swl('var(--down)', gx('decrease')));
   }
@@ -4567,13 +4642,15 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
     document.getElementById('gPlantTxt').textContent = S(GF.fto2 ? 'fYes' : 'fNo');
     ['gFrom', 'gTo'].forEach(function (id, i) { var el = document.getElementById(id); el.value = i ? GF.to : GF.from; el.min = DMIN; el.max = DMAX; });
     document.getElementById('gDateBox').hidden = PAGE === 'suivi';
-    document.getElementById('gReset').hidden = ['src', 'org', 'fto2', 'phase', 'line', 'preset'].every(function (k) { return GF[k] === GF0[k]; });
+    var gp = document.getElementById('gPick'); gp.hidden = !GF.pick; if (GF.pick) { document.getElementById('gPickTxt').textContent = pickLabel(GF.pick); document.getElementById('gPickX').setAttribute('aria-label', S('pkClear')); }
+    document.getElementById('gReset').hidden = ['pick', 'src', 'org', 'fto2', 'phase', 'line', 'preset'].every(function (k) { return GF[k] === GF0[k]; });
     var cli = G.tab === 'client', nc = cli ? CLI_NC : SEL_NC, set = cli ? CLI : SEL;
     var nd = D.defects.filter(function (r) { return set[r[0]] && keepMinor(r); }).length;
     document.getElementById('fbSum').textContent = S(cli ? 'fbSumCli' : 'fbSum', { n: num(nc.length), d: num(nd) });
   }
   function setGF(ch) { Object.keys(ch).forEach(function (k) { GF[k] = ch[k]; }); select(); A.msn = null; renderAll(); }
   document.getElementById('gSrc').addEventListener('change', function (e) { setGF({ src: e.target.value }); });
+  document.getElementById('gPickX').addEventListener('click', function (e) { e.stopPropagation(); GF.pick = null; pickPrep(); setGF({}); });
   document.getElementById('gOrg').addEventListener('change', function (e) { setGF({ org: e.target.value }); });
   document.getElementById('gLine').addEventListener('change', function (e) { setGF({ line: e.target.value }); });
   document.getElementById('gPreset').addEventListener('change', function (e) { setGF({ preset: e.target.value }); });
@@ -4594,7 +4671,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
   }
   document.getElementById('gFrom').addEventListener('change', function (e) { setDate('from', e.target.value); });
   document.getElementById('gTo').addEventListener('change', function (e) { setDate('to', e.target.value); });
-  document.getElementById('gReset').addEventListener('click', function () { var c = Object.assign({}, GF0); setGF(c); });
+  document.getElementById('gReset').addEventListener('click', function () { var c = Object.assign({}, GF0); setGF(c); pickPrep(); });
 
   // ---------------------------------------------------------------- Review page (local only): the proposed final layout, chart by chart, with the
   // choices to make. Chart keys: '01'..'50' gallery (fictitious data), '51'..'80' NC rates (real data), 'A:<k>' a current Analyses chart (real data).
@@ -5077,7 +5154,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
     document.getElementById('ngxBox').addEventListener('toggle', function (e) { if (e.target.open) v2Render(); });
     var pp = document.getElementById('p-pareto');
     var pf = v2Fold('parMore', V2L.pareto.fold); pf.id = 'parFold'; pp.appendChild(pf);
-    var wh = document.getElementById('p-where'), wg = v2Grid(V2L.where.top); wg.classList.add('v2mag'); wh.appendChild(wg); wh.appendChild(v2Fold('whereMore', V2L.where.fold));
+    var wh = document.getElementById('p-where'), wg = v2Grid(V2L.where.top); wg.classList.add('v2mag'); wh.appendChild(wg); wh.appendChild(v2Fold('whereMore', V2L.where.fold)); wh.appendChild(document.getElementById('whBox'));
     v2Chapters(wg);
     var cq = v2Grid(V2L.cnq.more); cq.classList.add('v2cq'); document.getElementById('p-cnq').insertBefore(cq, document.getElementById('cgxBox'));
     applyText();
@@ -5138,8 +5215,11 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
   // 2025 extract is not split by manual list) or only the missing-ID NCs are shown. The 2025 extract holds no customer return.
   function y25Sel() {
     var Y = D.y25; if (!Y || !Y.rows || GF.src !== 'all' || GF.org === 'missing_ids') return null;
-    var c = {}; Y.cols.forEach(function (k, i) { c[k] = i; });
-    return Y.rows.filter(function (r) { return (r[c.scope] === 'serie' || !GF.fto2) && (!GF.phase || r[c.phase] === GF.phase) && (!GF.line || r[c.line] === GF.line); })
+    var c = {}, P = GF.pick; Y.cols.forEach(function (k, i) { c[k] = i; });
+    if (P && ['month', 'prod', 'pprod'].indexOf(P.k) < 0) return null;   // a pick the 2025 extract cannot follow: no 2025 comparison
+    var pOk = !P ? null : P.k === 'month' ? function (r) { return String(r[c.month]).slice(5, 7) === P.v.slice(5, 7); } : P.k === 'prod' ? function (r) { return (r[c.product] || 'Other') === P.v; } :
+      function (r) { return !!(D.eqmsn && D.eqmsn.map && D.eqmsn.map[String(r[c.product] || '').toUpperCase()] === P.v); };
+    return Y.rows.filter(function (r) { return (r[c.scope] === 'serie' || !GF.fto2) && (!GF.phase || r[c.phase] === GF.phase) && (!GF.line || r[c.line] === GF.line) && (!pOk || pOk(r)); })
       .map(function (r) { return { m: r[c.month], line: r[c.line], p: r[c.product], nc: r[c.nc], def: G.minor ? r[c.def] : r[c.defMajor], cost: r[c.cost] }; });
   }
   // a 2025 sum by month of the year ('01'..'12'), and its running total over the months shown (actual + forecast, 'YYYY-MM')
@@ -5211,16 +5291,16 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
     rows.forEach(function (r, i) {
       var y = i * rh + (stack ? 22 : 8), mx = Math.max(r.v, r.t, r.b || 0) * 1.18 || 1, X = function (v) { return lab + v / mx * pw; }, gap = r.t ? r.v / r.t - 1 : null;   // no gap against a zero target
       var gt = gap == null ? '—' : (gap > 0 ? '+' : '') + pct0(gap * 100), gs = ' style="fill:' + (gap == null ? 'var(--muted)' : gap > 0 ? 'var(--up)' : 'var(--down)') + '"';
-      var b25 = r.b != null ? '<circle cx="' + r1(X(r.b)) + '" cy="' + (y + 6) + '" r="3.5" fill="var(--surface)" stroke="var(--muted)" stroke-width="1.6"' + tip(r.l, tipT(r)) + '/>' : '';   // the 2025 rate
+      var b25 = r.b != null ? '<circle cx="' + r1(X(r.b)) + '" cy="' + (y + 6) + '" r="3.5" fill="var(--surface)" stroke="var(--muted)" stroke-width="1.6"' + (r.all || r.l === '—' ? '' : pk('line', r.l)) + tip(r.l, tipT(r)) + '/>' : '';   // the 2025 rate
       if (stack) {   // narrow card: line name and figures on a row, the bar under them
         g += tx(0, y - 6, r.l, r.all ? 'ink b' : 'ink') + tx(W0 - 10 - gt.length * 7.5, y - 6, f2(r.v), 'ink b', 'end') + tx(W0 - 2, y - 6, gt, 'b', 'end', gs);
-        g += '<rect x="0" y="' + (y + 2) + '" width="' + r1(pw) + '" height="8" rx="4" fill="var(--track)"/><rect x="0" y="' + (y + 2) + '" width="' + r1(Math.max(2, X(r.v))) + '" height="8" rx="4" fill="' + (r.all ? 'var(--ink)' : 'var(--ink-2)') + '"' + tip(r.l, tipT(r)) + '/>' + b25 +
+        g += '<rect x="0" y="' + (y + 2) + '" width="' + r1(pw) + '" height="8" rx="4" fill="var(--track)"/><rect x="0" y="' + (y + 2) + '" width="' + r1(Math.max(2, X(r.v))) + '" height="8" rx="4" fill="' + (r.all ? 'var(--ink)' : 'var(--ink-2)') + '"' + (r.all || r.l === '—' ? '' : pk('line', r.l)) + tip(r.l, tipT(r)) + '/>' + b25 +
           '<line x1="' + r1(X(r.t)) + '" x2="' + r1(X(r.t)) + '" y1="' + (y - 3) + '" y2="' + (y + 15) + tick(r);
         return;
       }
       g += tx(lab - 12, y + 10, r.l, r.all ? 'ink b' : 'ink', 'end');
       g += '<rect x="' + lab + '" y="' + (y + 2) + '" width="' + r1(pw) + '" height="8" rx="4" fill="var(--track)"/>';
-      g += '<rect x="' + lab + '" y="' + (y + 2) + '" width="' + r1(Math.max(2, X(r.v) - lab)) + '" height="8" rx="4" fill="' + (r.all ? 'var(--ink)' : 'var(--ink-2)') + '"' + tip(r.l, tipT(r)) + '/>';
+      g += '<rect x="' + lab + '" y="' + (y + 2) + '" width="' + r1(Math.max(2, X(r.v) - lab)) + '" height="8" rx="4" fill="' + (r.all ? 'var(--ink)' : 'var(--ink-2)') + '"' + (r.all || r.l === '—' ? '' : pk('line', r.l)) + tip(r.l, tipT(r)) + '/>';
       g += b25 + '<line x1="' + r1(X(r.t)) + '" x2="' + r1(X(r.t)) + '" y1="' + (y - 3) + '" y2="' + (y + 15) + tick(r);
       g += tx(lab + pw + 12, y + 10, f2(r.v), 'ink b') + (narrow ? '' : tx(lab + pw + 58, y + 10, S('v2Tgt').toLowerCase() + ' ' + f2(r.t), 'mu')) + tx(W0 - 2, y + 10, gt, 'b', 'end', gs);
     });
@@ -5258,7 +5338,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
     g += '<path d="M' + ct.map(function (v, i) { return r1(X(i)) + ',' + r1(Y(v)); }).join('L') + '" fill="none" stroke="var(--ink)" stroke-width="1.3" stroke-dasharray="5 4"/>';
     S2.act.forEach(function (x, i) { var over = x.v > mTgt(x.m);
       g += '<circle cx="' + r1(X(i + 1)) + '" cy="' + r1(Y(cum[i + 1])) + '" r="4.5" fill="' + (over ? 'var(--up)' : 'var(--down)') + '" stroke="var(--surface)" stroke-width="1.8"' +
-        tip(monthName(x.m) + ' ' + x.m.slice(0, 4), [gx('ncCount', { n: num(x.v) }) + ' · ' + S('v2MonTgt', { v: num(Math.round(mTgt(x.m))) }), S('v2Cum', { v: num(cum[i + 1]) })].concat(c25 ? [S('v2Y25at', { v: num(c25[i + 1]) })] : [])) + '/>'; });
+        pk('month', x.m) + tip(monthName(x.m) + ' ' + x.m.slice(0, 4), [gx('ncCount', { n: num(x.v) }) + ' · ' + S('v2MonTgt', { v: num(Math.round(mTgt(x.m))) }), S('v2Cum', { v: num(cum[i + 1]) })].concat(c25 ? [S('v2Y25at', { v: num(c25[i + 1]) })] : [])) + '/>'; });
     if (n > na) g += '<circle cx="' + r1(X(n)) + '" cy="' + r1(Y(year)) + '" r="4" fill="var(--surface)" stroke="var(--s1)" stroke-width="2"' + tip(gx('fcLeg'), [num(Math.round(year))]) + '/>';
     var ly = spread([Y(year) + 4, Y(tgt) + 4], 16, mt + 6, mt + ph);
     g += tx(X(n) + 8, ly[0], num(Math.round(year)) + (cp ? '' : ' ' + S('v2Fc')), 'ink b') + tx(X(n) + 8, ly[1], num(Math.round(tgt)) + (cp ? '' : ' ' + S('v2TgtShort')), 'ink');
@@ -5286,6 +5366,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
     if (c25) g += '<path d="M' + c25.map(function (v, i) { return r1(X(i)) + ',' + r1(Y(v)); }).join('L') + '" fill="none" stroke="' + tint('--ink-2', 55) + '" stroke-width="1.5"' + tip('2025', [kE(c25[c25.length - 1])]) + '/>';
     g += '<path d="M' + act.join('L') + '" fill="none" stroke="var(--s1)" stroke-width="1.8"/>';
     if (n > na) g += '<path d="M' + cum.slice(na).map(function (v, i) { return r1(X(na + i)) + ',' + r1(Y(v)); }).join('L') + '" fill="none" stroke="var(--s1)" stroke-width="2.2" stroke-dasharray="1 5" stroke-linecap="round"/>';
+    S2.act.forEach(function (x, i) { g += '<rect x="' + r1(X(i)) + '" y="' + mt + '" width="' + r1(pw / n) + '" height="' + ph + '" fill="transparent"' + pk('month', x.m) + tip(monthName(x.m) + ' ' + x.m.slice(0, 4), [eur(x.v), gx('cum') + ' : ' + eur(cum[i + 1])]) + '/>'; });
     g += '<circle cx="' + r1(X(na)) + '" cy="' + r1(Y(cum[na])) + '" r="4.5" fill="var(--s1)" stroke="var(--surface)" stroke-width="2"' + tip(gx('cum'), [eur(cum[na])]) + '/>';
     g += '<circle cx="' + r1(X(n)) + '" cy="' + r1(Y(year)) + '" r="3.5" fill="var(--surface)" stroke="var(--s1)" stroke-width="2"' + tip(gx('proj'), [eur(year)]) + '/>';
     var ly = spread([Y(year) + 4, Y(bud) + 4], 16, mt + 6, mt + ph);
@@ -5339,7 +5420,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
         tx(ml + pw + 8, Y(p[0]) + 4, p[1] === 'mean' ? gx('mean') + ' ' + f1(p[0]) : gx(p[1], { v: f1(p[0]) }), 'mu'); });
     g += '<path d="' + c.map(function (v, j) { return sh[j] ? '' : (j && !sh[j - 1] ? 'L' : 'M') + r1(X(j)) + ',' + r1(Y(v)); }).join('') + '" fill="none" stroke="var(--s1)" stroke-width="1.5"/>';
     c.forEach(function (v, j) { var out = !sh[j] && (v > ucl || v < lcl);
-      g += '<circle cx="' + r1(X(j)) + '" cy="' + r1(Y(v)) + '" r="' + (out ? 5 : 3.5) + '" fill="' + (sh[j] ? 'var(--surface)' : out ? 'var(--up)' : 'var(--s1)') + '" stroke="' + (sh[j] ? 'var(--muted)' : 'var(--surface)') + '" stroke-width="' + (sh[j] ? 1.5 : 2) + '"' + tip(weekLong(wk[j]), [gx('ncCount', { n: num(v) })].concat(sh[j] ? [gx('shutWk')] : [])) + '/>'; });
+      g += '<circle cx="' + r1(X(j)) + '" cy="' + r1(Y(v)) + '" r="' + (out ? 5 : 3.5) + '" fill="' + (sh[j] ? 'var(--surface)' : out ? 'var(--up)' : 'var(--s1)') + '" stroke="' + (sh[j] ? 'var(--muted)' : 'var(--surface)') + '" stroke-width="' + (sh[j] ? 1.5 : 2) + '"' + pk('week', wk[j]) + tip(weekLong(wk[j]), [gx('ncCount', { n: num(v) })].concat(sh[j] ? [gx('shutWk')] : [])) + '/>'; });
     var lastM = '', seen = {}; wk.forEach(function (w, j) { var m = isoDay(isoMonday(w)).slice(0, 7); if (m !== lastM) { lastM = m; g += tx(X(j), H - 6, v2Mo(m, pw * 4.3 / (n - 1), j && Object.keys(seen).length), 'mu', 'start'); seen[m] = 1; } });
     gSet(k, svg(W0, H, g, gT(k)), swl('var(--s1)', gx('xLeg')) + swl('var(--up)', gx('limLeg'), true) + sw('var(--up)', gx('outLim'), true) + (sh.indexOf(true) >= 0 ? '<span><i class="sw" style="background:var(--surface);border:1.5px solid var(--muted);border-radius:50%"></i>' + esc(gx('shutWk')) + '</span>' : ''));
   }
@@ -5352,7 +5433,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
     raw.map(function (v, i) { return [v - Math.floor(v), i]; }).sort(function (a, b) { return b[0] - a[0]; }).slice(0, left).forEach(function (p) { cells[p[1]]++; });
     var cs = 24, gp = 3, side = W0 >= 470, g = '', idx = 0;
     keys.forEach(function (c, i) { for (var j = 0; j < cells[i]; j++, idx++) { var col = idx % 10, row = Math.floor(idx / 10);
-      g += '<rect x="' + col * (cs + gp) + '" y="' + row * (cs + gp) + '" width="' + cs + '" height="' + cs + '" rx="3" fill="' + catFill(c) + '"' + tip(catLabel(c), [pct(raw[i]) + ' · ' + gx('defN', { n: num(cnt[c]) })]) + '/>'; } });
+      g += '<rect x="' + col * (cs + gp) + '" y="' + row * (cs + gp) + '" width="' + cs + '" height="' + cs + '" rx="3" fill="' + catFill(c) + '"' + (c !== 'aside' ? pk('cat', c) : '') + tip(catLabel(c), [pct(raw[i]) + ' · ' + gx('defN', { n: num(cnt[c]) })]) + '/>'; } });
     var gw = 10 * (cs + gp);
     if (side) keys.forEach(function (c, i) { var y = 16 + i * 28; g += '<rect x="' + (gw + 26) + '" y="' + (y - 11) + '" width="12" height="12" rx="3" fill="' + catFill(c) + '"/>' + tx(gw + 46, y, catLabel(c), 'ink') + tx(Math.min(W0 - 4, gw + 380), y, pct0(raw[i]), 'ink b', 'end'); });
     gSet(k, svg(side ? Math.min(W0, gw + 384) : gw, Math.max(gw, side ? keys.length * 28 + 8 : 0), g, gT(k)), side ? '' : keys.map(function (c, i) { return sw(catFill(c), catLabel(c) + ' · ' + pct0(raw[i])); }).join(''));
@@ -5376,7 +5457,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
     top.forEach(function (r, i) {
       var va = a[r] || 0, vb = b[r] || 0, col = vb > va * 1.1 ? 'var(--up)' : vb < va * 0.9 ? 'var(--down)' : 'var(--dim)', nm = L(r), mc = Math.floor((xa - 48) / 6.4);
       if (nm.length > mc) nm = nm.slice(0, mc - 1) + '…';
-      g += '<line x1="' + xa + '" y1="' + r1(Y(va)) + '" x2="' + xb + '" y2="' + r1(Y(vb)) + '" stroke="' + col + '" stroke-width="2.2"' + tip(L(r), [qn(qs[0]) + ' : ' + gx(per, { v: f2(va) }), qn(qs[1]) + ' : ' + gx(per, { v: f2(vb) })]) + '/>';
+      g += '<line x1="' + xa + '" y1="' + r1(Y(va)) + '" x2="' + xb + '" y2="' + r1(Y(vb)) + '" stroke="' + col + '" stroke-width="2.2"' + pk('rca', r) + tip(L(r), [qn(qs[0]) + ' : ' + gx(per, { v: f2(va) }), qn(qs[1]) + ' : ' + gx(per, { v: f2(vb) })]) + '/>';
       g += '<circle cx="' + xa + '" cy="' + r1(Y(va)) + '" r="3.5" fill="' + col + '"/><circle cx="' + xb + '" cy="' + r1(Y(vb)) + '" r="3.5" fill="' + col + '"/>';
       g += tx(xa - 10, la[i], nm + '  ' + (PD ? f2(va) : f1(va)), 'ink', 'end') + tx(xb + 10, lb[i], PD ? f2(vb) : f1(vb), 'ink');
     });
@@ -5395,7 +5476,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
   }
   function v2ProdFc(k) {
     var cnt = function (v) { return num(Math.round(v)); }, ms = [['scNc', function (o) { return o.NC; }, cnt, 70], ['scDef', function (o) { return o.DEF; }, cnt, 78], ['scCost', function (o) { return o.COST; }, kE, 96]];
-    var os = pOk().filter(function (o) { return o.NC || o.FC; }).map(function (o) { var r = o.FC / o.EQ; return { o: o, v: ms.map(function (m) { var a = m[1](o); return [a, a * r]; }) }; })
+    var os = pOk().filter(function (o) { return o.NC || (o.FC && !GF.pick); }).map(function (o) { var r = o.FC / o.EQ; return { o: o, v: ms.map(function (m) { var a = m[1](o); return [a, a * r]; }) }; })
       .sort(function (x, y) { return (y.v[0][0] + y.v[0][1]) - (x.v[0][0] + x.v[0][1]); });   // forecast = the period's value per MSN × the MSN planned to December
     if (!os.length) { pEmpty(k); return; }
     var W0 = gWd(k, 520), lab = 108, gapC = 22, cw = (W0 - lab - gapC * 2) / 3, rh = 26, top = 34, H = top + os.length * rh + 6, g = '';
@@ -5421,7 +5502,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
       var x0 = lab + j * (cw + gapC), vals = os.map(m[1]), ref = E0 ? m[3] / E0 : 0, mx = Math.max.apply(null, vals.concat([ref, 1e-9])) * 1.02, bw = cw - 64;
       g += tx(x0, 14, S(m[0]) + ' ' + S('v2PerMsn'), 'ink b') + '<line x1="' + r1(x0 + ref / mx * bw) + '" x2="' + r1(x0 + ref / mx * bw) + '" y1="' + (top - 6) + '" y2="' + (H - 2) + '" stroke="var(--ink-2)" stroke-dasharray="3 3"/>' + tx(x0 + ref / mx * bw, top - 12, gx('overall', { v: m[2](ref) }), 'mu', 'middle', ' style="font-size:10.5px"');
       os.forEach(function (o, i) { var y = top + i * rh, v = vals[i], w = v / mx * bw;
-        g += '<rect x="' + r1(x0) + '" y="' + (y + 5) + '" width="' + r1(Math.max(1.5, w)) + '" height="14" rx="2" fill="' + (PCOL[o.p] || 'var(--dim)') + '"' + tip(o.p + ' · ' + S(m[0]), [m[2](v) + ' ' + S('v2PerMsn'), gx('ncEq', { n: num(Math.round(j === 0 ? o.NC : j === 1 ? o.DEF : o.COST)), e: f1(o.EQ) })]) + '/>' + tx(x0 + w + 5, y + 16, m[2](v), 'ink', null, ' style="font-size:11.5px"'); });
+        g += '<rect x="' + r1(x0) + '" y="' + (y + 5) + '" width="' + r1(Math.max(1.5, w)) + '" height="14" rx="2" fill="' + (PCOL[o.p] || 'var(--dim)') + '"' + ppk('pprod', o.p) + tip(o.p + ' · ' + S(m[0]), [m[2](v) + ' ' + S('v2PerMsn'), gx('ncEq', { n: num(Math.round(j === 0 ? o.NC : j === 1 ? o.DEF : o.COST)), e: f1(o.EQ) })]) + '/>' + tx(x0 + w + 5, y + 16, m[2](v), 'ink', null, ' style="font-size:11.5px"'); });
     });
     os.forEach(function (o, i) { g += tx(lab - 10, top + i * rh + 16, o.p, 'ink', 'end'); });
     gSet(k, svg(W0, H, g, gT(k)));
@@ -5438,7 +5519,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
     fins.forEach(function (f, i) {
       var y = i * rh;
       g += tx(lab - 8, y + 12, f, 'ink', 'end') + '<line x1="' + lab + '" x2="' + r1(lab + n0 * cw) + '" y1="' + (y + 8) + '" y2="' + (y + 8) + '" stroke="var(--grid)"/>';
-      msn.forEach(function (m, j) { var v = has[f + '|' + m]; if (v) g += '<rect x="' + r1(lab + j * cw + 0.4) + '" y="' + (y + 2) + '" width="' + r1(Math.max(1.6, cw - 0.8)) + '" height="12" fill="' + (v > 1 ? 'var(--seq)' : tint('--seq', 55)) + '"' + tip(gx('finTip', { f: f, m: m }), [gx('defN', { n: num(v) })]) + '/>'; });
+      msn.forEach(function (m, j) { var v = has[f + '|' + m]; if (v) g += '<rect x="' + r1(lab + j * cw + 0.4) + '" y="' + (y + 2) + '" width="' + r1(Math.max(1.6, cw - 0.8)) + '" height="12" fill="' + (v > 1 ? 'var(--seq)' : tint('--seq', 55)) + '"' + pk('fin', f) + tip(gx('finTip', { f: f, m: m }), [gx('defN', { n: num(v) })]) + '/>'; });
       g += tx(lab + n0 * cw + 8, y + 12, gx('finCount', { n: num(fc[f]) }), 'mu');
     });
     g += tx(lab, H - 4, l + ' · MSN ' + msn[0], 'mu') + tx(lab + n0 * cw, H - 4, 'MSN ' + msn[n0 - 1] + ' · ' + S('v2Ac', { n: num(n0) }), 'mu', 'end');
@@ -5455,7 +5536,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
       var ks = Object.keys(first).filter(function (key) { return key.indexOf(l + '|') === 0; }).sort(function (a, b) { return first[a] < first[b] ? -1 : 1; }), rows = Math.ceil(ks.length / cols);
       g += tx(0, y + 14, l, 'ink b') + tx(0, y + 30, num(ks.length), 'mu');
       ks.forEach(function (key, i) { var v = defs[key] || 0, cx = lab + (i % cols) * cell, cy = y + Math.floor(i / cols) * cell;
-        g += '<g transform="translate(' + cx + ',' + cy + ')"' + tip(l, [gx('acTip', { m: key.split('|')[1], n: num(v) })]) + '><rect width="' + cell + '" height="' + cell + '" fill="transparent"/><path d="' + PLANE + '" fill="' + shade(v) + '"' + (!v ? ' stroke="var(--dim)" stroke-width=".8"' : '') + '/></g>'; });
+        g += '<g transform="translate(' + cx + ',' + cy + ')"' + pk('msn', key.split('|')[1]) + tip(l, [gx('acTip', { m: key.split('|')[1], n: num(v) })]) + '><rect width="' + cell + '" height="' + cell + '" fill="transparent"/><path d="' + PLANE + '" fill="' + shade(v) + '"' + (!v ? ' stroke="var(--dim)" stroke-width=".8"' : '') + '/></g>'; });
       y += Math.max(rows * cell, 36) + 16;
     });
     if (!y) { pEmpty(k); return; }
@@ -5472,7 +5553,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
     g += pGridY(ml, pw, Y, nt, function (t) { return kE(t); });
     ms.forEach(function (m, i) {
       var x = ml + i * bw + bw * 0.18, w = bw * 0.64, acc = 0;
-      comps.forEach(function (c, j) { var h = v[i][j] / nt.top * ph; if (h > 0.5) g += '<rect x="' + r1(x) + '" y="' + r1(Y(acc + v[i][j])) + '" width="' + r1(w) + '" height="' + r1(Math.max(1, h - 2)) + '" fill="' + c[2] + '"' + tip(monthName(m) + ' · ' + gx(c[0]), [eur(v[i][j]) + ' · ' + pct0(tots[i] ? v[i][j] / tots[i] * 100 : 0)]) + '/>'; acc += v[i][j]; });
+      comps.forEach(function (c, j) { var h = v[i][j] / nt.top * ph; if (h > 0.5) g += '<rect x="' + r1(x) + '" y="' + r1(Y(acc + v[i][j])) + '" width="' + r1(w) + '" height="' + r1(Math.max(1, h - 2)) + '" fill="' + c[2] + '"' + pk('month', m) + tip(monthName(m) + ' · ' + gx(c[0]), [eur(v[i][j]) + ' · ' + pct0(tots[i] ? v[i][j] / tots[i] * 100 : 0)]) + '/>'; acc += v[i][j]; });
       g += tx(x + w / 2, Y(tots[i]) - 6, kE(tots[i]), 'ink', 'middle') + tx(x + w / 2, H - 6, monthName(m).slice(0, 4), 'mu', 'middle');
     });
     gSet(k, svg(W0, H, g, gT(k)), comps.map(function (c) { return sw(c[2], gx(c[0])); }).join(''));
@@ -5488,7 +5569,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
     lines.forEach(function (l, li) { var cy = mt + li * rh + rh / 2; g += '<line x1="' + lab + '" x2="' + (lab + pw) + '" y1="' + cy + '" y2="' + cy + '" stroke="var(--grid)"/>' + tx(0, cy + 4, l, 'ink b'); });
     ns.slice().sort(function (a, b) { return b[12] - a[12]; }).forEach(function (n) {
       var cy = mt + lines.indexOf(n[3]) * rh + rh / 2, col = PROG_COL[n[3]] || 'var(--dim)';
-      g += '<circle cx="' + r1(X(n[1])) + '" cy="' + cy + '" r="' + r1(R(n[12])) + '" fill="' + col + '" fill-opacity=".2" stroke="' + col + '" stroke-opacity=".75"' + tip(n[0] + ' · ' + n[3], [eur(n[12]), shortDay(n[1]), n[22] || '']) + '/>';
+      g += '<circle cx="' + r1(X(n[1])) + '" cy="' + cy + '" r="' + r1(R(n[12])) + '" fill="' + col + '" fill-opacity=".2" stroke="' + col + '" stroke-opacity=".75"' + pk('nc', n[0]) + tip(n[0] + ' · ' + n[3], [eur(n[12]), shortDay(n[1]), n[22] || '']) + '/>';
     });
     var put = [];
     ns.slice().sort(function (a, b) { return b[12] - a[12]; }).slice(0, 5).forEach(function (n) {
@@ -5512,7 +5593,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
     document.getElementById('foot1').textContent = S('foot1', dates);
     document.querySelectorAll('[data-t="serieSub"]').forEach(function (el) { el.textContent = S(GF.fto2 ? 'serieSub' : 'serieSubAll'); });
     document.getElementById('foot3').textContent = S('foot3', { n: num(D.meta.noLine), o: num(((A || {}).other || [0])[0]), oe: eur(((A || {}).other || [0, 0])[1]) });
-    ['nq', 'pq', 'kq', 'wq', 'cq', 'rq'].forEach(function (id) { var q = document.getElementById(id); q.placeholder = S('search'); q.setAttribute('aria-label', S('search')); });
+    ['nq', 'pq', 'kq', 'wq', 'cq', 'rq', 'whQ'].forEach(function (id) { var q = document.getElementById(id); q.placeholder = S('search'); q.setAttribute('aria-label', S('search')); });
     document.getElementById('lFr').setAttribute('aria-pressed', String(G.lang === 'fr'));
     document.getElementById('lEn').setAttribute('aria-pressed', String(G.lang === 'en'));
     document.getElementById('miIn').setAttribute('aria-pressed', String(G.minor));
@@ -5528,7 +5609,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
       document.getElementById('p-' + t).hidden = G.tab !== t;
     });
   }
-  function renderAll() { applyText(); showTab(); renderPMode(); ncBoard.render(); pareto.render(); costPareto.render(); weekly.render(); cnq.render(); renderCx(); renderDis(); client.render(); renderRca(); renderAna(); renderMft(); renderGal(); renderProd(); renderRev(); renderMock(); v2Render(); }
+  function renderAll() { applyText(); showTab(); renderPMode(); ncBoard.render(); pareto.render(); costPareto.render(); weekly.render(); cnq.render(); renderCx(); renderDis(); renderWhereTbl(); client.render(); renderRca(); renderAna(); renderMft(); renderGal(); renderProd(); renderRev(); renderMock(); v2Render(); }
   function setTab(t) { G.tab = t; if (!EMBED) { try { history.replaceState(null, '', '#' + t); } catch (x) {} } applyText(); showTab(); if (t === 'hebdo') weekly.render(); if (t === 'ov') ncBoard.render(); if (t === 'ana') renderAna(); if (t === 'mft') renderMft(); if (t === 'gal') renderGal(); if (t === 'prod') renderProd(); if (PAGE === 'mock') renderMock(); if (V2) v2Render(); if (t !== 'ana' && t !== 'mft') hideTip(); }
   document.getElementById('tabs').addEventListener('click', function (e) { var t = e.target.closest('[data-tab]'); if (t) setTab(t.getAttribute('data-tab')); });
   document.getElementById('tabs').addEventListener('keydown', function (e) {

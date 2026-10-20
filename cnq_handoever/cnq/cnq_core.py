@@ -30,7 +30,8 @@ How one NC is costed
   engineering   = hours from the rule (design queries)
   material      = sum of material of its defect lines, if the rule includes work
   part value    = `part_value` column if present and the rule counts the part (else 0)
-  total         = (admin + work minutes) / 60 * rate + engineering hours * engineering rate + material + part
+  total         = each step's minutes / 60 * the rate of who does it (STEP_RATES: production, quality, ME)
+                  + engineering hours * engineering rate (Airbus) + material + part
   customer return: + a flat extra (CUSTOMER_RETURN_EXTRA), or replaced by the real amount when the NC dataset
                    has a `customer_return_cost` value for that NC
   AEC cost      = total if liability == AEC plant code, else 0   (others are shown aside)
@@ -182,11 +183,11 @@ def compute_cnq(nc, defects, params=P):
     nc["cnq_hours_engineering"] = flag("eng_hours")
 
     # ------------------------------------------------------------ NC: euros
-    r = params.RATE_STANDARD
+    R = getattr(params, "STEP_RATES", None) or {k: params.RATE_STANDARD for k in ("alert", "writing", "support", "setup", "hands_on", "recheck")}
     part_in = pd.to_numeric(nc["part_value"], errors="coerce") if "part_value" in nc.columns else pd.Series(np.nan, index=nc.index)
     part_flag = flag("part")
     for step in ("alert", "writing", "support", "setup", "hands_on", "recheck"):
-        nc["cnq_cost_" + step] = nc["cnq_min_" + step] / 60.0 * r
+        nc["cnq_cost_" + step] = nc["cnq_min_" + step] / 60.0 * R[step]   # each step at the rate of who does it
     nc["cnq_cost_admin"] = nc[["cnq_cost_alert", "cnq_cost_writing", "cnq_cost_support", "cnq_cost_recheck"]].sum(axis=1)
     nc["cnq_cost_work"] = nc[["cnq_cost_setup", "cnq_cost_hands_on"]].sum(axis=1)
     nc["cnq_cost_engineering"] = nc["cnq_hours_engineering"] * params.RATE_ENGINEERING
@@ -203,9 +204,10 @@ def compute_cnq(nc, defects, params=P):
     nc["cnq_customer_amount_known"] = (is_return & real.notna()).astype(int)
     nc["cnq_cost_total"] = final
     # ---- comparison level 2 "Global": average times for every NC, same material
-    global_min = (alert * params.MIN_ALERT + flag("write") * params.MIN_WRITE_NC_GLOBAL + flag("support") * params.MIN_SUPPORT
-                  + work * params.MIN_WORK_GLOBAL + flag("recheck") * params.MIN_RECHECK_CLOSE)
-    nc["cnq_cost_global"] = global_min / 60.0 * r + nc["cnq_cost_engineering"] + nc["cnq_cost_material"] + nc["cnq_cost_part"]
+    global_eur = (alert * params.MIN_ALERT * R["alert"] + flag("write") * params.MIN_WRITE_NC_GLOBAL * R["writing"]
+                  + flag("support") * params.MIN_SUPPORT * R["support"] + work * params.MIN_WORK_GLOBAL * R["hands_on"]
+                  + flag("recheck") * params.MIN_RECHECK_CLOSE * R["recheck"]) / 60.0
+    nc["cnq_cost_global"] = global_eur + nc["cnq_cost_engineering"] + nc["cnq_cost_material"] + nc["cnq_cost_part"]
     # ---- comparison level 1 "Airbus transnational": official standard cost per NC, no material
     nc["cnq_cost_airbus"] = nc["cnq_rule"].map(params.AIRBUS_STANDARD).fillna(0.0).astype(float)
     nc["cnq_cost_aec"] = nc["cnq_cost_total"] * nc["cnq_on_aec"]
@@ -230,7 +232,7 @@ def compute_cnq(nc, defects, params=P):
     d["cnq_line_costed"] = d["cnq_on_aec"] * d["cnq_work_costed"]
     d["cnq_min_hands_on"] = d["cnq_line_costed"] * d["_min"] * d["notification_number"].map(k_line).fillna(1.0)
     d["cnq_cost_material"] = d["cnq_line_costed"] * d["_mat"]
-    d["cnq_cost_hands_on"] = d["cnq_min_hands_on"] / 60.0 * r
+    d["cnq_cost_hands_on"] = d["cnq_min_hands_on"] / 60.0 * R["hands_on"]
     d["cnq_cost_direct"] = d["cnq_cost_hands_on"] + d["cnq_cost_material"]
     d["cnq_month"] = d["notification_number"].map(back["cnq_month"])
     d["cnq_week"] = d["notification_number"].map(back["cnq_week"])
@@ -251,7 +253,8 @@ def _clean(df):
 def parameters_as_tables(params=P):
     """The parameters as three small tables, for review or to publish next to the datasets."""
     steps = pd.DataFrame([
-        ("RATE_STANDARD", params.RATE_STANDARD, "EUR/hour", "OFFICIAL"), ("RATE_ENGINEERING", params.RATE_ENGINEERING, "EUR/hour", "OFFICIAL"),
+        ("RATE_PROD", params.RATE_PROD, "EUR/hour", "AEC"), ("RATE_QUALITY", params.RATE_QUALITY, "EUR/hour", "AEC"),
+        ("RATE_ME", params.RATE_ME, "EUR/hour", "AEC"), ("RATE_ENGINEERING", params.RATE_ENGINEERING, "EUR/hour", "OFFICIAL"),
         ("MIN_ALERT", params.MIN_ALERT, "minutes", "MES"), ("MIN_WRITE_NC", params.MIN_WRITE_NC, "minutes", "LOCAL"),
         ("MIN_WRITE_NC_FINAL", params.MIN_WRITE_NC_FINAL, "minutes", "LOCAL"), ("MIN_SUPPORT", params.MIN_SUPPORT, "minutes", "LOCAL"),
         ("MIN_SETUP", params.MIN_SETUP, "minutes", "LOCAL"), ("MIN_RECHECK_CLOSE", params.MIN_RECHECK_CLOSE, "minutes", "LOCAL"),

@@ -38,6 +38,7 @@ from cnq.cnq_disruptions import nc_alea_times
 import cnq.cnq_params as CNQP
 
 S_ = lambda v: "" if v is None or (isinstance(v, float) and np.isnan(v)) else str(v)
+CAT_RENAME = {"MEO Câblage": "MEO Facteur humain"}   # the parser's category -> the dashboard's name
 
 # ============================================================ the two tables (the contract with the page and with Slate)
 # name, type, meaning. Types: text, int, num (decimal), date (text YYYY-MM-DD). Same names in the datasets, the SQL and the JS.
@@ -293,6 +294,9 @@ def prepare(x, lab, ref_dir, ops=None, dis=None, say=None):
         d[c_llm] = d[c_llm].where(use, d[c_par])
     d["llm_defaut_cable"] = d["llm_defaut_cable"].astype(str).str.lower().isin(["true", "1"])
     d["llm_categorie"] = d["llm_sous_categorie"].map(lambda s: PARSER.SOUS_CATEGORIES.get(s, ("Autre",))[0])
+    for c in ("llm_categorie", "groupe"):   # the dashboard's names for the parser's categories (decided 20 Oct)
+        if c in d.columns:
+            d[c] = d[c].replace(CAT_RENAME)
     d["llm_rca_type"] = d["llm_sous_categorie"].map(lambda s: PARSER.SOUS_CATEGORIES.get(s, (None, "AUTRE"))[1])
     d["llm_rca_nom"] = d["llm_rca_type"].map(L.RCA_NAMES).fillna("Non classé")
     d["llm_mineur"] = d["llm_sous_categorie"].map(PARSER.est_mineur)

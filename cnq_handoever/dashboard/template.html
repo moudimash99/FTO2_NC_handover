@@ -280,8 +280,8 @@ var I = {
   ch_title: ["Une NC retouchée, étape par étape", "A reworked NC, step by step"],
   ch_once: ["une fois par NC", "once per NC"], ch_final: ["{x} min au contrôle final", "{x} min at final inspection"],
   ch_hands_v: ["Σ défauts", "Σ defects"], ch_hands: ["minutes de chaque défaut relevé", "minutes of each defect found"],
-  ch_formula: ["Coût = total des minutes ÷ 60 × {r} €/h + matière des défauts. Le travail (étapes 4 et 5) ne descend jamais sous {f} min.",
-               "Cost = total minutes ÷ 60 × {r} €/h + material of the defects. The work (steps 4 and 5) is never under {f} min."],
+  ch_formula: ["Coût = minutes de chaque étape ÷ 60 × le taux de qui la fait (production {p} €/h, qualité {q} €/h, ME {m} €/h) + matière des défauts. Le travail (étapes 4 et 5) ne descend jamais sous {f} min.",
+               "Cost = each step's minutes ÷ 60 × the rate of who does it (production {p} €/h, quality {q} €/h, ME {m} €/h) + material of the defects. The work (steps 4 and 5) is never under {f} min."],
   ch_example: ["Exemple : une NC détectée en cours de production avec un seul défaut de 10 min. {a} + {b} + {c} + {d} + 10 + {e} = {m} min, soit {c2}.",
                "Example: an NC found in-process with a single 10-minute defect. {a} + {b} + {c} + {d} + 10 + {e} = {m} min, which is {c2}."],
   f_title: ["Les trois niveaux en une ligne chacun", "The three levels in one line each"],
@@ -353,7 +353,7 @@ var I = {
   not_aec: ["Non imputée à AEC", "Not on AEC"], not_aec_note: ["Chiffrée de la même façon, mais hors total.", "Costed the same way, but shown aside and left out of the totals."],
   no_master: ["Cette NC n'a ni statut, ni décision, ni date dans le jeu de données : elle ne peut pas être chiffrée.", "This NC has no status, decision or date in the dataset, so it cannot be costed."],
   x_l3: ["Niveau 3, détail par défaut", "Level 3, per defect"], x_l2: ["Niveau 2, moyenne globale", "Level 2, global average"], x_l1: ["Niveau 1, standard Airbus transnational", "Level 1, Airbus transnational standard"],
-  h_step: ["Étape", "Step"], h_how: ["Calcul", "How"], h_min: ["Minutes", "Minutes"], h_cost_at: ["Coût à {r} €/h", "Cost at {r} €/h"],
+  h_step: ["Étape", "Step"], h_how: ["Calcul", "How"], h_min: ["Minutes", "Minutes"], h_cost_at: ["Coût (taux de l'étape)", "Cost (the step's rate)"],
   s_alert: ["L'opérateur émet l'aléa", "Operator raises the alert"], s_writing: ["L'inspecteur qualité rédige la NC", "Quality inspector writes the NC"],
   s_support: ["Support technique : vérification, estimation, ordre de travail", "Technical support: check, estimate, work order"],
   s_setup: ["Autour de l'intervention : badgeage, approvisionnement, mise en place", "Around the work: badging, fetching, setting up"],
@@ -370,7 +370,7 @@ var I = {
   r_extra: ["Forfait retour client", "Customer-return flat amount"], r_extra_how: ["ajouté à chaque retour client sans montant réel", "added to each customer return with no real amount"],
   r_real: ["Montant réel saisi", "Real amount entered"], r_real_how: ["remplace l'estimation du modèle", "replaces the model estimate"],
   w_alert: ["aléa", "alert"], w_writing: ["rédaction", "writing"], w_support: ["support", "support"], w_work: ["travail", "work"], w_recheck: ["recontrôle", "re-check"],
-  x2_a: ["À {r} €/h, soit {c}", "At {r} €/h that is {c}"], x2_eng: [", plus l'étude d'ingénierie {c}", ", plus the engineering study {c}"], x2_mat: [", plus la matière {c}", ", plus material {c}"],
+  x2_a: ["Aux taux des étapes, soit {c}", "At the steps' rates that is {c}"], x2_eng: [", plus l'étude d'ingénierie {c}", ", plus the engineering study {c}"], x2_mat: [", plus la matière {c}", ", plus material {c}"],
   x2_note: ["Identique pour toutes les NC ayant cette décision, quels que soient leurs défauts.", "The same for every NC with this decision, whatever its defects."],
   x1_a: ["Coût standard officiel pour « {l} » : ", "Official standard cost for “{l}”: "],
   x1_note: ["Pour une retouche, le chiffre officiel correspond à 6,5 heures à 66,25 €/h, +5 % sur l'étape de création et +25 % pour les NC renvoyées. Il ne tient pas compte du nombre de défauts et n'ajoute pas de matière.",
@@ -390,7 +390,11 @@ var I = {
   u_per_nc: ["€ / NC", "€ / NC"], team_rule: ["Règle de l'équipe", "Team rule"],
   b_local: ["Estimation AEC", "AEC estimate"], b_official: ["Officiel Airbus", "Official Airbus"],
   b_rate: ["Taux officiel France ; taux AEC à obtenir de la Finance", "Official France rate; AEC rate to come from Finance"],
-  p_rate: ["Taux horaire : opérateur, inspecteur qualité, support technique", "Hourly rate: operator, inspector, technical support"], p_rateEng: ["Taux horaire : ingénierie", "Hourly rate: engineering"],
+  p_rate: ["Taux horaire : opérateur, inspecteur qualité, support technique", "Hourly rate: operator, inspector, technical support"],
+  p_rateProd: ["Taux horaire production : alerte, préparation, intervention", "Production hourly rate: alert, setup, hands-on work"],
+  p_rateQuality: ["Taux horaire qualité : rédaction, recontrôle et clôture", "Quality hourly rate: writing, re-check and closing"],
+  p_rateMe: ["Taux horaire ME : support technique", "ME hourly rate: technical support"],
+  b_aec: ["Taux AEC (20 oct. 2026)", "AEC rate (20 Oct 2026)"], p_rateEng: ["Taux horaire : ingénierie", "Hourly rate: engineering"],
   p_alert: ["L'opérateur émet l'aléa", "Operator raises the alert"], p_write: ["L'inspecteur qualité rédige la NC", "Quality inspector writes the NC"],
   p_writeFinal: ["Rédaction de la NC au contrôle final", "Writes the NC, at final inspection"], p_support: ["Support technique", "Technical support"],
   p_setup: ["Autour de l'intervention : badgeage, approvisionnement, mise en place", "Around the work: badging, fetching, setting up"],
@@ -484,8 +488,8 @@ Object.assign(I, {
   cu_writing: ["{x} min au contrôle final", "{x} min at final inspection"],
   cu_support: ["vérification, estimation, ordre de travail", "check, estimate, work order"], cu_setup: ["badgeage, approvisionnement, mise en place", "badging, fetching, setting up"],
   cu_hands: ["minutes de chaque défaut relevé", "minutes of each defect found"], cu_recheck: ["contrôle de la retouche, puis clôture", "check of the rework, then closing"],
-  ch_formula: ["Coût = total des minutes ÷ 60 × {r} €/h + matière. Les étapes 4 et 5 ne descendent jamais sous {f} min. Erreurs de branchement : la première de la NC prend le temps de sa classe, chacune des suivantes {c} min. NC internes : étapes 4 et 5 × {k}.",
-               "Cost = total minutes ÷ 60 × {r} €/h + material. Steps 4 and 5 are never under {f} min. Connection errors: the first one of the NC takes its class time, each following one {c} min. Internal NCs: steps 4 and 5 × {k}."],
+  ch_formula: ["Coût = minutes de chaque étape ÷ 60 × le taux de qui la fait (production {p} €/h, qualité {q} €/h, ME {m} €/h) + matière. Les étapes 4 et 5 ne descendent jamais sous {f} min. Erreurs de branchement : la première de la NC prend le temps de sa classe, chacune des suivantes {c} min. NC internes : étapes 4 et 5 × {k}.",
+               "Cost = each step's minutes ÷ 60 × the rate of who does it (production {p} €/h, quality {q} €/h, ME {m} €/h) + material. Steps 4 and 5 are never under {f} min. Connection errors: the first one of the NC takes its class time, each following one {c} min. Internal NCs: steps 4 and 5 × {k}."],
   n_noalert: ["pas d'aléa opérateur : NC trouvée au test ou au contrôle final", "no operator alert: NC found at test or at final inspection"],
   n_internal: ["× {k} : NC interne, temps calé sur les ordres de retouche", "× {k}: internal NC, time set from the rework orders"],
   n_alea: ["temps perdu déclaré sur l'aléa qualité qui a mené à la NC ({m} min)", "time lost declared on the quality aléa that led to the NC ({m} min)"],
@@ -550,7 +554,8 @@ function renderSummary() {
   }).join("");
   var g = [["g_admin", 0], ["g_work", 0], ["g_mat", 0], ["g_eng", 0], ["g_cr", 0]];
   a.forEach(function (x) {
-    g[0][1] += (x.steps.alert + x.steps.writing + x.steps.support + x.steps.recheck) / 60 * P.rate; g[1][1] += (x.steps.setup + x.steps.hands) / 60 * P.rate;
+    ["alert", "writing", "support", "recheck"].forEach(function (k) { g[0][1] += x.steps[k] / 60 * stepRate(P, k); });
+    ["setup", "hands"].forEach(function (k) { g[1][1] += x.steps[k] / 60 * stepRate(P, k); });
     g[2][1] += x.material; g[3][1] += x.eng; g[4][1] += x.adjust;
   });
   var pos = g.map(function (c) { return Math.max(c[1], 0); }), sum = pos.reduce(function (p, q) { return p + q; }, 0);
@@ -565,9 +570,9 @@ function renderMethod() {
   var chain = [["alert", P.alert + " min", t("cu_alert"), ""], ["writing", P.write + " min", t("cu_writing", { x: P.writeFinal }), ""], ["support", P.support + " min", t("cu_support"), ""],
     ["setup", P.setup + " min", t("cu_setup"), ""], ["hands", "Σ", t("cu_hands"), "var"], ["recheck", P.recheck + " min", t("cu_recheck"), ""]];
   $("chain").innerHTML = chain.map(function (c) { return '<li class="' + c[3] + '"><div class="cn">' + t("cs_" + c[0]) + '</div><div class="cv">' + c[1] + '</div><div class="cs">' + c[2] + "</div></li>"; }).join("");
-  $("chformula").textContent = t("ch_formula", { r: dec(P.rate), f: P.floor, c: P.connNext, k: dec(P.internalFactor) });
+  $("chformula").textContent = t("ch_formula", { p: dec(P.rateProd), q: dec(P.rateQuality), m: dec(P.rateMe), f: P.floor, c: P.connNext, k: dec(P.internalFactor) });
   var setup = Math.max(P.setup, P.floor - 10), m = P.alert + P.write + P.support + setup + 10 + P.recheck;
-  $("chexample").textContent = t("ch_example", { a: P.alert, b: P.write, c: P.support, d: setup, e: P.recheck, m: int(m), c2: eur2(m / 60 * P.rate) });
+  $("chexample").textContent = t("ch_example", { a: P.alert, b: P.write, c: P.support, d: setup, e: P.recheck, m: int(m), c2: eur2([["alert", P.alert], ["writing", P.write], ["support", P.support], ["setup", setup], ["hands", 10], ["recheck", P.recheck]].reduce(function (a, z) { return a + z[1] / 60 * stepRate(P, z[0]); }, 0)) });
   var basis = { RWK: ["rb_team", 0], DELETED: ["rb_rule", 0], DQN: ["rb_dqn", 1], EXC: ["rb_wo", 1], REJ_RW: ["rb_wo", 1] };
   var yn = function (v) { return v ? '<span class="yes">✓</span>' : '<span class="no">–</span>'; };
   var h = "<table><thead><tr><th>" + t("h_decision") + '</th><th class="c">' + t("mx_alert") + '</th><th class="c">' + t("mx_write") + '</th><th class="c">' + t("mx_support") + '</th><th class="c">' + t("mx_work") + '</th><th class="c">' + t("mx_recheck") +
@@ -595,7 +600,7 @@ function renderBreakdown() {
   DATA.lines.forEach(function (l, k) {
     var r = DATA.nc[l[0]], f = DATA.rules[r[NC.rule]];
     if (!isAec(r) || !f || !f.work) return;
-    CLS[l[1]].n += l[2]; CLS[l[1]].cost += RES.lines[k].min / 60 * P.rate + P.classes[l[1]].mat * l[2];
+    CLS[l[1]].n += l[2]; CLS[l[1]].cost += RES.lines[k].min / 60 * stepRate(P, "hands") + P.classes[l[1]].mat * l[2];
   });
   var top = CLS.slice().sort(function (p, q) { return q.cost - p.cost; }).slice(0, 6), mc = Math.max.apply(null, top.map(function (c) { return c.cost; }).concat([1]));
   $("classes").innerHTML = top.map(function (c) {
@@ -648,11 +653,11 @@ function renderNC(i) {
     setup: x.order ? t("n_order_setup", { o: x.order[2] }) : (x.steps.setup > P.setup * wf ? t("n_floor", { a: P.setup, f: P.floor }) : t("n_once", { x: P.setup })) + wnote,
     hands: x.order ? t("n_order_work", { o: x.order[2] }) : (x.lines === 0 ? t("n_noline", { x: P.noDefect }) : t("n_lines", { n: int(x.lines) })) + wnote, recheck: t("n_once", { x: P.recheck })
   };
-  var tb = '<div class="scroll"><table><thead><tr><th>' + t("h_step") + "</th><th>" + t("h_how") + '</th><th class="num">' + t("h_min") + '</th><th class="num">' + t("h_cost_at", { r: dec(P.rate) }) + "</th></tr></thead><tbody>";
+  var tb = '<div class="scroll"><table><thead><tr><th>' + t("h_step") + "</th><th>" + t("h_how") + '</th><th class="num">' + t("h_min") + '</th><th class="num">' + t("h_cost_at") + "</th></tr></thead><tbody>";
   STEPS.forEach(function (s) {
     var noAlert = s[0] === "alert" && f.alert === 1 && !r[NC.alertOn];
     var on = f[s[1]] === 1 && !noAlert, m = x.steps[s[0]];
-    tb += '<tr class="' + (on ? "" : "off") + '"><td>' + t("cs_" + s[0]) + "</td><td>" + (on ? notes[s[0]] : noAlert ? t("n_noalert") : t("n_off")) + '</td><td class="num">' + (on ? mn(m) : "-") + '</td><td class="num">' + (on ? eur2(m / 60 * P.rate) : "-") + "</td></tr>";
+    tb += '<tr class="' + (on ? "" : "off") + '"><td>' + t("cs_" + s[0]) + "</td><td>" + (on ? notes[s[0]] : noAlert ? t("n_noalert") : t("n_off")) + '</td><td class="num">' + (on ? mn(m) : "-") + '</td><td class="num">' + (on ? eur2(m / 60 * stepRate(P, s[0])) : "-") + "</td></tr>";
   });
   if (x.engH) tb += "<tr><td>" + t("r_eng") + "</td><td>" + t("r_eng_how", { h: dec(x.engH), r: dec(P.rateEng) }) + '</td><td class="num">-</td><td class="num">' + eur2(x.eng) + "</td></tr>";
   if (f.work) tb += "<tr><td>" + t("r_mat") + "</td><td>" + t("r_mat_how") + '</td><td class="num">-</td><td class="num">' + eur2(x.material) + "</td></tr>";
@@ -679,7 +684,7 @@ function renderNC(i) {
   $("ncout").innerHTML = h + tb + others + d;
 }
 
-var PARAM_DEFS = [["rate", "€/h", "b_rate", 1, 0.01], ["rateEng", "€/h", "b_official", 0, 0.01], ["alert", "min", "b_mes", 1, 1], ["write", "min", "b_local", 0, 1], ["writeFinal", "min", "b_local", 0, 1],
+var PARAM_DEFS = [["rateProd", "€/h", "b_aec", 1, 0.01], ["rateQuality", "€/h", "b_aec", 1, 0.01], ["rateMe", "€/h", "b_aec", 1, 0.01], ["rateEng", "€/h", "b_official", 0, 0.01], ["alert", "min", "b_mes", 1, 1], ["write", "min", "b_local", 0, 1], ["writeFinal", "min", "b_local", 0, 1],
   ["support", "min", "b_local", 0, 1], ["setup", "min", "b_local", 0, 1], ["floor", "min", "b_local", 0, 1], ["recheck", "min", "b_local", 0, 1], ["noDefect", "min", "b_local", 0, 1],
   ["connNext", "min", "b_wo", 1, 1], ["internalFactor", "×", "b_wo", 1, 0.1], ["writeGlobal", "min", "b_local", 0, 1], ["workGlobal", "min", "b_local", 0, 1]];
 function inputHTML(path, val, def, step) {

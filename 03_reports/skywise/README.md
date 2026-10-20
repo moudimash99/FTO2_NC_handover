@@ -36,7 +36,7 @@ template or the build and rebuild.
 2. Paste `fto2_level1.css` into the CSS tab, `fto2_level1.html` into the HTML tab, `fto2_level1.js` into the JS tab.
    (Or open `FTO2_Level1_Slate.html` and copy what sits between the START and END markers.)
 3. Expected: the dashboard with fictitious data (titles start with "Fictif", NC numbers 900000001...). Default view
-   (Série, Usine FTO2 uniquement): **543 NC, 1 138 défauts, 2,3 défauts par NC, 102,7 k€, 1,08 NC par MSN**.
+   (Série, Usine FTO2 uniquement): **543 NC, 1 138 défauts, 2,3 défauts par NC, 216,7 k€, 1,08 NC par MSN**.
 4. Check every tab, the filters, FR/EN and "Expliquer le calcul".
 
 If something is wrong, a red box at the top of the dashboard says what (for example: HTML part missing).
@@ -57,7 +57,7 @@ If something is wrong, a red box at the top of the dashboard says what (for exam
    ```json
    { "nc": "{{q_fto2_nc}}", "def": "{{q_fto2_def}}", "dis": "{{q_fto2_dis}}" }
    ```
-4. Expected: "Chargement des données Slate…", then exactly the level-1 figures (543 · 1 138 · 2,3 · 102,7 k€ · 1,08),
+4. Expected: "Chargement des données Slate…", then exactly the level-1 figures (543 · 1 138 · 2,3 · 216,7 k€ · 1,08),
    and on the Coût tab the block "Aléas qualité sans NC": 2 823 €, 77 aléas. Same figures as level 1 = the queries
    reach the page. Without `q_fto2_dis` the page starts after about 4 seconds, without the block.
 
@@ -93,7 +93,7 @@ Steps:
 
 1. Upload the folder `level3_datasets/notebook_kit` next to the notebook, as `nc_defect_parser.py` is today. It holds
    the same Python as the laptop build: `fto2_core.py` (the data steps), the parser v4.8, the CNQ model
-   `cnq-2026.10.20` (with `cnq_orders.py` and `cnq_disruptions.py`), two reference files. The `data/` folder (station
+   `cnq-2026.10.20b` (with `cnq_orders.py` and `cnq_disruptions.py`), two reference files. The `data/` folder (station
    mapping, GPS register, Test list) stays where it is.
 2. Upload `notebook_kit/fto2_ai_labels.csv` once as a dataset named **`fto2_ai_labels`** (the stored root-cause labels).
 3. In the workspace's Data panel:
@@ -127,11 +127,11 @@ Replace the text of `q_fto2_nc`, `q_fto2_def` and `q_fto2_dis` by `level3_datase
 and `q_fto2_dis.sql`. The JS, CSS, HTML and state stay those of level 2.
 
 Expected: the real dashboard, same figures as the laptop build. Default view on the data of 28 September 2026:
-**910 NC, 2 890 défauts, 3,5 défauts par NC, 165 k€, 1,79 NC par MSN** (with the September 2026 operations and the
+**910 NC, 2 890 défauts, 3,5 défauts par NC, 347,1 k€, 1,79 NC par MSN** (with the September 2026 operations and the
 Jan-Sep aléas, as on the laptop). Every NC of the selection counts (decided 20 Oct): all phases, all dates and the plant
 switch off show every row of `fto2_dash_nc` (1,127 on the laptop data). The cost is FTO2's only where FTO2 is liable;
 the other NCs count as NCs with a cost of 0 (the footnote gives their number and handling cost). Coût tab, block "Aléas
-qualité sans NC": 3 347 €, 66,9 h, 89 aléas (19 possible ERMA aléas left out).
+qualité sans NC": 8 233 € (at the production rate, 123 €/h), 66,9 h, 89 aléas (19 possible ERMA aléas left out).
 
 ### Refresh
 

@@ -407,7 +407,10 @@ def cnq_explain(d):
     minutes and material per defect class, the Airbus standard per decision, and the defect lines counted more than once."""
     import cnq.cnq_params as P
     kind = lambda b: "DERIVED" if b.startswith("TEAM RULE") else "RULE" if b.startswith("Rule from AEC") else b.split(" ")[0].upper()
-    return {"p": {"rate": P.RATE_STANDARD, "rateEng": P.RATE_ENGINEERING, "alert": P.MIN_ALERT, "write": P.MIN_WRITE_NC, "writeFinal": P.MIN_WRITE_NC_FINAL,
+    R = getattr(P, "STEP_RATES", None) or {}
+    return {"p": {"rate": P.RATE_STANDARD, "rateEng": P.RATE_ENGINEERING, "rateProd": getattr(P, "RATE_PROD", P.RATE_STANDARD),
+                  "rates": {"alert": R.get("alert"), "writing": R.get("writing"), "support": R.get("support"), "setup": R.get("setup"),
+                            "hands": R.get("hands_on"), "recheck": R.get("recheck")} if R else None, "alert": P.MIN_ALERT, "write": P.MIN_WRITE_NC, "writeFinal": P.MIN_WRITE_NC_FINAL,
                   "support": P.MIN_SUPPORT, "setup": P.MIN_SETUP, "floor": P.MIN_WORK_FLOOR, "recheck": P.MIN_RECHECK_CLOSE,
                   "noDefect": P.MIN_HANDS_ON_NO_DEFECT, "writeGlobal": P.MIN_WRITE_NC_GLOBAL, "workGlobal": P.MIN_WORK_GLOBAL,
                   "defDefault": P.MIN_DEFAULT_DEFECT, "crExtra": P.CUSTOMER_RETURN_EXTRA, "version": P.MODEL_VERSION,
@@ -563,7 +566,7 @@ def build_detail(d, nc, x):
     }).sort_values(["Créée", "NC", "Défaut #"], ascending=[False, True, True])
     summ_rows = []
     f = d[d.scope == "serie"]
-    for cat in ["MEO Câblage", "Erreur Branchement", "Élément Manquant", "Élément Endommagé", "Déverrouillage", "Grounding/Bonding", "Kitting Factory", "FOD", "Autre"]:
+    for cat in ["MEO Facteur humain", "Erreur Branchement", "Élément Manquant", "Élément Endommagé", "Déverrouillage", "Grounding/Bonding", "Kitting Factory", "FOD", "Autre"]:
         p, l = f[f.groupe == cat], f[f.llm_categorie == cat]
         summ_rows.append([cat, len(p), len(l), int(l.llm_defaut_cable.sum()), int(l.llm_mineur.sum()), round(float(l.cnq_cost_allocated_llm.sum()))])
     summ = pd.DataFrame(summ_rows, columns=["Catégorie", "Défauts série (parser)", "Défauts série (cause racine)", "dont câble", "dont mineurs", "CNQ réparti (EUR)"])

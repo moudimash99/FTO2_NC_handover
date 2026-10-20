@@ -28,6 +28,7 @@
           <div class="fb-dates"><select id="gPreset"></select><input type="date" id="gFrom" data-ta="fFrom"><span class="mu" aria-hidden="true">→</span><input type="date" id="gTo" data-ta="fTo"></div></div>
         <div class="fb" id="minorCtl"><span id="miLab" data-t="minorLabel"></span>
           <div class="seg" role="group" aria-labelledby="miLab"><button type="button" id="miIn" data-t="minorIn"></button><button type="button" id="miOut" data-t="minorOut"></button></div></div>
+        <span class="fb-pick" id="gPick" hidden><span id="gPickTxt"></span><button type="button" id="gPickX" aria-label="✕">✕</button></span>
         <button type="button" class="fb-reset" id="gReset" data-t="fReset" hidden></button>
       </div>
       <p class="fb-sum" id="fbSum" aria-live="polite"></p>
@@ -217,6 +218,13 @@
   <!-- Mock-up page only: products, lines, aircraft, stations -->
   <div class="panel" role="tabpanel" id="p-where" aria-labelledby="tab-where" hidden>
     <div class="lead"><h2 data-t="whereTitle"></h2><p class="sub" data-t="whereSub"></p></div>
+    <details class="detail" id="whBox"><summary><span data-t="tblWhere"></span><span class="count" id="whN"></span></summary>
+      <div class="inner">
+        <p class="sub" data-t="tblWhereSub"></p>
+        <input type="search" id="whQ" autocomplete="off">
+        <div class="table-wrap"><table><thead><tr id="whTh"></tr></thead><tbody id="whTb"></tbody></table></div>
+        <button type="button" class="more" id="whM" hidden></button>
+      </div></details>
   </div>
 
   <!-- 3b. Insights (series) -->

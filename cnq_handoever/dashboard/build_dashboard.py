@@ -74,7 +74,10 @@ data = {
 }
 # default parameters = the pipeline's. Base minutes are the values BEFORE the "2 x" rule; derived classes point to their base.
 base_min = {k: v[0] for k, v in P.DEFECT_TIMES.items()}
-p = {"rate": P.RATE_STANDARD, "rateEng": P.RATE_ENGINEERING, "alert": P.MIN_ALERT, "write": P.MIN_WRITE_NC, "writeFinal": P.MIN_WRITE_NC_FINAL,
+_W = getattr(P, "STEP_WHO", None) or {}
+p = {"rate": P.RATE_STANDARD, "rateEng": P.RATE_ENGINEERING, "rateProd": P.RATE_PROD, "rateQuality": P.RATE_QUALITY, "rateMe": P.RATE_ME,
+     "who": {("hands" if k == "hands_on" else k): w for k, w in _W.items()},   # each step at the rate of who does it
+     "alert": P.MIN_ALERT, "write": P.MIN_WRITE_NC, "writeFinal": P.MIN_WRITE_NC_FINAL,
      "support": P.MIN_SUPPORT, "setup": P.MIN_SETUP, "floor": P.MIN_WORK_FLOOR, "recheck": P.MIN_RECHECK_CLOSE, "noDefect": P.MIN_HANDS_ON_NO_DEFECT,
      "writeGlobal": P.MIN_WRITE_NC_GLOBAL, "workGlobal": P.MIN_WORK_GLOBAL, "crExtra": P.CUSTOMER_RETURN_EXTRA, "airbus": dict(P.AIRBUS_STANDARD),
      "connNext": P.MIN_CONNECTION_NEXT, "internalFactor": P.INTERNAL_WORK_FACTOR, "orderTime": bool(getattr(P, "USE_ORDER_TIME", False)), "aleaTime": bool(getattr(P, "USE_ALEA_TIME", False)),

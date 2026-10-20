@@ -72,6 +72,13 @@
 .fto2 .switch[aria-checked="true"] i::after { left: 16px; }
 .fto2 .switch b { font-weight: 600; min-width: 2.2em; }
 .fto2 .switch:disabled { opacity: .45; cursor: default; }
+.fto2 .fb-pick { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; background: var(--surface); border: 1px solid var(--s1); color: var(--ink); border-radius: 999px; padding: 4px 6px 4px 12px; }
+.fto2 .fb-pick[hidden] { display: none; }
+.fto2 .fb-pick button { font: inherit; border: 0; background: var(--track); border-radius: 999px; width: 22px; height: 22px; cursor: pointer; color: var(--ink); line-height: 1; }
+.fto2 [data-pick] { cursor: pointer; }
+.fto2 svg [data-pick]:hover { opacity: .78; }
+.fto2 td.pickc { text-decoration: underline dotted var(--muted); text-underline-offset: 3px; }
+.fto2 td.pickc:hover, .fto2 td.nc[data-pick]:hover { color: var(--s1); }
 .fto2 .fb-reset { font: inherit; font-size: 13px; color: var(--s1); background: none; border: 1px solid var(--ring); border-radius: 6px; padding: 5px 12px; cursor: pointer; }
 .fto2 .fb-note { font-size: 11.5px; color: var(--muted); max-width: 16em; line-height: 1.3; }
 .fto2 .fb-sum { font-size: 13px; color: var(--ink-2); font-variant-numeric: tabular-nums; max-width: none; }

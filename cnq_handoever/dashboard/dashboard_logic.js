@@ -7,6 +7,10 @@
 // line layout in DATA.lines:    [ncIndex, classIndex, qty, text], in line order within each NC
 var NC = { num: 0, month: 1, prog: 2, prod: 3, rule: 4, aec: 5, group: 6, fin: 7, cust: 8, where: 9, status: 10, alertOn: 11, internal: 12, order: 13, alea: 14 };
 
+// EUR per hour of a step, by who does it (P.who: production, quality, ME, each rate editable); P.rate alone before 20 Oct 2026
+var WHO_RATE = { prod: "rateProd", quality: "rateQuality", me: "rateMe" };
+function stepRate(P, k) { var w = P.who && P.who[k]; return w && P[WHO_RATE[w]] != null ? P[WHO_RATE[w]] : P.rate; }
+
 function classMinutes(P) {
   // a derived class is always factor x its base class ("wrong reference = 2 x missing")
   return P.classes.map(function (c) { return c.of == null ? c.min : P.classes[c.of].min * c.factor; });
@@ -45,7 +49,10 @@ function computeAll(DATA, P, amounts) {
     var engH = f.eng, eng = engH * P.rateEng, material = f.work * lineMat[i];
     var minutes3 = s.alert + s.writing + s.support + s.setup + s.hands + s.recheck;
     var minutes2 = alert * P.alert + f.write * P.writeGlobal + f.support * P.support + f.work * P.workGlobal + f.recheck * P.recheck;
-    var model = minutes3 / 60 * P.rate + eng + material;
+    var labour2 = (alert * P.alert * stepRate(P, "alert") + f.write * P.writeGlobal * stepRate(P, "writing") + f.support * P.support * stepRate(P, "support")
+                   + f.work * P.workGlobal * stepRate(P, "hands") + f.recheck * P.recheck * stepRate(P, "recheck")) / 60;
+    var labour = ["alert", "writing", "support", "setup", "hands", "recheck"].reduce(function (a, k) { return a + s[k] / 60 * stepRate(P, k); }, 0);
+    var model = labour + eng + material;
     var isReturn = known && r[NC.cust] === 1;
     var real = isReturn && amounts[r[NC.num]] != null && isFinite(amounts[r[NC.num]]) ? +amounts[r[NC.num]] : null;
     var l3 = real != null ? real : model + (isReturn ? (P.crExtra || 0) : 0);
@@ -53,7 +60,7 @@ function computeAll(DATA, P, amounts) {
       i: i, f: f, steps: s, order: o, engH: engH, eng: eng, material: material, lines: lineCnt[i], lineMin: lineMin[i],
       minutes3: minutes3, minutes2: minutes2, model: model, real: real, adjust: l3 - model, isReturn: isReturn,
       l3: l3,
-      l2: minutes2 / 60 * P.rate + eng + material,
+      l2: labour2 + eng + material,
       l1: P.airbus[r[NC.rule]] || 0
     };
   });
@@ -72,4 +79,4 @@ function sumBy(DATA, rows, keyFn, filterFn) {
   return out;
 }
 
-if (typeof module !== "undefined") { module.exports = { computeAll: computeAll, sumBy: sumBy, classMinutes: classMinutes, NC: NC }; }
+if (typeof module !== "undefined") { module.exports = { computeAll: computeAll, sumBy: sumBy, classMinutes: classMinutes, stepRate: stepRate, NC: NC }; }
