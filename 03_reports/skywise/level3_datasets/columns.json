@@ -98,7 +98,7 @@
   {
    "name": "scope",
    "type": "text",
-   "meaning": "report scope: serie, client, or empty (outside the report)"
+   "meaning": "where the NC was raised: serie (at FTO2), client (customer return), autre (another plant); every NC counts"
   },
   {
    "name": "phase",

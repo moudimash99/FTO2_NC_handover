@@ -1010,12 +1010,14 @@ function fto2FromTables(ncIn, defIn, ref, disIn) {
     return y + '-W' + (w < 10 ? '0' : '') + w;
   }
   function clean(t) { return t.trim().split(/\s+/).join(' ').replace(/^[ *:\-]+|[ *:\-]+$/g, ''); }
-  var ncs = [], byNc = {};
+  var ncs = [], byNc = {}, notLiable = [];
   rows(ncIn).forEach(function (r) {
     var id = str(r.nc).trim().replace(/\.0$/, ''), created = day(r.created);
     if (!id || !created) return;
+    var k = int(r.on_aec) === 1 ? 1 : 0;   // FTO2's cost only where FTO2 is liable; the NC still counts
+    if (!k) notLiable.push(num(r.cost_total));
     var a = [id, created, isoWeek(created), str(r.line), str(r.plant_scope), int(r.on_aec), str(r.rule), str(r.decision_label), str(r.where_found),
-      num(r.cost_airbus), num(r.cost_global), 0, num(r.cost_total), num(r.cost_admin), 0, num(r.cost_work), 0, num(r.cost_material), num(r.cost_engineering),
+      k * num(r.cost_airbus), k * num(r.cost_global), 0, k * num(r.cost_total), k * num(r.cost_admin), 0, k * num(r.cost_work), 0, k * num(r.cost_material), k * num(r.cost_engineering),
       0, int(r.cable), int(r.defect_lines), str(r.title), str(r.scope), str(r.phase),
       str(r.msn).replace(/\.0$/, ''), str(r.product) || 'Other', str(r.station), r.hour == null || r.hour === '' ? -1 : int(r.hour), numOrNull(r.lead_days), int(r.is_open),
       numOrNull(r.age_days), day(r.closed), str(r.type_nc), str(r.liability), str(r.sap_defect), str(r.sap_cause_group), str(r.sap_cause), str(r.status), str(r.source) || 'sky',
@@ -1050,13 +1052,13 @@ function fto2FromTables(ncIn, defIn, ref, disIn) {
   }
   var to = '', aec = ncs.filter(function (a) { return a[5] === 1; }), sum = function (xs) { return r2(xs.reduce(function (s, a) { return s + a[12]; }, 0)); };
   ncs.forEach(function (a) { if (a[1] > to) to = a[1]; });
-  var del = aec.filter(function (a) { return a[6] === 'DELETED'; }), oth = aec.filter(function (a) { return a[23] === '' && a[6] !== 'DELETED'; });
+  var nlSum = r2(notLiable.reduce(function (s, v) { return s + v; }, 0));
   var cnqp = {}; for (var k2 in (ref.cnqp || {})) cnqp[k2] = ref.cnqp[k2]; cnqp.qty = qty;
   // the disruption block (optional third table): quality aléas that led to no NC [id, opened, line, station, work order, minutes, in block, reason, status, comment]
   var dis = disIn ? rows(disIn).map(function (r) { return [str(r.id), day(r.opened), str(r.line), str(r.station), str(r.work_order), num(r.minutes), int(r.in_block), str(r.reason), str(r.status), str(r.comment)]; })
     .filter(function (a) { return a[0] && a[1]; }) : null;
   return { defects: defects, ncs: ncs, rca: rca, client: client, lt: lt, codes: ref.codes || {}, actions: ref.actions || [], cnqp: cnqp, eqmsn: eq, y25: ref.y25 || null, dis: dis,
-    meta: { from: ref.from || '2026-01-01', to: to, aside: { deleted: [del.length, sum(del)], other: [oth.length, sum(oth)] },
+    meta: { from: ref.from || '2026-01-01', to: to, aside: { other: [notLiable.length, nlSum] },
       noLine: ncs.filter(function (a) { return a[23] === 'serie' && a[21] === 0; }).length, modelTotal: sum(aec) } };
 }
 if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.tables.nc, window.DASH.tables.def, window.DASH.ref, window.DASH.tables.dis);
@@ -1135,7 +1137,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
       unit: 'Qualité', title: 'Non-conformités FTO2', period: 'NC créées du {from} au {to}',
       minorLabel: 'Défauts mineurs', minorIn: 'Inclus', minorOut: 'Exclus',
       tabPareto: 'Pareto', tabCost: 'Pareto des coûts', tabWeek: 'Pareto hebdomadaire', tabCnq: 'Coût de non-qualité', tabClient: 'Retours clients', tabRca: 'Causes (RCA)',
-      serieSub: 'NC émises à FTO2 sous responsabilité FTO2.', serieSubAll: 'NC sous responsabilité FTO2, émises à FTO2 ou hors FTO2 (retours clients).',
+      serieSub: 'NC émises à FTO2, toutes : supprimées et hors responsabilité FTO2 comprises.', serieSubAll: 'Toutes les NC, émises à FTO2 ou dans d’autres usines (retours clients compris).',
       fbTitle: 'Filtres', fSrc: 'Source des données', fOrg: 'Origine (pipeline)', org_all: 'Les deux sorties', org_normal: 'Sortie normale', org_missing_ids: 'IDs manquants', src_all: 'Toutes les données', src_sky: 'Skywise uniquement', src_man: 'Listes manuelles (GPS ou Test)', src_gps: 'Registre GPS', src_test: 'Liste Test',
       fPlant: 'Usine FTO2 uniquement', fYes: 'Oui', fNo: 'Non', fPlantOff: 'Sans effet ici : l’onglet sépare déjà FTO2 et retours clients.',
       fPhase: 'Type de production', ph_all: 'Tous', ph_SERIE: 'Série', ph_REC: 'REC', ph_FTI: 'FTI', fLine: 'Avion', line_all: 'Tous les avions',
@@ -1209,7 +1211,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
       bk_LOCAL: 'Processus décrit par AEC', bk_RULE: 'Règle AEC', bk_ASSUMED: 'Hypothèse', bk_OFFICIAL: 'Officiel Airbus', bk_TEAM: 'Table de l’équipe', bk_BORROWED: 'Emprunté', bk_DERIVED: 'Règle de l’équipe',
       cxNcT: 'Le calcul sur une NC réelle', cxNum: 'Numéro de NC', cxShow: 'Afficher', cxNone: 'Aucune NC ne porte ce numéro dans les données. Choisir un numéro dans la liste.',
       ex_one: 'Retouche à un défaut', ex_many: 'Retouche à plusieurs défauts', ex_final: 'Retouche au contrôle final', ex_noline: 'Retouche sans ligne de défaut',
-      ex_rej: 'Rejet', ex_rejrw: 'Rejet avec ordre de retouche', ex_order: 'Temps de l’ordre de retouche', fx_org: 'Origine', fx_order: 'Ordre de retouche', os_used: 'temps prévu utilisé', os_open: 'pas encore clos : temps du modèle', os_no_time: 'clos sans temps prévu : temps du modèle', os_not_found: 'hors des opérations disponibles : temps du modèle', os_none: 'opérations non chargées : temps du modèle', n_ordSetup: 'Temps prévu des opérations de préparation, contrôle et clôture de l’ordre de retouche', n_ordWork: 'Temps prévu des opérations de travail et de test de l’ordre de retouche, à la place du modèle', dl_ord: 'Temps du modèle, pour information (l’intervention comptée est celle de l’ordre) ; la matière est reprise ci-dessus', ex_exc: 'Échange', ex_dqn: 'Demande de DQN', ex_cli: 'Retour client',
+      ex_rej: 'Rejet', ex_rejrw: 'Rejet avec ordre de retouche', r_notaec: 'Hors responsabilité FTO2', r_notaec_how: 'FTO2 n’est pas responsable de cette NC : elle compte comme NC, son coût pour FTO2 est 0', ex_order: 'Temps de l’ordre de retouche', fx_org: 'Origine', fx_order: 'Ordre de retouche', os_used: 'temps prévu utilisé', os_open: 'pas encore clos : temps du modèle', os_no_time: 'clos sans temps prévu : temps du modèle', os_not_found: 'hors des opérations disponibles : temps du modèle', os_none: 'opérations non chargées : temps du modèle', n_ordSetup: 'Temps prévu des opérations de préparation, contrôle et clôture de l’ordre de retouche', n_ordWork: 'Temps prévu des opérations de travail et de test de l’ordre de retouche, à la place du modèle', dl_ord: 'Temps du modèle, pour information (l’intervention comptée est celle de l’ordre) ; la matière est reprise ci-dessus', ex_exc: 'Échange', ex_dqn: 'Demande de DQN', ex_cli: 'Retour client',
       fx_nc: 'NC', fx_date: 'Créée le', fx_line: 'Ligne', fx_dec: 'Décision', fx_where: 'Détection', fx_lines: 'Lignes de défaut',
       cxH: ['Étape', 'Calcul', 'Minutes', 'Coût à {r} €/h'],
       n_once: '{x} min, une fois par NC', n_alea: 'temps perdu déclaré sur l’aléa qualité {a}, qui a mené à la NC', ex_alea: 'Temps de l’aléa déclaré', n_noalert: 'pas d’alerte : NC trouvée au test ou au contrôle final', n_x2: '{s} · × {f} (NC interne)', n_plain: '{x} min', n_final: '{x} min car détectée au contrôle final',
@@ -1237,7 +1239,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
       subsTitle: 'Sous-catégories et codes officiels', exTitle: 'Exemples', minorTag: 'mineur', noEx: 'Pas d’exemple sur la période.',
       foot1: 'Source : extraction SAP Skywise, NC créées du {from} au {to}.',
       foot2: 'NC FTO2 : NC émises à FTO2 sous responsabilité FTO2, hors NC supprimées. Retours clients : NC émises hors FTO2 sous responsabilité FTO2. Les défauts sont classés par cause à partir du texte complet de chaque NC.',
-      foot3: 'Les {n} NC A400M sont comptées en NC et en coût mais pas en défauts : leur texte n’est pas disponible. Le modèle de coût compte aussi {d} NC supprimées ({de}) et {o} autre NC ({oe}), hors de ce tableau de bord.',
+      foot3: 'Les {n} NC sans ligne de défaut lisible (A400M sans texte, NC supprimées…) sont comptées en NC et en coût mais pas en défauts. Les {o} NC dont FTO2 n’est pas responsable comptent comme NC avec un coût de 0 pour FTO2 (leur traitement selon le modèle : {oe}).',
       foot4: 'Semaines de fermeture (moins de 10 défauts) exclues des moyennes hebdomadaires. Défauts mineurs : tyrap, frette, ficelle, capuchon, cerise ou bouchon manquant. Coût : 50 €/h, temps du processus estimés par l’équipe ; la valeur des pièces rebutées n’est pas incluse. Coût des défauts câble : coût des NC concernées ; quand une NC contient aussi d’autres défauts, son coût est partagé entre ses défauts.'
     },
     en: {
@@ -1302,7 +1304,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
       unit: 'Quality', title: 'FTO2 Non-conformities', period: 'NCs created {from} to {to}',
       minorLabel: 'Minor defects', minorIn: 'Included', minorOut: 'Excluded',
       tabPareto: 'Pareto', tabCost: 'Cost Pareto', tabWeek: 'Weekly Pareto', tabCnq: 'Cost of non-quality', tabClient: 'Customer returns', tabRca: 'Root causes (RCA)',
-      serieSub: 'NCs raised at FTO2 that FTO2 is liable for.', serieSubAll: 'NCs FTO2 is liable for, raised at FTO2 or outside it (customer returns).',
+      serieSub: 'Every NC raised at FTO2, deleted and not-liable ones included.', serieSubAll: 'Every NC, raised at FTO2 or at other plants (customer returns included).',
       fbTitle: 'Filters', fSrc: 'Data source', fOrg: 'Origin (pipeline)', org_all: 'Both outputs', org_normal: 'Normal output', org_missing_ids: 'Missing IDs', src_all: 'All data', src_sky: 'Skywise only', src_man: 'Manual lists (GPS or Test)', src_gps: 'GPS register', src_test: 'Test list',
       fPlant: 'FTO2 plant only', fYes: 'Yes', fNo: 'No', fPlantOff: 'No effect here: this tab already shows FTO2 and customer returns apart.',
       fPhase: 'Production type', ph_all: 'All', ph_SERIE: 'Series', ph_REC: 'REC', ph_FTI: 'FTI', fLine: 'Aircraft', line_all: 'All aircraft',
@@ -1376,7 +1378,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
       bk_LOCAL: 'Process described by AEC', bk_RULE: 'AEC rule', bk_ASSUMED: 'Assumed', bk_OFFICIAL: 'Official Airbus', bk_TEAM: 'Team table', bk_BORROWED: 'Borrowed', bk_DERIVED: 'Team rule',
       cxNcT: 'The calculation on a real NC', cxNum: 'NC number', cxShow: 'Show', cxNone: 'No NC with that number in the data. Pick one from the list.',
       ex_one: 'Rework, one defect', ex_many: 'Rework, several defects', ex_final: 'Rework at final inspection', ex_noline: 'Rework, no defect line',
-      ex_rej: 'Rejection', ex_rejrw: 'Rejection with a rework order', ex_order: 'Rework order time', fx_org: 'Origin', fx_order: 'Rework order', os_used: 'planned time used', os_open: 'not closed yet: model time', os_no_time: 'closed with no planned time: model time', os_not_found: 'not in the operations available: model time', os_none: 'operations not loaded: model time', n_ordSetup: 'Planned time of the rework order’s preparation, inspection and closing operations', n_ordWork: 'Planned time of the rework order’s work and test operations, instead of the model', dl_ord: 'Model times, for information (the hands-on work charged is the rework order’s); the material is used above', ex_exc: 'Exchange', ex_dqn: 'Design query', ex_cli: 'Customer return',
+      ex_rej: 'Rejection', ex_rejrw: 'Rejection with a rework order', r_notaec: 'Not FTO2’s liability', r_notaec_how: 'FTO2 is not liable for this NC: it counts as an NC, its cost for FTO2 is 0', ex_order: 'Rework order time', fx_org: 'Origin', fx_order: 'Rework order', os_used: 'planned time used', os_open: 'not closed yet: model time', os_no_time: 'closed with no planned time: model time', os_not_found: 'not in the operations available: model time', os_none: 'operations not loaded: model time', n_ordSetup: 'Planned time of the rework order’s preparation, inspection and closing operations', n_ordWork: 'Planned time of the rework order’s work and test operations, instead of the model', dl_ord: 'Model times, for information (the hands-on work charged is the rework order’s); the material is used above', ex_exc: 'Exchange', ex_dqn: 'Design query', ex_cli: 'Customer return',
       fx_nc: 'NC', fx_date: 'Created', fx_line: 'Line', fx_dec: 'Decision', fx_where: 'Found at', fx_lines: 'Defect lines',
       cxH: ['Step', 'How', 'Minutes', 'Cost at {r} EUR/h'],
       n_once: '{x} min, once per NC', n_alea: 'time lost declared on quality aléa {a}, which led to the NC', ex_alea: 'Declared aléa time', n_noalert: 'no alert: NC found at test or final inspection', n_x2: '{s} · × {f} (internal NC)', n_plain: '{x} min', n_final: '{x} min because it was found at final inspection',
@@ -1404,7 +1406,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
       subsTitle: 'Sub-categories and official codes', exTitle: 'Examples', minorTag: 'minor', noEx: 'No example over the period.',
       foot1: 'Source: Skywise SAP extract, NCs created {from} to {to}.',
       foot2: 'FTO2 NCs: NCs raised at FTO2 that FTO2 is liable for, deleted NCs excluded. Customer returns: NCs raised outside FTO2 that FTO2 is liable for. Defects are classified by root cause from the full text of each NC. NC texts and sub-categories stay in French.',
-      foot3: 'The {n} A400M NCs are counted as NCs and in the cost but not as defects: their text is not available. The cost model also counts {d} deleted NCs ({de}) and {o} other NC ({oe}), outside this dashboard.',
+      foot3: 'The {n} NCs with no readable defect line (A400M with no text, deleted NCs…) are counted as NCs and in the cost but not as defects. The {o} NCs FTO2 is not liable for count as NCs with a cost of 0 for FTO2 (their handling in the model: {oe}).',
       foot4: 'Shutdown weeks (fewer than 10 defects) are left out of weekly averages. Minor defects: a missing tyrap, frette, ficelle, cap, cerise or plug. Cost: 50 €/h, process times estimated by the team; the value of scrapped parts is not included. Cost of cable defects: cost of the NCs concerned; when an NC also has other defects, its cost is shared among its defects.'
     }
   };
@@ -1481,8 +1483,9 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
   var NC = {}; D.ncs.forEach(function (n) { NC[n[0]] = n; });
 
   // ---------------------------------------------------------------- global filters (bar under the title): every tab reads its NCs through them
-  // reporting scope: 'serie' = raised at FTO2, 'client' = customer return; [39] data source: 'sky' Skywise only, 'gps' / 'test' also in that manual list
-  var REP = D.ncs.filter(function (n) { return n[23] === 'serie' || n[23] === 'client'; });
+  // every NC of the pipeline's selection counts (decided 20 Oct). [23] where it was raised: 'serie' = at FTO2, 'client' = customer return,
+  // 'autre' = another plant; [39] data source: 'sky' Skywise only, 'gps' / 'test' also in that manual list
+  var REP = D.ncs;
   var DMAX = D.meta.to, DMIN = REP.reduce(function (m, n) { return n[1] < m ? n[1] : m; }, DMAX);
   var LINES = lineOrder(REP.map(function (n) { return n[3]; }));
   var GF0 = { src: 'all', org: '', fto2: true, phase: 'SERIE', line: '', preset: PAGE === 'suivi' ? 'all' : 'ytd', from: '', to: '' }, GF = Object.assign({}, GF0);
@@ -1504,7 +1507,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
     if (GF.line && !anyLine && n[3] !== GF.line) return false;
     return n[1] >= GF.from && n[1] <= GF.to;
   }
-  function gScope(n) { return n[23] === 'serie' || (!GF.fto2 && n[23] === 'client'); }
+  function gScope(n) { return n[23] === 'serie' || !GF.fto2; }   // FTO2 plant only: the NCs raised at FTO2
   // the selection: SEL follows every filter; SER (raised at FTO2) and CLI (customer returns) ignore the plant switch, for the tabs that show both apart
   var SEL_NC = [], SER_NC = [], CLI_NC = [], SEL = {}, SER = {}, CLI = {};
   function ids(a) { var o = {}; a.forEach(function (n) { o[n[0]] = 1; }); return o; }
@@ -1789,7 +1792,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
   // cost units: each defect line of an NC (its share of the NC cost), plus each NC with no defect line (A400M); shared with the CNQ tab
   var UNITS = (function () {
     var out = [], has = {};
-    D.defects.forEach(function (r) { var n = NC[r[0]]; if (n && (n[23] === 'serie' || n[23] === 'client')) { has[r[0]] = 1; out.push({ d: r, n: n }); } });
+    D.defects.forEach(function (r) { var n = NC[r[0]]; if (n) { has[r[0]] = 1; out.push({ d: r, n: n }); } });
     REP.forEach(function (n) { if (!has[n[0]]) out.push({ d: null, n: n }); });
     return out;
   })();
@@ -1981,7 +1984,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
   function cxSteps(n) { return n[40] || [0, 0, 0, 0, 0, 0, 0, 0]; }
   function cxRule(n) { return CXP.rules[n[6]] || null; }
   function cxAdj(n) {   // customer return: the flat extra or the real amount, i.e. what the level-3 cost holds beyond the steps (0 today)
-    var f = cxRule(n), st = cxSteps(n); if (!f) return 0;
+    var f = cxRule(n), st = cxSteps(n); if (!f || n[5] !== 1) return 0;   // not FTO2's liability: cost 0, shown as its own line
     var m = [f[0], f[1], f[2], f[3], f[3], f[4]].reduce(function (a, on, j) { return a + (on ? st[j] : 0); }, 0), d = n[12] - (m / 60 * CXP.p.rate + n[18] + n[17]);
     return Math.abs(d) >= 0.05 ? d : 0;
   }
@@ -2081,6 +2084,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
     if (f[6]) tb += '<tr><td>' + esc(S('r_part')) + '</td><td>' + esc(S('r_part_how')) + '</td><td class="r">–</td><td class="r">' + esc(eur2(0)) + '</td></tr>';
     var adj = cxAdj(n);
     if (adj) tb += '<tr><td>' + esc(S('r_adj')) + '</td><td></td><td class="r">–</td><td class="r">' + esc(eur2(adj)) + '</td></tr>';
+    if (n[5] !== 1 && totMin) tb += '<tr><td>' + esc(S('r_notaec')) + '</td><td>' + esc(S('r_notaec_how')) + '</td><td class="r">–</td><td class="r">' + esc(eur2(-totMin / 60 * r)) + '</td></tr>';
     tb += '<tr class="total"><td>' + esc(S('r_tot')) + '</td><td></td><td class="r">' + esc(mn(totMin)) + '</td><td class="r">' + esc(eur2(n[12])) + '</td></tr></tbody></table></div>';
     var m2 = (f[0] && st[0] ? P.alert : 0) + f[1] * P.writeGlobal + f[2] * P.support + f[3] * P.workGlobal + f[4] * P.recheck;
     var lv = '<div class="cx-lv"><div>' + esc(S('x2_line', { m: num(m2), c: '\u0001' })).replace('\u0001', '<b>' + esc(eur2(n[10])) + '</b>') + '</div><div>' +
@@ -5135,7 +5139,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
   function y25Sel() {
     var Y = D.y25; if (!Y || !Y.rows || GF.src !== 'all' || GF.org === 'missing_ids') return null;
     var c = {}; Y.cols.forEach(function (k, i) { c[k] = i; });
-    return Y.rows.filter(function (r) { return (r[c.scope] === 'serie' || (!GF.fto2 && r[c.scope] === 'client')) && (!GF.phase || r[c.phase] === GF.phase) && (!GF.line || r[c.line] === GF.line); })
+    return Y.rows.filter(function (r) { return (r[c.scope] === 'serie' || !GF.fto2) && (!GF.phase || r[c.phase] === GF.phase) && (!GF.line || r[c.line] === GF.line); })
       .map(function (r) { return { m: r[c.month], line: r[c.line], p: r[c.product], nc: r[c.nc], def: G.minor ? r[c.def] : r[c.defMajor], cost: r[c.cost] }; });
   }
   // a 2025 sum by month of the year ('01'..'12'), and its running total over the months shown (actual + forecast, 'YYYY-MM')
@@ -5507,7 +5511,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
     document.getElementById('asof').textContent = S('asof', { to: day(D.meta.to) });
     document.getElementById('foot1').textContent = S('foot1', dates);
     document.querySelectorAll('[data-t="serieSub"]').forEach(function (el) { el.textContent = S(GF.fto2 ? 'serieSub' : 'serieSubAll'); });
-    document.getElementById('foot3').textContent = S('foot3', { n: num(D.meta.noLine), d: num(A.deleted[0]), de: eur(A.deleted[1]), o: num(A.other[0]), oe: eur(A.other[1]) });
+    document.getElementById('foot3').textContent = S('foot3', { n: num(D.meta.noLine), o: num(((A || {}).other || [0])[0]), oe: eur(((A || {}).other || [0, 0])[1]) });
     ['nq', 'pq', 'kq', 'wq', 'cq', 'rq'].forEach(function (id) { var q = document.getElementById(id); q.placeholder = S('search'); q.setAttribute('aria-label', S('search')); });
     document.getElementById('lFr').setAttribute('aria-pressed', String(G.lang === 'fr'));
     document.getElementById('lEn').setAttribute('aria-pressed', String(G.lang === 'en'));

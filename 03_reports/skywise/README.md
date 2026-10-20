@@ -36,7 +36,7 @@ template or the build and rebuild.
 2. Paste `fto2_level1.css` into the CSS tab, `fto2_level1.html` into the HTML tab, `fto2_level1.js` into the JS tab.
    (Or open `FTO2_Level1_Slate.html` and copy what sits between the START and END markers.)
 3. Expected: the dashboard with fictitious data (titles start with "Fictif", NC numbers 900000001...). Default view
-   (Série, Usine FTO2 uniquement): **466 NC, 992 défauts, 2,3 défauts par NC, 98,9 k€, 0,93 NC par MSN**.
+   (Série, Usine FTO2 uniquement): **543 NC, 1 138 défauts, 2,3 défauts par NC, 102,7 k€, 1,08 NC par MSN**.
 4. Check every tab, the filters, FR/EN and "Expliquer le calcul".
 
 If something is wrong, a red box at the top of the dashboard says what (for example: HTML part missing).
@@ -57,7 +57,7 @@ If something is wrong, a red box at the top of the dashboard says what (for exam
    ```json
    { "nc": "{{q_fto2_nc}}", "def": "{{q_fto2_def}}", "dis": "{{q_fto2_dis}}" }
    ```
-4. Expected: "Chargement des données Slate…", then exactly the level-1 figures (466 · 992 · 2,3 · 98,9 k€ · 0,93),
+4. Expected: "Chargement des données Slate…", then exactly the level-1 figures (543 · 1 138 · 2,3 · 102,7 k€ · 1,08),
    and on the Coût tab the block "Aléas qualité sans NC": 2 823 €, 77 aléas. Same figures as level 1 = the queries
    reach the page. Without `q_fto2_dis` the page starts after about 4 seconds, without the block.
 
@@ -127,8 +127,10 @@ Replace the text of `q_fto2_nc`, `q_fto2_def` and `q_fto2_dis` by `level3_datase
 and `q_fto2_dis.sql`. The JS, CSS, HTML and state stay those of level 2.
 
 Expected: the real dashboard, same figures as the laptop build. Default view on the data of 28 September 2026:
-**722 NC, 2 704 défauts, 4,1 défauts par NC, 1,50 NC par MSN**, and **158,4 k€** without the work orders and aléas
-(**161,4 k€** with the September 2026 operations and the Jan-Sep aléas, as on the laptop). Coût tab, block "Aléas
+**910 NC, 2 890 défauts, 3,5 défauts par NC, 165 k€, 1,79 NC par MSN** (with the September 2026 operations and the
+Jan-Sep aléas, as on the laptop). Every NC of the selection counts (decided 20 Oct): all phases, all dates and the plant
+switch off show every row of `fto2_dash_nc` (1,127 on the laptop data). The cost is FTO2's only where FTO2 is liable;
+the other NCs count as NCs with a cost of 0 (the footnote gives their number and handling cost). Coût tab, block "Aléas
 qualité sans NC": 3 347 €, 66,9 h, 89 aléas (19 possible ERMA aléas left out).
 
 ### Refresh

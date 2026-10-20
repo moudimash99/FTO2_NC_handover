@@ -116,7 +116,7 @@ n0 AS (   -- one row per NC: line, perimeter, type, decision
 ),
 n1 AS (
     SELECT n0.*,
-        CASE plant_scope WHEN 'FTO2' THEN 'serie' WHEN 'Retour client' THEN 'client' ELSE '' END AS scope,
+        CASE plant_scope WHEN 'Retour client' THEN 'client' WHEN 'Fournisseur' THEN 'autre' WHEN 'Hors périmètre' THEN 'autre' ELSE 'serie' END AS scope,
         CASE plant_scope WHEN 'Retour client' THEN 'FFF1' WHEN 'Fournisseur' THEN 'FNZ1' WHEN 'Hors périmètre' THEN 'TOF' ELSE 'FTO2' END AS plant,
         CASE WHEN plant_scope IN ('FTO2', 'Retour client', 'Supprimée') THEN 1 ELSE 0 END AS on_aec,
         CASE WHEN plant_scope = 'Retour client' THEN 'NC Retour client' WHEN plant_scope = 'Fournisseur' THEN 'FOURNISSEUR'

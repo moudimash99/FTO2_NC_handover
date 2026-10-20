@@ -147,7 +147,7 @@ def main():
     REPORT["scope"] = nc_ref.perimetre.value_counts().to_dict()
     REPORT["report_scope"] = {k: {"ncs": int((nc_ref.scope == k).sum()), "ncs_without_defect_line": int(((nc_ref.scope == k) & (nc_ref.cnq_defect_lines == 0)).sum()),
                                   "defects": int((d.scope == k).sum()), "cnq": round(float(nc_ref.loc[nc_ref.scope == k, "cnq_cost_total"].sum()), 2)}
-                              for k in ("serie", "client")}
+                              for k in ("serie", "client", "autre")}
     REPORT["defects_by_scope"] = d.perimetre.value_counts().to_dict()
 
     # ======================================================== 4a. CNQ package: same data, same totals
@@ -305,18 +305,17 @@ def build_dashboard(d, nc, lt, y25=None, dis_t=None):
     for r in nc.itertuples():
         if not r.date_creation:
             continue
+        k = int(r.cnq_on_aec)   # FTO2's cost only where FTO2 is liable; every NC counts
         ncs.append([r.notification_number, r.date_creation, week_of(r.date_creation), S_(r.ligne), r.perimetre, int(r.cnq_on_aec), r.cnq_rule,
-                    r.cnq_decision_label, r.cnq_where_found, round(r.cnq_cost_airbus, 2), round(r.cnq_cost_global, 2), round(r.cnq_cost_total_parser, 2),
-                    round(r.cnq_cost_total, 2), round(r.cnq_cost_admin, 2), round(r.cnq_cost_work_parser, 2), round(r.cnq_cost_work, 2),
-                    round(r.cnq_cost_material_parser, 2), round(r.cnq_cost_material, 2), round(r.cnq_cost_engineering, 2),
+                    r.cnq_decision_label, r.cnq_where_found] + [round(k * v, 2) for v in (r.cnq_cost_airbus, r.cnq_cost_global, r.cnq_cost_total_parser,
+                    r.cnq_cost_total, r.cnq_cost_admin, r.cnq_cost_work_parser, r.cnq_cost_work, r.cnq_cost_material_parser, r.cnq_cost_material,
+                    r.cnq_cost_engineering)] + [
                     int(r.nc_cable), int(r.nc_cable_llm), int(r.cnq_defect_lines), S_(r.description_short)[:80], r.scope, S_(r.phase)]
                    + nc_extras(r))
     direct = {"%s|%d" % (r.notification_number, r.seq): [round(float(r.cnq_cost_direct), 2), round(float(r.cnq_cost_direct_llm), 2)]
               for r in d.itertuples() if r.cnq_cost_allocated or r.cnq_cost_allocated_llm}
-    aec = nc[nc.cnq_on_aec == 1]
-    dele, other = aec.cnq_rule == "DELETED", (aec.scope == "") & (aec.cnq_rule != "DELETED")
-    aside = {"deleted": [int(dele.sum()), round(float(aec.loc[dele, "cnq_cost_total"].sum()), 2)],
-             "other": [int(other.sum()), round(float(aec.loc[other, "cnq_cost_total"].sum()), 2)]}
+    aec, nl = nc[nc.cnq_on_aec == 1], nc[(nc.cnq_on_aec != 1) & (nc.date_creation != "")]
+    aside = {"other": [int(len(nl)), round(float(nl.cnq_cost_total.sum()), 2)]}   # NCs FTO2 is not liable for: counted, cost 0 for FTO2
     no_line = int(((nc.scope == "serie") & (nc.cnq_defect_lines == 0)).sum())
     client, lt_client = customer_return_extras(d, nc, lt)
     actions = mft_actions()

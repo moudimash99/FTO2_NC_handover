@@ -13,16 +13,17 @@
     "mes_disruptions_fto2_2026.csv.gz": 2500
   },
   "y2025": {
-    "ncs": 750,
-    "serie": 750,
+    "ncs": 1119,
+    "serie": 1119,
     "client": 0,
-    "level3_aec": 174714.72,
+    "autre": 0,
+    "level3_aec": 178870.25,
     "created_from": "2025-01-03",
     "created_to": "2025-12-23",
     "serie_SERIE": {
-      "ncs": 732,
-      "defects": 2931,
-      "level3": 170433.1
+      "ncs": 1000,
+      "defects": 3156,
+      "level3": 174529.44
     },
     "deliveries": 343.0
   },
@@ -71,16 +72,22 @@
   },
   "report_scope": {
     "serie": {
-      "ncs": 727,
-      "ncs_without_defect_line": 63,
-      "defects": 2709,
-      "cnq": 162569.8
+      "ncs": 988,
+      "ncs_without_defect_line": 89,
+      "defects": 2968,
+      "cnq": 195219.75
     },
     "client": {
       "ncs": 69,
       "ncs_without_defect_line": 4,
       "defects": 69,
       "cnq": 12379.12
+    },
+    "autre": {
+      "ncs": 70,
+      "ncs_without_defect_line": 9,
+      "defects": 61,
+      "cnq": 8864.95
     }
   },
   "defects_by_scope": {
@@ -129,14 +136,14 @@
       "ncs": 713,
       "defects": 1463,
       "aleas": 99,
-      "js_kb": 1167
+      "js_kb": 1172
     },
-    "level23_js_kb": 567,
+    "level23_js_kb": 572,
     "pipeline_notebook": true,
     "level4": [
       "FTO2_NC_Dashboard_level2.slate.json",
       "FTO2_NC_Dashboard_level3.slate.json"
     ]
   },
-  "review_disagreements": 301
+  "review_disagreements": 444
 }

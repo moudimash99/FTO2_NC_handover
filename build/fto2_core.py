@@ -61,7 +61,7 @@ NC_COLUMNS = [
     ("cable", "int", "1 when a defect line is a cable defect (root-cause labels)"),
     ("defect_lines", "int", "number of defect lines"),
     ("title", "text", "NC title (80 characters)"),
-    ("scope", "text", "report scope: serie, client, or empty (outside the report)"),
+    ("scope", "text", "where the NC was raised: serie (at FTO2), client (customer return), autre (another plant); every NC counts"),
     ("phase", "text", "production type: SERIE, REC, FTI"),
     ("msn", "text", "aircraft MSN"),
     ("product", "text", "product family (Produit_auto)"),
@@ -337,11 +337,13 @@ def prepare(x, lab, ref_dir, ops=None, dis=None, say=None):
     nc_ref["nc_cable"] = nc_ref.notification_number.isin(set(d[d.defaut_cable].notification_number))
     nc_ref["nc_cable_llm"] = nc_ref.notification_number.isin(set(d[d.llm_defaut_cable].notification_number))
     nc_ref["long_text"] = nc_ref.notification_number.map(lt)
-    # the reporting scope used by every page, so all of them count the same NCs:
-    #   serie  = raised at FTO2, FTO2 in the liability, not deleted
-    #   client = customer return (raised elsewhere, FTO2 in the liability, not deleted)
-    liab_f = nc_ref["liability"].fillna("").astype(str).str.upper().str.contains("FTO2")
-    nc_ref["scope"] = np.select([(nc_ref.perimetre == "FTO2") & liab_f, nc_ref.perimetre == "Retour client"], ["serie", "client"], default="")
+    # where the NC was raised, for the plant switch and the customer-returns tab. Every NC of the pipeline's selection counts
+    # (deleted, supplier-liable and not-liable ones included, decided 20 Oct); the cost is FTO2's only where FTO2 is liable.
+    #   serie  = raised at FTO2
+    #   client = customer return (raised elsewhere, FTO2 in the liability)
+    #   autre  = raised at another plant, not a customer return
+    at_fto2 = nc_ref["plant"].fillna("").astype(str).str.strip().str.upper() == L.OUR_PLANT.upper()
+    nc_ref["scope"] = np.select([nc_ref.perimetre == "Retour client", at_fto2], ["client", "serie"], default="autre")
     d["scope"] = d.notification_number.map(nc_ref.set_index("notification_number")["scope"]).fillna("")
     d["phase"] = d.notification_number.map(nc_ref.set_index("notification_number")["phase"]).fillna("")
     return {"d": d, "nc": nc_ref, "lt": lt, "nc_in": nc_in, "nc_parser": np_, "nc_llm": nl_, "def_llm": dl_, "dis": block, "codes": codes, "report": report}
@@ -550,7 +552,9 @@ def year_baseline(raw, station_desc, ref_dir, year):
     empty = pd.DataFrame(columns=["notification_number", "seq", "snippet", "llm_sous_categorie", "llm_sous_code", "llm_defaut_cable", "llm_confiance", "llm_symptome"])
     p = prepare(x, empty, ref_dir)
     nc, d = p["nc"], p["d"]
-    nc = nc[nc.date_creation.str.startswith(str(year)) & (nc.scope != "")].copy()
+    nc = nc[nc.date_creation.str.startswith(str(year))].copy()
+    for c in ("cnq_cost_total", "cnq_cost_global", "cnq_cost_airbus"):   # FTO2's cost: only where FTO2 is liable
+        nc[c] = nc[c] * nc["cnq_on_aec"]
     maj = d[~d.llm_mineur.astype(bool)].groupby("notification_number").size()
     nc["major"] = nc.notification_number.map(maj).fillna(0).astype(int)
     nc["month"] = nc.date_creation.str[:7]
@@ -561,6 +565,6 @@ def year_baseline(raw, station_desc, ref_dir, year):
     rows = [[r.month, r.scope, S_(r.phase), S_(r.ligne), r.prod, int(r.n), int(r.d), int(r.dm), round(float(r.c3), 2), round(float(r.c2), 2), round(float(r.c1), 2)]
             for r in g.itertuples()]
     aec = nc[nc.cnq_on_aec == 1]
-    info = {"ncs": int(len(nc)), "serie": int((nc.scope == "serie").sum()), "client": int((nc.scope == "client").sum()),
+    info = {"ncs": int(len(nc)), "serie": int((nc.scope == "serie").sum()), "client": int((nc.scope == "client").sum()), "autre": int((nc.scope == "autre").sum()),
             "level3_aec": round(float(aec.cnq_cost_total.sum()), 2), "created_from": nc.date_creation.min(), "created_to": nc.date_creation.max()}
     return rows, info, p
