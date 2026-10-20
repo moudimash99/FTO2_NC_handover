@@ -139,6 +139,7 @@ footer p { margin: 0; max-width: 110ch; }
     <div class="eyebrow" id="hEye"></div>
     <h1 id="hTitle"></h1>
     <p class="lede" id="hLede"></p>
+    <p class="save-state" id="chState"></p>
   </section>
 
   <section class="plate" id="v1">
@@ -190,6 +191,7 @@ footer p { margin: 0; max-width: 110ch; }
   var ASOF_DAY = Math.round((ASOF - Date.UTC(Y, 0, 1)) / 864e5);
   var CUT25 = Math.round((Date.UTC(Y0, ASOF.getUTCMonth(), ASOF.getUTCDate()) - Date.UTC(Y0, 0, 1)) / 864e5);
   var nNc = NC.id.length, nDf = DF.n.length, n25 = N25.d.length, nF25 = F25.n.length;
+  var MINAC = 8;   // a line needs this many aircraft in 2025 to be compared with 2026
   // decisions in four groups
   var DEC_GROUP = DICT.decision.map(function (d) {
     if (/^Rework|^Repair/.test(d)) return 0;
@@ -213,7 +215,7 @@ footer p { margin: 0; max-width: 110ch; }
       lede: 'Dans l’esprit du schéma « cause → poste » : chaque fil, point ou trait est un vrai défaut ou une vraie NC de l’extraction du {d}, en série. Gardez ce qui vous parle, le reste part.',
       months: ['janv.', 'févr.', 'mars', 'avr.', 'mai', 'juin', 'juil.', 'août', 'sept.', 'oct.', 'nov.', 'déc.'],
       monthsLong: ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'],
-      keep: 'Garder', later: 'Plus tard', no: 'Non', saved: 'Choix enregistré avec la page.', local: 'Choix gardé dans ce navigateur.',
+      keep: 'Garder', later: 'Plus tard', no: 'Non', savedAll: 'Vos choix Garder / Plus tard / Non sont enregistrés avec la page.', localAll: 'Vos choix Garder / Plus tard / Non restent dans ce navigateur.',
       v1T: 'Le voyage d’un défaut', v1P: 'Ligne avion → cause → poste qui le trouve → décision. Chaque fil garde la même épaisseur d’un bout à l’autre. Survolez un bloc pour suivre ses fils ; cliquez pour le garder.',
       v1Hl: 'En évidence', hlClient: 'Retours clients', hlCable: 'Défauts câble',
       v1W: '<b>Où :</b> remplacerait le schéma du chapitre 02 ; en tête du Pareto, il dit d’un coup d’œil où part chaque catégorie et ce qu’on en fait.',
@@ -230,11 +232,13 @@ footer p { margin: 0; max-width: 110ch; }
       v4T: 'Les faces des connecteurs', v4P: 'Les broches inversées, dessinées sur le pourtour du connecteur dans l’ordre de numérotation (pas encore le plan d’insert réel). Vert : {y} ; gris pointillé : {y0} ; épaisseur : nombre d’avions.',
       v4W: '<b>Où :</b> onglet Où, à la place des arcs ; avec les plans d’insert, chaque broche serait à sa vraie place sur la face.',
       fPairs: '{n} paires', fPlanes: '{n} avions', f1: '1 avion', f2: '2 avions', f3: '3 avions ou plus',
-      v5T: 'Le fleuve des causes', v5P: 'Les défauts semaine par semaine, chaque courant une cause. Le contour pointillé est {y0} à la même semaine. Survolez pour lire une semaine ; cliquez un courant pour l’allumer.',
+      v5T: 'Le fleuve des causes', v5P: 'Les défauts semaine par semaine (moyenne sur trois semaines), chaque courant une cause. Le contour pointillé est l’année au rythme par avion de {y0} : même semaine, ramenée au nombre d’avions de {y}. Survolez pour lire une semaine ; cliquez un courant pour l’allumer.',
       v5W: '<b>Où :</b> vue d’ensemble, à la place de la courbe cumulée, ou en tête du Pareto hebdomadaire.',
-      others: 'Autres causes', week: 'Semaine du {d}', total: 'Total', y0tot: '{y0}, même semaine', ghost: '{y0}, même semaine (contour)',
+      others: 'Autres causes', week: 'Semaine du {d}', total: 'Total', y0tot: '{y0} à production {y}', ghost: '{y} au rythme par avion de {y0}',
+      noBase: 'Pas de base {y0} pour cette ligne (moins de 8 avions) : pas de contour.', sWidth: 'Largeur du courant : défauts de la semaine',
+      fBase: 'Avions passés à FTO2 : {b} en {y}, {a} en {y0} à la même date',
       defects: 'défauts', ncs: 'NC', first: 'Première NC', last: 'Dernière NC', span: '{n} jours entre la première et la dernière', cli: 'retours clients',
-      foot: ['Source : extraction Skywise du {d} (05_outputs/fto2_nc.csv, fto2_defects.csv), périmètre FTO2, série ; retours clients : NC émises hors FTO2 sous responsabilité FTO2. {y0} : export Skywise de l’archive du 19 octobre, même périmètre et même date.',
+      foot: ['Source : extraction Skywise du {d} (05_outputs/fto2_nc.csv, fto2_defects.csv), périmètre FTO2, série ; retours clients : NC émises hors FTO2 sous responsabilité FTO2. {y0} : export Skywise de l’archive du 19 octobre, même périmètre et même date, comparé à production égale : sur chaque ligne, multiplié par avions {y} ÷ avions {y0} (MSN avec au moins une NC, en attendant un fichier de production) ; une ligne avec moins de 8 avions en {y0} (A320) compte comme en {y}.',
         'Causes : classement par cause racine. Broches : lues dans le texte des inversions (deux broches écrites). Les NC A400M n’ont pas de texte : elles ont une ligne de vie mais pas de défauts.']
     },
     en: {
@@ -243,7 +247,7 @@ footer p { margin: 0; max-width: 110ch; }
       lede: 'In the spirit of the cause → station flow: every thread, dot or line is a real defect or NC from the {d} extract, Série. Keep what speaks to you; drop the rest.',
       months: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
       monthsLong: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
-      keep: 'Keep', later: 'Later', no: 'No', saved: 'Choice saved with the page.', local: 'Choice kept in this browser.',
+      keep: 'Keep', later: 'Later', no: 'No', savedAll: 'Your Keep / Later / No choices are saved with the page.', localAll: 'Your Keep / Later / No choices stay in this browser.',
       v1T: 'A defect’s journey', v1P: 'Aircraft line → cause → station that finds it → decision. Each thread keeps its thickness from end to end. Hover a block to follow its threads; click to keep it.',
       v1Hl: 'Highlight', hlClient: 'Customer returns', hlCable: 'Cable defects',
       v1W: '<b>Where:</b> would replace the chapter 02 flow; at the top of the Pareto it shows at a glance where each category goes and what is done with it.',
@@ -260,11 +264,13 @@ footer p { margin: 0; max-width: 110ch; }
       v4T: 'Connector faces', v4P: 'Swapped pins drawn around the connector in numbering order (not yet the real insert layout). Green: {y}; grey dashed: {y0}; thickness: number of aircraft.',
       v4W: '<b>Where:</b> the Où tab, in place of the arcs; with the insert drawings each pin would sit at its real place on the face.',
       fPairs: '{n} pairs', fPlanes: '{n} aircraft', f1: '1 aircraft', f2: '2 aircraft', f3: '3 aircraft or more',
-      v5T: 'The river of causes', v5P: 'Defects week by week, each stream one cause. The dashed outline is {y0} in the same week. Hover to read a week; click a stream to light it.',
+      v5T: 'The river of causes', v5P: 'Defects week by week (three-week mean), each stream one cause. The dashed outline is the year at the {y0} rate per aircraft: same week, scaled to the {y} number of aircraft. Hover to read a week; click a stream to light it.',
       v5W: '<b>Where:</b> the overview, in place of the cumulative curve, or at the top of the weekly Pareto.',
-      others: 'Other causes', week: 'Week of {d}', total: 'Total', y0tot: '{y0}, same week', ghost: '{y0}, same week (outline)',
+      others: 'Other causes', week: 'Week of {d}', total: 'Total', y0tot: '{y0} at {y} production', ghost: '{y} at the {y0} rate per aircraft',
+      noBase: 'No {y0} base for this line (fewer than 8 aircraft): no outline.', sWidth: 'Stream width: defects in the week',
+      fBase: 'Aircraft through FTO2: {b} in {y}, {a} in {y0} at the same date',
       defects: 'defects', ncs: 'NCs', first: 'First NC', last: 'Last NC', span: '{n} days from first to last', cli: 'customer returns',
-      foot: ['Source: Skywise extract of {d} (05_outputs/fto2_nc.csv, fto2_defects.csv), FTO2 scope, Série; customer returns: NCs raised outside FTO2 that FTO2 is liable for. {y0}: Skywise export from the 19 October archive, same scope and date.',
+      foot: ['Source: Skywise extract of {d} (05_outputs/fto2_nc.csv, fto2_defects.csv), FTO2 scope, Série; customer returns: NCs raised outside FTO2 that FTO2 is liable for. {y0}: Skywise export from the 19 October archive, same scope and date, compared at equal production: on each line, multiplied by {y} aircraft ÷ {y0} aircraft (MSNs with at least one NC, until a production file is available); a line with fewer than 8 aircraft in {y0} (A320) counts as in {y}.',
         'Causes: root-cause classification. Pins: read from the text of swapped-wire defects (both pins written). A400M NCs have no text: they have a lifeline but no defects.']
     }
   };
@@ -313,6 +319,11 @@ footer p { margin: 0; max-width: 110ch; }
     for (i = 0; i < nDf; i++) { var n = DF.n[i]; if (ok[n]) (NC.sc[n] ? V.dcli : V.df).push(i); }
     V.ok25 = new Uint8Array(n25);
     for (i = 0; i < n25; i++) if (N25.ph[i] === 0 && (S.line < 0 || N25.l[i] === S.line) && N25.d[i] <= CUT25) V.ok25[i] = 1;
+    // aircraft through FTO2 per line, each year up to the same date (MSNs with at least one NC)
+    var a26 = {}, a25 = {}, cnt = function (o) { var r = {}; Object.keys(o).forEach(function (l) { r[l] = Object.keys(o[l]).length; }); return r; };
+    V.nc.forEach(function (j) { (a26[NC.l[j]] = a26[NC.l[j]] || {})[NC.m[j]] = 1; });
+    for (i = 0; i < n25; i++) if (V.ok25[i]) (a25[N25.l[i]] = a25[N25.l[i]] || {})[N25.m[i]] = 1;
+    V.aircraft = { a26: cnt(a26), a25: cnt(a25) };
     return V;
   }
 
@@ -572,7 +583,11 @@ footer p { margin: 0; max-width: 110ch; }
       el('rect', { x: cx - 5, y: cy - R - 14, width: 10, height: 8, rx: 2, fill: 'var(--rule)' }, svg);
       function chord(key, year) {
         var p = key.split('|'), a = pt(p[1], R), b = pt(p[2], R), k = Object.keys((year === Y ? pairs26 : pairs25)[key]).length;
-        var path = el('path', { d: 'M' + a[0] + ',' + a[1] + ' Q' + cx + ',' + cy + ' ' + b[0] + ',' + b[1], fill: 'none', stroke: year === Y ? 'var(--accent)' : 'var(--prior)', 'stroke-width': year === Y ? (k >= 3 ? 4.5 : k === 2 ? 3 : 1.6) : 1.4, 'stroke-dasharray': year === Y ? null : '3 3', 'stroke-linecap': 'round', class: 'hit' }, svg);
+        // control point on the bisector: near the rim for close pins, at the centre for opposite ones
+        var aa = ang(p[1]), ab = ang(p[2]), da = Math.abs(aa - ab); if (da > Math.PI) da = 2 * Math.PI - da;
+        var bis = Math.atan2(Math.sin(aa) + Math.sin(ab), Math.cos(aa) + Math.cos(ab)), rc = R * 0.85 * Math.max(0, 1 - da / Math.PI);
+        var qx = cx + Math.cos(bis) * rc, qy = cy + Math.sin(bis) * rc;
+        var path = el('path', { d: 'M' + a[0] + ',' + a[1] + ' Q' + qx + ',' + qy + ' ' + b[0] + ',' + b[1], fill: 'none', stroke: year === Y ? 'var(--accent)' : 'var(--prior)', 'stroke-width': year === Y ? (k >= 3 ? 4.5 : k === 2 ? 3 : 1.6) : 1.4, 'stroke-dasharray': year === Y ? null : '3 3', 'stroke-linecap': 'round', class: 'hit' }, svg);
         var other = (year === Y ? pairs25 : pairs26)[key];
         path.addEventListener('pointermove', function (ev) { showTip(ev, DICT.fin[fo.f] + ' · ' + p[1] + ' ↔ ' + p[2], [[num(k), String(year)], [num(other ? Object.keys(other).length : 0), String(year === Y ? Y0 : Y)]]); });
         path.addEventListener('pointerleave', hideTip);
@@ -589,7 +604,8 @@ footer p { margin: 0; max-width: 110ch; }
       el('text', { x: cx, y: cy - 4, 'text-anchor': 'middle', class: 'lab-b halo', 'font-family': 'var(--font-display)', 'font-size': 16 }, svg, DICT.fin[fo.f]);
       el('text', { x: cx, y: cy + 14, 'text-anchor': 'middle', class: 'tick halo' }, svg, fill(L().fPlanes, { n: num(fo.k) }));
     });
-    $('fLegend').innerHTML = '<span><i class="sw line" style="border-color:var(--accent);border-top-width:1.6px"></i>' + L().f1 + '</span><span><i class="sw line" style="border-color:var(--accent);border-top-width:3px"></i>' + L().f2 + '</span><span><i class="sw line" style="border-color:var(--accent);border-top-width:4.5px"></i>' + L().f3 + '</span><span><i class="sw dash" style="border-color:var(--prior)"></i>' + Y0 + '</span>';
+    var ac = function (o) { var s2 = 0; Object.keys(o).forEach(function (l) { s2 += o[l]; }); return s2; };
+    $('fLegend').innerHTML = '<span><i class="sw line" style="border-color:var(--accent);border-top-width:1.6px"></i>' + L().f1 + '</span><span><i class="sw line" style="border-color:var(--accent);border-top-width:3px"></i>' + L().f2 + '</span><span><i class="sw line" style="border-color:var(--accent);border-top-width:4.5px"></i>' + L().f3 + '</span><span><i class="sw dash" style="border-color:var(--prior)"></i>' + Y0 + '</span><span>' + t('fBase', { b: num(ac(V.aircraft.a26)), a: num(ac(V.aircraft.a25)) }) + '</span>';
     window.__lab.faces = { n: fins.length };
   }
 
@@ -607,19 +623,28 @@ footer p { margin: 0; max-width: 110ch; }
   }
   function river(V) {
     var box = $('sChart'), w = Math.max(640, width(box)), H = 380, m = { l: 18, r: 18, t: 30, b: 34 };
-    var NW = Math.floor(ASOF_DAY / 7) + 1;
-    var val = RIVER.map(function () { return new Array(NW).fill(0); }), tot25 = new Array(NW).fill(0), i;
+    var NW = Math.floor((ASOF_DAY + 1) / 7);   // complete weeks only
+    var val = RIVER.map(function () { return new Array(NW).fill(0); }), i;
     V.df.forEach(function (j) { var wk = Math.floor(NC.d[DF.n[j]] / 7); if (wk < NW) val[riverGroup(DF.k[j])][wk]++; });
-    for (i = 0; i < nF25; i++) { var n = F25.n[i]; if (!V.ok25[n]) continue; var wk = Math.floor(N25.d[n] / 7); if (wk < NW) tot25[wk]++; }
     var tot = new Array(NW).fill(0); for (var wk2 = 0; wk2 < NW; wk2++) RIVER.forEach(function (g) { tot[wk2] += val[g][wk2]; });
+    // the outline: the year at the 2025 rate per aircraft. On a line with a 2025 base, the 2025 defects of the same week
+    // times aircraft 2026 / aircraft 2025 (to date); a line without a base (fewer than MINAC aircraft) counts as in 2026
+    var A = V.aircraft, fac = {}, hasBase = false;
+    Object.keys(A.a26).forEach(function (l) { fac[l] = A.a25[l] >= MINAC ? A.a26[l] / A.a25[l] : 0; if (fac[l]) hasBase = true; });
+    var ghost = new Array(NW).fill(0);
+    for (i = 0; i < nF25; i++) { var n = F25.n[i]; if (!V.ok25[n] || !fac[N25.l[n]]) continue; var wk = Math.floor(N25.d[n] / 7); if (wk < NW) ghost[wk] += fac[N25.l[n]]; }
+    V.df.forEach(function (j) { var n = DF.n[j]; if (fac[NC.l[n]]) return; var wk = Math.floor(NC.d[n] / 7); if (wk < NW) ghost[wk]++; });
+    // shapes follow a centred three-week mean; the tooltip gives the week itself
+    var smooth = function (a) { return a.map(function (v, k) { var s2 = 0, c = 0; for (var q = k - 1; q <= k + 1; q++) if (q >= 0 && q < a.length) { s2 += a[q]; c++; } return s2 / c; }); };
+    var sval = val.map(smooth), stot = smooth(tot), sghost = smooth(ghost);
     var svg = svgIn(box, w, H);
-    var mx = Math.max.apply(null, tot.concat(tot25, [1])), mid = m.t + (H - m.t - m.b) / 2, half = (H - m.t - m.b) / 2;
+    var mx = Math.max.apply(null, stot.concat(hasBase ? sghost : [], [1])), mid = m.t + (H - m.t - m.b) / 2, half = (H - m.t - m.b) / 2;
     var xs = function (k) { return m.l + k / Math.max(1, NW - 1) * (w - m.l - m.r); }, ys = function (v) { return v / mx * half * 2; };
     // month marks
     for (var mo = 0; mo <= ASOF.getUTCMonth(); mo++) { var md = Math.round((Date.UTC(Y, mo, 1) - Date.UTC(Y, 0, 1)) / 864e5) / 7; el('line', { x1: xs(md), x2: xs(md), y1: m.t - 6, y2: H - m.b + 4, class: 'gridline' }, svg); el('text', { x: xs(md) + 4, y: H - 10, class: 'tick' }, svg, L().months[mo]); }
     // stacked from the centre line
-    var lowers = [], uppers = [], acc = tot.map(function (v) { return -v / 2; });
-    RIVER.forEach(function (g) { lowers[g] = acc.slice(); acc = acc.map(function (a, k) { return a + val[g][k]; }); uppers[g] = acc.slice(); });
+    var lowers = [], uppers = [], acc = stot.map(function (v) { return -v / 2; });
+    RIVER.forEach(function (g) { lowers[g] = acc.slice(); acc = acc.map(function (a, k) { return a + sval[g][k]; }); uppers[g] = acc.slice(); });
     var gS = el('g', {}, svg), paths = [];
     RIVER.forEach(function (g) {
       var up = uppers[g].map(function (v, k) { return [xs(k), mid - ys(v)]; }), lo = lowers[g].map(function (v, k) { return [xs(k), mid - ys(v)]; }).reverse();
@@ -628,14 +653,16 @@ footer p { margin: 0; max-width: 110ch; }
       p.addEventListener('click', function (ev) { ev.stopPropagation(); S.river = S.river === g ? -1 : g; paint(); });
       paths[g] = p;
     });
-    // 2025 in the same week, as an outline around the river
-    var g25u = tot25.map(function (v, k) { return [xs(k), mid - ys(v / 2)]; }), g25l = tot25.map(function (v, k) { return [xs(k), mid + ys(v / 2)]; });
-    el('path', { d: monotonePath(g25u), fill: 'none', stroke: 'var(--ink-2)', 'stroke-width': 1.3, 'stroke-dasharray': '4 3', opacity: 0.8 }, svg);
-    el('path', { d: monotonePath(g25l), fill: 'none', stroke: 'var(--ink-2)', 'stroke-width': 1.3, 'stroke-dasharray': '4 3', opacity: 0.8 }, svg);
+    // the year at the 2025 rate per aircraft, as an outline around the river
+    if (hasBase) {
+      var g25u = sghost.map(function (v, k) { return [xs(k), mid - ys(v / 2)]; }), g25l = sghost.map(function (v, k) { return [xs(k), mid + ys(v / 2)]; });
+      el('path', { d: monotonePath(g25u), fill: 'none', stroke: 'var(--ink-2)', 'stroke-width': 1.3, 'stroke-dasharray': '4 3', opacity: 0.8 }, svg);
+      el('path', { d: monotonePath(g25l), fill: 'none', stroke: 'var(--ink-2)', 'stroke-width': 1.3, 'stroke-dasharray': '4 3', opacity: 0.8 }, svg);
+    }
     // names inside the streams, where each is widest
     var gLab = el('g', { 'pointer-events': 'none' }, svg), labs = [];
     RIVER.forEach(function (g) {
-      var best = -1, bw = 0; for (var k = 2; k < NW - 2; k++) if (val[g][k] > bw) { bw = val[g][k]; best = k; }
+      var best = -1, bw = 0; for (var k = 2; k < NW - 2; k++) if (sval[g][k] > bw) { bw = sval[g][k]; best = k; }
       var th = ys(bw); labs[g] = null;
       if (best >= 0 && th >= 16) labs[g] = el('text', { x: xs(best), y: mid - ys((lowers[g][best] + uppers[g][best]) / 2) + 4, 'text-anchor': 'middle', class: 'lab halo', 'font-weight': 650 }, gLab, g < 5 ? nm(CAT[g]) : L().others);
     });
@@ -653,16 +680,17 @@ footer p { margin: 0; max-width: 110ch; }
       if (k < 0 || k >= NW) { cross.setAttribute('opacity', 0); hideTip(); return; }
       cross.setAttribute('x1', xs(k)); cross.setAttribute('x2', xs(k)); cross.setAttribute('opacity', 0.5);
       var rows = RIVER.map(function (g) { return [num(val[g][k]), g < 5 ? nm(CAT[g]) : L().others]; }).reverse();
-      rows.push([num(tot[k]), L().total]); rows.push([num(tot25[k]), t('y0tot')]);
+      rows.push([num(tot[k]), L().total]); if (hasBase) rows.push([num(ghost[k]), t('y0tot')]);
       showTip(ev, fill(L().week, { d: dateTxt(dayDate(Y, k * 7), true) }), rows);
     });
     svg.addEventListener('pointerleave', function () { cross.setAttribute('opacity', 0); hideTip(); });
-    $('sLegend').innerHTML = '<span><i class="sw dash" style="border-color:var(--ink-2)"></i>' + t('ghost') + '</span><span>' + (S.lang === 'fr' ? 'Largeur du courant : défauts de la semaine' : 'Stream width: defects in the week') + '</span>';
-    window.__lab.river = { weeks: NW, total: tot.reduce(function (a, b) { return a + b; }, 0) };
+    $('sLegend').innerHTML = (hasBase ? '<span><i class="sw dash" style="border-color:var(--ink-2)"></i>' + t('ghost') + '</span>' : '<span>' + t('noBase') + '</span>') + '<span>' + t('sWidth') + '</span>';
+    window.__lab.river = { weeks: NW, total: tot.reduce(function (a, b) { return a + b; }, 0), ghost: Math.round(ghost.reduce(function (a, b) { return a + b; }, 0) * 10) / 10, hasBase: hasBase };
   }
 
   // ---------------------------------------------------------------- choices, saved with the page when it can
-  var CH = { state: {}, db: null };
+  var CH = { state: {}, db: null, queue: {} };
+  function chStatus() { $('chState').textContent = CH.db ? L().savedAll : L().localAll; }
   function drawChoices() {
     Array.prototype.forEach.call(document.querySelectorAll('.choice'), function (box) {
       var id = box.getAttribute('data-id'); box.textContent = '';
@@ -674,17 +702,21 @@ footer p { margin: 0; max-width: 110ch; }
       });
     });
   }
+  function saveLocal() { try { localStorage.setItem('fto2-lab-choices', JSON.stringify(CH.state)); } catch (e) {} }
   function saveChoice(id, v) {
     var doc = { choice: v, at: new Date().toISOString() }; CH.state[id] = doc; drawChoices();
-    if (CH.db) CH.db.collection('lab').doc(id).set(doc).catch(function () {});
-    else { try { localStorage.setItem('fto2-lab-choices', JSON.stringify(CH.state)); } catch (e) {} }
+    if (!CH.db) { saveLocal(); return; }
+    // one write at a time per choice; a refused write (a viewer who cannot write) keeps the choices in this browser
+    CH.queue[id] = (CH.queue[id] || Promise.resolve()).then(function () { return CH.db ? CH.db.collection('lab').doc(id).set(doc) : null; })
+      .catch(function () { CH.db = null; saveLocal(); chStatus(); });
   }
   try { CH.state = JSON.parse(localStorage.getItem('fto2-lab-choices') || '{}') || {}; } catch (e) {}
   if (window.claude && typeof window.claude.use === 'function') {
     window.claude.use('db').then(function (db) {
       if (!db) return;
       CH.db = db;
-      db.collection('lab').onSnapshot(function (snap) { var next = {}; snap.docs.forEach(function (d) { if (d.exists) next[d.id] = d.data(); }); CH.state = next; drawChoices(); }, function () { CH.db = null; });
+      chStatus();
+      db.collection('lab').onSnapshot(function (snap) { var next = {}; snap.docs.forEach(function (d) { if (d.exists) next[d.id] = d.data(); }); CH.state = next; drawChoices(); }, function () { CH.db = null; chStatus(); });
     }, function () {});
   }
 
@@ -699,16 +731,16 @@ footer p { margin: 0; max-width: 110ch; }
     $('lLine').textContent = L().line;
     $('hEye').textContent = L().eye; $('hTitle').textContent = L().h1; $('hLede').textContent = fill(L().lede, { d: dateTxt(ASOF) });
     ['v1', 'v2', 'v3', 'v4', 'v5'].forEach(function (v) { $(v + 'T').textContent = t(v + 'T'); $(v + 'P').textContent = t(v + 'P'); $(v + 'W').innerHTML = L()[v + 'W']; });
-    $('v1HlL').textContent = L().v1Hl;
+    $('v1HlL').textContent = L().v1Hl; chStatus();
     if (!$('rPlay').disabled) $('rPlay').textContent = RAIN.t < 1 ? L().playing : L().play;
     Array.prototype.forEach.call($('fLang').children, function (b) { b.setAttribute('aria-pressed', String(b.getAttribute('data-v') === S.lang)); });
     seg('fLine', [[-1, L().all], [0, 'A350'], [1, 'A330'], [2, 'A320'], [3, 'A400M']], S.line, function (v) { S.line = v; S.jPin = null; render(); });
     seg('v1Hl', [['client', L().hlClient], ['cable', L().hlCable]], S.hl, function (v) { S.hl = v; render(); });
     var ft = $('foot'); ft.textContent = '';
-    L().foot.forEach(function (s) { var p = document.createElement('p'); p.textContent = fill(s, { d: dateTxt(ASOF), y0: Y0 }); ft.appendChild(p); });
+    L().foot.forEach(function (s) { var p = document.createElement('p'); p.textContent = fill(s, { d: dateTxt(ASOF), y: Y, y0: Y0 }); ft.appendChild(p); });
     drawChoices();
   }
-  window.__lab = {};
+  window.__lab = { rainObj: RAIN };
   function render() {
     hideTip(); texts();
     var V = select();

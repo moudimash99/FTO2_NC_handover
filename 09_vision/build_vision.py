@@ -222,6 +222,30 @@ def expected(F, line=None, phase="SERIE", cable=False):
     }
 
 
+def expected_lab(F, line=None):
+    """The figures the visual lab must show for one line (Série, same rules as the lab script)."""
+    nc, d, n25, d25, asof = F["nc"], F["d"], F["n25"], F["d25"], F["asof"]
+    y0, y25 = date(asof.year, 1, 1), date(asof.year - 1, 1, 1)
+    asof_day, cut25 = (asof - y0).days, (date(asof.year - 1, asof.month, asof.day) - y25).days
+    weeks = (asof_day + 1) // 7
+    s = nc[(nc.phase == "SERIE") & ((nc.ligne == line) if line else nc.ligne.notna())].copy()
+    s["day"] = (pd.to_datetime(s.date_creation).dt.date - y0).map(lambda t: t.days)
+    a = n25[(n25.phase == "SERIE") & ((n25.ligne == line) if line else n25.ligne.notna())].copy()
+    a["day"] = (pd.to_datetime(a.date).dt.date - y25).map(lambda t: t.days)
+    a = a[a.day <= cut25]
+    fto2, cli = s[s.scope == "serie"], s[s.scope == "client"]
+    df_f = d[d.notification_number.isin(fto2.notification_number)].drop(columns=["ligne"], errors="ignore").merge(fto2[["notification_number", "ligne", "day"]], on="notification_number")
+    df_c = d[d.notification_number.isin(cli.notification_number)]
+    ac26, ac25 = fto2.groupby("ligne").msn.nunique(), a.groupby("ligne").msn.nunique()
+    fac = {l: (ac26[l] / ac25[l] if ac25.get(l, 0) >= MINAC else 0) for l in ac26.index}
+    d25w = d25[d25.notification_number.isin(a.notification_number)].merge(a[["notification_number", "ligne", "day"]], on="notification_number")
+    d25w = d25w[d25w.day < weeks * 7]
+    ghost = sum(fac.get(l, 0) for l in d25w.ligne) + int(sum(1 for l, dd in zip(df_f.ligne, df_f.day) if not fac.get(l) and dd < weeks * 7))
+    return {"journey": int(len(df_f) + len(df_c)), "planes": int(s.groupby(["ligne", "msn"]).ngroups), "ncDots": int(len(fto2)),
+            "cliDots": int(len(cli)), "weeks": weeks, "riverTotal": int((df_f.day < weeks * 7).sum()),
+            "ghost": round(float(ghost), 1), "hasBase": any(v > 0 for v in fac.values())}
+
+
 def main():
     nc, d, n25, d25 = load()
     D, F = pack(nc, d, n25, d25)
@@ -236,7 +260,8 @@ def main():
     with open(os.path.join(HERE, "FTO2_Visual_Lab.html"), "w", encoding="utf-8") as f:
         f.write(lab)
     exp = {"default": expected(F), "A350": expected(F, line="A350"), "cable": expected(F, cable=True),
-           "allPhases": expected(F, phase=None)}
+           "allPhases": expected(F, phase=None),
+           "lab": {"all": expected_lab(F), "A350": expected_lab(F, "A350"), "A320": expected_lab(F, "A320")}}
     with open(os.path.join(HERE, "expected.json"), "w", encoding="utf-8") as f:
         json.dump(exp, f, ensure_ascii=False, indent=1)
     inv = F["d"].llm_rca_nom == "Inversion"

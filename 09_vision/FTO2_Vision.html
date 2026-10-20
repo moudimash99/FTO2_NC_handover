@@ -1426,7 +1426,10 @@ body.presenting .wrap { max-width: 1440px; }
     var notes = document.createElement('p'), a = document.createElement('a');
     a.href = 'https://claude.ai/artifact/W4Y6wLvN772mzHnxwYNvKu'; a.target = '_blank'; a.rel = 'noopener';
     a.textContent = S.lang === 'fr' ? 'Notes, feuille de route et choix (en anglais)' : 'Notes, roadmap and choices';
-    notes.appendChild(a); ft.appendChild(notes);
+    notes.appendChild(a);
+    var a2 = document.createElement('a'); a2.href = 'https://claude.ai/artifact/KoTPorviVHFcDvEfkn6n8F'; a2.target = '_blank'; a2.rel = 'noopener';
+    a2.textContent = S.lang === 'fr' ? 'Labo visuel : cinq autres façons de dessiner les mêmes défauts' : 'Visual lab: five other ways to draw the same defects';
+    notes.appendChild(document.createTextNode(' · ')); notes.appendChild(a2); ft.appendChild(notes);
   }
   var V = null;
   function render() {

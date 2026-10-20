@@ -517,5 +517,37 @@
    ],
    "planes": 135
   }
+ },
+ "lab": {
+  "all": {
+   "journey": 2736,
+   "planes": 139,
+   "ncDots": 722,
+   "cliDots": 34,
+   "weeks": 38,
+   "riverTotal": 2661,
+   "ghost": 2295.7,
+   "hasBase": true
+  },
+  "A350": {
+   "journey": 2120,
+   "planes": 69,
+   "ncDots": 340,
+   "cliDots": 20,
+   "weeks": 38,
+   "riverTotal": 2066,
+   "ghost": 1796.6,
+   "hasBase": true
+  },
+  "A320": {
+   "journey": 45,
+   "planes": 27,
+   "ncDots": 37,
+   "cliDots": 5,
+   "weeks": 38,
+   "riverTotal": 38,
+   "ghost": 38.0,
+   "hasBase": false
+  }
  }
 }

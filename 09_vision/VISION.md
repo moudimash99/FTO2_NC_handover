@@ -6,9 +6,21 @@ connects. Two pages came out of it, both private artifacts on his account:
 - Prototype on the real data: https://claude.ai/artifact/KmELL2B43ksMwXPcEGdFov (`FTO2_Vision.html`)
 - Notes, with the roadmap and his choices: https://claude.ai/artifact/W4Y6wLvN772mzHnxwYNvKu (`FTO2_Vision_Notes.html`)
 
+- Visual lab, five other ways to draw the same rows: https://claude.ai/artifact/KoTPorviVHFcDvEfkn6n8F (`FTO2_Visual_Lab.html`)
+
 **His choices** (Now / Later / No per roadmap line, with a note) are saved in the notes page's store, collection
 `choices`, one document per line (`r01` to `r13`, fields `choice`, `note`, `at`). Read them first:
-`ArtifactData list` on the notes URL, collection `choices`.
+`ArtifactData list` on the notes URL, collection `choices`. The lab's Keep / Later / No per visual is in the lab's
+store, collection `lab`, documents `v1` to `v5` (fields `choice`, `at`).
+
+## The visual lab (20 Oct, after "the branching one is excellent")
+
+1. A defect's journey: line → cause → station that finds it → decision, one thread per path, customer returns or
+   cable defects highlighted. The cause → station flow extended at both ends.
+2. The year's rain: one dot per defect falling, on its date, into the station that found it (9 s animation).
+3. Aircraft lifelines: one line per MSN, one dot per NC, customer returns in red; the staircase is the production order.
+4. Connector faces: swapped pins as chords around the connector (numbering order until the insert drawings come).
+5. The river of causes: defects per week by cause, with the year at the 2025 rate per aircraft as a dashed outline.
 
 ## The idea
 
