@@ -623,7 +623,7 @@ body.mk-on .wrap { padding-bottom: 90px; }
   grid-template-areas: "rca line fin" "rca waf fin" "code code code"; }
 .v2par { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; align-items: stretch; margin: 6px 0 28px; }
 #parTop > .v2-band, #pgl > .v2-band, #kgl > .v2-band { grid-column: auto; }
-#parTop > [data-v2="a:flow"] { grid-column: 1 / -1; }
+#parTop > [data-v2="a:flow"], #parTop > [data-v2="VK"] { grid-column: 1 / -1; }
 #parTop > .v2-band, #pgl > .v2-band, #kgl > .v2-band { grid-template-columns: minmax(0, 1fr); background: var(--surface); border: 1px solid var(--ring); border-radius: 10px; padding: 18px 20px 16px; box-shadow: none; clip-path: none; row-gap: 10px; align-content: start; min-width: 0; }
 #parTop > .v2-band > .bhead, #pgl > .v2-band > .bhead, #kgl > .v2-band > .bhead { position: static; grid-column: 1; gap: 6px; }
 #parTop > .v2-band > .custom, #pgl > .v2-band > .custom, #kgl > .v2-band > .custom { grid-column: 1; grid-row: auto; }
@@ -1247,7 +1247,10 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
       ppTitle: 'Production : les volumes derrière les taux', ppSub: 'Combien de MSN sont produits, prévus et livrés, ligne par ligne et produit par produit ; puis comment ces chiffres servent aux taux, aux prévisions et aux objectifs.',
       ppF1: 'MSN produits sur la période', ppF2: 'MSN prévus en 2026 (année)', ppF3: 'produits livrés en 2025', ppF4: 'NC rattachées au plan / toutes les NC',
       ppLines: 'Par ligne', ppLinesS: 'Taux = NC ÷ MSN produits sur la période. Objectif = taux 2025 − 25 % ; * : pas de 2025, taux 2026 − 25 %.', ppProds: 'Par produit', ppProdsS: 'Les produits du plan de production, ligne par ligne.',
-      ppMonth: 'MSN prévus, mois par mois', ppMonthS: 'Plan de production 2026 par ligne.', ppLight: 'Plus clair : mois à venir (prévision).', ppTipV: '{v} MSN', ppPlanned: 'prévu', connOnly: 'Erreurs de branchement par MSN : A330 et A350 seulement. Choisissez une de ces lignes, ou toutes.', ciMsn: '{e} MSN', ciDot: 'taux (NC par MSN)', ciLine: 'fourchette à 95 %', ppCurTip: '{p} compté comme produit au {d}, le reste prévu', ppCurL: 'Mois en cours ({m}) : la part des jours passés au {d}, le reste plus clair.',
+      ppMonth: 'MSN prévus, mois par mois', ppMonthS: 'Plan de production 2026 par ligne.', ppLight: 'Plus clair : mois à venir (prévision).', ppTipV: '{v} MSN', ppPlanned: 'prévu', connOnly: 'Erreurs de branchement par MSN : A330 et A350 seulement. Choisissez une de ces lignes, ou toutes.', ciMsn: '{e} MSN', ciDot: 'taux (NC par MSN)', ciLine: 'fourchette à 95 %',
+      pinStatL: 'inversions avec leurs deux broches écrites', pinAdjL: 'entre deux broches qui se suivent', pinRepL: 'paires de broches sur plusieurs avions', pinNone: 'Aucune inversion avec ses deux broches écrites dans la sélection.',
+      pinAc1: '1 avion', pinAcN: '{n} avions', pinAc3: '3 avions ou plus', pinTip: 'Broches {a} ↔ {b}', pinNextY: 'deux broches qui se suivent', pinNextN: 'broches éloignées',
+      pinNo25: 'Pas de comparaison 2025 : les textes des défauts 2025 ne sont pas dans les données.', pinCols: ['FIN', 'Broches', 'Voisines', 'Avions'], pinY: 'oui', pinN: 'non', ppCurTip: '{p} compté comme produit au {d}, le reste prévu', ppCurL: 'Mois en cours ({m}) : la part des jours passés au {d}, le reste plus clair.',
       ppCur: 'Les NC vont au-delà de ce que le plan donne comme produit : {m} compte pour la part de ses jours passés au {d} ({p} de son volume prévu), le reste du mois va dans la prévision. Ainsi les NC de ce mois comptent partout, comme dans la Vue d’ensemble.',
       ppL: 'Ligne', ppP: 'Produit', ppEq: 'MSN produits', ppYr: 'MSN prévus 2026', ppD25: 'Livrés 2025', ppNc: 'NC', ppRate: 'NC par MSN', ppR25: 'Taux 2025', ppTgt: 'Objectif', ppTgtY: 'Objectif année (NC)', pp25m: '2025 − 25 %',
       ppNone: 'Le plan de production réel n’est pas chargé.', ppHowT: 'Comment ces chiffres sont faits et utilisés',
@@ -1437,7 +1440,10 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
       ppTitle: 'Production: the volumes behind the rates', ppSub: 'How many MSN are built, planned and delivered, line by line and product by product; then how these figures feed the rates, the forecasts and the targets.',
       ppF1: 'MSN built in the period', ppF2: 'MSN planned in 2026 (year)', ppF3: 'products delivered in 2025', ppF4: 'NCs matched to the plan / all NCs',
       ppLines: 'By line', ppLinesS: 'Rate = NCs ÷ MSN built in the period. Target = 2025 rate − 25%; *: no 2025, 2026 rate − 25%.', ppProds: 'By product', ppProdsS: 'The production plan’s products, line by line.',
-      ppMonth: 'MSN planned, month by month', ppMonthS: '2026 production plan by line.', ppLight: 'Lighter: months to come (forecast).', ppTipV: '{v} MSN', ppPlanned: 'planned', connOnly: 'Connection errors per MSN: A330 and A350 only. Pick one of these lines, or all.', ciMsn: '{e} MSN', ciDot: 'rate (NCs per MSN)', ciLine: '95% range', ppCurTip: '{p} counted as built at {d}, the rest planned', ppCurL: 'Running month ({m}): the share of its days gone at {d}, the rest lighter.',
+      ppMonth: 'MSN planned, month by month', ppMonthS: '2026 production plan by line.', ppLight: 'Lighter: months to come (forecast).', ppTipV: '{v} MSN', ppPlanned: 'planned', connOnly: 'Connection errors per MSN: A330 and A350 only. Pick one of these lines, or all.', ciMsn: '{e} MSN', ciDot: 'rate (NCs per MSN)', ciLine: '95% range',
+      pinStatL: 'swaps with both pins written', pinAdjL: 'between two pins next to each other', pinRepL: 'pin pairs on more than one aircraft', pinNone: 'No swapped wires with both pins written in the selection.',
+      pinAc1: '1 aircraft', pinAcN: '{n} aircraft', pinAc3: '3 aircraft or more', pinTip: 'Pins {a} ↔ {b}', pinNextY: 'two pins next to each other', pinNextN: 'pins apart',
+      pinNo25: 'No 2025 comparison: the 2025 defect texts are not in the data.', pinCols: ['FIN', 'Pins', 'Next to each other', 'Aircraft'], pinY: 'yes', pinN: 'no', ppCurTip: '{p} counted as built at {d}, the rest planned', ppCurL: 'Running month ({m}): the share of its days gone at {d}, the rest lighter.',
       ppCur: 'The NCs run past what the plan gives as built: {m} counts for the share of its days gone at {d} ({p} of its planned volume), the rest of the month goes to the forecast. So that month’s NCs count everywhere, as on the Overview.',
       ppL: 'Line', ppP: 'Product', ppEq: 'MSN built', ppYr: 'MSN planned 2026', ppD25: 'Delivered 2025', ppNc: 'NCs', ppRate: 'NCs per MSN', ppR25: '2025 rate', ppTgt: 'Target', ppTgtY: 'Year target (NCs)', pp25m: '2025 − 25%',
       ppNone: 'The real production plan is not loaded.', ppHowT: 'How these figures are made and used',
@@ -5357,11 +5363,11 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
   var V2 = PAGE === 'main', V2B = false, V2CUT = 0.75, V2BAND = {};
   var V2L = {
     ov: { top: ['VT', 'VN', 'VB', 'a:lead', 'VX'], fold: ['a:cal'] },
-    pareto: { top: ['a:bub', 'a:bump', 'a:flow', '53', 'VQ', '78', '76'], inboard: ['VW'], fold: ['65'] },   // under the lists; the hundred squares sit in the lists (20 Oct)
+    pareto: { top: ['a:bub', 'a:bump', 'a:flow', '53', 'VQ', '78', '76', 'VK'], inboard: ['VW'], fold: ['65'] },   // under the lists; the hundred squares sit in the lists (20 Oct)
     where: { top: ['VP', '61', '64', 'a:prod', '54', 'a:msn', 'VF', 'a:station'], fold: ['VI'] },
     cnq: { more: ['VC'], fold: ['VE'] }
   };
-  var V2F = { VT: v2Target, VN: v2Trend, VB: v2Budget, VS: v2Score, VX: v2Xmr, VW: v2Waffle, VQ: v2Quarters, VP: v2Prod, VF: v2Fins, VI: v2Icons, VC: v2Comp, VE: v2Each };
+  var V2F = { VT: v2Target, VN: v2Trend, VB: v2Budget, VS: v2Score, VX: v2Xmr, VW: v2Waffle, VQ: v2Quarters, VP: v2Prod, VF: v2Fins, VI: v2Icons, VC: v2Comp, VE: v2Each, VK: v2Pins };
   Object.assign(GSTR, {
     VT: { fr: ['Objectif', 'Chaque ligne face à son objectif', 'NC par MSN produit ; trait : objectif, le taux 2025 de la ligne (NC par produit livré) moins 25 %. Toutes lignes : la somme des objectifs des lignes.', 'production MSN · NC · livraisons 2025'],
           en: ['Target', 'Each line against its target', 'NCs per MSN built; tick: target, the line’s 2025 rate (NCs per product delivered) minus 25%. All lines: the sum of the lines’ targets.', 'MSN output · NCs · 2025 deliveries'] },
@@ -5380,6 +5386,8 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
           en: ['Rates', 'NCs, defects and cost per MSN, product by product', 'The same product order in all three columns; tick: all products together.', 'MSN output · NCs · defects · cost'] },
     VF: { fr: ['Récurrence', 'Les FIN qui reviennent d’un avion à l’autre', 'Une colonne par avion (MSN), une ligne par FIN ; carré : défaut sur ce FIN. Ligne du filtre, sinon A350.', 'FIN lu par le parseur · MSN'],
           en: ['Recurrence', 'FINs that come back aircraft after aircraft', 'One column per aircraft (MSN), one row per FIN; square: a defect on that FIN. The filtered line, else A350.', 'FIN read by the parser · MSN'] },
+    VK: { fr: ['Inversions', 'Quelles broches sont inversées', 'Les connecteurs (FIN) où le plus d’avions ont une inversion dont les deux broches sont écrites dans le texte. Arc : deux broches inversées ; épaisseur : nombre d’avions ; petite bosse : deux broches qui se suivent.', 'texte des défauts · FIN · MSN'],
+          en: ['Swapped wires', 'Which pins get swapped', 'The connectors (FIN) where the most aircraft have a swap with both pins written in the text. Arc: two swapped pins; thickness: number of aircraft; small bump: two pins next to each other.', 'defect text · FIN · MSN'] },
     VI: { fr: ['Parc', 'Chaque avion, un pictogramme', 'Avions dans l’ordre de leur première NC ; teinte selon le nombre de défauts.', 'MSN · défauts'], en: ['Fleet', 'Each aircraft as an icon', 'Aircraft in the order of their first NC; shade by number of defects.', 'MSN · defects'] },
     VC: { fr: ['Composantes', 'De quoi est fait le coût, mois par mois', 'Gestion de la NC (alerte, rédaction, support, recontrôle), reprise, matière, ingénierie.', 'modèle CNQ'],
           en: ['Components', 'What the cost is made of, month by month', 'NC handling (alert, writing, support, re-check), rework, material, engineering.', 'CNQ model'] },
@@ -5447,7 +5455,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
     if (!V2F[k]) { rvDraw(k); return; }
     var t = GSTR[k][G.lang];
     document.getElementById('g-' + k + '-k').textContent = t[0]; document.getElementById('g-' + k + '-h').textContent = t[1]; document.getElementById('g-' + k + '-s').textContent = t[2];
-    if (!PD && k !== 'VW' && k !== 'VQ' && k !== 'VX' && k !== 'VF' && k !== 'VI' && k !== 'VC' && k !== 'VE') { pEmpty(k); return; }
+    if (!PD && k !== 'VW' && k !== 'VQ' && k !== 'VX' && k !== 'VF' && k !== 'VI' && k !== 'VC' && k !== 'VE' && k !== 'VK') { pEmpty(k); return; }
     V2F[k](k);
   }
   function v2Render() {
@@ -5905,6 +5913,61 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
     });
     g += tx(lab, H - 4, l + ' · MSN ' + msn[0], 'mu') + tx(lab + n0 * cw, H - 4, 'MSN ' + msn[n0 - 1] + ' · ' + S('v2Ac', { n: num(n0) }), 'mu', 'end');
     gSet(k, svg(W0, H, g, gT(k)), sw(tint('--seq', 55), gx('one')) + sw('var(--seq)', gx('twoPlus')));
+  }
+
+  // swapped wires, pin by pin (from the vision prototype, branch claude/vision-wow; Mohammad, 21 Oct): the two pins read in the defect's
+  // text ("... ENTRE LES BORNES 41 ET 42"; 1 to 3 characters, never a plug name such as 9KSJ26), per connector (FIN), one arc per pair
+  var PIN_RE = [/(?:BORNES?|PINS?|CONTACTS?|BROCHES?)\s*[<«"]?\s*([A-Z]{1,2}\d?|\d{1,3}[A-Z]?)\s*[>»"]?\s*(?:ET\s+(?:LA\s+)?BORNE|ET|\/|&|-|AND)\s*[<«"]?\s*([A-Z]{1,2}\d?|\d{1,3}[A-Z]?)(?![A-Z0-9])/i,
+    /INVERS\w*[^.]*?ENTRE\s*[<«"]?\s*([A-Z]{1,2}\d?|\d{1,3}[A-Z]?)\s*[>»"]?\s+ET\s*[<«"]?\s*([A-Z]{1,2}\d?|\d{1,3}[A-Z]?)(?![A-Z0-9])/i];
+  function pinKey(a, b) { var na = /^\d+$/.test(a), nb = /^\d+$/.test(b); if (na && nb) return +a - +b; if (na !== nb) return na ? -1 : 1; return a.length - b.length || (a < b ? -1 : a > b ? 1 : 0); }
+  function pinPair(t) {
+    if (!t) return null;
+    for (var i = 0; i < PIN_RE.length; i++) { var m = PIN_RE[i].exec(String(t)); if (m) { var a = m[1].toUpperCase(), b = m[2].toUpperCase(); if (a !== b) return [a, b].sort(pinKey); } }
+    return null;
+  }
+  function pinNext(a, b) {   // two pins that follow each other in the connector's numbering: 7 and 8, S and T, KK and LL, B1 and C1
+    if (/^\d+$/.test(a) && /^\d+$/.test(b)) return Math.abs(+a - +b) === 1;
+    var dbl = function (p) { return /^[A-Z]+$/.test(p) && p === new Array(p.length + 1).join(p[0]); };
+    if (dbl(a) && dbl(b) && a.length === b.length) return Math.abs(a.charCodeAt(0) - b.charCodeAt(0)) === 1;
+    if (a.length === 2 && b.length === 2 && a.slice(1) === b.slice(1) && /[A-Z]/.test(a[0]) && /[A-Z]/.test(b[0])) return Math.abs(a.charCodeAt(0) - b.charCodeAt(0)) === 1;
+    return false;
+  }
+  function pinPositions(pins) {   // numbers as such, single or doubled letters by alphabet rank, other names by their rank in the list
+    var pos = {}, numeric = pins.every(function (p) { return /^\d+$/.test(p); }), alpha = pins.every(function (p) { return /^([A-Z])\1*$/.test(p); });
+    pins.forEach(function (p, k) { pos[p] = numeric ? +p : alpha ? (p.length - 1) * 26 + p.charCodeAt(0) - 64 : k; });
+    return pos;
+  }
+  function v2Pins(k) {
+    var inv = v2Defs().filter(function (r) { return dRca(r) === 'Inversion'; }), per = {}, pairs = {}, nOk = 0, nAdj = 0;
+    inv.forEach(function (r) { var p = pinPair(r[18]); if (!p) return; nOk++; if (pinNext(p[0], p[1])) nAdj++;
+      var f = dFin(r); if (!f) return; var n = NC[r[0]], ac = (n && n[25]) || 'NC ' + r[0], key = f + '|' + p[0] + '|' + p[1];
+      (per[f] || (per[f] = {}))[ac] = 1; (pairs[key] || (pairs[key] = {}))[ac] = 1; });
+    var rep = Object.keys(pairs).filter(function (q) { return Object.keys(pairs[q]).length >= 2; }).length;
+    v2Stats(k, [[num(nOk) + ' / ' + num(inv.length), S('pinStatL')], [nOk ? pct0(nAdj / nOk * 100) : '—', S('pinAdjL')], [num(rep), S('pinRepL')]]);
+    var fins = Object.keys(per).map(function (f) { return { f: f, k: Object.keys(per[f]).length }; }).sort(function (a, b) { return b.k - a.k || (a.f < b.f ? -1 : 1); }).slice(0, 6);
+    if (!fins.length) { gSet(k, '<p class="empty">' + esc(S('pinNone')) + '</p>'); return; }
+    var W0 = gWd(k), cols = W0 > 900 ? 3 : W0 > 560 ? 2 : 1, gap = 22, cw = (W0 - (cols - 1) * gap) / cols, ch = 132, axis = 96, pad = 14, H = Math.ceil(fins.length / cols) * ch, g = '', col = catFill('Erreur Branchement'), rows = [];
+    var acN = function (n) { return S(n === 1 ? 'pinAc1' : 'pinAcN', { n: num(n) }); };
+    fins.forEach(function (fo, i) {
+      var x0 = (i % cols) * (cw + gap), y0 = Math.floor(i / cols) * ch, mine = Object.keys(pairs).filter(function (q) { return q.split('|')[0] === fo.f; }), set = {};
+      mine.forEach(function (q) { var p = q.split('|'); set[p[1]] = 1; set[p[2]] = 1; });
+      var pins = Object.keys(set).sort(pinKey), pos = pinPositions(pins), lo = Math.min.apply(null, pins.map(function (q) { return pos[q]; })), hi = Math.max.apply(null, pins.map(function (q) { return pos[q]; }));
+      var px = function (q) { return x0 + (hi === lo ? cw / 2 : pad + (pos[q] - lo) * (cw - 2 * pad) / (hi - lo)); };
+      g += '<g' + pk('fin', fo.f) + '><rect x="' + r1(x0) + '" y="' + y0 + '" width="' + r1(cw) + '" height="20" fill="transparent"/>' + tx(x0, y0 + 14, fo.f, 'ink b') + tx(x0 + cw, y0 + 14, acN(fo.k), 'mu', 'end') + '</g>';   // the connector's name filters it
+      g += '<line x1="' + r1(x0 + pad - 6) + '" x2="' + r1(x0 + cw - pad + 6) + '" y1="' + (y0 + axis) + '" y2="' + (y0 + axis) + '" stroke="var(--grid)" stroke-width="1.5"/>';
+      mine.sort(function (a, b) { return Object.keys(pairs[a]).length - Object.keys(pairs[b]).length; }).forEach(function (q) {
+        var p = q.split('|'), a = px(p[1]), b = px(p[2]), acs = Object.keys(pairs[q]), n = acs.length, hh = Math.max(7, Math.min(62, Math.abs(b - a) / 2)), cy = y0 + axis - hh * 1.33, nx = pinNext(p[1], p[2]);
+        var d = 'M' + r1(a) + ',' + (y0 + axis) + ' C' + r1(a) + ',' + r1(cy) + ' ' + r1(b) + ',' + r1(cy) + ' ' + r1(b) + ',' + (y0 + axis);
+        g += '<path d="' + d + '" fill="none" stroke="' + col + '" stroke-opacity=".85" stroke-width="' + (n >= 3 ? 4.5 : n === 2 ? 3 : 1.6) + '" stroke-linecap="round" pointer-events="none"/>' +
+          '<path d="' + d + '" fill="none" stroke="transparent" stroke-width="12" pointer-events="stroke"' + pk('fin', fo.f) + tip(S('pinTip', { a: p[1], b: p[2] }) + ' · ' + fo.f, [acN(n) + ' : ' + acs.slice(0, 8).join(', ') + (acs.length > 8 ? '…' : ''), S(nx ? 'pinNextY' : 'pinNextN')]) + '/>';   // a wide stroke to hover and click
+        rows.push([fo.f, p[1] + ' ↔ ' + p[2], S(nx ? 'pinY' : 'pinN'), n]);
+      });
+      var last = -1e9;
+      pins.forEach(function (q) { var xx = px(q); g += '<circle cx="' + r1(xx) + '" cy="' + (y0 + axis) + '" r="2.5" fill="var(--ink-2)"/>'; if (xx - last >= 16) { g += tx(xx, y0 + axis + 16, q, 'mu', 'middle', ' style="font-size:10.5px"'); last = xx; } });
+    });
+    rows.sort(function (a, b) { return b[3] - a[3]; }); rows.forEach(function (r) { r[3] = num(r[3]); });
+    gSet(k, svg(W0, H, g, gT(k)) + '<details class="vdata"><summary>' + esc(S('dataView')) + '</summary><div class="table-wrap"><table>' + miniTable(S('pinCols'), rows, 3) + '</table></div></details>',
+      ['1', '2', '3'].map(function (n, j) { return '<span><i class="ln" style="height:' + [1.6, 3, 4.5][j] + 'px;width:22px;background:' + col + '"></i>' + esc(j === 2 ? S('pinAc3') : acN(+n)) + '</span>'; }).join('') + '<span class="mu">' + esc(S('pinNo25')) + '</span>');
   }
 
   function v2Icons(k) {
