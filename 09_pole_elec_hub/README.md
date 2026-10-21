@@ -2,24 +2,24 @@
 
 New home page for the Pôle Élec quality tools, to replace the current "Pole Elec Quality HUB" Slate app.
 
-## Chosen design: template 5, restyled (21 Oct)
+## Chosen design: template 5 (20 Oct), four groups (21 Oct)
 
-The page to use is `hub/pole_elec_hub.html` (previews: `screenshots/hub_final.png`, `hub_final_hover.png`, `hub_final_phone.png`). On 21 Oct the template 5 layout (four groups, 2 × 2) was given a sober corporate look at Mohammad's request: a navy header band with the greeting and the date, four white panels with one colour each, one row per tool with its status on the right. The cable drawings and the per-tool colours are gone; a faint bundle of wires in the header is all that is left of the harness idea. The previous version is in the git history (commit `0531630`). The page is light only, so it matches the Slate app whatever the Windows theme. It is one self-contained file, HTML, CSS and JavaScript only: no other file, no external font, no library. Everything on it comes from the `HUB_CONFIG` block at the top of its `<script>`, the only part to edit:
+The page to use is `hub/pole_elec_hub.html` (previews: `screenshots/hub_final.png`, `hub_final_hover.png` with one tool hovered, `hub_final_phone.png`). It keeps the template 5 look, with the harness drawing in the header, and puts the tools in four groups of three, two groups per row. All twelve cards have the same size and line up across the page (the script sets their rows and places on one grid), so nothing is stacked on one side. A sober corporate restyle without the drawing was tried on 21 Oct and dropped (commit `b02ac35` in the history). The page is light only, so it matches the Slate app whatever the Windows theme. It is one self-contained file, HTML, CSS and JavaScript only: no other file, no external font, no library. Everything on it comes from the `HUB_CONFIG` block at the top of its `<script>`, the only part to edit:
 
-- links, names, short descriptions and icons of the tools, names and colours of the groups, the greeting are all there; a link still set to `A_COMPLETER` shows "Lien à compléter" and cannot be clicked;
+- links, names, short descriptions, icons and colours are all there; a link still set to `A_COMPLETER` shows "Lien à compléter" and cannot be clicked;
 - `soon: true` shows a tool as "Bientôt disponible" (not clickable); `guide:` adds a "Guide utilisateur" link;
 - save, refresh the page. Links open in a new tab, as in the current app.
 
 For Slate, `slate/` holds the same page in three parts: `hub.html` (markup), `hub.css` and `hub.js` (with `HUB_CONFIG` at the top). After changing `hub/pole_elec_hub.html`, run `python build_slate.py` to rebuild them.
 
-Content (from the Slate export of the current app, `06_input_data/slate_hub_export_2026-10-20.json`, with Mohammad's changes of 20 and 21 Oct), in four groups laid out 2 × 2 as in template 5. The current app has three groups (Outils qualité, QCM, QA Management); the four below split them, with the same tools and links:
+Content (from the Slate export of the current app, `06_input_data/slate_hub_export_2026-10-20.json`, with Mohammad's changes of 20 and 21 Oct), in four groups of three. The current app has three groups (Outils qualité, QCM, QA Management); the four below split them, with the same tools and links:
 
 - **Production & suivi:** PPS, Serie Follow Up, FOD.
-- **Assurance qualité:** NC Eradication (the QCM tab; shown as "Bientôt disponible" until it goes live, its link and user guide are already in the config) and MyQA (QA Management). **Form (DEMAT)** removed: it was the "capri" to remove (21 Oct); it is kept as a commented line in the config.
+- **Assurance qualité:** NC Eradication (the QCM tab; shown as "Bientôt disponible" until it goes live, its link and user guide are already in the config), MyQA (QA Management) and CPB (from Outils qualité, moved here so that every group has three tools). **Form (DEMAT)** removed: it was the "capri" to remove (21 Oct); it is kept as a commented line in the config.
 - **Non-conformités:** NC Writing, NC Dashboard, Alert Quality.
-- **Surveillance & amélioration:** **QSR** and **Operational Surveillance** (new, links to fill in), CPB, Projets & Amélioration.
+- **Surveillance & amélioration:** **QSR** and **Operational Surveillance** (new, links to fill in), Projets & Amélioration.
 
-Everything is visible at once on a 1440 × 900 screen; on a narrow screen the panels stack.
+Everything is visible at once on a 1440 × 900 screen. Below 1180 px wide the groups go one per row, and on a phone the cards stack. A group given a fourth tool starts a second line of cards.
 
 ## The five templates (design round of 20 Oct)
 

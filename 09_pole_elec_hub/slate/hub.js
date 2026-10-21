@@ -3,85 +3,85 @@
 // =============================================================================
 //  This block is the only part to edit. Save, then refresh the page.
 //
-//  For each group:
-//    name        title of the panel
-//    color       colour of the panel's top line and of its icons
-//  Groups fill a 2 x 2 grid in the order below: 1st top left, 2nd top right,
-//  3rd bottom left, 4th bottom right. The four groups split the current app's
-//  three (Outils qualité, QCM, QA Management); the tools and links are the same.
-//
-//  For each tool (shown in the order below):
-//    name        name of the tool
+//  For each tool:
+//    name        text on the card
 //    description small line under the name ("" shows nothing)
 //    icon        one of: trend-up, trending-up, trend-down, table, ban, alert,
 //                        bars, pen, folder, form, eye, doc, check, shield,
 //                        link, people, gear
-//    link        address the tool opens (in a new tab). While it still says
-//                "A_COMPLETER", the row shows "Lien à compléter" and cannot
+//    color       colour of the wire and of the icon, for example "#2e8b3a"
+//    link        address the card opens (in a new tab). While it still says
+//                "A_COMPLETER", the card shows "Lien à compléter" and cannot
 //                be clicked.
 //    guide       optional second link, shown as "Guide utilisateur"
 //    soon        true = shown as "Bientôt disponible" and not clickable;
 //                delete the line when the tool goes live
 //
+//  Groups go two per row, in the order below: 1st top left, 2nd top right,
+//  3rd bottom left, 4th bottom right. Each group shows its cards three per
+//  row and all cards have the same size, so with three tools per group every
+//  group is one line. Cards appear in the order below.
+//  The four groups split the current app's three (Outils qualité, QCM,
+//  QA Management); the tools and links are the same.
 //  Links taken from the current Slate app (A30 Quality Hub), 20 Oct 2026.
 // =============================================================================
 
 const HUB_CONFIG = {
   title: "Pôle Élec",
   subtitle: "Quality Hub",
-  // first name in the greeting; in Slate it can come from {{user.firstName}}
-  userName: "Mohammad",
-  welcome: "Bienvenue sur le dashboard de la qualité Pôle Élec.",
+  // in Slate the first name comes from {{user.firstName}}
+  welcome: "MOHAMMAD, bienvenue sur le dashboard de la qualité Pôle Élec",
 
   groups: [
     {
-      name: "Production & suivi", color: "#b45309",
+      name: "Production & suivi", code: "PROD", color: "#b5602b",
       tools: [
-        { name: "PPS", description: "Practical Problem Solving", icon: "trend-up",
+        { name: "PPS", description: "Practical Problem Solving", icon: "trend-up", color: "#2e8b3a",
           link: "https://drive.google.com/drive/folders/1XOzZbgKoalRyJSpLXolOK-w0mou9FcQQ" },
-        { name: "Serie Follow Up", description: "Suivi de la série", icon: "table",
+        { name: "Serie Follow Up", description: "Suivi de la série", icon: "table", color: "#7b3fa8",
           link: "https://docs.google.com/spreadsheets/d/1ZiR6qiyPivrTtRxDHg43n0SApw3LIw15SGXKZb51e4c/edit?gid=0#gid=0" },
-        { name: "FOD", description: "Foreign Object Debris", icon: "ban",
+        { name: "FOD", description: "Foreign Object Debris", icon: "ban", color: "#e8483f",
           link: "https://drive.google.com/drive/folders/1Pc0LTYiEtla2-yroxx3rk49TaeUyyb8j" }
       ]
     },
     {
-      name: "Assurance qualité", color: "#1d4ed8",
+      name: "Assurance qualité", code: "QA", color: "#2c6ad3",
       tools: [
         // QCM
-        { name: "NC Eradication", description: "Éradication des NC", icon: "trend-down",
+        { name: "NC Eradication", description: "Éradication des NC", icon: "trend-down", color: "#1d1673",
           link: "https://core.skywise.com/workspace/module/view/latest/ri.workshop.main.module.fe9aa8c0-22d4-4533-a04e-527c485347d1/similarityexplorer",
           guide: "https://sites.google.com/airbus.com/faq-nc-eradication/accueil",
           soon: true },
         // QA Management. Form (DEMAT) removed on 21 Oct ("capri"); to bring it back, put this line above MyQA:
-        // { name: "Form", description: "DEMAT", icon: "form", link: "https://demat.intra.corp/DEMAT/#/" },
-        { name: "MyQA", description: "MyQA tool", icon: "shield",
-          link: "https://sites.google.com/airbus.com/myqa-tool-fr/accueil" }
+        // { name: "Form", description: "DEMAT", icon: "form", color: "#3a9a4a", link: "https://demat.intra.corp/DEMAT/#/" },
+        { name: "MyQA", description: "MyQA tool", icon: "shield", color: "#2c97a4",
+          link: "https://sites.google.com/airbus.com/myqa-tool-fr/accueil" },
+        // CPB was in Outils qualité in the current app
+        { name: "CPB", description: "", icon: "folder", color: "#00208b",
+          link: "https://drive.google.com/drive/folders/1L9W2W8j5fqVKlQuw7skTLHCQ2S9oHP0K" }
       ]
     },
     {
-      name: "Non-conformités", color: "#be123c",
+      name: "Non-conformités", code: "NC", color: "#d23f3f",
       tools: [
-        { name: "NC Writing", description: "Rédaction des NC", icon: "pen",
+        { name: "NC Writing", description: "Rédaction des NC", icon: "pen", color: "#2c97a4",
           link: "https://core.skywise.com/workspace/code-workspaces/ri.foundry-container-service.main.container.fbafad4a-153e-476b-a137-69793a2112e3" },
-        { name: "NC Dashboard", description: "Tableau de bord des NC", icon: "bars",
+        { name: "NC Dashboard", description: "Tableau de bord des NC", icon: "bars", color: "#038a9d",
           link: "https://core.skywise.com/workspace/foundry-slate/app/ttttteqwffadsdasadsad/home" },
-        { name: "Alert Quality", description: "Alertes qualité", icon: "alert",
+        { name: "Alert Quality", description: "Alertes qualité", icon: "alert", color: "#c41e1e",
           link: "https://drive.google.com/drive/folders/1jhbOjOa39LHXJM7v8tTE-_2Mv_f4RSuG" }
       ]
     },
     {
-      name: "Surveillance & amélioration", color: "#047857",
+      name: "Surveillance & amélioration", code: "SURV", color: "#1d8a6b",
       tools: [
         // new: link to fill in
-        { name: "QSR", description: "", icon: "check",
+        { name: "QSR", description: "", icon: "check", color: "#c2306f",
           link: "A_COMPLETER" },
         // new: link to fill in
-        { name: "Operational Surveillance", description: "Surveillance opérationnelle", icon: "eye",
+        { name: "Operational Surveillance", description: "Surveillance opérationnelle", icon: "eye", color: "#5b4fc4",
           link: "A_COMPLETER" },
-        { name: "CPB", description: "", icon: "folder",
-          link: "https://drive.google.com/drive/folders/1L9W2W8j5fqVKlQuw7skTLHCQ2S9oHP0K" },
-        { name: "Projets & Amélioration", description: "Projets et amélioration continue", icon: "trending-up",
+        { name: "Projets & Amélioration", description: "Projets et amélioration continue", icon: "trending-up", color: "#00a396",
           link: "https://drive.google.com/drive/folders/1N-L9s0Y1SpDH0I0hNf145ZOVnRkdxNrd" }
       ]
     }
@@ -106,48 +106,99 @@ const ICONS={
   "trending-up":'<path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/>',
   "form":'<rect x="4.5" y="3" width="15" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h4.5"/>',
   "eye":'<path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="3"/>',
-  "external":'<path d="M14 4.5h5.5V10"/><path d="M19.5 4.5L11 13"/><path d="M18 14v4.5a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 4 18.5v-11A1.5 1.5 0 0 1 5.5 6H10"/>'
+  "arrow":'<path d="M5 12h13M13 6.5l5.5 5.5-5.5 5.5"/>'
 };
 const $=s=>document.querySelector(s);
 const esc=s=>String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const svgI=k=>'<svg viewBox="0 0 24 24" aria-hidden="true">'+(ICONS[k]||ICONS.link)+'</svg>';
 const todo=u=>!u||/^A_COMPLETER/i.test(String(u).trim());
+const noName=v=>!v||/^À COMPLÉTER/i.test(String(v).trim());
 
 const C=HUB_CONFIG;
-document.title=(C.title||"")+" "+(C.subtitle||"");
-$("#brand").innerHTML='<b>'+esc(C.title)+'</b><i></i><span>'+esc(C.subtitle)+'</span>';
-$("#foot-name").textContent=(C.title||"")+" · "+(C.subtitle||"");
-$("#hello").textContent="Bonjour"+(C.userName?" "+C.userName:"");
-$("#welcome").textContent=C.welcome||"";
-const today=new Date().toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long",year:"numeric"});
-$("#date").textContent=today.charAt(0).toUpperCase()+today.slice(1);
-
-// header motif: a bundle of wires fanning out, drawn faintly
-(function(){
-  const n=11; let d="";
-  for(let i=0;i<n;i++){
-    const y0=170+(i-(n-1)/2)*4.5, y1=24+i*212/(n-1);
-    d+='<path d="M660,'+y0.toFixed(1)+' C540,'+y0.toFixed(1)+' 470,'+y1.toFixed(1)+' 330,'+y1.toFixed(1)+' H0"/>';
-  }
-  $("#motif").innerHTML='<g fill="none" stroke="currentColor" stroke-width="1.2">'+d+'</g>';
-})();
-
-if(!Array.isArray(C.groups)){
-  $("#groups").innerHTML='<div class="err">La configuration HUB_CONFIG en haut du script contient une erreur.</div>';
+if(!C||!Array.isArray(C.groups)){
+  $("#groups").innerHTML='<div class="err" style="grid-column:1/-1">la configuration HUB_CONFIG en haut du script contient une erreur.</div>';
 } else {
-  $("#groups").innerHTML=C.groups.map(g=>{
-    const tools=g.tools||[];
-    return '<section class="panel" style="--c:'+esc(g.color||"#1f5fbf")+'">'
-      +'<header class="p-hd"><h2>'+esc(g.name)+'</h2><span>'+tools.length+' outil'+(tools.length>1?'s':'')+'</span></header>'
-      +'<ul class="list">'+tools.map(t=>{
-        const state=t.soon?"soon":todo(t.link)?"todo":"live";
-        const name=state==="live"?'<a class="stretch" href="'+esc(t.link)+'" target="_blank" rel="noopener">'+esc(t.name)+'</a>':esc(t.name);
-        const end=state==="live"
-          ?(t.guide&&!todo(t.guide)?'<a class="guide" href="'+esc(t.guide)+'" target="_blank" rel="noopener">Guide utilisateur</a>':'')+'<span class="go">'+svgI("external")+'</span>'
-          :state==="soon"?'<span class="pill soon">Bientôt disponible</span>':'<span class="pill todo">Lien à compléter</span>';
-        return '<li class="tool '+state+'"><span class="ic">'+svgI(t.icon)+'</span>'
-          +'<span class="t-main"><span class="t-name">'+name+'</span>'+(t.description?'<span class="t-desc">'+esc(t.description)+'</span>':'')+'</span>'
-          +'<span class="t-end">'+end+'</span></li>';
-      }).join("")+'</ul></section>';
-  }).join("");
+  document.title=(C.title||"")+" "+(C.subtitle||"");
+  $("#title").innerHTML=esc(C.title)+'<span>'+esc(C.subtitle)+'</span>';
+  $("#welcome").textContent=C.welcome||"";
+
+  // rows of the card grid: per line of two groups, the header row then its card rows (all 1fr, so
+  // every card row has the height of the tallest); a 0 px row between two lines adds space
+  const tracks=[], top=[];
+  for(let p=0,row=1;p<C.groups.length;p+=2){
+    const k=Math.max(1,...C.groups.slice(p,p+2).map(g=>Math.ceil((g.tools||[]).length/3)));
+    if(p){tracks.push("0px"); row++;}
+    top.push(row, row);
+    tracks.push("auto", ...Array(k).fill("1fr"));
+    row+=1+k;
+  }
+  $("#groups").style.gridTemplateRows=tracks.join(" ");
+
+  let n=0;
+  const html=C.groups.map((g,gi)=>{
+    const half=gi%2, hr=top[gi];
+    return '<section class="grp" style="--c:'+esc(g.color||"var(--copper)")+';--hr:'+hr+';--hc:'+(half?'5 / 8':'1 / 4')+'">'
+      +'<header class="g-hd"><span class="code">'+esc(g.code||g.name)+'</span><h2>'+esc(g.name)+'</h2><span class="rule"></span></header>'
+      +'<div class="cards">'+(g.tools||[]).map((t,i)=>{
+        const id="t"+(n++), w=esc(t.color||g.color||"#8592a5"), state=t.soon?"soon":todo(t.link)?"nolink":"link";
+        const cls=" "+state+(noName(t.name)?" noname":"");
+        const name=state==="link"?'<a class="stretch" href="'+esc(t.link)+'" target="_blank" rel="noopener">'+esc(t.name)+'</a>':esc(t.name);
+        const foot=state==="link"?'<span class="open">Ouvrir '+svgI("arrow")+'</span>'+(t.guide&&!todo(t.guide)?'<a class="guide" href="'+esc(t.guide)+'" target="_blank" rel="noopener">Guide utilisateur</a>':'')
+                  :state==="soon"?'<span class="open">Bientôt disponible</span>':'<span class="open">Lien à compléter</span>';
+        const inner='<span class="c-top"><i class="wire"></i><i class="collar"></i><i class="ferr"></i><span class="ib">'+svgI(t.icon)+'</span>'
+          +(state==="soon"?'<span class="soon-b">Bientôt</span>':'')+'</span>'
+          +'<h3>'+name+'</h3>'+(t.description?'<p>'+esc(t.description)+'</p>':'')+'<span class="foot">'+foot+'</span>';
+        return '<div class="card'+cls+'" data-id="'+id+'" style="--w:'+w+';--r:'+(hr+1+Math.floor(i/3))+';--cc:'+(half*4+1+i%3)+'">'+inner+'</div>';
+      }).join("")+'</div></section>';
+  });
+  $("#groups").innerHTML=html.join("");
+
+  // hero harness: connector, sleeve and tie-wraps on the trunk, one branch per group, one wire per tool
+  (function(){
+    const groups=C.groups.filter(g=>(g.tools||[]).length), N=groups.reduce((a,g)=>a+g.tools.length,0);
+    const G=Math.min(5.2,70/Math.max(N,1)), Y=115, X0=96, XB=392, XE=596, top0=28, top1=202;
+    const lane=i=>Y+(i-(N-1)/2)*G;
+    const by=groups.map((g,i)=>groups.length===1?Y:top0+i*(top1-top0)/(groups.length-1));
+    let defs='<defs><pattern id="braid" width="7" height="7" patternUnits="userSpaceOnUse"><rect width="7" height="7" fill="var(--braid-bg)"/>'
+      +'<path d="M-1,1 L1,-1 M0,7 L7,0 M6,8 L8,6" stroke="var(--braid-a)" stroke-width="2"/><path d="M0,0 L7,7 M-1,6 L1,8 M6,-1 L8,1" stroke="var(--braid-b)" stroke-width="2"/></pattern>'
+      +'<linearGradient id="al" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e9eef2"/><stop offset=".45" stop-color="#a2adb8"/><stop offset="1" stop-color="#55606b"/></linearGradient>'
+      +'<linearGradient id="nut" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#b9c3cc"/><stop offset=".5" stop-color="#76828e"/><stop offset="1" stop-color="#3f4952"/></linearGradient>'
+      +'<linearGradient id="boot" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#454c55"/><stop offset=".35" stop-color="#22272d"/><stop offset="1" stop-color="#101316"/></linearGradient></defs>';
+    let i=0, k0=0, wires="", ends="";
+    groups.forEach((g,gi)=>{
+      const k=g.tools.length;
+      g.tools.forEach((t,j)=>{
+        const y0=lane(i), y1=by[gi]+(j-(k-1)/2)*G;
+        const d="M"+X0+","+y0+" H"+XB+" C"+(XB+96)+","+y0+" "+(XE-104)+","+y1+" "+(XE-10)+","+y1+" H"+(XE+12);
+        wires+='<g class="hw" id="hw-t'+i+'" style="--w:'+esc(t.color||g.color||"#8592a5")+';--d:'+(2.2+((i*7)%5)*.35).toFixed(2)+'s;--dl:-'+((i*0.37)%2).toFixed(2)+'s">'
+          +'<path class="o" d="'+d+'"/><path class="b" d="'+d+'"/><path class="h" d="'+d+'" transform="translate(-.6 -.7)"/><path class="p" d="'+d+'"/></g>';
+        i++;
+      });
+      const h=k*G+14, top=by[gi]-h/2, code=String(g.code||g.name);
+      ends+='<rect x="'+(XE-6)+'" y="'+(top+3)+'" width="22" height="'+(h-6)+'" rx="5" fill="url(#boot)"/>'
+        +'<rect x="'+(XE+14)+'" y="'+top+'" width="36" height="'+h+'" rx="4" fill="url(#al)" stroke="#4b5560" stroke-width=".8"/>'
+        +'<rect x="'+(XE+50)+'" y="'+(top+4)+'" width="6" height="'+(h-8)+'" rx="1.5" fill="#3a434c"/>'
+        +'<rect x="'+(XE+62)+'" y="'+(by[gi]-11)+'" width="'+(code.length*8.4+16)+'" height="22" rx="5" fill="'+esc(g.color||"#b5602b")+'"/>'
+        +'<text class="tagt" x="'+(XE+70)+'" y="'+(by[gi]+4.5)+'">'+esc(code)+'</text>';
+      k0+=k;
+    });
+    const t0=lane(0)-5, t1=lane(N-1)+5, yc=Y;
+    const tie=x=>'<rect x="'+(x-3.5)+'" y="'+(t0-1)+'" width="7" height="'+(t1-t0+2)+'" rx="2" fill="#1d2228"/><rect x="'+(x-5.5)+'" y="'+(t0-9)+'" width="11" height="9" rx="2" fill="#2a3037"/>';
+    const conn='<rect x="6" y="'+(yc-44)+'" width="32" height="88" rx="5" fill="url(#nut)" stroke="#3a434c"/>'
+      +Array.from({length:9},(_,m)=>'<path d="M'+(10+m*3.2)+','+(yc-40)+' V'+(yc+40)+'" stroke="rgba(0,0,0,.22)"/>').join("")
+      +'<rect x="38" y="'+(yc-36)+'" width="28" height="72" rx="3" fill="url(#al)" stroke="#4b5560"/>'
+      +'<path d="M66,'+(yc-34)+' L90,'+(yc-31)+' V'+(yc+31)+' L66,'+(yc+34)+' Z" fill="url(#al)" stroke="#4b5560"/>'
+      +'<rect x="84" y="'+(yc-33)+'" width="36" height="66" rx="9" fill="url(#boot)"/>';
+    const sleeve='<rect x="150" y="'+t0+'" width="196" height="'+(t1-t0)+'" rx="6" fill="url(#braid)"/>'
+      +'<rect x="145" y="'+(t0-2)+'" width="12" height="'+(t1-t0+4)+'" rx="3" fill="url(#boot)"/><rect x="340" y="'+(t0-2)+'" width="12" height="'+(t1-t0+4)+'" rx="3" fill="url(#boot)"/>';
+    $("#harness").innerHTML=defs+wires+sleeve+tie(132)+tie(370)+conn+ends;
+  })();
+
+  // a card lights its own wire in the harness
+  const hs=$("#harness"), groupsEl=$("#groups");
+  const lit=(id,on)=>{const w=document.getElementById("hw-"+id); if(w){w.classList.toggle("on",on); hs.classList.toggle("live",on);}};
+  groupsEl.addEventListener("pointerover",e=>{const c=e.target.closest(".card"); if(c) lit(c.dataset.id,true);});
+  groupsEl.addEventListener("pointerout",e=>{const c=e.target.closest(".card"); if(c&&!c.contains(e.relatedTarget)) lit(c.dataset.id,false);});
+  groupsEl.addEventListener("focusin",e=>{const c=e.target.closest(".card"); if(c) lit(c.dataset.id,true);});
+  groupsEl.addEventListener("focusout",e=>{const c=e.target.closest(".card"); if(c) lit(c.dataset.id,false);});
 }
