@@ -13,9 +13,12 @@
 //    link        address the card opens (in a new tab). While it still says
 //                "A_COMPLETER", the card shows "Lien à compléter" and cannot
 //                be clicked.
-//    links       instead of link, several addresses, shown as buttons on the
-//                card: [ { name: "GDrive", url: "https://..." }, ... ]
-//                (a button still set to "A_COMPLETER" is not shown)
+//    links       instead of link, several addresses:
+//                [ { name: "GDrive", url: "https://..." }, ... ]
+//                (a link still set to "A_COMPLETER" is not shown)
+//  Each link is labelled by what it opens, found from its address: GDrive,
+//  Skywise or Site (Sheets for a spreadsheet). When two links of a card open
+//  the same kind of thing, they show their own names instead (SÉRIE, REC, HS).
 //    guide       optional extra link, shown as "Guide utilisateur"
 //    soon        true = shown as "Bientôt disponible" and not clickable;
 //                delete the line when the tool goes live
@@ -145,12 +148,14 @@ const ICONS={
   "trending-up":'<path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/>',
   "form":'<rect x="4.5" y="3" width="15" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h4.5"/>',
   "eye":'<path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="3"/>',
-  "arrow":'<path d="M5 12h13M13 6.5l5.5 5.5-5.5 5.5"/>'
+  "ext":'<path d="M8 6.5h9.5V16"/><path d="M17.5 6.5L6.5 17.5"/>'
 };
 const $=s=>document.querySelector(s);
 const esc=s=>String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const svgI=k=>'<svg viewBox="0 0 24 24" aria-hidden="true">'+(ICONS[k]||ICONS.link)+'</svg>';
 const todo=u=>!u||/^A_COMPLETER/i.test(String(u).trim());
+// what a link opens, from its address
+const dest=u=>/drive\.google\.com/.test(u)?"GDrive":/skywise\.com/.test(u)?"Skywise":/docs\.google\.com\/spreadsheets/.test(u)?"Sheets":"Site";
 const noName=v=>!v||/^À COMPLÉTER/i.test(String(v).trim());
 
 const C=HUB_CONFIG;
@@ -174,10 +179,15 @@ if(!C||!Array.isArray(C.groups)){
         const a=(u,label,c)=>'<a class="'+c+'" href="'+esc(u)+'" target="_blank" rel="noopener">'+esc(label)+'</a>';
         const guide=t.guide&&!todo(t.guide)?a(t.guide,"Guide utilisateur","guide"):'';
         const name=state==="link"&&!multi?a(t.link,t.name,"stretch"):esc(t.name);
-        const foot=state==="soon"?'<span class="open">Bientôt disponible</span>'
-                  :state==="nolink"?'<span class="open">Lien à compléter</span>'
-                  :multi?'<span class="go-list">'+list.map(l=>'<a class="open go" href="'+esc(l.url)+'" target="_blank" rel="noopener">'+esc(l.name)+' '+svgI("arrow")+'</a>').join("")+'</span>'+guide
-                  :'<span class="open">Ouvrir '+svgI("arrow")+'</span>'+guide;
+        // each link is labelled by what it opens; links of the same kind on one card keep their own names
+        const items=(multi?list:[{url:t.link}]).map(l=>({url:l.url, own:l.name, label:dest(l.url)}));
+        const same={}; items.forEach(x=>same[x.label]=(same[x.label]||0)+1);
+        items.forEach(x=>{ if(x.own&&same[x.label]>1) x.label=x.own; });
+        const label=x=>'<span class="lk-t">'+esc(x.label)+'</span>'+svgI("ext");
+        const foot=state==="soon"?'<span class="state">Bientôt disponible</span>'
+                  :state==="nolink"?'<span class="state">Lien à compléter</span>'
+                  :'<span class="lk">'+items.map(x=>multi?'<a class="lk-i" href="'+esc(x.url)+'" target="_blank" rel="noopener">'+label(x)+'</a>'
+                                                          :'<span class="lk-i">'+label(x)+'</span>').join("")+'</span>'+guide;
         const inner='<span class="c-top"><i class="wire"></i><i class="collar"></i><i class="ferr"></i><span class="ib">'+svgI(t.icon)+'</span>'
           +(state==="soon"?'<span class="soon-b">Bientôt</span>':'')+'</span>'
           +'<h3>'+name+'</h3>'+(t.description?'<p>'+esc(t.description)+'</p>':'')+'<span class="foot">'+foot+'</span>';

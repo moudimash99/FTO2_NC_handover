@@ -62,11 +62,16 @@ h1 span{display:block;color:var(--muted);font-weight:600}
 .guide:hover,.guide:focus-visible{color:var(--text);border-color:var(--muted);outline:none}
 /* several links: one arrow link per line, in the same style as "Ouvrir". The card itself is not a link,
    so it does not lift on hover; each link moves its own arrow. */
-.go-list{position:relative;z-index:2;display:flex;flex-direction:column;align-items:flex-start;gap:7px}
-.go{text-decoration:none;outline:none}
-.go:focus-visible{border-radius:3px;box-shadow:0 0 0 2px color-mix(in srgb,var(--w) 45%,transparent)}
-.card.multi:hover .open svg,.card.multi:focus-within .open svg{transform:none}
-.card.multi .go:hover svg,.card.multi .go:focus-visible svg{transform:translateX(4px)}
+/* links at the foot of a card: the label says what opens (GDrive, Skywise, Site) followed by a small
+   arrow; underlined on hover. With one link the whole card is the link, with several only the labels
+   are, so that card does not lift on hover. */
+.lk{position:relative;z-index:2;display:flex;flex-wrap:wrap;align-items:center;gap:4px 14px}
+.lk-i{display:inline-flex;align-items:center;gap:3px;text-decoration:none;color:color-mix(in srgb,var(--w) 85%,var(--text));font:600 13px/1.3 "Segoe UI",system-ui,sans-serif}
+.lk-i svg{width:12px;height:12px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none;transition:transform .18s}
+.lk-i:focus-visible{outline:2px solid color-mix(in srgb,var(--w) 60%,transparent);outline-offset:2px;border-radius:4px}
+.lk-t{text-underline-offset:3px;text-decoration-thickness:1.5px}
+a.lk-i:hover .lk-t,a.lk-i:focus-visible .lk-t,.card.link:not(.multi):hover .lk-i .lk-t,.card.link:not(.multi):focus-within .lk-i .lk-t{text-decoration:underline}
+a.lk-i:hover svg,a.lk-i:focus-visible svg,.card.link:not(.multi):hover .lk-i svg,.card.link:not(.multi):focus-within .lk-i svg{transform:translate(1px,-1px)}
 .card.multi:hover,.card.multi:focus-within{transform:none}
 .soon-b{margin-left:auto;font:600 11px/1 Consolas,"Cascadia Mono",monospace;letter-spacing:.04em;padding:5px 8px 4px;border-radius:20px;background:color-mix(in srgb,var(--w) 12%,var(--surface));color:color-mix(in srgb,var(--w) 80%,var(--text))}
 .card.soon .ib,.card.soon .wire,.card.soon .collar{filter:saturate(.35);opacity:.75}
@@ -86,10 +91,7 @@ h1 span{display:block;color:var(--muted);font-weight:600}
 .card h3{margin:8px 0 0;font:700 19px/1.2 "Segoe UI",system-ui,sans-serif}
 .card p{margin:0;color:var(--muted);font-size:14.5px;line-height:1.4}
 .foot{margin-top:auto;padding-top:8px;display:flex;align-items:center;gap:8px}
-.open{display:flex;align-items:center;gap:6px;font:700 13.5px/1 "Segoe UI",system-ui,sans-serif;color:color-mix(in srgb,var(--w) 85%,var(--text))}
-.open svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;transition:transform .18s}
-.card.link:hover .open svg,.card.link:focus-within .open svg{transform:translateX(4px)}
-.nolink .open,.soon .open{color:var(--faint);font:600 12.5px/1 Consolas,"Cascadia Mono",monospace;letter-spacing:.02em}
+.state{color:var(--faint);font:600 12.5px/1 Consolas,"Cascadia Mono",monospace;letter-spacing:.02em}
 /* eight per line: compact cards */
 .groups.dense{column-gap:12px}
 .dense .g-hd{align-self:end;gap:8px}
@@ -103,13 +105,11 @@ h1 span{display:block;color:var(--muted);font-weight:600}
 .dense .soon-b{font-size:10px;padding:4px 6px 3px}
 .dense .card h3{margin-top:7px;font-size:16px}
 .dense .card p{font-size:13px;line-height:1.35}
-.dense .go-list{gap:6px}
 .dense .guide{font-size:12px;padding:4px 7px 3px}
-.dense .open{font-size:13px}
-.dense .nolink .open,.dense .soon .open{font-size:11.5px}
+.dense .state{font-size:11.5px}
 .err{padding:18px 20px;border-radius:12px;border:1px solid #d23f3f;color:#d23f3f;background:var(--surface)}
 
-@media (prefers-reduced-motion:reduce){.hw .p{display:none}.card,.card .open svg{transition:none}.card.link:hover,.card.link:focus-within{transform:none}}
+@media (prefers-reduced-motion:reduce){.hw .p{display:none}.card,.lk-i svg{transition:none}.card.link:hover,.card.link:focus-within{transform:none}}
 @media (max-width:1180px){
   .hero{grid-template-columns:minmax(0,1fr)}
   .harness{max-width:620px;justify-self:center}
@@ -159,9 +159,12 @@ h1 span{display:block;color:var(--muted);font-weight:600}
 //    link        address the card opens (in a new tab). While it still says
 //                "A_COMPLETER", the card shows "Lien à compléter" and cannot
 //                be clicked.
-//    links       instead of link, several addresses, shown as buttons on the
-//                card: [ { name: "GDrive", url: "https://..." }, ... ]
-//                (a button still set to "A_COMPLETER" is not shown)
+//    links       instead of link, several addresses:
+//                [ { name: "GDrive", url: "https://..." }, ... ]
+//                (a link still set to "A_COMPLETER" is not shown)
+//  Each link is labelled by what it opens, found from its address: GDrive,
+//  Skywise or Site (Sheets for a spreadsheet). When two links of a card open
+//  the same kind of thing, they show their own names instead (SÉRIE, REC, HS).
 //    guide       optional extra link, shown as "Guide utilisateur"
 //    soon        true = shown as "Bientôt disponible" and not clickable;
 //                delete the line when the tool goes live
@@ -291,12 +294,14 @@ const ICONS={
   "trending-up":'<path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/>',
   "form":'<rect x="4.5" y="3" width="15" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h4.5"/>',
   "eye":'<path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="3"/>',
-  "arrow":'<path d="M5 12h13M13 6.5l5.5 5.5-5.5 5.5"/>'
+  "ext":'<path d="M8 6.5h9.5V16"/><path d="M17.5 6.5L6.5 17.5"/>'
 };
 const $=s=>document.querySelector(s);
 const esc=s=>String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const svgI=k=>'<svg viewBox="0 0 24 24" aria-hidden="true">'+(ICONS[k]||ICONS.link)+'</svg>';
 const todo=u=>!u||/^A_COMPLETER/i.test(String(u).trim());
+// what a link opens, from its address
+const dest=u=>/drive\.google\.com/.test(u)?"GDrive":/skywise\.com/.test(u)?"Skywise":/docs\.google\.com\/spreadsheets/.test(u)?"Sheets":"Site";
 const noName=v=>!v||/^À COMPLÉTER/i.test(String(v).trim());
 
 const C=HUB_CONFIG;
@@ -320,10 +325,15 @@ if(!C||!Array.isArray(C.groups)){
         const a=(u,label,c)=>'<a class="'+c+'" href="'+esc(u)+'" target="_blank" rel="noopener">'+esc(label)+'</a>';
         const guide=t.guide&&!todo(t.guide)?a(t.guide,"Guide utilisateur","guide"):'';
         const name=state==="link"&&!multi?a(t.link,t.name,"stretch"):esc(t.name);
-        const foot=state==="soon"?'<span class="open">Bientôt disponible</span>'
-                  :state==="nolink"?'<span class="open">Lien à compléter</span>'
-                  :multi?'<span class="go-list">'+list.map(l=>'<a class="open go" href="'+esc(l.url)+'" target="_blank" rel="noopener">'+esc(l.name)+' '+svgI("arrow")+'</a>').join("")+'</span>'+guide
-                  :'<span class="open">Ouvrir '+svgI("arrow")+'</span>'+guide;
+        // each link is labelled by what it opens; links of the same kind on one card keep their own names
+        const items=(multi?list:[{url:t.link}]).map(l=>({url:l.url, own:l.name, label:dest(l.url)}));
+        const same={}; items.forEach(x=>same[x.label]=(same[x.label]||0)+1);
+        items.forEach(x=>{ if(x.own&&same[x.label]>1) x.label=x.own; });
+        const label=x=>'<span class="lk-t">'+esc(x.label)+'</span>'+svgI("ext");
+        const foot=state==="soon"?'<span class="state">Bientôt disponible</span>'
+                  :state==="nolink"?'<span class="state">Lien à compléter</span>'
+                  :'<span class="lk">'+items.map(x=>multi?'<a class="lk-i" href="'+esc(x.url)+'" target="_blank" rel="noopener">'+label(x)+'</a>'
+                                                          :'<span class="lk-i">'+label(x)+'</span>').join("")+'</span>'+guide;
         const inner='<span class="c-top"><i class="wire"></i><i class="collar"></i><i class="ferr"></i><span class="ib">'+svgI(t.icon)+'</span>'
           +(state==="soon"?'<span class="soon-b">Bientôt</span>':'')+'</span>'
           +'<h3>'+name+'</h3>'+(t.description?'<p>'+esc(t.description)+'</p>':'')+'<span class="foot">'+foot+'</span>';

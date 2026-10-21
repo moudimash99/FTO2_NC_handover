@@ -20,7 +20,7 @@ Content: Mohammad's own list of 21 Oct (links, groups and the tools with several
 - **Surveillance & amélioration:** Operational Surveillance (DEMAT, GDrive), Projets & Amélioration, Alert Quality, FOD.
 - **Correctif:** PPS (Skywise, GDrive), SARI Events (CAPRI, GDrive), CPB (Lien, GDrive), QSR (eQSR, GDrive).
 
-A tool with `links` shows, instead of "Ouvrir →", one arrow link per line in the same style ("SÉRIE →", "REC →", "HS →"); only those links are clickable, so that card does not lift on hover and each link slides its own arrow. A tool with a single `link` opens from anywhere on its card.
+At the foot of each card, every link is a short text link labelled by what it opens, found from its address: **GDrive**, **Skywise** or **Site** (any other web page, e.g. DEMAT, C-SAAM, CAPRI, eQSR, DataStudio), followed by a small ↗ and underlined on hover. When links of one card open the same kind of thing they keep their own names (SÉRIE, REC, HS). A tool with one `link` opens from anywhere on its card; with `links`, only the labels are clickable, so that card does not lift on hover. A tool with a single `link` opens from anywhere on its card.
 
 On a wide screen the page has eight cards per row, all the same size, and groups share a row while they fit: Production & suivi, Assurance qualité and Non-conformités (1 + 3 + 4) on the first row, Surveillance & amélioration and Correctif (4 + 4) on the second. Both rows split after the fourth card, so the page gets a wider gap there and reads as a left half and a right half. Everything is visible at once on a 1440 × 900 screen. Between 1000 and 1240 px wide there are four cards per row; below 1000 px the groups go one per row with two cards per row, and on a phone the cards stack.
 
