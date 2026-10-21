@@ -1214,7 +1214,7 @@ window.DASH = {"defects":[["216055047",1,"2026-01-06","2026-W02","A350","",0,0,0
       ppTitle: 'Production : les volumes derrière les taux', ppSub: 'Combien de MSN sont produits, prévus et livrés, ligne par ligne et produit par produit ; puis comment ces chiffres servent aux taux, aux prévisions et aux objectifs.',
       ppF1: 'MSN produits sur la période', ppF2: 'MSN prévus en 2026 (année)', ppF3: 'produits livrés en 2025', ppF4: 'NC rattachées au plan / toutes les NC',
       ppLines: 'Par ligne', ppLinesS: 'Taux = NC ÷ MSN produits sur la période. Objectif = taux 2025 − 25 % ; * : pas de 2025, taux 2026 − 25 %.', ppProds: 'Par produit', ppProdsS: 'Les produits du plan de production, ligne par ligne.',
-      ppMonth: 'MSN prévus, mois par mois', ppMonthS: 'Plan de production 2026 par ligne.', ppLight: 'Plus clair : mois à venir (prévision).', ppTipV: '{v} MSN', ppPlanned: 'prévu', connOnly: 'Erreurs de branchement par MSN : A330 et A350 seulement. Choisissez une de ces lignes, ou toutes.', vqOnly: 'Causes 2025 contre 2026 : A330 et A350 seulement. Choisissez une de ces lignes, ou toutes.', ciMsn: '{e} MSN', ciDot: 'taux (NC par MSN)', ciLine: 'fourchette à 95 %',
+      ppMonth: 'MSN prévus, mois par mois', ppMonthS: 'Plan de production 2026 par ligne.', ppLight: 'Plus clair : mois à venir (prévision).', ppTipV: '{v} MSN', ppPlanned: 'prévu', connOnly: 'Erreurs de branchement par MSN : A330 et A350 seulement. Choisissez une de ces lignes, ou toutes.', vqOnly: 'Causes 2025 contre 2026 : A330 et A350 seulement. Choisissez une de ces lignes, ou toutes.', v2InclOut: 'dont {n} hors plan (produits sans volume au plan)', ciMsn: '{e} MSN', ciDot: 'taux (NC par MSN)', ciLine: 'fourchette à 95 %',
       pinStatL: 'inversions avec leurs deux broches écrites', pinAdjL: 'entre deux broches qui se suivent', pinRepL: 'paires de broches sur plusieurs avions', pinNone: 'Aucune inversion avec ses deux broches écrites dans la sélection.',
       pinAc1: '1 avion', pinAcN: '{n} avions', pinAc3: '3 avions ou plus', pinTip: 'Broches {a} ↔ {b}', pinNextY: 'deux broches qui se suivent', pinNextN: 'broches éloignées',
       pinNo25: 'Pas de comparaison 2025 : les textes des défauts 2025 ne sont pas dans les données.', pinCols: ['FIN', 'Broches', 'Voisines', 'Avions'], pinY: 'oui', pinN: 'non', ppCurTip: '{p} compté comme produit au {d}, le reste prévu', ppCurL: 'Mois en cours ({m}) : la part des jours passés au {d}, le reste plus clair.',
@@ -1407,7 +1407,7 @@ window.DASH = {"defects":[["216055047",1,"2026-01-06","2026-W02","A350","",0,0,0
       ppTitle: 'Production: the volumes behind the rates', ppSub: 'How many MSN are built, planned and delivered, line by line and product by product; then how these figures feed the rates, the forecasts and the targets.',
       ppF1: 'MSN built in the period', ppF2: 'MSN planned in 2026 (year)', ppF3: 'products delivered in 2025', ppF4: 'NCs matched to the plan / all NCs',
       ppLines: 'By line', ppLinesS: 'Rate = NCs ÷ MSN built in the period. Target = 2025 rate − 25%; *: no 2025, 2026 rate − 25%.', ppProds: 'By product', ppProdsS: 'The production plan’s products, line by line.',
-      ppMonth: 'MSN planned, month by month', ppMonthS: '2026 production plan by line.', ppLight: 'Lighter: months to come (forecast).', ppTipV: '{v} MSN', ppPlanned: 'planned', connOnly: 'Connection errors per MSN: A330 and A350 only. Pick one of these lines, or all.', vqOnly: 'Root causes 2025 against 2026: A330 and A350 only. Pick one of these lines, or all.', ciMsn: '{e} MSN', ciDot: 'rate (NCs per MSN)', ciLine: '95% range',
+      ppMonth: 'MSN planned, month by month', ppMonthS: '2026 production plan by line.', ppLight: 'Lighter: months to come (forecast).', ppTipV: '{v} MSN', ppPlanned: 'planned', connOnly: 'Connection errors per MSN: A330 and A350 only. Pick one of these lines, or all.', vqOnly: 'Root causes 2025 against 2026: A330 and A350 only. Pick one of these lines, or all.', v2InclOut: 'of which {n} out of the plan (products with no planned volume)', ciMsn: '{e} MSN', ciDot: 'rate (NCs per MSN)', ciLine: '95% range',
       pinStatL: 'swaps with both pins written', pinAdjL: 'between two pins next to each other', pinRepL: 'pin pairs on more than one aircraft', pinNone: 'No swapped wires with both pins written in the selection.',
       pinAc1: '1 aircraft', pinAcN: '{n} aircraft', pinAc3: '3 aircraft or more', pinTip: 'Pins {a} ↔ {b}', pinNextY: 'two pins next to each other', pinNextN: 'pins apart',
       pinNo25: 'No 2025 comparison: the 2025 defect texts are not in the data.', pinCols: ['FIN', 'Pins', 'Next to each other', 'Aircraft'], pinY: 'yes', pinN: 'no', ppCurTip: '{p} counted as built at {d}, the rest planned', ppCurL: 'Running month ({m}): the share of its days gone at {d}, the rest lighter.',
@@ -5622,9 +5622,11 @@ window.DASH = {"defects":[["216055047",1,"2026-01-06","2026-W02","A350","",0,0,0
     var has = function (p) { return L[p] && sumA(L[p]) > 0; }, by = {}, out = 0, z = function () { return PD.months.map(function () { return 0; }); };
     PD.prods.forEach(function (p) { var l = PD.line[p] || '—', a = by[l] || (by[l] = { l: l, v25: 0, del: 0, vol: z(), v26: 0, eq26: 0 });
       if (has(p)) a.del += sumA(L[p]); PD.prod[p].forEach(function (v, i) { a.vol[i] += v || 0; }); a.v26 += f26(PA[p]); a.eq26 += PA[p].EQ; });
-    Y.forEach(function (x) { var p = E.map[String(x.p || '').toUpperCase()], a = p && has(p) && by[PD.line[p] || '—']; if (a) a.v25 += f25(x); else out += f25(x); });
-    var lines = lineOrder(Object.keys(by)).map(function (l) { var a = by[l]; a.r25 = a.del > 0 && a.v25 > 0 ? a.v25 / a.del : null;
-      a.rt = (a.r25 != null ? a.r25 : a.eq26 ? a.v26 / a.eq26 : 0) * V2CUT; a.ph = a.r25 == null; a.year = a.rt * sumA(a.vol); return a; });   // no 2025 for a line: its 2026 rate - 25 %
+    Y.forEach(function (x) { var p = E.map[String(x.p || '').toUpperCase()], a = p && has(p) && by[PD.line[p] || '—'];
+      if (a) { a.v25 += f25(x); return; } out += f25(x);   // out of the plan: kept with its plane type (x25), for the bars by plane type
+      var l = x.line || '—', b = by[l] || (by[l] = { l: l, v25: 0, del: 0, vol: z(), v26: 0, eq26: 0, noPlan: true }); b.x25 = (b.x25 || 0) + f25(x); });
+    var lines = lineOrder(Object.keys(by)).map(function (l) { var a = by[l]; a.r25 = a.del > 0 && a.v25 > 0 ? a.v25 / a.del : null; a.x25 = a.x25 || 0; a.xT = a.x25 * V2CUT;
+      a.rt = (a.r25 != null ? a.r25 : a.eq26 ? a.v26 / a.eq26 : 0) * V2CUT; a.ph = a.r25 == null && !a.noPlan; a.year = a.rt * sumA(a.vol); return a; });   // no 2025 for a line: its 2026 rate - 25 %
     var wsum = 0; for (var mm = 1; mm <= 12; mm++) wsum += V2W[mm] || 1;
     return { lines: lines, out25: out, outT: out * V2CUT,
       tm: function (m) { var i = PD.months.indexOf(m); return sumA(lines.map(function (a) { return i < 0 ? 0 : a.rt * a.vol[i]; })) + out * V2CUT * (V2W[+m.slice(5, 7)] || 1) / wsum; },
@@ -5632,15 +5634,15 @@ window.DASH = {"defects":[["216055047",1,"2026-01-06","2026-W02","A350","",0,0,0
   }
   // left of a cumulative chart: 2025 and the year's target as two stacked bars, one colour per line, the part out of the plan grey
   function v2TgtBars(T, Y, x0, bw, fmt, H, key) {
-    var g = '', bars = [['2025', T.lines.map(function (a) { return [a.l, a.v25]; }).concat([['out', T.out25]])], [S(key), T.lines.map(function (a) { return [a.l, a.year]; }).concat([['out', T.outT]])]];
+    var g = '', bars = [['2025', T.lines.map(function (a) { return [a.l, a.v25 + a.x25, a.x25]; })], [S(key), T.lines.map(function (a) { return [a.l, a.year + a.xT, a.xT]; })]];   // by plane type, its NCs out of the plan included (21 Oct)
     bars.forEach(function (b, j) { var x = x0 + j * (bw + 8), acc = 0, tot = sumA(b[1].map(function (s2) { return s2[1]; }));
       b[1].forEach(function (s2) { if (s2[1] <= 0) return; var y1 = Y(acc + s2[1]), y0 = Y(acc), o = s2[0] === 'out';
         g += '<rect x="' + r1(x + (o ? 0.75 : 0)) + '" y="' + r1(y1 + (o ? 0.75 : 0)) + '" width="' + r1(bw - (o ? 1.5 : 0)) + '" height="' + r1(Math.max(0.5, y0 - y1 - 1 - (o ? 1.5 : 0))) + '" fill="' + (o ? 'var(--surface)' : lineCol(s2[0])) + '"' + (o ? ' stroke="var(--muted)" stroke-width="1.5" stroke-dasharray="3 2"' : pk('line', s2[0])) +
-          tip(b[0] + ' · ' + (o ? S('vpOutRow') : s2[0]), [fmt(s2[1])]) + '/>'; acc += s2[1]; });
+          tip(b[0] + ' · ' + (o ? S('vpOutRow') : s2[0]), [fmt(s2[1])].concat(s2[2] > 0.5 ? [S('v2InclOut', { n: fmt(s2[2]) })] : [])) + '/>'; acc += s2[1]; });
       g += tx(x + bw / 2, Y(tot) - 6, fmt(tot), 'ink b', 'middle') + tx(x + bw / 2, H - 6, b[0], 'ink', 'middle'); });
     return g;
   }
-  function v2LineKeys(T) { return T.lines.map(function (a) { return sw(lineCol(a.l), a.l + (a.ph ? ' (' + S('v2Ph') + ')' : '')); }).join('') + '<span><i class="sw" style="background:var(--surface);border:1.5px dashed var(--muted)"></i>' + esc(S('vpOutRow')) + '</span>'; }
+  function v2LineKeys(T) { return T.lines.map(function (a) { return sw(lineCol(a.l), a.l + (a.ph ? ' (' + S('v2Ph') + ')' : '')); }).join(''); }
   function v2Trend(k) {
     var S2 = v2Series(function () { return 1; }), all = S2.act.concat(S2.fc); if (!S2.act.length) { pEmpty(k); return; }
     var R5 = y25Sel(), n25 = R5 ? sumA(R5.map(function (x) { return x.nc; })) : 0, real = n25 > 0;   // without 2025 for the filter: placeholder 2025 = this year
@@ -5817,9 +5819,9 @@ window.DASH = {"defects":[["216055047",1,"2026-01-06","2026-W02","A350","",0,0,0
   }
   function v2Unplanned() {
     var E = pSrc(), map = (E && E.map) || {}, ids0 = {}, top = {}, o = { n: 0, d: 0, c: 0, top: [] };
-    SEL_NC.forEach(function (n) { if (PA ? v2InPlan(n) : map[String(n[26] || '').toUpperCase()]) return; ids0[n[0]] = 1; o.n++; o.c += n[12]; var p = n[26] || 'Other'; top[p] = (top[p] || 0) + 1; });
+    SEL_NC.forEach(function (n) { if (PA ? v2InPlan(n) : map[String(n[26] || '').toUpperCase()]) return; ids0[n[0]] = 1; o.n++; o.c += n[12]; var p = n[3] || '—'; top[p] = (top[p] || 0) + 1; });   // by plane type (21 Oct)
     v2Defs().forEach(function (r) { if (ids0[r[0]]) o.d++; });
-    o.top = Object.keys(top).sort(function (a, b) { return top[b] - top[a]; }).slice(0, 4).map(function (p) { return prodName(p) + ' ' + num(top[p]); });
+    o.top = Object.keys(top).sort(function (a, b) { return top[b] - top[a]; }).map(function (p) { return p + ' ' + num(top[p]); });
     return o;
   }
   function v2UnplannedNote() { var u = v2Unplanned(); return u.n ? '<span class="mu">' + esc(S('vpOut', { n: num(u.n), p: u.top.join(', ') })) + '</span>' : ''; }
