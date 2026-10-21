@@ -282,15 +282,16 @@ if(!C||!Array.isArray(C.groups)){
     $("#harness").innerHTML=defs+wires+sleeve+tie(186)+tie(310)+conn+ends;
   })();
 
-  // a click opens the tool in a new tab. Inside Slate the page runs in a frame that may block new tabs
-  // (then nothing happens on a plain click, while Ctrl+click, done by the browser, still works): when
-  // the new tab is blocked, a short message says to use Ctrl+click.
+  // a click opens the tool in a new tab. Inside Slate the page runs in a frame that blocks new tabs
+  // (only Ctrl+click, done by the browser, gets one): then the tool opens in the current tab instead,
+  // and if even that is blocked, a short message says to use Ctrl+click.
   document.addEventListener("click",e=>{
     const link=e.target.closest("a[href]");
     if(!link||e.defaultPrevented||e.button!==0||e.ctrlKey||e.metaKey||e.shiftKey||e.altKey) return;
     e.preventDefault();
     const w=window.open(link.href,"_blank");
     if(w){ w.opener=null; return; }
+    try{ window.top.location.href=link.href; return; }catch(err){}
     const h=$(".hint")||document.body.appendChild(Object.assign(document.createElement("div"),{className:"hint"}));
     h.textContent="Ouverture bloquée ici : Ctrl + clic pour ouvrir dans un nouvel onglet";
     h.classList.add("on"); clearTimeout(h.t); h.t=setTimeout(()=>h.classList.remove("on"),3500);
