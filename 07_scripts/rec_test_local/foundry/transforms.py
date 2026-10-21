@@ -1,7 +1,8 @@
 """Local stand-in for foundry.transforms: serves the exported NCs as the non_conformity dataset."""
+import os
 import pandas as pd
 
-DATA = None          # set by the runner
+DATA = pd.read_pickle(os.environ["REC_MOCK_DATA"]) if os.environ.get("REC_MOCK_DATA") else None
 
 
 class _Expr:
