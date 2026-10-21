@@ -12,17 +12,19 @@ The page to use is `hub/pole_elec_hub.html` (previews: `screenshots/hub_final.pn
 
 For Slate, `slate/` holds the same page in three parts: `hub.html` (markup), `hub.css` and `hub.js` (with `HUB_CONFIG` at the top). After changing `hub/pole_elec_hub.html`, run `python build_slate.py` to rebuild them.
 
-Content: Mohammad's own list of 21 Oct (links, groups and the tools with several links), built on the Slate export of the current app (`06_input_data/slate_hub_export_2026-10-20.json`). Five groups, sixteen tools:
+Content: Mohammad's own list of 21 Oct (links, groups and the tools with several links), built on the Slate export of the current app (`06_input_data/slate_hub_export_2026-10-20.json`). Five groups, sixteen tools, in the order of the drawing (biggest groups at the top):
 
-- **Production & suivi:** Suivi de la production (three buttons: SÉRIE, REC, HS).
-- **Assurance qualité:** MyQA, Qualif Indus (C-SAAM, GDrive), Qualif Personal.
 - **Non-conformités:** NC Writing, NC Dashboard, MFT, NC Eradication (shown as "Bientôt disponible" until it goes live; its link and user guide are already in the config).
 - **Surveillance & amélioration:** Operational Surveillance (DEMAT, GDrive), Projets & Amélioration, Alert Quality, FOD.
-- **Correctif:** PPS (Skywise, GDrive), SARI Events (CAPRI, GDrive), CPB (Lien, GDrive), QSR (eQSR, GDrive).
+- **Correctif:** PPS (Skywise, GDrive), SARI Events (CAPRI, GDrive), CPB (KPI, GDrive), QSR (eQSR, GDrive).
+- **Assurance qualité:** MyQA, Qualif Indus (C-SAAM, GDrive), Qualif Personal.
+- **Production & suivi:** Suivi de la production (SÉRIE, REC, HS).
 
-At the foot of each card, every link is a short text link labelled by what it opens, found from its address: **GDrive**, **Skywise** or **Site** (any other web page, e.g. DEMAT, C-SAAM, CAPRI, eQSR, DataStudio), followed by a small ↗ and underlined on hover. When links of one card open the same kind of thing they keep their own names (SÉRIE, REC, HS). A tool with one `link` opens from anywhere on its card; with `links`, only the labels are clickable, so that card does not lift on hover. A tool with a single `link` opens from anywhere on its card.
+The greeting is "Bonjour, bienvenue sur le dashboard de la qualité Pôle Élec", with no name.
 
-On a wide screen the page has eight cards per row, all the same size, and groups share a row while they fit: Production & suivi, Assurance qualité and Non-conformités (1 + 3 + 4) on the first row, Surveillance & amélioration and Correctif (4 + 4) on the second. Both rows split after the fourth card, so the page gets a wider gap there and reads as a left half and a right half. Everything is visible at once on a 1440 × 900 screen. Between 1000 and 1240 px wide there are four cards per row; below 1000 px the groups go one per row with two cards per row, and on a phone the cards stack.
+At the foot of each card, every link is a short text link followed by a small ↗, underlined on hover. A tool with several `links` shows their names (DEMAT, GDrive…). A tool with a single `link` shows what it opens, found from its address: **GDrive**, **Skywise** or **Site**, and opens from anywhere on its card; on a several-link card only the names are clickable, so that card does not lift on hover.
+
+On a wide screen the page has eight cards per row, all the same size, and groups share a row while they fit: Non-conformités and Surveillance & amélioration (4 + 4) on the first row, Correctif, Assurance qualité and Production & suivi (4 + 3 + 1) on the second. Both rows split after the fourth card, so the page gets a wider gap there and reads as a left half and a right half. Everything is visible at once on a 1440 × 900 screen. Between 1000 and 1240 px wide there are four cards per row; below 1000 px the groups go one per row with two cards per row, and on a phone the cards stack.
 
 ## The five templates (design round of 20 Oct)
 
@@ -54,7 +56,6 @@ All five work on a wide screen, a laptop and a phone, can be used with the keybo
 ## Moving the chosen one into Slate (to check with whoever builds the Slate app)
 
 - The page builds the cards and draws the wires with JavaScript, so it needs a Slate widget that runs JavaScript (a custom widget with HTML, CSS and JS boxes): paste `slate/hub.html`, `slate/hub.css` and `slate/hub.js` into them. A plain HTML text widget that strips scripts would show an empty page.
-- If the widget runs in a sandboxed frame, it must allow popups, or the links (which open a new tab) will not open.
-- The greeting has the name written in (`userName` in the config); in Slate it can come from `{{user.firstName}}`.
+- Links open in a new tab. Opened on its own, the page opens them on a plain click (checked); if in Slate they only open with Ctrl+click, the Slate editor or the widget's sandbox is catching the click: check in the app's view mode, and the widget must allow popups.
 - No external font: the page uses Segoe UI and Consolas, which are on Windows PCs.
 - No Airbus or Skywise logo is used.

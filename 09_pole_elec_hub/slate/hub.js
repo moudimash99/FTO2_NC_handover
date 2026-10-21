@@ -16,9 +16,9 @@
 //    links       instead of link, several addresses:
 //                [ { name: "GDrive", url: "https://..." }, ... ]
 //                (a link still set to "A_COMPLETER" is not shown)
-//  Each link is labelled by what it opens, found from its address: GDrive,
-//  Skywise or Site (Sheets for a spreadsheet). When two links of a card open
-//  the same kind of thing, they show their own names instead (SÉRIE, REC, HS).
+//  Each of these links shows its name. A tool with a single link shows what
+//  it opens, found from its address: GDrive, Skywise or Site (Sheets for a
+//  spreadsheet).
 //    guide       optional extra link, shown as "Guide utilisateur"
 //    soon        true = shown as "Bientôt disponible" and not clickable;
 //                delete the line when the tool goes live
@@ -28,45 +28,18 @@
 //
 //  The page has eight cards per row on a wide screen (four below 1240 px),
 //  all the same size. Groups follow in the order below and share a row while
-//  they fit in it (here Production & suivi, Assurance qualité and
-//  Non-conformités: 1 + 3 + 4 tools; then Surveillance & amélioration and
-//  Correctif: 4 + 4); otherwise a group starts a new row.
+//  they fit in it (here Non-conformités and Surveillance & amélioration:
+//  4 + 4 tools; then Correctif, Assurance qualité and Production & suivi:
+//  4 + 3 + 1); otherwise a group starts a new row. The drawing puts the
+//  biggest groups at the top, so keep the groups in that order to match it.
 // =============================================================================
 
 const HUB_CONFIG = {
   title: "Pôle Élec",
   subtitle: "Quality Hub",
-  // in Slate the first name comes from {{user.firstName}}
-  welcome: "MOHAMMAD, bienvenue sur le dashboard de la qualité Pôle Élec",
+  welcome: "Bonjour, bienvenue sur le dashboard de la qualité Pôle Élec",
 
   groups: [
-    {
-      name: "Production & suivi", code: "PROD", color: "#b5602b",
-      tools: [
-        { name: "Suivi de la production", description: "Série, REC, Hors série", icon: "table", color: "#7b3fa8",
-          links: [
-            { name: "SÉRIE", url: "https://docs.google.com/spreadsheets/d/1ZiR6qiyPivrTtRxDHg43n0SApw3LIw15SGXKZb51e4c/edit?gid=0#gid=0" },
-            { name: "REC", url: "https://docs.google.com/spreadsheets/d/1bUtT0iVMSCTUDYNmFqPJDf3PRiowM0yhojg6MTv4HfY/edit?gid=0#gid=0" },
-            { name: "HS", url: "https://docs.google.com/spreadsheets/d/1_yBq9OYhxNDydYhHy8PQtPVJEFncIMymBPIpRG2Qb1o/edit?gid=0#gid=0" }
-          ]
-        }
-      ]
-    },
-    {
-      name: "Assurance qualité", code: "QA", color: "#2c6ad3",
-      tools: [
-        { name: "MyQA", description: "Site / GDrive", icon: "shield", color: "#2c97a4",
-          link: "https://sites.google.com/airbus.com/myqa-tool-fr/accueil" },
-        { name: "Qualif Indus", description: "C-SAAM (Zeinab)", icon: "gear", color: "#e67e22",
-          links: [
-            { name: "C-SAAM", url: "https://pac.intra.corp/airbus/ac/internal/1W79/zcsaam_new/start.html?saml2idp=1s14:hub-p:saml2#/IQRegister" },
-            { name: "GDrive", url: "https://drive.google.com/drive/folders/1UEeVKj2uC1cDQbI-vEmktx6b4oJOP3o_" }
-          ]
-        },
-        { name: "Qualif Personal", description: "Suivi qualifications", icon: "people", color: "#3498db",
-          link: "https://drive.google.com/drive/folders/11ZpFytNOF6aQMO8YE3hDUy7XNBkCofaE" }
-      ]
-    },
     {
       name: "Non-conformités", code: "NC", color: "#d23f3f",
       tools: [
@@ -113,9 +86,9 @@ const HUB_CONFIG = {
             { name: "GDrive", url: "https://drive.google.com/drive/folders/1m0bYZ-A_lOKRfbfXfjfLyXN5pwDhOKlr" }
           ]
         },
-        { name: "CPB", description: "DataStudio & GDrive", icon: "folder", color: "#00208b",
+        { name: "CPB", description: "KPI & GDrive", icon: "folder", color: "#00208b",
           links: [
-            { name: "Lien", url: "https://datastudio.google.com/u/0/reporting/09b0a3bd-a6da-4be0-92e3-3805e3df8344/page/p_p2eag9tand/edit" },
+            { name: "KPI", url: "https://datastudio.google.com/u/0/reporting/09b0a3bd-a6da-4be0-92e3-3805e3df8344/page/p_p2eag9tand/edit" },
             { name: "GDrive", url: "https://drive.google.com/drive/folders/1L9W2W8j5fqVKlQuw7skTLHCQ2S9oHP0K" }
           ]
         },
@@ -123,6 +96,33 @@ const HUB_CONFIG = {
           links: [
             { name: "eQSR", url: "https://pac.intra.corp/airbus/ac/internal/G010/home/index.html?sap-client=001" },
             { name: "GDrive", url: "https://drive.google.com/drive/folders/1h_j30m-bGdgTYn2g9UWQ8-cHDq2S-JAf" }
+          ]
+        }
+      ]
+    },
+    {
+      name: "Assurance qualité", code: "QA", color: "#2c6ad3",
+      tools: [
+        { name: "MyQA", description: "Site / GDrive", icon: "shield", color: "#2c97a4",
+          link: "https://sites.google.com/airbus.com/myqa-tool-fr/accueil" },
+        { name: "Qualif Indus", description: "C-SAAM (Zeinab)", icon: "gear", color: "#e67e22",
+          links: [
+            { name: "C-SAAM", url: "https://pac.intra.corp/airbus/ac/internal/1W79/zcsaam_new/start.html?saml2idp=1s14:hub-p:saml2#/IQRegister" },
+            { name: "GDrive", url: "https://drive.google.com/drive/folders/1UEeVKj2uC1cDQbI-vEmktx6b4oJOP3o_" }
+          ]
+        },
+        { name: "Qualif Personal", description: "Suivi qualifications", icon: "people", color: "#3498db",
+          link: "https://drive.google.com/drive/folders/11ZpFytNOF6aQMO8YE3hDUy7XNBkCofaE" }
+      ]
+    },
+    {
+      name: "Production & suivi", code: "PROD", color: "#b5602b",
+      tools: [
+        { name: "Suivi de la production", description: "Série, REC, Hors série", icon: "table", color: "#7b3fa8",
+          links: [
+            { name: "SÉRIE", url: "https://docs.google.com/spreadsheets/d/1ZiR6qiyPivrTtRxDHg43n0SApw3LIw15SGXKZb51e4c/edit?gid=0#gid=0" },
+            { name: "REC", url: "https://docs.google.com/spreadsheets/d/1bUtT0iVMSCTUDYNmFqPJDf3PRiowM0yhojg6MTv4HfY/edit?gid=0#gid=0" },
+            { name: "HS", url: "https://docs.google.com/spreadsheets/d/1_yBq9OYhxNDydYhHy8PQtPVJEFncIMymBPIpRG2Qb1o/edit?gid=0#gid=0" }
           ]
         }
       ]
@@ -179,10 +179,8 @@ if(!C||!Array.isArray(C.groups)){
         const a=(u,label,c)=>'<a class="'+c+'" href="'+esc(u)+'" target="_blank" rel="noopener">'+esc(label)+'</a>';
         const guide=t.guide&&!todo(t.guide)?a(t.guide,"Guide utilisateur","guide"):'';
         const name=state==="link"&&!multi?a(t.link,t.name,"stretch"):esc(t.name);
-        // each link is labelled by what it opens; links of the same kind on one card keep their own names
-        const items=(multi?list:[{url:t.link}]).map(l=>({url:l.url, own:l.name, label:dest(l.url)}));
-        const same={}; items.forEach(x=>same[x.label]=(same[x.label]||0)+1);
-        items.forEach(x=>{ if(x.own&&same[x.label]>1) x.label=x.own; });
+        // each link shows its name from the config; a single link is labelled by what it opens
+        const items=(multi?list:[{url:t.link}]).map(l=>({url:l.url, label:l.name||dest(l.url)}));
         const label=x=>'<span class="lk-t">'+esc(x.label)+'</span>'+svgI("ext");
         const foot=state==="soon"?'<span class="state">Bientôt disponible</span>'
                   :state==="nolink"?'<span class="state">Lien à compléter</span>'
