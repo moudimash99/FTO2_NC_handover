@@ -177,7 +177,7 @@ function fto2FromTables(ncIn, defIn, ref, disIn) {
       ppTitle: 'Production : les volumes derrière les taux', ppSub: 'Combien de MSN sont produits, prévus et livrés, ligne par ligne et produit par produit ; puis comment ces chiffres servent aux taux, aux prévisions et aux objectifs.',
       ppF1: 'MSN produits sur la période', ppF2: 'MSN prévus en 2026 (année)', ppF3: 'produits livrés en 2025', ppF4: 'NC rattachées au plan / toutes les NC',
       ppLines: 'Par ligne', ppLinesS: 'Taux = NC ÷ MSN produits sur la période. Objectif = taux 2025 − 25 % ; * : pas de 2025, taux 2026 − 25 %.', ppProds: 'Par produit', ppProdsS: 'Les produits du plan de production, ligne par ligne.',
-      ppMonth: 'MSN prévus, mois par mois', ppMonthS: 'Plan de production 2026 par ligne.', ppLight: 'Plus clair : mois à venir (prévision).', ppTipV: '{v} MSN', ppPlanned: 'prévu', connOnly: 'Erreurs de branchement par MSN : A330 et A350 seulement. Choisissez une de ces lignes, ou toutes.', ciMsn: '{e} MSN', ciDot: 'taux (NC par MSN)', ciLine: 'fourchette à 95 %',
+      ppMonth: 'MSN prévus, mois par mois', ppMonthS: 'Plan de production 2026 par ligne.', ppLight: 'Plus clair : mois à venir (prévision).', ppTipV: '{v} MSN', ppPlanned: 'prévu', connOnly: 'Erreurs de branchement par MSN : A330 et A350 seulement. Choisissez une de ces lignes, ou toutes.', vqOnly: 'Causes 2025 contre 2026 : A330 et A350 seulement. Choisissez une de ces lignes, ou toutes.', ciMsn: '{e} MSN', ciDot: 'taux (NC par MSN)', ciLine: 'fourchette à 95 %',
       pinStatL: 'inversions avec leurs deux broches écrites', pinAdjL: 'entre deux broches qui se suivent', pinRepL: 'paires de broches sur plusieurs avions', pinNone: 'Aucune inversion avec ses deux broches écrites dans la sélection.',
       pinAc1: '1 avion', pinAcN: '{n} avions', pinAc3: '3 avions ou plus', pinTip: 'Broches {a} ↔ {b}', pinNextY: 'deux broches qui se suivent', pinNextN: 'broches éloignées',
       pinNo25: 'Pas de comparaison 2025 : les textes des défauts 2025 ne sont pas dans les données.', pinCols: ['FIN', 'Broches', 'Voisines', 'Avions'], pinY: 'oui', pinN: 'non', ppCurTip: '{p} compté comme produit au {d}, le reste prévu', ppCurL: 'Mois en cours ({m}) : la part des jours passés au {d}, le reste plus clair.',
@@ -370,7 +370,7 @@ function fto2FromTables(ncIn, defIn, ref, disIn) {
       ppTitle: 'Production: the volumes behind the rates', ppSub: 'How many MSN are built, planned and delivered, line by line and product by product; then how these figures feed the rates, the forecasts and the targets.',
       ppF1: 'MSN built in the period', ppF2: 'MSN planned in 2026 (year)', ppF3: 'products delivered in 2025', ppF4: 'NCs matched to the plan / all NCs',
       ppLines: 'By line', ppLinesS: 'Rate = NCs ÷ MSN built in the period. Target = 2025 rate − 25%; *: no 2025, 2026 rate − 25%.', ppProds: 'By product', ppProdsS: 'The production plan’s products, line by line.',
-      ppMonth: 'MSN planned, month by month', ppMonthS: '2026 production plan by line.', ppLight: 'Lighter: months to come (forecast).', ppTipV: '{v} MSN', ppPlanned: 'planned', connOnly: 'Connection errors per MSN: A330 and A350 only. Pick one of these lines, or all.', ciMsn: '{e} MSN', ciDot: 'rate (NCs per MSN)', ciLine: '95% range',
+      ppMonth: 'MSN planned, month by month', ppMonthS: '2026 production plan by line.', ppLight: 'Lighter: months to come (forecast).', ppTipV: '{v} MSN', ppPlanned: 'planned', connOnly: 'Connection errors per MSN: A330 and A350 only. Pick one of these lines, or all.', vqOnly: 'Root causes 2025 against 2026: A330 and A350 only. Pick one of these lines, or all.', ciMsn: '{e} MSN', ciDot: 'rate (NCs per MSN)', ciLine: '95% range',
       pinStatL: 'swaps with both pins written', pinAdjL: 'between two pins next to each other', pinRepL: 'pin pairs on more than one aircraft', pinNone: 'No swapped wires with both pins written in the selection.',
       pinAc1: '1 aircraft', pinAcN: '{n} aircraft', pinAc3: '3 aircraft or more', pinTip: 'Pins {a} ↔ {b}', pinNextY: 'two pins next to each other', pinNextN: 'pins apart',
       pinNo25: 'No 2025 comparison: the 2025 defect texts are not in the data.', pinCols: ['FIN', 'Pins', 'Next to each other', 'Aircraft'], pinY: 'yes', pinN: 'no', ppCurTip: '{p} counted as built at {d}, the rest planned', ppCurL: 'Running month ({m}): the share of its days gone at {d}, the rest lighter.',
@@ -3364,7 +3364,7 @@ function fto2FromTables(ncIn, defIn, ref, disIn) {
   // connection errors per MSN: A330 and A350 only (Mohammad, 20 Oct); A320's products are small parts counted one by one, its many units pull the rate down
   var CONN_LINES = { A330: 1, A350: 1 };
   function connOk(o) { return !!CONN_LINES[o.line]; }
-  function connNone(k) { if (GF.line && !CONN_LINES[GF.line]) { gSet(k, '<p class="empty">' + esc(S('connOnly')) + '</p>'); return true; } return false; }
+  function connNone(k, msg) { if (GF.line && !CONN_LINES[GF.line]) { gSet(k, '<p class="empty">' + esc(S(msg || 'connOnly')) + '</p>'); return true; } return false; }
   function pTrend(k, rows, fmt, unitTip, col, ref) {   // ref: { v, lab } a reference rate drawn dashed (2025)
     col = col || 'var(--s1)';
     if (rows.length < 2) { pEmpty(k); return; }
@@ -4310,8 +4310,8 @@ function fto2FromTables(ncIn, defIn, ref, disIn) {
     VX: { fr: ['Maîtrise statistique', 'NC par semaine, avec leurs limites', 'Limites calculées sur la variation habituelle d’une semaine à l’autre. Un point dehors signale un vrai changement.', 'NC par semaine'],
           en: ['Process control', 'NCs per week, with their limits', 'A dot outside the limits marks a real change; inside is normal variation.', 'NCs per week'] },
     VW: { fr: ['Répartition', 'Cent défauts', 'Chaque case : 1 % des défauts, par catégorie.', 'catégorie des défauts'], en: ['Breakdown', 'A hundred defects', 'Each square: 1% of defects, by category.', 'defect category'] },
-    VQ: { fr: ['2025 / 2026', 'Causes : 2025 contre 2026', 'Défauts par MSN, 10 premières causes de 2026, produits du plan de production.', 'causes · production MSN · livraisons 2025'],
-          en: ['2025 / 2026', 'Root causes: 2025 against 2026', 'Defects per MSN, the top 10 root causes of 2026, products of the production plan.', 'root causes · MSN output · 2025 deliveries'] },
+    VQ: { fr: ['2025 / 2026', 'Causes : 2025 contre 2026, A330 et A350', 'Défauts par MSN, 10 premières causes de 2026, produits du plan de production. Sans l’A320 (petites pièces comptées à l’unité) ni l’A400M.', 'causes · production MSN · livraisons 2025'],
+          en: ['2025 / 2026', 'Root causes: 2025 against 2026, A330 and A350', 'Defects per MSN, the top 10 root causes of 2026, products of the production plan. Without the A320 (small parts counted one by one) or the A400M.', 'root causes · MSN output · 2025 deliveries'] },
     VP: { fr: ['Taux', 'NC, défauts et coût par MSN, produit par produit', 'Un même ordre de produits dans les trois colonnes ; tiret : ensemble des produits.', 'production MSN · NC · défauts · coût'],
           en: ['Rates', 'NCs, defects and cost per MSN, product by product', 'The same product order in all three columns; tick: all products together.', 'MSN output · NCs · defects · cost'] },
     VF: { fr: ['Récurrence', 'Les FIN qui reviennent d’un avion à l’autre', 'Une colonne par avion (MSN), une ligne par FIN ; carré : défaut sur ce FIN. Ligne du filtre, sinon A350.', 'FIN lu par le parseur · MSN'],
@@ -4742,11 +4742,13 @@ function fto2FromTables(ncIn, defIn, ref, disIn) {
     gSet(k, svg(side ? Math.min(W0, gw + 384) : gw, Math.max(gw, side ? keys.length * 28 + 8 : 0), g, gT(k)), side ? '' : keys.map(function (c, i) { return sw(catFill(c), catLabel(c) + ' · ' + pct0(raw[i])); }).join(''));
   }
 
-  function v2Quarters(k) {   // 2025 against 2026, per MSN, the top 10 causes of 2026 (was the last two quarters; Mohammad, 20 Oct)
-    var R = y25Rca(), e26 = PD && PA ? pTot(function (o) { return o.EQ; }) : 0; if (!R || !e26) { pEmpty(k); return; }
+  function v2Quarters(k) {   // 2025 against 2026, per MSN, the top 10 causes of 2026 (was the last two quarters; Mohammad, 20 Oct); A330 and A350 only (21 Oct)
+    if (connNone(k, 'vqOnly')) return;
+    var keep = function (p) { return !!CONN_LINES[PD.line[p]]; };   // as the connection errors: A320's small parts counted one by one would pull the rate down
+    var R = y25Rca(), e26 = PD && PA ? sumA(P_().filter(function (o) { return o.EQ > 0 && connOk(o); }).map(function (o) { return o.EQ; })) : 0; if (!R || !e26) { pEmpty(k); return; }
     var a = {}, b = {}, tot = {}, per = 'perEq', qs = ['2025', '2026'], qn = function (q) { return q; };
-    PD.defs.forEach(function (d) { tot[d.rca] = (tot[d.rca] || 0) + 1; });
-    Object.keys(tot).forEach(function (c) { var q = y25Rate(R.filter(function (x) { return x.rca === c; }), function (x) { return x.d; }); a[c] = q ? q.r : 0; b[c] = tot[c] / e26; });
+    PD.defs.forEach(function (d) { if (keep(PD.ncs[d.n].p) && PA[PD.ncs[d.n].p].EQ > 0) tot[d.rca] = (tot[d.rca] || 0) + 1; });
+    Object.keys(tot).forEach(function (c) { var q = y25Rate(R.filter(function (x) { return x.rca === c; }), function (x) { return x.d; }, keep); a[c] = q ? q.r : 0; b[c] = tot[c] / e26; });
     var top = Object.keys(tot).sort(function (x, y) { return tot[y] - tot[x]; }).slice(0, 10), mx = 1e-9;
     top.forEach(function (r) { mx = Math.max(mx, a[r] || 0, b[r] || 0); });
     var W0 = gWd(k), H = 340, mt = 30, ph = H - mt - 14, xa = Math.min(260, W0 * 0.48), xb = W0 - 70, g = '';
