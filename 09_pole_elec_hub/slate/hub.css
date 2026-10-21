@@ -33,9 +33,9 @@ h1 span{display:block;color:var(--muted);font-weight:600}
 @keyframes run{to{stroke-dashoffset:-73}}
 @keyframes run2{to{stroke-dashoffset:-16}}
 
-/* all groups on one grid of four card columns; groups share a row while they fit, card rows have
-   equal heights (rows and places are set by the script). Every card has the same size and the
-   cards line up across the page. */
+/* all groups on one grid of card columns (eight on a wide screen, four below 1240 px); groups share
+   a row while they fit, card rows have equal heights (rows and places are set by the script). Every
+   card has the same size and the cards line up across the page. */
 .groups{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
 .grp,.cards{display:contents}
 .g-hd{display:flex;align-items:center;gap:12px;margin:0 0 -4px;grid-row:var(--hr);grid-column:var(--hc);min-width:0}
@@ -77,6 +77,23 @@ h1 span{display:block;color:var(--muted);font-weight:600}
 .open svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;transition:transform .18s}
 .card.link:hover .open svg,.card.link:focus-within .open svg{transform:translateX(4px)}
 .nolink .open,.soon .open{color:var(--faint);font:600 12.5px/1 Consolas,"Cascadia Mono",monospace;letter-spacing:.02em}
+/* eight per line: compact cards */
+.groups.dense{column-gap:12px}
+.dense .g-hd{align-self:end;gap:8px}
+.dense .g-hd h2{font-size:16px}
+.grp.one .rule{display:none}
+.dense .card{padding:12px 14px}
+.dense .c-top{margin-left:-14px}
+.dense .wire{width:18px}
+.dense .ib{width:34px;height:34px;border-radius:10px}
+.dense .ib svg{width:19px;height:19px}
+.dense .soon-b{font-size:10px;padding:4px 6px 3px}
+.dense .card h3{margin-top:7px;font-size:16px}
+.dense .card p{font-size:13px;line-height:1.35}
+.dense .links{gap:5px}
+.dense .guide{font-size:12px;padding:4px 7px 3px}
+.dense .open{font-size:13px}
+.dense .nolink .open,.dense .soon .open{font-size:11.5px}
 .err{padding:18px 20px;border-radius:12px;border:1px solid #d23f3f;color:#d23f3f;background:var(--surface)}
 
 @media (prefers-reduced-motion:reduce){.hw .p{display:none}.card,.card .open svg{transition:none}.card.link:hover,.card.link:focus-within{transform:none}}

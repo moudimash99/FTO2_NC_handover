@@ -2,9 +2,9 @@
 
 New home page for the Pôle Élec quality tools, to replace the current "Pole Elec Quality HUB" Slate app.
 
-## Chosen design: template 5 (20 Oct), on a four-column grid (21 Oct)
+## Chosen design: template 5 (20 Oct), two rows of eight cards (21 Oct)
 
-The page to use is `hub/pole_elec_hub.html` (previews: `screenshots/hub_final.png`, `hub_final_hover.png` with one tool hovered, `hub_final_phone.png`). It keeps the template 5 look, with the harness drawing in the header, and puts the tools on one grid of four cards per row. All cards have the same size and line up across the page (the script sets their rows and places on the grid), so nothing is stacked on one side. A sober corporate restyle without the drawing was tried on 21 Oct and dropped (commit `b02ac35` in the history). The page is light only, so it matches the Slate app whatever the Windows theme. It is one self-contained file, HTML, CSS and JavaScript only: no other file, no external font, no library. Everything on it comes from the `HUB_CONFIG` block at the top of its `<script>`, the only part to edit:
+The page to use is `hub/pole_elec_hub.html` (previews: `screenshots/hub_final.png`, `hub_final_hover.png` with one tool hovered, `hub_final_phone.png`). It keeps the template 5 look, with the harness drawing in the header, and puts the tools on one grid of eight compact cards per row (four below 1240 px wide). All cards have the same size and line up across the page (the script sets their rows and places on the grid), so nothing is stacked on one side. A sober corporate restyle without the drawing was tried on 21 Oct and dropped (commit `b02ac35` in the history). The page is light only, so it matches the Slate app whatever the Windows theme. It is one self-contained file, HTML, CSS and JavaScript only: no other file, no external font, no library. Everything on it comes from the `HUB_CONFIG` block at the top of its `<script>`, the only part to edit:
 
 - links, names, short descriptions, icons and colours are all there; `links:` gives a tool several buttons; a link still set to `A_COMPLETER` shows "Lien à compléter" and cannot be clicked;
 - `soon: true` shows a tool as "Bientôt disponible" (not clickable); `guide:` adds a "Guide utilisateur" link;
@@ -22,7 +22,7 @@ Content: Mohammad's own list of 21 Oct (links, groups and the tools with several
 
 A tool with `links` shows one button per link instead of "Ouvrir"; a tool with a single `link` opens from anywhere on its card.
 
-The page has four cards per row, all the same size, and groups share a row while they fit: Production & suivi and Assurance qualité together, then one group per row. At 1440 × 900 the last row needs a short scroll. Below 1000 px wide the groups go one per row with two cards per row, and on a phone the cards stack.
+On a wide screen the page has eight cards per row, all the same size, and groups share a row while they fit: Production & suivi, Assurance qualité and Non-conformités (1 + 3 + 4) on the first row, Surveillance & amélioration and Correctif (4 + 4) on the second. Both rows split after the fourth card, so the page gets a wider gap there and reads as a left half and a right half. Everything is visible at once on a 1440 × 900 screen. Between 1000 and 1240 px wide there are four cards per row; below 1000 px the groups go one per row with two cards per row, and on a phone the cards stack.
 
 ## The five templates (design round of 20 Oct)
 
