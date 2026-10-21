@@ -1,5 +1,6 @@
 import os
 import re
+import time
 import numpy as np
 import pandas as pd
 from foundry.transforms import Dataset, Column
@@ -9,36 +10,44 @@ from foundry.transforms import Dataset, Column
 # Tests the "REC written" rule (writer department) on the Skywise non_conformity dataset.
 # Run it where the pipeline notebook runs (same "non_conformity" dataset): paste it in a cell,
 # or upload it next to the notebook and run `%run rec_rule_test.py`. Read-only: it writes nothing to Skywise.
+# Every filter runs in Skywise: 4 queries, a few thousand rows back. FULL_SCAN = True adds the
+# all-Airbus scan (slow: ~800,000 rows since January) for TEST 4 and the cross-plant part of TEST 5.
 # Each test prints PASS or REVIEW; rows to read are saved as CSV in OUT_DIR.
 #   TEST 1  every NC in the REC tracker is tagged (recall)
-#   TEST 2  every NC tagged at a FAL plant is REC (precision; the part the exports could not show)
-#   TEST 3  REC-looking NCs the rule leaves out (REC inspector IDs, writers whose department moved)
-#   TEST 4  hits of the old rules (42RC, RECX/SUBR, workflow regex) against the new one, all plants
+#   TEST 2  every NC tagged at a FAL plant is REC: one line per writer to review (precision)
+#   TEST 3  REC-looking NCs the rule leaves out (REC inspectors, writers whose department moved)
+#   TEST 4  old rules (42RC, RECX/SUBR, workflow regex) against the new one, all plants (FULL_SCAN only)
 #   TEST 5  what changes for the pipeline tag and scope
-# Expected values come from the exports analysed on 20 Oct (07_scripts/rec_dept_rule.py).
+# Skywise run of 21 Oct (five departments): TEST 1 115/115; TEST 2 2,818 tagged at FAL plants, of which
+# 2,697 by OSOOM/DERICHEBOURG (a FAL department) -> OSOOM now counts only at a 42RC station.
 
 # %% Configuration
 START = "2026-01-01 00:00:00"   # same window as the pipeline
 OUT_DIR = "rec_test_output"
-CHUNK = 1000                     # NC numbers per isin() query
+CHUNK = 5000                     # NC numbers per isin() query (FULL_SCAN only)
+FULL_SCAN = False                # True: also run TEST 4 and the cross-plant part of TEST 5 (slow)
 
-REC_DEPTS = [
+REC_DEPTS = [                             # FTO2 quality departments: REC when they write at a FAL plant
     "QRT/DERICHEBOURG AERONAUTICS",
     "QR/DERICHEBOURG AERONAUTICS",
-    "OSOOM/DERICHEBOURG AERONAUTICS",
-    "QLOT/DERICHEBOURG AERONAUTICS",
     "QLOT1/AIRBUS OPERATIONS SAS",
 ]
+REC_DEPTS_AT_REC_STATION = [              # FAL departments that also hold REC inspectors: REC only at a 42RC station
+    "OSOOM/DERICHEBOURG AERONAUTICS",     # 21 Oct: 2,697 FAL NCs since January; its 26 tracker NCs are all at 42RC
+]
+ALL_REC_DEPTS = REC_DEPTS + REC_DEPTS_AT_REC_STATION
+REC_STATION = "42RC"
+KNOWN_REC_STATIONS = ["V42RC1", "F42RC1", "F42RC2", "D42RC1"]   # TEST 3 reads these; it warns about new 42RC codes
 REC_WORKFLOW = r"^(REC-|A30-REJ-PVU|RJ-PVU-REC)"
+CURRENT_REGEX = r"\bREC\b|-CRE|-PNC|A30-REJ-PVU2"                 # today's pipeline tag
 
 # Cross-checks only (the rule does not use them)
 REC_INSPECTOR_IDS = ["ST32873", "GALIZ81C", "RGAGTM5M", "PMAR3D30", "CLOP5B4I", "TO74350"]
 REC_HEADER_ORGS = [                       # writer org as printed in the long text when the NC was written
-    "QRT/DERICHEBOURG AERONAUTICS", "QR/DERICHEBOURG AERONAUTICS", "OSOOM/DERICHEBOURG AERONAUTICS",
-    "QLOT/DERICHEBOURG AERONAUTICS", "QLOT1/AIRBUS OPERATIONS SAS", "QRTE/AIRBUS OPERATIONS SAS",
-    "QRT3E/AIRBUS OPERATIONS SAS", "Q1AF/DERICHEBOURG AERONAUTICS",
-]
-KNOWN_WRITERS = {                         # writers seen in the exports who are in REC_DEPTS but are not REC
+    "QRT/DERICHEBOURG AERONAUTICS", "QR/DERICHEBOURG AERONAUTICS", "QLOT1/AIRBUS OPERATIONS SAS",
+    "QRTE/AIRBUS OPERATIONS SAS", "QRT3E/AIRBUS OPERATIONS SAS", "Q1AF/DERICHEBOURG AERONAUTICS",
+]                                         # + OSOOM/DERICHEBOURG AERONAUTICS at a 42RC station
+KNOWN_WRITERS = {                         # writers in the REC departments who are not REC (seen in the exports)
     "MBOUKHY2": "IEVB inspector (MSN 700/701)", "MELMVYRS": "IEVB inspector (MSN 700/701)",
     "CBOB0N1L": "IEVB inspector (MSN 700/701)", "SSEL1BWL": "FTO2 VU final rework",
     "ST10074": "FTO2 fibre optic lab", "TO41873": "FTO2 quality, A330 VU follow-up NCs",
@@ -70,36 +79,27 @@ LIGHT_COLS = [
     "liability", "status_open_closed", "decision_status", "creation_time", "programme", "msn",
     "description_short",
 ]
-TEXT_COLS = ["notification_no_leading_zeros", "description_long_text"]
+TEXT_COLS = LIGHT_COLS + ["description_long_text"]
 os.makedirs(OUT_DIR, exist_ok=True)
+pd.set_option("display.width", 200)
+pd.set_option("display.max_colwidth", 45)
 results = []
+T0 = time.time()
 
 
 # %% The rule
 def rec_written(df):
-    """True when the NC was written by REC: writer department in REC_DEPTS and either raised
-    outside plant FTO2, or inside FTO2 on a REC workflow (IEVB work centres excluded)."""
-    dept = df["user_department"].isin(REC_DEPTS)
+    """True when the NC was written by REC: writer department in REC_DEPTS (OSOOM only at a 42RC
+    station) and either raised outside plant FTO2, or inside FTO2 on a REC workflow (IEVB excluded)."""
+    at_rec_station = df["station"].str.contains(REC_STATION)
+    dept = (df["user_department"].isin(REC_DEPTS)
+            | (df["user_department"].isin(REC_DEPTS_AT_REC_STATION) & at_rec_station))
     wf = df["workflow_list"].str.match(REC_WORKFLOW)
     ievb = df["work_ctr"].str.startswith("IEVB")
     return dept & ((df["plant"] != "FTO2") | (wf & ~ievb))
 
 
 # %% Helpers
-def fetch(condition, cols):
-    return (Dataset.get("non_conformity")
-            .where(condition)
-            .select(*cols)
-            .read_table(format="pandas"))
-
-
-def fetch_ids(ids, cols):
-    ids = sorted({str(i) for i in ids})
-    parts = [fetch(Column.get("notification_no_leading_zeros").isin(ids[i:i + CHUNK]), cols)
-             for i in range(0, len(ids), CHUNK)]
-    return pd.concat(parts, ignore_index=True) if parts else pd.DataFrame(columns=cols)
-
-
 def as_text(v):
     if isinstance(v, (list, tuple, np.ndarray)):
         return ",".join(str(x) for x in v)
@@ -112,14 +112,31 @@ def as_text(v):
 
 
 def prep(df):
+    """Strings everywhere (vectorised; only the liability array is mapped row by row)."""
     df = df.copy()
     for c in df.columns:
-        df[c] = df[c].map(as_text).str.strip()
+        if c == "liability":
+            df[c] = df[c].map(as_text)
+        elif c != "creation_time":
+            df[c] = df[c].where(df[c].notna(), "").astype(str).str.strip()
     if "creation_time" in df:
-        df["created"] = pd.to_datetime(df["creation_time"].str[:19].str.replace("T", " "), errors="coerce")
+        df["created"] = pd.to_datetime(df["creation_time"].astype(str).str[:19].str.replace("T", " "),
+                                       errors="coerce")
     if "status_open_closed" in df:
         df["deleted"] = df["status_open_closed"].str.contains("deleted", case=False)
-    return df.drop_duplicates("notification_no_leading_zeros").reset_index(drop=True)
+    df = df.drop_duplicates("notification_no_leading_zeros").reset_index(drop=True)
+    df["rec_written"] = rec_written(df)
+    return df
+
+
+def fetch(condition, cols, label):
+    t = time.time()
+    df = (Dataset.get("non_conformity")
+          .where(condition)
+          .select(*cols)
+          .read_table(format="pandas"))
+    print(f"  {label}: {len(df)} rows in {time.time() - t:.0f} s")
+    return prep(df)
 
 
 HEADER = re.compile(r"\d{2}\.\d{2}\.\d{4}\s+\d{2}:\d{2}:\d{2}\s+\w+\s+\(\s*(\S+)\s+([^)]*?)\s*\)")
@@ -135,16 +152,20 @@ def creation_line(text):
 
 
 def add_writer(df):
-    """Writer ID and org from the creation line of the long text ('' when there is none; masked IDs show as #UID~)."""
-    if df.empty:
-        return df.assign(writer_id="", writer_org="", text_start="")
-    txt = prep(fetch_ids(df["notification_no_leading_zeros"], TEXT_COLS))
-    txt = txt.set_index("notification_no_leading_zeros")["description_long_text"]
-    t = df["notification_no_leading_zeros"].map(txt).fillna("")
+    """Writer ID and org from the creation line ('' when there is none; masked IDs show as #UID~)."""
+    t = df["description_long_text"]
     first = t.map(creation_line)
-    return df.assign(writer_id=first.map(lambda m: m.group(1) if m else ""),
-                     writer_org=first.map(lambda m: m.group(2) if m else ""),
-                     text_start=t.str.replace(r"\s+", " ", regex=True).str[:300])
+    df = df.assign(writer_id=first.map(lambda m: m.group(1) if m else ""),
+                   writer_org=first.map(lambda m: m.group(2) if m else ""),
+                   text_start=t.str.replace(r"\s+", " ", regex=True).str[:300])
+    df["writer"] = np.where(df.writer_id.eq(""), "(no creation line)", df.writer_id)
+    df["kind"] = np.select(
+        [df.writer_id.isin(REC_INSPECTOR_IDS), df.writer_id.isin(list(KNOWN_WRITERS)), df.writer_id.eq("#UID~"),
+         df.writer_id.eq("")],
+        ["REC inspector", "known non-REC: " + df.writer_id.map(KNOWN_WRITERS).fillna(""), "masked",
+         "no creation line"],
+        default="NEW - who is this?")
+    return df
 
 
 def verdict(name, ok, detail):
@@ -158,132 +179,145 @@ def save(df, name):
     print(f"    saved {len(df)} rows to {path}")
 
 
-# %% Fetch: every NC since START, light columns (same split as the pipeline)
-fto2_plant_df = fetch((Column.get("plant") == "FTO2") & (Column.get("creation_time") >= START), LIGHT_COLS)
-other_plant_df = fetch((Column.get("plant") != "FTO2") & (Column.get("creation_time") >= START), LIGHT_COLS)
-nc = prep(pd.concat([fto2_plant_df, other_plant_df], ignore_index=True))
-nc["rec_written"] = rec_written(nc)
-print(f"NCs since {START}: {len(nc)} (plant FTO2 {len(fto2_plant_df)}, other plants {len(other_plant_df)})")
-print(f"Tagged REC written: {nc.rec_written.sum()}")
+# %% Fetch: filters run in Skywise, only the rows the tests use come back
+print(f"Fetching NCs since {START}:")
+since = Column.get("creation_time") >= START
+cand = add_writer(fetch(Column.get("user_department").isin(ALL_REC_DEPTS) & since, TEXT_COLS,
+                        "written by the REC departments"))
+recst = add_writer(fetch(Column.get("station").isin(KNOWN_REC_STATIONS) & since, TEXT_COLS,
+                         "at the REC stations"))
+trk = add_writer(fetch(Column.get("notification_no_leading_zeros").isin(TRACKER_NCS + TRACKER_NOT_REC), TEXT_COLS,
+                       "tracker NCs (all dates)"))
+fto2 = fetch((Column.get("plant") == "FTO2") & since, LIGHT_COLS, "plant FTO2")
+print(f"Tagged REC written since {START}: {cand.rec_written.sum()} ({time.time() - T0:.0f} s so far)")
 
 # %% TEST 1 — recall on the REC tracker (all dates)
 print("\n" + "=" * 70 + "\nTEST 1 — REC tracker: every NC REC wrote must be tagged")
-trk = prep(fetch_ids(TRACKER_NCS + TRACKER_NOT_REC, LIGHT_COLS))
-trk["rec_written"] = rec_written(trk)
-trk = add_writer(trk)
 is_rec = trk["notification_no_leading_zeros"].isin(TRACKER_NCS)
 not_found = sorted(set(TRACKER_NCS) - set(trk["notification_no_leading_zeros"]))
 missed = trk[is_rec & ~trk.rec_written]
 wrong = trk[~is_rec & trk.rec_written]
-ids_hit = (is_rec & trk.writer_id.isin(REC_INSPECTOR_IDS)).sum()
 print(f"Found in Skywise: {is_rec.sum()}/{len(TRACKER_NCS)} | caught: {(is_rec & trk.rec_written).sum()}"
       f" | missed: {len(missed)} | 217022710 tagged: {len(wrong)}")
-print(f"For comparison, the 6 inspector IDs find {ids_hit}/{is_rec.sum()} (writer masked #UID~ on "
-      f"{(is_rec & trk.writer_id.eq('#UID~')).sum()}, no creation line on {(is_rec & trk.writer_id.eq('')).sum()})")
+print(f"For comparison, the 6 inspector IDs find {(is_rec & trk.kind.eq('REC inspector')).sum()}/{is_rec.sum()} "
+      f"(masked #UID~ on {(is_rec & trk.kind.eq('masked')).sum()}, no creation line on "
+      f"{(is_rec & trk.kind.eq('no creation line')).sum()})")
 if not_found:
     print("Not found in Skywise:", not_found)
+cols = ["notification_no_leading_zeros", "created", "plant", "station", "workflow_list", "user_department",
+        "writer", "kind", "description_short"]
+print(pd.concat([missed, wrong])[cols].to_string(index=False))
 save(pd.concat([missed, wrong]), "test1_tracker_missed.csv")
 verdict("TEST 1 tracker recall", len(missed) == 0 and len(wrong) == 0 and not not_found,
         f"{(is_rec & trk.rec_written).sum()}/{len(TRACKER_NCS)} caught (expected 115/115)")
 
-# %% TEST 2 — precision at FAL plants (cannot be checked from the exports)
+# %% TEST 2 — precision at FAL plants: one line per writer to review
 print("\n" + "=" * 70 + "\nTEST 2 — NCs tagged REC outside plant FTO2: are they all REC?")
-fal = nc[nc.rec_written & (nc.plant != "FTO2")].copy()
-print(f"Tagged REC outside plant FTO2: {len(fal)} ({fal.deleted.sum()} deleted). "
-      f"Exports: at least 84 (11 deleted) since 2026-01-01")
+fal = cand[cand.rec_written & (cand.plant != "FTO2")].copy()
+fal["in_tracker"] = fal["notification_no_leading_zeros"].isin(TRACKER_NCS)
+fal["at_42RC"] = fal.station.str.contains(REC_STATION)
+print(f"Tagged REC outside plant FTO2: {len(fal)} ({fal.deleted.sum()} deleted). Exports: at least 84 (11 deleted). "
+      f"21 Oct before the OSOOM fix: QRT 45, QR 34, QLOT1 38")
 if len(fal):
     print(pd.crosstab(fal.user_department, fal.plant, margins=True).to_string())
-    print("\nBy month (a department dropping to 0 can mean a rename):")
-    print(pd.crosstab(fal.created.dt.to_period("M"), fal.user_department).to_string())
-fal = add_writer(fal)
-fal["in_tracker"] = fal["notification_no_leading_zeros"].isin(TRACKER_NCS)
-fal["rec_signature"] = fal.station.str.contains("42RC") | fal.workflow_list.str.startswith("REC-")
-fal["writer_note"] = fal.writer_id.map(KNOWN_WRITERS).fillna("")
-print("\nWriter on the creation line (REC inspector IDs, masked, no creation line, others):")
-print(fal.assign(kind=np.where(fal.writer_id.isin(REC_INSPECTOR_IDS), "REC inspector",
-                       np.where(fal.writer_id.eq("#UID~"), "masked",
-                                np.where(fal.writer_id.eq(""), "no creation line", fal.writer_id))))
-      .groupby("kind").size().sort_values(ascending=False).head(25).to_string())
-to_read = fal[~fal.in_tracker & (~fal.rec_signature | fal.writer_note.ne("")
-                                 | ~fal.writer_id.isin(REC_INSPECTOR_IDS + ["#UID~", ""]))]
+osoom = cand[cand.user_department.isin(REC_DEPTS_AT_REC_STATION) & (cand.plant != "FTO2")]
+print(f"\nOSOOM at FAL plants: {len(osoom)} NCs, {osoom.station.str.contains(REC_STATION).sum()} at a 42RC station "
+      f"(tagged). Writers of the tagged ones:")
+print(osoom[osoom.station.str.contains(REC_STATION)].groupby(["writer", "kind"]).size()
+      .sort_values(ascending=False).head(15).to_string())
+writers = (fal.groupby(["user_department", "writer", "kind"])
+           .agg(ncs=("notification_no_leading_zeros", "size"), at_42RC=("at_42RC", "sum"),
+                in_tracker=("in_tracker", "sum"), first=("created", "min"), last=("created", "max"),
+                examples=("description_short", lambda s: " | ".join(s.head(3))))
+           .reset_index().sort_values(["kind", "ncs"], ascending=[True, False]))
+writers["dept"] = writers.user_department.str.split("/").str[0]
+print("\nWriters of the NCs tagged at FAL plants (review the 'NEW' and 'known non-REC' lines):")
+print(writers[["dept", "writer", "kind", "ncs", "at_42RC", "in_tracker", "examples"]].to_string(index=False))
+to_read = fal[~fal.in_tracker & ~fal.kind.eq("REC inspector")].sort_values(["user_department", "writer"])
 cols = ["notification_no_leading_zeros", "created", "plant", "station", "workflow_list", "decision_status",
-        "user_department", "writer_id", "writer_org", "writer_note", "description_short", "text_start"]
-print(f"\nRows to read (not in tracker, and no 42RC/REC- signature or an unknown/known non-REC writer): "
-      f"{len(to_read)}")
-print(to_read[cols[:-1]].head(40).to_string())
-save(fal[cols + ["in_tracker", "rec_signature"]], "test2_fal_all_tagged.csv")
+        "user_department", "writer", "writer_org", "kind", "description_short", "text_start"]
+print(f"\nRows not in the tracker and not by a known REC inspector: {len(to_read)} from {to_read.writer.nunique()} "
+      f"writers (test2_fal_rows_to_read.csv)")
+save(fal[cols + ["in_tracker", "at_42RC"]], "test2_fal_all_tagged.csv")
+save(writers.drop(columns="dept"), "test2_writers.csv")
 save(to_read[cols], "test2_fal_rows_to_read.csv")
-verdict("TEST 2 FAL-plant precision", len(to_read) == 0,
-        f"{len(fal)} tagged, {len(to_read)} rows to read by hand (each non-REC one is a false positive)")
+new_or_bad = fal.kind.str.startswith(("NEW", "known non-REC"))
+verdict("TEST 2 FAL-plant precision", not new_or_bad.any(),
+        f"{len(fal)} tagged; {new_or_bad.sum()} NCs by {fal[new_or_bad].writer.nunique()} new or non-REC writers; "
+        f"{len(to_read)} not in tracker and not by a REC inspector")
 
-# %% TEST 3 — REC-looking NCs the rule does not tag (all plants)
-print("\n" + "=" * 70 + "\nTEST 3 — NCs at REC stations / REC work centres / REC workflows not tagged")
-ctx = (nc.station.str.contains("42RC") | nc.work_ctr.str.match(r"^(RECX|SUBR)")
-       | nc.workflow_list.str.startswith("REC-"))
-untagged = nc[ctx & ~nc.rec_written].copy()
-print(f"Untagged NCs in a REC context: {len(untagged)} (expected: written by FAL or FTO2 methods for REC to fix)")
-print(untagged.user_department.value_counts().head(25).to_string())
-own = untagged[untagged.user_department.isin(REC_DEPTS)]
-print(f"\nOf these, written by REC_DEPTS and left out on purpose (plant FTO2 with an FTO2 workflow, or IEVB): "
-      f"{len(own)}")
-print(own.groupby(["workflow_list", own.work_ctr.str[:4].rename("work_ctr")]).size().to_string())
-untagged = add_writer(untagged)
-by_inspector = untagged[untagged.writer_id.isin(REC_INSPECTOR_IDS)]
-by_rec_org = untagged[untagged.writer_org.isin(REC_HEADER_ORGS) & ~untagged.user_department.isin(REC_DEPTS)]
+# %% TEST 3 — REC-looking NCs the rule does not tag
+print("\n" + "=" * 70 + "\nTEST 3 — REC NCs the rule leaves out")
+untagged = recst[~recst.rec_written]
+print(f"NCs at the REC stations {KNOWN_REC_STATIONS} not tagged: {len(untagged)} "
+      f"(expected: written by FAL or FTO2 methods for REC to fix). By department:")
+print(untagged.user_department.value_counts().head(20).to_string())
+by_inspector = pd.concat([untagged, cand[~cand.rec_written]]).drop_duplicates("notification_no_leading_zeros")
+by_inspector = by_inspector[by_inspector.kind.eq("REC inspector")]
+rec_org = (untagged.writer_org.isin(REC_HEADER_ORGS) | untagged.writer_org.isin(REC_DEPTS_AT_REC_STATION))
+by_rec_org = untagged[rec_org & ~untagged.user_department.isin(ALL_REC_DEPTS)]
+new_st = sorted(set(cand.station[cand.station.str.contains(REC_STATION)]) - set(KNOWN_REC_STATIONS))
 cols = ["notification_no_leading_zeros", "created", "plant", "station", "work_ctr", "workflow_list",
-        "user_department", "writer_id", "writer_org", "description_short", "text_start"]
-print(f"\nWritten by a REC inspector ID: {len(by_inspector)} | written under a REC org but department now "
-      f"elsewhere (moved or renamed): {len(by_rec_org)}")
-print(pd.concat([by_inspector, by_rec_org])[cols[:-1]].drop_duplicates().head(40).to_string())
-dept_new = (untagged[untagged.user_department.str.contains("DERICHEBOURG|EXPLEO", case=False)
-                     | untagged.user_department.str.match(r"^Q")]
-            .groupby("user_department").size().sort_values(ascending=False))
-print("\nQuality / subcontractor departments in that list (read a few rows if one looks like REC):")
-print(dept_new.head(20).to_string())
-save(untagged[cols], "test3_rec_context_untagged.csv")
+        "user_department", "writer", "writer_org", "description_short", "text_start"]
+print(f"\nNot tagged but written by a REC inspector: {len(by_inspector)} | at a REC station, written under a REC org "
+      f"by someone now in another department: {len(by_rec_org)}")
+print(pd.concat([by_inspector, by_rec_org])[cols[:-1]].drop_duplicates().head(40).to_string(index=False))
+if new_st:
+    print(f"42RC stations used by the REC departments but missing from KNOWN_REC_STATIONS (add them): {new_st}")
+save(untagged[cols], "test3_rec_station_untagged.csv")
 save(pd.concat([by_inspector, by_rec_org])[cols].drop_duplicates(), "test3_possible_missed.csv")
-verdict("TEST 3 missed REC NCs", len(by_inspector) + len(by_rec_org) == 0,
-        f"{len(by_inspector)} by REC inspector IDs, {len(by_rec_org)} under a REC org with another department now")
+verdict("TEST 3 missed REC NCs", len(by_inspector) + len(by_rec_org) == 0 and not new_st,
+        f"{len(by_inspector)} by REC inspectors, {len(by_rec_org)} under a REC org with another department now, "
+        f"{len(new_st)} new 42RC stations")
 
-# %% TEST 4 — old rules against the new one, all plants
+# %% TEST 4 — old rules against the new one, all plants (FULL_SCAN only)
 print("\n" + "=" * 70 + "\nTEST 4 — how general each rule is (all NCs since START)")
-rules = {
-    "station 42RC": nc.station.str.contains("42RC"),
-    "work_ctr RECX/SUBR": nc.work_ctr.str.match(r"^(RECX|SUBR)"),
-    "current workflow regex": nc.workflow_list.str.contains(r"\bREC\b|-CRE|-PNC|A30-REJ-PVU2", case=False),
-    "writer department (new)": nc.rec_written,
-}
-rec_dept = nc.user_department.isin(REC_DEPTS)
-table = pd.DataFrame([{"rule": k, "hits": int(m.sum()), "written by REC depts": int((m & rec_dept).sum()),
-                       "written by others": int((m & ~rec_dept).sum()),
-                       "outside plant FTO2": int((m & (nc.plant != "FTO2")).sum())}
-                      for k, m in rules.items()])
-print(table.to_string(index=False))
-save(table, "test4_rule_comparison.csv")
-verdict("TEST 4 rule comparison", True, "information only (see table)")
+if FULL_SCAN:
+    nc = pd.concat([fto2, fetch((Column.get("plant") != "FTO2") & since, LIGHT_COLS, "other plants (full scan)")],
+                   ignore_index=True)
+    rules = {
+        "station 42RC": nc.station.str.contains(REC_STATION),
+        "work_ctr RECX/SUBR": nc.work_ctr.str.match(r"^(RECX|SUBR)"),
+        "current workflow regex": nc.workflow_list.str.contains(CURRENT_REGEX, case=False),
+        "writer department (new)": nc.rec_written,
+    }
+    rec_dept = nc.user_department.isin(ALL_REC_DEPTS)
+    table = pd.DataFrame([{"rule": k, "hits": int(m.sum()), "written by REC depts": int((m & rec_dept).sum()),
+                           "written by others": int((m & ~rec_dept).sum()),
+                           "outside plant FTO2": int((m & (nc.plant != "FTO2")).sum())} for k, m in rules.items()])
+    print(table.to_string(index=False))
+    print("42RC station codes:", nc.station[rules["station 42RC"]].value_counts().to_dict())
+    save(table, "test4_rule_comparison.csv")
+    verdict("TEST 4 rule comparison", True, "information only (see table)")
+else:
+    print("Skipped (FULL_SCAN = False). 21 Oct: 42RC 396 hits, 263 written by others; RECX/SUBR 36; "
+          "current regex 35,866 across Airbus.")
 
 # %% TEST 5 — what changes for the pipeline
 print("\n" + "=" * 70 + "\nTEST 5 — changes against the current pipeline tag")
-fto2_liable = nc.liability.str.contains(r"\bFTO2\b")
-in_scope = (nc.plant == "FTO2") | fto2_liable
-current = in_scope & rules["current workflow regex"]
-new_scope = nc.rec_written & ~in_scope
-follow_up = nc.rec_written & (nc.plant == "FTO2") & nc.workflow_list.str.match(r"^(A30-REJ-PVU|RJ-PVU-REC)")
-print(f"Current pipeline scope: {in_scope.sum()} NCs, tagged REC today: {current.sum()}")
-print(f"New rule inside that scope: {(in_scope & nc.rec_written).sum()} | REC today, not REC now: "
-      f"{(current & ~nc.rec_written).sum()} | REC now, not REC today: {(in_scope & nc.rec_written & ~current).sum()}")
-print("REC today, not REC now — by writer department (FAL / methods NCs sent to REC):")
-print(nc[current & ~nc.rec_written].user_department.value_counts().head(15).to_string())
-print(f"\nREC NCs the pipeline does not fetch today (plant not FTO2 and not FTO2-liable): {new_scope.sum()}")
-print(nc[new_scope].plant.value_counts().to_string())
-print(f"\nDecision pending — A330 VU follow-up NCs (plant FTO2, A30-REJ-PVU / RJ-PVU-REC): {follow_up.sum()}")
-save(nc[current ^ (in_scope & nc.rec_written)], "test5_tag_changes.csv")
-verdict("TEST 5 pipeline changes", (in_scope & nc.rec_written & ~current).sum() == 0,
-        f"{(current & ~nc.rec_written).sum()} lose REC, {(in_scope & nc.rec_written & ~current).sum()} gain REC "
-        f"in scope, {new_scope.sum()} new REC NCs outside scope")
+current = fto2.workflow_list.str.contains(CURRENT_REGEX, case=False)
+print(f"Plant FTO2 since START: {len(fto2)} NCs | REC today: {current.sum()} | REC with the new rule: "
+      f"{fto2.rec_written.sum()} | lose REC: {(current & ~fto2.rec_written).sum()} | gain REC: "
+      f"{(fto2.rec_written & ~current).sum()}")
+print("Plant FTO2, REC today but not now — by writer department:")
+print(fto2[current & ~fto2.rec_written].user_department.value_counts().head(12).to_string())
+follow_up = fto2.rec_written & fto2.workflow_list.str.match(r"^(A30-REJ-PVU|RJ-PVU-REC)")
+print(f"Decision pending — A330 VU follow-up NCs (plant FTO2, A30-REJ-PVU / RJ-PVU-REC): {follow_up.sum()}")
+outside = fal[~fal.liability.str.contains(r"\bFTO2\b")]
+print(f"\nREC NCs the pipeline does not fetch today (plant not FTO2, not FTO2-liable): {len(outside)}")
+print(outside.plant.value_counts().to_string())
+if FULL_SCAN:
+    cross = nc[(nc.plant != "FTO2") & nc.liability.str.contains(r"\bFTO2\b")]
+    cur_x = cross.workflow_list.str.contains(CURRENT_REGEX, case=False)
+    print(f"FTO2-liable NCs at other plants: {len(cross)} | REC today: {cur_x.sum()} | lose REC: "
+          f"{(cur_x & ~cross.rec_written).sum()} | gain REC: {(cross.rec_written & ~cur_x).sum()}")
+save(fto2[current ^ fto2.rec_written], "test5_tag_changes_plant_fto2.csv")
+verdict("TEST 5 pipeline changes", (fto2.rec_written & ~current).sum() == 0,
+        f"plant FTO2: {(current & ~fto2.rec_written).sum()} lose REC, {(fto2.rec_written & ~current).sum()} gain; "
+        f"{len(outside)} REC NCs outside today's scope")
 
 # %% Summary
 print("\n" + "=" * 70 + "\nSUMMARY")
 for name, status, detail in results:
     print(f"{status:7} {name}: {detail}")
-print(f"\nCSV files in ./{OUT_DIR}/")
+print(f"\nCSV files in ./{OUT_DIR}/ — total {time.time() - T0:.0f} s")
