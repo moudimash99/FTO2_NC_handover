@@ -208,6 +208,7 @@ Deliverable: Docs "REC NC Tagging – Findings".
 - `MCROIP8V` is not REC (only ever OLMEM/DAHER, decision maker; picked up when the creation line is missing). 217022710 is a FAL NC REC enriched.
 - `user_department` is the writer's **current** department (TO74350's 2025 NCs show QLOT1; headers show QRT3E → QRTE → QLOT1, renamed July 2026). Someone leaving REC changes their past NCs: store the flag at first run. Department list needs a check after reorgs or a new subcontractor.
 - Not verifiable from our files: NCs by these departments at FAL plants that are not FTO2-liable. In the notebook, `other_plant_df` filtered on the five departments should give ≥ 84 rows since 1 Jan 2026 (11 deleted), only 7 of them neither at 42RC nor on a `REC-` workflow (PNCs from REC interventions). Any other row = read it.
+- Test for Skywise (21 Oct): `07_scripts/rec_rule_test.py`, run where the pipeline notebook runs. Tests: 1 tracker recall (115/115), 2 FAL-plant rows to read, 3 REC-looking NCs left out, 4 old rules vs new on all plants, 5 changes to the pipeline tag and scope. On the exports (offline stand-in `07_scripts/rec_test_local/`): all PASS; 76 NCs lose REC in today's scope, none gain, 80 REC NCs outside today's scope. Injected faults (IEVB writer at FFF1, REC inspector with a moved department, tracker NC with another department) are flagged by tests 2, 3 and 1.
 - Decision needed: the 31 A330 VU follow-up NCs (A30-REJ-PVU2 / RJ-PVU-REC-F at F4F0xx, plant FTO2, written by FTO2 quality, "le travail sera fait par l'équipe REC"). Tracker lists 2 as REC; GPS lists 2 others (216165997, 216064934) as SERIE. Tagged REC today and by the rule.
 
 ---
@@ -235,7 +236,7 @@ Full detail: `03_reports/dossier_stage_NC.md` (French master dossier) and `NC_de
 
 0. **CNQ checks (19 Oct):** go through `05_outputs/CNQ_investigation_checklist.html` with Mohammad (H1-H7 are high). Apply what he decides; the list of changes done, decided and kept for later is `CNQ_CHANGES.md`. Scope decided: REC and ERMA out; disruption block (quality aléas with no NC) shown beside the NC cost.
 1. **Cable defence:** get Mohammad's choice among options A–D and the "cable problem" definition; then produce the slide numbers (by defect and by NC). Nothing in the parser has been changed for this yet.
-2. **REC:** writer-department rule proposed (section 7, 20 Oct). Get the notebook check result (FAL-plant NCs by the five departments) and the A330 VU follow-up decision; then write the rule spec for the pipeline team (columns `rec_written`, `rec_fixed`, `imputation`).
+2. **REC:** writer-department rule proposed (section 7, 20 Oct). Get the result of `07_scripts/rec_rule_test.py` on Skywise (read `test2_fal_rows_to_read.csv` and `test3_possible_missed.csv` with Mohammad) and the A330 VU follow-up decision; then write the rule spec for the pipeline team (columns `rec_written`, `rec_fixed`, `imputation`).
 3. **Pack v4.8:** apply the two pending fixes (MT → A400M in `LINES`; drop A400M chart) when he asks; confirm whether the pack was installed.
 4. **Mohammad to check** the English RCA / category translations in the FR/EN dashboard.
 5. Human review of 185 low-confidence defects (`05_outputs/revue_humaine_souscodes.csv`, column `sous_code_correct` empty).
@@ -275,7 +276,7 @@ Full detail: `03_reports/dossier_stage_NC.md` (French master dossier) and `NC_de
 | `04_reference/` | Official codes, sub-category reference, mappings, codes to verify |
 | `05_outputs/` | Defect table xlsx; parsed defects v4.8 (CSV) and v4.1–v4.7; NC table v4.7; LLM sub-codes; human-review list; v4.7 group changes; cable review files; count disagreements; NC review list |
 | `06_input_data/` | Inputs Mohammad uploaded: dashboard export, missing IDs, nc-rec, REC tracker, cable team tracker, MFT action trackers (A330/A350), pipeline notebook, earlier REC note, sample NC text, code sheet text |
-| `07_scripts/` | `rec_dept_rule.py` (REC rule, 20 Oct), `rec_checks.py`, `cable_check.py`, `build_defect_table.py` (+ older working scripts in `archive/`) |
+| `07_scripts/` | `rec_rule_test.py` (REC rule test for Skywise, 21 Oct) and `rec_test_local/` (offline stand-in), `rec_dept_rule.py` (REC rule, 20 Oct), `rec_checks.py`, `cable_check.py`, `build_defect_table.py` (+ older working scripts in `archive/`) |
 | `08_tools/` | NC entry tool prototypes (JSX), logic flow (Mermaid), old Slate SQL and preview |
 | `cnq_handoever/` | CNQ model (pipeline step, Slate queries, offline dashboard, tests); README_handover.md section 4 lists the 19 Oct changes |
 | `CNQ_CHANGES.md` | Every CNQ change: applied, decided, kept for later, needed from the pipeline team |
