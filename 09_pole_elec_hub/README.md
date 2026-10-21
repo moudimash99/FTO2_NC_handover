@@ -12,13 +12,14 @@ The page to use is `hub/pole_elec_hub.html` (preview: `screenshots/hub_final.png
 
 For Slate, `slate/` holds the same page in three parts: `hub.html` (markup), `hub.css` and `hub.js` (with `HUB_CONFIG` at the top). After changing `hub/pole_elec_hub.html`, run `python build_slate.py` to rebuild them.
 
-Content (from the Slate export of the current app, `06_input_data/slate_hub_export_2026-10-20.json`, with Mohammad's changes of 20 and 21 Oct):
+Content (from the Slate export of the current app, `06_input_data/slate_hub_export_2026-10-20.json`, with Mohammad's changes of 20 and 21 Oct), in four groups laid out 2 × 2 as in template 5. The current app has three groups (Outils qualité, QCM, QA Management); the four below split them, with the same tools and links:
 
-- **Outils qualité:** PPS, Serie Follow Up, FOD, Alert Quality, NC Dashboard, NC Writing, CPB, Projets & Amélioration, plus **QSR** and **Operational Surveillance** (new, links to fill in). With ten tools the block shows four cards per row.
-- **QCM:** NC Eradication, shown as "Bientôt disponible" until it goes live; its link and user guide are already in the config.
-- **QA Management:** MyQA. **Form (DEMAT)** removed: it was the "capri" to remove (21 Oct); it is kept as a commented line in the config.
+- **Production & suivi (PROD):** PPS, Serie Follow Up, FOD.
+- **Assurance qualité (QA):** NC Eradication (the QCM tab; shown as "Bientôt disponible" until it goes live, its link and user guide are already in the config) and MyQA (QA Management). **Form (DEMAT)** removed: it was the "capri" to remove (21 Oct); it is kept as a commented line in the config.
+- **Non-conformités (NC):** NC Writing, NC Dashboard, Alert Quality.
+- **Surveillance & amélioration (SURV):** **QSR** and **Operational Surveillance** (new, links to fill in), CPB, Projets & Amélioration.
 
-The current app's tabs become two small groups on the right, so everything is visible at once on a 1440 × 900 screen.
+Left groups show three cards per row, right groups two; everything is visible at once on a 1440 × 900 screen.
 
 ## The five templates (design round of 20 Oct)
 

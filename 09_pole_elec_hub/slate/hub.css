@@ -38,10 +38,9 @@ h1 span{display:block;color:var(--muted);font-weight:600}
 @keyframes run{to{stroke-dashoffset:-73}}
 @keyframes run2{to{stroke-dashoffset:-16}}
 
-/* first group = main block, three cards per row (four from 10 tools on); the other groups stack on the right */
-.groups{display:grid;grid-template-columns:minmax(0,1fr) calc((100% - 48px) / 4);gap:26px 16px;align-items:start}
+/* groups in a 2 x 2 grid: three cards per row on the left, two on the right */
+.groups{display:grid;grid-template-columns:minmax(0,3fr) minmax(0,2fr);gap:20px 32px;align-items:start}
 .grp{min-width:0}
-.side{display:flex;flex-direction:column;gap:20px;min-width:0}
 .g-hd{display:flex;align-items:center;gap:12px;margin:0 0 12px}
 .code{font:600 11.5px/1 Consolas,"Cascadia Mono",monospace;letter-spacing:.08em;padding:6px 8px 5px;border-radius:5px;color:var(--c);background:color-mix(in srgb,var(--c) 12%,var(--surface));border:1px solid color-mix(in srgb,var(--c) 30%,transparent)}
 .g-hd h2{margin:0;font:700 18px/1.2 "Segoe UI",system-ui,sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -85,17 +84,13 @@ h1 span{display:block;color:var(--muted);font-weight:600}
 @media (max-width:1180px){
   .hero{grid-template-columns:minmax(0,1fr)}
   .groups{grid-template-columns:minmax(0,1fr)}
-  .side{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:26px 16px}
-}
-@media (max-width:1000px){
-  .grp.main .cards{--cols:3 !important}
+  .cards{--cols:3 !important}
 }
 @media (max-width:760px){
-  .grp.main .cards{--cols:2 !important}
+  .cards{--cols:2 !important}
   h1{font-size:38px}
   .hero{padding:22px 20px}
 }
 @media (max-width:520px){
-  .grp.main .cards{--cols:1 !important}
-  .side{grid-template-columns:minmax(0,1fr)}
+  .cards{--cols:1 !important}
 }
