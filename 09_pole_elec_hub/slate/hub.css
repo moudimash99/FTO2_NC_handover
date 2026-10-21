@@ -33,15 +33,15 @@ h1 span{display:block;color:var(--muted);font-weight:600}
 @keyframes run{to{stroke-dashoffset:-73}}
 @keyframes run2{to{stroke-dashoffset:-16}}
 
-/* groups two per row, all on one card grid: three columns per group, 32 px between the two groups,
-   card rows of equal height (rows and places are set by the script). Every card has the same size
-   and the cards line up across the page. */
-.groups{display:grid;grid-template-columns:repeat(3,minmax(0,1fr)) 0 repeat(3,minmax(0,1fr));gap:16px}
+/* all groups on one grid of four card columns; groups share a row while they fit, card rows have
+   equal heights (rows and places are set by the script). Every card has the same size and the
+   cards line up across the page. */
+.groups{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
 .grp,.cards{display:contents}
 .g-hd{display:flex;align-items:center;gap:12px;margin:0 0 -4px;grid-row:var(--hr);grid-column:var(--hc);min-width:0}
 .card{grid-row:var(--r);grid-column:var(--cc)}
 .code{font:600 11.5px/1 Consolas,"Cascadia Mono",monospace;letter-spacing:.08em;padding:6px 8px 5px;border-radius:5px;color:var(--c);background:color-mix(in srgb,var(--c) 12%,var(--surface));border:1px solid color-mix(in srgb,var(--c) 30%,transparent)}
-.g-hd h2{margin:0;font:700 18px/1.2 "Segoe UI",system-ui,sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.g-hd h2{margin:0;font:700 18px/1.2 "Segoe UI",system-ui,sans-serif}
 .rule{flex:1;min-width:16px;height:3px;border-radius:2px;background:linear-gradient(90deg,var(--c),color-mix(in srgb,var(--c) 0%,transparent))}
 
 .card{position:relative;display:flex;flex-direction:column;gap:3px;padding:14px 18px 13px;border-radius:14px;overflow:hidden;
@@ -53,6 +53,8 @@ h1 span{display:block;color:var(--muted);font-weight:600}
 .stretch::after{content:"";position:absolute;inset:0;z-index:1;border-radius:14px}
 .guide{position:relative;z-index:2;margin-left:auto;font:600 12.5px/1 "Segoe UI",system-ui,sans-serif;color:var(--muted);text-decoration:none;border:1px solid var(--line-2);border-radius:20px;padding:5px 9px 4px}
 .guide:hover,.guide:focus-visible{color:var(--text);border-color:var(--muted);outline:none}
+.links{position:relative;z-index:2;display:flex;flex-wrap:wrap;gap:6px}
+.links .guide{margin:0}
 .soon-b{margin-left:auto;font:600 11px/1 Consolas,"Cascadia Mono",monospace;letter-spacing:.04em;padding:5px 8px 4px;border-radius:20px;background:color-mix(in srgb,var(--w) 12%,var(--surface));color:color-mix(in srgb,var(--w) 80%,var(--text))}
 .card.soon .ib,.card.soon .wire,.card.soon .collar{filter:saturate(.35);opacity:.75}
 .card.noname{border-style:dashed;border-color:var(--line-2);box-shadow:none;background:var(--surface-2)}
@@ -80,15 +82,17 @@ h1 span{display:block;color:var(--muted);font-weight:600}
 @media (prefers-reduced-motion:reduce){.hw .p{display:none}.card,.card .open svg{transition:none}.card.link:hover,.card.link:focus-within{transform:none}}
 @media (max-width:1180px){
   .hero{grid-template-columns:minmax(0,1fr)}
-  /* one group per row */
+  .harness{max-width:620px;justify-self:center}
+}
+@media (max-width:1000px){
+  /* one group per row, two cards per row */
   .groups{display:flex;flex-direction:column;gap:26px}
   .grp{display:block}
-  .cards{display:grid;grid-template-columns:repeat(var(--cols,3),minmax(0,1fr));gap:16px}
+  .cards{display:grid;grid-template-columns:repeat(var(--cols,2),minmax(0,1fr));gap:16px}
   .g-hd{grid-row:auto;grid-column:auto;margin-bottom:12px}
   .card{grid-row:auto;grid-column:auto}
 }
 @media (max-width:760px){
-  .cards{--cols:2}
   h1{font-size:38px}
   .hero{padding:22px 20px}
 }

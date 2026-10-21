@@ -2,24 +2,27 @@
 
 New home page for the Pôle Élec quality tools, to replace the current "Pole Elec Quality HUB" Slate app.
 
-## Chosen design: template 5 (20 Oct), four groups (21 Oct)
+## Chosen design: template 5 (20 Oct), on a four-column grid (21 Oct)
 
-The page to use is `hub/pole_elec_hub.html` (previews: `screenshots/hub_final.png`, `hub_final_hover.png` with one tool hovered, `hub_final_phone.png`). It keeps the template 5 look, with the harness drawing in the header, and puts the tools in four groups of three, two groups per row. All twelve cards have the same size and line up across the page (the script sets their rows and places on one grid), so nothing is stacked on one side. A sober corporate restyle without the drawing was tried on 21 Oct and dropped (commit `b02ac35` in the history). The page is light only, so it matches the Slate app whatever the Windows theme. It is one self-contained file, HTML, CSS and JavaScript only: no other file, no external font, no library. Everything on it comes from the `HUB_CONFIG` block at the top of its `<script>`, the only part to edit:
+The page to use is `hub/pole_elec_hub.html` (previews: `screenshots/hub_final.png`, `hub_final_hover.png` with one tool hovered, `hub_final_phone.png`). It keeps the template 5 look, with the harness drawing in the header, and puts the tools on one grid of four cards per row. All cards have the same size and line up across the page (the script sets their rows and places on the grid), so nothing is stacked on one side. A sober corporate restyle without the drawing was tried on 21 Oct and dropped (commit `b02ac35` in the history). The page is light only, so it matches the Slate app whatever the Windows theme. It is one self-contained file, HTML, CSS and JavaScript only: no other file, no external font, no library. Everything on it comes from the `HUB_CONFIG` block at the top of its `<script>`, the only part to edit:
 
-- links, names, short descriptions, icons and colours are all there; a link still set to `A_COMPLETER` shows "Lien à compléter" and cannot be clicked;
+- links, names, short descriptions, icons and colours are all there; `links:` gives a tool several buttons; a link still set to `A_COMPLETER` shows "Lien à compléter" and cannot be clicked;
 - `soon: true` shows a tool as "Bientôt disponible" (not clickable); `guide:` adds a "Guide utilisateur" link;
 - save, refresh the page. Links open in a new tab, as in the current app.
 
 For Slate, `slate/` holds the same page in three parts: `hub.html` (markup), `hub.css` and `hub.js` (with `HUB_CONFIG` at the top). After changing `hub/pole_elec_hub.html`, run `python build_slate.py` to rebuild them.
 
-Content (from the Slate export of the current app, `06_input_data/slate_hub_export_2026-10-20.json`, with Mohammad's changes of 20 and 21 Oct), in four groups of three. The current app has three groups (Outils qualité, QCM, QA Management); the four below split them, with the same tools and links:
+Content: Mohammad's own list of 21 Oct (links, groups and the tools with several links), built on the Slate export of the current app (`06_input_data/slate_hub_export_2026-10-20.json`). Five groups, sixteen tools:
 
-- **Production & suivi:** PPS, Serie Follow Up, FOD.
-- **Assurance qualité:** NC Eradication (the QCM tab; shown as "Bientôt disponible" until it goes live, its link and user guide are already in the config), MyQA (QA Management) and CPB (from Outils qualité, moved here so that every group has three tools). **Form (DEMAT)** removed: it was the "capri" to remove (21 Oct); it is kept as a commented line in the config.
-- **Non-conformités:** NC Writing, NC Dashboard, Alert Quality.
-- **Surveillance & amélioration:** **QSR** and **Operational Surveillance** (new, links to fill in), Projets & Amélioration.
+- **Production & suivi:** Suivi de la production (three buttons: SÉRIE, REC, HS).
+- **Assurance qualité:** MyQA, Qualif Indus (C-SAAM, GDrive), Qualif Personal.
+- **Non-conformités:** NC Writing, NC Dashboard, MFT, NC Eradication (shown as "Bientôt disponible" until it goes live; its link and user guide are already in the config).
+- **Surveillance & amélioration:** Operational Surveillance (DEMAT, GDrive), Projets & Amélioration, Alert Quality, FOD.
+- **Correctif:** PPS (Skywise, GDrive), SARI Events (CAPRI, GDrive), CPB (Lien, GDrive), QSR (eQSR, GDrive).
 
-Everything is visible at once on a 1440 × 900 screen. Below 1180 px wide the groups go one per row, and on a phone the cards stack. A group given a fourth tool starts a second line of cards.
+A tool with `links` shows one button per link instead of "Ouvrir"; a tool with a single `link` opens from anywhere on its card.
+
+The page has four cards per row, all the same size, and groups share a row while they fit: Production & suivi and Assurance qualité together, then one group per row. At 1440 × 900 the last row needs a short scroll. Below 1000 px wide the groups go one per row with two cards per row, and on a phone the cards stack.
 
 ## The five templates (design round of 20 Oct)
 
@@ -46,8 +49,7 @@ All five work on a wide screen, a laptop and a phone, can be used with the keybo
 
 ## Still needed
 
-- Links for QSR and Operational Surveillance (and a short description for QSR).
-- The NC Dashboard link in the current app points to a Slate app named `ttttteqwffadsdasadsad`: worth checking it is the right one.
+- NC Writing and NC Dashboard point to a Slate app named `test123213213` (pages `page-1` and `home`): worth checking it is the final one.
 
 ## Moving the chosen one into Slate (to check with whoever builds the Slate app)
 

@@ -13,17 +13,20 @@
 //    link        address the card opens (in a new tab). While it still says
 //                "A_COMPLETER", the card shows "Lien à compléter" and cannot
 //                be clicked.
-//    guide       optional second link, shown as "Guide utilisateur"
+//    links       instead of link, several addresses, shown as buttons on the
+//                card: [ { name: "GDrive", url: "https://..." }, ... ]
+//                (a button still set to "A_COMPLETER" is not shown)
+//    guide       optional extra link, shown as "Guide utilisateur"
 //    soon        true = shown as "Bientôt disponible" and not clickable;
 //                delete the line when the tool goes live
 //
-//  Groups go two per row, in the order below: 1st top left, 2nd top right,
-//  3rd bottom left, 4th bottom right. Each group shows its cards three per
-//  row and all cards have the same size, so with three tools per group every
-//  group is one line. Cards appear in the order below.
-//  The four groups split the current app's three (Outils qualité, QCM,
-//  QA Management); the tools and links are the same.
-//  Links taken from the current Slate app (A30 Quality Hub), 20 Oct 2026.
+//  For each group: name, code (the tag on the header and in the drawing),
+//  color.
+//
+//  The page has four cards per row, all the same size. Groups follow in the
+//  order below and share a row while they fit in it (here Production & suivi,
+//  1 tool, and Assurance qualité, 3 tools); otherwise a group starts a new
+//  row. A group of more than four tools continues on the next row.
 // =============================================================================
 
 const HUB_CONFIG = {
@@ -36,53 +39,88 @@ const HUB_CONFIG = {
     {
       name: "Production & suivi", code: "PROD", color: "#b5602b",
       tools: [
-        { name: "PPS", description: "Practical Problem Solving", icon: "trend-up", color: "#2e8b3a",
-          link: "https://drive.google.com/drive/folders/1XOzZbgKoalRyJSpLXolOK-w0mou9FcQQ" },
-        { name: "Serie Follow Up", description: "Suivi de la série", icon: "table", color: "#7b3fa8",
-          link: "https://docs.google.com/spreadsheets/d/1ZiR6qiyPivrTtRxDHg43n0SApw3LIw15SGXKZb51e4c/edit?gid=0#gid=0" },
-        { name: "FOD", description: "Foreign Object Debris", icon: "ban", color: "#e8483f",
-          link: "https://drive.google.com/drive/folders/1Pc0LTYiEtla2-yroxx3rk49TaeUyyb8j" }
+        { name: "Suivi de la production", description: "Série, REC, Hors série", icon: "table", color: "#7b3fa8",
+          links: [
+            { name: "SÉRIE", url: "https://docs.google.com/spreadsheets/d/1ZiR6qiyPivrTtRxDHg43n0SApw3LIw15SGXKZb51e4c/edit?gid=0#gid=0" },
+            { name: "REC", url: "https://docs.google.com/spreadsheets/d/1bUtT0iVMSCTUDYNmFqPJDf3PRiowM0yhojg6MTv4HfY/edit?gid=0#gid=0" },
+            { name: "HS", url: "https://docs.google.com/spreadsheets/d/1_yBq9OYhxNDydYhHy8PQtPVJEFncIMymBPIpRG2Qb1o/edit?gid=0#gid=0" }
+          ]
+        }
       ]
     },
     {
       name: "Assurance qualité", code: "QA", color: "#2c6ad3",
       tools: [
-        // QCM
-        { name: "NC Eradication", description: "Éradication des NC", icon: "trend-down", color: "#1d1673",
-          link: "https://core.skywise.com/workspace/module/view/latest/ri.workshop.main.module.fe9aa8c0-22d4-4533-a04e-527c485347d1/similarityexplorer",
-          guide: "https://sites.google.com/airbus.com/faq-nc-eradication/accueil",
-          soon: true },
-        // QA Management. Form (DEMAT) removed on 21 Oct ("capri"); to bring it back, put this line above MyQA:
-        // { name: "Form", description: "DEMAT", icon: "form", color: "#3a9a4a", link: "https://demat.intra.corp/DEMAT/#/" },
-        { name: "MyQA", description: "MyQA tool", icon: "shield", color: "#2c97a4",
+        { name: "MyQA", description: "Site / GDrive", icon: "shield", color: "#2c97a4",
           link: "https://sites.google.com/airbus.com/myqa-tool-fr/accueil" },
-        // CPB was in Outils qualité in the current app
-        { name: "CPB", description: "", icon: "folder", color: "#00208b",
-          link: "https://drive.google.com/drive/folders/1L9W2W8j5fqVKlQuw7skTLHCQ2S9oHP0K" }
+        { name: "Qualif Indus", description: "C-SAAM (Zeinab)", icon: "gear", color: "#e67e22",
+          links: [
+            { name: "C-SAAM", url: "https://pac.intra.corp/airbus/ac/internal/1W79/zcsaam_new/start.html?saml2idp=1s14:hub-p:saml2#/IQRegister" },
+            { name: "GDrive", url: "https://drive.google.com/drive/folders/1UEeVKj2uC1cDQbI-vEmktx6b4oJOP3o_" }
+          ]
+        },
+        { name: "Qualif Personal", description: "Suivi qualifications", icon: "people", color: "#3498db",
+          link: "https://drive.google.com/drive/folders/11ZpFytNOF6aQMO8YE3hDUy7XNBkCofaE" }
       ]
     },
     {
       name: "Non-conformités", code: "NC", color: "#d23f3f",
       tools: [
         { name: "NC Writing", description: "Rédaction des NC", icon: "pen", color: "#2c97a4",
-          link: "https://core.skywise.com/workspace/code-workspaces/ri.foundry-container-service.main.container.fbafad4a-153e-476b-a137-69793a2112e3" },
+          link: "https://core.skywise.com/workspace/foundry-slate/app/test123213213/page-1" },
         { name: "NC Dashboard", description: "Tableau de bord des NC", icon: "bars", color: "#038a9d",
-          link: "https://core.skywise.com/workspace/foundry-slate/app/ttttteqwffadsdasadsad/home" },
-        { name: "Alert Quality", description: "Alertes qualité", icon: "alert", color: "#c41e1e",
-          link: "https://drive.google.com/drive/folders/1jhbOjOa39LHXJM7v8tTE-_2Mv_f4RSuG" }
+          link: "https://core.skywise.com/workspace/foundry-slate/app/test123213213/home" },
+        { name: "MFT", description: "Suivi MFT", icon: "people", color: "#9b59b6",
+          link: "https://drive.google.com/drive/folders/15XZVV3-SY8bz5w8RxNUJmE0EKUbhVf5l" },
+        { name: "NC Eradication", description: "Éradication des NC", icon: "trend-down", color: "#1d1673",
+          link: "https://core.skywise.com/workspace/module/view/latest/ri.workshop.main.module.fe9aa8c0-22d4-4533-a04e-527c485347d1/similarityexplorer",
+          guide: "https://sites.google.com/airbus.com/faq-nc-eradication/accueil", soon: true }
       ]
     },
     {
       name: "Surveillance & amélioration", code: "SURV", color: "#1d8a6b",
       tools: [
-        // new: link to fill in
-        { name: "QSR", description: "", icon: "check", color: "#c2306f",
-          link: "A_COMPLETER" },
-        // new: link to fill in
-        { name: "Operational Surveillance", description: "Surveillance opérationnelle", icon: "eye", color: "#5b4fc4",
-          link: "A_COMPLETER" },
+        { name: "Operational Surveillance", description: "DEMAT & GDrive", icon: "eye", color: "#5b4fc4",
+          links: [
+            { name: "DEMAT", url: "https://demat.intra.corp/DEMAT/#/" },
+            { name: "GDrive", url: "https://drive.google.com/drive/folders/0AHx9eVFJ4lTlUk9PVA" }
+          ]
+        },
         { name: "Projets & Amélioration", description: "Projets et amélioration continue", icon: "trending-up", color: "#00a396",
-          link: "https://drive.google.com/drive/folders/1N-L9s0Y1SpDH0I0hNf145ZOVnRkdxNrd" }
+          link: "https://drive.google.com/drive/folders/1N-L9s0Y1SpDH0I0hNf145ZOVnRkdxNrd" },
+        { name: "Alert Quality", description: "Alertes qualité", icon: "alert", color: "#c41e1e",
+          link: "https://drive.google.com/drive/folders/1jhbOjOa39LHXJM7v8tTE-_2Mv_f4RSuG" },
+        { name: "FOD", description: "Foreign Object Debris", icon: "ban", color: "#e8483f",
+          link: "https://sites.google.com/airbus.com/gsite-fod-airbus-electric-cent/accueil" }
+      ]
+    },
+    {
+      name: "Correctif", code: "CORR", color: "#8c3a9e",
+      tools: [
+        { name: "PPS", description: "Dashboard & GDrive", icon: "trend-up", color: "#2e8b3a",
+          links: [
+            { name: "Skywise", url: "https://core.skywise.com/workspace/contour-app/ri.contour.main.analysis.4c1518a3-f4ae-4180-b891-3a15bb56bb8e/dashboard/tab/8d3c9a1f-1597-4861-a90a-5c2f465ecf9c/edit" },
+            { name: "GDrive", url: "https://drive.google.com/drive/folders/1XOzZbgKoalRyJSpLXolOK-w0mou9FcQQ" }
+          ]
+        },
+        { name: "SARI Events", description: "CAPRI & GDrive", icon: "alert", color: "#e74c3c",
+          links: [
+            { name: "CAPRI", url: "https://peaswde0.eu.airbus.corp/airbus/ea/internal/1z43/z_capri_srv/home/index.html" },
+            { name: "GDrive", url: "https://drive.google.com/drive/folders/1m0bYZ-A_lOKRfbfXfjfLyXN5pwDhOKlr" }
+          ]
+        },
+        { name: "CPB", description: "DataStudio & GDrive", icon: "folder", color: "#00208b",
+          links: [
+            { name: "Lien", url: "https://datastudio.google.com/u/0/reporting/09b0a3bd-a6da-4be0-92e3-3805e3df8344/page/p_p2eag9tand/edit" },
+            { name: "GDrive", url: "https://drive.google.com/drive/folders/1L9W2W8j5fqVKlQuw7skTLHCQ2S9oHP0K" }
+          ]
+        },
+        { name: "QSR", description: "eQSR & GDrive", icon: "check", color: "#c2306f",
+          links: [
+            { name: "eQSR", url: "https://pac.intra.corp/airbus/ac/internal/G010/home/index.html?sap-client=001" },
+            { name: "GDrive", url: "https://drive.google.com/drive/folders/1h_j30m-bGdgTYn2g9UWQ8-cHDq2S-JAf" }
+          ]
+        }
       ]
     }
   ]
@@ -122,33 +160,47 @@ if(!C||!Array.isArray(C.groups)){
   $("#title").innerHTML=esc(C.title)+'<span>'+esc(C.subtitle)+'</span>';
   $("#welcome").textContent=C.welcome||"";
 
-  // rows of the card grid: per line of two groups, the header row then its card rows (all 1fr, so
-  // every card row has the height of the tallest); a 0 px row between two lines adds space
-  const tracks=[], top=[];
-  for(let p=0,row=1;p<C.groups.length;p+=2){
-    const k=Math.max(1,...C.groups.slice(p,p+2).map(g=>Math.ceil((g.tools||[]).length/3)));
-    if(p){tracks.push("0px"); row++;}
-    top.push(row, row);
-    tracks.push("auto", ...Array(k).fill("1fr"));
-    row+=1+k;
-  }
+  // places on the card grid: groups follow each other on a line of four cards while they fit,
+  // otherwise a new line starts. Each line is a header row then its card rows (all 1fr, so every
+  // card row has the height of the tallest); a 0 px row between two lines adds space.
+  const COLS=4, lines=[], place=C.groups.map(g=>{
+    const n=(g.tools||[]).length, w=Math.max(1,Math.min(n,COLS)), k=Math.max(1,Math.ceil(n/COLS));
+    let L=lines[lines.length-1];
+    if(!L||L.used+w>COLS){L={used:0,k:1}; lines.push(L);}
+    const at={L, c0:L.used+1, w};
+    L.used+=w; L.k=Math.max(L.k,k);
+    return at;
+  });
+  const tracks=[];
+  lines.forEach((L,i)=>{
+    if(i) tracks.push("0px");
+    L.hr=tracks.length+1;
+    tracks.push("auto", ...Array(L.k).fill("1fr"));
+  });
   $("#groups").style.gridTemplateRows=tracks.join(" ");
 
   let n=0;
   const html=C.groups.map((g,gi)=>{
-    const half=gi%2, hr=top[gi];
-    return '<section class="grp" style="--c:'+esc(g.color||"var(--copper)")+';--hr:'+hr+';--hc:'+(half?'5 / 8':'1 / 4')+'">'
+    const P=place[gi], hr=P.L.hr;
+    return '<section class="grp" style="--c:'+esc(g.color||"var(--copper)")+';--hr:'+hr+';--hc:'+P.c0+' / span '+P.w+'">'
       +'<header class="g-hd"><span class="code">'+esc(g.code||g.name)+'</span><h2>'+esc(g.name)+'</h2><span class="rule"></span></header>'
       +'<div class="cards">'+(g.tools||[]).map((t,i)=>{
-        const id="t"+(n++), w=esc(t.color||g.color||"#8592a5"), state=t.soon?"soon":todo(t.link)?"nolink":"link";
-        const cls=" "+state+(noName(t.name)?" noname":"");
-        const name=state==="link"?'<a class="stretch" href="'+esc(t.link)+'" target="_blank" rel="noopener">'+esc(t.name)+'</a>':esc(t.name);
-        const foot=state==="link"?'<span class="open">Ouvrir '+svgI("arrow")+'</span>'+(t.guide&&!todo(t.guide)?'<a class="guide" href="'+esc(t.guide)+'" target="_blank" rel="noopener">Guide utilisateur</a>':'')
-                  :state==="soon"?'<span class="open">Bientôt disponible</span>':'<span class="open">Lien à compléter</span>';
+        const id="t"+(n++), w=esc(t.color||g.color||"#8592a5");
+        // several links: one button each (the filled ones); one link: the whole card opens it
+        const multi=Array.isArray(t.links), list=multi?t.links.filter(l=>l&&!todo(l.url)):[];
+        const state=t.soon?"soon":(multi?list.length:!todo(t.link))?"link":"nolink";
+        const cls=" "+state+(noName(t.name)?" noname":"")+(multi?" multi":"");
+        const a=(u,label,c)=>'<a class="'+c+'" href="'+esc(u)+'" target="_blank" rel="noopener">'+esc(label)+'</a>';
+        const guide=t.guide&&!todo(t.guide)?a(t.guide,"Guide utilisateur","guide"):'';
+        const name=state==="link"&&!multi?a(t.link,t.name,"stretch"):esc(t.name);
+        const foot=state==="soon"?'<span class="open">Bientôt disponible</span>'
+                  :state==="nolink"?'<span class="open">Lien à compléter</span>'
+                  :multi?'<span class="links">'+list.map(l=>a(l.url,l.name,"guide")).join("")+guide+'</span>'
+                  :'<span class="open">Ouvrir '+svgI("arrow")+'</span>'+guide;
         const inner='<span class="c-top"><i class="wire"></i><i class="collar"></i><i class="ferr"></i><span class="ib">'+svgI(t.icon)+'</span>'
           +(state==="soon"?'<span class="soon-b">Bientôt</span>':'')+'</span>'
           +'<h3>'+name+'</h3>'+(t.description?'<p>'+esc(t.description)+'</p>':'')+'<span class="foot">'+foot+'</span>';
-        return '<div class="card'+cls+'" data-id="'+id+'" style="--w:'+w+';--r:'+(hr+1+Math.floor(i/3))+';--cc:'+(half*4+1+i%3)+'">'+inner+'</div>';
+        return '<div class="card'+cls+'" data-id="'+id+'" style="--w:'+w+';--r:'+(hr+1+Math.floor(i/P.w))+';--cc:'+(P.c0+i%P.w)+'">'+inner+'</div>';
       }).join("")+'</div></section>';
   });
   $("#groups").innerHTML=html.join("");
