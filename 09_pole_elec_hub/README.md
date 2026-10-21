@@ -2,11 +2,11 @@
 
 New home page for the Pôle Élec quality tools, to replace the current "Pole Elec Quality HUB" Slate app.
 
-## Chosen design: template 5 (20 Oct)
+## Chosen design: template 5, restyled (21 Oct)
 
-The page to use is `hub/pole_elec_hub.html` (preview: `screenshots/hub_final.png`). It is one self-contained file, HTML, CSS and JavaScript only: no other file, no external font, no library. Everything on it comes from the `HUB_CONFIG` block at the top of its `<script>`, the only part to edit:
+The page to use is `hub/pole_elec_hub.html` (previews: `screenshots/hub_final.png`, `hub_final_hover.png`, `hub_final_phone.png`). On 21 Oct the template 5 layout (four groups, 2 × 2) was given a sober corporate look at Mohammad's request: a navy header band with the greeting and the date, four white panels with one colour each, one row per tool with its status on the right. The cable drawings and the per-tool colours are gone; a faint bundle of wires in the header is all that is left of the harness idea. The previous version is in the git history (commit `0531630`). The page is light only, so it matches the Slate app whatever the Windows theme. It is one self-contained file, HTML, CSS and JavaScript only: no other file, no external font, no library. Everything on it comes from the `HUB_CONFIG` block at the top of its `<script>`, the only part to edit:
 
-- links, names, short descriptions, icons and colours are all there; a link still set to `A_COMPLETER` shows "Lien à compléter" and cannot be clicked;
+- links, names, short descriptions and icons of the tools, names and colours of the groups, the greeting are all there; a link still set to `A_COMPLETER` shows "Lien à compléter" and cannot be clicked;
 - `soon: true` shows a tool as "Bientôt disponible" (not clickable); `guide:` adds a "Guide utilisateur" link;
 - save, refresh the page. Links open in a new tab, as in the current app.
 
@@ -14,12 +14,12 @@ For Slate, `slate/` holds the same page in three parts: `hub.html` (markup), `hu
 
 Content (from the Slate export of the current app, `06_input_data/slate_hub_export_2026-10-20.json`, with Mohammad's changes of 20 and 21 Oct), in four groups laid out 2 × 2 as in template 5. The current app has three groups (Outils qualité, QCM, QA Management); the four below split them, with the same tools and links:
 
-- **Production & suivi (PROD):** PPS, Serie Follow Up, FOD.
-- **Assurance qualité (QA):** NC Eradication (the QCM tab; shown as "Bientôt disponible" until it goes live, its link and user guide are already in the config) and MyQA (QA Management). **Form (DEMAT)** removed: it was the "capri" to remove (21 Oct); it is kept as a commented line in the config.
-- **Non-conformités (NC):** NC Writing, NC Dashboard, Alert Quality.
-- **Surveillance & amélioration (SURV):** **QSR** and **Operational Surveillance** (new, links to fill in), CPB, Projets & Amélioration.
+- **Production & suivi:** PPS, Serie Follow Up, FOD.
+- **Assurance qualité:** NC Eradication (the QCM tab; shown as "Bientôt disponible" until it goes live, its link and user guide are already in the config) and MyQA (QA Management). **Form (DEMAT)** removed: it was the "capri" to remove (21 Oct); it is kept as a commented line in the config.
+- **Non-conformités:** NC Writing, NC Dashboard, Alert Quality.
+- **Surveillance & amélioration:** **QSR** and **Operational Surveillance** (new, links to fill in), CPB, Projets & Amélioration.
 
-Left groups show three cards per row, right groups two; everything is visible at once on a 1440 × 900 screen.
+Everything is visible at once on a 1440 × 900 screen; on a narrow screen the panels stack.
 
 ## The five templates (design round of 20 Oct)
 
@@ -53,6 +53,6 @@ All five work on a wide screen, a laptop and a phone, can be used with the keybo
 
 - The page builds the cards and draws the wires with JavaScript, so it needs a Slate widget that runs JavaScript (a custom widget with HTML, CSS and JS boxes): paste `slate/hub.html`, `slate/hub.css` and `slate/hub.js` into them. A plain HTML text widget that strips scripts would show an empty page.
 - If the widget runs in a sandboxed frame, it must allow popups, or the links (which open a new tab) will not open.
-- The welcome line has the name written in; in Slate it can come from `{{user.firstName}}`.
+- The greeting has the name written in (`userName` in the config); in Slate it can come from `{{user.firstName}}`.
 - No external font: the page uses Segoe UI and Consolas, which are on Windows PCs.
 - No Airbus or Skywise logo is used.
