@@ -8,7 +8,7 @@ The page to use is `hub/pole_elec_hub.html` (previews: `screenshots/hub_final.pn
 
 - links, names, short descriptions, icons and colours are all there; `links:` gives a tool several buttons; a link still set to `A_COMPLETER` shows "Lien à compléter" and cannot be clicked;
 - `soon: true` shows a tool as "Bientôt disponible" (not clickable); `guide:` adds a "Guide utilisateur" link;
-- save, refresh the page. Links open in a new tab, as in the current app.
+- save, refresh the page. A plain click opens a tool in the current tab; Ctrl+click (or middle click) opens it in a new tab.
 
 For Slate, `slate/` holds the same page in three parts: `hub.html` (markup), `hub.css` and `hub.js` (with `HUB_CONFIG` at the top). After changing `hub/pole_elec_hub.html`, run `python build_slate.py` to rebuild them.
 
@@ -56,6 +56,6 @@ All five work on a wide screen, a laptop and a phone, can be used with the keybo
 ## Moving the chosen one into Slate (to check with whoever builds the Slate app)
 
 - The page builds the cards and draws the wires with JavaScript, so it needs a Slate widget that runs JavaScript (a custom widget with HTML, CSS and JS boxes): paste `slate/hub.html`, `slate/hub.css` and `slate/hub.js` into them. A plain HTML text widget that strips scripts would show an empty page.
-- Links open in a new tab. Opened on its own, the page opens them on a plain click (checked); if in Slate they only open with Ctrl+click, the Slate editor or the widget's sandbox is catching the click: check in the app's view mode, and the widget must allow popups.
+- Clicks: a plain click replaces the current tab with the tool, Ctrl+click opens a new tab. Inside Slate the page runs in a frame; tested in Chrome with frames restricted in different ways: if the frame may change the tab's page, a plain click opens the tool in the tab; if it may only open new tabs, it opens a new tab; if it may do neither, a short message says to use Ctrl+click (Ctrl+click works in every case).
 - No external font: the page uses Segoe UI and Consolas, which are on Windows PCs.
 - No Airbus or Skywise logo is used.

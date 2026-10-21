@@ -10,7 +10,7 @@
 //                        bars, pen, folder, form, eye, doc, check, shield,
 //                        link, people, gear
 //    color       colour of the wire and of the icon, for example "#2e8b3a"
-//    link        address the card opens (in a new tab). While it still says
+//    link        address the card opens (in this tab; Ctrl+click: new tab). While it still says
 //                "A_COMPLETER", the card shows "Lien à compléter" and cannot
 //                be clicked.
 //    links       instead of link, several addresses:
@@ -176,7 +176,7 @@ if(!C||!Array.isArray(C.groups)){
         const multi=Array.isArray(t.links), list=multi?t.links.filter(l=>l&&!todo(l.url)):[];
         const state=t.soon?"soon":(multi?list.length:!todo(t.link))?"link":"nolink";
         const cls=" "+state+(noName(t.name)?" noname":"")+(multi?" multi":"");
-        const a=(u,label,c)=>'<a class="'+c+'" href="'+esc(u)+'" target="_blank" rel="noopener">'+esc(label)+'</a>';
+        const a=(u,label,c)=>'<a class="'+c+'" href="'+esc(u)+'" target="_top" rel="noopener">'+esc(label)+'</a>';
         const guide=t.guide&&!todo(t.guide)?a(t.guide,"Guide utilisateur","guide"):'';
         const name=state==="link"&&!multi?a(t.link,t.name,"stretch"):esc(t.name);
         // each link shows its name from the config; a single link is labelled by what it opens
@@ -184,7 +184,7 @@ if(!C||!Array.isArray(C.groups)){
         const label=x=>'<span class="lk-t">'+esc(x.label)+'</span>'+svgI("ext");
         const foot=state==="soon"?'<span class="state">Bientôt disponible</span>'
                   :state==="nolink"?'<span class="state">Lien à compléter</span>'
-                  :'<span class="lk">'+items.map(x=>multi?'<a class="lk-i" href="'+esc(x.url)+'" target="_blank" rel="noopener">'+label(x)+'</a>'
+                  :'<span class="lk">'+items.map(x=>multi?'<a class="lk-i" href="'+esc(x.url)+'" target="_top" rel="noopener">'+label(x)+'</a>'
                                                           :'<span class="lk-i">'+label(x)+'</span>').join("")+'</span>'+guide;
         const inner='<span class="c-top"><i class="wire"></i><i class="collar"></i><i class="ferr"></i><span class="ib">'+svgI(t.icon)+'</span>'
           +(state==="soon"?'<span class="soon-b">Bientôt</span>':'')+'</span>'
@@ -281,6 +281,21 @@ if(!C||!Array.isArray(C.groups)){
       +'<rect x="145" y="'+(t0-2)+'" width="12" height="'+(t1-t0+4)+'" rx="3" fill="url(#boot)"/><rect x="340" y="'+(t0-2)+'" width="12" height="'+(t1-t0+4)+'" rx="3" fill="url(#boot)"/>';
     $("#harness").innerHTML=defs+wires+sleeve+tie(186)+tie(310)+conn+ends;
   })();
+
+  // a plain click opens the tool in this tab (Ctrl+click, middle click: new tab, done by the browser).
+  // Inside Slate the page runs in a frame, so it navigates the whole tab; if the frame may not do that,
+  // it tries a new tab, and if that is blocked too it says to use Ctrl+click.
+  document.addEventListener("click",e=>{
+    const link=e.target.closest("a[href]");
+    if(!link||e.defaultPrevented||e.button!==0||e.ctrlKey||e.metaKey||e.shiftKey||e.altKey) return;
+    e.preventDefault();
+    try{ window.top.location.href=link.href; return; }catch(err){}
+    const w=window.open(link.href,"_blank");
+    if(w){ w.opener=null; return; }
+    const h=$(".hint")||document.body.appendChild(Object.assign(document.createElement("div"),{className:"hint"}));
+    h.textContent="Ouverture bloquée ici : Ctrl + clic pour ouvrir dans un nouvel onglet";
+    h.classList.add("on"); clearTimeout(h.t); h.t=setTimeout(()=>h.classList.remove("on"),3500);
+  });
 
   // a card lights its own wire in the harness
   const hs=$("#harness"), groupsEl=$("#groups");
