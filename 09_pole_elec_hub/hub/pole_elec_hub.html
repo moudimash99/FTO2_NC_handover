@@ -60,15 +60,13 @@ h1 span{display:block;color:var(--muted);font-weight:600}
 .stretch::after{content:"";position:absolute;inset:0;z-index:1;border-radius:14px}
 .guide{position:relative;z-index:2;margin-left:auto;font:600 12.5px/1 "Segoe UI",system-ui,sans-serif;color:var(--muted);text-decoration:none;border:1px solid var(--line-2);border-radius:20px;padding:5px 9px 4px}
 .guide:hover,.guide:focus-visible{color:var(--text);border-color:var(--muted);outline:none}
-/* several links: one segmented control across the card, in its colour, one segment per link (the 1 px gaps
-   show the frame colour as dividers, also when the segments wrap). The card itself is not a link,
-   so it does not lift on hover. */
-.seg{position:relative;z-index:2;flex:1;display:flex;flex-wrap:wrap;gap:1px;border-radius:8px;overflow:hidden;
-  background:color-mix(in srgb,var(--w) 30%,var(--line));border:1px solid color-mix(in srgb,var(--w) 30%,var(--line))}
-.seg a{flex:1 1 auto;text-align:center;padding:5px 10px 4px;font:600 12.5px/1.2 "Segoe UI",system-ui,sans-serif;white-space:nowrap;text-decoration:none;
-  color:color-mix(in srgb,var(--w) 85%,var(--text));background:color-mix(in srgb,var(--w) 6%,var(--surface));transition:background-color .15s,color .15s}
-.seg a:hover{background:color-mix(in srgb,var(--w) 16%,var(--surface));color:var(--text)}
-.seg a:focus-visible{outline:2px solid var(--w);outline-offset:-2px}
+/* several links: one arrow link per line, in the same style as "Ouvrir". The card itself is not a link,
+   so it does not lift on hover; each link moves its own arrow. */
+.go-list{position:relative;z-index:2;display:flex;flex-direction:column;align-items:flex-start;gap:7px}
+.go{text-decoration:none;outline:none}
+.go:focus-visible{border-radius:3px;box-shadow:0 0 0 2px color-mix(in srgb,var(--w) 45%,transparent)}
+.card.multi:hover .open svg,.card.multi:focus-within .open svg{transform:none}
+.card.multi .go:hover svg,.card.multi .go:focus-visible svg{transform:translateX(4px)}
 .card.multi:hover,.card.multi:focus-within{transform:none}
 .soon-b{margin-left:auto;font:600 11px/1 Consolas,"Cascadia Mono",monospace;letter-spacing:.04em;padding:5px 8px 4px;border-radius:20px;background:color-mix(in srgb,var(--w) 12%,var(--surface));color:color-mix(in srgb,var(--w) 80%,var(--text))}
 .card.soon .ib,.card.soon .wire,.card.soon .collar{filter:saturate(.35);opacity:.75}
@@ -105,7 +103,7 @@ h1 span{display:block;color:var(--muted);font-weight:600}
 .dense .soon-b{font-size:10px;padding:4px 6px 3px}
 .dense .card h3{margin-top:7px;font-size:16px}
 .dense .card p{font-size:13px;line-height:1.35}
-.dense .seg a{padding:4px 8px 3px;font-size:12px}
+.dense .go-list{gap:6px}
 .dense .guide{font-size:12px;padding:4px 7px 3px}
 .dense .open{font-size:13px}
 .dense .nolink .open,.dense .soon .open{font-size:11.5px}
@@ -319,12 +317,12 @@ if(!C||!Array.isArray(C.groups)){
         const multi=Array.isArray(t.links), list=multi?t.links.filter(l=>l&&!todo(l.url)):[];
         const state=t.soon?"soon":(multi?list.length:!todo(t.link))?"link":"nolink";
         const cls=" "+state+(noName(t.name)?" noname":"")+(multi?" multi":"");
-        const a=(u,label,c)=>'<a'+(c?' class="'+c+'"':'')+' href="'+esc(u)+'" target="_blank" rel="noopener">'+esc(label)+'</a>';
+        const a=(u,label,c)=>'<a class="'+c+'" href="'+esc(u)+'" target="_blank" rel="noopener">'+esc(label)+'</a>';
         const guide=t.guide&&!todo(t.guide)?a(t.guide,"Guide utilisateur","guide"):'';
         const name=state==="link"&&!multi?a(t.link,t.name,"stretch"):esc(t.name);
         const foot=state==="soon"?'<span class="open">Bientôt disponible</span>'
                   :state==="nolink"?'<span class="open">Lien à compléter</span>'
-                  :multi?'<span class="seg">'+list.map(l=>a(l.url,l.name,"")).join("")+'</span>'+guide
+                  :multi?'<span class="go-list">'+list.map(l=>'<a class="open go" href="'+esc(l.url)+'" target="_blank" rel="noopener">'+esc(l.name)+' '+svgI("arrow")+'</a>').join("")+'</span>'+guide
                   :'<span class="open">Ouvrir '+svgI("arrow")+'</span>'+guide;
         const inner='<span class="c-top"><i class="wire"></i><i class="collar"></i><i class="ferr"></i><span class="ib">'+svgI(t.icon)+'</span>'
           +(state==="soon"?'<span class="soon-b">Bientôt</span>':'')+'</span>'

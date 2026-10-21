@@ -171,12 +171,12 @@ if(!C||!Array.isArray(C.groups)){
         const multi=Array.isArray(t.links), list=multi?t.links.filter(l=>l&&!todo(l.url)):[];
         const state=t.soon?"soon":(multi?list.length:!todo(t.link))?"link":"nolink";
         const cls=" "+state+(noName(t.name)?" noname":"")+(multi?" multi":"");
-        const a=(u,label,c)=>'<a'+(c?' class="'+c+'"':'')+' href="'+esc(u)+'" target="_blank" rel="noopener">'+esc(label)+'</a>';
+        const a=(u,label,c)=>'<a class="'+c+'" href="'+esc(u)+'" target="_blank" rel="noopener">'+esc(label)+'</a>';
         const guide=t.guide&&!todo(t.guide)?a(t.guide,"Guide utilisateur","guide"):'';
         const name=state==="link"&&!multi?a(t.link,t.name,"stretch"):esc(t.name);
         const foot=state==="soon"?'<span class="open">Bientôt disponible</span>'
                   :state==="nolink"?'<span class="open">Lien à compléter</span>'
-                  :multi?'<span class="seg">'+list.map(l=>a(l.url,l.name,"")).join("")+'</span>'+guide
+                  :multi?'<span class="go-list">'+list.map(l=>'<a class="open go" href="'+esc(l.url)+'" target="_blank" rel="noopener">'+esc(l.name)+' '+svgI("arrow")+'</a>').join("")+'</span>'+guide
                   :'<span class="open">Ouvrir '+svgI("arrow")+'</span>'+guide;
         const inner='<span class="c-top"><i class="wire"></i><i class="collar"></i><i class="ferr"></i><span class="ib">'+svgI(t.icon)+'</span>'
           +(state==="soon"?'<span class="soon-b">Bientôt</span>':'')+'</span>'
