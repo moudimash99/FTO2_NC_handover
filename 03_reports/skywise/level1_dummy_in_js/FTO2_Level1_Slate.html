@@ -1251,7 +1251,7 @@ function fto2FromTables(ncIn, defIn, ref, disIn) {
       msnRecentLeg: 'Première NC il y a moins de 30 jours', avgShort: 'moy. {v}', avgLeg: 'Moyenne du programme', msnClick: 'Cliquez sur une barre pour afficher les NC de cet avion.', msnHead: '{n} NC · {c}',
       k_prod: 'Produits', t_prod: 'Coût par famille de produit', s_prod: 'NC FTO2 et retours clients ; nombre de NC, d’avions (MSN) et coût moyen par avion. Les 10 familles les plus coûteuses, les autres regroupées.',
       prodTip: 'FTO2 {s} · retours {c} · {n} NC · {k} MSN', prodUnknown: 'Non identifié', prodRest: '{n} autres familles',
-      k_lead: 'Délais', t_lead: 'Combien de temps une NC reste ouverte', s_lead: 'Part des NC encore ouvertes N jours après leur création, par décision. Les NC encore ouvertes comptent jusqu’à aujourd’hui (méthode de Kaplan-Meier). Point : la moitié des NC sont closes.',
+      k_lead: 'Délais', t_lead: 'Combien de temps une NC reste ouverte', s_lead: 'Part des NC encore ouvertes N jours après leur création, par décision. Les NC encore ouvertes comptent jusqu’à aujourd’hui (méthode de Kaplan-Meier). Point : la moitié des NC sont closes. Cliquez à un nombre de jours pour garder les NC encore ouvertes à ce moment-là.',
      
       g_rw: 'Retouche', g_rej: 'Rebut / rejet', g_oth: 'Autres décisions', axDays: 'Jours depuis la création de la NC', daysShort: '{n} j', medDays: 'médiane {n} j', medLeg: 'Médiane : 50 % closes',
       hMedian: 'Médiane', hOpen7: 'Ouvertes à 7 j', hOpen30: 'Ouvertes à 30 j', hStillOpen: 'Encore ouvertes', kmTipH: 'Jour {d}', kmOpen: 'encore ouvertes',
@@ -1309,7 +1309,7 @@ function fto2FromTables(ncIn, defIn, ref, disIn) {
       fPlant: 'Usine FTO2 uniquement', fYes: 'Oui', fNo: 'Non', fPlantOff: 'Sans effet ici : l’onglet sépare déjà FTO2 et retours clients.',
       fPhase: 'Type de production', ph_all: 'Tous', ph_SERIE: 'Série', ph_REC: 'REC', ph_FTI: 'FTI', fLine: 'Avion', line_all: 'Tous les avions',
       fPeriod: 'Période', pr_ytd: 'Depuis le 1er janvier', pr_m1: 'Dernier mois', pr_m3: '3 derniers mois', pr_m6: '6 derniers mois', pr_m12: '12 derniers mois', pr_all: 'Toutes les dates', pr_custom: 'Dates choisies',
-      fFrom: 'Du', fTo: 'Au', fReset: 'Réinitialiser', pkClear: 'Retirer ce filtre', pk_wgrp: 'Trouvée à', pk_stcat: 'Poste et catégorie', pk_finmsn: 'FIN et avion', pk_dgrp: 'Décision', pk_lgrp: 'Décision', pk_open: 'Statut', pkOpenV: 'encore ouvertes', kmOpenN: 'Encore ouvertes : {n}', pk_month: 'Mois', pk_week: 'Semaine', pk_day: 'Jour', pk_prod: 'Produit', pk_pprod: 'Produit', pk_msn: 'Avion (MSN)', pk_station: 'Poste', pk_type: 'Type de NC', pk_ntype: 'Type de NC', pk_rule: 'Décision', pk_where: 'Détection', pk_nc: 'NC', pk_hour: 'Heure', pk_cat: 'NC avec un défaut', pk_rca: 'NC avec la cause', pk_sub: 'NC avec le défaut', pk_fin: 'NC avec un défaut sur', pk_code: 'NC avec le sous-code', fbSum: '{n} NC · {d} défauts dans la sélection', fbSumCli: '{n} NC retours clients · {d} défauts dans la sélection',
+      fFrom: 'Du', fTo: 'Au', fReset: 'Réinitialiser', pkClear: 'Retirer ce filtre', pk_wgrp: 'Trouvée à', pk_age: 'Encore ouvertes', pkAgeV: 'plus de {n} jours après leur création', kmAgeMark: 'filtre : ouvertes après {n} j', kmClick: 'Cliquez : garder les {n} NC encore ouvertes après {d} jours', pk_stcat: 'Poste et catégorie', pk_finmsn: 'FIN et avion', pk_dgrp: 'Décision', pk_lgrp: 'Décision', pk_open: 'Statut', pkOpenV: 'encore ouvertes', kmOpenN: 'Encore ouvertes : {n}', pk_month: 'Mois', pk_week: 'Semaine', pk_day: 'Jour', pk_prod: 'Produit', pk_pprod: 'Produit', pk_msn: 'Avion (MSN)', pk_station: 'Poste', pk_type: 'Type de NC', pk_ntype: 'Type de NC', pk_rule: 'Décision', pk_where: 'Détection', pk_nc: 'NC', pk_hour: 'Heure', pk_cat: 'NC avec un défaut', pk_rca: 'NC avec la cause', pk_sub: 'NC avec le défaut', pk_fin: 'NC avec un défaut sur', pk_code: 'NC avec le sous-code', fbSum: '{n} NC · {d} défauts dans la sélection', fbSumCli: '{n} NC retours clients · {d} défauts dans la sélection',
       foot5: 'Source des données : toutes les NC viennent de Skywise ; « listes manuelles » : NC retrouvées aussi dans le registre GPS ou la liste Test (champ Ext_Source). Type de production : phase de la NC (Série, REC, FTI). Périodes comptées jusqu’à la dernière NC de l’extraction.',
       paretoTitle: 'Pareto des défauts', costTitle: 'Pareto des coûts de non-qualité',
       costSub: 'Le coût de chaque NC est réparti entre ses défauts ; les NC A400M sans texte forment une ligne à part.',
@@ -1441,7 +1441,7 @@ function fto2FromTables(ncIn, defIn, ref, disIn) {
       msnRecentLeg: 'First NC less than 30 days ago', avgShort: 'avg {v}', avgLeg: 'Programme average', msnClick: 'Click a bar to list that aircraft’s NCs.', msnHead: '{n} NCs · {c}',
       k_prod: 'Products', t_prod: 'Cost by product family', s_prod: 'FTO2 NCs and customer returns; number of NCs, aircraft (MSNs) and average cost per aircraft. The 10 costliest families, the rest grouped.',
       prodTip: 'FTO2 {s} · returns {c} · {n} NCs · {k} MSNs', prodUnknown: 'Not identified', prodRest: '{n} other families',
-      k_lead: 'Lead time', t_lead: 'How long an NC stays open', s_lead: 'Share of NCs still open N days after creation, by decision. NCs still open count until today (Kaplan-Meier). Dot: half of the NCs are closed.',
+      k_lead: 'Lead time', t_lead: 'How long an NC stays open', s_lead: 'Share of NCs still open N days after creation, by decision. NCs still open count until today (Kaplan-Meier). Dot: half of the NCs are closed. Click at a number of days to keep the NCs still open by then.',
      
       g_rw: 'Rework', g_rej: 'Scrap / rejection', g_oth: 'Other decisions', axDays: 'Days since the NC was created', daysShort: '{n} d', medDays: 'median {n} d', medLeg: 'Median: 50% closed',
       hMedian: 'Median', hOpen7: 'Open at 7 d', hOpen30: 'Open at 30 d', hStillOpen: 'Still open', kmTipH: 'Day {d}', kmOpen: 'still open',
@@ -1499,7 +1499,7 @@ function fto2FromTables(ncIn, defIn, ref, disIn) {
       fPlant: 'FTO2 plant only', fYes: 'Yes', fNo: 'No', fPlantOff: 'No effect here: this tab already shows FTO2 and customer returns apart.',
       fPhase: 'Production type', ph_all: 'All', ph_SERIE: 'Series', ph_REC: 'REC', ph_FTI: 'FTI', fLine: 'Aircraft', line_all: 'All aircraft',
       fPeriod: 'Period', pr_ytd: 'Year to date', pr_m1: 'Last month', pr_m3: 'Last 3 months', pr_m6: 'Last 6 months', pr_m12: 'Last 12 months', pr_all: 'All dates', pr_custom: 'Custom dates',
-      fFrom: 'From', fTo: 'To', fReset: 'Reset', pkClear: 'Remove this filter', pk_wgrp: 'Found at', pk_stcat: 'Station and category', pk_finmsn: 'FIN and aircraft', pk_dgrp: 'Decision', pk_lgrp: 'Decision', pk_open: 'Status', pkOpenV: 'still open', kmOpenN: 'Still open: {n}', pk_month: 'Month', pk_week: 'Week', pk_day: 'Day', pk_prod: 'Product', pk_pprod: 'Product', pk_msn: 'Aircraft (MSN)', pk_station: 'Station', pk_type: 'NC type', pk_ntype: 'NC type', pk_rule: 'Decision', pk_where: 'Found at', pk_nc: 'NC', pk_hour: 'Hour', pk_cat: 'NCs with a defect', pk_rca: 'NCs with the cause', pk_sub: 'NCs with the defect', pk_fin: 'NCs with a defect on', pk_code: 'NCs with the sub-code', fbSum: '{n} NCs · {d} defects in the selection', fbSumCli: '{n} customer-return NCs · {d} defects in the selection',
+      fFrom: 'From', fTo: 'To', fReset: 'Reset', pkClear: 'Remove this filter', pk_wgrp: 'Found at', pk_age: 'Still open', pkAgeV: 'more than {n} days after creation', kmAgeMark: 'filter: open after {n} d', kmClick: 'Click: keep the {n} NCs still open after {d} days', pk_stcat: 'Station and category', pk_finmsn: 'FIN and aircraft', pk_dgrp: 'Decision', pk_lgrp: 'Decision', pk_open: 'Status', pkOpenV: 'still open', kmOpenN: 'Still open: {n}', pk_month: 'Month', pk_week: 'Week', pk_day: 'Day', pk_prod: 'Product', pk_pprod: 'Product', pk_msn: 'Aircraft (MSN)', pk_station: 'Station', pk_type: 'NC type', pk_ntype: 'NC type', pk_rule: 'Decision', pk_where: 'Found at', pk_nc: 'NC', pk_hour: 'Hour', pk_cat: 'NCs with a defect', pk_rca: 'NCs with the cause', pk_sub: 'NCs with the defect', pk_fin: 'NCs with a defect on', pk_code: 'NCs with the sub-code', fbSum: '{n} NCs · {d} defects in the selection', fbSumCli: '{n} customer-return NCs · {d} defects in the selection',
       foot5: 'Data source: every NC comes from Skywise; “manual lists”: NCs also found in the GPS register or the Test list (Ext_Source field). Production type: the NC phase (Series, REC, FTI). Periods count up to the last NC of the extract.',
       paretoTitle: 'Defect Pareto', costTitle: 'Cost of non-quality Pareto',
       costSub: 'Each NC’s cost is shared among its defects; A400M NCs with no text form a row of their own.',
@@ -1711,7 +1711,9 @@ function fto2FromTables(ncIn, defIn, ref, disIn) {
     hour: function (n) { return String(n[28]); }, wgrp: function (n) { return wGroup(n[8]); }, dgrp: function (n) { return dGroup(n[7]); },
     lgrp: function (n) { var g = dGroup(n[7]); return g === 'exc' ? 'oth' : g; }, open: function (n) { return n[30] ? '1' : '0'; } };
   var PICK_NC = null;
-  function pickNc(n) { var p = GF.pick; if (PICK_DEF[p.k]) return !!(PICK_NC && PICK_NC[n[0]]); var f = PICK_NCF[p.k]; return !f || String(f(n)) === String(p.v); }
+  function pickNc(n) { var p = GF.pick; if (PICK_DEF[p.k]) return !!(PICK_NC && PICK_NC[n[0]]); if (p.k === 'age') return ncAgeOver(n, +p.v); var f = PICK_NCF[p.k]; return !f || String(f(n)) === String(p.v); }
+  // still open N days after creation (a click on the open-time chart): closed after more than N days, or still open and older than N days
+  function ncAgeOver(n, d) { var t = n[29] != null ? n[29] : n[31]; return t != null && Math.round(t * 10) / 10 > d; }   // days to a tenth, as the chart
   function pickPrep() {
     PICK_NC = null; var p = GF.pick; if (!p || !PICK_DEF[p.k]) return;
     PICK_NC = {}; D.defects.forEach(function (r) { if (String(PICK_DEF[p.k](r)) === String(p.v)) PICK_NC[r[0]] = 1; });
@@ -1719,7 +1721,7 @@ function fto2FromTables(ncIn, defIn, ref, disIn) {
   function pk(k, v) { return v == null || v === '' ? '' : ' data-pick="' + esc(k + '|' + v) + '"'; }
   function ppk(k, v) { return D.eqmsn && pSrc() === D.eqmsn ? pk(k, v) : ''; }   // NC-rate charts: only on the real production plan
   function pickLabel(p) {
-    var v = p.k === 'month' ? monthName(p.v) + ' ' + p.v.slice(0, 4) : p.k === 'day' ? shortDay(p.v) : p.k === 'cat' ? L(p.v) : p.k === 'prod' ? prodName(p.v) : p.k === 'ntype' ? S('ty_' + p.v) : p.k === 'rule' ? ruleName(p.v) : p.k === 'where' ? whereName(p.v) : p.k === 'wgrp' ? S('w_' + p.v) : p.k === 'dgrp' ? S('d_' + p.v) : p.k === 'lgrp' ? S('g_' + p.v) : p.k === 'open' ? S('pkOpenV') : p.k === 'stcat' ? p.v.split('§')[0] + ' · ' + catLabel(p.v.split('§')[1]) : p.k === 'finmsn' ? p.v.split('§')[0] + ' · MSN ' + p.v.split('§')[1] : p.v;
+    var v = p.k === 'month' ? monthName(p.v) + ' ' + p.v.slice(0, 4) : p.k === 'day' ? shortDay(p.v) : p.k === 'cat' ? L(p.v) : p.k === 'prod' ? prodName(p.v) : p.k === 'ntype' ? S('ty_' + p.v) : p.k === 'rule' ? ruleName(p.v) : p.k === 'where' ? whereName(p.v) : p.k === 'wgrp' ? S('w_' + p.v) : p.k === 'dgrp' ? S('d_' + p.v) : p.k === 'lgrp' ? S('g_' + p.v) : p.k === 'open' ? S('pkOpenV') : p.k === 'stcat' ? p.v.split('§')[0] + ' · ' + catLabel(p.v.split('§')[1]) : p.k === 'finmsn' ? p.v.split('§')[0] + ' · MSN ' + p.v.split('§')[1] : p.k === 'age' ? S('pkAgeV', { n: num(+p.v) }) : p.v;
     return S('pk_' + p.k) + ' : ' + v;
   }
   function pickSet(k, v) {
@@ -1729,6 +1731,11 @@ function fto2FromTables(ncIn, defIn, ref, disIn) {
     GF.pick = same ? null : { k: k, v: v }; pickPrep(); hideTip(); setGF({});
     if (keep) { A.msn = keep; rvDraw('A:msn'); }
   }
+  document.addEventListener('click', function (e) {   // the open-time chart: a click at day N keeps the NCs still open after N days
+    if (!(e.target.getAttribute && e.target.getAttribute('data-km')) || !A.km) return;
+    var kb = e.target.ownerSVGElement.getBoundingClientRect(), d = Math.round(Math.max(0, Math.min(1, (e.clientX - kb.left - A.km.ml) / A.km.pw)) * A.km.XM);
+    if (d > 0) pickSet('age', String(d));
+  });
   document.addEventListener('click', function (e) {
     var el = e.target.closest && e.target.closest('[data-pick]'); if (!el) return;
     var s2 = el.getAttribute('data-pick'), i = s2.indexOf('|'); pickSet(s2.slice(0, i), s2.slice(i + 1));
@@ -2937,8 +2944,10 @@ function fto2FromTables(ncIn, defIn, ref, disIn) {
       var md = kmMedian(pts); if (md != null && md <= XM) g += '<circle cx="' + r1(X(md)) + '" cy="' + r1(Y(0.5)) + '" r="4.5" fill="' + col[k] + '" stroke="var(--surface)" stroke-width="2"/>';
     });
     g += '<line class="guide" x1="' + ml + '" x2="' + (ml + pw) + '" y1="' + r1(Y(0.5)) + '" y2="' + r1(Y(0.5)) + '"/>';
-    g += '<line id="kmX" class="cross" y1="' + mt + '" y2="' + (mt + ph) + '" x1="-10" x2="-10"/><rect data-km="1" x="' + ml + '" y="' + mt + '" width="' + pw + '" height="' + ph + '" fill="transparent"/>';
-    A.km = { keys: keys, curves: curves, ml: ml, pw: pw, XM: XM };
+    var ag = GF.pick && GF.pick.k === 'age' ? +GF.pick.v : null;   // the day clicked: NCs still open after it
+    if (ag != null) g += '<line x1="' + r1(X(ag)) + '" x2="' + r1(X(ag)) + '" y1="' + mt + '" y2="' + (mt + ph) + '" stroke="var(--s1)" stroke-width="1.5" stroke-dasharray="4 3"/>' + tx(X(ag) + (ag > XM * 0.5 ? -6 : 6), mt + 18, S('kmAgeMark', { n: num(ag) }), 'b halo', ag > XM * 0.5 ? 'end' : null, ' style="fill:var(--s1)"');
+    g += '<line id="kmX" class="cross" y1="' + mt + '" y2="' + (mt + ph) + '" x1="-10" x2="-10"/><rect data-km="1" x="' + ml + '" y="' + mt + '" width="' + pw + '" height="' + ph + '" fill="transparent" style="cursor:pointer"/>';
+    A.km = { keys: keys, curves: curves, ml: ml, pw: pw, XM: XM, ts: all.map(function (x) { return x.t; }) };
     var leg = keys.map(function (k) { var md = kmMedian(curves[k]); return '<span' + pk('lgrp', k) + '><i class="ln" style="background:' + col[k] + '"></i>' + esc(S('g_' + k)) + ' (' + num(grp[k].length) + ')' + (md != null ? ' · <b>' + esc(S('medDays', { n: num(Math.round(md)) })) + '</b>' : '') + '</span>'; }).join('') + '<span><i class="sw ring" style="background:var(--surface);border-color:var(--ink-2)"></i>' + esc(S('medLeg')) + '</span>' +
       (open.length ? '<span' + pk('open', '1') + '><i class="sw" style="background:var(--ink-2)"></i>' + esc(S('kmOpenN', { n: num(open.length) })) + '</span>' : '');
     var rows = keys.map(function (k) { var c = curves[k], md = kmMedian(c); return [S('g_' + k), num(grp[k].length), md != null ? S('daysShort', { n: num(Math.round(md)) }) : '—', pct0(kmAt(c, 7) * 100), pct0(kmAt(c, 30) * 100), num(grp[k].filter(function (x) { return !x.e; }).length)]; });
@@ -3077,7 +3086,8 @@ function fto2FromTables(ncIn, defIn, ref, disIn) {
     if (kr && A.km) {
       var kb = e.target.ownerSVGElement.getBoundingClientRect(), kp = Math.max(0, Math.min(1, (e.clientX - kb.left - A.km.ml) / A.km.pw)), day0 = Math.round(kp * A.km.XM), kxx = r1(A.km.ml + day0 / A.km.XM * A.km.pw);
       kx.setAttribute('x1', kxx); kx.setAttribute('x2', kxx);
-      showTip(e, [S('kmTipH', { d: num(day0) })].concat(A.km.keys.map(function (k) { return S('g_' + k) + ' : ' + pct0(kmAt(A.km.curves[k], day0) * 100) + ' ' + S('kmOpen'); })));
+      showTip(e, [S('kmTipH', { d: num(day0) })].concat(A.km.keys.map(function (k) { return S('g_' + k) + ' : ' + pct0(kmAt(A.km.curves[k], day0) * 100) + ' ' + S('kmOpen'); }))
+        .concat(day0 > 0 ? [S('kmClick', { d: num(day0), n: num(A.km.ts.filter(function (t) { return t > day0; }).length) })] : []));
       return;
     }
     if (kx) { kx.setAttribute('x1', -10); kx.setAttribute('x2', -10); }
