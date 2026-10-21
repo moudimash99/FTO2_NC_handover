@@ -66,6 +66,8 @@ h1 span{display:block;color:var(--muted);font-weight:600}
 a.lk-i:hover .lk-t,a.lk-i:focus-visible .lk-t,.card.link:not(.multi):hover .lk-i .lk-t,.card.link:not(.multi):focus-within .lk-i .lk-t{text-decoration:underline}
 a.lk-i:hover svg,a.lk-i:focus-visible svg,.card.link:not(.multi):hover .lk-i svg,.card.link:not(.multi):focus-within .lk-i svg{transform:translate(1px,-1px)}
 .card.multi:hover,.card.multi:focus-within{transform:none}
+/* with one link the label is only a hint: clicks go through it to the card's link */
+.card:not(.multi) .lk{pointer-events:none}
 .soon-b{margin-left:auto;font:600 11px/1 Consolas,"Cascadia Mono",monospace;letter-spacing:.04em;padding:5px 8px 4px;border-radius:20px;background:color-mix(in srgb,var(--w) 12%,var(--surface));color:color-mix(in srgb,var(--w) 80%,var(--text))}
 .card.soon .ib,.card.soon .wire,.card.soon .collar{filter:saturate(.35);opacity:.75}
 .card.noname{border-style:dashed;border-color:var(--line-2);box-shadow:none;background:var(--surface-2)}
