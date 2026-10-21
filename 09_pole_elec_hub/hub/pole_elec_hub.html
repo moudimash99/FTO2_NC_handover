@@ -374,9 +374,14 @@ if(!C||!Array.isArray(C.groups)){
   layout();
   addEventListener("resize",layout);
 
-  // hero harness: connector, sleeve and tie-wraps on the trunk, one branch per group, one wire per tool
+  // hero harness: connector, sleeve with its tie-wraps on the trunk, one branch per group, one wire per
+  // tool. Branches are drawn biggest first (most tools at the top, a single wire at the bottom); each
+  // wire keeps the id of its card so hovering the card lights it.
   (function(){
-    const groups=C.groups.filter(g=>(g.tools||[]).length), N=groups.reduce((a,g)=>a+g.tools.length,0);
+    let n0=0;
+    const groups=C.groups.map(g=>({g, tools:(g.tools||[]).map(t=>({t, id:"t"+(n0++)}))}))
+      .filter(x=>x.tools.length).sort((a,b)=>b.tools.length-a.tools.length);
+    const N=groups.reduce((a,x)=>a+x.tools.length,0);
     const G=Math.min(5.2,70/Math.max(N,1)), Y=115, X0=96, XB=392, XE=596, top0=28, top1=202;
     const lane=i=>Y+(i-(N-1)/2)*G;
     const by=groups.map((g,i)=>groups.length===1?Y:top0+i*(top1-top0)/(groups.length-1));
@@ -386,12 +391,12 @@ if(!C||!Array.isArray(C.groups)){
       +'<linearGradient id="nut" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#b9c3cc"/><stop offset=".5" stop-color="#76828e"/><stop offset="1" stop-color="#3f4952"/></linearGradient>'
       +'<linearGradient id="boot" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#454c55"/><stop offset=".35" stop-color="#22272d"/><stop offset="1" stop-color="#101316"/></linearGradient></defs>';
     let i=0, k0=0, wires="", ends="";
-    groups.forEach((g,gi)=>{
-      const k=g.tools.length;
-      g.tools.forEach((t,j)=>{
+    groups.forEach(({g,tools},gi)=>{
+      const k=tools.length;
+      tools.forEach(({t,id},j)=>{
         const y0=lane(i), y1=by[gi]+(j-(k-1)/2)*G;
         const d="M"+X0+","+y0+" H"+XB+" C"+(XB+96)+","+y0+" "+(XE-104)+","+y1+" "+(XE-10)+","+y1+" H"+(XE+12);
-        wires+='<g class="hw" id="hw-t'+i+'" style="--w:'+esc(t.color||g.color||"#8592a5")+';--d:'+(2.2+((i*7)%5)*.35).toFixed(2)+'s;--dl:-'+((i*0.37)%2).toFixed(2)+'s">'
+        wires+='<g class="hw" id="hw-'+id+'" style="--w:'+esc(t.color||g.color||"#8592a5")+';--d:'+(2.2+((i*7)%5)*.35).toFixed(2)+'s;--dl:-'+((i*0.37)%2).toFixed(2)+'s">'
           +'<path class="o" d="'+d+'"/><path class="b" d="'+d+'"/><path class="h" d="'+d+'" transform="translate(-.6 -.7)"/><path class="p" d="'+d+'"/></g>';
         i++;
       });
@@ -412,7 +417,7 @@ if(!C||!Array.isArray(C.groups)){
       +'<rect x="84" y="'+(yc-33)+'" width="36" height="66" rx="9" fill="url(#boot)"/>';
     const sleeve='<rect x="150" y="'+t0+'" width="196" height="'+(t1-t0)+'" rx="6" fill="url(#braid)"/>'
       +'<rect x="145" y="'+(t0-2)+'" width="12" height="'+(t1-t0+4)+'" rx="3" fill="url(#boot)"/><rect x="340" y="'+(t0-2)+'" width="12" height="'+(t1-t0+4)+'" rx="3" fill="url(#boot)"/>';
-    $("#harness").innerHTML=defs+wires+sleeve+tie(132)+tie(370)+conn+ends;
+    $("#harness").innerHTML=defs+wires+sleeve+tie(186)+tie(310)+conn+ends;
   })();
 
   // a card lights its own wire in the harness
