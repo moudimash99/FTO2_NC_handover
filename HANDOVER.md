@@ -33,7 +33,7 @@ Read sections 1, 2 and 9 first. Everything else is reference. Every number below
 | CNQ reconciliation (predecessor files vs official method M1888 / UG2600252) | Mentioned by Mohammad, **not started here** | — |
 | CNQ model | Version cnq-2026.10.19: 7 rule changes from SAP rework orders and MES aléas, approved 19 Oct | `cnq_handoever/`, `CNQ_CHANGES.md` |
 | Work orders, MES aléas, 2025 NCs (uploaded 19 Oct) | Analysed; investigation checklist for Mohammad, **checks pending** | `05_outputs/CNQ_investigation_checklist.html`, `07_scripts/wo_disruption/` |
-| New Pôle Élec Quality Hub (Slate home page) | Template 5 chosen 20 Oct. Page `hub/pole_elec_hub.html`, everything in `hub/hub_config.js` with the real links from his Slate export; QSR and Operational Surveillance added (links to fill in), CPB removed, NC Eradication shown as coming soon. Slate port not done | `09_pole_elec_hub/`, export in `06_input_data/slate_hub_export_2026-10-20.json` |
+| New Pôle Élec Quality Hub (Slate home page) | Template 5 chosen 20 Oct. Page `hub/pole_elec_hub.html`, one self-contained HTML/CSS/JS file, links in its `HUB_CONFIG` block, taken from his Slate export; QSR and Operational Surveillance added (links to fill in), Form (DEMAT) removed (21 Oct: it was the "capri"), NC Eradication shown as coming soon. Same page split for Slate in `slate/` (`hub.html`, `hub.css`, `hub.js`); not installed in Slate yet | `09_pole_elec_hub/`, export in `06_input_data/slate_hub_export_2026-10-20.json` |
 
 ---
 
@@ -226,7 +226,7 @@ Full detail: `03_reports/dossier_stage_NC.md` (French master dossier) and `NC_de
 ## 9. Next steps, in priority order
 
 0. **CNQ checks (19 Oct):** go through `05_outputs/CNQ_investigation_checklist.html` with Mohammad (H1-H7 are high). Apply what he decides; the list of changes done, decided and kept for later is `CNQ_CHANGES.md`. Scope decided: REC and ERMA out; disruption block (quality aléas with no NC) shown beside the NC cost.
-0b. **Hub:** template 5 chosen and filled from his Slate export; get the QSR and Operational Surveillance links, confirm "capri" = CPB, then prepare the page for Slate (he installs it). Content = the current app plus his listed changes, nothing else.
+0b. **Hub:** template 5 chosen and filled from his Slate export; get the QSR and Operational Surveillance links; the Slate parts are in `09_pole_elec_hub/slate/` (he installs it, in a widget that runs JavaScript). Content = the current app plus his listed changes, nothing else.
 1. **Cable defence:** get Mohammad's choice among options A–D and the "cable problem" definition; then produce the slide numbers (by defect and by NC). Nothing in the parser has been changed for this yet.
 2. **REC:** get the definition decision; ask for the precision query result and REC's roster; then write the final rule spec for the pipeline team (columns `rec_written`, `rec_fixed`, `imputation`).
 3. **Pack v4.8:** apply the two pending fixes (MT → A400M in `LINES`; drop A400M chart) when he asks; confirm whether the pack was installed.
@@ -275,4 +275,4 @@ Full detail: `03_reports/dossier_stage_NC.md` (French master dossier) and `NC_de
 | `05_outputs/CNQ_investigation_checklist.html` | Offline checklist of open CNQ checks; click a check to open its list; answers kept in the browser, CSV export |
 | `06_input_data/work_orders_disruptions_nc2025.rar` | Upload of 19 Oct: SAP work-order operations (Sept 2026), MES aléas (Jan-Sep 2026), Skywise NCs 2025 |
 | `07_scripts/wo_disruption/` | Scripts behind every number of the 19 Oct analysis, README with run order |
-| `09_pole_elec_hub/` | Five templates for the new hub page, one link list (`hub_links.json`), build and screenshot scripts, README |
+| `09_pole_elec_hub/` | The chosen hub page (`hub/`) and its Slate parts (`slate/`, from `build_slate.py`), the five templates with their link list (`hub_links.json`), build and screenshot scripts, README |

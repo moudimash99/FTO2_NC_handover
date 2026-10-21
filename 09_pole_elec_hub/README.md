@@ -4,17 +4,19 @@ New home page for the Pôle Élec quality tools, to replace the current "Pole El
 
 ## Chosen design: template 5 (20 Oct)
 
-The page to use is `hub/pole_elec_hub.html` (preview: `screenshots/hub_final.png`). Everything on it comes from `hub/hub_config.js`, the only file to edit:
+The page to use is `hub/pole_elec_hub.html` (preview: `screenshots/hub_final.png`). It is one self-contained file, HTML, CSS and JavaScript only: no other file, no external font, no library. Everything on it comes from the `HUB_CONFIG` block at the top of its `<script>`, the only part to edit:
 
 - links, names, short descriptions, icons and colours are all there; a link still set to `A_COMPLETER` shows "Lien à compléter" and cannot be clicked;
 - `soon: true` shows a tool as "Bientôt disponible" (not clickable); `guide:` adds a "Guide utilisateur" link;
-- keep the two files in the same folder, save, refresh the page. Links open in a new tab, as in the current app.
+- save, refresh the page. Links open in a new tab, as in the current app.
 
-Content (from the Slate export of the current app, `06_input_data/slate_hub_export_2026-10-20.json`, with Mohammad's changes of 20 Oct):
+For Slate, `slate/` holds the same page in three parts: `hub.html` (markup), `hub.css` and `hub.js` (with `HUB_CONFIG` at the top). After changing `hub/pole_elec_hub.html`, run `python build_slate.py` to rebuild them.
 
-- **Outils qualité:** PPS, Serie Follow Up, FOD, Alert Quality, NC Dashboard, NC Writing, Projets & Amélioration, plus **QSR** and **Operational Surveillance** (new, links to fill in). **CPB** removed (kept as a commented line in the config).
+Content (from the Slate export of the current app, `06_input_data/slate_hub_export_2026-10-20.json`, with Mohammad's changes of 20 and 21 Oct):
+
+- **Outils qualité:** PPS, Serie Follow Up, FOD, Alert Quality, NC Dashboard, NC Writing, CPB, Projets & Amélioration, plus **QSR** and **Operational Surveillance** (new, links to fill in). With ten tools the block shows four cards per row.
 - **QCM:** NC Eradication, shown as "Bientôt disponible" until it goes live; its link and user guide are already in the config.
-- **QA Management:** Form (DEMAT), MyQA.
+- **QA Management:** MyQA. **Form (DEMAT)** removed: it was the "capri" to remove (21 Oct); it is kept as a commented line in the config.
 
 The current app's tabs become two small groups on the right, so everything is visible at once on a 1440 × 900 screen.
 
@@ -44,11 +46,12 @@ All five work on a wide screen, a laptop and a phone, can be used with the keybo
 ## Still needed
 
 - Links for QSR and Operational Surveillance (and a short description for QSR).
-- Confirm that "capri" meant CPB: it is the only tile of the current app close to that name.
 - The NC Dashboard link in the current app points to a Slate app named `ttttteqwffadsdasadsad`: worth checking it is the right one.
 
 ## Moving the chosen one into Slate (to check with whoever builds the Slate app)
 
-- The page builds the cards and draws the wires with JavaScript, and reads `hub_config.js` next to it. Inside Slate the links would have to live in Slate itself (for example a variable), not in a separate file. For Slate, the chosen design can be turned into plain HTML and CSS with the links written in, or rebuilt with Slate's own widgets and the app stylesheet. Which one depends on what the Slate app accepts (HTML widget, custom CSS, inline SVG): to confirm in Skywise.
-- Fonts come from Google Fonts. If Skywise blocks them, the pages fall back to Bahnschrift / Segoe UI / Consolas, which are on Windows PCs.
+- The page builds the cards and draws the wires with JavaScript, so it needs a Slate widget that runs JavaScript (a custom widget with HTML, CSS and JS boxes): paste `slate/hub.html`, `slate/hub.css` and `slate/hub.js` into them. A plain HTML text widget that strips scripts would show an empty page.
+- If the widget runs in a sandboxed frame, it must allow popups, or the links (which open a new tab) will not open.
+- The welcome line has the name written in; in Slate it can come from `{{user.firstName}}`.
+- No external font: the page uses Segoe UI and Consolas, which are on Windows PCs.
 - No Airbus or Skywise logo is used.
