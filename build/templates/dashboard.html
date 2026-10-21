@@ -618,7 +618,7 @@ body.mk-on .wrap { padding-bottom: 90px; }
   grid-template-areas: "rca line fin" "rca waf fin" "code code code"; }
 .v2par { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; align-items: stretch; margin: 6px 0 28px; }
 #parTop > .v2-band, #pgl > .v2-band, #kgl > .v2-band { grid-column: auto; }
-#parTop > [data-v2="a:flow"], #parTop > [data-v2="VK"] { grid-column: 1 / -1; }
+#parTop > [data-v2="a:flow"], #parFold [data-v2="VK"] { grid-column: 1 / -1; }
 #parTop > .v2-band, #pgl > .v2-band, #kgl > .v2-band { grid-template-columns: minmax(0, 1fr); background: var(--surface); border: 1px solid var(--ring); border-radius: 10px; padding: 18px 20px 16px; box-shadow: none; clip-path: none; row-gap: 10px; align-content: start; min-width: 0; }
 #parTop > .v2-band > .bhead, #pgl > .v2-band > .bhead, #kgl > .v2-band > .bhead { position: static; grid-column: 1; gap: 6px; }
 #parTop > .v2-band > .custom, #pgl > .v2-band > .custom, #kgl > .v2-band > .custom { grid-column: 1; grid-row: auto; }
@@ -5356,7 +5356,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
   var V2 = PAGE === 'main', V2B = false, V2CUT = 0.75, V2BAND = {};
   var V2L = {
     ov: { top: ['VT', 'VN', 'VB', 'a:lead', 'VX'], fold: ['a:cal'] },
-    pareto: { top: ['a:bub', 'a:bump', 'a:flow', '53', 'VQ', '78', '76', 'VK'], inboard: ['VW'], fold: ['65'] },   // under the lists; the hundred squares sit in the lists (20 Oct)
+    pareto: { top: ['a:bub', 'a:bump', 'a:flow', '53', 'VQ', '78', '76'], inboard: ['VW'], fold: ['65', 'VK'] },   // under the lists; the hundred squares sit in the lists (20 Oct); swapped pins folded until checked on the real data (21 Oct)
     where: { top: ['VP', '61', '64', 'a:prod', '54', 'a:msn', 'VF', 'a:station'], fold: ['VI'] },
     cnq: { more: ['VC'], fold: ['VE'] }
   };

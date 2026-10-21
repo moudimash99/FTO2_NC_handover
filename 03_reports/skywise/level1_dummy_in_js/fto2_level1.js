@@ -4293,7 +4293,7 @@ function fto2FromTables(ncIn, defIn, ref, disIn) {
   var V2 = PAGE === 'main', V2B = false, V2CUT = 0.75, V2BAND = {};
   var V2L = {
     ov: { top: ['VT', 'VN', 'VB', 'a:lead', 'VX'], fold: ['a:cal'] },
-    pareto: { top: ['a:bub', 'a:bump', 'a:flow', '53', 'VQ', '78', '76', 'VK'], inboard: ['VW'], fold: ['65'] },   // under the lists; the hundred squares sit in the lists (20 Oct)
+    pareto: { top: ['a:bub', 'a:bump', 'a:flow', '53', 'VQ', '78', '76'], inboard: ['VW'], fold: ['65', 'VK'] },   // under the lists; the hundred squares sit in the lists (20 Oct); swapped pins folded until checked on the real data (21 Oct)
     where: { top: ['VP', '61', '64', 'a:prod', '54', 'a:msn', 'VF', 'a:station'], fold: ['VI'] },
     cnq: { more: ['VC'], fold: ['VE'] }
   };
