@@ -1,0 +1,246 @@
+[
+ {
+  "id": "trk-a330-1",
+  "line": "A330",
+  "category": "Equipements endommagés 13CE/17CE/Platine F92513600000200",
+  "title": "Platines et composants endommagés",
+  "problem": {
+   "level": "rca",
+   "values": [
+    "Structure Endommagée",
+    "Composant Endommagé"
+   ]
+  },
+  "defects": "Socle relais : Fixations / platines abîmées",
+  "rootCause": "Le moyen de serrage n’est pas adapté",
+  "analysisOwner": "",
+  "analysisStart": "2026-06-01",
+  "analysisStatus": "",
+  "action": "prévoir système de maintien (étau) de la platine → lancé avis O9",
+  "actionOwner": "TEAM LEADER",
+  "actionStart": "2026-07-01",
+  "status": "En cours",
+  "expected": "2026-12-01",
+  "note": "",
+  "source": "Tracker MFT A330",
+  "log": [],
+  "createdBy": "",
+  "createdAt": "2026-10-23"
+ },
+ {
+  "id": "trk-a330-2",
+  "line": "A330",
+  "category": "EQUIPEMENT",
+  "title": "Fourreaux abîmés",
+  "problem": {
+   "level": "rca",
+   "values": [
+    "Protection Endommagée"
+   ]
+  },
+  "defects": "Fourreau abîmés",
+  "rootCause": "Stock en vrac dans un kanban",
+  "analysisOwner": "",
+  "analysisStart": "2026-06-01",
+  "analysisStatus": "",
+  "action": "1/ Mise en place d’un nouveau conditionnement de stockage à déployer FAIT 2/ Kanban à redimensionner",
+  "actionOwner": "TEAM LEADER LOGISTIQUE",
+  "actionStart": "2026-08-01",
+  "status": "En cours",
+  "expected": "2026-12-01",
+  "note": "Avant",
+  "source": "Tracker MFT A330",
+  "log": [],
+  "createdBy": "",
+  "createdAt": "2026-10-23"
+ },
+ {
+  "id": "trk-a330-3",
+  "line": "A330",
+  "category": "Mise en oeuvre",
+  "title": "Mise en œuvre (retouches MEO)",
+  "problem": {
+   "level": "cat",
+   "values": [
+    "MEO Facteur humain"
+   ]
+  },
+  "defects": "On constate un nombre élevé de retouches, principalement généré par des problèmes de mise en œuvre et des écarts par rapport au dossier de définition.",
+  "rootCause": "Mauvais suivi de l’AIPI et de la définition",
+  "analysisOwner": "",
+  "analysisStart": "2026-07-01",
+  "analysisStatus": "",
+  "action": "1/ MFT hebdomadaire avec les team leaders pour l'analyse des retouches 2/ Réalisation des surveillances opérationnelles 3/ Assigner des tuteurs dédiés par vacation pour garantir la disponibilité et l'alignement horaire",
+  "actionOwner": "QLS/TEAM LEADER QLS TEAM LEADER",
+  "actionStart": "2026-09-01",
+  "status": "En cours",
+  "expected": "2026-12-01",
+  "note": "",
+  "source": "Tracker MFT A330",
+  "log": [],
+  "createdBy": "",
+  "createdAt": "2026-10-23"
+ },
+ {
+  "id": "trk-a330-4",
+  "line": "A330",
+  "category": "Mise en oeuvre",
+  "title": "Métallisation non conforme",
+  "problem": {
+   "level": "rca",
+   "values": [
+    "Défaut de Métallisation"
+   ]
+  },
+  "defects": "Métallisation non conforme - Bleu de métallisation posé avant la prise des mesures.",
+  "rootCause": "Process E2E non appliqué donc opérateur ne sait sait pas si mesure OK → délégation L2",
+  "analysisOwner": "",
+  "analysisStart": "2026-07-01",
+  "analysisStatus": "",
+  "action": "1/ Planifier des formations en salle training. 2/ Mettre en place une QA adaptée au besoin. 3/ Qualifier le personnel opérateur associé à cette QA. 4/ Mettre à jour les gammes de travail et les SOI.",
+  "actionOwner": "QLS TEAM LEADER TRAINING",
+  "actionStart": "2026-09-01",
+  "status": "En cours",
+  "expected": "2026-12-01",
+  "note": "",
+  "source": "Tracker MFT A330",
+  "log": [],
+  "createdBy": "",
+  "createdAt": "2026-10-23"
+ },
+ {
+  "id": "trk-a350-1",
+  "line": "A350",
+  "category": "Erreurs/Inversions de branchements",
+  "title": "Erreurs et inversions de branchement",
+  "problem": {
+   "level": "cat",
+   "values": [
+    "Erreur Branchement"
+   ]
+  },
+  "defects": "Erreurs et inversions de branchements de câble détectés au niveau du TEST.",
+  "rootCause": "Etape 1: Mise en place d'un tableau de suivi des retouches test par le ME => Pas de récurrence / Pas de problème technique. Resultat: Problème de tutorat , manque de suivi du tuteur",
+  "analysisOwner": "PPE/ME/ST",
+  "analysisStart": "2026-02-01",
+  "analysisStatus": "Clos",
+  "action": "Action 1 — Optimisation du tutorat : Allègement : Réduire la charge de travail des tuteurs. Planning : Aligner les vacations tuteurs/tutorés. Compétences : Vérifier l'expérience et la capacité à transmettre des tuteurs.",
+  "actionOwner": "Team Leader",
+  "actionStart": "2026-07-01",
+  "status": "En cours",
+  "expected": "",
+  "note": "",
+  "source": "Tracker MFT A350",
+  "log": [],
+  "createdBy": "",
+  "createdAt": "2026-10-23"
+ },
+ {
+  "id": "trk-a350-2",
+  "line": "A350",
+  "category": "Déverrouillages",
+  "title": "Déverrouillages",
+  "problem": {
+   "level": "cat",
+   "values": [
+    "Déverrouillage"
+   ]
+  },
+  "defects": "Pannes intermitentes, pas de connexion électrique entre les 2 prises.",
+  "rootCause": "1/ suite à Analyse des récurrences produit et retouches individuelles. --> Surtout de VG et VT 2/ Pas d'outillage pour check déverrouillage (ex: pesons) 3/ Analyse Qualité du tutorat : Freins : Surcharge des tuteurs, décalage d'horaires et manque d'expérience produit. Impact : Hausse des retouches chez les stagiaires et nouveaux arrivants en intégration.",
+  "analysisOwner": "Qualité (QLS de la ligne), Team Leader",
+  "analysisStart": "2026-02-01",
+  "analysisStatus": "En cours",
+  "action": "1/ Y' a t il une reccurence sur les VT (Ex: 103) et VG ? les bornes associées? 2/ Valider un outillage pour éviter tout déverrouillage 3/- Stopper l'affectation des stagiaires sur les postes d'Intégration - Dédier des tuteurs par vacation",
+  "actionOwner": "1/ Q +ST 2/ Méthodes 3 / TL",
+  "actionStart": "2026-07-01",
+  "status": "En cours",
+  "expected": "",
+  "note": "",
+  "source": "Tracker MFT A350",
+  "log": [],
+  "createdBy": "",
+  "createdAt": "2026-10-23"
+ },
+ {
+  "id": "trk-a350-3",
+  "line": "A350",
+  "category": "Améloration point de contrôle",
+  "title": "Retouches trouvées au contrôle final",
+  "problem": {
+   "level": "where",
+   "values": [
+    "Final inspection"
+   ]
+  },
+  "defects": "Des retouches qualité générées au poste Mécanique ont été détectées au contrôle final.",
+  "rootCause": "Voici une version synthétique et percutante : Mise en place d'un contrôle L2 anticipé au poste Mécanique Suite à des retouches détectées au contrôle final, un contrôle L2 est déplacé en amont, directement au poste Mécanique. Bénéfices : Validation amont : Contrôle des structures et équipements mécaniques avant câblage. Retouches facilitées : Interventions simplifiées, sans risque pour les éléments adjacents. Traçabilité optimisée : Imputation directe des non-conformités (NC) fournisseurs. Instructions ciblées : Consignes de contrôle (QSOI) adaptées à chaque poste.",
+  "analysisOwner": "Qualité (QLS de la ligne), Team Leader.",
+  "analysisStart": "2026-04-01",
+  "analysisStatus": "En cours",
+  "action": "Planifier les réunion avec les métiers supports impactés par le sujet : - ME pour les gammes. - Production pour faire des tests. - PPE pour les temps. Création d'une QA L2 Méca. Création d'une QSOI.",
+  "actionOwner": "Qualité",
+  "actionStart": "",
+  "status": "En cours",
+  "expected": "En cours",
+  "note": "",
+  "source": "Tracker MFT A350",
+  "log": [],
+  "createdBy": "",
+  "createdAt": "2026-10-23"
+ },
+ {
+  "id": "trk-a350-4",
+  "line": "A350",
+  "category": "Câbles coupés",
+  "title": "Câbles coupés trop courts",
+  "problem": {
+   "level": "sub",
+   "values": [
+    "Câble à refaire (ligne)"
+   ]
+  },
+  "defects": "Câble trop court",
+  "rootCause": "Suite à analyse, probléme sur Rapid share qui coupe trop court.",
+  "analysisOwner": "Support technique de chaque ligne.",
+  "analysisStart": "2026-06-01",
+  "analysisStatus": "En cours",
+  "action": "1/ Modification paramétrage RapidShare pour confort du Personnel sur le retrait d’un scotch → Paramétrer la machine comme à l’ancienne version 2/ Appliquer rigoureusement la maintenance ( ex: nettoyage des couteaux)",
+  "actionOwner": "Gimenez.M TL",
+  "actionStart": "2026-07-01",
+  "status": "En cours",
+  "expected": "",
+  "note": "",
+  "source": "Tracker MFT A350",
+  "log": [],
+  "createdBy": "",
+  "createdAt": "2026-10-23"
+ },
+ {
+  "id": "trk-a350-5",
+  "line": "A350",
+  "category": "Câbles Abîmés",
+  "title": "Câbles abîmés",
+  "problem": {
+   "level": "rca",
+   "values": [
+    "Câble Endommagé"
+   ]
+  },
+  "defects": "Abimés Opérateurs",
+  "rootCause": "1/ Abimés lors de la manutention 2/ Câbles abimés lors de la mise en oeuvre sur les SE",
+  "analysisOwner": "Support technique de chaque ligne.",
+  "analysisStart": "2026-06-01",
+  "analysisStatus": "En cours",
+  "action": "1/ Modification de la structure des arbres à câbles qui abîme → PAT Compagnons en cours 2.1/ Quel sous Ensemble est impactés? 2.2 / Quelle Mise en oeuvre?",
+  "actionOwner": "1/ Team Leader 2/ ST 3/ Q",
+  "actionStart": "2026-07-01",
+  "status": "En cours",
+  "expected": "",
+  "note": "",
+  "source": "Tracker MFT A350",
+  "log": [],
+  "createdBy": "",
+  "createdAt": "2026-10-23"
+ }
+]
