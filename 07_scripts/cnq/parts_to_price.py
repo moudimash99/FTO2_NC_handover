@@ -33,6 +33,8 @@ PN = [
     r"\b((?!10|33|0000)\d{10})\b",                                               # 10-digit references (not orders, phones, zeros)
 ]
 FIN = re.compile(r"\b(\d{1,4}[A-Z]{2,3}\d{0,3}(?:-[A-D])?)\b")
+# SAP articles that are the rejected part itself rather than the assembly or routing being worked on
+PART_ARTICLE = re.compile(r"\bLABEL\b|WIRE BUNDLE|^VTP\b", re.I)
 
 
 def body(t):
@@ -82,7 +84,10 @@ def load():
         text = short + " | " + body(r.description_long_text)
         refs, fins = refs_in(text), fins_in(text)
         q = pd.to_numeric(r.defect_quantity, errors="coerce")
-        if refs:
+        art_desc = r.article_version_description if isinstance(r.article_version_description, str) else ""
+        if isinstance(r.article_version, str) and PART_ARTICLE.search(art_desc):
+            key, kind = r.article_version, "SAP article (the part itself)"
+        elif refs:
             key, kind = refs[0], "Reference in text"
         elif fins:
             key, kind = "FIN %s" % fins[0], "FIN only"
@@ -101,7 +106,7 @@ def load():
 
 
 def groups(t):
-    order = {"Reference in text": 0, "FIN only": 1, "To identify": 2}
+    order = {"SAP article (the part itself)": 0, "Reference in text": 0, "FIN only": 1, "To identify": 2}
     out = []
     for key, g in t.groupby("key"):
         dec = g.decision.value_counts()
@@ -154,22 +159,25 @@ def build(t):
     n_ref = sum(1 for r in g if r["kind"] == "Reference in text")
     n_fin = sum(1 for r in g if r["kind"] == "FIN only")
     n_id = sum(1 for r in g if r["kind"] == "To identify")
+    n_art = sum(1 for r in g if r["kind"] == "SAP article (the part itself)")
     lines = [
         ("CNQ – parts to price", FB),
         ("", F),
         ("What this is", FB),
         ("The cost model counts the value of the part on rejections (REJ), rejections with a rework order (REJ_RW), exchanges (EXC) "
          "and scraps (SCR) where FTO2 is liable. Today that value is 0 because no price is known.", F),
-        ("%d NCs need a part price. They come down to %d parts: %d with a reference written in the NC, %d with only a FIN, "
-         "%d to identify from the NC's wording." % (len(a), len(g), n_ref, n_fin, n_id), F),
+        ("%d NCs need a part price. They come down to %d parts: %d whose SAP article is the part itself, %d with a reference "
+         "written in the NC, %d with only a FIN, %d to identify from the NC's wording." % (len(a), len(g), n_art, n_ref, n_fin, n_id), F),
         ("Source: NC exports of 12 Oct 2026 (fto2_dashboard_data_12 and _missing_ids_3), decisions and liability as in the dashboard "
          "(NCs created in 2026, every phase).", F),
         ("", F),
         ("How the part was found", FB),
         ("The reference is read from the NC title and long text (NSA, ABS, ASNA, NAS, EN, E0…, 14-character Airbus articles, "
          "10-digit references). When none is written, the FIN is used; otherwise the part is listed as the NC names it.", F),
-        ("The SAP article on the NC is mostly the assembly being built (a VU or a routing), not the rejected part. It is shown in "
-         "'NC detail' for reference only.", F),
+        ("The SAP article on the NC is mostly the assembly or the routing being worked on (ELEC ASSY 295VU, INTEGRATION 740VU, "
+         "Gamme domestique 743VU INCOMING, Intégration harnais 1101VB sur MIP), not the rejected part: the same articles carry "
+         "rework NCs, where nothing is thrown away. When the article is the part itself (a functional label, a harness), it is "
+         "used as the part. Otherwise it is shown in 'NC detail' for reference only.", F),
         ("This is an automatic reading of the texts: check the reference before asking for a price.", F),
         ("", F),
         ("What to fill in", FB),
