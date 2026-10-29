@@ -3717,7 +3717,7 @@ window.DASH = {"defects":[["216055047",1,"2026-01-06","2026-W02","A350","",0,0,0
   }
 
   // ---- second batch (26-50)
-  Object.assign(GX.fr, { lsc: 'LSC {v}', lic: 'LIC {v}', mrT: 'Étendue mobile', run8: 'Série de 8 du même côté de la moyenne', xLeg: 'NC de la semaine', limLeg: 'Limites de contrôle',
+  Object.assign(GX.fr, { lsc: 'LSC {v}', lim3: 'Limites à 3 σ : vrai changement', lim2: 'Limites à 2 σ : à surveiller', warnLim: 'Entre 2 et 3 σ', xZ: '{z} σ de la moyenne', xMean: 'NC par semaine en moyenne', xSigma: 'σ, l’écart-type d’une semaine', x3s: 'limite haute, moyenne + 3 σ', lic: 'LIC {v}', mrT: 'Étendue mobile', run8: 'Série de 8 du même côté de la moyenne', xLeg: 'NC de la semaine', limLeg: 'Limites de contrôle',
     cusumTip: 'écart cumulé {v}', aboveMean: 'Semaine au-dessus de la moyenne', belowMean: 'Semaine en dessous', trend: 'Tendance', band: 'Bande ± 2σ', projYear: 'Fin d’année : {v} NC par semaine',
     shutWk: 'Semaine de fermeture, hors calcul', created: 'Créées', closed: 'Closes', openGap: 'Ouvertes (écart)', openNow: '{n} ouvertes', age_0: '0 à 7 j', age_1: '8 à 30 j', age_2: '31 à 60 j',
     age_3: '61 à 90 j', age_4: 'Plus de 90 j', cohTip: '{p} encore ouvertes après {k} sem. ({n} NC)', weeksAfter: 'Semaines après la création', perDef: '{v} par défaut', mult: '× {v}',
@@ -3727,7 +3727,7 @@ window.DASH = {"defects":[["216055047",1,"2026-01-06","2026-W02","A350","",0,0,0
     ratio: 'Médiane : réel = {v} × estimé', diag: 'Réel = estimé', overEst: 'Plus long que prévu', underEst: 'Plus court que prévu', nbDefAx: 'Défauts dans la NC', meanMed: 'Médiane {m} · moyenne {a}',
     pc_nc: 'NC', pc_dpn: 'Défauts par NC', pc_cpn: 'Coût moyen par NC', pc_days: 'Délai médian (j)', pc_late: 'Trouvées après le poste', q_hh: 'Fréquent et cher', q_hl: 'Fréquent, peu cher',
     q_lh: 'Rare mais cher', q_ll: 'Rare et peu cher', ncAx: 'Nombre de NC', avgAx: 'Coût moyen par NC', arcTip: '{n} NC en commun', ncsDefs: '{n} NC · {d} défauts', a350vs: 'Part dans les défauts de la ligne' });
-  Object.assign(GX.en, { lsc: 'UCL {v}', lic: 'LCL {v}', mrT: 'Moving range', run8: 'Run of 8 on one side of the mean', xLeg: 'NCs of the week', limLeg: 'Control limits',
+  Object.assign(GX.en, { lsc: 'UCL {v}', lim3: '3 σ limits: a real change', lim2: '2 σ limits: to watch', warnLim: 'Between 2 and 3 σ', xZ: '{z} σ from the mean', xMean: 'NCs per week on average', xSigma: 'σ, the standard deviation of a week', x3s: 'upper limit, mean + 3 σ', lic: 'LCL {v}', mrT: 'Moving range', run8: 'Run of 8 on one side of the mean', xLeg: 'NCs of the week', limLeg: 'Control limits',
     cusumTip: 'cumulative deviation {v}', aboveMean: 'Week above the mean', belowMean: 'Week below', trend: 'Trend', band: '± 2σ band', projYear: 'Year end: {v} NCs a week',
     shutWk: 'Shutdown week, left out', created: 'Created', closed: 'Closed', openGap: 'Open (gap)', openNow: '{n} open', age_0: '0 to 7 d', age_1: '8 to 30 d', age_2: '31 to 60 d',
     age_3: '61 to 90 d', age_4: 'Over 90 d', cohTip: '{p} still open after {k} wk ({n} NCs)', weeksAfter: 'Weeks after creation', perDef: '{v} per defect', mult: '× {v}',
@@ -5371,8 +5371,8 @@ window.DASH = {"defects":[["216055047",1,"2026-01-06","2026-W02","A350","",0,0,0
           en: ['Cost', 'Cumulative cost of non-quality', 'Dotted: forecast; dashed: cumulative cost target, line by line (2025 cost per product delivered − 25% × 2026 output). Left: 2025 and the year’s target, by line.', 'CNQ cost · planned MSN output · 2025 cost'] },
     VS: { fr: ['Volumes et taux', 'NC, défauts et coût : le volume, puis par MSN', 'Chaque ligne : le volume mois par mois, puis le même rapporté au nombre de MSN produits.', 'NC · défauts · coût · production MSN'],
           en: ['Volumes and rates', 'NCs, defects and cost: the volume, then per MSN', 'Each row: the volume month by month, then the same against the number of MSN built.', 'NCs · defects · cost · MSN output'] },
-    VX: { fr: ['Maîtrise statistique', 'NC par semaine, avec leurs limites', 'Limites calculées sur la variation habituelle d’une semaine à l’autre. Un point dehors signale un vrai changement.', 'NC par semaine'],
-          en: ['Process control', 'NCs per week, with their limits', 'A dot outside the limits marks a real change; inside is normal variation.', 'NCs per week'] },
+    VX: { fr: ['Maîtrise statistique', 'NC par semaine, avec leurs limites', 'σ = écart-type : l’écart moyen d’une semaine à la suivante ÷ 1,128 (deux semaines diffèrent en moyenne de 1,128 σ). Au-delà de 3 σ : un vrai changement (par hasard, une semaine sur 370). Entre 2 et 3 σ : à surveiller (par hasard, une semaine sur 22) ; deux semaines sur trois au-delà de 2 σ du même côté forment un signal.', 'NC par semaine'],
+          en: ['Process control', 'NCs per week, with their limits', 'σ = standard deviation: the mean jump from one week to the next ÷ 1.128 (two weeks differ on average by 1.128 σ). Beyond 3 σ: a real change (by chance, one week in 370). Between 2 and 3 σ: to watch (by chance, one week in 22); two weeks out of three beyond 2 σ on the same side make a signal.', 'NCs per week'] },
     VW: { fr: ['Répartition', 'Cent défauts', 'Chaque case : 1 % des défauts, par catégorie.', 'catégorie des défauts'], en: ['Breakdown', 'A hundred defects', 'Each square: 1% of defects, by category.', 'defect category'] },
     VQ: { fr: ['2025 / 2026', 'Causes : 2025 contre 2026, A330 et A350', 'Défauts par MSN, les 10 premières causes de 2025 et de 2026, produits du plan de production ; point creux 2025, point plein 2026. Sans l’A320 (petites pièces comptées à l’unité) ni l’A400M.', 'causes · production MSN · livraisons 2025'],
           en: ['2025 / 2026', 'Root causes: 2025 against 2026, A330 and A350', 'Defects per MSN, the top 10 root causes of 2025 and of 2026, products of the production plan; hollow dot 2025, filled dot 2026. Without the A320 (small parts counted one by one) or the A400M.', 'root causes · MSN output · 2025 deliveries'] },
@@ -5782,21 +5782,27 @@ window.DASH = {"defects":[["216055047",1,"2026-01-06","2026-W02","A350","",0,0,0
     var c = wk.map(function (w) { return cnt[w] || 0; }), sh = wk.map(function (w) { return (WEEK_ALL[w] || 0) < 10; }), n = c.length, on = c.filter(function (v, j) { return !sh[j]; }), mean = avgOf(on), mr = [];
     if (on.length < 6) { pEmpty(k); return; }
     for (var i = 1; i < on.length; i++) mr.push(Math.abs(on[i] - on[i - 1]));
-    var mrb = avgOf(mr), ucl = mean + 2.66 * mrb, lcl = Math.max(0, mean - 2.66 * mrb);
+    // σ (standard deviation) = mean week-to-week jump ÷ 1.128 (d2 for two points); limits at 2 σ (watch) and 3 σ (real change), 30 Oct
+    var mrb = avgOf(mr), sg = mrb / 1.128, ucl = mean + 3 * sg, lcl = Math.max(0, mean - 3 * sg), u2 = mean + 2 * sg, l2 = Math.max(0, mean - 2 * sg);
     var W0 = gWd(k, 300), ml = 34, mrg = 92, pw = W0 - ml - mrg, h1 = 200, mt = 10, H = mt + h1 + 26, g = '';
     function X(j) { return ml + j / (n - 1) * pw; }
     var top = Math.ceil(Math.max(ucl, Math.max.apply(null, c)) / 5) * 5 || 5; function Y(v) { return mt + h1 - v / top * h1; }
     [0, top / 2, top].forEach(function (t) { g += tx(ml - 6, Y(t) + 4, num(t), 'mu', 'end'); });
     g += '<line x1="' + ml + '" x2="' + (ml + pw) + '" y1="' + r1(Y(0)) + '" y2="' + r1(Y(0)) + '" stroke="var(--grid)"/>';
-    [[ucl, 'lsc', true], [mean, 'mean', false], [lcl, 'lic', true]].forEach(function (p) {
-      g += '<line x1="' + ml + '" x2="' + (ml + pw) + '" y1="' + r1(Y(p[0])) + '" y2="' + r1(Y(p[0])) + '" stroke="' + (p[2] ? 'var(--up)' : 'var(--ink-2)') + '"' + (p[2] ? ' stroke-dasharray="4 3"' : '') + '/>' +
-        tx(ml + pw + 8, Y(p[0]) + 4, p[1] === 'mean' ? gx('mean') + ' ' + f1(p[0]) : gx(p[1], { v: f1(p[0]) }), 'mu'); });
+    var lim = [[ucl, '+3 σ', 3], [u2, '+2 σ', 2], [mean, gx('mean'), 0]].concat(mean - 2 * sg > 0 ? [[l2, '−2 σ', 2]] : []).concat(mean - 3 * sg > 0 ? [[lcl, '−3 σ', 3]] : []);
+    var ly = spread(lim.map(function (p) { return Y(p[0]) + 4; }), 13, mt + 4, mt + h1 + 4);
+    lim.forEach(function (p, i) {
+      g += '<line x1="' + ml + '" x2="' + (ml + pw) + '" y1="' + r1(Y(p[0])) + '" y2="' + r1(Y(p[0])) + '" stroke="' + (p[2] === 3 ? 'var(--up)' : 'var(--ink-2)') + '"' + (p[2] === 3 ? ' stroke-dasharray="5 3"' : p[2] === 2 ? ' stroke-dasharray="1.5 3"' : '') + '/>' +
+        tx(ml + pw + 8, ly[i], p[1] + ' ' + f1(p[0]), p[2] === 3 ? 'ink' : 'mu'); });
     g += '<path d="' + c.map(function (v, j) { return sh[j] ? '' : (j && !sh[j - 1] ? 'L' : 'M') + r1(X(j)) + ',' + r1(Y(v)); }).join('') + '" fill="none" stroke="var(--s1)" stroke-width="1.5"/>';
-    c.forEach(function (v, j) { var out = !sh[j] && (v > ucl || v < lcl);
-      g += '<circle cx="' + r1(X(j)) + '" cy="' + r1(Y(v)) + '" r="' + (out ? 5 : 3.5) + '" fill="' + (sh[j] ? 'var(--surface)' : out ? 'var(--up)' : 'var(--s1)') + '" stroke="' + (sh[j] ? 'var(--muted)' : 'var(--surface)') + '" stroke-width="' + (sh[j] ? 1.5 : 2) + '"' + pk('week', wk[j]) + tip(weekLong(wk[j]), [gx('ncCount', { n: num(v) })].concat(sh[j] ? [gx('shutWk')] : [])) + '/>'; });
+    c.forEach(function (v, j) { var out = !sh[j] && (v > ucl || (mean - 3 * sg > 0 && v < lcl)), warn = !sh[j] && !out && (v > u2 || (mean - 2 * sg > 0 && v < l2)), z = sg ? (v - mean) / sg : 0;
+      g += '<circle cx="' + r1(X(j)) + '" cy="' + r1(Y(v)) + '" r="' + (out ? 5 : warn ? 4.5 : 3.5) + '" fill="' + (sh[j] || warn ? 'var(--surface)' : out ? 'var(--up)' : 'var(--s1)') + '" stroke="' + (sh[j] ? 'var(--muted)' : warn ? 'var(--up)' : 'var(--surface)') + '" stroke-width="2"' + pk('week', wk[j]) +
+        tip(weekLong(wk[j]), [gx('ncCount', { n: num(v) })].concat(sh[j] ? [gx('shutWk')] : [gx('xZ', { z: (z >= 0 ? '+' : '−') + f1(Math.abs(z)) })])) + '/>'; });
     var part = WEEKS.filter(function (w) { return isPartial(w) && weekEnd(w) >= GF.from && isoDay(isoMonday(w)) <= GF.to; }), pn = sumA(part.map(function (w) { return cnt[w] || 0; }));
     var lastM = '', seen = {}; wk.forEach(function (w, j) { var m = isoDay(isoMonday(w)).slice(0, 7); if (m !== lastM) { lastM = m; g += tx(X(j), H - 6, v2Mo(m, pw * 4.3 / (n - 1), j && Object.keys(seen).length), 'mu', 'start'); seen[m] = 1; } });
-    gSet(k, svg(W0, H, g, gT(k)), swl('var(--s1)', gx('xLeg')) + swl('var(--up)', gx('limLeg'), true) + sw('var(--up)', gx('outLim'), true) + (sh.indexOf(true) >= 0 ? '<span><i class="sw" style="background:var(--surface);border:1.5px solid var(--muted);border-radius:50%"></i>' + esc(gx('shutWk')) + '</span>' : '') + (pn ? '<span class="mu">' + esc(S('xPartial', { n: num(pn) })) + '</span>' : ''));
+    v2Stats(k, [[f1(mean), gx('xMean')], [f1(sg), gx('xSigma')], [f1(ucl), gx('x3s')]]);
+    gSet(k, svg(W0, H, g, gT(k)), swl('var(--s1)', gx('xLeg')) + swl('var(--up)', gx('lim3'), true) + '<span><i class="dash" style="border-top:2px dotted var(--ink-2)"></i>' + esc(gx('lim2')) + '</span>' + sw('var(--up)', gx('outLim'), true) +
+      '<span><i class="sw" style="background:var(--surface);border:2px solid var(--up);border-radius:50%"></i>' + esc(gx('warnLim')) + '</span>' + (sh.indexOf(true) >= 0 ? '<span><i class="sw" style="background:var(--surface);border:1.5px solid var(--muted);border-radius:50%"></i>' + esc(gx('shutWk')) + '</span>' : '') + (pn ? '<span class="mu">' + esc(S('xPartial', { n: num(pn) })) + '</span>' : ''));
   }
 
   function v2Defs() { return D.defects.filter(function (r) { return SEL[r[0]] && keepMinor(r); }); }
