@@ -606,7 +606,7 @@ body.mk-on .wrap { padding-bottom: 90px; }
 #p-ov[data-lay] .v2ov .bhead h3, #p-where .v2mag .bhead h3 { font-size: clamp(20px, 2vw, 24px); }
 /* Où, Chapitres (chosen 19 Oct): products, aircraft, stations; the chapter title stays on the left while its cards scroll */
 #p-where .v2mag { display: grid; grid-template-columns: minmax(0, 210px) repeat(2, minmax(0, 1fr)); gap: 20px; align-items: stretch; margin: 4px 0 28px;
-  grid-template-areas: "c1 rate rate" "c1 month month" "c1 ci prod" "c1 cause cause" "c2 msn msn" "c2 fin fin" "c3 station station"; }
+  grid-template-areas: "c1 rate rate" "c1 month month" "c1 prod prod" "c1 cause cause" "c2 msn msn" "c2 fin fin" "c3 station station"; }
 #p-where .v2mag .v2-band { align-content: start; min-width: 0; scroll-margin-top: calc(var(--tabs-h) + 18px); }
 #p-where .v2mag > [data-v2="VP"] { grid-area: rate; } #p-where .v2mag > [data-v2="61"] { grid-area: month; } #p-where .v2mag > [data-v2="64"] { grid-area: ci; }
 #p-where .v2mag > [data-v2="a:prod"] { grid-area: prod; } #p-where .v2mag > [data-v2="54"] { grid-area: cause; } #p-where .v2mag > [data-v2="VF"] { grid-area: fin; } #p-where .v2mag > [data-v2="a:msn"] { grid-area: msn; } #p-where .v2mag > [data-v2="a:station"] { grid-area: station; }
@@ -3129,7 +3129,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
       relSubB: 'Limites par MSN comme le suivi hebdomadaire : 2 σ attention, 3 σ alarme. Points : NC de chaque MSN construit dans la période.',
       relSubC: 'Boîte : la moitié des MSN ; moustaches : 5 % à 95 % ; trait : médiane. Points : NC de chaque MSN construit dans la période.',
       relSubD: 'Points : NC de chaque MSN construit dans la période. Bande : intervalle de confiance à 95 % du taux.',
-      relSubE: 'Barres : nombre de MSN par nombre de NC. Trait : intervalle de confiance à 95 % du taux.', relSubP: 'Point : NC par MSN. Trait : intervalle de confiance à 95 % du taux moyen.', relSub2: 'Barre : intervalle de confiance à 95 %. Points : NC de chaque MSN.', relAc: 'NC d’un MSN', relPrev: 'Lignes précédentes', relNext: 'Lignes suivantes', relRate: 'NC par MSN sur la période', relSub: 'Barre : intervalle de confiance à 95 %. Points gris : chaque mois. A330 et A350.', relCi: 'intervalle de confiance à 95 %', relMonth: 'chaque mois', vqCat: 'couleur de la catégorie', vqChg: 'Écart 2026 − 2025 (par MSN)', vqCause: 'Cause', totalM: 'Total du mois', q1: '1er trimestre', q2: '2e trimestre',
+      relSubE: 'Barres : nombre de MSN par nombre de NC. Trait : intervalle de confiance à 95 % du taux.', relSubP: 'Point : NC par MSN. Trait : intervalle de confiance à 95 % du taux moyen.', relSubW: 'NC par MSN et intervalle de confiance à 95 %. Juillet et août comptent pour un demi-mois.', relYtd: 'Depuis janvier', rel6: '6 derniers mois', rel3: '3 derniers mois', relSub2: 'Barre : intervalle de confiance à 95 %. Points : NC de chaque MSN.', relAc: 'NC d’un MSN', relPrev: 'Lignes précédentes', relNext: 'Lignes suivantes', relRate: 'NC par MSN sur la période', relSub: 'Barre : intervalle de confiance à 95 %. Points gris : chaque mois. A330 et A350.', relCi: 'intervalle de confiance à 95 %', relMonth: 'chaque mois', vqCat: 'couleur de la catégorie', vqChg: 'Écart 2026 − 2025 (par MSN)', vqCause: 'Cause', totalM: 'Total du mois', q1: '1er trimestre', q2: '2e trimestre',
       perMonth: '{v} par mois', median: 'Médiane', ncCount: '{n} NC', rollMean: 'Moyenne glissante sur 9 avions', rankAx: 'Rang de l’avion dans sa ligne', perAc: 'Défauts par avion',
       b0: 'Aucun défaut', b1: '1 à 5 défauts', b2: '6 à 15', b3: 'Plus de 15', acTip: 'MSN {m} · {n} défauts', fpyTip: '{n} NC pour {u} unités passées', punchTip: '{n} NC',
       done: 'Terminée', open: 'En cours', late: 'En retard', planned: 'Planifiée', targetRca: 'Cause visée : {r}', finCount: '{n} avions', finTip: 'FIN {f} · MSN {m}',
@@ -3148,7 +3148,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
       relSubB: 'Per-MSN limits as on the weekly chart: 2 σ attention, 3 σ alarm. Dots: NCs of each MSN built in the period.',
       relSubC: 'Box: half of the MSN; whiskers: 5% to 95%; line: median. Dots: NCs of each MSN built in the period.',
       relSubD: 'Dots: NCs of each MSN built in the period. Band: 95% confidence interval of the rate.',
-      relSubE: 'Bars: number of MSN per number of NCs. Line: 95% confidence interval of the rate.', relSubP: 'Dot: NCs per MSN. Line: 95% confidence interval of the average rate.', relSub2: 'Bar: 95% confidence interval. Dots: NCs of each MSN.', relAc: 'NCs of one MSN', relPrev: 'Previous lines', relNext: 'Next lines', relRate: 'NCs per MSN over the period', relSub: 'Bar: 95% confidence interval. Grey dots: each month. A330 and A350.', relCi: '95% confidence interval', relMonth: 'each month', vqCat: 'category colour', vqChg: 'Change 2026 − 2025 (per MSN)', vqCause: 'Root cause', totalM: 'Month total', q1: 'Q1', q2: 'Q2',
+      relSubE: 'Bars: number of MSN per number of NCs. Line: 95% confidence interval of the rate.', relSubP: 'Dot: NCs per MSN. Line: 95% confidence interval of the average rate.', relSubW: 'NCs per MSN and 95% confidence interval. July and August count as half a month.', relYtd: 'Year to date', rel6: 'Last 6 months', rel3: 'Last 3 months', relSub2: 'Bar: 95% confidence interval. Dots: NCs of each MSN.', relAc: 'NCs of one MSN', relPrev: 'Previous lines', relNext: 'Next lines', relRate: 'NCs per MSN over the period', relSub: 'Bar: 95% confidence interval. Grey dots: each month. A330 and A350.', relCi: '95% confidence interval', relMonth: 'each month', vqCat: 'category colour', vqChg: 'Change 2026 − 2025 (per MSN)', vqCause: 'Root cause', totalM: 'Month total', q1: 'Q1', q2: 'Q2',
       perMonth: '{v} a month', median: 'Median', ncCount: '{n} NCs', rollMean: 'Rolling mean over 9 aircraft', rankAx: 'Aircraft build rank in its line', perAc: 'Defects per aircraft',
       b0: 'No defect', b1: '1 to 5 defects', b2: '6 to 15', b3: 'More than 15', acTip: 'MSN {m} · {n} defects', fpyTip: '{n} NCs for {u} units through', punchTip: '{n} NCs',
       done: 'Done', open: 'In progress', late: 'Late', planned: 'Planned', targetRca: 'Targeted cause: {r}', finCount: '{n} aircraft', finTip: 'FIN {f} · MSN {m}',
@@ -4790,10 +4790,51 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
     var hb2 = V2BAND[k] && V2BAND[k].querySelector('.sub'); if (hb2) hb2.textContent = gx('relSub' + V);
     gSet(k, nav + svg(W0, H, g, gT(k)), V === 'P' ? sw(lineCol(os[0].o.line), gx('relRate'), true) + '<span><i class="ln" style="width:22px;height:2px;background:var(--ink-2)"></i>' + esc(gx('relCi')) + '</span>' : '');
   }
+  // 64 (30 Oct, Mohammad): per product, the rate of 2025, of the year to date, of the last 6 and the last 3 months, each with its 95 %
+  // confidence interval (Byar), coloured by period from light (2025) to dark (3 months). The windows count July and August as half a
+  // month each (the summer shutdown), so 'last 3 months' at the end of September is June to September. One page per group of lines.
+  var SUMMER = 'half';   // 'half': July and August count 0.5 each in a window; 'skip': left out
+  function relWin(n) {   // month indices of the last n months of the period, newest first
+    var a = pAct(), out = [], w = 0; for (var j = a.length - 1; j >= 0 && w < n - 1e-9; j--) { var mm = +PD.months[a[j]].slice(5, 7), wt = mm === 7 || mm === 8 ? (SUMMER === 'skip' ? 0 : 0.5) : 1; if (wt) { out.push(a[j]); w += wt; } }
+    return out;
+  }
+  function byar(n, e) { if (!e) return null; if (!n) return { r: 0, l: 0, u: 3.689 / e };
+    var l = n * Math.pow(1 - 1 / (9 * n) - 1.96 / (3 * Math.sqrt(n)), 3), u = (n + 1) * Math.pow(1 - 1 / (9 * (n + 1)) + 1.96 / (3 * Math.sqrt(n + 1)), 3); return { r: n / e, l: Math.max(l, 0) / e, u: u / e }; }
+  function g64w(k) {
+    RELK = k;
+    var hb = V2BAND[k] && V2BAND[k].querySelector('.sub'); if (hb) hb.textContent = gx('relSubW');
+    var Y5 = y25Sel(), L5 = (D.y25 && D.y25.prod) || {}, E5 = pSrc(), w6 = relWin(6), w3 = relWin(3);
+    var PER = [['y25', '2025', 'var(--dim)'], ['ytd', gx('relYtd'), tint('--seq', 45)], ['m6', gx('rel6'), tint('--seq', 72)], ['m3', gx('rel3'), 'var(--seq)']];
+    var pages = [['A350 · A330', function (o) { return (o.line === 'A350' || o.line === 'A330') && o.p !== 'MDCD'; }], ['A400M', function (o) { return o.line === 'A400M'; }],
+      ['A320', function (o) { return o.line === 'A320'; }], ['MDCD', function (o) { return o.p === 'MDCD'; }]].map(function (pg) {
+      var os = pOk().filter(function (o) { return o.NC > 0 && pg[1](o); }).map(function (o) {
+        var sw = function (ix) { return byar(sumA(ix.map(function (i) { return o.nc[i]; })), sumA(ix.map(function (i) { return o.eqm[i]; }))); };
+        var n25 = 0; (Y5 || []).forEach(function (x) { if (E5 && E5.map && E5.map[String(x.p || '').toUpperCase()] === o.p) n25 += x.nc; });
+        var d25 = L5[o.p] ? sumA(L5[o.p]) : 0;
+        return { o: o, v: { y25: d25 ? byar(n25, d25) : null, ytd: byar(o.NC, o.EQ), m6: sw(w6), m3: sw(w3) } }; }).sort(function (a, b) { return b.v.ytd.r - a.v.ytd.r; });
+      return { name: pg[0], os: os }; }).filter(function (g) { return g.os.length; });
+    if (!pages.length) { pEmpty(k); return; }
+    RELPG = (RELPG % pages.length + pages.length) % pages.length;
+    var grp = pages[RELPG], os = grp.os, W0 = gWd(k), lab = 96, mr = 64, rh = 60, top = 6, H = top + os.length * rh + 24, pw = W0 - lab - mr, hi = 0, g = '';
+    os.forEach(function (x) { PER.forEach(function (q) { var v = x.v[q[0]]; if (v) hi = Math.max(hi, v.u); }); });
+    var nt = pNice(hi * 1.04); function X(v) { return lab + Math.max(0, v) / nt.top * pw; }
+    for (var t = 0; t <= nt.top + 1e-9; t += nt.step) g += '<line x1="' + r1(X(t)) + '" x2="' + r1(X(t)) + '" y1="0" y2="' + (H - 22) + '" stroke="var(--grid)"/>' + tx(X(t), H - 6, num(t), 'mu', 'middle');
+    os.forEach(function (x, i) {
+      var y0 = top + i * rh + 8;
+      g += tx(lab - 10, y0 + 26, x.o.p, 'ink', 'end');
+      PER.forEach(function (q, j) { var v = x.v[q[0]], y = y0 + j * 12 + 4; if (!v) return;
+        g += '<line x1="' + r1(X(v.l)) + '" x2="' + r1(X(v.u)) + '" y1="' + y + '" y2="' + y + '" stroke="' + q[2] + '" stroke-width="2"/>' +
+          '<line x1="' + r1(X(v.l)) + '" x2="' + r1(X(v.l)) + '" y1="' + (y - 3) + '" y2="' + (y + 3) + '" stroke="' + q[2] + '" stroke-width="1.5"/><line x1="' + r1(X(v.u)) + '" x2="' + r1(X(v.u)) + '" y1="' + (y - 3) + '" y2="' + (y + 3) + '" stroke="' + q[2] + '" stroke-width="1.5"/>' +
+          '<circle cx="' + r1(X(v.r)) + '" cy="' + y + '" r="4.2" fill="' + q[2] + '" stroke="var(--surface)" stroke-width="1.2"' + ppk('pprod', x.o.p) + tip(x.o.p + ' · ' + q[1], [gx('perEq', { v: f2(v.r) }), gx('ciTip', { a: f2(v.l), b: f2(v.u) })]) + '/>' +
+          tx(lab + pw + 10, y + 4, f2(v.r), j === 1 ? 'ink b' : 'mu', null, ' style="font-size:11px"'); });
+    });
+    var nav = pages.length > 1 ? '<div class="relnav"><button type="button" class="cxb" data-relpg="-1" aria-label="' + esc(gx('relPrev')) + '">◀</button><b>' + esc(grp.name) + '</b><span class="mu">' + (RELPG + 1) + ' / ' + pages.length + '</span><button type="button" class="cxb" data-relpg="1" aria-label="' + esc(gx('relNext')) + '">▶</button></div>' : '';
+    gSet(k, nav + svg(W0, H, g, gT(k)), PER.map(function (q) { return sw(q[2], q[1], true); }).join('') + '<span><i class="ln" style="width:22px;height:2px;background:var(--ink-2)"></i>' + esc(gx('relCi')) + '</span>');
+  }
   // 64. rate with its 95% interval (Byar), log scale
   function g64(k) {
     var pv = window.FTO2_PREVIEW && window.FTO2_PREVIEW.rel; if (typeof pv === 'string') { g64v(k, pv); return; } if (pv === 2) { g64c(k); return; } if (pv) { g64b(k); return; }
-    g64v(k, 'P'); return;   // 30 Oct, Mohammad: the rate and its 95 % interval only, one page per group of lines (A350 · A330, A400M, A320, MDCD)
+    g64w(k); return;   // 30 Oct, Mohammad: 2025, year to date, last 6 and last 3 months, each with its 95 % interval, one page per group of lines
     var W0 = gWd(k), os = pOk().filter(function (o) { return o.NC > 0; }).map(function (o) {
       var n = o.NC, l = n * Math.pow(1 - 1 / (9 * n) - 1.96 / (3 * Math.sqrt(n)), 3), u = (n + 1) * Math.pow(1 - 1 / (9 * (n + 1)) + 1.96 / (3 * Math.sqrt(n + 1)), 3);
       return { o: o, r: n / o.EQ, l: Math.max(l, 0.01) / o.EQ, u: u / o.EQ }; }).sort(function (a, b) { return b.r - a.r; });
@@ -5569,7 +5610,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
     ov: { top: ['VT', 'VN', 'VB', 'a:lead', 'VX'], fold: ['a:cal'] },
     pareto: { top: ['a:bub', 'a:bump', 'a:flow', '78', '76', 'VM', 'VQ', '53'],   // 30 Oct: connection errors by month alone on a row; per million operations beside by product
                 inboard: ['VW'], fold: ['65', 'VK'] },   // under the lists; the hundred squares sit in the lists (20 Oct); swapped pins folded until checked on the real data (21 Oct)
-    where: { top: ['VP', '61', '64', 'a:prod', '54', 'a:msn', 'VF', 'a:station'], fold: [] },   // fleet pictograms removed (Mohammad, 29 Oct)
+    where: { top: ['VP', '61', 'a:prod', '54', 'a:msn', 'VF', 'a:station'], fold: ['64'] },   // fleet pictograms removed (Mohammad, 29 Oct)
     cnq: { more: ['VC'], fold: ['VE'] }
   };
   var V2F = { VM: v2Mio, VT: v2Target, VN: v2Trend, VB: v2Budget, VS: v2Score, VX: v2Xmr, VW: v2Waffle, VQ: v2Quarters, VP: v2Prod, VF: v2Fins, VI: v2Icons, VC: v2Comp, VE: v2Each, VK: v2Pins };
