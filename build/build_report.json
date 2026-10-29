@@ -134,9 +134,9 @@
       "ncs": 713,
       "defects": 1463,
       "aleas": 99,
-      "js_kb": 1339
+      "js_kb": 1338
     },
-    "level23_js_kb": 742,
+    "level23_js_kb": 741,
     "pipeline_notebook": true,
     "level4": [
       "FTO2_NC_Dashboard_level2.slate.json",
