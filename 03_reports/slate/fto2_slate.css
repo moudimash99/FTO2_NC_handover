@@ -329,6 +329,9 @@
 .fto2 details.vdata > summary { cursor: pointer; font-size: 13px; color: var(--s1); justify-self: start; }
 .fto2 details.vdata[open] > summary { margin-bottom: 8px; }
 .fto2 details.vnote > summary { color: var(--muted); font-size: 12.5px; }
+.fto2 .grpseg { margin: 2px 0 8px; }
+.fto2 .grpseg button { font-size: 12px; padding: 3px 9px; }
+.fto2 .relnav { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; font-size: 13px; }
 .fto2 details.vnote td { font-size: 12.5px; }
 .fto2 table.mini { min-width: 0; font-variant-numeric: tabular-nums; }
 .fto2 table.mini th, .fto2 table.mini td { padding: 5px 10px; white-space: nowrap; }

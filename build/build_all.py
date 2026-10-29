@@ -462,7 +462,7 @@ def production_msn():
         if len(r) < 15:
             continue
         if r[14] == "date prévue du début" and r[3].strip():
-            cur = {"line": r[1].strip(), "prod": r[2].strip(), "msn": r[3].strip(), "plan": [day(x) for x in r[5:13]], "real": [None] * 8}
+            cur = {"line": r[1].strip(), "prod": EQ_NAMES.get(r[2].strip(), r[2].strip()), "msn": r[3].strip(), "plan": [day(x) for x in r[5:13]], "real": [None] * 8}
             recs.append(cur)
         elif r[14] == "date réelle" and cur:
             cur["real"] = [day(x) for x in r[5:13]]
