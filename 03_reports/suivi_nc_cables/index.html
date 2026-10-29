@@ -1,0 +1,706 @@
+<style>
+.cx { display: grid; gap: var(--cds-gap-xl); font-family: var(--font-anthropic-sans); color: var(--color-fg); }
+.cx:not([data-lang="en"]) [data-l="en"], .cx[data-lang="en"] [data-l="fr"] { display: none; }
+.cx-head { display: grid; gap: var(--cds-gap-sm); }
+.cx-title { margin: 0; font-family: var(--font-anthropic-serif); font-weight: 400; font-size: var(--cds-font-size-title); text-wrap: balance; }
+.cx-lede { margin: 0; max-width: 72ch; color: var(--color-fg-muted); }
+.cx-lede .k { color: var(--color-fg); font-variant-numeric: tabular-nums; }
+.cx-tools { display: flex; flex-wrap: wrap; gap: var(--cds-gap-sm); align-items: center; }
+.cx-seg { display: inline-flex; flex-wrap: wrap; border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); overflow: hidden; }
+.cx-seg button { font: inherit; font-size: var(--cds-font-size-body); padding: var(--cds-pad-xs) var(--cds-pad-md); border: 0; background: transparent; color: var(--color-fg); cursor: pointer; }
+.cx-seg button + button { border-left: 1px solid var(--color-border-line); }
+.cx-seg button[aria-pressed="true"] { background: var(--color-fg); color: var(--color-bg); }
+.cx-seg.small button { font-size: var(--cds-font-size-caption); padding: var(--cds-pad-xs) var(--cds-pad-sm); }
+.cx-chips { display: flex; flex-wrap: wrap; gap: var(--cds-gap-xs); align-items: center; }
+.cx-chip { font: inherit; font-size: var(--cds-font-size-caption); padding: var(--cds-pad-xs) var(--cds-pad-sm); border: 1px solid var(--color-border-line); border-radius: 999px; background: var(--color-panel); color: var(--color-fg); cursor: pointer; }
+.cx-chip.clear { border-style: dashed; color: var(--color-fg-muted); }
+.cx-push { margin-left: auto; }
+.cx button:focus-visible, .cx input:focus-visible, .cx td:focus-visible, .cx tr:focus-visible { outline: 2px solid var(--color-fg); outline-offset: 2px; }
+
+.cx-kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 11rem), 1fr)); gap: var(--cds-gap-md); }
+.cx-kpi { display: grid; gap: var(--cds-gap-xs); align-content: start; padding: var(--cds-pad-md); background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); }
+.cx-kpi .lab { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+.cx-kpi .num { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: var(--cds-font-size-title); font-variant-numeric: tabular-nums; }
+.cx-kpi .sub { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+.cx-kpi.alert .num { color: var(--color-warn); }
+
+.cx-sec { display: grid; gap: var(--cds-gap-md); }
+.cx-sec > h2 { margin: 0; font-size: var(--cds-font-size-heading); font-weight: var(--cds-font-weight-medium); }
+.cx-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 24rem), 1fr)); gap: var(--cds-gap-md); }
+.cx-card { display: grid; gap: var(--cds-gap-sm); align-content: start; min-width: 0; padding: var(--cds-pad-lg); background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); }
+.cx-card h3 { margin: 0; font-size: var(--cds-font-size-heading); font-weight: var(--cds-font-weight-medium); }
+.cx-wide { grid-column: 1 / -1; }
+.cx-note { margin: 0; font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); max-width: 80ch; }
+.cx-note .k { color: var(--color-fg); font-variant-numeric: tabular-nums; }
+
+.cx-legend { display: flex; flex-wrap: wrap; gap: var(--cds-gap-xs) var(--cds-gap-md); }
+.cx-legend button { font: inherit; font-size: var(--cds-font-size-caption); display: inline-flex; align-items: center; gap: var(--cds-gap-xs); padding: 2px 4px; border: 0; background: transparent; color: var(--color-fg); cursor: pointer; border-radius: var(--cds-radius); }
+.cx-legend button[aria-pressed="false"] { opacity: .45; }
+.cx-sw { width: .7rem; height: .7rem; border-radius: 2px; flex: none; }
+.cx-chartbox { position: relative; min-height: 15rem; }
+.cx-chartbox svg { display: block; }
+.cx-tip { position: absolute; top: 0; left: 0; pointer-events: none; background: var(--cds-surface-popover); border: 1px solid var(--cds-border); border-radius: var(--cds-radius); box-shadow: var(--cds-shadow-popover); padding: var(--cds-pad-xs) var(--cds-pad-sm); font-size: var(--cds-font-size-caption); display: grid; gap: 2px; min-width: 10rem; z-index: 2; }
+.cx-tip .h { color: var(--cds-text-secondary); }
+.cx-tip .r { display: flex; align-items: center; gap: var(--cds-gap-xs); font-variant-numeric: tabular-nums; }
+.cx-tip .r span:last-child { margin-left: auto; padding-left: var(--cds-pad-sm); }
+
+.cx-scroll { overflow: auto; max-width: 100%; }
+.cx-tbl { width: 100%; border-collapse: collapse; font-size: var(--cds-font-size-caption); font-variant-numeric: tabular-nums; }
+.cx-tbl th, .cx-tbl td { text-align: left; padding: var(--cds-pad-xs) var(--cds-pad-sm); border-bottom: 1px solid var(--color-border-line); vertical-align: top; }
+.cx-tbl th { font-weight: var(--cds-font-weight-medium); color: var(--color-fg-muted); position: sticky; top: 0; background: var(--color-panel); z-index: 1; }
+.cx-tbl td.n, .cx-tbl th.n { text-align: right; }
+.cx-mx td.c { cursor: pointer; }
+.cx-mx td.c:hover { outline: 1px solid var(--color-fg-muted); outline-offset: -1px; }
+.cx-mx td.on { outline: 2px solid var(--color-fg); outline-offset: -2px; }
+.cx-mx tbody th { position: static; color: var(--color-fg); font-weight: 400; cursor: pointer; }
+.cx-tall { max-height: 34rem; }
+.cx-mid { max-height: 22rem; }
+.cx-rows tr[data-key] { cursor: pointer; }
+.cx-rows tr[data-key]:hover td { background: color-mix(in srgb, var(--color-fg) 5%, transparent); }
+.cx-tbl td.txt { min-width: 16rem; max-width: 40rem; }
+@media (max-width: 760px) { .cx-hide-n { display: none; } }
+
+.cx-bars { display: grid; gap: var(--cds-gap-xs); }
+.cx-brow { display: grid; grid-template-columns: minmax(0, 15rem) minmax(0, 1fr) 2.5rem; gap: var(--cds-gap-sm); align-items: center; font: inherit; font-size: var(--cds-font-size-caption); text-align: left; padding: 2px 0; border: 0; background: transparent; color: var(--color-fg); cursor: pointer; width: 100%; }
+.cx-brow[aria-pressed="true"] .cx-blab { font-weight: var(--cds-font-weight-medium); text-decoration: underline; }
+.cx-brow.dim { opacity: .45; }
+.cx-blab { overflow-wrap: anywhere; }
+.cx-btrack { display: flex; gap: 2px; height: .9rem; }
+.cx-bseg { height: 100%; border-radius: 3px; min-width: 2px; }
+.cx-bval { text-align: right; font-variant-numeric: tabular-nums; }
+.cx-sep { border-top: 1px dashed var(--color-border-line); margin: var(--cds-gap-xs) 0; }
+@media (max-width: 520px) { .cx-brow { grid-template-columns: minmax(0, 9rem) minmax(0, 1fr) 2.2rem; } }
+
+.cx-search { font: inherit; font-size: var(--cds-font-size-body); padding: var(--cds-pad-xs) var(--cds-pad-sm); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); background: var(--color-bg); color: var(--color-fg); width: min(100%, 22rem); }
+.cx-fail { display: flex; align-items: center; justify-content: center; gap: var(--cds-gap-xs); min-height: inherit; color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); }
+.cx-fail::before { content: ""; width: .375rem; height: .375rem; border-radius: 50%; background: var(--color-bad); }
+[data-dash-source-state=refreshing] { opacity: .5; transition: opacity var(--cds-dur-slow); }
+[data-dash-source-state=empty] { color: transparent; }
+
+.cx-cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr)); gap: var(--cds-gap-md); }
+.cx-cols h4 { margin: 0 0 var(--cds-gap-xs); font-size: var(--cds-font-size-body); font-weight: var(--cds-font-weight-medium); }
+.cx-cols ul { margin: 0; padding-left: 1.1rem; font-size: var(--cds-font-size-caption); display: grid; gap: 2px; }
+.cx-cols .o { color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); margin: var(--cds-gap-xs) 0 2px; }
+</style>
+
+<div class="cx" id="cx" data-lang="fr">
+  <header class="cx-head" id="haut">
+    <h1 class="cx-title"><span data-l="fr">Suivi NC câbles</span><span data-l="en">Cable NC tracker</span></h1>
+    <p class="cx-lede" data-l="fr">Demandes de câble de la salle d'impression, <span data-source="par_mois" class="cx-periode dash-skeleton">—</span>. Au T3, la salle d'impression cause <span class="k dash-skeleton" data-source="chiffres" data-field="pct_impression_t3" data-where="prog=Tous">—</span>&nbsp;% des demandes, contre <span class="k dash-skeleton" data-source="chiffres" data-field="pct_impression_t1" data-where="prog=Tous">—</span>&nbsp;% au T1, et <span class="k dash-skeleton" data-source="chiffres" data-field="pct_sans_cause" data-where="prog=Tous">—</span>&nbsp;% des lignes n'ont pas encore de cause.</p>
+    <p class="cx-lede" data-l="en">Cable requests to the printing room, <span data-source="par_mois" class="cx-periode dash-skeleton">—</span>. In Q3 the printing room caused <span class="k dash-skeleton" data-source="chiffres" data-field="pct_impression_t3" data-where="prog=Tous">—</span>% of requests, against <span class="k dash-skeleton" data-source="chiffres" data-field="pct_impression_t1" data-where="prog=Tous">—</span>% in Q1, and <span class="k dash-skeleton" data-source="chiffres" data-field="pct_sans_cause" data-where="prog=Tous">—</span>% of rows still have no cause.</p>
+    <div class="cx-tools">
+      <div class="cx-seg" id="prog" role="group" aria-label="Programme" data-source="chiffres"></div>
+      <div class="cx-chips" id="chips" aria-live="polite" data-source="libelles"></div>
+      <div class="cx-seg small cx-push" id="lang" role="group" aria-label="Langue / Language">
+        <button type="button" data-lang="fr" aria-pressed="true">FR</button><button type="button" data-lang="en" aria-pressed="false">EN</button>
+      </div>
+    </div>
+  </header>
+
+  <section class="cx-kpis" id="chiffres" aria-label="Chiffres clés / Key figures">
+    <div class="cx-kpi"><span class="lab"><span data-l="fr">Demandes de câble</span><span data-l="en">Cable requests</span></span><span class="num"><span class="dash-skeleton" data-source="chiffres" data-field="demandes" data-where="prog=Tous">—</span></span><span class="sub"><span data-l="fr">une ligne du fichier par demande</span><span data-l="en">one row of the file per request</span></span></div>
+    <div class="cx-kpi"><span class="lab"><span data-l="fr">Dues à la salle d'impression au T3</span><span data-l="en">Caused by the printing room in Q3</span></span><span class="num"><span class="dash-skeleton" data-source="chiffres" data-field="pct_impression_t3" data-where="prog=Tous">—</span>&nbsp;%</span><span class="sub"><span data-l="fr">machine et opérateur, T1&nbsp;: </span><span data-l="en">machine and operator, Q1: </span><span data-source="chiffres" data-field="pct_impression_t1" data-where="prog=Tous">—</span>&nbsp;%</span></div>
+    <div class="cx-kpi"><span class="lab"><span data-l="fr">Lignes avec une cause</span><span data-l="en">Rows with a cause</span></span><span class="num"><span class="dash-skeleton" data-source="chiffres" data-field="pct_avec_cause" data-where="prog=Tous">—</span>&nbsp;%</span><span class="sub"><span data-source="chiffres" data-field="avec_cause" data-where="prog=Tous">—</span><span data-l="fr"> lignes, pré-remplies depuis le commentaire</span><span data-l="en"> rows, pre-filled from the comment</span></span></div>
+    <div class="cx-kpi"><span class="lab"><span data-l="fr">Câbles revenus 2 fois ou plus</span><span data-l="en">Cables back 2 times or more</span></span><span class="num"><span class="dash-skeleton" data-source="chiffres" data-field="cables_revenus" data-where="prog=Tous">—</span></span><span class="sub"><span data-l="fr">même numéro de câble sur plusieurs NC</span><span data-l="en">same cable number on several NCs</span></span></div>
+    <div class="cx-kpi alert"><span class="lab"><span data-l="fr">Lignes avec une action</span><span data-l="en">Rows with an action</span></span><span class="num"><span class="dash-skeleton" data-source="chiffres" data-field="avec_action" data-where="prog=Tous">—</span></span><span class="sub"><span data-l="fr">colonnes Action et Statut</span><span data-l="en">Action and Status columns</span></span></div>
+  </section>
+
+  <section class="cx-sec" id="qui">
+    <h2><span data-l="fr">Qui cause les demandes</span><span data-l="en">Who causes the requests</span></h2>
+    <div class="cx-grid">
+      <article class="cx-card cx-wide" id="carte-mois">
+        <h3><span data-l="fr">Demandes par mois, selon qui les cause</span><span data-l="en">Requests per month, by who caused them</span></h3>
+        <p class="cx-note" data-l="fr">Colonne « Imputation » du fichier. Part due à la salle d'impression&nbsp;: T1 <span class="k" data-source="chiffres" data-field="pct_impression_t1" data-where="prog=Tous">—</span>&nbsp;% · T2 <span class="k" data-source="chiffres" data-field="pct_impression_t2" data-where="prog=Tous">—</span>&nbsp;% · T3 <span class="k" data-source="chiffres" data-field="pct_impression_t3" data-where="prog=Tous">—</span>&nbsp;%. Un clic sur la légende filtre la liste.</p>
+        <p class="cx-note" data-l="en">The file's “Imputation” column. Share caused by the printing room: Q1 <span class="k" data-source="chiffres" data-field="pct_impression_t1" data-where="prog=Tous">—</span>% · Q2 <span class="k" data-source="chiffres" data-field="pct_impression_t2" data-where="prog=Tous">—</span>% · Q3 <span class="k" data-source="chiffres" data-field="pct_impression_t3" data-where="prog=Tous">—</span>%. Click the legend to filter the list.</p>
+        <div data-source="par_mois" id="mois">
+          <div class="cx-legend" id="mois-leg"></div>
+          <div class="cx-chartbox dash-skeleton" id="mois-box"></div>
+        </div>
+      </article>
+      <article class="cx-card" id="carte-matrice">
+        <h3><span data-l="fr">Quoi × qui</span><span data-l="en">What × who</span></h3>
+        <p class="cx-note"><span data-l="fr">Motif (ce qui ne va pas) croisé avec l'imputation (qui l'a causé). Un clic sur une case filtre la liste.</span><span data-l="en">Reason (what is wrong) against imputation (who caused it). Click a cell to filter the list.</span></p>
+        <div class="cx-scroll">
+          <table class="cx-tbl cx-mx" id="mx" data-source="motif_origine" data-row-key="prog,motif">
+            <thead><tr><th data-field="motif" data-fr="motif" data-en="motif_en"><span data-l="fr">Motif</span><span data-l="en">Reason</span></th><th class="n" data-field="production"><span data-l="fr">Prod. ligne</span><span data-l="en">Prod. line</span></th><th class="n" data-field="machine"><span data-l="fr">Impr. machine</span><span data-l="en">Print. machine</span></th><th class="n" data-field="operateur"><span data-l="fr">Impr. opérateur</span><span data-l="en">Print. operator</span></th><th class="n" data-field="autre"><span data-l="fr">Autre</span><span data-l="en">Other</span></th><th class="n" data-field="total">Total</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </article>
+      <article class="cx-card" id="carte-types">
+        <h3><span data-l="fr">Types de câble les plus demandés</span><span data-l="en">Most requested cable types</span></h3>
+        <p class="cx-note"><span data-l="fr">Type lu dans le commentaire, quand il y est écrit. Couleur&nbsp;: qui a causé la demande.</span><span data-l="en">Type read from the comment, when it is written there. Colour: who caused the request.</span></p>
+        <div class="cx-bars" id="types" data-source="types"></div>
+      </article>
+    </div>
+  </section>
+
+  <section class="cx-sec" id="pourquoi">
+    <h2><span data-l="fr">Pourquoi</span><span data-l="en">Why</span></h2>
+    <div class="cx-grid">
+      <article class="cx-card" id="carte-causes">
+        <h3><span data-l="fr">Causes, pré-remplies depuis le commentaire</span><span data-l="en">Causes, pre-filled from the comment</span></h3>
+        <p class="cx-note"><span data-l="fr">Proposition&nbsp;: la cause est lue dans le commentaire par mots-clés et reste à valider. Dans le fichier, ce serait une liste déroulante qui dépend de l'imputation. Un clic filtre la liste.</span><span data-l="en">A proposal: the cause is read from the comment by keywords and still needs checking. In the file it would be a dropdown that depends on the imputation. Click to filter the list.</span></p>
+        <div class="cx-bars" id="causes" data-source="causes libelles"></div>
+      </article>
+      <article class="cx-card" id="carte-revenus">
+        <h3><span data-l="fr">Câbles qui reviennent</span><span data-l="en">Cables that keep coming back</span></h3>
+        <p class="cx-note"><span data-l="fr">Numéros de câble présents sur au moins deux NC. Un clic filtre la liste sur ce câble.</span><span data-l="en">Cable numbers found on at least two NCs. Click to filter the list on that cable.</span></p>
+        <div class="cx-scroll cx-mid">
+          <table class="cx-tbl cx-rows" id="revenus" data-source="revenus" data-row-key="prog,cable">
+            <thead><tr><th data-field="cable"><span data-l="fr">Câble</span><span data-l="en">Cable</span></th><th class="n" data-field="demandes">NC</th><th class="n" data-field="msn">MSN</th><th data-field="motifs" data-fr="motifs" data-en="motifs_en"><span data-l="fr">Motifs</span><span data-l="en">Reasons</span></th><th data-field="origines" data-fr="origines" data-en="origines_en">Imputation</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section class="cx-sec" id="liste">
+    <h2><span data-l="fr">Toutes les demandes</span><span data-l="en">All requests</span></h2>
+    <article class="cx-card" id="carte-liste">
+      <div class="cx-tools">
+        <input class="cx-search" id="recherche" type="search" placeholder="Rechercher (NC, câble, MSN, mot du commentaire)" aria-label="Rechercher dans les demandes">
+        <span class="cx-note" id="compte" data-source="cables"></span>
+      </div>
+      <div class="cx-scroll cx-tall">
+        <table class="cx-tbl" id="demandes" data-source="cables" data-row-key="ligne">
+          <thead><tr><th data-field="semaine"><span data-l="fr">Sem.</span><span data-l="en">Wk</span></th><th data-field="nc">NC</th><th data-field="programme">Prog.</th><th class="cx-hide-n" data-field="msn">MSN</th><th data-field="motif" data-fr="motif" data-en="motif_en"><span data-l="fr">Motif</span><span data-l="en">Reason</span></th><th data-field="origine" data-fr="origine" data-en="origine_en">Imputation</th><th data-field="cause" data-fr="cause" data-en="cause_en"><span data-l="fr">Cause (proposée)</span><span data-l="en">Cause (proposed)</span></th><th class="cx-hide-n" data-field="cables"><span data-l="fr">Câbles</span><span data-l="en">Cables</span></th><th data-field="commentaire"><span data-l="fr">Commentaire</span><span data-l="en">Comment (in French)</span></th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </article>
+  </section>
+
+  <section class="cx-sec" id="colonnes">
+    <h2><span data-l="fr">Colonnes proposées pour le fichier</span><span data-l="en">Proposed columns for the file</span></h2>
+    <article class="cx-card">
+      <p class="cx-note"><span data-l="fr">Motif et Imputation existent déjà. Ces trois listes déroulantes s'ajouteraient&nbsp;; une fois remplies, les graphiques ci-dessus les reprennent.</span><span data-l="en">Reason (Motif) and Imputation already exist. These three dropdowns would be added; once they are filled in, the charts above use them.</span></p>
+      <div class="cx-cols" data-l="fr">
+        <div>
+          <h4>Cause (selon l'imputation)</h4>
+          <p class="o">Production ligne</p>
+          <ul><li>Mauvais cheminement</li><li>Mauvaise mise en œuvre (sertissage, buscan…)</li><li>Coupé en production (geste à préciser)</li><li>Lame / cutter (scotch, collier)</li><li>Pincé / écrasé</li><li>Entaillé / isolant abîmé</li><li>Frottement / arête (arbre, support)</li><li>Manipulation / transport</li><li>Reprise qui a raccourci le câble</li><li>Oubli de pose</li></ul>
+          <p class="o">Impression – machine</p>
+          <ul><li>Longueur machine (réglage / isolant)</li><li>Marquage laser absent ou illisible</li><li>Défaut isolant (bobine)</li><li>Oubli dans le lot</li></ul>
+          <p class="o">Impression – opérateur</p>
+          <ul><li>Coupe à la main</li><li>Mauvaise jauge / type</li><li>Mauvais numéro</li><li>Mauvaise longueur saisie</li><li>Oubli dans le lot</li></ul>
+          <p class="o">Définition (BE / ME)</p>
+          <ul><li>Longueur trop courte à la def</li><li>Mauvaise référence à la def</li></ul>
+          <p class="o">Toutes</p>
+          <ul><li>Inconnu – à analyser</li></ul>
+        </div>
+        <div>
+          <h4>Où sur le câble</h4>
+          <p class="o">Pour « Câble abîmé » et « Câble coupé »</p>
+          <ul><li>Extrémité</li><li>Milieu</li><li>Au collier</li><li>À une dérivation</li><li>Au support d'arbre</li><li>Dans le backshell</li></ul>
+        </div>
+        <div>
+          <h4>Statut</h4>
+          <p class="o">Avec Action, Porteur et Date de clôture</p>
+          <ul><li>À analyser</li><li>Action en cours</li><li>Clos</li><li>Cas isolé (pas d'action)</li></ul>
+        </div>
+      </div>
+      <div class="cx-cols" data-l="en">
+        <div>
+          <h4>Cause (depends on the imputation)</h4>
+          <p class="o">Production line</p>
+          <ul><li>Wrong routing</li><li>Poor installation (crimping, buscan…)</li><li>Cut in production (how not stated)</li><li>Blade / cutter (tape, tie)</li><li>Pinched / crushed</li><li>Nicked / insulation damaged</li><li>Rubbing / sharp edge (cable tree, support)</li><li>Handling / transport</li><li>Rework that shortened the cable</li><li>Not fitted</li></ul>
+          <p class="o">Printing – machine</p>
+          <ul><li>Machine length (setting / insulation)</li><li>Laser marking missing or unreadable</li><li>Insulation defect (reel)</li><li>Left out of the batch</li></ul>
+          <p class="o">Printing – operator</p>
+          <ul><li>Cut by hand</li><li>Wrong gauge / type</li><li>Wrong number</li><li>Wrong length entered</li><li>Left out of the batch</li></ul>
+          <p class="o">Definition (design office / ME)</p>
+          <ul><li>Too short in the drawing</li><li>Wrong reference in the drawing</li></ul>
+          <p class="o">All</p>
+          <ul><li>Unknown – to analyse</li></ul>
+        </div>
+        <div>
+          <h4>Where on the cable</h4>
+          <p class="o">For “Damaged cable” and “Cut cable”</p>
+          <ul><li>End</li><li>Middle</li><li>At a tie or clamp</li><li>At a breakout</li><li>At a cable-tree support</li><li>Inside the backshell</li></ul>
+        </div>
+        <div>
+          <h4>Status</h4>
+          <p class="o">With Action, Owner and Closing date</p>
+          <ul><li>To analyse</li><li>Action in progress</li><li>Closed</li><li>One-off (no action)</li></ul>
+        </div>
+      </div>
+    </article>
+  </section>
+</div>
+
+<script>
+dash.calc('chiffres', {
+  inputs: ['cables'],
+  title: 'Chiffres clés par programme',
+  description: "Par programme (et Tous) : demandes, part due à la salle d'impression par trimestre (%), lignes avec une cause pré-remplie ou une action, câbles présents sur au moins deux NC.",
+  fn: (cables) => {
+    const count = (p) => cables.filter((r) => r.programme === p).length;
+    const progs = ['Tous', ...[...new Set(cables.map((r) => r.programme))].sort((a, b) => count(b) - count(a))];
+    const pct = (a, b) => (b ? Math.round((100 * a) / b) : null);
+    return progs.map((prog) => {
+      const rows = prog === 'Tous' ? cables : cables.filter((r) => r.programme === prog);
+      const q = (t) => rows.filter((r) => r.trimestre === t);
+      const imp = (t) => pct(q(t).filter((r) => r.origine.startsWith('Impression')).length, q(t).length);
+      const avecCause = rows.filter((r) => r.cause !== 'Inconnu – à analyser').length;
+      const ncs = {};
+      rows.forEach((r) => r.cables.split(' ').filter(Boolean).forEach((c) => { (ncs[c] = ncs[c] || new Set()).add(r.nc); }));
+      return {
+        prog, demandes: rows.length,
+        pct_impression_t1: imp('T1'), pct_impression_t2: imp('T2'), pct_impression_t3: imp('T3'),
+        avec_cause: avecCause, pct_avec_cause: pct(avecCause, rows.length), pct_sans_cause: pct(rows.length - avecCause, rows.length),
+        avec_action: rows.filter((r) => r.action || r.statut).length,
+        cables_revenus: Object.values(ncs).filter((s) => s.size >= 2).length,
+      };
+    });
+  },
+});
+
+dash.calc('libelles', {
+  inputs: ['cables'],
+  title: 'Libellés en anglais',
+  description: "Chaque motif, imputation et cause du fichier avec sa traduction anglaise (table de traduction fixe ; le texte français est gardé s'il n'en a pas).",
+  fn: (cables) => {
+    const EN = {
+      'Câble court': 'Short cable', 'Câble abimé': 'Damaged cable', 'Câble manquant': 'Missing cable', 'Câble coupé': 'Cut cable',
+      'Câble non conforme': 'Non-conforming cable', 'Rail abimé': 'Damaged rail',
+      'Production ligne': 'Production line', 'Impression – machine': 'Printing – machine', 'Impression – opérateur': 'Printing – operator',
+      'Définition (BE / ME)': 'Definition (design office / ME)', 'Autre / non renseigné': 'Other / blank',
+      'Inconnu – à analyser': 'Unknown – to analyse', 'Coupé en production (geste à préciser)': 'Cut in production (how not stated)',
+      'Mauvais cheminement': 'Wrong routing', 'Mauvaise mise en œuvre (sertissage, buscan…)': 'Poor installation (crimping, buscan…)',
+      'Oubli dans le lot': 'Left out of the batch', 'Mauvaise jauge / type': 'Wrong gauge / type',
+      'Longueur machine (réglage / isolant)': 'Machine length (setting / insulation)', 'Marquage laser absent ou illisible': 'Laser marking missing or unreadable',
+      'Longueur trop courte à la def': 'Too short in the drawing', 'Mauvais numéro': 'Wrong number', 'Pincé / écrasé': 'Pinched / crushed',
+      'Défaut isolant (bobine)': 'Insulation defect (reel)', 'Entaillé / isolant abîmé': 'Nicked / insulation damaged', 'Coupe à la main': 'Cut by hand',
+    };
+    const out = [];
+    ['motif', 'origine', 'cause'].forEach((champ) => [...new Set(cables.map((r) => r[champ]))].forEach((fr) => out.push({ champ, fr, en: EN[fr] || fr })));
+    return out;
+  },
+});
+
+dash.calc('traduction', {
+  inputs: ['cables', 'libelles'],
+  title: 'Demandes, libellés anglais',
+  description: "Pour chaque ligne du fichier : motif, imputation et cause en anglais, d'après la table des libellés.",
+  fn: (cables, libelles) => {
+    const en = Object.fromEntries(libelles.map((l) => [l.champ + '|' + l.fr, l.en]));
+    return cables.map((r) => ({ ligne: r.ligne, motif_en: en['motif|' + r.motif], origine_en: en['origine|' + r.origine], cause_en: en['cause|' + r.cause] }));
+  },
+});
+
+dash.calc('par_mois', {
+  inputs: ['cables'],
+  title: 'Demandes par mois et imputation',
+  description: "Nombre de demandes par programme (et Tous), mois de création de la NC et imputation (qui a causé la demande).",
+  fn: (cables) => {
+    const progs = ['Tous', ...new Set(cables.map((r) => r.programme))];
+    const mois = [...new Set(cables.map((r) => r.mois))].sort();
+    const origines = [...new Set(cables.map((r) => r.origine))];
+    const out = [];
+    progs.forEach((prog) => {
+      const rows = prog === 'Tous' ? cables : cables.filter((r) => r.programme === prog);
+      mois.forEach((m) => origines.forEach((o) => out.push({ prog, mois: m, origine: o, n: rows.filter((r) => r.mois === m && r.origine === o).length })));
+    });
+    return out;
+  },
+});
+
+dash.calc('motif_origine', {
+  inputs: ['cables', 'libelles'],
+  title: 'Motif × imputation',
+  description: "Demandes par programme (et Tous), motif et imputation ; « autre » regroupe la définition et les lignes sans imputation.",
+  fn: (cables, libelles) => {
+    const en = Object.fromEntries(libelles.filter((l) => l.champ === 'motif').map((l) => [l.fr, l.en]));
+    const progs = ['Tous', ...new Set(cables.map((r) => r.programme))];
+    const col = { 'Production ligne': 'production', 'Impression – machine': 'machine', 'Impression – opérateur': 'operateur' };
+    const out = [];
+    progs.forEach((prog) => {
+      const rows = prog === 'Tous' ? cables : cables.filter((r) => r.programme === prog);
+      [...new Set(rows.map((r) => r.motif))].forEach((motif) => {
+        const m = rows.filter((r) => r.motif === motif);
+        const row = { prog, motif, motif_en: en[motif], production: 0, machine: 0, operateur: 0, autre: 0, total: m.length };
+        m.forEach((r) => { row[col[r.origine] || 'autre'] += 1; });
+        out.push(row);
+      });
+    });
+    return out;
+  },
+});
+
+dash.calc('causes', {
+  inputs: ['cables'],
+  title: 'Demandes par cause pré-remplie',
+  description: "Demandes par programme (et Tous), imputation (et Toutes) et cause pré-remplie depuis le commentaire.",
+  fn: (cables) => {
+    const progs = ['Tous', ...new Set(cables.map((r) => r.programme))];
+    const origines = ['Toutes', ...new Set(cables.map((r) => r.origine))];
+    const out = [];
+    progs.forEach((prog) => origines.forEach((origine) => {
+      const rows = cables.filter((r) => (prog === 'Tous' || r.programme === prog) && (origine === 'Toutes' || r.origine === origine));
+      const n = {};
+      rows.forEach((r) => { n[r.cause] = (n[r.cause] || 0) + 1; });
+      Object.entries(n).forEach(([cause, k]) => out.push({ prog, origine, cause, n: k }));
+    }));
+    return out;
+  },
+});
+
+dash.calc('revenus', {
+  inputs: ['cables', 'libelles'],
+  title: 'Câbles présents sur plusieurs NC',
+  description: "Par programme (et Tous), chaque numéro de câble écrit dans au moins deux NC différentes : nombre de NC et de MSN, motifs et imputations (en français et en anglais).",
+  fn: (cables, libelles) => {
+    const en = Object.fromEntries(libelles.map((l) => [l.champ + '|' + l.fr, l.en]));
+    const progs = ['Tous', ...new Set(cables.map((r) => r.programme))];
+    const out = [];
+    progs.forEach((prog) => {
+      const by = {};
+      cables.filter((r) => prog === 'Tous' || r.programme === prog).forEach((r) => r.cables.split(' ').filter(Boolean).forEach((c) => {
+        const b = (by[c] = by[c] || { nc: new Set(), msn: new Set(), motif: new Set(), origine: new Set() });
+        b.nc.add(r.nc); b.msn.add(r.msn); b.motif.add(r.motif); b.origine.add(r.origine);
+      }));
+      Object.entries(by).filter(([, b]) => b.nc.size >= 2).forEach(([cable, b]) => out.push({
+        prog, cable, demandes: b.nc.size, msn: b.msn.size,
+        motifs: [...b.motif].join(', '), origines: [...b.origine].join(', '),
+        motifs_en: [...b.motif].map((m) => en['motif|' + m]).join(', '), origines_en: [...b.origine].map((o) => en['origine|' + o]).join(', '),
+      }));
+    });
+    return out;
+  },
+});
+
+dash.calc('types', {
+  inputs: ['cables'],
+  title: 'Demandes par type de câble',
+  description: "Demandes par programme (et Tous), type de câble écrit dans le commentaire et imputation ; les lignes sans type sont laissées de côté.",
+  fn: (cables) => {
+    const progs = ['Tous', ...new Set(cables.map((r) => r.programme))];
+    const out = [];
+    progs.forEach((prog) => {
+      const n = {};
+      cables.filter((r) => r.type && (prog === 'Tous' || r.programme === prog)).forEach((r) => {
+        const k = r.type + '|' + r.origine;
+        n[k] = (n[k] || 0) + 1;
+      });
+      Object.entries(n).forEach(([k, v]) => { const [type, origine] = k.split('|'); out.push({ prog, type, origine, n: v }); });
+    });
+    return out;
+  },
+});
+</script>
+
+<script>
+(() => {
+  const ORIG = ['Production ligne', 'Impression – machine', 'Impression – opérateur', 'Définition (BE / ME)', 'Autre / non renseigné'];
+  const INCONNU = 'Inconnu – à analyser';
+  const T = {
+    fr: {
+      all: 'Tous', remove: 'Retirer le filtre ', clearAll: 'Tout effacer', cable: 'Câble ', total: 'Total', none: 'Aucune demande pour ce choix.',
+      fail: 'Échec du chargement', one: ' demande', many: ' demandes', search: 'Rechercher (NC, câble, MSN, mot du commentaire)',
+      searchLabel: 'Rechercher dans les demandes', chart: "Demandes par mois selon l'imputation", prog: 'Programme',
+      short: { 'Production ligne': 'Production ligne', 'Impression – machine': 'Impression – machine', 'Impression – opérateur': 'Impression – opérateur', 'Définition (BE / ME)': 'Définition', 'Autre / non renseigné': 'Non renseigné' },
+      months: ['janv.', 'févr.', 'mars', 'avr.', 'mai', 'juin', 'juil.', 'août', 'sept.', 'oct.', 'nov.', 'déc.'],
+      monthsLong: ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'],
+    },
+    en: {
+      all: 'All', remove: 'Remove filter ', clearAll: 'Clear all', cable: 'Cable ', total: 'Total', none: 'No request for this choice.',
+      fail: 'Failed to load', one: ' request', many: ' requests', search: 'Search (NC, cable, MSN, word in the comment)',
+      searchLabel: 'Search the requests', chart: 'Requests per month by imputation', prog: 'Programme',
+      short: { 'Production ligne': 'Production line', 'Impression – machine': 'Printing – machine', 'Impression – opérateur': 'Printing – operator', 'Définition (BE / ME)': 'Definition', 'Autre / non renseigné': 'Blank' },
+      months: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+      monthsLong: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+    },
+  };
+  const colorOf = (o) => { const i = ORIG.indexOf(o); return i >= 0 && i < 4 ? dash.colors[i] : 'var(--cds-chart-muted)'; };
+  const enc = encodeURIComponent;
+  const $ = (s) => document.querySelector(s);
+  const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
+  const show = (v) => (v == null ? '—' : String(v));
+  let search = '';
+  let L = T.fr;
+  let lab = (champ, fr) => fr;   // display label of a data value in the chosen language
+
+  const failed = (box) => { box.classList.remove('dash-skeleton'); box.replaceChildren(el('div', 'cx-fail', L.fail)); };
+  const ready = (id, ...boxes) => {
+    const d = dash.data(id);
+    boxes.forEach((b) => { if (d.status === 'ok' || d.status === 'error') b.classList.remove('dash-skeleton'); });
+    if (d.status === 'error') { boxes.forEach(failed); return null; }
+    return d.status === 'ok' ? d.data : null;
+  };
+  const prm = () => { const p = dash.params(); return { lang: p.lang === 'en' ? 'en' : 'fr', prog: p.prog || 'Tous', origine: p.origine || null, motif: p.motif || null, cause: p.cause || null, cable: p.cable || null }; };
+  const set = (o) => dash.setParams(o);
+
+  document.querySelectorAll('#lang button').forEach((b) => b.addEventListener('click', () => set({ lang: b.dataset.lang })));
+
+  // ------------------------------------------------ language
+  function applyLang(P) {
+    L = T[P.lang];
+    $('#cx').dataset.lang = P.lang;
+    document.querySelectorAll('#lang button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.lang === P.lang)));
+    document.querySelectorAll('th[data-fr]').forEach((th) => { th.dataset.field = th.dataset[P.lang]; });
+    ['motif', 'origine', 'cause'].forEach((f) => {
+      const th = $('#demandes th[data-fr="' + f + '"]');
+      if (P.lang === 'en') th.dataset.source = 'traduction'; else delete th.dataset.source;
+    });
+    const s = $('#recherche');
+    s.placeholder = L.search;
+    s.setAttribute('aria-label', L.searchLabel);
+    const libs = P.lang === 'en' ? ready('libelles') : null;
+    const map = libs ? Object.fromEntries(libs.map((l) => [l.champ + '|' + l.fr, l.en])) : null;
+    lab = (champ, fr) => (map && map[champ + '|' + fr]) || (champ === 'origine' ? L.short[fr] || fr : fr);
+  }
+
+  // ------------------------------------------------ programme, chips, headline figures
+  function drawHead(P) {
+    const rows = ready('chiffres');
+    const seg = $('#prog');
+    seg.setAttribute('aria-label', L.prog);
+    if (rows) {
+      seg.replaceChildren(...rows.map((r) => {
+        const b = el('button', '', r.prog === 'Tous' ? L.all : r.prog);
+        b.type = 'button';
+        b.setAttribute('aria-pressed', String(r.prog === P.prog));
+        b.addEventListener('click', () => set({ prog: r.prog }));
+        return b;
+      }));
+    }
+    const row = rows && (rows.find((r) => r.prog === P.prog) || rows[0]);
+    document.querySelectorAll('[data-source="chiffres"][data-field]').forEach((s) => {
+      s.dataset.where = 'prog=' + enc(row ? row.prog : P.prog);
+      if (row) { s.classList.remove('dash-skeleton'); s.textContent = show(row[s.dataset.field]); }
+      else if (dash.data('chiffres').status === 'error') { s.classList.remove('dash-skeleton'); s.textContent = '—'; }
+    });
+    const mois = ready('par_mois', ...document.querySelectorAll('.cx-periode'));
+    if (mois) {
+      const ms = [...new Set(mois.map((r) => r.mois))].sort();
+      document.querySelectorAll('.cx-periode').forEach((sp) => {
+        const lg = T[sp.closest('[data-l]').dataset.l];
+        const f = (m) => lg.monthsLong[+m.slice(5, 7) - 1];
+        sp.textContent = ms.length ? f(ms[0]) + ' – ' + f(ms[ms.length - 1]) + ' ' + ms[ms.length - 1].slice(0, 4) : '—';
+      });
+    }
+    const items = [];
+    const add = (label, key) => { const b = el('button', 'cx-chip', label + ' ×'); b.type = 'button'; b.setAttribute('aria-label', L.remove + label); b.addEventListener('click', () => set({ [key]: null })); items.push(b); };
+    if (P.origine) add(lab('origine', P.origine), 'origine');
+    if (P.motif) add(lab('motif', P.motif), 'motif');
+    if (P.cause) add(lab('cause', P.cause), 'cause');
+    if (P.cable) add(L.cable + P.cable, 'cable');
+    if (items.length > 1) { const c = el('button', 'cx-chip clear', L.clearAll); c.type = 'button'; c.addEventListener('click', () => set({ origine: null, motif: null, cause: null, cable: null })); items.push(c); }
+    $('#chips').replaceChildren(...items);
+  }
+
+  // ------------------------------------------------ month chart
+  function drawMois(P) {
+    const box = $('#mois-box');
+    const leg = $('#mois-leg');
+    const all = ready('par_mois', box);
+    if (!all) { if (dash.data('par_mois').status !== 'error') box.replaceChildren(); return; }
+    const rows = all.filter((r) => r.prog === P.prog);
+    const origines = ORIG.filter((o) => rows.some((r) => r.origine === o && r.n > 0));
+    leg.replaceChildren(...origines.map((o) => {
+      const b = el('button');
+      b.type = 'button';
+      b.setAttribute('aria-pressed', String(!P.origine || P.origine === o));
+      const sw = el('span', 'cx-sw'); sw.style.background = colorOf(o);
+      b.append(sw, el('span', '', L.short[o]));
+      b.addEventListener('click', () => set({ origine: P.origine === o ? null : o }));
+      return b;
+    }));
+    const mois = [...new Set(rows.map((r) => r.mois))].sort();
+    const data = mois.map((m) => {
+      const d = { mois: m, total: 0 };
+      origines.forEach((o) => { const r = rows.find((x) => x.mois === m && x.origine === o); d[o] = r ? r.n : 0; d.total += d[o]; });
+      return d;
+    });
+    const W = Math.max(280, box.clientWidth), H = 240, mt = 18, mb = 26, mr = 8;
+    const y = d3.scaleLinear([0, d3.max(data, (d) => d.total) || 1], [H - mb, mt]).nice();
+    const svg = d3.create('svg').attr('width', '100%').attr('viewBox', `0 0 ${W} ${H}`).attr('role', 'img').attr('aria-label', L.chart);
+    const ticks = y.ticks(4);
+    const tg = svg.append('g').style('font-size', 'var(--cds-font-size-caption)');
+    const tl = tg.selectAll('text').data(ticks).join('text').text((t) => t).style('fill', 'var(--color-fg-muted)').attr('text-anchor', 'end').attr('dy', '0.32em');
+    box.replaceChildren(svg.node());
+    const ml = Math.ceil(d3.max(tl.nodes(), (n) => n.getComputedTextLength()) || 10) + 8;
+    tl.attr('x', ml - 6).attr('y', (t) => y(t));
+    svg.insert('g', 'g').selectAll('line').data(ticks).join('line').attr('x1', ml).attr('x2', W - mr).attr('y1', (t) => y(t)).attr('y2', (t) => y(t)).style('stroke', (t) => (t === 0 ? 'var(--cds-chart-axis)' : 'var(--cds-chart-grid)')).attr('stroke-width', 1);
+    const x = d3.scaleBand(mois, [ml, W - mr]).paddingInner(0.28).paddingOuter(0.14);
+    const bw = Math.min(32, x.bandwidth());
+    const off = (x.bandwidth() - bw) / 2;
+    const stack = d3.stack().keys(origines)(data);
+    const g = svg.append('g');
+    stack.forEach((layer) => {
+      const o = layer.key;
+      g.append('g').selectAll('rect').data(layer).join('rect')
+        .attr('x', (d) => x(d.data.mois) + off).attr('width', bw)
+        .attr('y', (d) => y(d[1]) + (d[1] > d[0] ? 1 : 0))
+        .attr('height', (d) => Math.max(0, y(d[0]) - y(d[1]) - (d[1] > d[0] ? 2 : 0)))
+        .attr('rx', 3).style('fill', colorOf(o))
+        .style('opacity', !P.origine || P.origine === o ? 1 : 0.22);
+    });
+    const step = x.bandwidth() < 26 ? 2 : 1;
+    svg.append('g').selectAll('text').data(mois.filter((m, i) => i % step === 0)).join('text')
+      .attr('x', (m) => x(m) + x.bandwidth() / 2).attr('y', H - 8).attr('text-anchor', 'middle')
+      .style('font-size', 'var(--cds-font-size-caption)').style('fill', 'var(--color-fg-muted)')
+      .text((m) => L.months[+m.slice(5, 7) - 1]);
+    if (bw >= 18) {
+      svg.append('g').selectAll('text').data(data.filter((d) => d.total > 0)).join('text')
+        .attr('x', (d) => x(d.mois) + x.bandwidth() / 2).attr('y', (d) => y(d.total) - 5).attr('text-anchor', 'middle')
+        .style('font-size', 'var(--cds-font-size-caption)').style('fill', 'var(--color-fg)').style('font-variant-numeric', 'tabular-nums')
+        .text((d) => d.total);
+    }
+    const tip = el('div', 'cx-tip'); tip.hidden = true; box.append(tip);
+    svg.append('g').selectAll('rect').data(data).join('rect')
+      .attr('x', (d) => x(d.mois)).attr('width', x.bandwidth()).attr('y', mt).attr('height', H - mb - mt)
+      .style('fill', 'transparent')
+      .on('pointermove', (ev, d) => {
+        const m = +d.mois.slice(5, 7) - 1;
+        tip.replaceChildren(el('div', 'h', L.monthsLong[m] + ' ' + d.mois.slice(0, 4)),
+          ...origines.slice().reverse().map((o) => { const r = el('div', 'r'); const sw = el('span', 'cx-sw'); sw.style.background = colorOf(o); r.append(sw, el('span', '', L.short[o]), el('span', '', String(d[o]))); return r; }),
+          (() => { const r = el('div', 'r'); r.append(el('span', '', L.total), el('span', '', String(d.total))); return r; })());
+        tip.hidden = false;
+        const bx = box.getBoundingClientRect();
+        const px = ev.clientX - bx.left, tw = tip.offsetWidth;
+        tip.style.left = Math.max(0, Math.min(bx.width - tw, px + 12 > bx.width - tw ? px - tw - 12 : px + 12)) + 'px';
+        tip.style.top = Math.max(0, ev.clientY - bx.top - 20) + 'px';
+      })
+      .on('pointerleave', () => { tip.hidden = true; });
+  }
+
+  // ------------------------------------------------ motif x origin matrix
+  function drawMatrix(P) {
+    const body = $('#mx tbody');
+    const all = ready('motif_origine');
+    if (!all) { body.replaceChildren(); return; }
+    const rows = all.filter((r) => r.prog === P.prog).sort((a, b) => b.total - a.total);
+    const max = d3.max(rows, (r) => Math.max(r.production, r.machine, r.operateur, r.autre)) || 1;
+    const cols = [['production', 'Production ligne'], ['machine', 'Impression – machine'], ['operateur', 'Impression – opérateur'], ['autre', null]];
+    body.replaceChildren(...rows.map((r) => {
+      const tr = el('tr');
+      tr.dataset.key = enc(r.prog) + ',' + enc(r.motif);
+      const th = el('th', '', P.lang === 'en' ? r.motif_en : r.motif); th.scope = 'row';
+      th.addEventListener('click', () => set({ motif: P.motif === r.motif && !P.origine ? null : r.motif, origine: null }));
+      tr.append(th);
+      cols.forEach(([k, o]) => {
+        const td = el('td', 'n c', String(r[k]));
+        const c = o ? colorOf(o) : 'var(--cds-chart-muted)';
+        if (r[k]) td.style.background = `color-mix(in srgb, ${c} ${Math.round(8 + 42 * (r[k] / max))}%, transparent)`;
+        if (P.motif === r.motif && P.origine === o && o) td.classList.add('on');
+        if (o) td.addEventListener('click', () => set(P.motif === r.motif && P.origine === o ? { motif: null, origine: null } : { motif: r.motif, origine: o }));
+        tr.append(td);
+      });
+      tr.append(el('td', 'n', String(r.total)));
+      return tr;
+    }));
+  }
+
+  // ------------------------------------------------ horizontal bar lists
+  function drawCauses(P) {
+    const box = $('#causes');
+    const all = ready('causes', box);
+    if (!all) { if (dash.data('causes').status !== 'error') box.replaceChildren(); return; }
+    const o = P.origine || 'Toutes';
+    const rows = all.filter((r) => r.prog === P.prog && r.origine === o);
+    const owner = {};
+    all.filter((r) => r.prog === 'Tous' && r.origine !== 'Toutes').forEach((r) => { if (!owner[r.cause] || owner[r.cause].n < r.n) owner[r.cause] = r; });
+    const known = rows.filter((r) => r.cause !== INCONNU).sort((a, b) => b.n - a.n);
+    const unk = rows.filter((r) => r.cause === INCONNU);
+    const max = d3.max(rows, (r) => r.n) || 1;
+    const line = (r, color) => {
+      const b = el('button', 'cx-brow');
+      b.type = 'button';
+      b.setAttribute('aria-pressed', String(P.cause === r.cause));
+      if (P.cause && P.cause !== r.cause) b.classList.add('dim');
+      const tr = el('span', 'cx-btrack'); const s = el('span', 'cx-bseg'); s.style.width = (100 * r.n / max) + '%'; s.style.background = color; tr.append(s);
+      b.append(el('span', 'cx-blab', lab('cause', r.cause)), tr, el('span', 'cx-bval', String(r.n)));
+      b.addEventListener('click', () => set({ cause: P.cause === r.cause ? null : r.cause }));
+      return b;
+    };
+    const kids = known.map((r) => line(r, colorOf(owner[r.cause] ? owner[r.cause].origine : '')));
+    if (unk.length) { kids.push(el('div', 'cx-sep')); kids.push(line(unk[0], 'var(--cds-chart-muted)')); }
+    box.replaceChildren(...(kids.length ? kids : [el('p', 'cx-note', L.none)]));
+  }
+
+  function drawTypes(P) {
+    const box = $('#types');
+    const all = ready('types', box);
+    if (!all) { if (dash.data('types').status !== 'error') box.replaceChildren(); return; }
+    const rows = all.filter((r) => r.prog === P.prog);
+    const tot = d3.rollups(rows, (v) => d3.sum(v, (r) => r.n), (r) => r.type).sort((a, b) => b[1] - a[1]).slice(0, 8);
+    const max = d3.max(tot, (t) => t[1]) || 1;
+    box.replaceChildren(...tot.map(([type, n]) => {
+      const row = el('div', 'cx-brow'); row.style.cursor = 'default';
+      const tr = el('span', 'cx-btrack'); tr.style.width = (100 * n / max) + '%';
+      ORIG.forEach((o) => {
+        const r = rows.find((x) => x.type === type && x.origine === o);
+        if (!r) return;
+        const s = el('span', 'cx-bseg'); s.style.flex = String(r.n); s.style.background = colorOf(o);
+        s.title = L.short[o] + ' : ' + r.n;
+        if (P.origine && P.origine !== o) s.style.opacity = '.22';
+        tr.append(s);
+      });
+      const wrap = el('span'); wrap.append(tr);
+      row.append(el('span', 'cx-blab', type), wrap, el('span', 'cx-bval', String(n)));
+      return row;
+    }));
+  }
+
+  // ------------------------------------------------ tables
+  function drawRevenus(P) {
+    const body = $('#revenus tbody');
+    const all = ready('revenus');
+    if (!all) { body.replaceChildren(); return; }
+    const rows = all.filter((r) => r.prog === P.prog).sort((a, b) => b.demandes - a.demandes || b.msn - a.msn || a.cable.localeCompare(b.cable));
+    const en = P.lang === 'en';
+    body.replaceChildren(...rows.map((r) => {
+      const tr = el('tr');
+      tr.dataset.key = enc(r.prog) + ',' + enc(r.cable);
+      tr.tabIndex = 0;
+      if (P.cable === r.cable) tr.style.background = 'color-mix(in srgb, var(--color-fg) 8%, transparent)';
+      tr.append(el('td', '', r.cable), el('td', 'n', String(r.demandes)), el('td', 'n', String(r.msn)), el('td', '', en ? r.motifs_en : r.motifs), el('td', '', en ? r.origines_en : r.origines));
+      const go = () => set({ cable: P.cable === r.cable ? null : r.cable });
+      tr.addEventListener('click', go);
+      tr.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(); } });
+      return tr;
+    }));
+  }
+
+  function drawTable(P) {
+    const body = $('#demandes tbody');
+    const all = ready('cables');
+    const tr8 = P.lang === 'en' ? ready('traduction') : null;
+    if (!all || (P.lang === 'en' && !tr8)) { body.replaceChildren(); $('#compte').textContent = ''; return; }
+    const en = tr8 ? new Map(tr8.map((r) => [r.ligne, r])) : null;
+    const q = search.trim().toLowerCase();
+    const rows = all.filter((r) => (P.prog === 'Tous' || r.programme === P.prog)
+      && (!P.origine || r.origine === P.origine) && (!P.motif || r.motif === P.motif) && (!P.cause || r.cause === P.cause)
+      && (!P.cable || r.cables.split(' ').includes(P.cable))
+      && (!q || [r.nc, r.msn, r.semaine, r.cables, r.type, r.commentaire, r.motif, r.cause, en ? Object.values(en.get(r.ligne) || {}).join(' ') : ''].join(' ').toLowerCase().includes(q)))
+      .sort((a, b) => b.date.localeCompare(a.date) || b.ligne - a.ligne);
+    $('#compte').textContent = rows.length + (rows.length > 1 ? L.many : L.one);
+    body.replaceChildren(...rows.map((r) => {
+      const t = en ? en.get(r.ligne) || {} : null;
+      const tr = el('tr');
+      tr.dataset.key = String(r.ligne);
+      tr.append(el('td', '', r.semaine), el('td', '', r.nc), el('td', '', r.programme), el('td', 'cx-hide-n', r.msn),
+        el('td', '', t ? t.motif_en : r.motif), el('td', '', t ? t.origine_en : r.origine), el('td', '', t ? t.cause_en : r.cause),
+        el('td', 'cx-hide-n', r.cables), el('td', 'txt', r.commentaire));
+      return tr;
+    }));
+  }
+
+  $('#recherche').addEventListener('input', (e) => { search = e.target.value; drawTable(prm()); });
+
+  dash.onData(() => {
+    const P = prm();
+    applyLang(P);
+    drawHead(P);
+    drawMois(P);
+    drawMatrix(P);
+    drawCauses(P);
+    drawTypes(P);
+    drawRevenus(P);
+    drawTable(P);
+  });
+})();
+</script>
