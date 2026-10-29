@@ -356,6 +356,8 @@ def build_dashboard(d, nc, lt, y25=None, dis_t=None):
     slate_pack(data, page="suivi")
     import skywise_pack   # the four Skywise migration levels (03_reports/skywise): build/skywise_pack.py
     REPORT["skywise"] = skywise_pack.build(src["ref"], ROOT, _scope_css, say)
+    import views_pack   # Synthèse and Détail for Slate, two ways (03_reports/skywise/views): build/views_pack.py
+    views_pack.build(say)
 
 
 def colmajor(df):
