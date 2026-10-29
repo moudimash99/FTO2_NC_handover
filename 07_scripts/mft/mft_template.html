@@ -184,10 +184,10 @@ svg .ink { fill: var(--ink); } svg .b { font-weight: 600; }
 
 <main class="wrap">
   <section class="tab" id="t-pareto" aria-labelledby="tb-pareto">
-    <div class="lead"><h2 id="pTitle"></h2><p class="sub" id="pSub"></p></div>
+    <div class="lead"><h2 id="pTitle"></h2><p class="sub" id="pSub" hidden></p></div>
     <div class="row"><span class="lbl" id="lPer">Période</span><div class="seg" role="group" aria-labelledby="lPer" id="per"></div><span id="selChip"></span></div>
     <div class="figs" id="pFigs"></div>
-    <div class="card"><div class="head"><h3>Catégories</h3><div class="key"><span><i class="tick"></i>moyenne des 4 semaines d’avant</span></div></div><div class="bars" id="bCat"></div></div>
+    <div class="card"><div class="head"><h3>Catégories</h3><div class="key"><span><i class="tick"></i>moy. 4 sem. préc.</span></div></div><div class="bars" id="bCat"></div></div>
     <div class="grid3">
       <div class="card"><div class="head"><h3>Causes</h3></div><div class="bars" id="bRca"></div></div>
       <div class="card"><div class="head"><h3>Sous-codes officiels</h3></div><div class="bars" id="bCode"></div></div>
@@ -199,18 +199,18 @@ svg .ink { fill: var(--ink); } svg .b { font-weight: 600; }
   </section>
 
   <section class="tab" id="t-analyse" aria-labelledby="tb-analyse" hidden>
-    <div class="lead"><h2 id="aTitle"></h2><p class="sub">Ce qui ressort sur la ligne sans entrer dans le détail : l’évolution des défauts semaine par semaine, ce qui monte, ce qui est nouveau, les repères qui reviennent d’un avion à l’autre. « + Action » ouvre une action déjà remplie pour ce problème.</p></div>
-    <div class="card"><div class="head"><h3>Défauts par semaine, par catégorie</h3><span class="mu">26 semaines · cliquez une semaine pour son Pareto</span></div><div id="aWeeks"></div><div class="key" id="aWeeksKey"></div></div>
+    <div class="lead"><h2 id="aTitle"></h2></div>
+    <div class="card"><div class="head"><h3>Défauts par semaine, par catégorie</h3><span class="mu">26 semaines</span></div><div id="aWeeks"></div><div class="key" id="aWeeksKey"></div></div>
     <div class="grid2">
-      <div class="card"><div class="head"><h3>Ce qui monte</h3><span class="mu">4 dernières semaines contre les 8 d’avant</span></div><div class="lst" id="aUp"></div></div>
-      <div class="card"><div class="head"><h3>Ce qui baisse</h3><span class="mu">même comparaison</span></div><div class="lst" id="aDown"></div></div>
-      <div class="card"><div class="head"><h3>Nouveau cette semaine</h3><span class="mu">absent des 8 semaines d’avant</span></div><div class="lst" id="aNew"></div></div>
-      <div class="card"><div class="head"><h3>Repères qui reviennent</h3><span class="mu">même FIN sur plusieurs avions, 8 semaines</span></div><div class="lst" id="aFin"></div></div>
+      <div class="card"><div class="head"><h3>Ce qui monte</h3><span class="mu">4 sem. vs 8 préc.</span></div><div class="lst" id="aUp"></div></div>
+      <div class="card"><div class="head"><h3>Ce qui baisse</h3><span class="mu">4 sem. vs 8 préc.</span></div><div class="lst" id="aDown"></div></div>
+      <div class="card"><div class="head"><h3>Nouveau cette semaine</h3><span class="mu">vs 8 sem. préc.</span></div><div class="lst" id="aNew"></div></div>
+      <div class="card"><div class="head"><h3>FIN récurrents</h3><span class="mu">8 sem. · 3 avions ou plus</span></div><div class="lst" id="aFin"></div></div>
     </div>
   </section>
 
   <section class="tab" id="t-actions" aria-labelledby="tb-actions" hidden>
-    <div class="lead"><h2>Suivi des actions</h2><p class="sub">Chaque action suit son problème semaine par semaine. Référence : la moyenne des 8 semaines avant le début de l’action. Objectif : la moyenne glissante sur 4 semaines au moins 30 % sous la référence, tenue 4 semaines de suite ; l’action peut alors être close. Les semaines de fermeture (moins de 10 défauts dans l’usine) et la semaine en cours ne comptent pas.</p></div>
+    <div class="lead"><h2>Suivi des actions</h2></div>
     <div class="row">
       <div class="seg" role="group" aria-label="Statut" id="fSt"></div>
       <div class="seg" role="group" aria-label="Lignes" id="fLn"></div>
@@ -294,7 +294,7 @@ var D = /*@@DATA@@*/null;
     seg($('lines'), LINES.map(function (x) { return [x[0], x[0]]; }), S.line, 'data-line');
     seg($('phases'), [['SERIE', 'Série'], ['REC', 'REC'], ['FTI', 'FTI'], ['', 'Tout']], S.ph, 'data-ph');
     $('wk').innerHTML = WEEKS.map(function (w, i) { return i; }).reverse().map(function (i) { return '<option value="' + i + '"' + (i === S.week ? ' selected' : '') + '>' + esc(wkLong(i) + (PARTIAL && i === NW - 1 ? ' (en cours)' : SHUT[i] ? ' (fermeture)' : '')) + '</option>'; }).join('');
-    $('asof').textContent = 'Données au ' + dayFr(D.to) + ' · NC émises à FTO2';
+    $('asof').textContent = 'Données au ' + dayFr(D.to);
     seg($('per'), [[1, 'La semaine'], [4, '4 semaines'], [13, '13 semaines']], S.per, 'data-per');
     seg($('fSt'), [['open', 'Ouvertes'], ['all', 'Toutes'], ['closed', 'Closes']], S.fSt, 'data-fst');
     seg($('fLn'), [['line', S.line], ['all', 'Toutes les lignes']], S.fLn, 'data-fln');
@@ -324,17 +324,18 @@ var D = /*@@DATA@@*/null;
   function renderPareto() {
     var ws = per(S.week), wl = S.per === 1 ? wkLong(S.week) : wkShort(ws[0]) + ' à ' + wkShort(ws[ws.length - 1]);
     $('pTitle').textContent = S.line + ' · ' + wl;
-    $('pSub').textContent = (S.per === 1 ? 'Les défauts des NC créées cette semaine-là' : 'Les défauts des NC créées sur ces ' + S.per + ' semaines') + ', ' + (S.ph ? 'production ' + ({ SERIE: 'série', REC: 'REC', FTI: 'FTI' }[S.ph]) : 'toute production') + '. Trait vertical : la moyenne des 4 semaines de travail d’avant, ramenée à la même durée. Cliquez une barre pour filtrer la liste des défauts.' + (SHUT[S.week] ? ' Semaine de fermeture : peu de défauts.' : PARTIAL && S.week === NW - 1 ? ' Semaine en cours, incomplète.' : '');
+    $('pSub').textContent = SHUT[S.week] ? 'Semaine de fermeture' : PARTIAL && S.week === NW - 1 ? 'Semaine en cours, incomplète' : '';
+    $('pSub').hidden = !$('pSub').textContent;
     var set = {}; ws.forEach(function (i) { set[i] = 1; });
     var ncs = 0, ncSet = {}; NCS.forEach(function (n, i) { if (set[NCW[i]] && inScope(i)) { ncs++; ncSet[i] = 1; } });
     var defs = DEFS.filter(function (d) { return ncSet[d[0]]; }), prev = validBefore(ws[0] - 1, 4), pd = 0, pn = 0, pset = {};
     prev.forEach(function (i) { pset[i] = 1; }); NCS.forEach(function (n, i) { if (pset[NCW[i]] && inScope(i)) pn++; }); DEFS.forEach(function (d) { if (pset[NCW[d[0]]] && inScope(d[0])) pd++; });
     var refD = prev.length ? pd / prev.length * S.per : null, refN = prev.length ? pn / prev.length * S.per : null;
     var cm = {}; defs.forEach(function (d) { var c = fld(d, 'cat'); if (CATC[c]) cm[c] = (cm[c] || 0) + 1; }); var topc = Object.keys(cm).sort(function (a, b) { return cm[b] - cm[a]; })[0];
-    var dlt = function (v, r) { return r ? '<small class="delta ' + (v > r * 1.1 ? 'up' : v < r * 0.9 ? 'down' : '') + '">' + pct(v / r - 1) + ' contre avant (' + num(r, 1) + ')</small>' : '<small>—</small>'; };
+    var dlt = function (v, r) { return r ? '<small class="delta ' + (v > r * 1.1 ? 'up' : v < r * 0.9 ? 'down' : '') + '">' + pct(v / r - 1) + ' vs ' + num(r, 1) + '</small>' : '<small>—</small>'; };
     $('pFigs').innerHTML = '<div class="fig"><span class="k">NC</span><b>' + num(ncs) + '</b>' + dlt(ncs, refN) + '</div>' +
       '<div class="fig"><span class="k">Défauts</span><b>' + num(defs.length) + '</b>' + dlt(defs.length, refD) + '</div>' +
-      '<div class="fig"><span class="k">Défauts par NC</span><b>' + (ncs ? num(defs.length / ncs, 1) : '—') + '</b><small>NC sans ligne de défaut comprises</small></div>' +
+      '<div class="fig"><span class="k">Défauts par NC</span><b>' + (ncs ? num(defs.length / ncs, 1) : '—') + '</b><small></small></div>' +
       '<div class="fig"><span class="k">Première catégorie</span><b style="font-size:21px">' + esc(topc || '—') + '</b><small>' + (topc ? num(cm[topc]) + ' défauts · ' + num(cm[topc] / (defs.length || 1) * 100) + ' %' : '') + '</small></div>';
     barList($('bCat'), 'cat'); barList($('bRca'), 'rca', 12); barList($('bCode'), 'code', 10); barList($('bFin'), 'fin', 10);
     $('selChip').innerHTML = S.sel ? '<span class="chip">' + esc(LEVELS[S.sel.k] + ' : ' + shown(S.sel.k, S.sel.v)) + ' <button type="button" id="selX" aria-label="Retirer le filtre">✕</button></span>' : '';
@@ -373,14 +374,14 @@ var D = /*@@DATA@@*/null;
       if (j % (ws.length > 18 && W < 700 ? 3 : 2) === 0 || i === S.week) g += '<text x="' + (ml + j * bw + bw / 2).toFixed(1) + '" y="' + (H - 8) + '" text-anchor="middle"' + (i === S.week ? ' class="ink b"' : '') + '>' + wkShort(i) + '</text>';
       acts.forEach(function (a) { var s = a.actionStart ? WIDX[isoWeek(a.actionStart)] : null; if (s === i) g += '<path d="M' + (ml + j * bw + bw / 2 - 5).toFixed(1) + ',10 l5,8 l5,-8z" fill="var(--ink)"' + tipA('Début d’action · ' + wkShort(i), [a.title || a.category]) + '/>'; }); });
     box.innerHTML = '<svg width="' + W + '" height="' + H + '" viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="Défauts par semaine">' + g + '</svg>';
-    $('aWeeksKey').innerHTML = CATS.map(function (c) { return '<span><i style="background:' + CATC[c] + '"></i>' + esc(c) + '</span>'; }).join('') + '<span><i style="background:var(--dim)"></i>Suivi séparé</span><span>▼ début d’une action</span><span class="mu">pâle : semaine de fermeture ou en cours</span>';
+    $('aWeeksKey').innerHTML = CATS.map(function (c) { return '<span><i style="background:' + CATC[c] + '"></i>' + esc(c) + '</span>'; }).join('') + '<span><i style="background:var(--dim)"></i>Suivi séparé</span><span>▼ Début d’action</span><span><i style="background:var(--ink-2);opacity:.35"></i>Fermeture / en cours</span>';
     // rising / falling causes
     var last4 = validBefore(S.week, 4), prev8 = validBefore((last4[0] || S.week) - 1, 8), ser = {}, wsS = validBefore(S.week, 13);
     DEFS.forEach(function (d) { if (!inScope(d[0])) return; var v = fld(d, 'rca'); if (!v) return; (ser[v] || (ser[v] = WEEKS.map(function () { return 0; })))[NCW[d[0]]]++; });
     var rows = Object.keys(ser).map(function (v) { var a = mean(last4.map(function (i) { return ser[v][i]; })) || 0, b = mean(prev8.map(function (i) { return ser[v][i]; })) || 0;
       return { v: v, a: a, b: b, n4: a * last4.length, r: b ? a / b - 1 : (a ? Infinity : 0) }; });
     var item = function (x, cls) { var c = valCol('rca', x.v);
-      return '<div class="it"><div class="nm"><i style="background:' + c + '"></i><span>' + esc(x.v) + '</span></div><div class="d">' + num(x.b, 1) + ' → ' + num(x.a, 1) + ' par semaine</div>' +
+      return '<div class="it"><div class="nm"><i style="background:' + c + '"></i><span>' + esc(x.v) + '</span></div><div class="d">' + num(x.b, 1) + ' → ' + num(x.a, 1) + ' / sem.</div>' +
         '<div class="r"><span class="delta ' + cls + '">' + (isFinite(x.r) ? pct(x.r) : 'nouveau') + '</span>' + spark(ser[x.v], wsS, c) + plusBtn('rca', x.v) + '</div></div>'; };
     var up = rows.filter(function (x) { return x.n4 >= 4 && x.a > x.b * 1.25; }).sort(function (a, b) { return (b.a - b.b) - (a.a - a.b); }).slice(0, 6);
     var dn = rows.filter(function (x) { return x.b * 8 >= 6 && x.a < x.b * 0.75; }).sort(function (a, b) { return (a.a - a.b) - (b.a - b.b); }).slice(0, 6);
@@ -482,12 +483,10 @@ var D = /*@@DATA@@*/null;
       '<div class="key"><span><i style="background:' + col + ';opacity:.5"></i>défauts par semaine</span><span><i class="ln" style="background:var(--ink)"></i>moyenne glissante 4 sem.</span><span><i class="dash"></i>référence (8 sem. avant)</span><span><i class="dot"></i>objectif −30 %</span></div>';
   }
   function kpiText(o) {
-    if (o.st === 'none') return 'Choisissez le problème suivi (catégorie, cause, sous-code, FIN…) pour voir son évolution.';
-    if (o.st === 'nostart') return 'Saisissez la date de début de l’action pour calculer la référence.';
-    if (o.st === 'noref') return 'Pas assez de semaines de travail avant le début, ou aucun défaut : pas de référence.';
-    var t = (o.fromAnalysis ? 'Sans date de début d’action, la référence part du début de l’analyse. ' : '') + 'Référence : <b>' + num(o.base, 1) + '</b> / sem. · objectif ≤ <b>' + num(o.tgt, 1) + '</b>';
-    if (o.st === 'early') return t + ' · ' + o.post.length + ' semaine' + (o.post.length > 1 ? 's' : '') + ' de travail depuis le début : il en faut 4 pour juger.';
-    return t + ' · maintenant <b>' + num(o.cur, 1) + '</b> / sem. (moyenne 4 sem.) · <b>' + pct(o.chg) + '</b>' + (o.st === 'met' ? ' · tenu ' + o.steady + ' semaines : l’action peut être close.' : '');
+    if (o.st === 'none' || o.st === 'nostart' || o.st === 'noref') return '';
+    var t = 'Réf. ' + (o.fromAnalysis ? '(début de l’analyse) ' : '') + '<b>' + num(o.base, 1) + '</b> / sem. · Objectif ≤ <b>' + num(o.tgt, 1) + '</b>';
+    if (o.st === 'early') return t + ' · ' + o.post.length + ' sem. sur 4';
+    return t + ' · Actuel <b>' + num(o.cur, 1) + '</b> / sem. · <b>' + pct(o.chg) + '</b>' + (o.st === 'met' ? ' · tenu ' + o.steady + ' sem.' : '');
   }
   function who(id) { return id ? (NAMES[id] || 'quelqu’un') : ''; }
   function renderActions() {
@@ -499,7 +498,7 @@ var D = /*@@DATA@@*/null;
     var box = $('acts'), W = Math.max(260, Math.min(640, Math.floor((box.clientWidth || 900) * (box.clientWidth > 860 ? 0.55 : 1)) - 40)), sts = list.map(stats);
     $('actSum').textContent = list.length + ' action' + (list.length > 1 ? 's' : '') + (sts.some(function (o) { return o.st === 'met'; }) ? ' · ' + sts.filter(function (o) { return o.st === 'met'; }).length + ' à l’objectif' : '') + (sts.some(function (o) { return o.st === 'up'; }) ? ' · ' + sts.filter(function (o) { return o.st === 'up'; }).length + ' en hausse' : '');
     if (!DB) { box.innerHTML = '<p class="empty">Les actions apparaissent ici quand la page est ouverte dans Claude par une personne connectée.</p>'; return; }
-    if (!list.length) { box.innerHTML = '<p class="empty">Aucune action ' + (S.fSt === 'closed' ? 'close ' : S.fSt === 'open' ? 'ouverte ' : '') + (S.fLn === 'all' ? '' : 'sur ' + esc(S.line) + ' ') + '. ' + (CANW === false ? '' : 'Créez-en une avec « + Nouvelle action » ou depuis l’onglet Analyse.') + '</p>'; return; }
+    if (!list.length) { box.innerHTML = '<p class="empty">Aucune action ' + (S.fSt === 'closed' ? 'close ' : S.fSt === 'open' ? 'ouverte ' : '') + (S.fLn === 'all' ? '' : 'sur ' + esc(S.line)) + '</p>'; return; }
     box.innerHTML = list.map(function (a, n) { var o = sts[n], ed = CANW !== false, closed = a.status === 'Clos' || a.status === 'Abandonnée';
       var dl = [['Problème suivi', esc(problemText(a.problem))], ['Porteur de l’action', esc(a.actionOwner || '—')], ['Porteur de l’analyse', esc(a.analysisOwner || '—')],
         ['Début de l’analyse', esc(monthFr(a.analysisStart) || '—')], ['Début de l’action', esc(a.actionStart ? (a.actionStart.slice(8, 10) === '01' ? monthFr(a.actionStart) : dayFr(a.actionStart)) : '—')], ['Bénéfice attendu', esc(/^\d{4}-\d\d/.test(a.expected || '') ? monthFr(a.expected) : (a.expected || '—'))],
@@ -510,7 +509,7 @@ var D = /*@@DATA@@*/null;
         '<div style="display:grid;gap:6px;min-width:0">' + (o.ser ? actChart(a, o, W) : '') + '<div class="kpi">' + kpiText(o) + '</div></div>' +
         '<details data-d="' + esc(a.id) + '"' + (OPEN[a.id] ? ' open' : '') + '><summary>Défauts, analyse, action et suivi' + ((a.log || []).length ? ' · ' + a.log.length + ' point' + (a.log.length > 1 ? 's' : '') : '') + '</summary><div class="txtb">' +
           [['Catégorie (tracker)', a.category], ['Défauts constatés', a.defects], ['Analyse de cause racine', a.rootCause], ['Action', a.action], ['Informations', a.note]].filter(function (x) { return x[1]; }).map(function (x) { return '<div><h4>' + x[0] + '</h4><p>' + esc(x[1]) + '</p></div>'; }).join('') + '</div>' +
-          '<div class="log">' + logs + (ed ? '<div class="row"><input type="text" id="lg-' + esc(a.id) + '" placeholder="Point de la semaine (ex. : contrôle renforcé au poste 3, à revoir S44)" style="flex:1;min-width:200px" maxlength="400"><button type="button" class="btn sm" data-log="' + esc(a.id) + '">Ajouter le point</button></div>' : '') + '</div></details>' +
+          '<div class="log">' + logs + (ed ? '<div class="row"><input type="text" id="lg-' + esc(a.id) + '" placeholder="Point de la semaine" style="flex:1;min-width:200px" maxlength="400"><button type="button" class="btn sm" data-log="' + esc(a.id) + '">Ajouter le point</button></div>' : '') + '</div></details>' +
         (ed ? '<div class="ops"><button type="button" class="btn sm" data-edit="' + esc(a.id) + '">Modifier</button>' + (closed ? '<button type="button" class="btn sm" data-reopen="' + esc(a.id) + '">Rouvrir</button>' : '<button type="button" class="btn sm" data-close="' + esc(a.id) + '">Clore</button>') +
           (CONF === a.id ? '<span class="confirm">Supprimer cette action ? <button type="button" class="btn sm" data-delok="' + esc(a.id) + '">Oui, supprimer</button><button type="button" class="btn sm" data-delno="1">Non</button></span>' : '<button type="button" class="btn link" data-del="' + esc(a.id) + '">Supprimer</button>') + '</div>' : '') +
         '</article>'; }).join('');
