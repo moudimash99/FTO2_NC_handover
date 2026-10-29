@@ -795,6 +795,35 @@ footer p { max-width: none; }
   .level { grid-template-columns: minmax(0, 9em) minmax(0, 1fr) 6.4em; }
 }
 @media (prefers-reduced-motion: no-preference) { .fill, .stick { transition: width .15s ease, height .15s ease; } .switch i::after { transition: left .15s ease; } }
+/* Views page (PAGE 'vues'): each view has its own line and period above its numbers; charts show simple (no notes), a press opens the
+   complete chart over the page; the Pareto shows one level at a time; every data table stays folded at the bottom of its card */
+.vu-page .fbar { display: none; }
+.vu-bar { display: flex; flex-wrap: wrap; align-items: end; gap: 10px 22px; }
+.vu-bar .fb > label { font-size: 11px; letter-spacing: .07em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+.vu-grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 18px; align-items: start; }
+.vu-slot { grid-column: span 6; min-width: 0; display: grid; }
+.vu-slot:empty { display: none; }
+#vuSynGrid .vu-slot[data-slot="VN"] { grid-column: span 8; }
+#vuSynGrid .vu-slot[data-slot="VT"] { grid-column: span 4; }
+#vuSynGrid .vu-slot[data-slot="a:bump"], #vuSynGrid .vu-slot[data-slot="VQ"], #vuSynGrid .vu-slot[data-slot="a:bub"] { grid-column: span 4; }
+#vuDetGrid .vu-slot[data-slot="a:bump"] { grid-column: span 5; }
+#vuDetGrid .vu-slot[data-slot="78"] { grid-column: span 7; }
+#vuDetGrid .vu-slot[data-slot="54"] { grid-column: 1 / -1; }
+@media (max-width: 960px) { .vu-grid .vu-slot { grid-column: 1 / -1 !important; } }
+.vu .bhead > .kicker, .vu .bhead > .sub, .vu .v2stats, .vu .vhead > .kicker, .vu .vhead > .sub { display: none; }
+.vu-par .psec > .figs, .vu-par .psec > p.sub, .vu-par .chips .hint { display: none; }
+.vu-band .bhead { position: relative; padding-right: 100px; }
+.vu-x { position: absolute; top: 0; right: 0; font: inherit; font-size: 12px; font-weight: 700; color: var(--ink-2); background: var(--surface); border: 1px solid var(--ring); border-radius: 14px; padding: 3px 11px; cursor: pointer; }
+.vu-x:hover { color: var(--ink); border-color: var(--ink-2); }
+.vu-up { color: var(--up); font-weight: 700; } .vu-down { color: var(--down); font-weight: 700; }
+.vu-ov { position: fixed; inset: 0; z-index: 50; overflow-y: auto; display: grid; place-items: start center; padding: max(20px, env(safe-area-inset-top, 0px)) max(14px, env(safe-area-inset-right, 0px)) 24px max(14px, env(safe-area-inset-left, 0px)); }
+.vu-scrim { position: fixed; inset: 0; background: rgba(12, 14, 13, .58); backdrop-filter: blur(3px); }
+.vu-panel { position: relative; width: min(1200px, 100%); display: grid; gap: 10px; }
+.vu-top { display: flex; justify-content: flex-end; }
+.vu-close { font: inherit; font-weight: 600; font-size: 13.5px; color: var(--ink); background: var(--surface); border: 1px solid var(--ring); border-radius: 8px; padding: 6px 14px; cursor: pointer; }
+.vu-full { transform-origin: 0 0; box-shadow: 0 24px 60px rgba(0, 0, 0, .28); }
+.vu-full .vu-x { display: none; }
+html.vu-lock { overflow: hidden; }
 </style>
 
 <div class="wrap">
@@ -851,6 +880,8 @@ footer p { max-width: none; }
     <button type="button" role="tab" id="tab-hebdo" aria-controls="p-hebdo" data-tab="hebdo" data-t="tabWeek"></button>
     <button type="button" role="tab" id="tab-mft" aria-controls="p-mft" data-tab="mft" data-t="tabMft"></button>
     <button type="button" role="tab" id="tab-rev" aria-controls="p-rev" data-tab="rev" data-t="tabRev"></button>
+    <button type="button" role="tab" id="tab-syn" aria-controls="p-syn" data-tab="syn" data-t="tabSyn"></button>
+    <button type="button" role="tab" id="tab-det" aria-controls="p-det" data-tab="det" data-t="tabDet"></button>
   </div>
 
   <!-- 1. Overview: headline figures and every chart counted in NCs -->
@@ -1128,6 +1159,24 @@ footer p { max-width: none; }
     <textarea class="rv-copybox" id="rvCopyBox" readonly hidden></textarea>
     <div id="rvBody"></div>
   </div>
+
+  <!-- Views page (PAGE 'vues'): Synthèse, the whole plant over the year; Détail, one line over one month. The charts are this dashboard's -->
+  <div class="panel vu" role="tabpanel" id="p-syn" aria-labelledby="tab-syn" hidden>
+    <div class="vu-bar"><div class="fb"><label for="vuSL" data-t="fLine"></label><select id="vuSL"></select></div>
+      <div class="fb"><label for="vuSP" data-t="fPeriod"></label><select id="vuSP"></select></div></div>
+    <div class="figs" id="vuSF"></div>
+    <div class="vu-grid" id="vuSynGrid"></div>
+    <div id="vuSynCalc" hidden></div>
+  </div>
+  <div class="panel vu" role="tabpanel" id="p-det" aria-labelledby="tab-det" hidden>
+    <div class="vu-bar"><div class="fb"><label for="vuDL" data-t="fLine"></label><select id="vuDL"></select></div>
+      <div class="fb"><label for="vuDM" data-t="vuMonth"></label><select id="vuDM"></select></div></div>
+    <div class="figs" id="vuDF"></div>
+    <div class="vu-par" id="vuPar"></div>
+    <div class="vu-grid" id="vuDetGrid"></div>
+  </div>
+  <div class="vu-ov" id="vuOv" hidden><div class="vu-scrim" id="vuScrim"></div>
+    <div class="vu-panel" id="vuPanel" role="dialog" aria-modal="true" aria-label=""><div class="vu-top"><button type="button" class="vu-close" id="vuClose" data-t="vuClose"></button></div><div id="vuHold"></div></div></div>
 
   <div id="tip" role="tooltip" hidden></div>
   <footer><p id="foot1"></p><p data-t="foot2"></p><p id="foot3"></p><p data-t="foot4"></p><p data-t="foot5"></p></footer>
@@ -1680,8 +1729,8 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
   var ASIDE = { 'Non classé': 1, '__none': 1 };   // Kitting Factory, FOD and Autre are categories like the others since 29 Oct (Mohammad: no more 'tracked separately')
 
   // two pages from one file: the dashboard, and the weekly follow-up (weekly Pareto, MFT actions)
-  var PAGE = window.FTO2_PAGE === 'suivi' ? 'suivi' : (window.FTO2_PAGE === 'review' || window.FTO2_PAGE === 'mock') && D.dummy ? window.FTO2_PAGE : 'main';
-  var TABS = PAGE === 'suivi' ? ['hebdo', 'mft'] : PAGE === 'review' ? ['rev'] : PAGE === 'mock' ? ['ov', 'pareto', 'where', 'cnq', 'client', 'cbl', 'rca', 'pplan', 'hebdo', 'mft'] : ['ov', 'pareto', 'where', 'cnq', 'client', 'cbl', 'rca', 'pplan'];
+  var PAGE = window.FTO2_PAGE === 'suivi' || window.FTO2_PAGE === 'vues' ? window.FTO2_PAGE : (window.FTO2_PAGE === 'review' || window.FTO2_PAGE === 'mock') && D.dummy ? window.FTO2_PAGE : 'main';
+  var TABS = PAGE === 'suivi' ? ['hebdo', 'mft'] : PAGE === 'vues' ? ['syn', 'det'] : PAGE === 'review' ? ['rev'] : PAGE === 'mock' ? ['ov', 'pareto', 'where', 'cnq', 'client', 'cbl', 'rca', 'pplan', 'hebdo', 'mft'] : ['ov', 'pareto', 'where', 'cnq', 'client', 'cbl', 'rca', 'pplan'];
   var G = { lang: 'fr', minor: true, tab: TABS[0] };
   try { var s1 = localStorage.getItem('fto2-dash-lang'); if (s1 === 'fr' || s1 === 'en') G.lang = s1; } catch (e) {}
   var h0 = ''; try { h0 = EMBED ? '' : (location.hash || '').replace('#', ''); } catch (e) {} if (TABS.indexOf(h0) >= 0) G.tab = h0;
@@ -6806,6 +6855,173 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
   function setMinor(v) { G.minor = v; pareto.f = {}; costPareto.f = {}; weekly.f = {}; client.f = {}; renderAll(); }
   document.getElementById('miIn').addEventListener('click', function () { setMinor(true); });
   document.getElementById('miOut').addEventListener('click', function () { setMinor(false); });
+
+  // ---------------------------------------------------------------- Views page (PAGE 'vues', 30 Oct, Mohammad): two monthly views made of this
+  // dashboard's own charts, for the QCMs (Synthèse: the plant, the year) and the QLS (Détail: one line, one month). Each view keeps its own line
+  // and period; Détail's Pareto opens a level at a time (category, then cause, then sub-code), in volume by default, its charts run from January
+  // to that month. Charts show without their notes; a press opens the complete chart over the page (a double click or tap skips the animation).
+  if (PAGE === 'vues') (function () {
+    Object.assign(STR.fr, { title: 'Synthèse et détail', tabSyn: 'Synthèse', tabDet: 'Détail', vuMonth: 'Mois', vuAll: 'Toutes lignes', vuOpen: 'Complet', vuClose: 'Fermer',
+      vuNcY: 'NC depuis janvier', vuNcP: 'NC sur la période', vuRate: 'NC par MSN', vuCost: 'Coût de non-qualité', vuRet: 'Retours clients',
+      vuNcM: 'NC du mois', vuDefM: 'Défauts du mois', vuCostM: 'Coût du mois', vuRateY: 'NC par MSN depuis janvier',
+      vuFc: 'prévision fin déc. : {f} · objectif : {t}', vuVsT: 'par rapport à l’objectif ({t})', vuPrev: '{m} : {v}', vuRetC: '{e}' });
+    Object.assign(STR.en, { title: 'Summary and detail', tabSyn: 'Summary', tabDet: 'Detail', vuMonth: 'Month', vuAll: 'All lines', vuOpen: 'Complete', vuClose: 'Close',
+      vuNcY: 'NCs since January', vuNcP: 'NCs in the period', vuRate: 'NCs per MSN', vuCost: 'Cost of non-quality', vuRet: 'Customer returns',
+      vuNcM: 'NCs this month', vuDefM: 'Defects this month', vuCostM: 'Cost this month', vuRateY: 'NCs per MSN since January',
+      vuFc: 'forecast end Dec.: {f} · target: {t}', vuVsT: 'against the target ({t})', vuPrev: '{m}: {v}', vuRetC: '{e}' });
+    var h1v = document.querySelector('h1[data-t]'); if (h1v) h1v.setAttribute('data-t', 'title');
+    document.querySelector('.wrap').classList.add('vu-page');
+    V2 = true; V2B = true; PMODE = 'vol';   // the bands of this page are placed below, not the main page's layout; the Pareto opens in volume
+    V2L.syn = { top: ['VN', 'VT', 'a:bump', 'VQ', 'a:bub'], more: ['VB'] };   // VB: drawn out of sight, for its forecast and budget
+    V2L.det = { top: ['a:bump', '78', '54'] };
+    var $v = function (id) { return document.getElementById(id); };
+    var MON = (function () { var s = {}, y0 = DMAX.slice(0, 4) + '-01-01'; REP.forEach(function (n) { if (ours(n) && n[1] >= y0) s[n[1].slice(0, 7)] = 1; }); return Object.keys(s).sort(); })();
+    var VU = { syn: { line: '', preset: 'ytd' }, det: { line: LINES[0] || '', month: MON[MON.length - 1] || DMAX.slice(0, 7) } };
+    function mEnd(m) { var e = isoDay(new Date(Date.UTC(+m.slice(0, 4), +m.slice(5, 7), 0))); return e < DMAX ? e : DMAX; }
+    function mPrev(m) { var d = new Date(Date.UTC(+m.slice(0, 4), +m.slice(5, 7) - 2, 1)); return d.toISOString().slice(0, 7); }
+    // the open view's filters; Détail: its month, or January to that month (ytd) for its charts
+    function vuApply(ytd) {
+      var v = VU[G.tab]; if (!v) return;
+      GF.line = v.line;
+      if (G.tab === 'syn') GF.preset = v.preset;
+      else { GF.preset = 'custom'; GF.from = ytd ? v.month.slice(0, 4) + '-01-01' : v.month + '-01'; GF.to = mEnd(v.month); }
+      select();
+    }
+    function inCtx(fn) { if (G.tab !== 'det') { fn(); return; } vuApply(true); PD = pSrc() ? pData() : null; PA = PD ? pAgg(PD) : null; try { fn(); } finally { vuApply(false); } }
+
+    // bands built once, each placed in the open view's slot (the cause ranking shows in both views)
+    var VUB = false;
+    function vuBuild() {
+      if (VUB) return; VUB = true;
+      [['vuSynGrid', V2L.syn.top], ['vuDetGrid', V2L.det.top]].forEach(function (p) {
+        var g = v2Wire($v(p[0]));
+        p[1].forEach(function (k) { var s2 = document.createElement('div'); s2.className = 'vu-slot'; s2.setAttribute('data-slot', k); g.appendChild(s2); });
+      });
+      V2L.syn.top.concat(V2L.det.top, V2L.syn.more).forEach(function (k) {
+        if (V2BAND[k]) return; var b = v2Band(k); if (!b) return;
+        if (V2L.syn.more.indexOf(k) >= 0) { $v('vuSynCalc').appendChild(b); return; }
+        b.classList.add('vu-band');
+        var x = document.createElement('button'); x.type = 'button'; x.className = 'vu-x'; x.setAttribute('data-vux', k); x.innerHTML = '<span aria-hidden="true">⤢</span> <span data-t="vuOpen"></span>';
+        b.querySelector('.bhead').appendChild(x);
+      });
+      // the Pareto tab's two boards: volume / cost switch, the lists, the defect table folded at the bottom
+      var par = $v('vuPar'), pp = $v('p-pareto'); par.appendChild(pp.querySelector('.controls')); par.appendChild($v('pVol')); par.appendChild($v('pCost'));
+      var cab = $v('pCab'); if (cab && cab.closest('.ctl')) cab.closest('.ctl').hidden = true;
+      v2Wire($v('vuPanel'));
+      applyText();
+    }
+    function vuPlace() { document.querySelectorAll('#p-' + G.tab + ' .vu-slot').forEach(function (s2) { var b = V2BAND[s2.getAttribute('data-slot')]; if (b && b.parentNode !== s2 && !b.classList.contains('vu-full')) s2.appendChild(b); }); }
+
+    // the Pareto a level at a time: categories; causes once a category is pressed; sub-codes once a cause is
+    [[pareto, ['pg', 'pgl'], 'pc'], [costPareto, ['kg', 'kgl'], 'kc']].forEach(function (p) {
+      var b = p[0], r0 = b.render;
+      b.render = function () {
+        if (!b.f.cat) { delete b.f.rca; delete b.f.code; } else if (!b.f.rca) delete b.f.code;
+        delete b.f.line; delete b.f.fin;
+        r0();
+        var show = { cat: true, rca: !!b.f.cat, code: !!b.f.rca };
+        p[1].forEach(function (id) { var g = $v(id), any = false; g.querySelectorAll(':scope > [data-card]').forEach(function (c) { c.hidden = !show[c.getAttribute('data-card')]; if (!c.hidden) any = true; }); g.hidden = !any; });
+        $v(p[2]).hidden = !Object.keys(b.f).length;   // the chips row only when a level is open
+      };
+    });
+
+    // numbers: the plant's trend and cost as their charts compute them; NC per MSN and its target as the target chart
+    function rateOf(l) {
+      if (!PD || !PA) return null;
+      var by = {}; P_().forEach(function (o) { var k = o.line || '—', a = by[k] || (by[k] = { nc: 0, eq: 0 }); a.nc += o.NC; a.eq += o.EQ; });
+      var B = y25Lines(), ls = lineOrder(Object.keys(by)).filter(function (k) { return by[k].eq >= 0.5 && (!l || k === l); });
+      if (!ls.length) return null;
+      var nc = 0, eq = 0, tn = 0;
+      ls.forEach(function (k) { var a = by[k], b = B && B[k], t = b && b.eq >= 0.5 && b.nc > 0 ? b.nc / b.eq * V2CUT : a.nc / a.eq * V2CUT; nc += a.nc; eq += a.eq; tn += t * a.eq; });
+      return { v: nc / eq, t: tn / eq };
+    }
+    function stats(k) { var b = V2BAND[k]; return b ? [].map.call(b.querySelectorAll('.v2stats > div > b'), function (x) { return x.textContent; }) : []; }
+    function fig(v, lab, sub) { return '<div class="fig"><b>' + esc(v) + '</b><span>' + esc(lab) + '</span>' + (sub ? '<small>' + sub + '</small>' : '') + '</div>'; }
+    function gapTx(r) { if (!r || !r.t) return ''; var g = r.v / r.t - 1; return '<span class="' + (g > 0 ? 'vu-up' : 'vu-down') + '">' + (g > 0 ? '+' : '') + pct0(g * 100) + '</span> ' + esc(S('vuVsT', { t: f2(r.t) })); }
+    function count() { var d = 0, c = 0; D.defects.forEach(function (r) { if (SEL[r[0]] && keepMinor(r)) d++; }); SEL_NC.forEach(function (n) { c += n[12] || 0; }); return { n: SEL_NC.length, d: d, c: c }; }
+    var RATE_DET = null;
+    function vuFigs() {
+      if (G.tab === 'syn') {
+        var n = stats('VN'), c = stats('VB'), r = rateOf(VU.syn.line), rc = 0; CLI_NC.forEach(function (x) { rc += x[12] || 0; });
+        $v('vuSF').innerHTML = fig(n[0] || num(SEL_NC.length), S(VU.syn.preset === 'ytd' ? 'vuNcY' : 'vuNcP'), n[1] ? esc(S('vuFc', { f: n[1], t: n[2] })) : '') +
+          fig(r ? f2(r.v) : '—', S('vuRate'), gapTx(r)) + fig(c[0] || '—', S('vuCost'), c[1] ? esc(S('vuFc', { f: c[1], t: c[2] })) : '') +
+          fig(num(CLI_NC.length), S('vuRet'), esc(eur(rc)));
+      } else {
+        var m = VU.det.month, pm = mPrev(m), now = count(), keep = [GF.from, GF.to];
+        GF.from = pm + '-01'; GF.to = mEnd(pm); select(); var prev = count(); GF.from = keep[0]; GF.to = keep[1]; select();
+        var pmN = monthName(pm);
+        $v('vuDF').innerHTML = fig(num(now.n), S('vuNcM'), esc(S('vuPrev', { m: pmN, v: num(prev.n) }))) + fig(num(now.d), S('vuDefM'), esc(S('vuPrev', { m: pmN, v: num(prev.d) }))) +
+          fig(RATE_DET ? f2(RATE_DET.v) : '—', S('vuRateY'), gapTx(RATE_DET)) + fig(eurK(now.c), S('vuCostM'), esc(S('vuPrev', { m: pmN, v: eurK(prev.c) })));
+      }
+    }
+    function vuBar() {
+      opts($v('vuSL'), [['', S('vuAll')]].concat(LINES.map(function (l) { return [l, l]; })), VU.syn.line);
+      opts($v('vuSP'), PRESETS.filter(function (p) { return p !== 'custom'; }).map(function (p) { return [p, S('pr_' + p)]; }), VU.syn.preset);
+      opts($v('vuDL'), LINES.map(function (l) { return [l, l]; }), VU.det.line);
+      opts($v('vuDM'), MON.slice().reverse().map(function (mm) { return [mm, monthName(mm) + ' ' + mm.slice(0, 4)]; }), VU.det.month);
+    }
+    [['vuSL', 'syn', 'line'], ['vuSP', 'syn', 'preset'], ['vuDL', 'det', 'line'], ['vuDM', 'det', 'month']].forEach(function (c) {
+      $v(c[0]).addEventListener('change', function (e) { VU[c[1]][c[2]] = e.target.value; vuApply(false); A.msn = null; renderAll(); });
+    });
+
+    // every redraw of this page goes through here: bands in place, Détail's charts from January, then the numbers
+    var v2R0 = v2Render;
+    v2Render = function () {
+      if (!VU[G.tab]) { v2R0(); return; }
+      vuBuild(); vuPlace(); vuBar();
+      if (G.tab === 'det') { vuApply(true); v2R0(); RATE_DET = rateOf(VU.det.line); vuApply(false); } else v2R0();
+      vuFigs();
+      if (OPEN) inCtx(function () { v2Draw(OPEN.k); });
+    };
+    var setTab0 = setTab;
+    setTab = function (t) {
+      if (!VU[t]) { setTab0(t); return; }
+      if (OPEN) vuClose(true);
+      G.tab = t; if (!EMBED) { try { history.replaceState(null, '', '#' + t); } catch (x) {} }
+      vuApply(false); renderAll(); hideTip();
+    };
+
+    // the complete chart: the band grows out of its place over the page; a double click or tap finishes the animation
+    var OPEN = null, RUN = [], OPENED = 0, lastTap = 0, REDUCE = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    function anim(el, kf, o) { if (REDUCE || !el.animate) return null; var a = el.animate(kf, o); RUN.push(a); a.finished.then(function () { RUN = RUN.filter(function (x) { return x !== a; }); }, function () { RUN = RUN.filter(function (x) { return x !== a; }); }); return a; }
+    function skip() { RUN.slice().forEach(function (a) { try { a.finish(); } catch (e) {} }); }
+    function vuOpen(k) {
+      var b = V2BAND[k]; if (!b || OPEN) return;
+      var q0 = b.getBoundingClientRect(), ph = document.createElement('div'); ph.style.height = q0.height + 'px'; b.parentNode.insertBefore(ph, b);
+      OPEN = { k: k, b: b, ph: ph }; OPENED = Date.now();
+      $v('vuHold').appendChild(b); b.classList.add('vu-full'); $v('vuOv').hidden = false; $v('vuOv').scrollTop = 0; document.documentElement.classList.add('vu-lock');
+      $v('vuPanel').setAttribute('aria-label', b.querySelector('h3') ? b.querySelector('h3').textContent : '');
+      inCtx(function () { v2Draw(k); });
+      var q1 = b.getBoundingClientRect(), sx = q0.width / q1.width, dx = q0.left - q1.left, dy = q0.top - q1.top, E = 'cubic-bezier(.2,.8,.2,1)';
+      anim($v('vuScrim'), [{ opacity: 0 }, { opacity: 1 }], { duration: 420, easing: 'ease-out' });
+      anim(b, [{ transform: 'translate(' + dx + 'px,' + dy + 'px) scale(' + sx + ')', boxShadow: '0 0 0 rgba(0,0,0,0)' },
+        { transform: 'translate(' + r1(dx * .3) + 'px,' + r1(dy * .3 - 16) + 'px) scale(' + (sx + (1 - sx) * .78) + ')', offset: .6 },
+        { transform: 'none', boxShadow: '0 24px 60px rgba(0,0,0,.28)' }], { duration: 720, easing: E });
+      b.querySelectorAll('.bhead > .kicker, .bhead > .sub, .v2stats, details').forEach(function (e, i) { anim(e, [{ opacity: 0, transform: 'translateY(6px)' }, { opacity: 1, transform: 'none' }], { duration: 320, delay: 520 + i * 70, easing: E, fill: 'backwards' }); });
+      $v('vuClose').focus();
+    }
+    function vuClose(now) {
+      if (!OPEN) return; var o = OPEN; OPEN = null;
+      var done = function () {
+        o.b.classList.remove('vu-full'); o.ph.parentNode.insertBefore(o.b, o.ph); o.ph.remove();
+        $v('vuOv').hidden = true; document.documentElement.classList.remove('vu-lock');
+        if (!now) { inCtx(function () { v2Draw(o.k); }); var x = o.b.querySelector('.vu-x'); if (x) x.focus(); }
+      };
+      if (now || REDUCE || !o.b.animate) { skip(); done(); return; }
+      anim($v('vuScrim'), [{ opacity: 1 }, { opacity: 0 }], { duration: 220, easing: 'ease-in', fill: 'forwards' });
+      var a = anim(o.b, [{ opacity: 1, transform: 'none' }, { opacity: 0, transform: 'translateY(10px) scale(.98)' }], { duration: 200, easing: 'ease-in', fill: 'forwards' });
+      a.finished.then(function () { done(); [$v('vuScrim'), o.b].forEach(function (e) { e.getAnimations().forEach(function (x) { x.cancel(); }); }); }, done);
+    }
+    document.addEventListener('click', function (e) {
+      var x = e.target.closest && e.target.closest('[data-vux]'); if (x) { vuOpen(x.getAttribute('data-vux')); return; }
+      if (e.target.id === 'vuClose') { vuClose(); return; }
+      if (e.target.id === 'vuScrim' || e.target.id === 'vuOv') { if (RUN.length || Date.now() - OPENED < 900) skip(); else vuClose(); }   // the second tap of a double tap skips, it does not close
+    });
+    document.addEventListener('dblclick', function () { if (RUN.length) skip(); });
+    document.addEventListener('pointerdown', function (e) { if (e.pointerType !== 'touch') return; var t = Date.now(); if (RUN.length && t - lastTap < 320) skip(); lastTap = t; });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && OPEN) { skip(); vuClose(); } });
+    vuApply(false);
+  })();
   renderAll();
 })();
 </script>

@@ -350,6 +350,8 @@ def build_dashboard(d, nc, lt, y25=None, dis_t=None):
     # the same layout as a mock-up of the final dashboard, every chart scored a to e at its side (local only)
     _page("dashboard.html", local, "FTO2_Maquette_Notee.html", page="mock")
     _page("dashboard.html", data, "FTO2_Suivi_Hebdo.html", page="suivi")
+    # the two monthly views, Synthèse (QCM) and Détail (QLS), made of this dashboard's charts (build/build_vues.py rebuilds it alone)
+    _page("dashboard.html", src, "FTO2_Vues.html", page="vues", title="FTO2 · Synthèse et détail")
     slate_pack(data)
     slate_pack(data, page="suivi")
     import skywise_pack   # the four Skywise migration levels (03_reports/skywise): build/skywise_pack.py
