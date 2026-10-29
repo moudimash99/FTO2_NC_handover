@@ -2762,7 +2762,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
     });
     document.addEventListener('click', function (e) { if (AL.open && !w.contains(e.target)) { AL.open = false; alRender(); } });
     document.addEventListener('keydown', function (e) { if (AL.open && e.key === 'Escape') { AL.open = false; alRender(); document.getElementById('alBtn').focus(); } });
-    if (EMBED || PAGE !== 'main' || !window.claude || typeof window.claude.use !== 'function') return;
+    if (EMBED || (PAGE !== 'main' && PAGE !== 'vues') || !window.claude || typeof window.claude.use !== 'function') return;
     window.claude.use('user').then(function (u) { if (u && u.id) return u.id().then(function (id) { AL.uid = id; }); }).catch(function () {});
     window.claude.use('db').then(function (db) {
       if (!db) return; AL.db = db;
@@ -7017,6 +7017,21 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
       if (e.target.id === 'vuClose') { vuClose(); return; }
       if (e.target.id === 'vuScrim' || e.target.id === 'vuOv') { if (RUN.length || Date.now() - OPENED < 900) skip(); else vuClose(); }   // the second tap of a double tap skips, it does not close
     });
+    // the bell (shared alarm engine): an alarm opens Détail on its line, the Pareto open on its category, cause or sub-code
+    STR.fr.tabPareto = STR.fr.tabDet; STR.en.tabPareto = STR.en.tabDet;   // its "→" line names the view (the Pareto tab is not on this page)
+    alTab = function () { return 'pareto'; };
+    alGo = function (key) {
+      var g = (AL.res || []).filter(function (x) { return x.key === key; })[0]; if (!g) return;
+      var a = g.head, f = {}, r = null; AL.open = false; VU.det.line = a.line;
+      if (a.lv === 'cat') f.cat = a.v;
+      else if (a.lv === 'rca' || a.lv === 'code') {
+        D.defects.some(function (x) { if ((a.lv === 'rca' ? dRca(x) : dCode(x)) === a.v) { r = x; return true; } return false; });
+        if (r) { f.cat = dCat(r); f.rca = dRca(r); if (a.lv === 'code') f.code = a.v; }
+      }
+      pareto.f = Object.assign({}, f); costPareto.f = Object.assign({}, f); pareto.limit = costPareto.limit = 100;
+      setTab('det');
+      var el = $v('vuPar'); if (el && el.scrollIntoView) el.scrollIntoView({ block: 'start' });
+    };
     document.addEventListener('dblclick', function () { if (RUN.length) skip(); });
     document.addEventListener('pointerdown', function (e) { if (e.pointerType !== 'touch') return; var t = Date.now(); if (RUN.length && t - lastTap < 320) skip(); lastTap = t; });
     document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && OPEN) { skip(); vuClose(); } });
