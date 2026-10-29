@@ -2441,12 +2441,12 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
       .map(function (x) { return '<div class="fig"><b>' + esc(x[0]) + '</b><span>' + esc(x[1]) + '</span></div>'; }).join('');
     var th = function (a) { return '<thead><tr>' + a.map(function (h, j) { return '<th scope="col"' + (j ? ' class="r"' : '') + '>' + esc(S(h)) + '</th>'; }).join('') + '</tr></thead>'; };
     var dot = function (l) { return '<span class="pp-dot" style="background:' + lineCol(l) + '"></span>'; };
-    box.innerHTML = grpSeg() + '<table class="cxt">' + th(['ppL', 'ppEq', 'ppYr', 'ppD25', 'ppNc25', 'ppNc', 'ppRate', 'ppR25', 'ppTgt', 'ppTgtY']) + '<tbody>' +
+    box.innerHTML = '<table class="cxt">' + th(['ppL', 'ppEq', 'ppYr', 'ppD25', 'ppNc25', 'ppNc', 'ppRate', 'ppR25', 'ppTgt', 'ppTgtY']) + '<tbody>' +
       lines.map(function (a) { var t = tl[a.l];
         return '<tr><td' + pk('line', a.l) + '>' + dot(a.l) + esc(a.l) + '</td><td class="r">' + f(a.eq) + '</td><td class="r">' + f(a.yr) + '</td><td class="r">' + (a.d25 ? num(Math.round(a.d25)) : '—') + '</td><td class="r">' + (a.n25 ? num(a.n25) : '—') + '</td><td class="r">' + num(a.nc) +
           '</td><td class="r">' + rt(a.nc, a.eq) + '</td><td class="r">' + (t && t.r25 != null ? f2(t.r25) : '—') + '</td><td class="r">' + (t ? f2(t.rt) + (t.ph ? ' *' : '') : '—') + '</td><td class="r">' + (t ? num(Math.round(t.year + t.xT)) : '—') + '</td></tr>'; }).join('') +
       '<tr class="tot"><td>' + esc(S('total')) + '</td><td class="r">' + f(sumK('eq')) + '</td><td class="r">' + f(sumK('yr')) + '</td><td class="r">' + num(Math.round(sumK('d25'))) + '</td><td class="r">' + num(sumK('n25')) + '</td><td class="r">' + num(sumK('nc')) +
-      '</td><td class="r">' + (function () { var gl = lines.filter(function (a) { return grpOk({ line: a.l }); }); return rt(sumA(gl.map(function (a) { return a.nc; })), sumA(gl.map(function (a) { return a.eq; }))) + (GF.line ? '' : ' <small class="mu">' + (G320 ? 'A320' : 'A330 + A350') + '</small>'); })() + '</td><td class="r"></td><td class="r"></td><td class="r">' + (T ? num(Math.round(T.year)) : '—') + '</td></tr></tbody></table>';
+      '</td><td class="r">' + rt(sumK('nc'), sumK('eq')) + '</td><td class="r"></td><td class="r"></td><td class="r">' + (T ? num(Math.round(T.year)) : '—') + '</td></tr></tbody></table>';
     var os = P_().slice().sort(function (a, b) { return lineOrder([a.line, b.line]).indexOf(a.line) - lineOrder([a.line, b.line]).indexOf(b.line) || b.NC - a.NC; });
     document.getElementById('ppProdsT').innerHTML = '<table class="cxt">' + th(['ppP', 'ppL', 'ppEq', 'ppYr', 'ppD25', 'ppNc25', 'ppNc', 'ppRate']) + '<tbody>' +
       os.map(function (o) { return '<tr><td' + ppk('pprod', o.p) + '>' + esc(o.p) + '</td><td class="r">' + dot(o.line) + esc(o.line || '—') + '</td><td class="r">' + f(o.EQ) + '</td><td class="r">' + f(yr(o.p)) + '</td><td class="r">' + (d25(o.p) ? num(d25(o.p)) : '—') +
