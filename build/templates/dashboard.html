@@ -479,6 +479,29 @@ table.cxt { min-width: 560px; font-variant-numeric: tabular-nums; }
 .pp-card { background: var(--surface); border: 1px solid var(--ring); border-radius: 10px; padding: 18px 20px 16px; display: grid; gap: 10px; align-content: start; min-width: 0; }
 .pp-card h3 { font-family: var(--font-display); font-weight: 400; font-size: clamp(20px, 2vw, 24px); line-height: 1.15; margin: 0; }
 .pp-wide { grid-column: 1 / -1; } .pp-how p { margin: 0 0 8px; max-width: 900px; } .pp-how h4 { margin: 12px 0 4px; font-size: 14px; }
+/* Câbles tab */
+.cb-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+@media (max-width: 900px) { .cb-grid { grid-template-columns: minmax(0, 1fr); } }
+#p-cbl table.cxt { min-width: 0; }
+#p-cbl #cbList table.cxt { min-width: 900px; }
+.cb-mid { max-height: 22rem; overflow: auto; } .cb-tall { max-height: 34rem; overflow: auto; }
+#p-cbl .cb-mid th, #p-cbl .cb-tall th { position: sticky; top: 0; z-index: 1; }
+.cb-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 14px; } .cb-head input { margin-left: auto; }
+.cb-leg { font: inherit; font-size: 12.5px; display: inline-flex; align-items: center; gap: 6px; padding: 2px 4px; border: 0; background: transparent; color: var(--ink-2); cursor: pointer; border-radius: 4px; }
+.cb-leg[aria-pressed="false"] { opacity: .45; }
+.cb-bars { display: grid; gap: 4px; }
+.cb-row { display: grid; grid-template-columns: minmax(0, 15rem) minmax(0, 1fr) 2.6rem; gap: 10px; align-items: center; font: inherit; font-size: 12.5px; text-align: left; padding: 2px 0; border: 0; background: transparent; color: var(--ink); }
+button.cb-row { cursor: pointer; } button.cb-row[aria-pressed="true"] .cb-lab { font-weight: 600; text-decoration: underline; } .cb-row.dim { opacity: .45; }
+.cb-lab { overflow-wrap: anywhere; } .cb-val { text-align: right; font-variant-numeric: tabular-nums; }
+.cb-track { display: flex; gap: 2px; height: 12px; } .cb-seg { height: 100%; border-radius: 3px; min-width: 2px; }
+.cb-sep { border-top: 1px dashed var(--grid); margin: 4px 0; }
+#p-cbl td.cb-c, #p-cbl tbody th, #p-cbl tr[data-cb] { cursor: pointer; }
+#p-cbl td.cb-c:hover { outline: 1px solid var(--muted); outline-offset: -1px; } #p-cbl td.cb-on { outline: 2px solid var(--ink); outline-offset: -2px; }
+#p-cbl tbody th { font-weight: 400; color: var(--ink); white-space: normal; }
+#p-cbl tr.cb-sel td { background: var(--s1-soft); }
+#p-cbl td.cb-com { min-width: 16rem; max-width: 40rem; white-space: normal; }
+#p-cbl #cbRec td:first-child, #p-cbl #cbList td:nth-child(8) { white-space: nowrap; }
+@media (max-width: 520px) { .cb-row { grid-template-columns: minmax(0, 9rem) minmax(0, 1fr) 2.2rem; } }
 table.cxt tr.tot td { font-weight: 600; border-top: 1px solid var(--ink); } .pp-dot { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 8px; vertical-align: -1px; }
 @media (max-width: 900px) { .pp-grid { grid-template-columns: minmax(0, 1fr); } }
 table.cxt th.r, table.cxt td.r { text-align: right; white-space: nowrap; }
@@ -798,6 +821,7 @@ footer p { max-width: none; }
     <button type="button" role="tab" id="tab-cnq" aria-controls="p-cnq" data-tab="cnq" data-t="tabCnq"></button>
     <span class="gap" aria-hidden="true"></span>
     <button type="button" role="tab" id="tab-client" aria-controls="p-client" data-tab="client" data-t="tabClient"></button>
+    <button type="button" role="tab" id="tab-cbl" aria-controls="p-cbl" data-tab="cbl" data-t="tabCbl"></button>
     <span class="gap" aria-hidden="true"></span>
     <button type="button" role="tab" id="tab-rca" aria-controls="p-rca" data-tab="rca" data-t="tabRca"></button>
     <button type="button" role="tab" id="tab-pplan" aria-controls="p-pplan" data-tab="pplan" data-t="tabPplan"></button>
@@ -1017,6 +1041,23 @@ footer p { max-width: none; }
       </div></details>
   </div>
 
+  <!-- Câbles: the cable team's requests for new cables (D.cables, the rows of the "Suivi NC câbles" page) -->
+  <div class="panel" role="tabpanel" id="p-cbl" aria-labelledby="tab-cbl" hidden>
+    <div class="lead"><h2 data-t="cbTitle"></h2><p class="sub" id="cbPer"></p></div>
+    <div class="chips" id="cbChips"></div>
+    <div id="cbBody">
+      <div class="figs" id="cbFigs"></div>
+      <div class="pp-grid cb-grid">
+        <div class="card pp-card pp-wide"><h3 data-t="cbMonth"></h3><p class="sub" id="cbShare"></p><div class="vlegend" id="cbLeg"></div><div id="cbMonthC"></div></div>
+        <div class="card pp-card"><h3 data-t="cbMx"></h3><div class="table-wrap" id="cbMx"></div></div>
+        <div class="card pp-card"><h3 data-t="cbTypes"></h3><div class="cb-bars" id="cbTypes"></div></div>
+        <div class="card pp-card"><h3 data-t="cbCauses"></h3><div class="cb-bars" id="cbCauses"></div></div>
+        <div class="card pp-card"><h3 data-t="cbRec"></h3><div class="table-wrap cb-mid" id="cbRec"></div></div>
+        <div class="card pp-card pp-wide"><div class="cb-head"><h3 data-t="cbList"></h3><span class="sub" id="cbN"></span><input type="search" id="cbQ" autocomplete="off" data-ta="cbSearch"></div><div class="table-wrap cb-tall" id="cbList"></div></div>
+      </div>
+    </div>
+  </div>
+
   <!-- 5. Root causes -->
   <div class="panel" role="tabpanel" id="p-rca" aria-labelledby="tab-rca" hidden>
     <div class="lead"><h2 data-t="rcaTitle"></h2><p class="sub" data-t="rcaSub"></p></div>
@@ -1169,7 +1210,7 @@ function fto2FromTables(ncIn, defIn, ref, disIn) {
   // the disruption block (optional third table): quality aléas that led to no NC [id, opened, line, station, work order, minutes, in block, reason, status, comment]
   var dis = disIn ? rows(disIn).map(function (r) { return [str(r.id), day(r.opened), str(r.line), str(r.station), str(r.work_order), num(r.minutes), int(r.in_block), str(r.reason), str(r.status), str(r.comment)]; })
     .filter(function (a) { return a[0] && a[1]; }) : null;
-  return { defects: defects, ncs: ncs, rca: rca, client: client, lt: lt, codes: ref.codes || {}, actions: ref.actions || [], cnqp: cnqp, eqmsn: eq, y25: ref.y25 || null, dis: dis,
+  return { defects: defects, ncs: ncs, rca: rca, client: client, lt: lt, codes: ref.codes || {}, actions: ref.actions || [], cnqp: cnqp, eqmsn: eq, y25: ref.y25 || null, dis: dis, cables: ref.cables || null,
     meta: { from: ref.from || '2026-01-01', to: to, aside: { other: [notLiable.length, nlSum] },
       noLine: ncs.filter(function (a) { var p = String(a[42] || '').trim().toUpperCase(); return (p === 'FTO2' || p === 'FT02') && a[21] === 0; }).length, modelTotal: sum(aec) } };
 }
@@ -1250,7 +1291,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
       bumpTip: '{r} · {n} défauts', bumpNone: 'Aucun défaut ce mois-ci', lowVol: 'volume faible', lowTip: '{n} défauts : mois peu chargé, rangs moins fiables', beyond: '>10',
       unit: 'Qualité', title: 'Non-conformités FTO2', period: 'NC créées du {from} au {to}',
       minorLabel: 'Défauts mineurs', minorIn: 'Inclus', minorOut: 'Exclus',
-      tabPareto: 'Pareto', tabCost: 'Pareto des coûts', tabWeek: 'Pareto hebdomadaire', tabCnq: 'Coût de non-qualité', tabClient: 'Retours clients', tabRca: 'Définitions', tabPplan: 'Production',
+      tabPareto: 'Pareto', tabCost: 'Pareto des coûts', tabWeek: 'Pareto hebdomadaire', tabCnq: 'Coût de non-qualité', tabClient: 'Retours clients', tabCbl: 'Câbles', tabRca: 'Définitions', tabPplan: 'Production',
       serieSub: 'NC émises à FTO2 (plant FTO2), toutes : supprimées et hors responsabilité FTO2 comprises.', serieSubAll: 'Toutes les NC, émises à FTO2 ou dans d’autres usines (retours clients compris).',
       infoBtn: 'Comment la sélection est faite', inf_title: 'Ce que chaque filtre retire, dans l’ordre', inf_out: 'Retirées', inf_left: 'Restent',
       inf_start: 'NC fournies par le pipeline', inf_startS: '{a} sortie normale · {b} IDs manquants ; le tableau n’en retire aucune d’office',
@@ -1260,6 +1301,10 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
       inf_cost: 'Coût : compté seulement là où FTO2 est responsable. {n} NC de la sélection comptent comme NC avec un coût de 0 € (leur traitement selon le modèle : {e}).',
       inf_minor: 'Défauts mineurs {v} : ce choix change le nombre de défauts, pas le nombre de NC.', inf_nodef: '{n} NC de la sélection n’ont aucune ligne de défaut lisible : comptées en NC et en coût, pas en défauts.',
       inf_cli: 'Onglet Retours clients : il montre les retours clients des mêmes filtres, quel que soit l’interrupteur usine ({n} NC).', inf_in: 'inclus', inf_ex: 'exclus',
+      cbTitle: 'Suivi NC câbles', cbNoData: 'Le suivi des câbles n’est pas chargé.', cbF1: 'Demandes de câble', cbF2: 'Part impression {q}', cbF3: 'Lignes avec une cause', cbF4: 'Câbles récurrents', cbF5: 'Lignes avec une action',
+      cbMonth: 'Demandes par mois et imputation', cbShare: 'Part impression : {v}', cbMx: 'Motif × imputation', cbTypes: 'Types de câble', cbCauses: 'Causes (proposées)', cbRec: 'Câbles récurrents', cbList: 'Demandes',
+      cbMotif: 'Motif', cbProd: 'Prod. ligne', cbMach: 'Impr. machine', cbOper: 'Impr. opérateur', cbOther: 'Autre', cbCable: 'Câble', cbMotifs: 'Motifs', cbImp: 'Imputation', cbWk: 'Sem.', cbProg: 'Prog.', cbCause: 'Cause (proposée)', cbCables: 'Câbles', cbCom: 'Commentaire',
+      cbI0: 'Production ligne', cbI1: 'Impression – machine', cbI2: 'Impression – opérateur', cbI3: 'Définition', cbI4: 'Non renseigné', cbN: '{n} demandes', cbN1: '1 demande', cbSearch: 'Rechercher', cbNone: 'Aucune demande pour ce choix.', cbClear: 'Tout effacer', cbCableChip: 'Câble {c}', cbQ: 'T',
       ppTitle: 'Production : les volumes derrière les taux', ppSub: 'Combien de MSN sont produits, prévus et livrés, ligne par ligne et produit par produit ; puis comment ces chiffres servent aux taux, aux prévisions et aux objectifs.',
       ppF1: 'MSN produits sur la période', ppF2: 'MSN prévus en 2026 (année)', ppF3: 'produits livrés en 2025', ppF4: 'NC rattachées au plan / toutes les NC',
       ppLines: 'Par ligne', ppLinesS: 'Taux = NC ÷ MSN produits sur la période. Objectif = taux 2025 − 25 % ; * : pas de 2025, taux 2026 − 25 %.', ppProds: 'Par produit', ppProdsS: 'Les produits du plan de production, ligne par ligne.',
@@ -1446,7 +1491,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
       bumpTip: '{r} · {n} defects', bumpNone: 'No defect this month', lowVol: 'low volume', lowTip: '{n} defects: light month, ranks less reliable', beyond: '>10',
       unit: 'Quality', title: 'FTO2 Non-conformities', period: 'NCs created {from} to {to}',
       minorLabel: 'Minor defects', minorIn: 'Included', minorOut: 'Excluded',
-      tabPareto: 'Pareto', tabCost: 'Cost Pareto', tabWeek: 'Weekly Pareto', tabCnq: 'Cost of non-quality', tabClient: 'Customer returns', tabRca: 'Definitions', tabPplan: 'Production',
+      tabPareto: 'Pareto', tabCost: 'Cost Pareto', tabWeek: 'Weekly Pareto', tabCnq: 'Cost of non-quality', tabClient: 'Customer returns', tabCbl: 'Cables', tabRca: 'Definitions', tabPplan: 'Production',
       serieSub: 'Every NC raised at FTO2 (plant FTO2), deleted and not-liable ones included.', serieSubAll: 'Every NC, raised at FTO2 or at other plants (customer returns included).',
       infoBtn: 'How the selection is made', inf_title: 'What each filter removes, in order', inf_out: 'Removed', inf_left: 'Left',
       inf_start: 'NCs from the pipeline', inf_startS: '{a} normal output · {b} missing IDs; the page drops none of them by itself',
@@ -1456,6 +1501,10 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
       inf_cost: 'Cost: counted only where FTO2 is liable. {n} NCs of the selection count as NCs with a cost of €0 (their handling in the model: {e}).',
       inf_minor: 'Minor defects {v}: this changes the number of defects, not the number of NCs.', inf_nodef: '{n} NCs of the selection have no readable defect line: counted as NCs and in the cost, not as defects.',
       inf_cli: 'Customer returns tab: it shows the customer returns under the same filters, whatever the plant switch ({n} NCs).', inf_in: 'included', inf_ex: 'excluded',
+      cbTitle: 'Cable NC tracker', cbNoData: 'The cable tracker is not loaded.', cbF1: 'Cable requests', cbF2: 'Printing share {q}', cbF3: 'Rows with a cause', cbF4: 'Recurring cables', cbF5: 'Rows with an action',
+      cbMonth: 'Requests per month by imputation', cbShare: 'Printing share: {v}', cbMx: 'Reason × imputation', cbTypes: 'Cable types', cbCauses: 'Causes (proposed)', cbRec: 'Recurring cables', cbList: 'Requests',
+      cbMotif: 'Reason', cbProd: 'Prod. line', cbMach: 'Print. machine', cbOper: 'Print. operator', cbOther: 'Other', cbCable: 'Cable', cbMotifs: 'Reasons', cbImp: 'Imputation', cbWk: 'Wk', cbProg: 'Prog.', cbCause: 'Cause (proposed)', cbCables: 'Cables', cbCom: 'Comment',
+      cbI0: 'Production line', cbI1: 'Printing – machine', cbI2: 'Printing – operator', cbI3: 'Definition', cbI4: 'Blank', cbN: '{n} requests', cbN1: '1 request', cbSearch: 'Search', cbNone: 'No request for this choice.', cbClear: 'Clear all', cbCableChip: 'Cable {c}', cbQ: 'Q',
       ppTitle: 'Production: the volumes behind the rates', ppSub: 'How many MSN are built, planned and delivered, line by line and product by product; then how these figures feed the rates, the forecasts and the targets.',
       ppF1: 'MSN built in the period', ppF2: 'MSN planned in 2026 (year)', ppF3: 'products delivered in 2025', ppF4: 'NCs matched to the plan / all NCs',
       ppLines: 'By line', ppLinesS: 'Rate = NCs ÷ MSN built in the period. Target = 2025 rate − 25%; *: no 2025, 2026 rate − 25%.', ppProds: 'By product', ppProdsS: 'The production plan’s products, line by line.',
@@ -1606,7 +1655,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
 
   // two pages from one file: the dashboard, and the weekly follow-up (weekly Pareto, MFT actions)
   var PAGE = window.FTO2_PAGE === 'suivi' ? 'suivi' : (window.FTO2_PAGE === 'review' || window.FTO2_PAGE === 'mock') && D.dummy ? window.FTO2_PAGE : 'main';
-  var TABS = PAGE === 'suivi' ? ['hebdo', 'mft'] : PAGE === 'review' ? ['rev'] : PAGE === 'mock' ? ['ov', 'pareto', 'where', 'cnq', 'client', 'rca', 'pplan', 'hebdo', 'mft'] : ['ov', 'pareto', 'where', 'cnq', 'client', 'rca', 'pplan'];
+  var TABS = PAGE === 'suivi' ? ['hebdo', 'mft'] : PAGE === 'review' ? ['rev'] : PAGE === 'mock' ? ['ov', 'pareto', 'where', 'cnq', 'client', 'cbl', 'rca', 'pplan', 'hebdo', 'mft'] : ['ov', 'pareto', 'where', 'cnq', 'client', 'cbl', 'rca', 'pplan'];
   var G = { lang: 'fr', minor: true, tab: TABS[0] };
   try { var s1 = localStorage.getItem('fto2-dash-lang'); if (s1 === 'fr' || s1 === 'en') G.lang = s1; } catch (e) {}
   var h0 = ''; try { h0 = EMBED ? '' : (location.hash || '').replace('#', ''); } catch (e) {} if (TABS.indexOf(h0) >= 0) G.tab = h0;
@@ -2423,6 +2472,117 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
 
   // ---------------------------------------------------------------- 4e. Production: per line and per product, the volume built, planned and delivered in 2025,
   // the NCs and the rates and targets made from them; the monthly plan by line; then how these numbers are made and used
+  // Câbles (Mohammad, 30 Oct): the cable team's requests for new cables, as on the "Suivi NC câbles" page (D.cables, one row per
+  // request: [row, week, date, NC, programme, MSN, reason, imputation, proposed cause, cables, cable type, comment, has an action]),
+  // under the filter bar's aircraft and period. A reason, an imputation, a cause or a cable clicked filters the list of requests
+  // (chips at the top); the other cards only mark it. Imputation colours: teal, amber, plum (checked for colour blindness), greys.
+  var CB_IMP = ['Production ligne', 'Impression – machine', 'Impression – opérateur', 'Définition (BE / ME)', 'Autre / non renseigné'],
+    CB_COL = ['var(--c7)', 'var(--c3)', 'var(--c9)', 'var(--muted)', 'var(--dim)'], CB_UNK = 'Inconnu – à analyser',
+    CBF = { origine: '', motif: '', cause: '', cable: '' }, CB_Q = '';
+  var CB_EN = { 'Câble court': 'Short cable', 'Câble abimé': 'Damaged cable', 'Câble manquant': 'Missing cable', 'Câble coupé': 'Cut cable',
+    'Câble non conforme': 'Non-conforming cable', 'Rail abimé': 'Damaged rail', 'Production ligne': 'Production line', 'Impression – machine': 'Printing – machine',
+    'Impression – opérateur': 'Printing – operator', 'Définition (BE / ME)': 'Definition (design office / ME)', 'Autre / non renseigné': 'Other / blank',
+    'Inconnu – à analyser': 'Unknown – to analyse', 'Coupé en production (geste à préciser)': 'Cut in production (how not stated)', 'Mauvais cheminement': 'Wrong routing',
+    'Mauvaise mise en œuvre (sertissage, buscan…)': 'Poor installation (crimping, buscan…)', 'Oubli dans le lot': 'Left out of the batch', 'Mauvaise jauge / type': 'Wrong gauge / type',
+    'Longueur machine (réglage / isolant)': 'Machine length (setting / insulation)', 'Marquage laser absent ou illisible': 'Laser marking missing or unreadable',
+    'Longueur trop courte à la def': 'Too short in the drawing', 'Mauvais numéro': 'Wrong number', 'Pincé / écrasé': 'Pinched / crushed',
+    'Défaut isolant (bobine)': 'Insulation defect (reel)', 'Entaillé / isolant abîmé': 'Nicked / insulation damaged', 'Coupe à la main': 'Cut by hand' };
+  function cbLab(v) { return G.lang === 'en' && CB_EN[v] ? CB_EN[v] : v; }
+  function cbI(o) { var i = CB_IMP.indexOf(o); return i < 0 ? 4 : i; }
+  function cbQn(r) { return 'T' + Math.ceil(+r.d.slice(5, 7) / 3); }
+  function cbRows() {
+    return (D.cables || []).map(function (a) { return { k: a[0], wk: a[1], d: a[2], nc: a[3], prog: a[4], msn: a[5], motif: a[6], imp: a[7], cause: a[8], cables: String(a[9] || '').split(' ').filter(Boolean), type: a[10], com: a[11], act: a[12] }; })
+      .filter(function (r) { return (!GF.line || (r.prog === 'A321' ? 'A320' : r.prog) === GF.line) && r.d >= GF.from && r.d <= GF.to; });
+  }
+  function cbAttr(k, v, extra) { return ' data-cb="' + k + '" data-v="' + esc(v) + '"' + (extra || ''); }
+  function renderCbl() {
+    if (G.tab !== 'cbl') return;
+    var body = document.getElementById('cbBody'); if (!body) return;
+    if (!D.cables || !D.cables.length) { body.innerHTML = '<p class="empty">' + esc(S('cbNoData')) + '</p>'; return; }
+    var R = cbRows(), ms = Object.keys(R.reduce(function (o, r) { o[r.d.slice(0, 7)] = 1; return o; }, {})).sort(), qs = ['T1', 'T2', 'T3', 'T4'].filter(function (q) { return R.some(function (r) { return cbQn(r) === q; }); });
+    var qn = function (q) { return S('cbQ') + q.slice(1); }, imp = function (q) { var x = R.filter(function (r) { return cbQn(r) === q; }); return x.length ? 100 * x.filter(function (r) { return r.imp.indexOf('Impression') === 0; }).length / x.length : null; };
+    var ml = function (m) { return day(m + '-15', { month: 'long' }); };
+    document.getElementById('cbPer').textContent = ms.length ? ml(ms[0]) + ' – ' + ml(ms[ms.length - 1]) + ' ' + ms[ms.length - 1].slice(0, 4) : '—';
+    document.getElementById('cbQ').placeholder = S('cbSearch');
+    // chips: what filters the list of requests
+    var ch = []; [['origine', function (v) { return cbLab(v); }], ['motif', cbLab], ['cause', cbLab], ['cable', function (v) { return S('cbCableChip', { c: v }); }]].forEach(function (x) {
+      if (CBF[x[0]]) ch.push('<button type="button" class="chip" data-cbx="' + x[0] + '">' + esc(x[1](CBF[x[0]])) + ' ×</button>'); });
+    if (ch.length > 1) ch.push('<button type="button" class="chip" data-cbx="all">' + esc(S('cbClear')) + '</button>');
+    document.getElementById('cbChips').innerHTML = ch.join('');
+    // cables written in two NCs or more
+    var by = {}; R.forEach(function (r) { r.cables.forEach(function (c) { var b = by[c] || (by[c] = { nc: {}, msn: {}, motif: {}, imp: {} }); b.nc[r.nc] = 1; b.msn[r.msn] = 1; b.motif[r.motif] = 1; b.imp[r.imp] = 1; }); });
+    var rec = Object.keys(by).filter(function (c) { return Object.keys(by[c].nc).length >= 2; }).map(function (c) { var b = by[c]; return { c: c, n: Object.keys(b.nc).length, m: Object.keys(b.msn).length, motifs: Object.keys(b.motif), imps: Object.keys(b.imp) }; })
+      .sort(function (a, b) { return b.n - a.n || b.m - a.m || a.c.localeCompare(b.c); });
+    var withCause = R.filter(function (r) { return r.cause !== CB_UNK; }).length, qL = qs[qs.length - 1];
+    document.getElementById('cbFigs').innerHTML = [[num(R.length), S('cbF1')], [qL && imp(qL) != null ? pct0(imp(qL)) : '—', S('cbF2', { q: qL ? qn(qL) : '' })], [R.length ? pct0(100 * withCause / R.length) : '—', S('cbF3')], [num(rec.length), S('cbF4')], [num(R.filter(function (r) { return r.act; }).length), S('cbF5')]]
+      .map(function (x) { return '<div class="fig"><b>' + esc(x[0]) + '</b><span>' + esc(x[1]) + '</span></div>'; }).join('');
+    document.getElementById('cbShare').textContent = S('cbShare', { v: qs.map(function (q) { var v = imp(q); return qn(q) + ' ' + (v == null ? '—' : pct0(v)); }).join(' · ') });
+    // requests per month, stacked by imputation
+    var imps = CB_IMP.filter(function (o) { return R.some(function (r) { return r.imp === o; }); }), mc = document.getElementById('cbMonthC');
+    document.getElementById('cbLeg').innerHTML = imps.map(function (o) { return '<button type="button" class="cb-leg"' + cbAttr('origine', o, ' aria-pressed="' + (!CBF.origine || CBF.origine === o) + '"') + '><i class="sw" style="background:' + CB_COL[cbI(o)] + '"></i>' + esc(S('cbI' + cbI(o))) + '</button>'; }).join('');
+    var cnt = ms.map(function (m) { var o = { t: 0 }; imps.forEach(function (i) { o[i] = 0; }); R.forEach(function (r) { if (r.d.slice(0, 7) === m) { o[r.imp]++; o.t++; } }); return o; });
+    var W = Math.max(300, mc.clientWidth || 600), H = 240, l0 = 34, mb = 22, mt = 18, n = ms.length || 1, bw = (W - l0) / n, w = Math.min(32, bw * 0.6);
+    var nt = pNice(Math.max.apply(null, cnt.map(function (o) { return o.t; }).concat([1])) * 1.08), Y = function (v) { return mt + (H - mt - mb) * (1 - v / nt.top); }, g = '';
+    for (var t0 = 0; t0 <= nt.top + 1e-9; t0 += nt.step) g += '<line x1="' + l0 + '" x2="' + W + '" y1="' + r1(Y(t0)) + '" y2="' + r1(Y(t0)) + '" stroke="var(--grid)"/>' + tx(l0 - 6, Y(t0) + 4, num(t0), 'mu', 'end');
+    ms.forEach(function (m, i) { var x = l0 + i * bw + (bw - w) / 2, acc = 0, o = cnt[i];
+      imps.forEach(function (im) { var v = o[im]; if (!v) return;
+        g += '<rect x="' + r1(x) + '" y="' + r1(Y(acc + v) + 1) + '" width="' + r1(w) + '" height="' + r1(Math.max(0.5, Y(acc) - Y(acc + v) - 2)) + '" rx="3" fill="' + CB_COL[cbI(im)] + '"' + (CBF.origine && CBF.origine !== im ? ' fill-opacity=".22"' : '') + cbAttr('origine', im) +
+          tip(monthName(m) + ' ' + m.slice(0, 4), imps.slice().reverse().map(function (j) { return S('cbI' + cbI(j)) + ' : ' + o[j]; }).concat([S('total') + ' : ' + o.t])) + '/>'; acc += v; });
+      if (w >= 18 && o.t) g += tx(x + w / 2, Y(o.t) - 5, num(o.t), 'ink', 'middle');
+      g += tx(l0 + i * bw + bw / 2, H - 6, day(m + '-15', { month: 'short' }), 'mu', 'middle'); });
+    mc.innerHTML = svg(W, H, g, S('cbMonth'));
+    // reason x imputation
+    var cols = [['cbProd', 'Production ligne'], ['cbMach', 'Impression – machine'], ['cbOper', 'Impression – opérateur'], ['cbOther', null]], mot = {};
+    R.forEach(function (r) { var a = mot[r.motif] || (mot[r.motif] = { m: r.motif, v: [0, 0, 0, 0], t: 0 }), j = r.imp === CB_IMP[0] ? 0 : r.imp === CB_IMP[1] ? 1 : r.imp === CB_IMP[2] ? 2 : 3; a.v[j]++; a.t++; });
+    var mrows = Object.keys(mot).map(function (k) { return mot[k]; }).sort(function (a, b) { return b.t - a.t; }), mmax = Math.max.apply(null, mrows.map(function (a) { return Math.max.apply(null, a.v); }).concat([1]));
+    var th = function (a) { return '<thead><tr>' + a.map(function (h, j) { return '<th scope="col"' + (j && h !== 'cbMotifs' && h !== 'cbImp' ? ' class="r"' : '') + '>' + esc(S(h)) + '</th>'; }).join('') + '</tr></thead>'; };
+    document.getElementById('cbMx').innerHTML = mrows.length ? '<table class="cxt">' + th(['cbMotif', 'cbProd', 'cbMach', 'cbOper', 'cbOther', 'total']) + '<tbody>' + mrows.map(function (a) {
+      return '<tr><th scope="row"' + cbAttr('motif', a.m, ' tabindex="0"') + '>' + esc(cbLab(a.m)) + '</th>' + cols.map(function (c, j) { var v = a.v[j], col = c[1] ? CB_COL[cbI(c[1])] : 'var(--dim)';
+        return '<td class="r' + (c[1] ? ' cb-c' : '') + (c[1] && CBF.motif === a.m && CBF.origine === c[1] ? ' cb-on' : '') + '"' + (v ? ' style="background:color-mix(in srgb, ' + col + ' ' + Math.round(8 + 42 * v / mmax) + '%, transparent)"' : '') +
+          (c[1] ? ' data-cb="cell" data-m="' + esc(a.m) + '" data-v="' + esc(c[1]) + '" tabindex="0"' : '') + '>' + num(v) + '</td>'; }).join('') + '<td class="r">' + num(a.t) + '</td></tr>'; }).join('') + '</tbody></table>' : '<p class="empty">' + esc(S('cbNone')) + '</p>';
+    // cable types, the eight most frequent, cut by imputation
+    var ty = {}; R.forEach(function (r) { if (!r.type) return; var a = ty[r.type] || (ty[r.type] = { t: 0, v: {} }); a.t++; a.v[r.imp] = (a.v[r.imp] || 0) + 1; });
+    var tks = Object.keys(ty).sort(function (a, b) { return ty[b].t - ty[a].t; }).slice(0, 8), tmax = tks.length ? ty[tks[0]].t : 1;
+    document.getElementById('cbTypes').innerHTML = tks.map(function (k) { var a = ty[k];
+      return '<div class="cb-row"><span class="cb-lab">' + esc(k) + '</span><span><span class="cb-track" style="width:' + r1(100 * a.t / tmax) + '%">' + CB_IMP.filter(function (o) { return a.v[o]; }).map(function (o) {
+        return '<span class="cb-seg" style="flex:' + a.v[o] + ';background:' + CB_COL[cbI(o)] + (CBF.origine && CBF.origine !== o ? ';opacity:.22' : '') + '"' + tip(k, [S('cbI' + cbI(o)) + ' : ' + a.v[o]]) + '></span>'; }).join('') + '</span></span><span class="cb-val">' + num(a.t) + '</span></div>'; }).join('') || '<p class="empty">' + esc(S('cbNone')) + '</p>';
+    // proposed causes (under the imputation chosen), coloured by the imputation where each is most frequent; unknown last, in grey
+    var own = {}, cn = {}; R.forEach(function (r) { var o = own[r.cause] || (own[r.cause] = {}); o[r.imp] = (o[r.imp] || 0) + 1; if (!CBF.origine || r.imp === CBF.origine) cn[r.cause] = (cn[r.cause] || 0) + 1; });
+    var ownOf = function (c) { var o = own[c] || {}; return Object.keys(o).sort(function (a, b) { return o[b] - o[a]; })[0]; }, cks = Object.keys(cn), cmax = Math.max.apply(null, cks.map(function (c) { return cn[c]; }).concat([1]));
+    var crow = function (c, col) { return '<button type="button" class="cb-row' + (CBF.cause && CBF.cause !== c ? ' dim' : '') + '"' + cbAttr('cause', c, ' aria-pressed="' + (CBF.cause === c) + '"') + '><span class="cb-lab">' + esc(cbLab(c)) + '</span><span class="cb-track"><span class="cb-seg" style="width:' + r1(100 * cn[c] / cmax) + '%;background:' + col + '"></span></span><span class="cb-val">' + num(cn[c]) + '</span></button>'; };
+    document.getElementById('cbCauses').innerHTML = cks.length ? cks.filter(function (c) { return c !== CB_UNK; }).sort(function (a, b) { return cn[b] - cn[a]; }).map(function (c) { return crow(c, CB_COL[cbI(ownOf(c))]); }).join('') +
+      (cn[CB_UNK] ? '<div class="cb-sep"></div>' + crow(CB_UNK, 'var(--dim)') : '') : '<p class="empty">' + esc(S('cbNone')) + '</p>';
+    // recurring cables
+    document.getElementById('cbRec').innerHTML = rec.length ? '<table class="cxt">' + th(['cbCable', 'NC', 'MSN', 'cbMotifs', 'cbImp']) + '<tbody>' + rec.map(function (a) {
+      return '<tr' + cbAttr('cable', a.c, ' tabindex="0"') + (CBF.cable === a.c ? ' class="cb-sel"' : '') + '><td>' + esc(a.c) + '</td><td class="r">' + num(a.n) + '</td><td class="r">' + num(a.m) + '</td><td>' + esc(a.motifs.map(cbLab).join(', ')) + '</td><td>' + esc(a.imps.map(cbLab).join(', ')) + '</td></tr>'; }).join('') + '</tbody></table>' : '<p class="empty">' + esc(S('cbNone')) + '</p>';
+    cbList(R);
+  }
+  function cbList(R) {
+    var q = CB_Q.trim().toLowerCase(), rows = R.filter(function (r) {
+      return (!CBF.origine || r.imp === CBF.origine) && (!CBF.motif || r.motif === CBF.motif) && (!CBF.cause || r.cause === CBF.cause) && (!CBF.cable || r.cables.indexOf(CBF.cable) >= 0) &&
+        (!q || [r.nc, r.msn, r.wk, r.cables.join(' '), r.type, r.com, r.motif, r.cause, r.imp, cbLab(r.motif), cbLab(r.cause), cbLab(r.imp)].join(' ').toLowerCase().indexOf(q) >= 0); })
+      .sort(function (a, b) { return b.d.localeCompare(a.d) || b.k - a.k; });
+    document.getElementById('cbN').textContent = rows.length === 1 ? S('cbN1') : S('cbN', { n: num(rows.length) });
+    var h = ['cbWk', 'NC', 'cbProg', 'MSN', 'cbMotif', 'cbImp', 'cbCause', 'cbCables', 'cbCom'];
+    document.getElementById('cbList').innerHTML = rows.length ? '<table class="cxt"><thead><tr>' + h.map(function (k) { return '<th scope="col">' + esc(S(k)) + '</th>'; }).join('') + '</tr></thead><tbody>' + rows.map(function (r) {
+      return '<tr><td>' + esc(r.wk) + '</td><td>' + esc(r.nc) + '</td><td>' + esc(r.prog) + '</td><td>' + esc(r.msn) + '</td><td>' + esc(cbLab(r.motif)) + '</td><td>' + esc(cbLab(r.imp)) + '</td><td>' + esc(cbLab(r.cause)) + '</td><td>' + esc(r.cables.join(' ')) + '</td><td class="cb-com">' + esc(r.com) + '</td></tr>'; }).join('') + '</tbody></table>' : '<p class="empty">' + esc(S('cbNone')) + '</p>';
+  }
+  (function () {
+    var p = document.getElementById('p-cbl'); if (!p) return;
+    p.addEventListener('click', function (e) {
+      var x = e.target.closest('[data-cbx]'); if (x) { var k = x.getAttribute('data-cbx'); if (k === 'all') CBF = { origine: '', motif: '', cause: '', cable: '' }; else CBF[k] = ''; renderCbl(); return; }
+      var b = e.target.closest('[data-cb]'); if (!b) return;
+      var t = b.getAttribute('data-cb'), v = b.getAttribute('data-v');
+      if (t === 'cell') { var m = b.getAttribute('data-m'), on = CBF.motif === m && CBF.origine === v; CBF.motif = on ? '' : m; CBF.origine = on ? '' : v; }
+      else if (t === 'motif') { CBF.motif = CBF.motif === v && !CBF.origine ? '' : v; CBF.origine = ''; }
+      else CBF[t] = CBF[t] === v ? '' : v;
+      hideTip(); renderCbl();
+    });
+    p.addEventListener('keydown', function (e) { var b = e.target.closest('[data-cb]'); if (b && b.tagName !== 'BUTTON' && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); b.click(); } });
+    p.addEventListener('pointermove', function (e) { var t = e.target.closest && e.target.closest('[data-tip]'); if (t) showTip(e, t.getAttribute('data-tip').split('|')); else hideTip(); });
+    p.addEventListener('pointerleave', hideTip);
+    document.getElementById('cbQ').addEventListener('input', function (e) { CB_Q = e.target.value; cbList(cbRows()); });
+  })();
   function renderPplan() {
     if (G.tab !== 'pplan') return;
     var E = pSrc(), box = document.getElementById('ppLinesT'); if (!box) return;
@@ -3110,7 +3270,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
   var MP = document.getElementById('p-mft');
   MP.addEventListener('pointermove', function (e) { var t = e.target.closest && e.target.closest('[data-tip]'); if (t) showTip(e, t.getAttribute('data-tip').split('|')); else hideTip(); });
   MP.addEventListener('pointerleave', hideTip);
-  var rzT; window.addEventListener('resize', function () { clearTimeout(rzT); rzT = setTimeout(function () { renderAna(); renderPplan(); renderGal(); renderProd(); renderRev(); renderMock(); v2Render(); }, 150); });
+  var rzT; window.addEventListener('resize', function () { clearTimeout(rzT); rzT = setTimeout(function () { renderAna(); renderPplan(); renderCbl(); renderGal(); renderProd(); renderRev(); renderMock(); v2Render(); }, 150); });
 
   // ---------------------------------------------------------------- 6. Gallery (local page only): chart ideas drawn on FICTITIOUS data
   // build/dummy_data.py draws the data at random; only the category / root cause / sub-category names are real (taxonomy).
@@ -6381,8 +6541,8 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
       document.getElementById('p-' + t).hidden = G.tab !== t;
     });
   }
-  function renderAll() { applyText(); showTab(); renderPMode(); ncBoard.render(); pareto.render(); costPareto.render(); weekly.render(); cnq.render(); renderCx(); renderDis(); renderWhereTbl(); client.render(); renderRca(); renderPplan(); renderAna(); renderMft(); renderGal(); renderProd(); renderRev(); renderMock(); v2Render(); }
-  function setTab(t) { G.tab = t; if (!EMBED) { try { history.replaceState(null, '', '#' + t); } catch (x) {} } applyText(); showTab(); if (t === 'hebdo') weekly.render(); if (t === 'ov') ncBoard.render(); if (t === 'ana') renderAna(); if (t === 'pplan') renderPplan(); if (t === 'mft') renderMft(); if (t === 'gal') renderGal(); if (t === 'prod') renderProd(); if (PAGE === 'mock') renderMock(); if (V2) v2Render(); if (t !== 'ana' && t !== 'mft') hideTip(); }
+  function renderAll() { applyText(); showTab(); renderPMode(); ncBoard.render(); pareto.render(); costPareto.render(); weekly.render(); cnq.render(); renderCx(); renderDis(); renderWhereTbl(); client.render(); renderCbl(); renderRca(); renderPplan(); renderAna(); renderMft(); renderGal(); renderProd(); renderRev(); renderMock(); v2Render(); }
+  function setTab(t) { G.tab = t; if (!EMBED) { try { history.replaceState(null, '', '#' + t); } catch (x) {} } applyText(); showTab(); if (t === 'hebdo') weekly.render(); if (t === 'ov') ncBoard.render(); if (t === 'ana') renderAna(); if (t === 'pplan') renderPplan(); if (t === 'cbl') renderCbl(); if (t === 'mft') renderMft(); if (t === 'gal') renderGal(); if (t === 'prod') renderProd(); if (PAGE === 'mock') renderMock(); if (V2) v2Render(); if (t !== 'ana' && t !== 'mft') hideTip(); }
   document.getElementById('tabs').addEventListener('click', function (e) { var t = e.target.closest('[data-tab]'); if (t) setTab(t.getAttribute('data-tab')); });
   document.getElementById('tabs').addEventListener('keydown', function (e) {
     if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;

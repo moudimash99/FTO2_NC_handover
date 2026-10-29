@@ -44,6 +44,7 @@
     <button type="button" role="tab" id="tab-cnq" aria-controls="p-cnq" data-tab="cnq" data-t="tabCnq"></button>
     <span class="gap" aria-hidden="true"></span>
     <button type="button" role="tab" id="tab-client" aria-controls="p-client" data-tab="client" data-t="tabClient"></button>
+    <button type="button" role="tab" id="tab-cbl" aria-controls="p-cbl" data-tab="cbl" data-t="tabCbl"></button>
     <span class="gap" aria-hidden="true"></span>
     <button type="button" role="tab" id="tab-rca" aria-controls="p-rca" data-tab="rca" data-t="tabRca"></button>
     <button type="button" role="tab" id="tab-pplan" aria-controls="p-pplan" data-tab="pplan" data-t="tabPplan"></button>
@@ -261,6 +262,23 @@
         <div class="table-wrap"><table><thead><tr id="rth2"></tr></thead><tbody id="rtb2"></tbody></table></div>
         <button type="button" class="more" id="rm" hidden></button>
       </div></details>
+  </div>
+
+  <!-- Câbles: the cable team's requests for new cables (D.cables, the rows of the "Suivi NC câbles" page) -->
+  <div class="panel" role="tabpanel" id="p-cbl" aria-labelledby="tab-cbl" hidden>
+    <div class="lead"><h2 data-t="cbTitle"></h2><p class="sub" id="cbPer"></p></div>
+    <div class="chips" id="cbChips"></div>
+    <div id="cbBody">
+      <div class="figs" id="cbFigs"></div>
+      <div class="pp-grid cb-grid">
+        <div class="card pp-card pp-wide"><h3 data-t="cbMonth"></h3><p class="sub" id="cbShare"></p><div class="vlegend" id="cbLeg"></div><div id="cbMonthC"></div></div>
+        <div class="card pp-card"><h3 data-t="cbMx"></h3><div class="table-wrap" id="cbMx"></div></div>
+        <div class="card pp-card"><h3 data-t="cbTypes"></h3><div class="cb-bars" id="cbTypes"></div></div>
+        <div class="card pp-card"><h3 data-t="cbCauses"></h3><div class="cb-bars" id="cbCauses"></div></div>
+        <div class="card pp-card"><h3 data-t="cbRec"></h3><div class="table-wrap cb-mid" id="cbRec"></div></div>
+        <div class="card pp-card pp-wide"><div class="cb-head"><h3 data-t="cbList"></h3><span class="sub" id="cbN"></span><input type="search" id="cbQ" autocomplete="off" data-ta="cbSearch"></div><div class="table-wrap cb-tall" id="cbList"></div></div>
+      </div>
+    </div>
   </div>
 
   <!-- 5. Root causes -->

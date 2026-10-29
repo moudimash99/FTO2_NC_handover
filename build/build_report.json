@@ -118,6 +118,11 @@
   },
   "mft_actions": 9,
   "rca_without_definition": [],
+  "cables": {
+    "requests": 474,
+    "from": "2026-01-05",
+    "to": "2026-09-28"
+  },
   "eqmsn": {
     "products": 10,
     "total_std": 640.46,
@@ -135,9 +140,9 @@
       "ncs": 713,
       "defects": 1463,
       "aleas": 99,
-      "js_kb": 1376
+      "js_kb": 1488
     },
-    "level23_js_kb": 778,
+    "level23_js_kb": 891,
     "pipeline_notebook": true,
     "level4": [
       "FTO2_NC_Dashboard_level2.slate.json",

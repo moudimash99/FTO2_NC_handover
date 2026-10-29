@@ -326,7 +326,7 @@ def build_dashboard(d, nc, lt, y25=None, dis_t=None):
     client, lt_client = customer_return_extras(d, nc, lt)
     actions = mft_actions()
     data = {"defects": defs, "ncs": ncs, "direct": direct, "rca": rca_reference(d), "client": client, "lt": lt_client, "codes": CODE_DESC, "actions": actions,
-            "cnqp": cnq_explain(d),
+            "cnqp": cnq_explain(d), "cables": cable_requests(),
             "meta": {"from": "2026-01-01", "to": REPORT["created_to"], "aside": aside, "noLine": no_line,
                      "modelTotal": round(float(aec.cnq_cost_total.sum()), 2)}}
     # every page carries the production file (rates per MSN); only the review pages carry the made-up gallery data (never in the Slate files)
@@ -363,12 +363,12 @@ def colmajor(df):
 
 def reference_block(data):
     """What does not come from the two tables: code sheet, MFT actions, cost parameters, production plan, root-cause tree, 2025 (NCs
-    summed per month, scope, phase, line and product; deliveries per product).
+    summed per month, scope, phase, line and product; deliveries per product), the cable team's requests.
     Written into the page (and into the Slate JS); the examples, quantities and product lines are rebuilt from the tables."""
     cq = {k: v for k, v in data["cnqp"].items() if k != "qty"}
     eq = {k: v for k, v in data["eqmsn"].items() if k != "line"} if data.get("eqmsn") else None
     return {"from": data["meta"]["from"], "codes": data["codes"], "actions": data["actions"], "cnqp": cq, "eqmsn": eq,
-            "rca": [dict(o, ex=[]) for o in data["rca"]], "y25": data.get("y25")}
+            "rca": [dict(o, ex=[]) for o in data["rca"]], "y25": data.get("y25"), "cables": data.get("cables")}
 
 
 EQ_NAMES = {"MIP": "MIP A350", "MIP(2)": "MIP A400M"}   # the production file's names, as the page shows them (MIP(2) is the A400M MIP: Mohammad, 29 Oct)
@@ -559,6 +559,21 @@ def working_day_volume(asof, recs):
             if d.year == 2026 and x:
                 m[d.month - 1] += x / tot
     return {p: [round(v, 2) for v in m] for p, m in out.items()}
+
+def cable_requests():
+    """The cable team's requests for new cables (06_input_data/cables_2026.json: the rows behind the "Suivi NC câbles" page,
+    https://claude.ai/artifact/17wJtGR1KwavRspXDnJdMz, file of 26 Oct, made there from 06_input_data/cable_team_tracker_A30_NC_cables.csv:
+    reason, imputation, the cause proposed from the analysis comment, the cable numbers and type read in it). For the Câbles tab, one
+    row per request: [row, week, date, NC, programme, MSN, reason, imputation, proposed cause, cables, cable type, comment, 1 if it
+    has an action or a status]. None without the file."""
+    path = os.path.join(ROOT, "06_input_data", "cables_2026.json")
+    if not os.path.exists(path):
+        return None
+    rows = json.load(open(path, encoding="utf-8"))
+    out = [[r["ligne"], r["semaine"], r["date"], r["nc"], r["programme"], r["msn"], r["motif"], r["origine"], r["cause"], r["cables"],
+            r["type"], r["commentaire"], 1 if (r.get("action") or r.get("statut")) else 0] for r in rows]
+    REPORT["cables"] = {"requests": len(out), "from": min(r[2] for r in out), "to": max(r[2] for r in out)}
+    return out
 
 def cnq_explain(d):
     """The CNQ parameters the "explain the calculation" part shows: times and rates, which steps each decision charges,
