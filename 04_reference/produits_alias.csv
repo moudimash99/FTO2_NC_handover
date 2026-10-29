@@ -1,0 +1,6 @@
+ligne,produit_nc,poste,produit_cible,note
+A330,^74[23]VU$,,740VU,"742VU (porte) et 743VU : partie du meuble 740VU (Mohammad, 29 Oct)"
+A330,^\d{3}VU$,,PTVU,"petits VU : écrits aux mêmes postes « xxxVU – passage ARP » que les NC PTVU (Mohammad, 29 Oct)"
+A350,^58\d\dVB$,,MDCD,"harnais de la ligne MDCD (5881VB, 5883VB, 5893VB…)"
+A350,"^\d{3,4}VB$",,MIP A350,"harnais A350 : MIP (Mohammad, 29 Oct, à vérifier)"
+A350,^Other$,WF492,MIP A350,"poste WF492 : intégration / méca du MIP (Mohammad, 29 Oct)"

@@ -1,6 +1,6 @@
 produit_nc,produit_eqmsn,a_confirmer,note
 MIP A350,MIP,non,
-MIP A400M,MIP(2),oui,MIP(2) supposé être le MIP de l'A400M (volume proche de la cadence A400M)
+MIP A400M,MIP(2),non,MIP(2) = le MIP de l'A400M (confirmé par Mohammad le 29 Oct)
 PTVU,PTVU,non,
 740VU,740VU,non,
 300VU,300VU,non,

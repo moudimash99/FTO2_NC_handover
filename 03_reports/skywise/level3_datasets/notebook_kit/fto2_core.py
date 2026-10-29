@@ -572,7 +572,7 @@ def year_causes(p, year):
     return ["month", "scope", "phase", "line", "product", "cat", "rca", "def", "defMajor"], rows
 
 
-def year_baseline(raw, station_desc, ref_dir, year):
+def year_baseline(raw, station_desc, ref_dir, year, alias=None):
     """One year of NCs through the pipeline's rules, the parser and the CNQ model (no stored labels: parser classes), summed per
     month, report scope, phase, line and product: [month, scope, phase, line, product, NCs, defect lines, major defect lines,
     level-3 cost, level-2, level-1]. The work minutes are the model's (no rework-order operations for that year).
@@ -580,6 +580,9 @@ def year_baseline(raw, station_desc, ref_dir, year):
     x, _ = merge_exports([pipeline_rules(raw, station_desc)])
     empty = pd.DataFrame(columns=["notification_number", "seq", "snippet", "llm_sous_categorie", "llm_sous_code", "llm_defaut_cable", "llm_confiance", "llm_symptome"])
     p = prepare(x, empty, ref_dir)
+    if alias:   # alias(line, product, station) -> the plan product (build_all.alias_product): products off the plan put back on theirs
+        st = p["nc"]["station_description"] if "station_description" in p["nc"].columns else p["nc"].get("station", pd.Series("", index=p["nc"].index))
+        p["nc"]["produit"] = [alias(S_(l), S_(q) or "Other", S_(t)) for l, q, t in zip(p["nc"].ligne, p["nc"].produit, st)]
     nc, d = p["nc"], p["d"]
     nc = nc[nc.date_creation.str.startswith(str(year))].copy()
     for c in ("cnq_cost_total", "cnq_cost_global", "cnq_cost_airbus"):   # FTO2's cost: only where FTO2 is liable

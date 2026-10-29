@@ -96,15 +96,20 @@ def year_2025(x):
     if not os.path.exists(path):
         return None
     raw = pd.read_csv(path, dtype=str, keep_default_na=False, na_values=[""])
-    rows, info, p = core.year_baseline(raw, core.station_pairs([x]), os.path.join(ROOT, "04_reference"), 2025)
+    rules, plan = product_alias_rules(), {str(k).upper() for k in pd.read_csv(os.path.join(ROOT, "04_reference", "eqmsn_produits.csv"), encoding="utf-8").produit_nc}
+    alias = lambda line, prod, station: alias_product(rules, plan, line, prod, station)   # products off the plan put back on their plan product
+    rows, info, p = core.year_baseline(raw, core.station_pairs([x]), os.path.join(ROOT, "04_reference"), 2025, alias)
     out = {"cols": ["month", "scope", "phase", "line", "product", "nc", "def", "defMajor", "cost", "cost2", "cost1"], "rows": rows,
            "from": info["created_from"], "to": info["created_to"], "prod": None, "msn": None}
     out["rcaCols"], out["rca"] = core.year_causes(p, 2025)   # 2025 defects by cause (parser labels), for the 2025 / 2026 cause charts
+    n25 = p["nc"][p["nc"].date_creation.astype(str).str.startswith("2025") & (p["nc"].scope == "serie")]
+    msn = n25.msn.fillna("").astype(str).str.replace(r"\.0$", "", regex=True).str.lstrip("0")
+    out["byMsn"] = {"%s|%s" % k: int(v) for k, v in n25.assign(m=msn)[msn != ""].groupby(["ligne", "m"]).size().items()}   # 2025 NCs per aircraft: built partly in 2025
     lv = os.path.join(ROOT, "06_input_data", "Livraisons_MSN_2025.csv")
     if os.path.exists(lv):
         t = pd.read_csv(lv, encoding="utf-8")
         months = [c for c in t.columns if c.startswith("2025-")]
-        out["prod"] = {k: [float(v) for v in vals] for k, vals in zip(t.produit_eqmsn, t[months].values)}
+        out["prod"] = {EQ_NAMES.get(k, k): [float(v) for v in vals] for k, vals in zip(t.produit_eqmsn, t[months].values)}
         out["months"] = months
         ln = pd.read_csv(os.path.join(ROOT, "06_input_data", "Livraisons_MSN_2025_lignes.csv"), encoding="utf-8")
         out["msn"] = dict(zip(ln.ligne, ln.msn_entiers_livres_2025.astype(int)))
@@ -366,6 +371,9 @@ def reference_block(data):
             "rca": [dict(o, ex=[]) for o in data["rca"]], "y25": data.get("y25")}
 
 
+EQ_NAMES = {"MIP": "MIP A350", "MIP(2)": "MIP A400M"}   # the production file's names, as the page shows them (MIP(2) is the A400M MIP: Mohammad, 29 Oct)
+
+
 def eqmsn(nc):
     """Production volume for the Production tab: EqMSN per product and month of 2026 (06_input_data/EqMSN_2026.xlsx, both the
     Standard and the Adjusted sheet), the NC product labels it matches (04_reference/eqmsn_produits.csv) and each product's line,
@@ -387,11 +395,11 @@ def eqmsn(nc):
                 if start and r[0] == "Total":
                     break
                 continue
-            rows[str(r[0])] = [round(float(v or 0), 2) for v in r[1:13]]
+            rows[EQ_NAMES.get(str(r[0]), str(r[0]))] = [round(float(v or 0), 2) for v in r[1:13]]
         out[key] = rows
     ref = pd.read_csv(os.path.join(ROOT, "04_reference", "eqmsn_produits.csv"), encoding="utf-8")
-    out["map"] = {str(a).upper(): b for a, b in zip(ref.produit_nc, ref.produit_eqmsn)}
-    out["toConfirm"] = [b for b, c in zip(ref.produit_eqmsn, ref.a_confirmer) if c == "oui"]
+    out["map"] = {str(a).upper(): EQ_NAMES.get(b, b) for a, b in zip(ref.produit_nc, ref.produit_eqmsn)}
+    out["toConfirm"] = [EQ_NAMES.get(b, b) for b, c in zip(ref.produit_eqmsn, ref.a_confirmer) if c == "oui"]
     lines = {}
     for lab, line in zip(nc.produit.fillna("").astype(str).str.upper(), nc.ligne.fillna("").astype(str)):
         p = out["map"].get(lab)
@@ -399,8 +407,75 @@ def eqmsn(nc):
             lines.setdefault(p, {}).setdefault(line, 0)
             lines[p][line] += 1
     out["line"] = {p: (max(lines[p], key=lines[p].get) if p in lines else "") for p in out["std"]}
-    REPORT["eqmsn"] = {"products": len(out["std"]), "total_std": round(sum(sum(v) for v in out["std"].values()), 2)}
+    out["alias"] = product_alias_rules()
+    out["msnAsof"], out["msn"] = production_msn()
+    REPORT["eqmsn"] = {"products": len(out["std"]), "total_std": round(sum(sum(v) for v in out["std"].values()), 2),
+                       "msn_dates": len(out["msn"] or {}), "msn_asof": out["msnAsof"]}
     return out
+
+
+def product_alias_rules():
+    """NC products the production plan does not name, put back on the plan product they belong to (04_reference/produits_alias.csv,
+    agreed with Mohammad 29 Oct): [line, product regex, station regex or '', plan product]. The first rule that matches wins, and a
+    rule applies only to a product that is not itself in the plan. The page applies the same rules to the 2026 NCs (fto2FromTables)."""
+    path = os.path.join(ROOT, "04_reference", "produits_alias.csv")
+    if not os.path.exists(path):
+        return []
+    t = pd.read_csv(path, dtype=str, keep_default_na=False, encoding="utf-8")
+    return [[r.ligne, r.produit_nc, r.poste, r.produit_cible] for r in t.itertuples()]
+
+
+def alias_product(rules, plan, line, prod, station):
+    """The plan product of an NC product (see product_alias_rules); the product itself when no rule matches."""
+    prod = prod or "Other"
+    if prod.upper() in plan:
+        return prod
+    for l, rp, rs, to in rules:
+        if l == line and re.search(rp, prod) and (not rs or re.search(rs, station or "", re.I)):
+            return to
+    return prod
+
+
+def production_msn():
+    """Each aircraft's build dates from the 'Tableau Avances / Retards' export (06_input_data/Avances_Retards_*.csv, newest file):
+    four rows per MSN and product (planned start of each milestone, reason, real date, advance / delay). Per line|MSN:
+    [start, end, products] where start = the first real milestone date (else the planned Impression date) and end = the real OTA
+    (else the planned OTA), the earliest start and latest end over the aircraft's products. A real date after the export or more
+    than 200 days from its plan is a typo and is ignored. Checked against the export's own 'en cours' flag on 07/10/2026: 130 of
+    its 134 MSN in progress are in progress by this rule, and 7 more. The page hatches an aircraft built between start and end
+    at the last NC date. Returns (export date, {line|msn: [start, end, products]}), or (None, None) without the file."""
+    import csv, datetime as dt
+    files = sorted(glob.glob(os.path.join(ROOT, "06_input_data", "Avances_Retards_*.csv")))
+    if not files:
+        return None, None
+    asof = dt.date.fromisoformat(os.path.basename(files[-1])[len("Avances_Retards_"):-4])
+    rows = list(csv.reader(open(files[-1], encoding="utf-8")))
+    h = next(i for i, r in enumerate(rows) if r[:3] == ["S/HS", "Prog", "Produit"])
+
+    def day(s):
+        try:
+            return dt.datetime.strptime(s.strip(), "%d/%m/%Y").date()
+        except ValueError:
+            return None
+    recs, cur = [], None
+    for r in rows[h + 1:]:
+        if len(r) < 15:
+            continue
+        if r[14] == "date prévue du début" and r[3].strip():
+            cur = {"line": r[1].strip(), "prod": r[2].strip(), "msn": r[3].strip(), "plan": [day(x) for x in r[5:13]], "real": [None] * 8}
+            recs.append(cur)
+        elif r[14] == "date réelle" and cur:
+            cur["real"] = [day(x) for x in r[5:13]]
+    out = {}
+    for c in recs:
+        real = [x if x and x <= asof and not (p and abs((x - p).days) > 200) else None for x, p in zip(c["real"], c["plan"])]
+        s, e = next((x for x in real if x), None) or c["plan"][0], real[7] or c["plan"][7]
+        if not s or not e:
+            continue
+        k = c["line"] + "|" + c["msn"].lstrip("0")
+        o = out.get(k)
+        out[k] = [min(o[0], s.isoformat()), max(o[1], e.isoformat()), o[2] + [c["prod"]]] if o else [s.isoformat(), e.isoformat(), [c["prod"]]]
+    return asof.isoformat(), out
 
 
 def cnq_explain(d):

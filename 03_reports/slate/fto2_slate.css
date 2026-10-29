@@ -20,9 +20,9 @@
   --up: #a33b2b;
   --down: #1d6b52;
   --focus: #1d6b52;
-  --c1: #2a78d6; --c2: #1baf7a; --c3: #eda100; --c4: #e87ba4; --c5: #008300; --c6: #6250d6; --seq: #1d6b52;
+  --c1: #2a78d6; --c2: #1baf7a; --c3: #eda100; --c4: #e87ba4; --c5: #008300; --c6: #6250d6; --c7: #0097a7; --c8: #8a7300; --c9: #a23b72; --seq: #1d6b52;
   --l1: #7e3fb0; --l2: #e57a24; --l3: #cf3f7a; --l4: #95561c;   
-  --on0: #15171a; --on1: #ffffff; --on2: #15171a; --on3: #15171a; --on4: #15171a; --on5: #ffffff; --on6: #ffffff;
+  --on0: #15171a; --on1: #ffffff; --on2: #15171a; --on3: #15171a; --on4: #15171a; --on5: #ffffff; --on6: #ffffff; --on7: #ffffff; --on8: #ffffff; --on9: #ffffff;
   --font-ui: "Hanken Grotesk", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
   --font-data: "Hanken Grotesk", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
   --font-display: "Newsreader", Georgia, "Times New Roman", serif;
@@ -620,7 +620,9 @@
   grid-template-areas: "rca line fin" "rca waf fin" "code code code"; }
 .fto2 .v2par { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; align-items: stretch; margin: 6px 0 28px; }
 .fto2 #parTop > .v2-band, .fto2 #pgl > .v2-band, .fto2 #kgl > .v2-band { grid-column: auto; }
-.fto2 #parTop > [data-v2="a:flow"], .fto2 #parFold [data-v2="VK"] { grid-column: 1 / -1; }
+.fto2 #parTop > [data-v2="a:flow"], .fto2 #parTop > [data-v2="53"], .fto2 #parFold [data-v2="VK"] { grid-column: 1 / -1; }
+.fto2 #parTop > [data-v2="VQ"] { grid-column: 2; grid-row: span 2; }
+.fto2 #parTop > [data-v2="76"], .fto2 #parTop > [data-v2="78"] { grid-column: 1; }
 .fto2 #parTop > .v2-band, .fto2 #pgl > .v2-band, .fto2 #kgl > .v2-band { grid-template-columns: minmax(0, 1fr); background: var(--surface); border: 1px solid var(--ring); border-radius: 10px; padding: 18px 20px 16px; box-shadow: none; clip-path: none; row-gap: 10px; align-content: start; min-width: 0; }
 .fto2 #parTop > .v2-band > .bhead, .fto2 #pgl > .v2-band > .bhead, .fto2 #kgl > .v2-band > .bhead { position: static; grid-column: 1; gap: 6px; }
 .fto2 #parTop > .v2-band > .custom, .fto2 #pgl > .v2-band > .custom, .fto2 #kgl > .v2-band > .custom { grid-column: 1; grid-row: auto; }
