@@ -118,6 +118,7 @@ def main():
     blob = json.dumps(D, ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/")
     page = tpl.replace("/*@@DATA@@*/null", blob, 1)
     for out in (os.path.join(ROOT, "03_reports", "FTO2_MFT.html"), os.path.join(ROOT, "build", "artifacts", "FTO2_MFT.html")):
+        os.makedirs(os.path.dirname(out), exist_ok=True)   # build/artifacts is not in git
         with open(out, "w", encoding="utf-8") as f:
             f.write(page)
     print("NCs", len(D["ncs"]), "| defect lines", len(D["defs"]), "| data to", D["to"], D["toWeek"], "| tracker actions", len(seeds),
