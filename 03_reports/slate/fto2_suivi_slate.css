@@ -647,7 +647,7 @@
 .fto2 #pgl > [data-card="code"], .fto2 #kgl > [data-card="code"] { grid-area: code; }
 .fto2 #pgl > [data-card="fin"], .fto2 #kgl > [data-card="fin"] { grid-area: fin; }
 .fto2 #p-cnq { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; align-items: stretch;
-  grid-template-areas: "lead lead lead" "strip strip strip" "figs figs figs" "chips chips chips" "split split split" "line prod rule" "comp comp month" "dis dis dis" "meth meth meth" "more more more" "cx cx cx" "table table table"; }
+  grid-template-areas: "lead lead lead" "strip strip strip" "figs figs figs" "chips chips chips" "split split split" "line prod rule" "comp comp month" "dis dis dis" "more more more" "cx cx cx" "table table table"; }
 .fto2 #p-cnq > * { min-width: 0; }
 .fto2 #p-cnq > #cg, .fto2 #p-cnq > .v2cq { display: contents; }
 .fto2 #p-cnq > .lead { grid-area: lead; }

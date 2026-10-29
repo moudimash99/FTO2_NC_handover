@@ -1957,7 +1957,12 @@ window.DASH = {"defects":[["216055047",1,"2026-01-06","2026-W02","A350","",0,0,0
       coNode: '{n} associations', single: 'NC à une seule catégorie, non tracées : {n}', target: 'Cible {v}', rateTip: '{e} erreurs · {i} insertions · {u} unités',
       above: 'Au-dessus de la cible', below: 'Sous la cible', kNc: 'NC par avion', kCost: 'Coût par avion', kDays: 'Délai médian de clôture (jours)', objShort: 'obj. {v}',
       objBand: 'Zone sous l’objectif', objective: 'Objectif', worse: 'Au-dessus de l’objectif', cum: 'Coût cumulé', budget: 'Budget au prorata', proj: 'Projection au rythme actuel',
-      budgetEnd: 'Budget {v}', projEnd: 'Projection {v}', dataEnd: 'Fin des données', increase: 'Hausse', decrease: 'Baisse', mioOnly: 'MIP A350 seulement pour l’instant : choisissez l’A350, ou toutes les lignes.', mio25: '2025 (par MIP livré)', mioTgt: 'objectif (2025 − 25 %)', mioTip: '{v} par million d’opérations', mioNow: 'par million d’opérations sur la période', mioSig: 'niveau sigma', vq25: '2025 : {v} par produit livré', vq26: '2026 : {v} par MSN', vqUp: 'hausse de plus de 10 %', vqDown: 'baisse de plus de 10 %', vqFlat: 'à 10 % près', relSub2: 'Barre : intervalle de confiance à 95 %. Points : NC de chaque MSN.', relAc: 'NC d’un MSN', relPrev: 'Lignes précédentes', relNext: 'Lignes suivantes', relRate: 'NC par MSN sur la période', relSub: 'Barre : intervalle de confiance à 95 %. Points gris : chaque mois. A330 et A350.', relCi: 'intervalle de confiance à 95 %', relMonth: 'chaque mois', vqCat: 'couleur de la catégorie', vqChg: 'Écart 2026 − 2025 (par MSN)', vqCause: 'Cause', totalM: 'Total du mois', q1: '1er trimestre', q2: '2e trimestre',
+      budgetEnd: 'Budget {v}', projEnd: 'Projection {v}', dataEnd: 'Fin des données', increase: 'Hausse', decrease: 'Baisse', mioOnly: 'MIP A350 seulement pour l’instant : choisissez l’A350, ou toutes les lignes.', mio25: '2025 (par MIP livré)', mioTgt: 'objectif (2025 − 25 %)', mioTip: '{v} par million d’opérations', mioNow: 'par million d’opérations sur la période', mioSig: 'niveau sigma', vq25: '2025 : {v} par produit livré', vq26: '2026 : {v} par MSN', vqUp: 'hausse de plus de 10 %', vqDown: 'baisse de plus de 10 %', vqFlat: 'à 10 % près', relAcN: '{n} MSN', relHist: '{n} MSN avec {v} NC',
+      relSubA: 'Clair : où tombent 95 % des MSN. Foncé : intervalle de confiance à 95 % du taux. Points : NC de chaque MSN construit dans la période.',
+      relSubB: 'Limites par MSN comme le suivi hebdomadaire : 2 σ attention, 3 σ alarme. Points : NC de chaque MSN construit dans la période.',
+      relSubC: 'Boîte : la moitié des MSN ; moustaches : 5 % à 95 % ; trait : médiane. Points : NC de chaque MSN construit dans la période.',
+      relSubD: 'Points : NC de chaque MSN construit dans la période. Bande : intervalle de confiance à 95 % du taux.',
+      relSubE: 'Barres : nombre de MSN par nombre de NC. Trait : intervalle de confiance à 95 % du taux.', relSub2: 'Barre : intervalle de confiance à 95 %. Points : NC de chaque MSN.', relAc: 'NC d’un MSN', relPrev: 'Lignes précédentes', relNext: 'Lignes suivantes', relRate: 'NC par MSN sur la période', relSub: 'Barre : intervalle de confiance à 95 %. Points gris : chaque mois. A330 et A350.', relCi: 'intervalle de confiance à 95 %', relMonth: 'chaque mois', vqCat: 'couleur de la catégorie', vqChg: 'Écart 2026 − 2025 (par MSN)', vqCause: 'Cause', totalM: 'Total du mois', q1: '1er trimestre', q2: '2e trimestre',
       perMonth: '{v} par mois', median: 'Médiane', ncCount: '{n} NC', rollMean: 'Moyenne glissante sur 9 avions', rankAx: 'Rang de l’avion dans sa ligne', perAc: 'Défauts par avion',
       b0: 'Aucun défaut', b1: '1 à 5 défauts', b2: '6 à 15', b3: 'Plus de 15', acTip: 'MSN {m} · {n} défauts', fpyTip: '{n} NC pour {u} unités passées', punchTip: '{n} NC',
       done: 'Terminée', open: 'En cours', late: 'En retard', planned: 'Planifiée', targetRca: 'Cause visée : {r}', finCount: '{n} avions', finTip: 'FIN {f} · MSN {m}',
@@ -1971,7 +1976,12 @@ window.DASH = {"defects":[["216055047",1,"2026-01-06","2026-W02","A350","",0,0,0
       coNode: '{n} pairings', single: 'NCs with a single category, not drawn: {n}', target: 'Target {v}', rateTip: '{e} errors · {i} insertions · {u} units',
       above: 'Above target', below: 'At or below target', kNc: 'NCs per aircraft', kCost: 'Cost per aircraft', kDays: 'Median days to close', objShort: 'target {v}',
       objBand: 'Zone within target', objective: 'Target', worse: 'Above target', cum: 'Cumulative cost', budget: 'Pro-rata budget', proj: 'Projection at the current pace',
-      budgetEnd: 'Budget {v}', projEnd: 'Projection {v}', dataEnd: 'End of data', increase: 'Increase', decrease: 'Decrease', mioOnly: 'MIP A350 only for now: pick the A350, or all lines.', mio25: '2025 (per MIP delivered)', mioTgt: 'target (2025 − 25%)', mioTip: '{v} per million operations', mioNow: 'per million operations over the period', mioSig: 'sigma level', vq25: '2025: {v} per product delivered', vq26: '2026: {v} per MSN', vqUp: 'up more than 10%', vqDown: 'down more than 10%', vqFlat: 'within 10%', relSub2: 'Bar: 95% confidence interval. Dots: NCs of each MSN.', relAc: 'NCs of one MSN', relPrev: 'Previous lines', relNext: 'Next lines', relRate: 'NCs per MSN over the period', relSub: 'Bar: 95% confidence interval. Grey dots: each month. A330 and A350.', relCi: '95% confidence interval', relMonth: 'each month', vqCat: 'category colour', vqChg: 'Change 2026 − 2025 (per MSN)', vqCause: 'Root cause', totalM: 'Month total', q1: 'Q1', q2: 'Q2',
+      budgetEnd: 'Budget {v}', projEnd: 'Projection {v}', dataEnd: 'End of data', increase: 'Increase', decrease: 'Decrease', mioOnly: 'MIP A350 only for now: pick the A350, or all lines.', mio25: '2025 (per MIP delivered)', mioTgt: 'target (2025 − 25%)', mioTip: '{v} per million operations', mioNow: 'per million operations over the period', mioSig: 'sigma level', vq25: '2025: {v} per product delivered', vq26: '2026: {v} per MSN', vqUp: 'up more than 10%', vqDown: 'down more than 10%', vqFlat: 'within 10%', relAcN: '{n} MSN', relHist: '{n} MSN with {v} NCs',
+      relSubA: 'Light: where 95% of the MSN fall. Dark: 95% confidence interval of the rate. Dots: NCs of each MSN built in the period.',
+      relSubB: 'Per-MSN limits as on the weekly chart: 2 σ attention, 3 σ alarm. Dots: NCs of each MSN built in the period.',
+      relSubC: 'Box: half of the MSN; whiskers: 5% to 95%; line: median. Dots: NCs of each MSN built in the period.',
+      relSubD: 'Dots: NCs of each MSN built in the period. Band: 95% confidence interval of the rate.',
+      relSubE: 'Bars: number of MSN per number of NCs. Line: 95% confidence interval of the rate.', relSub2: 'Bar: 95% confidence interval. Dots: NCs of each MSN.', relAc: 'NCs of one MSN', relPrev: 'Previous lines', relNext: 'Next lines', relRate: 'NCs per MSN over the period', relSub: 'Bar: 95% confidence interval. Grey dots: each month. A330 and A350.', relCi: '95% confidence interval', relMonth: 'each month', vqCat: 'category colour', vqChg: 'Change 2026 − 2025 (per MSN)', vqCause: 'Root cause', totalM: 'Month total', q1: 'Q1', q2: 'Q2',
       perMonth: '{v} a month', median: 'Median', ncCount: '{n} NCs', rollMean: 'Rolling mean over 9 aircraft', rankAx: 'Aircraft build rank in its line', perAc: 'Defects per aircraft',
       b0: 'No defect', b1: '1 to 5 defects', b2: '6 to 15', b3: 'More than 15', acTip: 'MSN {m} · {n} defects', fpyTip: '{n} NCs for {u} units through', punchTip: '{n} NCs',
       done: 'Done', open: 'In progress', late: 'Late', planned: 'Planned', targetRca: 'Targeted cause: {r}', finCount: '{n} aircraft', finTip: 'FIN {f} · MSN {m}',
@@ -3549,10 +3559,71 @@ window.DASH = {"defects":[["216055047",1,"2026-01-06","2026-W02","A350","",0,0,0
     var nav = G.length > 1 ? '<div class="relnav"><button type="button" class="cxb" data-relpg="-1" aria-label="' + esc(gx('relPrev')) + '">◀</button><b>' + esc(grp.ls.join(' · ')) + '</b><span class="mu">' + (RELPG + 1) + ' / ' + G.length + '</span><button type="button" class="cxb" data-relpg="1" aria-label="' + esc(gx('relNext')) + '">▶</button></div>' : '';
     gSet(k, nav + svg(W0, H, g, gT(k)), '<span><i class="sw" style="border-radius:50%;background:var(--ink-2)"></i>' + esc(gx('relRate')) + '</span><span><i class="ln" style="width:22px;height:2px;background:var(--ink-2)"></i>' + esc(gx('relCi')) + '</span><span><i class="sw" style="border-radius:50%;background:var(--muted)"></i>' + esc(gx('relAc')) + '</span>');
   }
-  document.addEventListener('click', function (e) { var b = e.target.closest && e.target.closest('[data-relpg]'); if (!b || !RELK) return; RELPG += +b.getAttribute('data-relpg'); g64c(RELK); });
+  document.addEventListener('click', function (e) { var b = e.target.closest && e.target.closest('[data-relpg]'); if (!b || !RELK) return; RELPG += +b.getAttribute('data-relpg'); g64(RELK); });
+  // 64, five ways to show the spread of single aircraft beside the 95 % interval of the rate (30 Oct, previews 'A'..'E'). Aircraft
+  // counted: those of the production table built entirely inside the period (start and OTA), so a part-built one does not read low;
+  // dots on the product's own line, left to right only
+  function relQ(a, q) { if (!a.length) return 0; var s = a.slice().sort(function (x, y) { return x - y; }), i = (s.length - 1) * q, lo = Math.floor(i), hi = Math.ceil(i); return s[lo] + (s[hi] - s[lo]) * (i - lo); }
+  function relData() {
+    var PM = D.eqmsn && D.eqmsn.msn, full = {}, per = {};
+    if (PM) Object.keys(PM).forEach(function (key) { var x = PM[key]; if (x[0] < GF.from || x[1] > D.meta.to) return; var m = key.slice(key.indexOf('|') + 1); x[2].forEach(function (p) { (full[p] || (full[p] = {}))[m] = 0; }); });
+    PD.ncs.forEach(function (x) { var n = NC[x.id], m = n && n[25]; if (!m) return; var f = full[x.p]; if (PM) { if (f && f[m] != null) f[m]++; } else { var o = per[x.p] || (per[x.p] = {}); o[m] = (o[m] || 0) + 1; } });
+    var src = PM ? full : per;
+    // pages: A350 · A330 without MDCD, A400M, A320, then MDCD alone (too few MSN yet: its interval would squeeze the others; 30 Oct)
+    return [['A350 · A330', function (o) { return (o.line === 'A350' || o.line === 'A330') && o.p !== 'MDCD'; }], ['A400M', function (o) { return o.line === 'A400M'; }],
+      ['A320', function (o) { return o.line === 'A320'; }], ['MDCD', function (o) { return o.p === 'MDCD'; }]].map(function (pg) {
+      var os = pOk().filter(function (o) { return o.NC > 0 && pg[1](o); }).map(function (o) {
+        var n = o.NC, l = n * Math.pow(1 - 1 / (9 * n) - 1.96 / (3 * Math.sqrt(n)), 3), u = (n + 1) * Math.pow(1 - 1 / (9 * (n + 1)) + 1.96 / (3 * Math.sqrt(n + 1)), 3), am = src[o.p] || {};
+        var ac = Object.keys(am).map(function (m) { return [m, am[m]]; }), v = ac.map(function (a) { return a[1]; }), mu = v.length ? sumA(v) / v.length : 0;
+        var sd = v.length > 1 ? Math.sqrt(sumA(v.map(function (x) { return (x - mu) * (x - mu); })) / (v.length - 1)) : 0;
+        return { o: o, r: n / o.EQ, l: Math.max(l, 0) / o.EQ, u: u / o.EQ, ac: ac, v: v, mu: mu, sd: sd }; }).sort(function (a, b) { return b.r - a.r; });
+      return { name: pg[0], os: os }; }).filter(function (g) { return g.os.length; });
+  }
+  function relSwarm(xs, y, step, cap) {   // dots that would overlap are spread up and down around the line
+    var used = {}; return xs.map(function (x) { var b = Math.round(x / 5), k = used[b] || 0; used[b] = k + 1; var off = k === 0 ? 0 : (k % 2 ? 1 : -1) * Math.ceil(k / 2) * step; return y + Math.max(-cap, Math.min(cap, off)); });
+  }
+  function g64v(k, V) {
+    RELK = k; var G = relData(); if (!G.length) { pEmpty(k); return; }
+    RELPG = (RELPG % G.length + G.length) % G.length;
+    var grp = G[RELPG], os = grp.os, W0 = gWd(k), lab = 96, mr = 96, rh = V === 'E' ? 64 : 56, top = 10, H = top + os.length * rh + 26, pw = W0 - lab - mr, hi = 0, g = '';
+    os.forEach(function (x) { hi = Math.max(hi, x.u, x.mu + 3 * x.sd, relQ(x.v, 0.975)); x.v.forEach(function (v) { hi = Math.max(hi, v); }); });
+    var nt = pNice(hi * 1.04); function X(v) { return lab + Math.max(0, v) / nt.top * pw; }
+    for (var t = 0; t <= nt.top + 1e-9; t += nt.step) g += '<line x1="' + r1(X(t)) + '" x2="' + r1(X(t)) + '" y1="0" y2="' + (H - 22) + '" stroke="var(--grid)"/>' + tx(X(t), H - 6, num(t), 'mu', 'middle');
+    var tick = function (x, y, h, c) { return '<line x1="' + r1(x) + '" x2="' + r1(x) + '" y1="' + (y - h) + '" y2="' + (y + h) + '" stroke="' + c + '" stroke-width="1.5"/>'; };
+    os.forEach(function (x, i) {
+      var y = top + i * rh + rh / 2, c = lineCol(x.o.line), ys = relSwarm(x.ac.map(function (a) { return X(a[1]); }), y, 4, rh / 2 - 8), lo2 = x.mu - 2 * x.sd, hi2 = x.mu + 2 * x.sd, hi3 = x.mu + 3 * x.sd;
+      g += tx(lab - 10, y + 4, x.o.p, 'ink', 'end');
+      if (V === 'A') {   // light: where 95 % of the aircraft fall; dark: the 95 % confidence interval of the rate
+        var a1 = relQ(x.v, 0.025), a2 = relQ(x.v, 0.975);
+        g += '<rect x="' + r1(X(a1)) + '" y="' + (y - 9) + '" width="' + r1(Math.max(2, X(a2) - X(a1))) + '" height="18" rx="4" fill="' + c + '" fill-opacity=".14"/>' + tx(X(a1) - 4, y + 4, f1(a1), 'mu', 'end', ' style="font-size:10.5px"') + tx(X(a2) + 4, y + 4, f1(a2), 'mu', null, ' style="font-size:10.5px"');
+        g += '<rect x="' + r1(X(x.l)) + '" y="' + (y - 3) + '" width="' + r1(Math.max(2, X(x.u) - X(x.l))) + '" height="6" rx="2" fill="' + c + '" fill-opacity=".55"/>';
+      } else if (V === 'B') {   // aircraft limits, as the weekly chart: 2 sigma attention, 3 sigma alarm
+        g += tick(X(Math.max(0, lo2)), y, 10, 'var(--ink-2)') + tick(X(hi2), y, 10, 'var(--ink-2)') + tick(X(hi3), y, 12, 'var(--up)') + '<line x1="' + r1(X(Math.max(0, lo2))) + '" x2="' + r1(X(hi3)) + '" y1="' + y + '" y2="' + y + '" stroke="var(--grid)" stroke-width="1.5"/>' +
+          tx(X(hi2), y - 13, '2 σ', 'mu', 'middle', ' style="font-size:10px"') + tx(X(hi3), y - 15, '3 σ', 'mu', 'middle', ' style="font-size:10px;fill:var(--up)"');
+      } else if (V === 'C') {   // box: half of the aircraft inside, whiskers 5 % to 95 %, the median
+        var q1 = relQ(x.v, 0.25), q2 = relQ(x.v, 0.5), q3 = relQ(x.v, 0.75), w1 = relQ(x.v, 0.05), w2 = relQ(x.v, 0.95);
+        g += '<line x1="' + r1(X(w1)) + '" x2="' + r1(X(w2)) + '" y1="' + y + '" y2="' + y + '" stroke="var(--ink-2)"/>' + tick(X(w1), y, 5, 'var(--ink-2)') + tick(X(w2), y, 5, 'var(--ink-2)') +
+          '<rect x="' + r1(X(q1)) + '" y="' + (y - 9) + '" width="' + r1(Math.max(2, X(q3) - X(q1))) + '" height="18" rx="3" fill="' + c + '" fill-opacity=".16" stroke="' + c + '"/>' + tick(X(q2), y, 9, c);
+      } else if (V === 'D') {   // dots only, the rate's interval as a thin band behind them
+        g += '<rect x="' + r1(X(x.l)) + '" y="' + (y - rh / 2 + 6) + '" width="' + r1(Math.max(2, X(x.u) - X(x.l))) + '" height="' + (rh - 12) + '" fill="' + c + '" fill-opacity=".12"/>';
+      } else if (V === 'E') {   // a small histogram of the aircraft on the line
+        var hb = {}, mx = 0; x.v.forEach(function (v) { hb[v] = (hb[v] || 0) + 1; mx = Math.max(mx, hb[v]); });
+        Object.keys(hb).forEach(function (v) { var h = hb[v] / mx * (rh - 22), bw = Math.max(2, pw / nt.top * 0.8); g += '<rect x="' + r1(X(+v) - bw / 2) + '" y="' + r1(y + 8 - h) + '" width="' + r1(bw) + '" height="' + r1(h) + '" rx="1" fill="var(--muted)" fill-opacity=".45"' + tip(x.o.p, [gx('relHist', { n: num(hb[v]), v: num(+v) })]) + '/>'; });
+        g += '<line x1="' + r1(X(x.l)) + '" x2="' + r1(X(x.u)) + '" y1="' + (y + 12) + '" y2="' + (y + 12) + '" stroke="' + c + '" stroke-width="3"/>';
+      }
+      if (V !== 'E') x.ac.forEach(function (a, j) { var out3 = V === 'B' && a[1] > hi3, out2 = V === 'B' && !out3 && (a[1] > hi2 || a[1] < lo2);
+        g += '<circle cx="' + r1(X(a[1])) + '" cy="' + r1(ys[j]) + '" r="2.8" fill="' + (out3 ? 'var(--up)' : out2 ? 'var(--surface)' : 'var(--muted)') + '"' + (out2 ? ' stroke="var(--up)" stroke-width="1.3"' : ' fill-opacity=".6"') + tip('MSN ' + a[0] + ' · ' + x.o.p, [gx('ncCount', { n: num(a[1]) })]) + '/>'; });
+      if (V === 'A' || V === 'C' || V === 'B') g += tick(X(x.l), y, 4, c) + tick(X(x.u), y, 4, c);
+      g += '<circle cx="' + r1(X(x.r)) + '" cy="' + (V === 'E' ? y + 12 : y) + '" r="5.5" fill="' + c + '" stroke="var(--surface)" stroke-width="1.5"' + ppk('pprod', x.o.p) + tip(x.o.p, [gx('perEq', { v: f2(x.r) }), gx('ciTip', { a: f2(x.l), b: f2(x.u) }), gx('relAcN', { n: num(x.v.length) })]) + '/>' +
+        tx(lab + pw + 10, y + 4, f2(x.r), 'ink b') + tx(lab + pw + 46, y + 4, gx('relAcN', { n: num(x.v.length) }), 'mu', null, ' style="font-size:11px"');
+    });
+    var nav = G.length > 1 ? '<div class="relnav"><button type="button" class="cxb" data-relpg="-1" aria-label="' + esc(gx('relPrev')) + '">◀</button><b>' + esc(grp.name) + '</b><span class="mu">' + (RELPG + 1) + ' / ' + G.length + '</span><button type="button" class="cxb" data-relpg="1" aria-label="' + esc(gx('relNext')) + '">▶</button></div>' : '';
+    var hb2 = V2BAND[k] && V2BAND[k].querySelector('.sub'); if (hb2) hb2.textContent = gx('relSub' + V);
+    gSet(k, nav + svg(W0, H, g, gT(k)), '');
+  }
   // 64. rate with its 95% interval (Byar), log scale
   function g64(k) {
-    var pv = window.FTO2_PREVIEW && window.FTO2_PREVIEW.rel; if (pv === 2) { g64c(k); return; } if (pv) { g64b(k); return; }
+    var pv = window.FTO2_PREVIEW && window.FTO2_PREVIEW.rel; if (typeof pv === 'string') { g64v(k, pv); return; } if (pv === 2) { g64c(k); return; } if (pv) { g64b(k); return; }
     var W0 = gWd(k), os = pOk().filter(function (o) { return o.NC > 0; }).map(function (o) {
       var n = o.NC, l = n * Math.pow(1 - 1 / (9 * n) - 1.96 / (3 * Math.sqrt(n)), 3), u = (n + 1) * Math.pow(1 - 1 / (9 * (n + 1)) + 1.96 / (3 * Math.sqrt(n + 1)), 3);
       return { o: o, r: n / o.EQ, l: Math.max(l, 0.01) / o.EQ, u: u / o.EQ }; }).sort(function (a, b) { return b.r - a.r; });
@@ -4404,6 +4475,7 @@ window.DASH = {"defects":[["216055047",1,"2026-01-06","2026-W02","A350","",0,0,0
     var cq = v2Grid(V2L.cnq.more); cq.classList.add('v2cq'); document.getElementById('p-cnq').insertBefore(cq, document.getElementById('cgxBox'));
     var cgb = document.getElementById('cgxBox'), cgx = v2Wire(document.getElementById('cgx')); cgb.hidden = false;
     V2L.cnq.fold.forEach(function (k) { var b = v2Band(k); if (b) cgx.appendChild(b); });
+    var wo = document.getElementById('cWo'); if (wo) cgx.appendChild(wo.closest('.card'));   // how the rework is costed: in the other cost charts (Mohammad, 30 Oct)
     cgb.addEventListener('toggle', function () { if (cgb.open) v2Render(); });
     applyText();
   }
