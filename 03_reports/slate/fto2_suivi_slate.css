@@ -52,6 +52,8 @@
 .fto2 .al-sub { grid-column: 2; font-size: 12px; color: var(--muted); }
 .fto2 .al-dot { grid-row: 1; width: 10px; height: 10px; border-radius: 50%; margin-top: 4px; box-sizing: border-box; border: 2px solid var(--ink-2); }
 .fto2 .al-dot.maj { background: var(--up); border-color: var(--up); }
+.fto2 .al-ops { display: flex; flex-direction: column; gap: 6px; align-items: flex-end; }
+.fto2 .al-sp { display: block; }
 .fto2 .al-vu { font: inherit; font-size: 12px; padding: 3px 9px; border: 1px solid var(--ring); border-radius: 999px; background: var(--surface); color: var(--ink-2); cursor: pointer; white-space: nowrap; }
 .fto2 .al-pop .mu { margin: 8px 0 2px; font-size: 12.5px; color: var(--muted); }
 .fto2 .al-seen summary { cursor: pointer; font-size: 12.5px; color: var(--muted); padding: 8px 0 2px; }

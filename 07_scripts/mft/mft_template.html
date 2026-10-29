@@ -247,7 +247,7 @@ var D = /*@@DATA@@*/null;
   var DIC = D.dic, NCS = D.ncs, DEFS = D.defs, CODES = D.codes || {};
   var CATS = ['MEO Facteur humain', 'Erreur Branchement', 'Élément Manquant', 'Élément Endommagé', 'Déverrouillage', 'Grounding/Bonding'];
   var CATC = { 'MEO Facteur humain': 'var(--c1)', 'Erreur Branchement': 'var(--c2)', 'Élément Manquant': 'var(--c3)', 'Élément Endommagé': 'var(--c4)', 'Déverrouillage': 'var(--c5)', 'Grounding/Bonding': 'var(--c6)' };
-  var LEVELS = { cat: 'Catégorie', rca: 'Cause', sub: 'Sous-catégorie', code: 'Sous-code', fin: 'FIN', where: 'Lieu de détection', station: 'Poste' };
+  var LEVELS = { cat: 'Catégorie', rca: 'Cause', sub: 'Sous-catégorie', code: 'Sous-code', fin: 'FIN', where: 'Lieu de détection', station: 'Poste', msn: 'MSN' };
   var WHERE_FR = { 'Final inspection': 'Contrôle final', 'TEST': 'Test', 'Cables': 'Câbles', 'In-process (internal)': 'En cours de fabrication', 'Supplier': 'Fournisseur', 'QUALITE': 'Qualité', 'Customer return': 'Retour client', 'NC Interne': 'NC interne' };
   var STATUSES = ['À lancer', 'En cours', 'Clos', 'Abandonnée'];
   function catCol(c) { return CATC[c] || 'var(--dim)'; }
@@ -669,33 +669,49 @@ var D = /*@@DATA@@*/null;
 
   // ---------------------------------------------------------------- the bell: what to look at. The dashboard's alarm rule, copied in
   // by build_mft.py, for the production type chosen, as of the week shown (its finished week); the line picker chooses whose
-  // alarms are listed. Seen marks: the page's store, collection 'alarmes' (the dashboard keeps its own).
+  // alarms are listed; five lines at most. Seen marks: the page's store, collection 'alarmes' (the dashboard keeps its own).
   /*@@ALARMS@@*/
-  var AL = { open: false, marks: {}, res: null, sigK: '', first: 0, last: -1 };
+  var AL = { open: false, more: false, marks: {}, res: null, sigK: '', first: 0, last: -1 };
   function alCompute() {
     var V = D.vol; if (!V) return null;
     var wi = S.week; if (PARTIAL && wi === NW - 1) wi--;
-    var wk = WEEKS[wi] || '', last = wk.slice(0, 4) === '2026' ? +wk.slice(6) - 1 : -1, key = S.ph + '|' + last;
+    var wk = WEEKS[wi] || '', last = wk.slice(0, 4) === '2026' ? +wk.slice(6) - 1 : -1, key = [S.ph, last, ACTIONS.length, ACTIONS.map(function (a) { return a.id + a.status + a.actionStart; }).join()].join('|');
     if (key === AL.sigK) return AL.res;
-    var items = {}, cnt = { rca: {}, code: {} }, w0 = 53, z = function () { var a = []; for (var i = 0; i < 53; i++) a.push(0); return a; };
-    function it(line, lv, v, hist) { var k = line + '|' + lv + '|' + v; return items[k] || (items[k] = { key: k, line: line, lv: lv, v: v, w: z(), e: V[line], n: [], hist: !!hist }); }
-    function add(o, i, id) { o.w[i]++; (o.n[i] || (o.n[i] = [])).push(id); if (i < w0) w0 = i; }
+    var items = {}, planes = {}, cnt = { rca: {}, code: {} }, w0 = 53, z = function () { var a = []; for (var i = 0; i < 53; i++) a.push(0); return a; }, ME = D.msnEnd || {};
+    function it(line, lv, v, hist) { var k = line + '|' + lv + '|' + v; return items[k] || (items[k] = { key: k, line: line, lv: lv, v: v, w: z(), e: V[line], n: [], d: [], hist: !!hist }); }
+    function add(o, i, id, dk) { o.w[i]++; (o.n[i] || (o.n[i] = [])).push(id); if (dk != null) (o.d[i] || (o.d[i] = [])).push(dk); if (i < w0) w0 = i; }
     function tally(m, k, v) { var q = m[k] || (m[k] = {}); q[v] = (q[v] || 0) + 1; }
-    DEFS.forEach(function (d) {
-      var n = NCS[d[0]]; if (S.ph && DIC.phase[n[3]] !== S.ph) return;
+    var inPh = function (n) { return !S.ph || DIC.phase[n[3]] === S.ph; };
+    DEFS.forEach(function (d, j) {
+      var n = NCS[d[0]]; if (!inPh(n)) return;
       var l = DIC.line[n[2]], i = ALARM.week(n[1]); if (!V[l] || i < 0) return;
       var c = fld(d, 'cat'), ca = fld(d, 'rca'), co = fld(d, 'code'), st = fld(d, 'station'), wh = fld(d, 'where');
-      add(it(l, 'all', ''), i, n[0]);
-      if (c) add(it(l, 'cat', c), i, n[0]);
-      if (ca) { add(it(l, 'rca', ca), i, n[0]); tally(cnt.rca, l + '|' + ca, c); }
-      if (co) { add(it(l, 'code', co), i, n[0]); tally(cnt.code, l + '|' + co, ca); }
-      if (st) add(it(l, 'station', st, true), i, n[0]);
-      if (wh) add(it(l, 'where', wh, true), i, n[0]);
+      add(it(l, 'all', ''), i, n[0], j);
+      if (c) add(it(l, 'cat', c), i, n[0], j);
+      if (ca) { add(it(l, 'rca', ca), i, n[0], j); tally(cnt.rca, l + '|' + ca, c); }
+      if (co) { add(it(l, 'code', co), i, n[0], j); tally(cnt.code, l + '|' + co, ca); }
+      if (st) add(it(l, 'station', st, true), i, n[0], j);
+      if (wh) add(it(l, 'where', wh, true), i, n[0], j);
+    });
+    NCS.forEach(function (n) {   // aircraft: NCs per aircraft and product
+      if (!inPh(n)) return;
+      var l = DIC.line[n[2]], m = DIC.msn[n[4]] || '', p = DIC.prod ? DIC.prod[n[7]] : '', i = ALARM.week(n[1]), end = ME[l + '|' + String(m).replace(/^0+/, '')];
+      if (!p || !m || i < 0 || end == null) return;
+      var k = l + '|' + m + '|' + p, o = planes[k], ew = ALARM.week(end);
+      if (!o) o = planes[k] = { key: k, line: l, msn: m, prod: p, w: z(), n: [], end: ew < 0 ? 99 : ew };
+      o.w[i]++; (o.n[i] || (o.n[i] = [])).push(n[0]);
+    });
+    // the actions in progress: the NCs of their problem, to say that one already covers an alarm
+    var acts = ACTIONS.filter(function (a) { return a.actionStart && a.status !== 'Clos' && a.status !== 'Abandonnée'; }).map(function (a) {
+      var pred = problemPred(a.problem), o = { line: a.line, title: a.title || a.category, start: ALARM.week(a.actionStart), defs: {} };
+      if (pred) DEFS.forEach(function (d, j) { var n = NCS[d[0]]; if (DIC.line[n[2]] === a.line && inPh(n) && pred(d)) o.defs[j] = 1; });
+      return o;
     });
     var dom = function (m) { m = m || {}; return Object.keys(m).sort(function (a, b) { return m[b] - m[a]; })[0] || ''; };
     AL.first = w0 + ALARM.P.recent + ALARM.P.base - 1; AL.last = last; AL.sigK = key;
     AL.res = last < AL.first ? [] : ALARM.run(Object.keys(items).map(function (x) { return items[x]; }), AL.first, last, function (a) {
-      return a.lv === 'cat' ? a.line + '|all|' : a.lv === 'rca' ? a.line + '|cat|' + dom(cnt.rca[a.line + '|' + a.v]) : a.lv === 'code' ? a.line + '|rca|' + dom(cnt.code[a.line + '|' + a.v]) : ''; });
+      return a.lv === 'cat' ? a.line + '|all|' : a.lv === 'rca' ? a.line + '|cat|' + dom(cnt.rca[a.line + '|' + a.v]) : a.lv === 'code' ? a.line + '|rca|' + dom(cnt.code[a.line + '|' + a.v]) : ''; },
+      Object.keys(planes).map(function (x) { return planes[x]; }), acts);
     return AL.res;
   }
   function alName(a) {
@@ -703,34 +719,45 @@ var D = /*@@DATA@@*/null;
       a.lv === 'where' ? (WHERE_FR[v] || v) : a.lv === 'station' ? 'poste ' + v : v;
     return s + (a.child ? ' (' + a.child + ')' : '');
   }
+  function alText(g) {
+    var a = g.head, s = 'S' + (g.since + 1);
+    if (g.kind === 'plane') return 'MSN ' + a.v + ' : ' + a.n + ' NC, un ' + a.prod + ' en a ' + a.med + ' d’habitude';
+    return alName(a) + (g.kind === 'cross' ? ' en hausse sur plusieurs lignes depuis ' : g.kind === 'creep' ? ' en hausse lente depuis ' : ' en hausse depuis ') + s;
+  }
   function alRender() {
     var btn = $('alBtn'), pop = $('alPop'); if (!btn) return;
     var res = alCompute(); btn.hidden = !res; if (!res) { pop.hidden = true; return; }
-    var mine = res.filter(function (g) { return S.line === 'all' || g.line === S.line; }), other = res.length - mine.length;
+    var mine = res.filter(function (g) { return S.line === 'all' || g.line.split(' + ').indexOf(S.line) >= 0; }), other = res.length - mine.length;
     var show = mine.filter(function (g) { return !ALARM.seen(g, AL.marks[g.key]); }), hid = mine.filter(function (g) { return ALARM.seen(g, AL.marks[g.key]); });
     btn.classList.toggle('maj', show.some(function (g) { return g.lvl === 2; })); $('alN').hidden = !show.length; $('alN').textContent = show.length;
     btn.setAttribute('aria-expanded', String(AL.open)); btn.title = 'Alarmes' + (show.length ? ' · ' + show.length : '');
     pop.hidden = !AL.open; if (!AL.open) return;
-    var wr = $('alWrap').getBoundingClientRect(), PW = document.documentElement.clientWidth, pw = Math.min(440, PW - 32), px = Math.max(16, Math.min(wr.right - pw, PW - pw - 16));
+    var wr = $('alWrap').getBoundingClientRect(), PW = document.documentElement.clientWidth, pw = Math.min(460, PW - 32), px = Math.max(16, Math.min(wr.right - pw, PW - pw - 16));
     pop.style.width = pw + 'px'; pop.style.left = Math.round(px - wr.left) + 'px'; pop.style.right = 'auto';
     var can = !!DB && CANW !== false, row = function (g, isSeen) {
       var a = g.head, sub = [], also = g.also.filter(function (x) { return x.lv !== 'prod'; });
       if (a.kids) sub.push('dont ' + a.kids.map(function (v) { return alName({ lv: a.lv === 'all' ? 'cat' : a.lv === 'cat' ? 'rca' : 'code', v: v }); }).join(', '));
       if (also.length) sub.push('aussi : ' + also.map(alName).join(', '));
+      if (g.act) sub.push('action en cours : ' + g.act.title);
+      var lvNew = g.kind === 'plane' ? 'msn' : a.lv;
       return '<div class="al-row"><button type="button" class="al-go" data-algo="' + esc(g.key) + '"><i class="al-dot ' + (g.lvl === 2 ? 'maj' : 'min') + '" title="' + (g.lvl === 2 ? 'Majeure' : 'Mineure') + '"></i>' +
-        '<span class="al-what"><b>' + esc(g.line) + '</b> · ' + esc(alName(a) + ' en hausse depuis S' + (g.since + 1)) + '</span>' + (sub.length ? '<span class="al-sub">' + esc(sub.join(' · ')) + '</span>' : '') +
-        '<span class="al-sub">→ Pareto de la semaine</span></button><span class="al-ops">' + (can && a.lv !== 'all' && !isSeen ? plusBtn(a.lv, a.v) : '') +
+        '<span class="al-what"><b>' + esc(g.line) + '</b> · ' + esc(alText(g)) + '</span>' + (sub.length ? '<span class="al-sub">' + esc(sub.join(' · ')) + '</span>' : '') +
+        '<span class="al-sub">→ Pareto de la semaine</span></button><span class="al-ops">' + ALARM.spark(g, AL.last, g.lvl === 2 ? 'var(--up)' : 'var(--ink-2)') +
+        (can && lvNew !== 'all' && g.kind !== 'cross' && !g.act && !isSeen ? plusBtn(lvNew, a.v) : '') +
         (can ? '<button type="button" class="al-vu" data-al' + (isSeen ? 'un' : 'vu') + '="' + esc(g.key) + '">' + (isSeen ? 'Remettre' : 'Vu') + '</button>' : '') + '</span></div>';
     };
+    var top = show.slice(0, ALARM.P.show), rest = show.slice(ALARM.P.show);
     pop.innerHTML = '<div class="al-head"><h3 id="alT">À regarder · S' + (AL.last + 1) + '</h3><button type="button" class="al-x" id="alX" aria-label="Fermer">✕</button></div>' +
-      (AL.last < AL.first ? '<p class="mu">Pas encore assez de semaines pour comparer.</p>' : show.length ? show.map(function (g) { return row(g, false); }).join('') : '<p class="mu">Rien à signaler.</p>') +
+      (AL.last < AL.first ? '<p class="mu">Pas encore assez de semaines pour comparer.</p>' : top.length ? top.map(function (g) { return row(g, false); }).join('') : '<p class="mu">Rien à signaler.</p>') +
+      (rest.length ? '<details class="al-seen" id="alMore"' + (AL.more ? ' open' : '') + '><summary>' + rest.length + ' autre' + (rest.length > 1 ? 's' : '') + '</summary>' + rest.map(function (g) { return row(g, false); }).join('') + '</details>' : '') +
       (other ? '<p class="mu">+' + other + ' sur les autres lignes</p>' : '') +
       (hid.length ? '<details class="al-seen"><summary>Vues (' + hid.length + ')</summary>' + hid.map(function (g) { return row(g, true); }).join('') + '</details>' : '');
+    var mo = $('alMore'); if (mo) mo.addEventListener('toggle', function () { AL.more = mo.open; });
   }
   function alGo(key) {
     var g = (AL.res || []).filter(function (x) { return x.key === key; })[0]; if (!g) return;
     var a = g.head; AL.open = false;
-    S.line = g.line; S.sel = a.lv === 'all' ? null : { k: a.lv, v: a.v }; S.tab = 'pareto'; S.lim = 40; remember();
+    S.line = g.kind === 'cross' ? 'all' : g.line; S.sel = g.kind === 'plane' ? { k: 'msn', v: a.v } : a.lv === 'all' ? null : { k: a.lv, v: a.v }; S.tab = 'pareto'; S.lim = 40; remember();
     try { history.replaceState(null, '', '#pareto'); } catch (x) { }
     renderAll();
   }

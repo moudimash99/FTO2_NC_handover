@@ -58,7 +58,8 @@ def data():
     n = pd.read_csv(os.path.join(ROOT, "05_outputs", "fto2_dash_nc.csv"), dtype=str, keep_default_na=False, encoding="utf-8-sig")
     d = pd.read_csv(os.path.join(ROOT, "05_outputs", "fto2_dash_defects.csv"), dtype=str, keep_default_na=False, encoding="utf-8-sig")
     n = n[n.plant.str.strip().str.upper().isin(["FTO2", "FT02"]) & (n.created >= "2026-01-01")].sort_values("created")
-    dic = {k: [] for k in ("line", "phase", "msn", "station", "where", "cat", "rca", "sub", "code", "fin")}
+    dic = {k: [] for k in ("line", "phase", "msn", "station", "where", "cat", "rca", "sub", "code", "fin", "prod")}
+    plan_prod = plan_products()
     idx = {k: {} for k in dic}
 
     def code(k, v):
@@ -70,9 +71,9 @@ def data():
 
     ncs, pos = [], {}
     for r in n.itertuples():
-        pos[r.nc] = len(ncs)   # [nc, date, line, phase, msn, station, where found]
+        pos[r.nc] = len(ncs)   # [nc, date, line, phase, msn, station, where found, plan product]
         ncs.append([r.nc, r.created[:10], code("line", r.line or "—"), code("phase", r.phase), code("msn", r.msn), code("station", r.station),
-                    code("where", r.where_found)])
+                    code("where", r.where_found), code("prod", plan_prod(r.line, r.product, r.station))])
     defs = []
     for r in d.itertuples():
         i = pos.get(r.nc)
@@ -82,7 +83,28 @@ def data():
     fr = pd.read_csv(os.path.join(ROOT, "04_reference", "souscodes_fr.csv"), encoding="utf-8-sig").set_index("sous_code").description_fr.to_dict()
     to = n.created.max()[:10]
     return {"to": to, "toWeek": week(to), "ncs": ncs, "defs": defs, "dic": dic,
-            "codes": {c: tidy(fr.get(c, ""), 90) for c in dic["code"] if c}, "vol": weekly_volume()}
+            "codes": {c: tidy(fr.get(c, ""), 90) for c in dic["code"] if c}, "vol": weekly_volume(), "msnEnd": msn_end()}
+
+
+def plan_products():
+    """The production plan's product of an NC, as the dashboard reads it: the product alias rules, then the plan's names
+    (04_reference/produits_alias.csv, eqmsn_produits.csv); '' when it is not in the plan. For the alarm on aircraft."""
+    import sys
+    sys.path.insert(0, os.path.join(ROOT, "build"))
+    import build_all as B
+    ref = pd.read_csv(os.path.join(ROOT, "04_reference", "eqmsn_produits.csv"), encoding="utf-8")
+    plan = {str(a).upper(): B.EQ_NAMES.get(b, b) for a, b in zip(ref.produit_nc, ref.produit_eqmsn)}
+    rules = B.product_alias_rules()
+    return lambda line, prod, station: plan.get(B.alias_product(rules, set(plan), line, prod or "Other", station).upper(), "")
+
+
+def msn_end():
+    """When each aircraft's build ends (production table, as the dashboard): {line|msn: date}."""
+    import sys
+    sys.path.insert(0, os.path.join(ROOT, "build"))
+    import build_all as B
+    asof, pm = B.production_msn()
+    return {k: v[1] for k, v in (pm or {}).items()}
 
 
 def weekly_volume():
