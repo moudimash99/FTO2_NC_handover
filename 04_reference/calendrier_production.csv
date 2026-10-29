@@ -1,0 +1,6 @@
+debut,fin,poids,motif
+2025-12-24,2026-01-02,0,fermeture de fin d'année (aucune NC)
+2026-05-15,2026-05-15,0,pont de l'Ascension (aucune NC)
+2026-07-13,2026-07-24,0.5,semaines de congés avant la fermeture (NC divisées par deux)
+2026-07-27,2026-08-07,0,fermeture d'été (aucune NC)
+2026-08-10,2026-08-14,0.5,semaine de reprise (NC divisées par deux)

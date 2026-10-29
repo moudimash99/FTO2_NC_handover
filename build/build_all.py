@@ -376,8 +376,9 @@ EQ_NAMES = {"MIP": "MIP A350", "MIP(2)": "MIP A400M"}   # the production file's 
 
 def eqmsn(nc):
     """Production volume for the Production tab: EqMSN per product and month of 2026 (06_input_data/EqMSN_2026.xlsx, both the
-    Standard and the Adjusted sheet), the NC product labels it matches (04_reference/eqmsn_produits.csv) and each product's line,
-    taken from the NCs. None if the file is missing."""
+    Standard and the Adjusted sheet; "wd": the same counted on working days, see working_day_volume, the page's default), the NC
+    product labels it matches (04_reference/eqmsn_produits.csv) and each product's line, taken from the NCs. None if the file is
+    missing."""
     path = os.path.join(ROOT, "06_input_data", "EqMSN_2026.xlsx")
     if not os.path.exists(path):
         return None
@@ -409,7 +410,11 @@ def eqmsn(nc):
     out["line"] = {p: (max(lines[p], key=lines[p].get) if p in lines else "") for p in out["std"]}
     out["alias"] = product_alias_rules()
     out["msnAsof"], out["msn"] = production_msn()
+    asof, recs = _production_export()
+    if asof:
+        out["wd"] = working_day_volume(asof, recs)   # the page's default volume (Mohammad, 30 Oct)
     REPORT["eqmsn"] = {"products": len(out["std"]), "total_std": round(sum(sum(v) for v in out["std"].values()), 2),
+                       "total_wd": round(sum(sum(v) for v in out.get("wd", {}).values()), 2),
                        "msn_dates": len(out["msn"] or {}), "msn_asof": out["msnAsof"]}
     return out
 
@@ -436,18 +441,14 @@ def alias_product(rules, plan, line, prod, station):
     return prod
 
 
-def production_msn():
-    """Each aircraft's build dates from the 'Tableau Avances / Retards' export (06_input_data/Avances_Retards_*.csv, newest file):
-    four rows per MSN and product (planned start of each milestone, reason, real date, advance / delay). Per line|MSN:
-    [start, end, products] where start = the first real milestone date (else the planned Impression date) and end = the real OTA
-    (else the planned OTA), the earliest start and latest end over the aircraft's products. A real date after the export or more
-    than 200 days from its plan is a typo and is ignored. Checked against the export's own 'en cours' flag on 07/10/2026: 130 of
-    its 134 MSN in progress are in progress by this rule, and 7 more. The page hatches an aircraft built between start and end
-    at the last NC date. Returns (export date, {line|msn: [start, end, products]}), or (None, None) without the file."""
+def _production_export():
+    """The newest 'Tableau Avances / Retards' export (06_input_data/Avances_Retards_*.csv): its date and one record per MSN and
+    product, {line, prod, msn, plan, real} with the 8 milestone dates (Impression, Enclenchement, SE, MECA, INTE, TEST, QUALITE,
+    Départ OTA) of the 'date prévue du début' and 'date réelle' rows. (None, []) without the file."""
     import csv, datetime as dt
     files = sorted(glob.glob(os.path.join(ROOT, "06_input_data", "Avances_Retards_*.csv")))
     if not files:
-        return None, None
+        return None, []
     asof = dt.date.fromisoformat(os.path.basename(files[-1])[len("Avances_Retards_"):-4])
     rows = list(csv.reader(open(files[-1], encoding="utf-8")))
     h = next(i for i, r in enumerate(rows) if r[:3] == ["S/HS", "Prog", "Produit"])
@@ -466,6 +467,20 @@ def production_msn():
             recs.append(cur)
         elif r[14] == "date réelle" and cur:
             cur["real"] = [day(x) for x in r[5:13]]
+    return asof, recs
+
+
+def production_msn():
+    """Each aircraft's build dates from the 'Tableau Avances / Retards' export (06_input_data/Avances_Retards_*.csv, newest file):
+    four rows per MSN and product (planned start of each milestone, reason, real date, advance / delay). Per line|MSN:
+    [start, end, products] where start = the first real milestone date (else the planned Impression date) and end = the real OTA
+    (else the planned OTA), the earliest start and latest end over the aircraft's products. A real date after the export or more
+    than 200 days from its plan is a typo and is ignored. Checked against the export's own 'en cours' flag on 07/10/2026: 130 of
+    its 134 MSN in progress are in progress by this rule, and 7 more. The page hatches an aircraft built between start and end
+    at the last NC date. Returns (export date, {line|msn: [start, end, products]}), or (None, None) without the file."""
+    asof, recs = _production_export()
+    if not asof:
+        return None, None
     out = {}
     for c in recs:
         real = [x if x and x <= asof and not (p and abs((x - p).days) > 200) else None for x, p in zip(c["real"], c["plan"])]
@@ -477,6 +492,73 @@ def production_msn():
         out[k] = [min(o[0], s.isoformat()), max(o[1], e.isoformat()), o[2] + [c["prod"]]] if o else [s.isoformat(), e.isoformat(), [c["prod"]]]
     return asof.isoformat(), out
 
+
+def _french_holidays(year):
+    """French public holidays of a year: the fixed ones and Easter Monday, Ascension and Whit Monday."""
+    import datetime as dt
+    a, (b, c) = year % 19, divmod(year, 100)
+    d, e = divmod(b, 4)
+    g = (b - (b + 8) // 25 + 1) // 3
+    h = (19 * a + b - d - g + 15) % 30
+    i, k = divmod(c, 4)
+    l = (32 + 2 * e + 2 * i - h - k) % 7
+    m = (a + 11 * h + 22 * l) // 451
+    easter = dt.date(year, (h + l - 7 * m + 114) // 31, (h + l - 7 * m + 114) % 31 + 1)
+    return {dt.date(year, mo, da) for mo, da in ((1, 1), (5, 1), (5, 8), (7, 14), (8, 15), (11, 1), (11, 11), (12, 25))} | \
+           {easter + dt.timedelta(n) for n in (1, 39, 50)}
+
+
+def working_day_volume(asof, recs):
+    """EqMSN per product and month of 2026 counted on the days the plant works. Same MSNs and dates as the EqMSN sheet (each MSN
+    = 1.0 from its Impression date to its OTA, the real date else the planned one, the sheet script's date corrections: a real
+    date after the export or more than 200 days from its plan is taken with the plan's year when that lands within 30 days of
+    the plan, else the plan is used; the span reaches a real milestone entered after the OTA; a second block of the same MSN is
+    dropped), but spread over Monday to Friday minus French public holidays, with the closures and quiet weeks of
+    04_reference/calendrier_production.csv at their weight (0 or 0.5). July and August 2026 come to about 58 % of a normal month
+    for the MIP A350, as its NCs do (Mohammad, 29 Oct); the sheet spreads over every calendar day (83 %). {product: 12 months}."""
+    import datetime as dt
+    cal = pd.read_csv(os.path.join(ROOT, "04_reference", "calendrier_production.csv"), encoding="utf-8")
+    cal = [(dt.date.fromisoformat(a), dt.date.fromisoformat(b), float(w)) for a, b, w in zip(cal.debut, cal.fin, cal.poids)]
+    hol = set().union(*(_french_holidays(y) for y in range(asof.year - 2, asof.year + 3)))
+
+    def weight(d):
+        if d.weekday() >= 5 or d in hol:
+            return 0
+        return next((w for a, b, w in cal if a <= d <= b), 1)
+
+    def fix(x, p):
+        if not x:
+            return None
+        if x <= asof and (not p or abs((x - p).days) <= 200):
+            return x
+        try:
+            y = x.replace(year=p.year) if p else None
+        except ValueError:
+            y = None
+        return y if y and y <= asof and abs((y - p).days) <= 30 else None
+    out, seen = {}, set()
+    for c in recs:
+        if (c["prod"], c["msn"]) in seen:
+            continue
+        seen.add((c["prod"], c["msn"]))
+        real = [fix(x, p) for x, p in zip(c["real"], c["plan"])]
+        known = [x for x in real + c["plan"] if x]
+        if not known:
+            continue
+        s = real[0] or c["plan"][0] or min(known)
+        e = max([real[7] or c["plan"][7] or max(known)] + [x for x in real if x])
+        if e < s:
+            continue
+        days = [s + dt.timedelta(n) for n in range((e - s).days + 1)]
+        w = [weight(d) for d in days]
+        tot = sum(w) or 1
+        if not sum(w):
+            w[-1] = 1
+        m = out.setdefault(c["prod"], [0.0] * 12)
+        for d, x in zip(days, w):
+            if d.year == 2026 and x:
+                m[d.month - 1] += x / tot
+    return {p: [round(v, 2) for v in m] for p, m in out.items()}
 
 def cnq_explain(d):
     """The CNQ parameters the "explain the calculation" part shows: times and rates, which steps each decision charges,

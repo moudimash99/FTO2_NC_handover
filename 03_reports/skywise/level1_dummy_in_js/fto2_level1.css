@@ -602,7 +602,7 @@
 .fto2 #p-ov[data-lay] .v2ov > .card > .custom, .fto2 #p-where .v2mag .v2-band > .custom { grid-column: 1; grid-row: auto; }
 .fto2 #p-ov[data-lay] .v2ov .bhead h3, .fto2 #p-where .v2mag .bhead h3 { font-size: clamp(20px, 2vw, 24px); }
 .fto2 #p-where .v2mag { display: grid; grid-template-columns: minmax(0, 210px) repeat(2, minmax(0, 1fr)); gap: 20px; align-items: stretch; margin: 4px 0 28px;
-  grid-template-areas: "c1 rate rate" "c1 month month" "c1 ci prod" "c1 cause cause" "c2 msn msn" "c2 fin fin" "c3 station station"; }
+  grid-template-areas: "c1 rate rate" "c1 month month" "c1 prod prod" "c1 cause cause" "c2 msn msn" "c2 fin fin" "c3 station station"; }
 .fto2 #p-where .v2mag .v2-band { align-content: start; min-width: 0; scroll-margin-top: calc(var(--tabs-h) + 18px); }
 .fto2 #p-where .v2mag > [data-v2="VP"] { grid-area: rate; }
 .fto2 #p-where .v2mag > [data-v2="61"] { grid-area: month; }
