@@ -55,6 +55,8 @@
     <button type="button" role="tab" id="tab-hebdo" aria-controls="p-hebdo" data-tab="hebdo" data-t="tabWeek"></button>
     <button type="button" role="tab" id="tab-mft" aria-controls="p-mft" data-tab="mft" data-t="tabMft"></button>
     <button type="button" role="tab" id="tab-rev" aria-controls="p-rev" data-tab="rev" data-t="tabRev"></button>
+    <button type="button" role="tab" id="tab-syn" aria-controls="p-syn" data-tab="syn" data-t="tabSyn"></button>
+    <button type="button" role="tab" id="tab-det" aria-controls="p-det" data-tab="det" data-t="tabDet"></button>
   </div>
 
   <!-- 1. Overview: headline figures and every chart counted in NCs -->
@@ -332,6 +334,20 @@
     <textarea class="rv-copybox" id="rvCopyBox" readonly hidden></textarea>
     <div id="rvBody"></div>
   </div>
+
+  <!-- Views page (PAGE 'vues'): Synthèse, the whole plant over the year; Détail, one line over one month. The charts are this dashboard's -->
+  <div class="panel vu" role="tabpanel" id="p-syn" aria-labelledby="tab-syn" hidden>
+    <div class="figs" id="vuSF"></div>
+    <div class="vu-grid" id="vuSynGrid"></div>
+    <div id="vuSynCalc" hidden></div>
+  </div>
+  <div class="panel vu" role="tabpanel" id="p-det" aria-labelledby="tab-det" hidden>
+    <div class="figs" id="vuDF"></div>
+    <div class="vu-par" id="vuPar"></div>
+    <div class="vu-grid" id="vuDetGrid"></div>
+  </div>
+  <div class="vu-ov" id="vuOv" hidden><div class="vu-scrim" id="vuScrim"></div>
+    <div class="vu-panel" id="vuPanel" role="dialog" aria-modal="true" aria-label=""><div class="vu-top"><button type="button" class="vu-close" id="vuClose" data-t="vuClose"></button></div><div id="vuHold"></div></div></div>
 
   <div id="tip" role="tooltip" hidden></div>
   <footer><p id="foot1"></p><p data-t="foot2"></p><p id="foot3"></p><p data-t="foot4"></p><p data-t="foot5"></p></footer>

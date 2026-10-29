@@ -835,6 +835,35 @@
 .fto2 .fill, .fto2 .stick { transition: width .15s ease, height .15s ease; }
 .fto2 .switch i::after { transition: left .15s ease; }
 }
+.fto2 .vu-grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 18px; align-items: start; }
+.fto2 .vu-slot { grid-column: span 6; min-width: 0; display: grid; }
+.fto2 .vu-slot:empty { display: none; }
+.fto2 #vuSynGrid .vu-slot[data-slot="VN"] { grid-column: span 8; }
+.fto2 #vuSynGrid .vu-slot[data-slot="VT"] { grid-column: span 4; }
+.fto2 #vuSynGrid .vu-slot[data-slot="a:bump"], .fto2 #vuSynGrid .vu-slot[data-slot="VQ"], .fto2 #vuSynGrid .vu-slot[data-slot="a:bub"] { grid-column: span 4; }
+.fto2 #vuDetGrid .vu-slot[data-slot="a:bump"] { grid-column: span 5; }
+.fto2 #vuDetGrid .vu-slot[data-slot="78"] { grid-column: span 7; }
+.fto2 #vuDetGrid .vu-slot[data-slot="54"] { grid-column: 1 / -1; }
+@media (max-width: 960px) {
+.fto2 .vu-grid .vu-slot { grid-column: 1 / -1 !important; }
+}
+.fto2 .vu .bhead > .kicker, .fto2 .vu .bhead > .sub, .fto2 .vu .v2stats, .fto2 .vu .vhead > .kicker, .fto2 .vu .vhead > .sub { display: none; }
+.fto2 .vu-par .psec > .figs, .fto2 .vu-par .psec > p.sub, .fto2 .vu-par .chips .hint { display: none; }
+.fto2 .vu-par .grid > .card { grid-column: 1 / -1; }
+.fto2 .vu-par .bar.zero { display: none; }
+.fto2 .vu-band .bhead { position: relative; padding-right: 100px; }
+.fto2 .vu-x { position: absolute; top: 0; right: 0; font: inherit; font-size: 12px; font-weight: 700; color: var(--ink-2); background: var(--surface); border: 1px solid var(--ring); border-radius: 14px; padding: 3px 11px; cursor: pointer; }
+.fto2 .vu-x:hover { color: var(--ink); border-color: var(--ink-2); }
+.fto2 .vu-up { color: var(--up); font-weight: 700; }
+.fto2 .vu-down { color: var(--down); font-weight: 700; }
+.fto2 .vu-ov { position: fixed; inset: 0; z-index: 50; overflow-y: auto; display: grid; place-items: start center; padding: max(20px, env(safe-area-inset-top, 0px)) max(14px, env(safe-area-inset-right, 0px)) 24px max(14px, env(safe-area-inset-left, 0px)); }
+.fto2 .vu-scrim { position: fixed; inset: 0; background: rgba(12, 14, 13, .58); backdrop-filter: blur(3px); }
+.fto2 .vu-panel { position: relative; width: min(1200px, 100%); display: grid; gap: 10px; }
+.fto2 .vu-top { display: flex; justify-content: flex-end; }
+.fto2 .vu-close { font: inherit; font-weight: 600; font-size: 13.5px; color: var(--ink); background: var(--surface); border: 1px solid var(--ring); border-radius: 8px; padding: 6px 14px; cursor: pointer; }
+.fto2 .vu-full { transform-origin: 0 0; box-shadow: 0 24px 60px rgba(0, 0, 0, .28); }
+.fto2 .vu-full .vu-x { display: none; }
+.fto2 html.vu-lock { overflow: hidden; }
 .fto2 .fto2-err { background: #fdecea; color: #8a1c12; border: 1px solid #f1b0a8; border-radius: 8px; padding: 10px 14px; font-size: 13px; margin: 12px 20px; }
 .fto2 .fto2-wait { background: #eef4f1; color: #1d6b52; border: 1px solid #b9d5ca; border-radius: 8px; padding: 10px 14px; font-size: 13px; margin: 12px 20px; }
 .fto2 .fto2-wait.warn { background: #fff5e6; color: #7a4a00; border-color: #f0c98a; }

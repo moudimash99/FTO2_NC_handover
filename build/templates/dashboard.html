@@ -7144,7 +7144,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
         if (r) { f.cat = dCat(r); f.rca = dRca(r); if (a.lv === 'code') f.code = a.v; }
       }
       pareto.f = Object.assign({}, f); costPareto.f = Object.assign({}, f); pareto.limit = costPareto.limit = 100;
-      GF.line = a.line; GF.pick = null; pickPrep(); setGF({}); setTab('det');
+      GF.line = g.kind === 'cross' ? '' : g.line; GF.pick = null; pickPrep(); setGF({}); setTab('det');   // an alarm on several lines: all lines
       var el = $v('vuPar'); if (el && el.scrollIntoView) el.scrollIntoView({ block: 'start' });
     };
     document.addEventListener('dblclick', function () { if (RUN.length) skip(); });
