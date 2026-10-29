@@ -436,6 +436,12 @@ var D = {"to":"2026-09-28","toWeek":"2026-W40","ncs":[["216037622","2026-01-05",
   function ckey(c) { return String(c || '').toUpperCase().replace(/[^A-Z0-9]/g, ''); }
   function isGrp(c) { return /^[A-Z]\d{2}$/.test(ckey(c)); }
   function fold(s) { return String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim(); }
+  // a cause is a set of sub-codes (each sub-code has one cause): the whole code when no other cause uses it, so later sub-codes are followed too
+  function causeCodes(v) {
+    var mine = {}, other = {}; DEFS.forEach(function (d) { var c = fld(d, 'code'); if (!c) return; if (fld(d, 'rca') === v) mine[c] = 1; else other[grpOf(c)] = 1; });
+    var out = []; Object.keys(mine).sort().forEach(function (c) { var g = grpOf(c), k = g && !other[g] ? g : c; if (out.indexOf(k) < 0) out.push(k); });
+    return out;
+  }
   function normProb(p) {
     if (!p) return { mode: 'simple', codes: [] };
     if (p.mode === 'simple') return { mode: 'simple', codes: (p.codes || []).slice() };
@@ -673,7 +679,7 @@ var D = {"to":"2026-09-28","toWeek":"2026-W40","ncs":[["216037622","2026-01-05",
     if (t.id === 'newAct') { openForm(null); return; }
     if (a('data-new')) { var p = a('data-new'), i = p.indexOf('|'), lv = p.slice(0, i), val = p.slice(i + 1);
       if (!DB || CANW === false) return;
-      openForm({ line: S.line === 'all' ? '' : S.line, title: shown(lv, val), category: '', problem: { level: lv, values: [val] }, defects: '', rootCause: '', analysisOwner: '', analysisStart: today(), action: '', actionOwner: '', actionStart: '', status: 'À lancer', expected: '', note: '', log: [] }); return; }
+      openForm({ line: S.line === 'all' ? '' : S.line, title: shown(lv, val), category: '', problem: lv === 'code' ? { mode: 'simple', codes: [val] } : lv === 'rca' ? { mode: 'simple', codes: causeCodes(val) } : { level: lv, values: [val] }, defects: '', rootCause: '', analysisOwner: '', analysisStart: today(), action: '', actionOwner: '', actionStart: '', status: 'À lancer', expected: '', note: '', log: [] }); return; }
     if (a('data-cancel')) { $('ov').hidden = true; FORM = null; return; }
     if (FORM && a('data-pm')) { readForm(); var P = FORM.problem, to = a('data-pm'); if (to === P.mode) return;
       if (to === 'expert') { var gs = P.codes.filter(isGrp), cs = P.codes.filter(function (c) { return !isGrp(c); }), rs;   // the codes stay one 'or': one condition
