@@ -159,6 +159,13 @@ svg .ink { fill: var(--ink); } svg .b { font-weight: 600; }
 .frm .f > label { font-size: 12px; font-weight: 600; color: var(--ink-2); }
 .frm .f input, .frm .f select { width: 100%; }
 .prev { font-size: 13px; color: var(--ink-2); }
+.prev ul { margin: 6px 0 0; padding-left: 18px; display: grid; gap: 3px; }
+.rule { display: flex; flex-wrap: wrap; gap: 6px 8px; align-items: center; padding: 8px 10px; border: 1px solid var(--ring); border-radius: 8px; }
+.frm .rule select, .frm .rule input { width: auto; }
+.frm .rule input { flex: 1 1 200px; min-width: 0; }
+.rule .row { flex-basis: 100%; }
+.rules { gap: 8px; }
+.help { font-size: 12.5px; color: var(--ink-2); background: var(--band); border-radius: 8px; padding: 8px 10px; line-height: 1.45; }
 .err { color: var(--up); font-size: 13px; font-weight: 600; }
 @media (prefers-reduced-motion: no-preference) { .bar .tr i { transition: width .15s ease; } }
 </style>
@@ -229,7 +236,9 @@ var D = /*@@DATA@@*/null;
   var WHERE_FR = { 'Final inspection': 'Contrôle final', 'TEST': 'Test', 'Cables': 'Câbles', 'In-process (internal)': 'En cours de fabrication', 'Supplier': 'Fournisseur', 'QUALITE': 'Qualité', 'Customer return': 'Retour client', 'NC Interne': 'NC interne' };
   var STATUSES = ['À lancer', 'En cours', 'Clos', 'Abandonnée'];
   function catCol(c) { return CATC[c] || 'var(--dim)'; }
-  function fld(d, k) { var n = NCS[d[0]]; return k === 'cat' ? DIC.cat[d[1]] : k === 'rca' ? DIC.rca[d[2]] : k === 'sub' ? DIC.sub[d[3]] : k === 'code' ? DIC.code[d[4]] : k === 'fin' ? DIC.fin[d[5]] : k === 'where' ? DIC.where[n[6]] : ''; }
+  function fld(d, k) { var n = NCS[d[0]]; return k === 'cat' ? DIC.cat[d[1]] : k === 'rca' ? DIC.rca[d[2]] : k === 'sub' ? DIC.sub[d[3]] : k === 'code' ? DIC.code[d[4]] : k === 'fin' ? DIC.fin[d[5]] : k === 'where' ? DIC.where[n[6]] :
+    k === 'grp' ? grpOf(DIC.code[d[4]]) : k === 'station' ? DIC.station[n[5]] : k === 'msn' ? DIC.msn[n[4]] : k === 'text' ? d[7] : ''; }
+  function grpOf(c) { var m = /^[A-Z]\d{2}/.exec(c || ''); return m ? m[0] : ''; }   // the code of a sub-code: Q11-003 -> Q11
   function shown(k, v) { return k === 'code' ? (v + (CODES[v] ? ' · ' + CODES[v] : '')) : k === 'where' ? (WHERE_FR[v] || v) : v; }
   // the category a value belongs to (most frequent), for its colour
   var VCAT = { rca: {}, sub: {}, code: {}, fin: {} };
@@ -395,8 +404,42 @@ var D = /*@@DATA@@*/null;
 
   // ---------------------------------------------------------------- tab 3: actions
   var ACTIONS = [], DB = null, USER = null, UID = null, CANW = null, NAMES = {}, CONF = null, BUSY = false, OPEN = {};   // OPEN: cards whose details are unfolded
-  function problemPred(p) { if (!p || !p.level || !p.values || !p.values.length) return null; var set = {}; p.values.forEach(function (v) { set[v] = 1; }); return function (d) { return !!set[fld(d, p.level)]; }; }
-  function problemText(p) { return p && p.level && p.values && p.values.length ? LEVELS[p.level] + ' : ' + p.values.map(function (v) { return shown(p.level, v); }).join(', ') : 'Problème à préciser'; }
+  // the problem an action follows (29 Oct, Mohammad): simple = codes or sub-codes (Q11 = every Q11 sub-code; Q11003 or Q11-003 = that
+  // sub-code); expert = conditions on a column, all of them true: is one of the values, contains one of the words, regular expression.
+  // An action saved before ({ level, values }) reads as one 'is' condition (a sub-code level as the simple mode).
+  var FIELDS = { cat: 'Catégorie', rca: 'Cause', sub: 'Sous-catégorie', grp: 'Code', code: 'Sous-code', fin: 'FIN', where: 'Lieu de détection', station: 'Poste', msn: 'MSN', text: 'Texte du défaut' };
+  var OPS = { is: 'est l’une des valeurs', contains: 'contient l’un des mots', regex: 'expression régulière' };
+  function ckey(c) { return String(c || '').toUpperCase().replace(/[^A-Z0-9]/g, ''); }
+  function isGrp(c) { return /^[A-Z]\d{2}$/.test(ckey(c)); }
+  function fold(s) { return String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim(); }
+  function normProb(p) {
+    if (!p) return { mode: 'simple', codes: [] };
+    if (p.mode === 'simple') return { mode: 'simple', codes: (p.codes || []).slice() };
+    if (p.mode === 'expert') return { mode: 'expert', rules: (p.rules || []).map(function (r) { return { f: r.f, op: r.op || 'is', v: (r.v || []).slice() }; }) };
+    if (p.level === 'code') return { mode: 'simple', codes: (p.values || []).slice() };
+    return p.level ? { mode: 'expert', rules: [{ f: p.level, op: 'is', v: (p.values || []).slice() }] } : { mode: 'simple', codes: [] };
+  }
+  function ruleTest(r) {   // null: an empty condition, or an expression that does not compile
+    var v = (r.v || []).filter(function (x) { return String(x).trim(); }); if (!v.length || !FIELDS[r.f]) return null;
+    if (r.op === 'regex') { try { var re = new RegExp(v.join('|'), 'i'); return function (s) { return re.test(s || ''); }; } catch (e) { return null; } }
+    if (r.op === 'contains') { var w = v.map(fold); return function (s) { var t = fold(s); return w.some(function (x) { return t.indexOf(x) >= 0; }); }; }
+    var set = {}; v.forEach(function (x) { set[fold(x)] = 1; }); return function (s) { return !!set[fold(s)]; };
+  }
+  function problemPred(p0) {
+    var p = normProb(p0);
+    if (p.mode === 'simple') { if (!p.codes.length) return null; var G = {}, K = {};
+      p.codes.forEach(function (c) { if (isGrp(c)) G[ckey(c)] = 1; else K[ckey(c)] = 1; });
+      return function (d) { var c = fld(d, 'code'); return !!c && (!!G[grpOf(c)] || !!K[ckey(c)]); }; }
+    var ts = p.rules.map(function (r) { var t = ruleTest(r); return t && { f: r.f, t: t }; });
+    if (!ts.length || ts.some(function (x) { return !x; })) return null;
+    return function (d) { return ts.every(function (x) { return x.t(fld(d, x.f)); }); };
+  }
+  function problemText(p0) {
+    var p = normProb(p0);
+    if (p.mode === 'simple') return p.codes.length ? 'Code / sous-code : ' + p.codes.map(function (c) { return isGrp(c) ? ckey(c) + ' (tous ses sous-codes)' : shown('code', c); }).join(', ') : 'Problème à préciser';
+    if (!p.rules.length) return 'Problème à préciser';
+    return p.rules.map(function (r) { return FIELDS[r.f] + ' ' + (r.op === 'regex' ? 'correspond à /' + r.v.join('|') + '/' : OPS[r.op] + ' : ' + r.v.map(function (x) { return r.f === 'where' ? shown('where', x) : x; }).join(', ')); }).join(' · et ');
+  }
   // the indicator: reference = mean of the 8 working weeks before the action start; rolling mean over 4 working weeks; target −30 % held 4 weeks
   function stats(a) {
     var pred = problemPred(a.problem); if (!pred) return { st: 'none' };
@@ -478,14 +521,12 @@ var D = /*@@DATA@@*/null;
   var FORM = null;
   function topValues(line, level) { var m = {}; DEFS.forEach(function (d) { if (inScope(d[0], line)) { var v = fld(d, level); if (v) m[v] = (m[v] || 0) + 1; } }); return Object.keys(m).sort(function (a, b) { return m[b] - m[a]; }).slice(0, 60).map(function (v) { return [v, m[v]]; }); }
   function openForm(a) {
-    FORM = JSON.parse(JSON.stringify(a || { line: S.line, title: '', category: '', problem: { level: 'rca', values: [] }, defects: '', rootCause: '', analysisOwner: '', analysisStart: '', action: '', actionOwner: '', actionStart: '', status: 'En cours', expected: '', note: '', log: [] }));
-    if (!FORM.problem) FORM.problem = { level: 'rca', values: [] };
+    FORM = JSON.parse(JSON.stringify(a || { line: S.line, title: '', category: '', problem: { mode: 'simple', codes: [] }, defects: '', rootCause: '', analysisOwner: '', analysisStart: '', action: '', actionOwner: '', actionStart: '', status: 'En cours', expected: '', note: '', log: [] }));
+    FORM.problem = normProb(FORM.problem);
     drawForm(); $('ov').hidden = false; var t = $('fTitle'); if (t) t.focus();
   }
   function fval(k) { return esc(FORM[k] || ''); }
   function drawForm() {
-    var lv = FORM.problem.level || 'rca', tv = topValues(FORM.line, lv), p = problemPred(FORM.problem), last8 = validBefore(LASTC, 8), ser = p ? weekly(p, FORM.line) : null;
-    var prev = ser ? 'Ce problème sur ' + FORM.line + ' : ' + num(last8.reduce(function (s, i) { return s + ser[i]; }, 0)) + ' défauts sur les 8 dernières semaines de travail (' + num(mean(last8.map(function (i) { return ser[i]; })) || 0, 1) + ' par semaine).' : 'Choisissez au moins une valeur pour suivre le problème.';
     var dIn = function (k) { var v = FORM[k] || ''; return /^\d{4}-\d\d-\d\d$/.test(v) ? v : /^\d{4}-\d\d$/.test(v) ? v + '-01' : ''; };
     $('frm').innerHTML = '<div class="head" style="display:flex;justify-content:space-between;gap:10px;align-items:baseline"><h3>' + (FORM.id ? 'Modifier l’action' : 'Nouvelle action') + '</h3><button type="button" class="btn link" data-cancel="1">Fermer</button></div>' +
       '<div class="fg">' +
@@ -493,9 +534,7 @@ var D = /*@@DATA@@*/null;
       '<div class="f"><label for="fStatus">Statut</label><select id="fStatus">' + STATUSES.map(function (s) { return '<option' + (s === FORM.status ? ' selected' : '') + '>' + s + '</option>'; }).join('') + '</select></div>' +
       '<div class="f w"><label for="fTitle">Titre</label><input type="text" id="fTitle" maxlength="120" value="' + fval('title') + '" placeholder="Ex. : Erreurs et inversions de branchement"></div>' +
       '<div class="f w"><label for="fCat">Catégorie (comme dans le tracker)</label><input type="text" id="fCat" maxlength="160" value="' + fval('category') + '" placeholder="Ex. : Erreurs/Inversions de branchements"></div>' +
-      '<div class="f"><label for="fLevel">Problème suivi : niveau</label><select id="fLevel">' + Object.keys(LEVELS).map(function (k) { return '<option value="' + k + '"' + (k === lv ? ' selected' : '') + '>' + LEVELS[k] + '</option>'; }).join('') + '</select></div>' +
-      '<div class="f"><label for="fVal">Valeur à ajouter</label><select id="fVal"><option value="">Choisir…</option>' + tv.filter(function (x) { return FORM.problem.values.indexOf(x[0]) < 0; }).map(function (x) { return '<option value="' + esc(x[0]) + '">' + esc(shown(lv, x[0]) + ' (' + x[1] + ')') + '</option>'; }).join('') + '</select></div>' +
-      '<div class="f w"><div class="row">' + (FORM.problem.values.length ? FORM.problem.values.map(function (v) { return '<span class="chip">' + esc(shown(lv, v)) + ' <button type="button" data-rmv="' + esc(v) + '" aria-label="Retirer">✕</button></span>'; }).join('') : '<span class="mu">Aucune valeur choisie.</span>') + '</div><div class="prev">' + esc(prev) + '</div></div>' +
+      probHtml() +
       '<div class="f w"><label for="fDef">Défauts constatés</label><textarea id="fDef" maxlength="2000">' + fval('defects') + '</textarea></div>' +
       '<div class="f w"><label for="fRoot">Analyse de cause racine</label><textarea id="fRoot" maxlength="3000">' + fval('rootCause') + '</textarea></div>' +
       '<div class="f"><label for="fAOwn">Porteur de l’analyse</label><input type="text" id="fAOwn" maxlength="120" value="' + fval('analysisOwner') + '"></div>' +
@@ -507,6 +546,57 @@ var D = /*@@DATA@@*/null;
       '<div class="f w"><label for="fNote">Informations</label><textarea id="fNote" maxlength="1200">' + fval('note') + '</textarea></div>' +
       '</div><div class="row"><button type="submit" class="btn pri" id="fSave">' + (FORM.id ? 'Enregistrer' : 'Créer l’action') + '</button><button type="button" class="btn" data-cancel="1">Annuler</button><span class="err" id="fErr"></span></div>';
   }
+  // the problem editor: simple (codes, sub-codes) or expert (conditions); the preview counts and shows what it catches
+  function codeSuggest(line) { var c = {}, g = {}; DEFS.forEach(function (d) { if (!inScope(d[0], line)) return; var v = fld(d, 'code'); if (!v) return; c[v] = (c[v] || 0) + 1; var k = grpOf(v); if (k) g[k] = (g[k] || 0) + 1; });
+    var by = function (o) { return Object.keys(o).sort(function (a, b) { return o[b] - o[a]; }); };
+    return by(g).map(function (k) { return [k, k + ' · tous ses sous-codes (' + g[k] + ')']; }).concat(by(c).map(function (k) { return [k, shown('code', k) + ' (' + c[k] + ')']; })); }
+  function probHtml() {
+    var p = FORM.problem, simple = p.mode === 'simple', h = '';
+    h += '<div class="f w"><label id="lPm">Problème suivi</label><div class="row"><div class="seg" role="group" aria-labelledby="lPm"><button type="button" data-pm="simple" aria-pressed="' + simple + '">Simple</button><button type="button" data-pm="expert" aria-pressed="' + !simple + '">Expert</button></div>' +
+      '<span class="mu">' + (simple ? 'Un code (Q11 : tous ses sous-codes) ou un sous-code (Q11003 ou Q11-003).' : 'Une ou plusieurs conditions ; un défaut est suivi s’il les remplit toutes.') + '</span></div></div>';
+    if (simple) {
+      h += '<div class="f w"><label for="fCode">Code ou sous-code</label><div class="row"><input type="text" id="fCode" list="dlCode" autocomplete="off" spellcheck="false" placeholder="Ex. : Q11 ou Q11-003" style="flex:1 1 220px;width:auto"><button type="button" class="btn" data-addcode="1">Ajouter</button></div>' +
+        '<datalist id="dlCode">' + codeSuggest(FORM.line).map(function (x) { return '<option value="' + esc(x[0]) + '">' + esc(x[1]) + '</option>'; }).join('') + '</datalist>' +
+        '<div class="row">' + (p.codes.length ? p.codes.map(function (c, j) { return '<span class="chip">' + esc(isGrp(c) ? ckey(c) + ' · tous ses sous-codes' : shown('code', c)) + ' <button type="button" data-rmc="' + j + '" aria-label="Retirer">✕</button></span>'; }).join('') : '<span class="mu">Aucun code choisi.</span>') + '</div><span class="err" id="fCodeErr"></span></div>';
+    } else {
+      var anyRx = false;
+      h += '<div class="f w rules">' + p.rules.map(function (r, i) {
+        var rx = r.op === 'regex'; if (rx) anyRx = true;
+        var sel = function (o, cur, attr) { return '<select ' + attr + '="' + i + '" aria-label="' + (attr === 'data-rf' ? 'Colonne' : 'Type de filtre') + '">' + Object.keys(o).map(function (k) { return '<option value="' + k + '"' + (k === cur ? ' selected' : '') + '>' + esc(o[k]) + '</option>'; }).join('') + '</select>'; };
+        var sug = r.f === 'text' ? [] : topValues(FORM.line, r.f);
+        return '<div class="rule">' + sel(FIELDS, r.f, 'data-rf') + sel(OPS, r.op, 'data-ro') +
+          (rx ? '<input type="text" data-rx="' + i + '" value="' + esc(r.v.join('|')) + '" spellcheck="false" autocomplete="off" placeholder="Ex. : DR2[04].{0,40}court" aria-label="Expression régulière">'
+              : '<input type="text" id="rv-' + i + '" data-rv="' + i + '" list="dl-' + i + '" autocomplete="off" placeholder="' + (r.op === 'contains' ? 'un mot ou un bout de texte' : 'une valeur') + '" aria-label="Valeur"><button type="button" class="btn sm" data-rva="' + i + '">Ajouter</button>' +
+                '<datalist id="dl-' + i + '">' + sug.map(function (x) { return '<option value="' + esc(x[0]) + '">' + esc(shown(r.f, x[0]) + ' (' + x[1] + ')') + '</option>'; }).join('') + '</datalist>') +
+          '<button type="button" class="btn link" data-rdel="' + i + '" aria-label="Retirer la condition">✕</button>' +
+          (rx ? '<div class="row"><span class="err" id="rxErr-' + i + '">' + esc(rxErr(r)) + '</span></div>'
+              : '<div class="row">' + (r.v.length ? r.v.map(function (v, j) { return '<span class="chip">' + esc(shown(r.f, v)) + ' <button type="button" data-rvx="' + i + '|' + j + '" aria-label="Retirer">✕</button></span>'; }).join('') : '<span class="mu">Aucune valeur.</span>') + '</div>') + '</div>';
+      }).join('') + '<div class="row"><button type="button" class="btn sm" data-radd="1">+ Ajouter une condition</button></div>' +
+        '<div class="help"><b>est</b> : la valeur exacte, l’une de la liste. <b>contient</b> : l’un des mots ou bouts de texte, sans tenir compte des accents ni des majuscules (utile sur le texte du défaut).' +
+        (anyRx ? '<br><b>Expression régulière</b> : très puissante mais difficile à écrire. Demandez-la à Gemini, par exemple : « Écris une expression régulière JavaScript, insensible à la casse, qui trouve un câble DR20 ou DR24 coupé trop court ». Décrivez ce que vous cherchez sans coller de texte de NC, puis vérifiez les exemples trouvés ci-dessous.' : '') + '</div></div>';
+    }
+    return h + '<div class="f w"><div class="prev" id="fPrev">' + prevHtml() + '</div></div>';
+  }
+  function rxErr(r) { var v = (r.v || []).join('|'); if (!v.trim()) return 'Saisissez l’expression.'; try { new RegExp(v, 'i'); return ''; } catch (e) { return 'Expression non valide : ' + e.message; } }
+  function prevHtml() {
+    var p = problemPred(FORM.problem); if (!p) return esc(FORM.problem.mode === 'simple' ? 'Choisissez au moins un code pour suivre le problème.' : 'Complétez chaque condition pour suivre le problème.');
+    var last8 = validBefore(LASTC, 8), ser = weekly(p, FORM.line), all = ser.reduce(function (s, v) { return s + v; }, 0), ex = [];
+    for (var k = DEFS.length - 1; k >= 0 && ex.length < 3; k--) { var d = DEFS[k]; if (inScope(d[0], FORM.line) && p(d)) ex.push(d); }
+    ex.sort(function (a, b) { return NCS[b[0]][1] < NCS[a[0]][1] ? -1 : 1; });
+    var n8 = last8.reduce(function (s, i) { return s + ser[i]; }, 0);
+    return esc('Ce problème sur ' + FORM.line + ' : ' + num(n8) + (n8 > 1 ? ' défauts' : ' défaut') + ' sur les 8 dernières semaines de travail (' + num(mean(last8.map(function (i) { return ser[i]; })) || 0, 1) + ' par semaine), ' + num(all) + ' depuis janvier.') +
+      (ex.length ? '<ul>' + ex.map(function (d) { var n = NCS[d[0]]; return '<li>' + esc(n[1].slice(8, 10) + '/' + n[1].slice(5, 7) + ' · MSN ' + (DIC.msn[n[4]] || '—') + ' · ' + String(d[7] || '').slice(0, 140)) + '</li>'; }).join('') + '</ul>' : '');
+  }
+  function addCode() {
+    var e = $('fCode'), raw = e ? e.value.trim() : ''; if (!raw) return;
+    var out = [], miss = [];
+    raw.split(/[,;\s]+/).forEach(function (t) { if (!t) return; var k = ckey(t);
+      if (isGrp(k)) { out.push(k); return; }
+      var hit = DIC.code.filter(function (c) { return c && ckey(c) === k; })[0]; if (hit) out.push(hit); else miss.push(t); });
+    readForm(); out.forEach(function (c) { if (FORM.problem.codes.indexOf(c) < 0) FORM.problem.codes.push(c); }); drawForm();
+    if (miss.length) $('fCodeErr').textContent = 'Aucun défaut avec : ' + miss.join(', ') + '.'; else { var f = $('fCode'); if (f) f.focus(); }
+  }
+  function addVal(i) { var e = $('rv-' + i), v = e ? e.value.trim() : ''; if (!v) return; readForm(); var r = FORM.problem.rules[i]; if (r.v.indexOf(v) < 0) r.v.push(v); drawForm(); var f = $('rv-' + i); if (f) f.focus(); }
   function readForm() {
     var g = function (id) { var e = $(id); return e ? e.value.trim() : ''; };
     FORM.line = g('fLine') || FORM.line; FORM.status = g('fStatus') || FORM.status; FORM.title = g('fTitle'); FORM.category = g('fCat');
@@ -518,6 +608,7 @@ var D = /*@@DATA@@*/null;
   async function saveForm() {
     if (BUSY) return; readForm();
     if (!FORM.title && !FORM.category) { $('fErr').textContent = 'Donnez au moins un titre.'; return; }
+    if (FORM.problem.mode === 'expert' && FORM.problem.rules.some(function (r) { return r.op === 'regex' && rxErr(r); })) { $('fErr').textContent = 'L’expression régulière n’est pas valide.'; return; }
     var body = JSON.parse(JSON.stringify(FORM)), id = body.id; delete body.id;
     body.updatedAt = today(); if (UID) body.updatedBy = UID;
     if (body.status === 'Clos' && !body.closedAt) body.closedAt = today(); if (body.status !== 'Clos') body.closedAt = '';
@@ -552,7 +643,19 @@ var D = /*@@DATA@@*/null;
       if (!DB || CANW === false) return;
       openForm({ line: S.line, title: shown(lv, val), category: '', problem: { level: lv, values: [val] }, defects: '', rootCause: '', analysisOwner: '', analysisStart: today(), action: '', actionOwner: '', actionStart: '', status: 'À lancer', expected: '', note: '', log: [] }); return; }
     if (a('data-cancel')) { $('ov').hidden = true; FORM = null; return; }
-    if (a('data-rmv') != null) { readForm(); FORM.problem.values = FORM.problem.values.filter(function (v) { return v !== a('data-rmv'); }); drawForm(); return; }
+    if (FORM && a('data-pm')) { readForm(); var P = FORM.problem, to = a('data-pm'); if (to === P.mode) return;
+      if (to === 'expert') { var gs = P.codes.filter(isGrp), cs = P.codes.filter(function (c) { return !isGrp(c); }), rs;   // the codes stay one 'or': one condition
+        rs = gs.length && cs.length ? [{ f: 'code', op: 'regex', v: ['^(' + P.codes.map(function (c) { return String(c).replace(/[.*+?^${}()|[\]\\-]/g, '\\$&'); }).join('|') + ')'] }]
+          : gs.length ? [{ f: 'grp', op: 'is', v: gs }] : cs.length ? [{ f: 'code', op: 'is', v: cs }] : [{ f: 'rca', op: 'is', v: [] }];
+        FORM.problem = { mode: 'expert', rules: rs }; }
+      else { var cc = []; P.rules.forEach(function (r) { if (r.op === 'is' && (r.f === 'code' || r.f === 'grp')) cc = cc.concat(r.v); }); FORM.problem = { mode: 'simple', codes: cc }; }
+      drawForm(); return; }
+    if (FORM && a('data-addcode')) { addCode(); return; }
+    if (FORM && a('data-rmc') != null) { readForm(); FORM.problem.codes.splice(+a('data-rmc'), 1); drawForm(); return; }
+    if (FORM && a('data-radd')) { readForm(); FORM.problem.rules.push({ f: 'rca', op: 'is', v: [] }); drawForm(); return; }
+    if (FORM && a('data-rdel') != null) { readForm(); FORM.problem.rules.splice(+a('data-rdel'), 1); drawForm(); return; }
+    if (FORM && a('data-rva') != null) { addVal(+a('data-rva')); return; }
+    if (FORM && a('data-rvx')) { readForm(); var q = a('data-rvx').split('|'); FORM.problem.rules[+q[0]].v.splice(+q[1], 1); drawForm(); return; }
     if (a('data-edit')) { var x = ACTIONS.filter(function (y) { return y.id === a('data-edit'); })[0]; if (x) openForm(x); return; }
     if (a('data-close')) { patch(a('data-close'), { status: 'Clos', closedAt: today(), updatedAt: today() }, t); return; }
     if (a('data-reopen')) { patch(a('data-reopen'), { status: 'En cours', closedAt: '', updatedAt: today() }, t); return; }
@@ -567,10 +670,17 @@ var D = /*@@DATA@@*/null;
   $('frm').addEventListener('submit', function (e) { e.preventDefault(); saveForm(); });
   $('frm').addEventListener('change', function (e) {
     if (!FORM) return; var id = e.target.id;
-    if (id === 'fLevel') { readForm(); FORM.problem = { level: e.target.value, values: [] }; drawForm(); }
-    else if (id === 'fVal' && e.target.value) { readForm(); FORM.problem.values.push(e.target.value); drawForm(); }
+    var t = e.target;
+    if (t.hasAttribute('data-rf')) { readForm(); var r = FORM.problem.rules[+t.getAttribute('data-rf')]; r.f = t.value; if (r.op !== 'regex') r.v = []; drawForm(); }
+    else if (t.hasAttribute('data-ro')) { readForm(); var r2 = FORM.problem.rules[+t.getAttribute('data-ro')]; if ((r2.op === 'regex') !== (t.value === 'regex')) r2.v = []; r2.op = t.value; drawForm(); }
     else if (id === 'fLine') { readForm(); drawForm(); }
   });
+  $('frm').addEventListener('input', function (e) {   // a regular expression is checked and previewed as it is typed
+    var t = e.target; if (!FORM || !t.hasAttribute('data-rx')) return; var i = +t.getAttribute('data-rx'), r = FORM.problem.rules[i]; r.v = t.value ? [t.value] : [];
+    var er = $('rxErr-' + i); if (er) er.textContent = rxErr(r); var pv = $('fPrev'); if (pv) pv.innerHTML = prevHtml(); });
+  $('frm').addEventListener('keydown', function (e) {   // Enter in a value box adds the value instead of saving the action
+    if (e.key !== 'Enter' || !FORM) return; var t = e.target;
+    if (t.id === 'fCode') { e.preventDefault(); addCode(); } else if (t.hasAttribute && t.hasAttribute('data-rv')) { e.preventDefault(); addVal(+t.getAttribute('data-rv')); } else if (t.hasAttribute && t.hasAttribute('data-rx')) e.preventDefault(); });
   $('ov').addEventListener('click', function (e) { if (e.target.id === 'ov') { $('ov').hidden = true; FORM = null; } });
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !$('ov').hidden) { $('ov').hidden = true; FORM = null; } });
   $('wk').addEventListener('change', function (e) { S.week = +e.target.value; S.sel = null; renderAll(); });
