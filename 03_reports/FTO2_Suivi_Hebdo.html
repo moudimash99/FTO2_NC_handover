@@ -3136,7 +3136,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
       relSubB: 'Limites par MSN comme le suivi hebdomadaire : 2 σ attention, 3 σ alarme. Points : NC de chaque MSN construit dans la période.',
       relSubC: 'Boîte : la moitié des MSN ; moustaches : 5 % à 95 % ; trait : médiane. Points : NC de chaque MSN construit dans la période.',
       relSubD: 'Points : NC de chaque MSN construit dans la période. Bande : intervalle de confiance à 95 % du taux.',
-      relSubE: 'Barres : nombre de MSN par nombre de NC. Trait : intervalle de confiance à 95 % du taux.', relSub2: 'Barre : intervalle de confiance à 95 %. Points : NC de chaque MSN.', relAc: 'NC d’un MSN', relPrev: 'Lignes précédentes', relNext: 'Lignes suivantes', relRate: 'NC par MSN sur la période', relSub: 'Barre : intervalle de confiance à 95 %. Points gris : chaque mois. A330 et A350.', relCi: 'intervalle de confiance à 95 %', relMonth: 'chaque mois', vqCat: 'couleur de la catégorie', vqChg: 'Écart 2026 − 2025 (par MSN)', vqCause: 'Cause', totalM: 'Total du mois', q1: '1er trimestre', q2: '2e trimestre',
+      relSubE: 'Barres : nombre de MSN par nombre de NC. Trait : intervalle de confiance à 95 % du taux.', relSubP: 'Point : NC par MSN. Trait : intervalle de confiance à 95 % du taux moyen.', relSub2: 'Barre : intervalle de confiance à 95 %. Points : NC de chaque MSN.', relAc: 'NC d’un MSN', relPrev: 'Lignes précédentes', relNext: 'Lignes suivantes', relRate: 'NC par MSN sur la période', relSub: 'Barre : intervalle de confiance à 95 %. Points gris : chaque mois. A330 et A350.', relCi: 'intervalle de confiance à 95 %', relMonth: 'chaque mois', vqCat: 'couleur de la catégorie', vqChg: 'Écart 2026 − 2025 (par MSN)', vqCause: 'Cause', totalM: 'Total du mois', q1: '1er trimestre', q2: '2e trimestre',
       perMonth: '{v} par mois', median: 'Médiane', ncCount: '{n} NC', rollMean: 'Moyenne glissante sur 9 avions', rankAx: 'Rang de l’avion dans sa ligne', perAc: 'Défauts par avion',
       b0: 'Aucun défaut', b1: '1 à 5 défauts', b2: '6 à 15', b3: 'Plus de 15', acTip: 'MSN {m} · {n} défauts', fpyTip: '{n} NC pour {u} unités passées', punchTip: '{n} NC',
       done: 'Terminée', open: 'En cours', late: 'En retard', planned: 'Planifiée', targetRca: 'Cause visée : {r}', finCount: '{n} avions', finTip: 'FIN {f} · MSN {m}',
@@ -3155,7 +3155,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
       relSubB: 'Per-MSN limits as on the weekly chart: 2 σ attention, 3 σ alarm. Dots: NCs of each MSN built in the period.',
       relSubC: 'Box: half of the MSN; whiskers: 5% to 95%; line: median. Dots: NCs of each MSN built in the period.',
       relSubD: 'Dots: NCs of each MSN built in the period. Band: 95% confidence interval of the rate.',
-      relSubE: 'Bars: number of MSN per number of NCs. Line: 95% confidence interval of the rate.', relSub2: 'Bar: 95% confidence interval. Dots: NCs of each MSN.', relAc: 'NCs of one MSN', relPrev: 'Previous lines', relNext: 'Next lines', relRate: 'NCs per MSN over the period', relSub: 'Bar: 95% confidence interval. Grey dots: each month. A330 and A350.', relCi: '95% confidence interval', relMonth: 'each month', vqCat: 'category colour', vqChg: 'Change 2026 − 2025 (per MSN)', vqCause: 'Root cause', totalM: 'Month total', q1: 'Q1', q2: 'Q2',
+      relSubE: 'Bars: number of MSN per number of NCs. Line: 95% confidence interval of the rate.', relSubP: 'Dot: NCs per MSN. Line: 95% confidence interval of the average rate.', relSub2: 'Bar: 95% confidence interval. Dots: NCs of each MSN.', relAc: 'NCs of one MSN', relPrev: 'Previous lines', relNext: 'Next lines', relRate: 'NCs per MSN over the period', relSub: 'Bar: 95% confidence interval. Grey dots: each month. A330 and A350.', relCi: '95% confidence interval', relMonth: 'each month', vqCat: 'category colour', vqChg: 'Change 2026 − 2025 (per MSN)', vqCause: 'Root cause', totalM: 'Month total', q1: 'Q1', q2: 'Q2',
       perMonth: '{v} a month', median: 'Median', ncCount: '{n} NCs', rollMean: 'Rolling mean over 9 aircraft', rankAx: 'Aircraft build rank in its line', perAc: 'Defects per aircraft',
       b0: 'No defect', b1: '1 to 5 defects', b2: '6 to 15', b3: 'More than 15', acTip: 'MSN {m} · {n} defects', fpyTip: '{n} NCs for {u} units through', punchTip: '{n} NCs',
       done: 'Done', open: 'In progress', late: 'Late', planned: 'Planned', targetRca: 'Targeted cause: {r}', finCount: '{n} aircraft', finTip: 'FIN {f} · MSN {m}',
@@ -4759,8 +4759,8 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
   function g64v(k, V) {
     RELK = k; var G = relData(); if (!G.length) { pEmpty(k); return; }
     RELPG = (RELPG % G.length + G.length) % G.length;
-    var grp = G[RELPG], os = grp.os, W0 = gWd(k), lab = 96, mr = 96, rh = V === 'E' ? 64 : 56, top = 10, H = top + os.length * rh + 26, pw = W0 - lab - mr, hi = 0, g = '';
-    os.forEach(function (x) { hi = Math.max(hi, x.u, x.mu + 3 * x.sd, relQ(x.v, 0.975)); x.v.forEach(function (v) { hi = Math.max(hi, v); }); });
+    var grp = G[RELPG], os = grp.os, W0 = gWd(k), lab = 96, mr = 96, rh = V === 'E' ? 64 : V === 'P' ? 40 : 56, top = 10, H = top + os.length * rh + 26, pw = W0 - lab - mr, hi = 0, g = '';
+    os.forEach(function (x) { hi = Math.max(hi, x.u); if (V !== 'P') { hi = Math.max(hi, x.mu + 3 * x.sd, relQ(x.v, 0.975)); x.v.forEach(function (v) { hi = Math.max(hi, v); }); } });
     var nt = pNice(hi * 1.04); function X(v) { return lab + Math.max(0, v) / nt.top * pw; }
     for (var t = 0; t <= nt.top + 1e-9; t += nt.step) g += '<line x1="' + r1(X(t)) + '" x2="' + r1(X(t)) + '" y1="0" y2="' + (H - 22) + '" stroke="var(--grid)"/>' + tx(X(t), H - 6, num(t), 'mu', 'middle');
     var tick = function (x, y, h, c) { return '<line x1="' + r1(x) + '" x2="' + r1(x) + '" y1="' + (y - h) + '" y2="' + (y + h) + '" stroke="' + c + '" stroke-width="1.5"/>'; };
@@ -4785,19 +4785,22 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
         Object.keys(hb).forEach(function (v) { var h = hb[v] / mx * (rh - 22), bw = Math.max(2, pw / nt.top * 0.8); g += '<rect x="' + r1(X(+v) - bw / 2) + '" y="' + r1(y + 8 - h) + '" width="' + r1(bw) + '" height="' + r1(h) + '" rx="1" fill="var(--muted)" fill-opacity=".45"' + tip(x.o.p, [gx('relHist', { n: num(hb[v]), v: num(+v) })]) + '/>'; });
         g += '<line x1="' + r1(X(x.l)) + '" x2="' + r1(X(x.u)) + '" y1="' + (y + 12) + '" y2="' + (y + 12) + '" stroke="' + c + '" stroke-width="3"/>';
       }
-      if (V !== 'E') x.ac.forEach(function (a, j) { var out3 = V === 'B' && a[1] > hi3, out2 = V === 'B' && !out3 && (a[1] > hi2 || a[1] < lo2);
+      if (V === 'P') g += '<line x1="' + r1(X(x.l)) + '" x2="' + r1(X(x.u)) + '" y1="' + y + '" y2="' + y + '" stroke="var(--ink-2)" stroke-width="2"/>' + tick(X(x.l), y, 5, 'var(--ink-2)') + tick(X(x.u), y, 5, 'var(--ink-2)') +
+        tx(X(x.l) - 4, y + 16, f2(x.l), 'mu', 'end', ' style="font-size:10.5px"') + tx(X(x.u) + 4, y + 16, f2(x.u), 'mu', null, ' style="font-size:10.5px"');
+      if (V !== 'E' && V !== 'P') x.ac.forEach(function (a, j) { var out3 = V === 'B' && a[1] > hi3, out2 = V === 'B' && !out3 && (a[1] > hi2 || a[1] < lo2);
         g += '<circle cx="' + r1(X(a[1])) + '" cy="' + r1(ys[j]) + '" r="2.8" fill="' + (out3 ? 'var(--up)' : out2 ? 'var(--surface)' : 'var(--muted)') + '"' + (out2 ? ' stroke="var(--up)" stroke-width="1.3"' : ' fill-opacity=".6"') + tip('MSN ' + a[0] + ' · ' + x.o.p, [gx('ncCount', { n: num(a[1]) })]) + '/>'; });
       if (V === 'A' || V === 'C' || V === 'B') g += tick(X(x.l), y, 4, c) + tick(X(x.u), y, 4, c);
       g += '<circle cx="' + r1(X(x.r)) + '" cy="' + (V === 'E' ? y + 12 : y) + '" r="5.5" fill="' + c + '" stroke="var(--surface)" stroke-width="1.5"' + ppk('pprod', x.o.p) + tip(x.o.p, [gx('perEq', { v: f2(x.r) }), gx('ciTip', { a: f2(x.l), b: f2(x.u) }), gx('relAcN', { n: num(x.v.length) })]) + '/>' +
-        tx(lab + pw + 10, y + 4, f2(x.r), 'ink b') + tx(lab + pw + 46, y + 4, gx('relAcN', { n: num(x.v.length) }), 'mu', null, ' style="font-size:11px"');
+        tx(lab + pw + 10, y + 4, f2(x.r), 'ink b') + tx(lab + pw + 46, y + 4, V === 'P' ? S('ciMsn', { e: f1(x.o.EQ) }) : gx('relAcN', { n: num(x.v.length) }), 'mu', null, ' style="font-size:11px"');
     });
     var nav = G.length > 1 ? '<div class="relnav"><button type="button" class="cxb" data-relpg="-1" aria-label="' + esc(gx('relPrev')) + '">◀</button><b>' + esc(grp.name) + '</b><span class="mu">' + (RELPG + 1) + ' / ' + G.length + '</span><button type="button" class="cxb" data-relpg="1" aria-label="' + esc(gx('relNext')) + '">▶</button></div>' : '';
     var hb2 = V2BAND[k] && V2BAND[k].querySelector('.sub'); if (hb2) hb2.textContent = gx('relSub' + V);
-    gSet(k, nav + svg(W0, H, g, gT(k)), '');
+    gSet(k, nav + svg(W0, H, g, gT(k)), V === 'P' ? sw(lineCol(os[0].o.line), gx('relRate'), true) + '<span><i class="ln" style="width:22px;height:2px;background:var(--ink-2)"></i>' + esc(gx('relCi')) + '</span>' : '');
   }
   // 64. rate with its 95% interval (Byar), log scale
   function g64(k) {
     var pv = window.FTO2_PREVIEW && window.FTO2_PREVIEW.rel; if (typeof pv === 'string') { g64v(k, pv); return; } if (pv === 2) { g64c(k); return; } if (pv) { g64b(k); return; }
+    g64v(k, 'P'); return;   // 30 Oct, Mohammad: the rate and its 95 % interval only, one page per group of lines (A350 · A330, A400M, A320, MDCD)
     var W0 = gWd(k), os = pOk().filter(function (o) { return o.NC > 0; }).map(function (o) {
       var n = o.NC, l = n * Math.pow(1 - 1 / (9 * n) - 1.96 / (3 * Math.sqrt(n)), 3), u = (n + 1) * Math.pow(1 - 1 / (9 * (n + 1)) + 1.96 / (3 * Math.sqrt(n + 1)), 3);
       return { o: o, r: n / o.EQ, l: Math.max(l, 0.01) / o.EQ, u: u / o.EQ }; }).sort(function (a, b) { return b.r - a.r; });
