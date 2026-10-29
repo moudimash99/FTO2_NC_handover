@@ -5539,8 +5539,8 @@ function fto2FromTables(ncIn, defIn, ref, disIn) {
     VM: { fr: ['Branchement', 'Erreurs de branchement par million d’opérations, MIP A350', '5 572 opérations de branchement par MIP.', 'défauts · production MSN · livraisons 2025'],
           en: ['Connections', 'Connection errors per million operations, MIP A350', '5,572 connection operations per MIP.', 'defects · MSN output · 2025 deliveries'] },
     VW: { fr: ['Répartition', 'Cent défauts', 'Chaque case : 1 % des défauts, par catégorie.', 'catégorie des défauts'], en: ['Breakdown', 'A hundred defects', 'Each square: 1% of defects, by category.', 'defect category'] },
-    VQ: { fr: ['2025 / 2026', 'Causes : 2025 contre 2026, A330 et A350', 'Défauts par MSN, les 10 premières causes de 2025 et de 2026, produits du plan de production ; point creux 2025, point plein 2026. Sans l’A320 (petites pièces comptées à l’unité) ni l’A400M.', 'causes · production MSN · livraisons 2025'],
-          en: ['2025 / 2026', 'Root causes: 2025 against 2026, A330 and A350', 'Defects per MSN, the top 10 root causes of 2025 and of 2026, products of the production plan; hollow dot 2025, filled dot 2026. Without the A320 (small parts counted one by one) or the A400M.', 'root causes · MSN output · 2025 deliveries'] },
+    VQ: { fr: ['2025 / 2026', 'Causes : 2025 contre 2026, A330 et A350', 'Défauts par MSN, les 10 premières causes de 2025 et de 2026. A330 et A350.', 'causes · production MSN · livraisons 2025'],
+          en: ['2025 / 2026', 'Root causes: 2025 against 2026, A330 and A350', 'Defects per MSN, the top 10 root causes of 2025 and of 2026. A330 and A350.', 'root causes · MSN output · 2025 deliveries'] },
     VP: { fr: ['Taux', 'NC, défauts et coût par MSN, produit par produit', 'Un même ordre de produits dans les trois colonnes ; tiret : ensemble des produits.', 'production MSN · NC · défauts · coût'],
           en: ['Rates', 'NCs, defects and cost per MSN, product by product', 'The same product order in all three columns; tick: all products together.', 'MSN output · NCs · defects · cost'] },
     VF: { fr: ['Récurrence', 'Les FIN qui reviennent d’un avion à l’autre', 'Une colonne par avion (MSN), une ligne par FIN ; carré : défaut sur ce FIN. Ligne du filtre, sinon A350.', 'FIN lu par le parseur · MSN'],
@@ -6024,8 +6024,8 @@ function fto2FromTables(ncIn, defIn, ref, disIn) {
       '<span><b style="color:var(--up)">▲</b> ' + esc(gx('vqUp')) + '</span><span><b style="color:var(--down)">▼</b> ' + esc(gx('vqDown')) + '</span><span>= ' + esc(gx('vqFlat')) + '</span><span class="mu">' + esc(S('v2Q25')) + '</span>');
   }
 
-  // five ways to draw causes 2025 vs 2026, to choose from (30 Oct); 'd' (rows with an arrow) until Mohammad picks one
-  var VQV = (window.FTO2_PREVIEW && window.FTO2_PREVIEW.vq) || 'd';
+  // five ways to draw causes 2025 vs 2026 (30 Oct); Mohammad chose 'a', the slope chart (30 Oct)
+  var VQV = (window.FTO2_PREVIEW && window.FTO2_PREVIEW.vq) || 'a';
   function vqDir(va, vb) { return vb > va * 1.1 ? 1 : vb < va * 0.9 ? -1 : 0; }
   function vqCol(r) { var ck = RCA_CAT[r]; return ck === 'aside' || !ck ? 'var(--ink-2)' : catFill(ck); }
   function vqTip(r, va, vb) { var d = vb - va, pc = va > 0 ? Math.round(d / va * 100) : null; return tip(L(r), [gx('vq25', { v: f2(va) }), gx('vq26', { v: f2(vb) }), (d >= 0 ? '+' : '') + f2(d) + (pc != null ? ' (' + (pc >= 0 ? '+' : '') + pc + ' %)' : '')]); }
