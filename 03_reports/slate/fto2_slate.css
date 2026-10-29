@@ -149,8 +149,8 @@
 .fto2 .bar .track { position: relative; height: 13px; background: var(--track); border-radius: 2px; }
 .fto2 .bar .fill { display: block; position: relative; overflow: hidden; height: 100%; background: var(--bc, var(--s1)); border-radius: 0 4px 4px 0; }
 .fto2 .bar .fill.stk { display: flex; background: var(--dim); }
-.fto2 .bar .fill.stk .seg { display: block; height: 100%; flex: none; }
-.fto2 .bar .fill.stk .seg + .seg { box-shadow: inset 1px 0 0 var(--surface); }
+.fto2 .bar .fill.stk .sg { display: block; height: 100%; flex: none; }
+.fto2 .bar .fill.stk .sg + .sg { box-shadow: inset 1px 0 0 var(--surface); }
 .fto2 .bar .fill .cab { position: absolute; left: 0; top: 0; bottom: 0; background: var(--s2); }
 .fto2 .bars.active .bar:not([aria-pressed="true"]) .fill .cab { opacity: .45; }
 .fto2 .key i.c { background: var(--s2); }
@@ -161,7 +161,7 @@
 .fto2 .bars.active .bar .fill { background: var(--dim); }
 .fto2 .bars.active .bar[aria-pressed="true"] .fill { background: var(--bc, var(--s1)); }
 .fto2 .bars.active .bar[aria-pressed="true"] .fill.stk { background: var(--dim); }
-.fto2 .bars.active .bar:not([aria-pressed="true"]) .fill.stk .seg { opacity: .3; }
+.fto2 .bars.active .bar:not([aria-pressed="true"]) .fill.stk .sg { opacity: .3; }
 .fto2 .bar[aria-pressed="true"] { background: var(--s1-soft); }
 .fto2 .bar[aria-pressed="true"] .name { font-weight: 600; }
 .fto2 .bar.zero { color: var(--muted); }
@@ -328,6 +328,8 @@
 .fto2 svg.viz [data-msn] { cursor: pointer; }
 .fto2 details.vdata > summary { cursor: pointer; font-size: 13px; color: var(--s1); justify-self: start; }
 .fto2 details.vdata[open] > summary { margin-bottom: 8px; }
+.fto2 details.vnote > summary { color: var(--muted); font-size: 12.5px; }
+.fto2 details.vnote td { font-size: 12.5px; }
 .fto2 table.mini { min-width: 0; font-variant-numeric: tabular-nums; }
 .fto2 table.mini th, .fto2 table.mini td { padding: 5px 10px; white-space: nowrap; }
 .fto2 #tip { position: fixed; z-index: 50; pointer-events: none; background: var(--surface); color: var(--ink); border: 1px solid var(--ring); box-shadow: 0 6px 20px rgba(0,0,0,.14); border-radius: 6px; padding: 7px 10px; font-size: 12.5px; display: grid; gap: 1px; max-width: 300px; }
@@ -620,9 +622,7 @@
   grid-template-areas: "rca line fin" "rca waf fin" "code code code"; }
 .fto2 .v2par { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; align-items: stretch; margin: 6px 0 28px; }
 .fto2 #parTop > .v2-band, .fto2 #pgl > .v2-band, .fto2 #kgl > .v2-band { grid-column: auto; }
-.fto2 #parTop > [data-v2="a:flow"], .fto2 #parTop > [data-v2="53"], .fto2 #parFold [data-v2="VK"] { grid-column: 1 / -1; }
-.fto2 #parTop > [data-v2="VQ"] { grid-column: 2; grid-row: span 2; }
-.fto2 #parTop > [data-v2="76"], .fto2 #parTop > [data-v2="78"] { grid-column: 1; }
+.fto2 #parTop > [data-v2="a:flow"], .fto2 #parTop > [data-v2="78"], .fto2 #parFold [data-v2="VK"] { grid-column: 1 / -1; }
 .fto2 #parTop > .v2-band, .fto2 #pgl > .v2-band, .fto2 #kgl > .v2-band { grid-template-columns: minmax(0, 1fr); background: var(--surface); border: 1px solid var(--ring); border-radius: 10px; padding: 18px 20px 16px; box-shadow: none; clip-path: none; row-gap: 10px; align-content: start; min-width: 0; }
 .fto2 #parTop > .v2-band > .bhead, .fto2 #pgl > .v2-band > .bhead, .fto2 #kgl > .v2-band > .bhead { position: static; grid-column: 1; gap: 6px; }
 .fto2 #parTop > .v2-band > .custom, .fto2 #pgl > .v2-band > .custom, .fto2 #kgl > .v2-band > .custom { grid-column: 1; grid-row: auto; }
@@ -644,7 +644,7 @@
 .fto2 #pgl > [data-card="code"], .fto2 #kgl > [data-card="code"] { grid-area: code; }
 .fto2 #pgl > [data-card="fin"], .fto2 #kgl > [data-card="fin"] { grid-area: fin; }
 .fto2 #p-cnq { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; align-items: stretch;
-  grid-template-areas: "lead lead lead" "strip strip strip" "figs figs figs" "chips chips chips" "meth split split" "line prod rule" "comp comp month" "dis dis dis" "more more more" "cx cx cx" "table table table"; }
+  grid-template-areas: "lead lead lead" "strip strip strip" "figs figs figs" "chips chips chips" "split split split" "line prod rule" "comp comp month" "dis dis dis" "meth meth meth" "more more more" "cx cx cx" "table table table"; }
 .fto2 #p-cnq > * { min-width: 0; }
 .fto2 #p-cnq > #cg, .fto2 #p-cnq > .v2cq { display: contents; }
 .fto2 #p-cnq > .lead { grid-area: lead; }
