@@ -65,6 +65,24 @@ header { display: grid; gap: 12px; }
 .topbar { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
 .asof { font-size: 12.5px; color: var(--muted); font-variant-numeric: tabular-nums; }
 .topbar .right { display: flex; gap: 14px; align-items: center; }
+/* ===== ALARM CSS START ===== */
+/* alarms: the bell and what it lists */
+.al-wrap { position: relative; }
+.al-btn { position: relative; display: inline-flex; align-items: center; justify-content: center; width: 34px; height: 32px; border: 1px solid var(--ring); border-radius: 6px; background: var(--surface); color: var(--ink-2); cursor: pointer; }
+.al-btn[aria-expanded="true"] { border-color: var(--ink-2); } .al-btn.maj { color: var(--up); }
+.al-n { position: absolute; top: -7px; right: -7px; min-width: 18px; height: 18px; padding: 0 5px; border-radius: 9px; font-size: 11px; font-weight: 700; line-height: 18px; text-align: center; background: var(--ink-2); color: var(--page); }
+.al-btn.maj .al-n { background: var(--up); color: #fff; }
+.al-pop { position: absolute; right: 0; top: calc(100% + 8px); z-index: 60; width: min(440px, calc(100vw - 32px)); max-height: min(70vh, 560px); overflow: auto; background: var(--surface); border: 1px solid var(--ring); border-radius: 10px; box-shadow: 0 12px 32px rgba(0,0,0,.16); padding: 12px 14px 10px; text-align: left; }
+.al-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 4px; } .al-head h3 { margin: 0; font-size: 15px; font-weight: 600; }
+.al-x { font: inherit; border: 0; background: transparent; color: var(--muted); cursor: pointer; font-size: 14px; padding: 2px 6px; border-radius: 4px; }
+.al-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px; align-items: start; padding: 9px 0; border-top: 1px solid var(--grid); }
+.al-go { display: grid; grid-template-columns: 12px minmax(0, 1fr); gap: 2px 9px; font: inherit; font-size: 13.5px; line-height: 1.35; text-align: left; border: 0; background: transparent; color: var(--ink); cursor: pointer; padding: 0; }
+.al-go:hover .al-what { text-decoration: underline; } .al-what { grid-column: 2; } .al-sub { grid-column: 2; font-size: 12px; color: var(--muted); }
+.al-dot { grid-row: 1; width: 10px; height: 10px; border-radius: 50%; margin-top: 4px; box-sizing: border-box; border: 2px solid var(--ink-2); }
+.al-dot.maj { background: var(--up); border-color: var(--up); }
+.al-vu { font: inherit; font-size: 12px; padding: 3px 9px; border: 1px solid var(--ring); border-radius: 999px; background: var(--surface); color: var(--ink-2); cursor: pointer; white-space: nowrap; }
+.al-pop .mu { margin: 8px 0 2px; font-size: 12.5px; color: var(--muted); } .al-seen summary { cursor: pointer; font-size: 12.5px; color: var(--muted); padding: 8px 0 2px; }
+/* ===== ALARM CSS END ===== */
 .unit { font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2); font-weight: 600; }
 .titles { display: grid; gap: 4px; }
 h1 { font-family: var(--font-display); font-weight: 500; font-size: clamp(28px, 4.2vw, 38px); line-height: 1.12; margin: 0; letter-spacing: -0.01em; text-wrap: balance; }
@@ -784,6 +802,8 @@ footer p { max-width: none; }
     <div class="topbar">
       <div class="unit">FTO2 · <span data-t="unit"></span></div>
       <div class="right"><span class="asof" id="asof"></span>
+      <div class="al-wrap" id="alWrap"><button type="button" class="al-btn" id="alBtn" aria-haspopup="dialog" aria-expanded="false" aria-controls="alPop" data-ta="alBtn" hidden><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M12 2.5a6.5 6.5 0 0 0-6.5 6.5v3.4l-1.8 3.1A1 1 0 0 0 4.6 17h14.8a1 1 0 0 0 .9-1.5l-1.8-3.1V9A6.5 6.5 0 0 0 12 2.5zm-2.6 16a2.7 2.7 0 0 0 5.2 0z"/></svg><span class="al-n" id="alN" hidden></span></button>
+        <div class="al-pop" id="alPop" role="dialog" aria-labelledby="alT" hidden></div></div>
       <div class="seg lang" role="group" aria-label="Langue / Language">
         <button type="button" id="lFr" aria-pressed="true">FR</button>
         <button type="button" id="lEn" aria-pressed="false">EN</button>
@@ -1301,6 +1321,9 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
       inf_cost: 'Coût : compté seulement là où FTO2 est responsable. {n} NC de la sélection comptent comme NC avec un coût de 0 € (leur traitement selon le modèle : {e}).',
       inf_minor: 'Défauts mineurs {v} : ce choix change le nombre de défauts, pas le nombre de NC.', inf_nodef: '{n} NC de la sélection n’ont aucune ligne de défaut lisible : comptées en NC et en coût, pas en défauts.',
       inf_cli: 'Onglet Retours clients : il montre les retours clients des mêmes filtres, quel que soit l’interrupteur usine ({n} NC).', inf_in: 'inclus', inf_ex: 'exclus',
+      alBtn: 'Alarmes', alT: 'À regarder · {w}', alUp: '{w} en hausse depuis {s}', alAll: 'Toutes les causes', alSt: 'poste {v}', alCab: 'Câbles · {v}', alDont: 'dont {l}', alAlso: 'aussi : {l}',
+      alNone: 'Rien à signaler.', alShort: 'Pas encore assez de semaines pour comparer.', alOther: '+{n} sur les autres lignes', alSeen: 'Vu', alBack: 'Remettre', alSeenL: 'Vues ({n})',
+      alMaj: 'Majeure', alMin: 'Mineure', alWk: 'S{n}', alClose: 'Fermer',
       cbTitle: 'Suivi NC câbles', cbNoData: 'Le suivi des câbles n’est pas chargé.', cbF1: 'Demandes de câble', cbF2: 'Part impression {q}', cbF3: 'Lignes avec une cause', cbF4: 'Câbles récurrents', cbF5: 'Lignes avec une action',
       cbMonth: 'Demandes par mois et imputation', cbShare: 'Part impression : {v}', cbMx: 'Motif × imputation', cbTypes: 'Types de câble', cbCauses: 'Causes (proposées)', cbRec: 'Câbles récurrents', cbList: 'Demandes',
       cbMotif: 'Motif', cbProd: 'Prod. ligne', cbMach: 'Impr. machine', cbOper: 'Impr. opérateur', cbOther: 'Autre', cbCable: 'Câble', cbMotifs: 'Motifs', cbImp: 'Imputation', cbWk: 'Sem.', cbProg: 'Prog.', cbCause: 'Cause (proposée)', cbCables: 'Câbles', cbCom: 'Commentaire',
@@ -1501,6 +1524,9 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
       inf_cost: 'Cost: counted only where FTO2 is liable. {n} NCs of the selection count as NCs with a cost of €0 (their handling in the model: {e}).',
       inf_minor: 'Minor defects {v}: this changes the number of defects, not the number of NCs.', inf_nodef: '{n} NCs of the selection have no readable defect line: counted as NCs and in the cost, not as defects.',
       inf_cli: 'Customer returns tab: it shows the customer returns under the same filters, whatever the plant switch ({n} NCs).', inf_in: 'included', inf_ex: 'excluded',
+      alBtn: 'Alarms', alT: 'To look at · {w}', alUp: '{w} rising since {s}', alAll: 'All causes', alSt: 'station {v}', alCab: 'Cables · {v}', alDont: 'including {l}', alAlso: 'also: {l}',
+      alNone: 'Nothing to report.', alShort: 'Not enough weeks yet to compare.', alOther: '+{n} on the other lines', alSeen: 'Seen', alBack: 'Put back', alSeenL: 'Seen ({n})',
+      alMaj: 'Major', alMin: 'Minor', alWk: 'W{n}', alClose: 'Close',
       cbTitle: 'Cable NC tracker', cbNoData: 'The cable tracker is not loaded.', cbF1: 'Cable requests', cbF2: 'Printing share {q}', cbF3: 'Rows with a cause', cbF4: 'Recurring cables', cbF5: 'Rows with an action',
       cbMonth: 'Requests per month by imputation', cbShare: 'Printing share: {v}', cbMx: 'Reason × imputation', cbTypes: 'Cable types', cbCauses: 'Causes (proposed)', cbRec: 'Recurring cables', cbList: 'Requests',
       cbMotif: 'Reason', cbProd: 'Prod. line', cbMach: 'Print. machine', cbOper: 'Print. operator', cbOther: 'Other', cbCable: 'Cable', cbMotifs: 'Reasons', cbImp: 'Imputation', cbWk: 'Wk', cbProg: 'Prog.', cbCause: 'Cause (proposed)', cbCables: 'Cables', cbCom: 'Comment',
@@ -2472,6 +2498,231 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
 
   // ---------------------------------------------------------------- 4e. Production: per line and per product, the volume built, planned and delivered in 2025,
   // the NCs and the rates and targets made from them; the monthly plan by line; then how these numbers are made and used
+  /* ===== ALARM ENGINE START ===== */
+  // Alarms (Mohammad, 30 Oct): the bell lists what to look at. One rule for the dashboard and the MFT page (build_mft.py copies this
+  // block into the MFT page). An item (all the defects of a line, a category, a cause, a sub-code, a station, where the defects are
+  // found, a product, a cable imputation or reason) is followed week by week: its count over the last 4 finished weeks against the
+  // 12 weeks before, per MSN built in those weeks (working days), as a binomial test read in σ. Minor: 2.5 σ, and still 1.5 σ with
+  // the biggest of the 4 weeks set aside (one bad week raises nothing); major: 3 σ, still 2 σ without that week, and at least 10
+  // more than usual over the 4 weeks, also counted without it. An alarm stays open until 4 weeks in a row under 1 σ; a minor that
+  // turns major is upgraded, never lowered while open. Then one line per problem: a sub-code with the same weeks as its cause shows
+  // with it ("Inversion (T04)"), a parent gives way to the child that carries 60 % of its rise, and the alarms of a line sharing
+  // more than half of their NCs (a cause, where it is found, its station) are one alarm. Stations and places need some history (a
+  // new or renamed station is not a rise). Tested on 2026 (30 Oct, série, weeks 17 to 39): A350 3 major and 8 minor, A330 1 and 2;
+  // with nothing changing, chance alone gives about 2 minor and 0.3 major in 23 weeks. Weeks are indexed 0 = ISO week 1 of 2026.
+  var ALARM = (function () {
+    var P = { recent: 4, base: 12, zMin: 2.5, gMin: 1.5, zMaj: 3, gMaj: 2, exMaj: 10, quiet: 4, minX: 3, hist: 3, share: 0.5 };
+    var LF = [0];
+    function lf(n) { for (var i = LF.length; i <= n; i++) LF[i] = LF[i - 1] + Math.log(i); return LF[n]; }
+    function tail(x, n, p) {   // P(K >= x) for K binomial (n, p)
+      if (x <= 0 || p >= 1) return 1;
+      if (p <= 0 || x > n) return 0;
+      var lp = Math.log(p), lq = Math.log(1 - p), t = [], m = -Infinity, s = 0, k, v;
+      for (k = x; k <= n; k++) { v = lf(n) - lf(k) - lf(n - k) + k * lp + (n - k) * lq; t.push(v); if (v > m) m = v; }
+      for (k = 0; k < t.length; k++) s += Math.exp(t[k] - m);
+      return Math.min(1, Math.exp(m) * s);
+    }
+    function invN(p) {   // inverse of the standard normal distribution (Acklam)
+      var a = [-39.69683028665376, 220.9460984245205, -275.9285104469687, 138.357751867269, -30.66479806614716, 2.506628277459239],
+        b = [-54.47609879822406, 161.5858368580409, -155.6989798598866, 66.80131188771972, -13.28068155288572],
+        c = [-0.007784894002430293, -0.3223964580411365, -2.400758277161838, -2.549732539343734, 4.374664141464968, 2.938163982698783],
+        d = [0.007784695709041462, 0.3224671290700398, 2.445134137142996, 3.754408661907416], q, r;
+      if (p < 0.02425) { q = Math.sqrt(-2 * Math.log(p)); return (((((c[0] * q + c[1]) * q + c[2]) * q + c[3]) * q + c[4]) * q + c[5]) / ((((d[0] * q + d[1]) * q + d[2]) * q + d[3]) * q + 1); }
+      if (p > 1 - 0.02425) { q = Math.sqrt(-2 * Math.log(1 - p)); return -(((((c[0] * q + c[1]) * q + c[2]) * q + c[3]) * q + c[4]) * q + c[5]) / ((((d[0] * q + d[1]) * q + d[2]) * q + d[3]) * q + 1); }
+      q = p - 0.5; r = q * q; return (((((a[0] * r + a[1]) * r + a[2]) * r + a[3]) * r + a[4]) * r + a[5]) * q / (((((b[0] * r + b[1]) * r + b[2]) * r + b[3]) * r + b[4]) * r + 1);
+    }
+    function sig(x, er, b, eb) {   // how many σ x events over the exposure er stand above b events over eb (0 under 3 events)
+      if (x < P.minX || er <= 0 || eb <= 0) return 0;
+      return invN(1 - Math.min(Math.max(tail(x, x + b, er / (er + eb)), 1e-12), 1 - 1e-12));
+    }
+    function week(iso) {   // '2026-05-14' -> its ISO week, 0 for week 1 of 2026; -1 outside 2026
+      var d = new Date(String(iso).slice(0, 10) + 'T00:00:00Z'), dow = (d.getUTCDay() + 6) % 7;
+      if (isNaN(d)) return -1;
+      d.setUTCDate(d.getUTCDate() - dow + 3);   // the Thursday of the week decides the year
+      if (d.getUTCFullYear() !== 2026) return -1;
+      return Math.floor((d - Date.UTC(2026, 0, 1)) / 6048e5);   // 1 January 2026 is a Thursday
+    }
+    function lastDone(iso) {   // the last finished week up to that day: its own week if it is a Sunday, else the week before
+      var d = new Date(String(iso).slice(0, 10) + 'T00:00:00Z');
+      if (d.getUTCDay() !== 0) d.setUTCDate(d.getUTCDate() - (d.getUTCDay() + 6) % 7 - 1);
+      return week(d.toISOString());
+    }
+    // one item week by week, from `first` to `last`: the alarm open at `last` (null if none), with its figures that week.
+    // it = {w: [count per week], e: [MSN per week], hist: true for stations and places (they must exist over the whole 16 weeks)}
+    function scan(it, first, last) {
+      var R = P.recent, B = P.base, o = null, i, j;
+      if (it.hist && it.f == null) { it.f = 0; while (it.f < it.w.length && !it.w[it.f]) it.f++; }   // its first week
+      for (i = Math.max(first, R + B - 1); i <= last; i++) {
+        var x = 0, er = 0, b = 0, eb = 0, big = i - R + 1;
+        for (j = i - R + 1; j <= i; j++) { x += it.w[j] || 0; er += it.e[j] || 0; if ((it.w[j] || 0) > (it.w[big] || 0)) big = j; }
+        for (j = i - R - B + 1; j <= i - R; j++) { b += it.w[j] || 0; eb += it.e[j] || 0; }
+        var xg = x - (it.w[big] || 0), eg = er - (it.e[big] || 0), zf = sig(x, er, b, eb), zg = sig(xg, eg, b, eb);
+        var ex = eb > 0 && eg > 0 ? (xg - b * eg / eb) * er / eg : 0;
+        var lvl = it.hist && !(it.f <= i - R - B + 1 && b >= P.hist) ? 0 : zf >= P.zMaj && zg >= P.gMaj && ex >= P.exMaj ? 2 : zf >= P.zMin && zg >= P.gMin ? 1 : 0;
+        if (o) {
+          o.quiet = zf < 1 ? o.quiet + 1 : 0;
+          if (o.quiet >= P.quiet) { o = null; continue; }
+          if (lvl > o.lvl) o.lvl = lvl;
+        } else if (lvl) o = { lvl: lvl, since: i, quiet: 0 };
+        if (o && i === last) { o.weeks = it.w.slice(i - R + 1, i + 1).map(function (v) { return v || 0; }); o.usual = eb > 0 ? b / eb * er / R : 0; o.ex = ex; o.z = zf; o.zg = zg; }
+      }
+      return o;
+    }
+    var RANK = { all: 0, cat: 0, rca: 0, code: 0, where: 1, station: 2, prod: 3, cimp: 4, cmot: 4 };
+    // the alarms open at week `last`, one per problem, the strongest first. items: [{key, line, lv, v, w, e, n: [[NC ids] per week],
+    // hist}]; parentOf(alarm) -> the key of its parent item ('' for none): line|all| <- line|cat|c <- line|rca|r <- line|code|s
+    function run(items, first, last, parentOf) {
+      var al = [], by = {}, gone = {};
+      items.forEach(function (it) {
+        var o = scan(it, first, last); if (!o || o.z < 1) return;   // back to its usual level this week: settling, off the list
+        var ids = {}; for (var j = last - P.recent + 1; j <= last; j++) (it.n[j] || []).forEach(function (id) { ids[id] = 1; });
+        al.push(Object.assign(o, { key: it.key, line: it.line, lv: it.lv, v: it.v, ncs: ids }));
+      });
+      al.forEach(function (a) { by[a.key] = a; });
+      al.forEach(function (a) { var p = by[parentOf(a)]; if (p && p.weeks.join() === a.weeks.join()) { p.child = a.v; gone[a.key] = 1; } });   // the same defects: one line
+      ['all', 'cat', 'rca'].forEach(function (lv) {
+        al.forEach(function (a) {
+          if (a.lv !== lv || gone[a.key]) return;
+          var kids = al.filter(function (b) { return !gone[b.key] && parentOf(b) === a.key; });
+          if (!kids.length) return;
+          if (Math.max.apply(null, kids.map(function (b) { return b.ex; })) >= 0.6 * a.ex) gone[a.key] = 1;   // one child carries the rise
+          else { a.kids = kids.map(function (b) { return b.v; }); kids.forEach(function (b) { gone[b.key] = 1; if (b.lvl > a.lvl) a.lvl = b.lvl; if (b.since < a.since) a.since = b.since; }); }
+        });
+      });
+      // the other items (where found, station, product, cables) join the problem of their line that shares most of their NCs,
+      // more than half of the smaller of the two; a family problem is never merged into another one
+      var out = [], fam = function (a) { return RANK[a.lv] === 0; };
+      al.filter(function (a) { return !gone[a.key]; }).sort(function (a, b) { return RANK[a.lv] - RANK[b.lv] || b.lvl - a.lvl || b.ex - a.ex; }).forEach(function (a) {
+        var ids = Object.keys(a.ncs), best = null, bs = 0;
+        if (!fam(a)) out.forEach(function (g) {
+          if (g.line !== a.line) return;
+          var n = 0, m = Object.keys(g.head.ncs).length; ids.forEach(function (id) { if (g.head.ncs[id]) n++; });
+          var sh = n / Math.max(1, Math.min(ids.length, m)); if (sh > P.share && sh > bs) { best = g; bs = sh; }
+        });
+        if (best) { best.also.push(a); if (a.lvl > best.lvl) best.lvl = a.lvl; if (a.since < best.since) best.since = a.since; }
+        else out.push({ key: a.key, line: a.line, head: a, also: [], lvl: a.lvl, since: a.since, ex: a.ex });
+      });
+      return out.sort(function (a, b) { return b.lvl - a.lvl || b.ex - a.ex; });
+    }
+    // a problem marked as seen stays out of the list unless it got worse since: a higher level, half again as many extra defects
+    // (5 at least), or it closed and opened again
+    function seen(g, m) { return !!m && m.since === g.since && g.lvl <= (m.lvl || 0) && !(g.ex >= 1.5 * (m.ex || 0) && g.ex >= (m.ex || 0) + 5); }
+    function docId(key) { var h = 5381; for (var i = 0; i < key.length; i++) h = ((h * 33) ^ key.charCodeAt(i)) >>> 0; return 'a' + h.toString(36) + '-' + key.length; }
+    return { P: P, run: run, seen: seen, week: week, lastDone: lastDone, docId: docId, sig: sig };
+  })();
+  /* ===== ALARM ENGINE END ===== */
+  // the bell (Mohammad, 30 Oct): what to look at, for the selection's production type, plant and data source, on the lines of the
+  // aircraft filter (the other lines counted below), as of the last finished week of the period. A problem can be marked as seen
+  // (the page's store, collection 'alarmes'; not in Slate): it leaves the list for everyone and comes back if it gets worse.
+  var AL = { db: null, uid: null, marks: {}, sigK: '', res: null, first: 0, last: -1, open: false };
+  function alNc(n) { return ours(n) && n[23] !== 'client' && (!GF.phase || n[24] === GF.phase) && (GF.src === 'all' || (GF.src === 'man' ? n[39] !== 'sky' : n[39] === GF.src)) && (!GF.org || (n[41] || 'normal') === GF.org); }
+  function alCompute(at) {   // at: a week index instead of the period's end (checks)
+    var E = D.eqmsn && D.eqmsn.wdw; if (!E) return null;
+    var last = at != null ? at : ALARM.lastDone(GF.to < D.meta.to ? GF.to : D.meta.to), k = [GF.phase, GF.src, GF.org, last].join('|');
+    if (k === AL.sigK) return AL.res;
+    var items = {}, cnt = { rca: {}, code: {} }, z = function () { var a = []; for (var i = 0; i < 53; i++) a.push(0); return a; }, w0 = 53;
+    function it(line, lv, v, e, hist) { var key = line + '|' + lv + '|' + v; return items[key] || (items[key] = { key: key, line: line, lv: lv, v: v, w: z(), e: e, n: [], hist: !!hist }); }
+    function add(o, i, id) { o.w[i]++; (o.n[i] || (o.n[i] = [])).push(id); if (i < w0) w0 = i; }
+    function tally(m, k2, v) { var q = m[k2] || (m[k2] = {}); q[v] = (q[v] || 0) + 1; }
+    D.defects.forEach(function (r) {
+      var n = NC[r[0]]; if (!n || !alNc(n)) return;
+      var l = n[3], e = E.line[l], i = ALARM.week(n[1]); if (!e || i < 0) return;
+      var c = dCat(r), ca = dRca(r), co = dCode(r);
+      add(it(l, 'all', '', e), i, n[0]);
+      if (c) add(it(l, 'cat', c, e), i, n[0]);
+      if (ca) { add(it(l, 'rca', ca, e), i, n[0]); tally(cnt.rca, l + '|' + ca, c); }
+      if (co) { add(it(l, 'code', co, e), i, n[0]); tally(cnt.code, l + '|' + co, ca); }
+      if (n[27]) add(it(l, 'station', n[27], e, true), i, n[0]);
+      if (n[8]) add(it(l, 'where', n[8], e, true), i, n[0]);
+    });
+    D.ncs.forEach(function (n) {   // products: NCs per MSN of the product
+      if (!alNc(n) || !E.prod || !D.eqmsn.map) return;
+      var p = D.eqmsn.map[String(n[26] || '').toUpperCase()], i = ALARM.week(n[1]); if (!p || !E.prod[p] || i < 0) return;
+      add(it(n[3], 'prod', p, E.prod[p]), i, n[0]);
+    });
+    (D.cables || []).forEach(function (a) {   // cable requests per MSN of the line
+      var l = a[4] === 'A321' ? 'A320' : a[4], e = E.line[l], i = ALARM.week(a[2]); if (!e || i < 0) return;
+      add(it(l, 'cimp', a[7], e), i, a[3]); add(it(l, 'cmot', a[6], e), i, a[3]);
+    });
+    var dom = function (m) { m = m || {}; return Object.keys(m).sort(function (a, b) { return m[b] - m[a]; })[0] || ''; };
+    var first = w0 + ALARM.P.recent + ALARM.P.base - 1;
+    AL.first = first; AL.last = last; AL.sigK = k;
+    AL.res = last < first ? [] : ALARM.run(Object.keys(items).map(function (x) { return items[x]; }), first, last, function (a) {
+      return a.lv === 'cat' ? a.line + '|all|' : a.lv === 'rca' ? a.line + '|cat|' + dom(cnt.rca[a.line + '|' + a.v]) : a.lv === 'code' ? a.line + '|rca|' + dom(cnt.code[a.line + '|' + a.v]) : ''; });
+    return AL.res;
+  }
+  function alName(a) {
+    var v = a.v, cd = a.lv === 'code' ? codeDesc(v).split(' (')[0] : '';
+    var s = a.lv === 'all' ? S('alAll') : a.lv === 'cat' || a.lv === 'rca' ? L(v) : a.lv === 'code' ? v + (cd ? ' · ' + cd : '') : a.lv === 'where' ? whereName(v) :
+      a.lv === 'station' ? S('alSt', { v: v }) : a.lv === 'prod' ? prodName(v) : a.lv === 'cimp' || a.lv === 'cmot' ? S('alCab', { v: cbLab(v) }) : v;
+    return s + (a.child ? ' (' + a.child + ')' : '');
+  }
+  function alTab(a) { return a.lv === 'cimp' || a.lv === 'cmot' ? 'cbl' : a.lv === 'where' || a.lv === 'station' || a.lv === 'prod' ? 'where' : 'pareto'; }
+  function alWk(i) { return S('alWk', { n: i + 1 }); }
+  function alRender() {
+    var btn = document.getElementById('alBtn'), pop = document.getElementById('alPop'); if (!btn) return;
+    var res = alCompute(); btn.hidden = !res; if (!res) { pop.hidden = true; return; }
+    var mine = res.filter(function (g) { return !GF.line || g.line === GF.line; }), other = res.length - mine.length;
+    var show = mine.filter(function (g) { return !ALARM.seen(g, AL.marks[g.key]); }), hid = mine.filter(function (g) { return ALARM.seen(g, AL.marks[g.key]); });
+    var maj = show.some(function (g) { return g.lvl === 2; }), nEl = document.getElementById('alN');
+    btn.classList.toggle('maj', maj); nEl.hidden = !show.length; nEl.textContent = show.length;
+    btn.setAttribute('aria-expanded', String(AL.open)); btn.title = S('alBtn') + (show.length ? ' · ' + show.length : '');
+    pop.hidden = !AL.open; if (!AL.open) return;
+    // kept on screen: under the bell, inside the page's width (on a phone the bell is not at the right edge)
+    var wr = document.getElementById('alWrap').getBoundingClientRect(), PW = document.documentElement.clientWidth, pw = Math.min(440, PW - 32), px = Math.max(16, Math.min(wr.right - pw, PW - pw - 16));
+    pop.style.width = pw + 'px'; pop.style.left = Math.round(px - wr.left) + 'px'; pop.style.right = 'auto';
+    var can = !!AL.db, row = function (g, isSeen) {
+      var a = g.head, sub = [];
+      if (a.kids) sub.push(S('alDont', { l: a.kids.map(function (v) { return alName({ lv: a.lv === 'all' ? 'cat' : a.lv === 'cat' ? 'rca' : 'code', v: v }); }).join(', ') }));
+      var also = g.also.filter(function (x) { return x.lv !== 'prod'; });   // the product is the line's, it adds nothing
+      if (also.length) sub.push(S('alAlso', { l: also.map(alName).join(', ') }));
+      return '<div class="al-row"><button type="button" class="al-go" data-algo="' + esc(g.key) + '"><i class="al-dot ' + (g.lvl === 2 ? 'maj' : 'min') + '" title="' + esc(S(g.lvl === 2 ? 'alMaj' : 'alMin')) + '"></i>' +
+        '<span class="al-what"><b>' + esc(g.line) + '</b> · ' + esc(S('alUp', { w: alName(a), s: alWk(g.since) })) + '</span>' +
+        (sub.length ? '<span class="al-sub">' + esc(sub.join(' · ')) + '</span>' : '') + '<span class="al-sub">→ ' + esc(S({ pareto: 'tabPareto', where: 'tabWhere', cbl: 'tabCbl' }[alTab(a)])) + '</span></button>' +
+        (can ? '<button type="button" class="al-vu" data-al' + (isSeen ? 'un' : 'vu') + '="' + esc(g.key) + '">' + esc(S(isSeen ? 'alBack' : 'alSeen')) + '</button>' : '') + '</div>';
+    };
+    pop.innerHTML = '<div class="al-head"><h3 id="alT">' + esc(S('alT', { w: alWk(AL.last) })) + '</h3><button type="button" class="al-x" id="alX" aria-label="' + esc(S('alClose')) + '">✕</button></div>' +
+      (AL.last < AL.first ? '<p class="mu">' + esc(S('alShort')) + '</p>' : show.length ? show.map(function (g) { return row(g, false); }).join('') : '<p class="mu">' + esc(S('alNone')) + '</p>') +
+      (other ? '<p class="mu al-other">' + esc(S('alOther', { n: other })) + '</p>' : '') +
+      (hid.length ? '<details class="al-seen"><summary>' + esc(S('alSeenL', { n: hid.length })) + '</summary>' + hid.map(function (g) { return row(g, true); }).join('') + '</details>' : '');
+  }
+  function alGo(key) {
+    var g = (AL.res || []).filter(function (x) { return x.key === key; })[0]; if (!g) return;
+    var a = g.head, tab = alTab(a);
+    AL.open = false; GF.line = a.line;
+    if (tab === 'cbl') { GF.pick = null; CBF = { origine: a.lv === 'cimp' ? a.v : '', motif: a.lv === 'cmot' ? a.v : '', cause: '', cable: '' }; }
+    else { var k = { cat: 'cat', rca: 'rca', code: 'code', station: 'station', where: 'where', prod: 'pprod' }[a.lv]; GF.pick = k ? { k: k, v: a.v } : null; }
+    pickPrep(); setGF({}); setTab(tab);
+    var p = document.getElementById('p-' + tab); if (p && p.scrollIntoView) p.scrollIntoView({ block: 'start' });
+  }
+  function alMark(key, on) {
+    var g = (AL.res || []).filter(function (x) { return x.key === key; })[0]; if (!AL.db || !g) return;
+    var ref = AL.db.collection('alarmes').doc(ALARM.docId(key));
+    (on ? ref.set({ key: key, line: g.line, since: g.since, lvl: g.lvl, ex: Math.round(g.ex * 10) / 10, at: new Date().toISOString().slice(0, 10), by: AL.uid || '' }) : ref.delete()).catch(function () {});
+  }
+  (function () {
+    var w = document.getElementById('alWrap'); if (!w) return;
+    if (window.FTO2_PREVIEW && window.FTO2_PREVIEW.al) window.FTO2_AL = { compute: alCompute, name: alName };   // checks only
+    w.addEventListener('click', function (e) {
+      var t = e.target.closest('button'); if (!t) return;
+      if (t.id === 'alBtn') { AL.open = !AL.open; alRender(); return; }
+      if (t.id === 'alX') { AL.open = false; alRender(); document.getElementById('alBtn').focus(); return; }
+      if (t.hasAttribute('data-algo')) { alGo(t.getAttribute('data-algo')); return; }
+      if (t.hasAttribute('data-alvu')) { alMark(t.getAttribute('data-alvu'), true); return; }
+      if (t.hasAttribute('data-alun')) alMark(t.getAttribute('data-alun'), false);
+    });
+    document.addEventListener('click', function (e) { if (AL.open && !w.contains(e.target)) { AL.open = false; alRender(); } });
+    document.addEventListener('keydown', function (e) { if (AL.open && e.key === 'Escape') { AL.open = false; alRender(); document.getElementById('alBtn').focus(); } });
+    if (EMBED || PAGE !== 'main' || !window.claude || typeof window.claude.use !== 'function') return;
+    window.claude.use('user').then(function (u) { if (u && u.id) return u.id().then(function (id) { AL.uid = id; }); }).catch(function () {});
+    window.claude.use('db').then(function (db) {
+      if (!db) return; AL.db = db;
+      db.collection('alarmes').onSnapshot(function (snap) {
+        var m = {}; snap.docs.forEach(function (d) { var x = d.data(); if (x && x.key) m[x.key] = x; }); AL.marks = m; alRender();
+      }, function () {});
+      alRender();
+    }).catch(function () {});
+  })();
   // Câbles (Mohammad, 30 Oct): the cable team's requests for new cables, as on the "Suivi NC câbles" page (D.cables, one row per
   // request: [row, week, date, NC, programme, MSN, reason, imputation, proposed cause, cables, cable type, comment, has an action]),
   // under the filter bar's aircraft and period. A reason, an imputation, a cause or a cable clicked filters the list of requests
@@ -3270,7 +3521,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
   var MP = document.getElementById('p-mft');
   MP.addEventListener('pointermove', function (e) { var t = e.target.closest && e.target.closest('[data-tip]'); if (t) showTip(e, t.getAttribute('data-tip').split('|')); else hideTip(); });
   MP.addEventListener('pointerleave', hideTip);
-  var rzT; window.addEventListener('resize', function () { clearTimeout(rzT); rzT = setTimeout(function () { renderAna(); renderPplan(); renderCbl(); renderGal(); renderProd(); renderRev(); renderMock(); v2Render(); }, 150); });
+  var rzT; window.addEventListener('resize', function () { clearTimeout(rzT); rzT = setTimeout(function () { renderAna(); renderPplan(); renderCbl(); alRender(); renderGal(); renderProd(); renderRev(); renderMock(); v2Render(); }, 150); });
 
   // ---------------------------------------------------------------- 6. Gallery (local page only): chart ideas drawn on FICTITIOUS data
   // build/dummy_data.py draws the data at random; only the category / root cause / sub-category names are real (taxonomy).
@@ -6541,7 +6792,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
       document.getElementById('p-' + t).hidden = G.tab !== t;
     });
   }
-  function renderAll() { applyText(); showTab(); renderPMode(); ncBoard.render(); pareto.render(); costPareto.render(); weekly.render(); cnq.render(); renderCx(); renderDis(); renderWhereTbl(); client.render(); renderCbl(); renderRca(); renderPplan(); renderAna(); renderMft(); renderGal(); renderProd(); renderRev(); renderMock(); v2Render(); }
+  function renderAll() { applyText(); showTab(); renderPMode(); ncBoard.render(); pareto.render(); costPareto.render(); weekly.render(); cnq.render(); renderCx(); renderDis(); renderWhereTbl(); client.render(); renderCbl(); renderRca(); alRender(); renderPplan(); renderAna(); renderMft(); renderGal(); renderProd(); renderRev(); renderMock(); v2Render(); }
   function setTab(t) { G.tab = t; if (!EMBED) { try { history.replaceState(null, '', '#' + t); } catch (x) {} } applyText(); showTab(); if (t === 'hebdo') weekly.render(); if (t === 'ov') ncBoard.render(); if (t === 'ana') renderAna(); if (t === 'pplan') renderPplan(); if (t === 'cbl') renderCbl(); if (t === 'mft') renderMft(); if (t === 'gal') renderGal(); if (t === 'prod') renderProd(); if (PAGE === 'mock') renderMock(); if (V2) v2Render(); if (t !== 'ana' && t !== 'mft') hideTip(); }
   document.getElementById('tabs').addEventListener('click', function (e) { var t = e.target.closest('[data-tab]'); if (t) setTab(t.getAttribute('data-tab')); });
   document.getElementById('tabs').addEventListener('keydown', function (e) {

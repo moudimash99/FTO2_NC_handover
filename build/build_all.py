@@ -413,6 +413,9 @@ def eqmsn(nc):
     asof, recs = _production_export()
     if asof:
         out["wd"] = working_day_volume(asof, recs)   # the page's default volume (Mohammad, 30 Oct)
+        out["wdw"] = working_day_volume(asof, recs, weekly=True)   # the same per week, for the alarms
+        rows = [(k, a, "2026-W%02d" % (i + 1), v) for k in ("line", "prod") for a, b in out["wdw"][k].items() for i, v in enumerate(b) if v]
+        pd.DataFrame(rows, columns=["niveau", "nom", "semaine", "msn"]).to_csv(os.path.join(OUT, "fto2_msn_semaine.csv"), index=False, encoding="utf-8")
     REPORT["eqmsn"] = {"products": len(out["std"]), "total_std": round(sum(sum(v) for v in out["std"].values()), 2),
                        "total_wd": round(sum(sum(v) for v in out.get("wd", {}).values()), 2),
                        "msn_dates": len(out["msn"] or {}), "msn_asof": out["msnAsof"]}
@@ -508,14 +511,16 @@ def _french_holidays(year):
            {easter + dt.timedelta(n) for n in (1, 39, 50)}
 
 
-def working_day_volume(asof, recs):
+def working_day_volume(asof, recs, weekly=False):
     """EqMSN per product and month of 2026 counted on the days the plant works. Same MSNs and dates as the EqMSN sheet (each MSN
     = 1.0 from its Impression date to its OTA, the real date else the planned one, the sheet script's date corrections: a real
     date after the export or more than 200 days from its plan is taken with the plan's year when that lands within 30 days of
     the plan, else the plan is used; the span reaches a real milestone entered after the OTA; a second block of the same MSN is
     dropped), but spread over Monday to Friday minus French public holidays, with the closures and quiet weeks of
     04_reference/calendrier_production.csv at their weight (0 or 0.5). July and August 2026 come to about 58 % of a normal month
-    for the MIP A350, as its NCs do (Mohammad, 29 Oct); the sheet spreads over every calendar day (83 %). {product: 12 months}."""
+    for the MIP A350, as its NCs do (Mohammad, 29 Oct); the sheet spreads over every calendar day (83 %). {product: 12 months}.
+    weekly=True: the same per ISO week of 2026, by line and by product, for the alarms: {"line": {line: 53 weeks}, "prod": {product:
+    53 weeks}}, week 1 first."""
     import datetime as dt
     cal = pd.read_csv(os.path.join(ROOT, "04_reference", "calendrier_production.csv"), encoding="utf-8")
     cal = [(dt.date.fromisoformat(a), dt.date.fromisoformat(b), float(w)) for a, b, w in zip(cal.debut, cal.fin, cal.poids)]
@@ -536,7 +541,7 @@ def working_day_volume(asof, recs):
         except ValueError:
             y = None
         return y if y and y <= asof and abs((y - p).days) <= 30 else None
-    out, seen = {}, set()
+    out, wk, seen = {}, {"line": {}, "prod": {}}, set()
     for c in recs:
         if (c["prod"], c["msn"]) in seen:
             continue
@@ -555,10 +560,20 @@ def working_day_volume(asof, recs):
         if not sum(w):
             w[-1] = 1
         m = out.setdefault(c["prod"], [0.0] * 12)
+        wl, wp = wk["line"].setdefault(c["line"], [0.0] * 53), wk["prod"].setdefault(c["prod"], [0.0] * 53)
         for d, x in zip(days, w):
-            if d.year == 2026 and x:
+            if not x:
+                continue
+            if d.year == 2026:
                 m[d.month - 1] += x / tot
+            y, n, _ = d.isocalendar()
+            if y == 2026:
+                wl[n - 1] += x / tot
+                wp[n - 1] += x / tot
+    if weekly:
+        return {k: {a: [round(v, 3) for v in b] for a, b in g.items()} for k, g in wk.items()}
     return {p: [round(v, 2) for v in m] for p, m in out.items()}
+
 
 def cable_requests():
     """The cable team's requests for new cables (06_input_data/cables_2026.json: the rows behind the "Suivi NC câbles" page,

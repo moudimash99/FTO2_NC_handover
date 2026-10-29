@@ -178,6 +178,9 @@ input[aria-invalid="true"] { border-color: var(--up); }
 .rules { gap: 8px; }
 .help { font-size: 12.5px; color: var(--ink-2); background: var(--band); border-radius: 8px; padding: 8px 10px; line-height: 1.45; }
 .err { color: var(--up); font-size: 13px; font-weight: 600; }
+/*@@ALARMCSS@@*/
+header.top .al-wrap { margin-left: auto; }
+.al-ops { display: flex; flex-direction: column; gap: 6px; align-items: flex-end; }
 @media (prefers-reduced-motion: no-preference) { .bar .tr i { transition: width .15s ease; } }
 </style>
 
@@ -186,6 +189,8 @@ input[aria-invalid="true"] { border-color: var(--up); }
   <div class="ctl"><label id="lLine">Ligne</label><div class="seg" role="group" aria-labelledby="lLine" id="lines"></div></div>
   <div class="ctl"><label id="lPh">Production</label><div class="seg" role="group" aria-labelledby="lPh" id="phases"></div></div>
   <div class="ctl per"><label id="lPer">Période</label><div class="seg" role="group" aria-labelledby="lPer" id="per"></div><label for="wkF" id="lF">du</label><select id="wkF"></select><label for="wk" id="lT">au</label><select id="wk"></select></div>
+  <div class="al-wrap" id="alWrap"><button type="button" class="al-btn" id="alBtn" aria-haspopup="dialog" aria-expanded="false" aria-controls="alPop" aria-label="Alarmes" hidden><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M12 2.5a6.5 6.5 0 0 0-6.5 6.5v3.4l-1.8 3.1A1 1 0 0 0 4.6 17h14.8a1 1 0 0 0 .9-1.5l-1.8-3.1V9A6.5 6.5 0 0 0 12 2.5zm-2.6 16a2.7 2.7 0 0 0 5.2 0z"/></svg><span class="al-n" id="alN" hidden></span></button>
+    <div class="al-pop" id="alPop" role="dialog" aria-labelledby="alT" hidden></div></div>
 </div></header>
 <nav class="tabs" aria-label="Onglets"><div class="wrap" role="tablist">
   <button role="tab" id="tb-pareto" data-tab="pareto" aria-selected="true">Pareto de la semaine</button>
@@ -242,7 +247,7 @@ var D = /*@@DATA@@*/null;
   var DIC = D.dic, NCS = D.ncs, DEFS = D.defs, CODES = D.codes || {};
   var CATS = ['MEO Facteur humain', 'Erreur Branchement', 'Élément Manquant', 'Élément Endommagé', 'Déverrouillage', 'Grounding/Bonding'];
   var CATC = { 'MEO Facteur humain': 'var(--c1)', 'Erreur Branchement': 'var(--c2)', 'Élément Manquant': 'var(--c3)', 'Élément Endommagé': 'var(--c4)', 'Déverrouillage': 'var(--c5)', 'Grounding/Bonding': 'var(--c6)' };
-  var LEVELS = { cat: 'Catégorie', rca: 'Cause', sub: 'Sous-catégorie', code: 'Sous-code', fin: 'FIN', where: 'Lieu de détection' };
+  var LEVELS = { cat: 'Catégorie', rca: 'Cause', sub: 'Sous-catégorie', code: 'Sous-code', fin: 'FIN', where: 'Lieu de détection', station: 'Poste' };
   var WHERE_FR = { 'Final inspection': 'Contrôle final', 'TEST': 'Test', 'Cables': 'Câbles', 'In-process (internal)': 'En cours de fabrication', 'Supplier': 'Fournisseur', 'QUALITE': 'Qualité', 'Customer return': 'Retour client', 'NC Interne': 'NC interne' };
   var STATUSES = ['À lancer', 'En cours', 'Clos', 'Abandonnée'];
   function catCol(c) { return CATC[c] || 'var(--dim)'; }
@@ -662,6 +667,93 @@ var D = /*@@DATA@@*/null;
     finally { BUSY = false; if (btn) btn.disabled = false; }
   }
 
+  // ---------------------------------------------------------------- the bell: what to look at. The dashboard's alarm rule, copied in
+  // by build_mft.py, for the production type chosen, as of the week shown (its finished week); the line picker chooses whose
+  // alarms are listed. Seen marks: the page's store, collection 'alarmes' (the dashboard keeps its own).
+  /*@@ALARMS@@*/
+  var AL = { open: false, marks: {}, res: null, sigK: '', first: 0, last: -1 };
+  function alCompute() {
+    var V = D.vol; if (!V) return null;
+    var wi = S.week; if (PARTIAL && wi === NW - 1) wi--;
+    var wk = WEEKS[wi] || '', last = wk.slice(0, 4) === '2026' ? +wk.slice(6) - 1 : -1, key = S.ph + '|' + last;
+    if (key === AL.sigK) return AL.res;
+    var items = {}, cnt = { rca: {}, code: {} }, w0 = 53, z = function () { var a = []; for (var i = 0; i < 53; i++) a.push(0); return a; };
+    function it(line, lv, v, hist) { var k = line + '|' + lv + '|' + v; return items[k] || (items[k] = { key: k, line: line, lv: lv, v: v, w: z(), e: V[line], n: [], hist: !!hist }); }
+    function add(o, i, id) { o.w[i]++; (o.n[i] || (o.n[i] = [])).push(id); if (i < w0) w0 = i; }
+    function tally(m, k, v) { var q = m[k] || (m[k] = {}); q[v] = (q[v] || 0) + 1; }
+    DEFS.forEach(function (d) {
+      var n = NCS[d[0]]; if (S.ph && DIC.phase[n[3]] !== S.ph) return;
+      var l = DIC.line[n[2]], i = ALARM.week(n[1]); if (!V[l] || i < 0) return;
+      var c = fld(d, 'cat'), ca = fld(d, 'rca'), co = fld(d, 'code'), st = fld(d, 'station'), wh = fld(d, 'where');
+      add(it(l, 'all', ''), i, n[0]);
+      if (c) add(it(l, 'cat', c), i, n[0]);
+      if (ca) { add(it(l, 'rca', ca), i, n[0]); tally(cnt.rca, l + '|' + ca, c); }
+      if (co) { add(it(l, 'code', co), i, n[0]); tally(cnt.code, l + '|' + co, ca); }
+      if (st) add(it(l, 'station', st, true), i, n[0]);
+      if (wh) add(it(l, 'where', wh, true), i, n[0]);
+    });
+    var dom = function (m) { m = m || {}; return Object.keys(m).sort(function (a, b) { return m[b] - m[a]; })[0] || ''; };
+    AL.first = w0 + ALARM.P.recent + ALARM.P.base - 1; AL.last = last; AL.sigK = key;
+    AL.res = last < AL.first ? [] : ALARM.run(Object.keys(items).map(function (x) { return items[x]; }), AL.first, last, function (a) {
+      return a.lv === 'cat' ? a.line + '|all|' : a.lv === 'rca' ? a.line + '|cat|' + dom(cnt.rca[a.line + '|' + a.v]) : a.lv === 'code' ? a.line + '|rca|' + dom(cnt.code[a.line + '|' + a.v]) : ''; });
+    return AL.res;
+  }
+  function alName(a) {
+    var v = a.v, s = a.lv === 'all' ? 'Toutes les causes' : a.lv === 'code' ? v + (CODES[v] ? ' · ' + String(CODES[v]).split(' (')[0] : '') :
+      a.lv === 'where' ? (WHERE_FR[v] || v) : a.lv === 'station' ? 'poste ' + v : v;
+    return s + (a.child ? ' (' + a.child + ')' : '');
+  }
+  function alRender() {
+    var btn = $('alBtn'), pop = $('alPop'); if (!btn) return;
+    var res = alCompute(); btn.hidden = !res; if (!res) { pop.hidden = true; return; }
+    var mine = res.filter(function (g) { return S.line === 'all' || g.line === S.line; }), other = res.length - mine.length;
+    var show = mine.filter(function (g) { return !ALARM.seen(g, AL.marks[g.key]); }), hid = mine.filter(function (g) { return ALARM.seen(g, AL.marks[g.key]); });
+    btn.classList.toggle('maj', show.some(function (g) { return g.lvl === 2; })); $('alN').hidden = !show.length; $('alN').textContent = show.length;
+    btn.setAttribute('aria-expanded', String(AL.open)); btn.title = 'Alarmes' + (show.length ? ' · ' + show.length : '');
+    pop.hidden = !AL.open; if (!AL.open) return;
+    var wr = $('alWrap').getBoundingClientRect(), PW = document.documentElement.clientWidth, pw = Math.min(440, PW - 32), px = Math.max(16, Math.min(wr.right - pw, PW - pw - 16));
+    pop.style.width = pw + 'px'; pop.style.left = Math.round(px - wr.left) + 'px'; pop.style.right = 'auto';
+    var can = !!DB && CANW !== false, row = function (g, isSeen) {
+      var a = g.head, sub = [], also = g.also.filter(function (x) { return x.lv !== 'prod'; });
+      if (a.kids) sub.push('dont ' + a.kids.map(function (v) { return alName({ lv: a.lv === 'all' ? 'cat' : a.lv === 'cat' ? 'rca' : 'code', v: v }); }).join(', '));
+      if (also.length) sub.push('aussi : ' + also.map(alName).join(', '));
+      return '<div class="al-row"><button type="button" class="al-go" data-algo="' + esc(g.key) + '"><i class="al-dot ' + (g.lvl === 2 ? 'maj' : 'min') + '" title="' + (g.lvl === 2 ? 'Majeure' : 'Mineure') + '"></i>' +
+        '<span class="al-what"><b>' + esc(g.line) + '</b> · ' + esc(alName(a) + ' en hausse depuis S' + (g.since + 1)) + '</span>' + (sub.length ? '<span class="al-sub">' + esc(sub.join(' · ')) + '</span>' : '') +
+        '<span class="al-sub">→ Pareto de la semaine</span></button><span class="al-ops">' + (can && a.lv !== 'all' && !isSeen ? plusBtn(a.lv, a.v) : '') +
+        (can ? '<button type="button" class="al-vu" data-al' + (isSeen ? 'un' : 'vu') + '="' + esc(g.key) + '">' + (isSeen ? 'Remettre' : 'Vu') + '</button>' : '') + '</span></div>';
+    };
+    pop.innerHTML = '<div class="al-head"><h3 id="alT">À regarder · S' + (AL.last + 1) + '</h3><button type="button" class="al-x" id="alX" aria-label="Fermer">✕</button></div>' +
+      (AL.last < AL.first ? '<p class="mu">Pas encore assez de semaines pour comparer.</p>' : show.length ? show.map(function (g) { return row(g, false); }).join('') : '<p class="mu">Rien à signaler.</p>') +
+      (other ? '<p class="mu">+' + other + ' sur les autres lignes</p>' : '') +
+      (hid.length ? '<details class="al-seen"><summary>Vues (' + hid.length + ')</summary>' + hid.map(function (g) { return row(g, true); }).join('') + '</details>' : '');
+  }
+  function alGo(key) {
+    var g = (AL.res || []).filter(function (x) { return x.key === key; })[0]; if (!g) return;
+    var a = g.head; AL.open = false;
+    S.line = g.line; S.sel = a.lv === 'all' ? null : { k: a.lv, v: a.v }; S.tab = 'pareto'; S.lim = 40; remember();
+    try { history.replaceState(null, '', '#pareto'); } catch (x) { }
+    renderAll();
+  }
+  function alMark(key, on) {
+    var g = (AL.res || []).filter(function (x) { return x.key === key; })[0]; if (!DB || !g) return;
+    var ref = DB.collection('alarmes').doc(ALARM.docId(key));
+    (on ? ref.set({ key: key, line: g.line, since: g.since, lvl: g.lvl, ex: Math.round(g.ex * 10) / 10, at: today(), by: UID || '' }) : ref.delete()).catch(function () { });
+  }
+  (function () {
+    var w = $('alWrap'); if (!w) return;
+    w.addEventListener('click', function (e) {
+      var t = e.target.closest('button'); if (!t) return;
+      if (t.id === 'alBtn') { AL.open = !AL.open; alRender(); return; }
+      if (t.id === 'alX') { AL.open = false; alRender(); $('alBtn').focus(); return; }
+      if (t.hasAttribute('data-algo')) { alGo(t.getAttribute('data-algo')); return; }
+      if (t.hasAttribute('data-alvu')) { alMark(t.getAttribute('data-alvu'), true); return; }
+      if (t.hasAttribute('data-alun')) { alMark(t.getAttribute('data-alun'), false); return; }
+      if (t.hasAttribute('data-new')) { AL.open = false; $('alPop').hidden = true; $('alBtn').setAttribute('aria-expanded', 'false'); }   // the action form opens (page handler)
+    });
+    document.addEventListener('click', function (e) { if (AL.open && !w.contains(e.target)) { AL.open = false; alRender(); } });
+    document.addEventListener('keydown', function (e) { if (AL.open && e.key === 'Escape') { AL.open = false; alRender(); $('alBtn').focus(); } });
+  })();
+
   // ---------------------------------------------------------------- events
   document.addEventListener('click', function (e) {
     var t = e.target.closest('button, [data-wk]'); if (!t) return;
@@ -737,7 +829,7 @@ var D = /*@@DATA@@*/null;
   document.addEventListener('scroll', function () { tip.hidden = true; }, true);
   var rt; addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(renderAll, 150); });
 
-  function renderAll() { renderControls(); if (S.tab === 'pareto') renderPareto(); else if (S.tab === 'analyse') renderAnalyse(); else renderActions(); $('nAct').textContent = ACTIONS.filter(function (a) { return onLine(a) && a.status !== 'Clos' && a.status !== 'Abandonnée'; }).length; }
+  function renderAll() { renderControls(); if (S.tab === 'pareto') renderPareto(); else if (S.tab === 'analyse') renderAnalyse(); else renderActions(); $('nAct').textContent = ACTIONS.filter(function (a) { return onLine(a) && a.status !== 'Clos' && a.status !== 'Abandonnée'; }).length; alRender(); }
   var h = (location.hash || '').slice(1); if (h === 'analyse' || h === 'actions' || h === 'pareto') S.tab = h;
   renderAll();
 
@@ -749,6 +841,7 @@ var D = /*@@DATA@@*/null;
     if (USER) { try { UID = await USER.id(); } catch (e) { } try { CANW = await USER.can('data.write'); } catch (e) { CANW = null; } }
     if (!DB) { $('dbNote').hidden = false; $('dbNote').textContent = 'Les actions sont enregistrées dans la page : ouvrez-la depuis Claude, connecté, pour les voir et les modifier.'; renderAll(); return; }
     if (CANW === false) { $('dbNote').hidden = false; $('dbNote').textContent = 'Accès en lecture : vous voyez les actions sans pouvoir les modifier.'; }
+    DB.collection('alarmes').onSnapshot(function (snap) { var m = {}; snap.docs.forEach(function (d) { var x = d.data(); if (x && x.key) m[x.key] = x; }); AL.marks = m; alRender(); }, function () { });
     DB.collection('actions').onSnapshot(async function (snap) {
       ACTIONS = snap.docs.map(function (d) { return Object.assign({ id: d.id }, d.data()); });
       var ids = {}; ACTIONS.forEach(function (a) { if (a.createdBy) ids[a.createdBy] = 1; (a.log || []).forEach(function (e) { if (e.by) ids[e.by] = 1; }); });

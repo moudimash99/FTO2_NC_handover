@@ -82,7 +82,28 @@ def data():
     fr = pd.read_csv(os.path.join(ROOT, "04_reference", "souscodes_fr.csv"), encoding="utf-8-sig").set_index("sous_code").description_fr.to_dict()
     to = n.created.max()[:10]
     return {"to": to, "toWeek": week(to), "ncs": ncs, "defs": defs, "dic": dic,
-            "codes": {c: tidy(fr.get(c, ""), 90) for c in dic["code"] if c}}
+            "codes": {c: tidy(fr.get(c, ""), 90) for c in dic["code"] if c}, "vol": weekly_volume()}
+
+
+def weekly_volume():
+    """MSN built per line and ISO week of 2026 (working days, as the dashboard: 05_outputs/fto2_msn_semaine.csv from
+    build/build_all.py), the alarms' denominator: {line: 53 weeks, week 1 first}. None without the file."""
+    path = os.path.join(ROOT, "05_outputs", "fto2_msn_semaine.csv")
+    if not os.path.exists(path):
+        return None
+    t = pd.read_csv(path, encoding="utf-8")
+    out = {}
+    for r in t[t.niveau == "line"].itertuples():
+        out.setdefault(r.nom, [0.0] * 53)[int(r.semaine[-2:]) - 1] = float(r.msn)
+    return out
+
+
+def alarm_parts():
+    """The alarm rule and its styles, copied from the dashboard's template so that both pages raise the same alarms."""
+    t = open(os.path.join(ROOT, "build", "templates", "dashboard.html"), encoding="utf-8").read()
+    cut = lambda a, b: t[t.index(a):t.index(b) + len(b)]
+    return (cut("/* ===== ALARM ENGINE START ===== */", "/* ===== ALARM ENGINE END ===== */"),
+            cut("/* ===== ALARM CSS START ===== */", "/* ===== ALARM CSS END ===== */"))
 
 
 def seed_actions():
@@ -116,7 +137,9 @@ def main():
         json.dump(seeds, f, ensure_ascii=False, indent=1)
     tpl = open(os.path.join(HERE, "mft_template.html"), encoding="utf-8").read()
     blob = json.dumps(D, ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/")
-    page = tpl.replace("/*@@DATA@@*/null", blob, 1)
+    js, css = alarm_parts()
+    page = tpl.replace("/*@@DATA@@*/null", blob, 1).replace("/*@@ALARMS@@*/", js, 1).replace("/*@@ALARMCSS@@*/", css, 1)
+    assert "@@ALARMS@@" not in page and "@@ALARMCSS@@" not in page
     for out in (os.path.join(ROOT, "03_reports", "FTO2_MFT.html"), os.path.join(ROOT, "build", "artifacts", "FTO2_MFT.html")):
         os.makedirs(os.path.dirname(out), exist_ok=True)   # build/artifacts is not in git
         with open(out, "w", encoding="utf-8") as f:
