@@ -43,6 +43,9 @@ with no row, or the columns it received when no 2026 FTO2 NC could be read.
   table Slate can write to (or a Foundry action), to be set up.
 - The action form saves without a form submission (Slate's sandbox allows none), with its button or Enter, and opens where
   the click was when the widget is taller than the screen.
+- **A press on a bar filters the whole page**, as on the dashboard: the figures, the other lists, the defect table and the
+  Analyse tab. One value per list (category, cause, sub-code, FIN), several lists can be combined; the chips above say what
+  is picked (✕ removes one, "Tout retirer" all). Picks stay when the period changes and are cleared when the line changes.
 - `preview_local_only.html` opens on a laptop with a frozen copy of the data, to look at the page: never paste it into Slate.
 
 ## Build

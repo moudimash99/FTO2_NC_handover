@@ -216,6 +216,7 @@ header.top .al-wrap { margin-left: auto; }
 
   <section class="tab" id="t-analyse" aria-labelledby="tb-analyse" hidden>
     <div class="lead"><h2 id="aTitle"></h2></div>
+    <div class="row" id="selRowA" hidden><span id="selChipA"></span></div>
     <div class="card"><div class="head"><h3>Défauts par semaine, par catégorie</h3><div class="row"><span class="mu">26 semaines</span><button type="button" class="btn sm tg" id="mkT" aria-pressed="false">▼ Débuts d’action</button></div></div><div id="aWeeks"></div><div class="key" id="aWeeksKey"></div></div>
     <div class="grid2">
       <div class="card"><div class="head"><h3>Ce qui monte</h3><span class="mu">4 sem. vs 8 préc.</span></div><div class="lst" id="aUp"></div></div>
@@ -247,12 +248,12 @@ var D = /*@@DATA@@*/null;
   var DIC = D.dic, NCS = D.ncs, DEFS = D.defs, CODES = D.codes || {};
   var CATS = ['MEO Facteur humain', 'Erreur Branchement', 'Élément Manquant', 'Élément Endommagé', 'Déverrouillage', 'Grounding/Bonding'];
   var CATC = { 'MEO Facteur humain': 'var(--c1)', 'Erreur Branchement': 'var(--c2)', 'Élément Manquant': 'var(--c3)', 'Élément Endommagé': 'var(--c4)', 'Déverrouillage': 'var(--c5)', 'Grounding/Bonding': 'var(--c6)' };
-  var LEVELS = { cat: 'Catégorie', rca: 'Cause', sub: 'Sous-catégorie', code: 'Sous-code', fin: 'FIN', where: 'Lieu de détection', station: 'Poste', msn: 'MSN' };
+  var LEVELS = { cat: 'Catégorie', rca: 'Cause', sub: 'Sous-catégorie', code: 'Sous-code', grp: 'Code', fin: 'FIN', where: 'Lieu de détection', station: 'Poste', msn: 'MSN', prod: 'Produit' };
   var WHERE_FR = { 'Final inspection': 'Contrôle final', 'TEST': 'Test', 'Cables': 'Câbles', 'In-process (internal)': 'En cours de fabrication', 'Supplier': 'Fournisseur', 'QUALITE': 'Qualité', 'Customer return': 'Retour client', 'NC Interne': 'NC interne' };
   var STATUSES = ['À lancer', 'En cours', 'Clos', 'Abandonnée'];
   function catCol(c) { return CATC[c] || 'var(--dim)'; }
   function fld(d, k) { var n = NCS[d[0]]; return k === 'cat' ? DIC.cat[d[1]] : k === 'rca' ? DIC.rca[d[2]] : k === 'sub' ? DIC.sub[d[3]] : k === 'code' ? DIC.code[d[4]] : k === 'fin' ? DIC.fin[d[5]] : k === 'where' ? DIC.where[n[6]] :
-    k === 'grp' ? grpOf(DIC.code[d[4]]) : k === 'station' ? DIC.station[n[5]] : k === 'msn' ? DIC.msn[n[4]] : k === 'text' ? d[7] : ''; }
+    k === 'grp' ? grpOf(DIC.code[d[4]]) : k === 'station' ? DIC.station[n[5]] : k === 'msn' ? DIC.msn[n[4]] : k === 'prod' ? (DIC.prod ? DIC.prod[n[7]] : '') : k === 'text' ? d[7] : ''; }
   function grpOf(c) { var m = /^[A-Z]\d{2}/.exec(c || ''); return m ? m[0] : ''; }   // the code of a sub-code: Q11-003 -> Q11
   function shown(k, v) { return k === 'code' ? (v + (CODES[v] ? ' · ' + CODES[v] : '')) : k === 'where' ? (WHERE_FR[v] || v) : v; }
   // the category a value belongs to (most frequent), for its colour
@@ -284,9 +285,15 @@ var D = /*@@DATA@@*/null;
 
   // ---------------------------------------------------------------- state
   var LINES = (function () { var c = {}; NCS.forEach(function (n) { var l = DIC.line[n[2]]; if (l && l !== '—') c[l] = (c[l] || 0) + 1; }); return Object.keys(c).sort(function (a, b) { return c[b] - c[a]; }).map(function (l) { return [l, c[l]]; }); })();
-  var S = { line: LINES.length ? LINES[0][0] : 'all', from: LASTC, week: LASTC, pm: 1, mk: false, ph: 'SERIE', tab: 'pareto', per: 1, sel: null, lim: 40, fSt: 'open' };   // from..week: the weeks shown, per: how many; pm: 1, 4 or 13 weeks ending at week, 0 = chosen freely
+  var S = { line: LINES.length ? LINES[0][0] : 'all', from: LASTC, week: LASTC, pm: 1, mk: false, ph: 'SERIE', tab: 'pareto', per: 1, f: {}, lim: 40, fSt: 'open' };   // from..week: the weeks shown, per: how many; pm: 1, 4 or 13 weeks ending at week, 0 = chosen freely
   try { var sv = JSON.parse(localStorage.getItem('mft-fto2') || '{}'); if (sv.line && (sv.line === 'all' || LINES.some(function (x) { return x[0] === sv.line; }))) S.line = sv.line; if (sv.ph != null) S.ph = sv.ph; S.mk = !!sv.mk; } catch (e) { }
   function remember() { try { localStorage.setItem('mft-fto2', JSON.stringify({ line: S.line, ph: S.ph, mk: S.mk })); } catch (e) { } }
+  // a press on a bar filters the whole page (figures, the other lists, the table, the Analyse tab), as on the dashboard: one value
+  // per list, each list filtered by the picks of the others (Mohammad, 30 Oct)
+  function selOk(d, except) { for (var k in S.f) { if (k !== except && fld(d, k) !== S.f[k]) return false; } return true; }
+  function anySel() { return Object.keys(S.f).length > 0; }
+  function selChips() { var ks = Object.keys(S.f); return ks.map(function (k) { return '<span class="chip">' + esc(LEVELS[k] + ' : ' + shown(k, S.f[k])) + ' <button type="button" data-unsel="' + k + '" aria-label="Retirer ' + esc(LEVELS[k]) + '">✕</button></span>'; }).join('') +
+    (ks.length > 1 ? '<button type="button" class="btn sm" data-unsel="*">Tout retirer</button>' : ''); }
   function inScope(ni, line) { var n = NCS[ni], l = line || S.line; return (l === 'all' || DIC.line[n[2]] === l) && (!S.ph || DIC.phase[n[3]] === S.ph); }
   function lineName() { return S.line === 'all' ? 'Toutes les lignes' : S.line; }
   function onLine(a) { return S.line === 'all' || a.line === S.line; }
@@ -324,7 +331,7 @@ var D = /*@@DATA@@*/null;
   // ---------------------------------------------------------------- tab 1: the week's Pareto
   function counts(ws, k) {   // value -> count over the weeks ws, for the line
     var set = {}; ws.forEach(function (i) { set[i] = 1; }); var m = {};
-    DEFS.forEach(function (d) { if (set[NCW[d[0]]] && inScope(d[0])) { var v = fld(d, k); if (v) m[v] = (m[v] || 0) + 1; } }); return m;
+    DEFS.forEach(function (d) { if (set[NCW[d[0]]] && inScope(d[0]) && selOk(d, k)) { var v = fld(d, k); if (v) m[v] = (m[v] || 0) + 1; } }); return m;
   }
   function barList(el, k, top) {
     var ws = per(), prev = validBefore(ws[0] - 1, 4), m = counts(ws, k), pm = counts(prev, k), np = prev.length || 1, tot = 0;
@@ -333,10 +340,11 @@ var D = /*@@DATA@@*/null;
     if (k === 'cat') { var main = vals.filter(function (v) { return CATC[v]; }).sort(function (a, b) { return m[b] - m[a]; }), side = vals.filter(function (v) { return !CATC[v]; }).sort(function (a, b) { return m[b] - m[a]; }); vals = main.concat(side); }
     else vals.sort(function (a, b) { return m[b] - m[a] || (a < b ? -1 : 1); });
     if (top) vals = vals.slice(0, top);
+    if (S.f[k] != null && vals.indexOf(S.f[k]) < 0 && m[S.f[k]]) vals.push(S.f[k]);   // the value picked stays in its list, to see it and undo it
     if (!vals.length) { el.innerHTML = '<p class="empty">' + (S.line === 'A400M' ? 'A400M : les textes des NC sont masqués, aucun défaut n’est lu.' : 'Aucun défaut sur la période.') + '</p>'; return; }
     var ref = function (v) { return (pm[v] || 0) / np * S.per; }, mx = Math.max.apply(null, vals.map(function (v) { return Math.max(m[v], ref(v)); }).concat([1e-9])), cum = 0;
-    el.classList.toggle('sel', !!(S.sel && S.sel.k === k));
-    el.innerHTML = vals.map(function (v) { cum += m[v]; var on = S.sel && S.sel.k === k && S.sel.v === v, r = ref(v);
+    el.classList.toggle('sel', k in S.f);
+    el.innerHTML = vals.map(function (v) { cum += m[v]; var on = S.f[k] === v, r = ref(v);
       return '<button type="button" class="bar" data-k="' + k + '" data-v="' + esc(v) + '" aria-pressed="' + !!on + '"' + tipA(shown(k, v), [num(m[v]) + ' défauts sur la période', 'avant : ' + num(r, 1) + ' (moyenne de ' + np + ' semaines, ramenée à la période)', k === 'cat' ? '' : (VCAT[k] && VCAT[k][v] ? 'catégorie : ' + VCAT[k][v] : '')].filter(Boolean)) + '>' +
         '<span class="nm">' + esc(shown(k, v)) + '</span><span class="v">' + num(m[v]) + '</span><span class="p">' + (k === 'cat' && CATC[v] ? num(cum / tot * 100) + ' %' : num(m[v] / tot * 100) + ' %') + '</span>' +
         '<span class="tr"><i style="width:' + (m[v] / mx * 100) + '%;background:' + valCol(k, v) + '"></i><em style="left:calc(' + (r / mx * 100) + '% - 1px)"></em></span></button>'; }).join('');
@@ -347,9 +355,14 @@ var D = /*@@DATA@@*/null;
     $('pSub').textContent = S.per === 1 && SHUT[S.week] ? 'Semaine de fermeture' : PARTIAL && S.week === NW - 1 ? 'Semaine en cours, incomplète' : '';
     $('pSub').hidden = !$('pSub').textContent;
     var set = {}; ws.forEach(function (i) { set[i] = 1; });
-    var ncs = 0, ncSet = {}; NCS.forEach(function (n, i) { if (set[NCW[i]] && inScope(i)) { ncs++; ncSet[i] = 1; } });
-    var defs = DEFS.filter(function (d) { return ncSet[d[0]]; }), prev = validBefore(ws[0] - 1, 4), pd = 0, pn = 0, pset = {};
-    prev.forEach(function (i) { pset[i] = 1; }); NCS.forEach(function (n, i) { if (pset[NCW[i]] && inScope(i)) pn++; }); DEFS.forEach(function (d) { if (pset[NCW[d[0]]] && inScope(d[0])) pd++; });
+    // with picks: the defects that match them and the NCs that have one; without: every NC of the period, a defect or not
+    var sel = anySel(), ncs = 0, ncSet = {}; NCS.forEach(function (n, i) { if (set[NCW[i]] && inScope(i)) ncSet[i] = 1; });
+    var defs = DEFS.filter(function (d) { return ncSet[d[0]] && selOk(d); }), hit = {};
+    if (sel) { defs.forEach(function (d) { hit[d[0]] = 1; }); ncs = Object.keys(hit).length; } else ncs = Object.keys(ncSet).length;
+    var prev = validBefore(ws[0] - 1, 4), pd = 0, pn = 0, pset = {}, phit = {};
+    prev.forEach(function (i) { pset[i] = 1; });
+    DEFS.forEach(function (d) { if (pset[NCW[d[0]]] && inScope(d[0]) && selOk(d)) { pd++; phit[d[0]] = 1; } });
+    if (sel) pn = Object.keys(phit).length; else NCS.forEach(function (n, i) { if (pset[NCW[i]] && inScope(i)) pn++; });
     var refD = prev.length ? pd / prev.length * S.per : null, refN = prev.length ? pn / prev.length * S.per : null;
     var cm = {}; defs.forEach(function (d) { var c = fld(d, 'cat'); if (CATC[c]) cm[c] = (cm[c] || 0) + 1; }); var topc = Object.keys(cm).sort(function (a, b) { return cm[b] - cm[a]; })[0];
     var dlt = function (v, r) { return r ? '<small class="delta ' + (v > r * 1.1 ? 'up' : v < r * 0.9 ? 'down' : '') + '">' + pct(v / r - 1) + ' vs ' + num(r, 1) + '</small>' : '<small>—</small>'; };
@@ -358,10 +371,9 @@ var D = /*@@DATA@@*/null;
       '<div class="fig"><span class="k">Défauts par NC</span><b>' + (ncs ? num(defs.length / ncs, 1) : '—') + '</b><small></small></div>' +
       '<div class="fig"><span class="k">Première catégorie</span><b style="font-size:21px">' + esc(topc || '—') + '</b><small>' + (topc ? num(cm[topc]) + ' défauts · ' + num(cm[topc] / (defs.length || 1) * 100) + ' %' : '') + '</small></div>';
     barList($('bCat'), 'cat'); barList($('bRca'), 'rca', 12); barList($('bCode'), 'code', 10); barList($('bFin'), 'fin', 10);
-    $('selRow').hidden = !S.sel;
-    $('selChip').innerHTML = S.sel ? '<span class="chip">' + esc(LEVELS[S.sel.k] + ' : ' + shown(S.sel.k, S.sel.v)) + ' <button type="button" id="selX" aria-label="Retirer le filtre">✕</button></span>' : '';
-    var rows = defs.filter(function (d) { return !S.sel || fld(d, S.sel.k) === S.sel.v; }).sort(function (a, b) { return NCS[b[0]][1] < NCS[a[0]][1] ? -1 : NCS[b[0]][1] > NCS[a[0]][1] ? 1 : 0; });
-    $('detH').textContent = S.sel ? 'Les défauts · ' + LEVELS[S.sel.k] + ' : ' + shown(S.sel.k, S.sel.v) : 'Les défauts';
+    $('selRow').hidden = !sel; $('selChip').innerHTML = selChips();
+    var rows = defs.slice().sort(function (a, b) { return NCS[b[0]][1] < NCS[a[0]][1] ? -1 : NCS[b[0]][1] > NCS[a[0]][1] ? 1 : 0; });
+    $('detH').textContent = sel ? 'Les défauts · ' + Object.keys(S.f).map(function (k) { return shown(k, S.f[k]); }).join(' · ') : 'Les défauts';
     $('detN').textContent = num(rows.length) + ' ligne' + (rows.length > 1 ? 's' : '');
     $('detB').innerHTML = rows.length ? rows.slice(0, S.lim).map(function (d) { var n = NCS[d[0]];
       return '<tr><td class="n">' + esc(dayFr(n[1])) + '</td><td class="n">' + esc(n[0]) + '</td><td class="n">' + esc(DIC.msn[n[4]]) + '</td><td>' + esc(DIC.station[n[5]]) + '</td><td class="n">' + esc(fld(d, 'fin')) + '</td><td><span style="color:' + catCol(fld(d, 'cat')) + '">■</span> ' + esc(fld(d, 'rca')) + '</td><td class="txt">' + esc(d[7]) + '</td></tr>'; }).join('')
@@ -379,10 +391,11 @@ var D = /*@@DATA@@*/null;
   function plusBtn(k, v) { return '<button type="button" class="btn sm" data-new="' + esc(k + '|' + v) + '">+ Action</button>'; }
   function renderAnalyse() {
     $('aTitle').textContent = lineName() + ' · jusqu’à ' + wkLong(S.week);
+    $('selRowA').hidden = !anySel(); $('selChipA').innerHTML = selChips();
     // weekly stacked bars, 26 weeks
     var box = $('aWeeks'), W = width(box, 300), ws = []; for (var i = Math.max(0, S.week - 25); i <= S.week; i++) ws.push(i);
     var by = {}; ws.forEach(function (i) { by[i] = {}; }); var keys = CATS.concat(['aside']);
-    DEFS.forEach(function (d) { var i = NCW[d[0]]; if (by[i] && inScope(d[0])) { var c = fld(d, 'cat'), k = CATC[c] ? c : 'aside'; by[i][k] = (by[i][k] || 0) + 1; } });
+    DEFS.forEach(function (d) { var i = NCW[d[0]]; if (by[i] && inScope(d[0]) && selOk(d)) { var c = fld(d, 'cat'), k = CATC[c] ? c : 'aside'; by[i][k] = (by[i][k] || 0) + 1; } });
     var tot = ws.map(function (i) { return keys.reduce(function (s, k) { return s + (by[i][k] || 0); }, 0); }), mx = Math.max.apply(null, tot.concat([1]));
     var ml = 34, mb = 26, mt = 22, H = 230, pw = W - ml - 6, bw = pw / ws.length, Y = function (v) { return mt + (H - mt - mb) * (1 - v / mx); }, g = '';
     var step = mx > 40 ? 20 : mx > 20 ? 10 : 5;
@@ -402,7 +415,7 @@ var D = /*@@DATA@@*/null;
     $('aWeeksKey').innerHTML = CATS.map(function (c) { return '<span><i style="background:' + CATC[c] + '"></i>' + esc(c) + '</span>'; }).join('') + '<span><i style="background:var(--dim)"></i>Suivi séparé</span>' + (marks && S.mk ? '<span>▼ Début d’action</span>' : '') + '<span><i style="background:var(--ink-2);opacity:.35"></i>Fermeture / en cours</span>';
     // rising / falling causes
     var last4 = validBefore(S.week, 4), prev8 = validBefore((last4[0] || S.week) - 1, 8), ser = {}, wsS = validBefore(S.week, 13);
-    DEFS.forEach(function (d) { if (!inScope(d[0])) return; var v = fld(d, 'rca'); if (!v) return; (ser[v] || (ser[v] = WEEKS.map(function () { return 0; })))[NCW[d[0]]]++; });
+    DEFS.forEach(function (d) { if (!inScope(d[0]) || !selOk(d, 'rca')) return; var v = fld(d, 'rca'); if (!v) return; (ser[v] || (ser[v] = WEEKS.map(function () { return 0; })))[NCW[d[0]]]++; });
     var rows = Object.keys(ser).map(function (v) { var a = mean(last4.map(function (i) { return ser[v][i]; })) || 0, b = mean(prev8.map(function (i) { return ser[v][i]; })) || 0;
       return { v: v, a: a, b: b, n4: a * last4.length, r: b ? a / b - 1 : (a ? Infinity : 0) }; });
     var item = function (x, cls) { var c = valCol('rca', x.v);
@@ -421,7 +434,7 @@ var D = /*@@DATA@@*/null;
       : '<p class="empty">Rien de nouveau cette semaine.</p>';
     // FINs on several aircraft over 8 working weeks
     var w8 = {}; validBefore(S.week, 8).forEach(function (i) { w8[i] = 1; }); var fm = {};
-    DEFS.forEach(function (d) { if (!w8[NCW[d[0]]] || !inScope(d[0])) return; var f = fld(d, 'fin'); if (!f) return; var o = fm[f] || (fm[f] = { ac: {}, n: 0, rca: {} }); o.ac[DIC.msn[NCS[d[0]][4]] || 'NC ' + NCS[d[0]][0]] = 1; o.n++; var r = fld(d, 'rca'); o.rca[r] = (o.rca[r] || 0) + 1; });
+    DEFS.forEach(function (d) { if (!w8[NCW[d[0]]] || !inScope(d[0]) || !selOk(d, 'fin')) return; var f = fld(d, 'fin'); if (!f) return; var o = fm[f] || (fm[f] = { ac: {}, n: 0, rca: {} }); o.ac[DIC.msn[NCS[d[0]][4]] || 'NC ' + NCS[d[0]][0]] = 1; o.n++; var r = fld(d, 'rca'); o.rca[r] = (o.rca[r] || 0) + 1; });
     var fins = Object.keys(fm).map(function (f) { var o = fm[f]; return { f: f, k: Object.keys(o.ac).length, n: o.n, r: Object.keys(o.rca).sort(function (a, b) { return o.rca[b] - o.rca[a]; })[0] }; })
       .filter(function (x) { return x.k >= 3; }).sort(function (a, b) { return b.k - a.k || b.n - a.n; }).slice(0, 8);
     $('aFin').innerHTML = fins.length ? fins.map(function (x) { return '<div class="it"><div class="nm"><i style="background:' + valCol('rca', x.r) + '"></i><span>' + esc(x.f) + '</span></div><div class="d">' + num(x.k) + ' avions · ' + num(x.n) + ' défauts · surtout ' + esc(x.r) + '</div><div class="r">' + plusBtn('fin', x.f) + '</div></div>'; }).join('')
@@ -761,7 +774,7 @@ var D = /*@@DATA@@*/null;
   function alGo(key) {
     var g = (AL.res || []).filter(function (x) { return x.key === key; })[0]; if (!g) return;
     var a = g.head; AL.open = false;
-    S.line = g.kind === 'cross' ? 'all' : g.line; S.sel = g.kind === 'plane' ? { k: 'msn', v: a.v } : a.lv === 'all' ? null : { k: a.lv, v: a.v }; S.tab = 'pareto'; S.lim = 40; remember();
+    S.line = g.kind === 'cross' ? 'all' : g.line; S.f = {}; if (g.kind === 'plane') S.f.msn = a.v; else if (a.lv !== 'all') S.f[a.lv] = a.v; S.tab = 'pareto'; S.lim = 40; remember();
     try { history.replaceState(null, '', '#pareto'); } catch (x) { }
     renderAll();
   }
@@ -789,15 +802,15 @@ var D = /*@@DATA@@*/null;
   document.addEventListener('click', function (e) {
     var t = e.target.closest('button, [data-wk]'); if (!t) return;
     var a = t.getAttribute.bind(t);
-    if (a('data-line') != null) { S.line = a('data-line'); S.sel = null; S.lim = 40; remember(); renderAll(); return; }
+    if (a('data-line') != null) { S.line = a('data-line'); S.f = {}; S.lim = 40; remember(); renderAll(); return; }   // values differ by line: picks cleared
     if (a('data-ph') != null) { S.ph = a('data-ph'); remember(); renderAll(); return; }
     if (a('data-tab')) { S.tab = a('data-tab'); try { history.replaceState(null, '', '#' + S.tab); } catch (x) { } renderAll(); return; }
-    if (a('data-k')) { var k = a('data-k'), v = a('data-v'); S.sel = S.sel && S.sel.k === k && S.sel.v === v ? null : { k: k, v: v }; S.lim = 40; renderPareto(); return; }
+    if (a('data-k')) { var k = a('data-k'), v = a('data-v'); if (S.f[k] === v) delete S.f[k]; else S.f[k] = v; S.lim = 40; renderAll(); return; }
+    if (a('data-unsel')) { var u = a('data-unsel'); if (u === '*') S.f = {}; else delete S.f[u]; S.lim = 40; renderAll(); return; }
     if (t.id === 'mkT') { S.mk = !S.mk; remember(); renderAnalyse(); return; }
-    if (t.id === 'selX') { S.sel = null; renderPareto(); return; }
     if (t.id === 'detMore') { S.lim += 100; renderPareto(); return; }
-    if (a('data-per') != null) { S.pm = +a('data-per'); if (S.pm) setRange(S.week - S.pm + 1, S.week); S.sel = null; renderAll(); return; }
-    if (a('data-wk')) { var wi = +a('data-wk'); setRange(wi - S.per + 1, wi); S.tab = 'pareto'; S.sel = null; renderAll(); return; }   // the week clicked ends a period of the same length
+    if (a('data-per') != null) { S.pm = +a('data-per'); if (S.pm) setRange(S.week - S.pm + 1, S.week); renderAll(); return; }
+    if (a('data-wk')) { var wi = +a('data-wk'); setRange(wi - S.per + 1, wi); S.tab = 'pareto'; renderAll(); return; }   // the week clicked ends a period of the same length
     if (a('data-fst')) { S.fSt = a('data-fst'); renderActions(); renderControls(); return; }
     if (t.id === 'newAct') { openForm(null); return; }
     if (a('data-new')) { var p = a('data-new'), i = p.indexOf('|'), lv = p.slice(0, i), val = p.slice(i + 1);
@@ -854,8 +867,8 @@ var D = /*@@DATA@@*/null;
   $('frm').addEventListener('click', function (e) { if (e.target.closest && e.target.closest('#fSave')) { e.preventDefault(); saveForm(); } });
   $('ov').addEventListener('click', function (e) { if (e.target.id === 'ov') { $('ov').hidden = true; FORM = null; } });
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !$('ov').hidden) { $('ov').hidden = true; FORM = null; } });
-  $('wkF').addEventListener('change', function (e) { var f = +e.target.value; setRange(f, Math.max(f, S.week)); S.sel = null; renderAll(); });
-  $('wk').addEventListener('change', function (e) { var t = +e.target.value; setRange(S.pm ? t - S.pm + 1 : Math.min(S.from, t), t); S.sel = null; renderAll(); });
+  $('wkF').addEventListener('change', function (e) { var f = +e.target.value; setRange(f, Math.max(f, S.week)); renderAll(); });
+  $('wk').addEventListener('change', function (e) { var t = +e.target.value; setRange(S.pm ? t - S.pm + 1 : Math.min(S.from, t), t); renderAll(); });
   var tip = $('tip');
   document.addEventListener('mousemove', function (e) { var t = e.target.closest && e.target.closest('[data-tip]'); if (!t) { tip.hidden = true; return; }
     var p = t.getAttribute('data-tip').split('|'); tip.innerHTML = '<b>' + esc(p[0]) + '</b>' + p.slice(1).map(esc).join('<br>'); tip.hidden = false;
