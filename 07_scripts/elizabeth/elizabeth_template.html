@@ -1,0 +1,296 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tableau Elizabeth · FTO2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=Newsreader:opsz,wght@6..72,400;6..72,500&display=swap">
+<style>
+/*@@BASECSS@@*/
+/* Elizabeth (30 Oct): the MFT page's look (its styles above, copied at the build); three families and the NC count, a weekly
+   threshold. Families: blue-green for connection as everywhere, the category colours otherwise. */
+.thr { display: inline-flex; align-items: center; gap: 8px; }
+.thr input { font: inherit; font-size: 14px; width: 68px; padding: 6px 8px; border: 1px solid var(--ring); border-radius: 6px; background: var(--surface); color: var(--ink); font-variant-numeric: tabular-nums; }
+.figs .fig small.hot { color: var(--up); font-weight: 700; }
+.figs .fig .dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; vertical-align: 1px; }
+.wrows { display: grid; gap: 6px; }
+.wrow { display: grid; grid-template-columns: 180px minmax(0, 1fr); gap: 16px; align-items: center; padding: 8px 0; border-top: 1px solid var(--grid); }
+.wrow:first-child { border-top: 0; }
+.wrow .wl b { display: block; font-size: 14.5px; font-weight: 600; }
+.wrow .wl small { display: block; font-size: 12.5px; color: var(--muted); }
+.wrow .wl small.hot { color: var(--up); font-weight: 700; }
+.key i.thrk { width: 16px; height: 0; border-top: 2px dashed var(--ink); background: none; border-radius: 0; }
+.key i.over { background: var(--up); }
+details.card > summary { cursor: pointer; font-family: var(--font-display, inherit); font-size: 19px; list-style-position: inside; }
+details.card[open] > summary { margin-bottom: 10px; }
+td.mk { text-align: center; font-size: 13px; }
+@media (max-width: 720px) { .wrow { grid-template-columns: minmax(0, 1fr); gap: 6px; } }
+</style>
+</head>
+<body>
+<div id="fto2-err" class="fto2-err" hidden></div>
+<div id="fto2-wait" class="fto2-wait" hidden></div>
+<header class="top"><div class="wrap">
+  <div class="brand"><b>Tableau Elizabeth</b><span id="asof"></span></div>
+  <div class="ctl"><label id="lLine">Ligne</label><div class="seg" role="group" aria-labelledby="lLine" id="lines"></div></div>
+  <div class="ctl"><label id="lPh">Production</label><div class="seg" role="group" aria-labelledby="lPh" id="phases"></div></div>
+  <div class="ctl"><label id="lPer">Période</label><div class="seg" role="group" aria-labelledby="lPer" id="per"></div><select id="wk" aria-label="Jusqu’à la semaine"></select></div>
+  <div class="ctl"><label for="thr">Seuil</label><span class="thr"><input type="number" id="thr" min="1" max="500" step="1" value="10"><span class="mu">NC / semaine</span></span></div>
+</div></header>
+<main class="wrap">
+  <div class="lead"><h2 id="title"></h2></div>
+  <div class="figs" id="figs"></div>
+  <div class="card"><div class="head"><h3>Pareto</h3><div class="key"><span><i class="tick"></i><span id="refKey"></span></span></div></div><div class="bars" id="bFam"></div></div>
+  <div class="card" id="famCard" hidden><div class="head"><h3 id="famT"></h3><button type="button" class="btn sm" id="famX" aria-label="Fermer">✕</button></div>
+    <div class="grid2"><div><h3 class="sub">Causes</h3><div class="bars" id="bRca"></div></div><div><h3 class="sub">Sous-codes</h3><div class="bars" id="bCode"></div></div></div></div>
+  <div class="card"><div class="head"><h3>Par semaine</h3><div class="key"><span><i class="thrk"></i><span id="thrKey"></span></span><span><i class="over"></i>au-dessus du seuil</span></div></div><div class="wrows" id="weeks"></div></div>
+  <details class="card" id="tblBox"><summary><span id="tblT">Les NC</span> <span class="mu" id="tblN"></span></summary>
+    <div class="tw"><table><thead><tr><th>Date</th><th>NC</th><th>MSN</th><th>Poste</th><th>Branch.</th><th>Déverr.</th><th>Câble</th><th>Défaut</th></tr></thead><tbody id="tblB"></tbody></table></div>
+    <div><button type="button" class="btn sm" id="tblMore" hidden>Voir plus</button></div></details>
+</main>
+<div id="tip" hidden></div>
+<script>
+/*@@HEAD@@*/
+// ---------------------------------------------------------------- the two tables (Slate's queries, or the page's copy) -> the page's data
+// NCs raised at FTO2 (plant FTO2 or FT02) created in 2026, as the MFT page; each NC flagged by family: a connection error, an unlocked
+// contact, a cable defect (the cable itself to remake or resupply) among its defect lines. Tables: one array per column, or rows.
+function elzFromTables(ncIn, defIn) {
+  function rows(t) {
+    if (!t) return [];
+    if (Array.isArray(t)) return t;
+    var cols = Object.keys(t), n = 0, out = [];
+    cols.forEach(function (c) { if (t[c] && t[c].length > n) n = t[c].length; });
+    for (var i = 0; i < n; i++) { var o = {}; cols.forEach(function (c) { o[c] = t[c] ? t[c][i] : null; }); out.push(o); }
+    return out;
+  }
+  function str(v) { return v == null ? '' : String(v); }
+  function tidy(v, n) { return str(v).replace(/\s+/g, ' ').trim().slice(0, n); }
+  function id(v) { return str(v).trim().replace(/\.0$/, ''); }
+  var n = rows(ncIn).map(function (r) { return { r: r, c: str(r.created), p: str(r.plant).trim().toUpperCase() }; })
+    .filter(function (x) { return (x.p === 'FTO2' || x.p === 'FT02') && x.c >= '2026-01-01'; });
+  n.sort(function (a, b) { return a.c < b.c ? -1 : a.c > b.c ? 1 : 0; });
+  var ncs = [], pos = {}, to = '';
+  n.forEach(function (x) { var r = x.r, d = x.c.slice(0, 10), k = id(r.nc); pos[k] = ncs.length; if (d > to) to = d;
+    ncs.push({ id: k, d: d, l: str(r.line) || '—', ph: str(r.phase), msn: id(r.msn), st: tidy(r.station, 80), t: tidy(r.title, 200), br: 0, dv: 0, cb: 0 }); });
+  var defs = [];
+  rows(defIn).forEach(function (r) { var i = pos[id(r.nc)]; if (i == null) return;
+    var d = { n: i, cat: tidy(r.cat, 80), rca: tidy(r.rca, 120), code: tidy(r.subcode, 40), cab: Math.round(parseFloat(r.cable) || 0) ? 1 : 0, t: tidy(r.text, 240) };
+    defs.push(d); });
+  return { to: to, ncs: ncs, defs: defs };
+}
+
+function elzMain(D, REF) {
+  'use strict';
+  var NCS = D.ncs, DEFS = D.defs;
+  var FAM = [
+    { k: 'br', name: 'Branchement', col: 'var(--c2)', has: function (d) { return d.cat === 'Erreur Branchement'; } },
+    { k: 'dv', name: 'Déverrouillage', col: 'var(--c5)', has: function (d) { return d.cat === 'Déverrouillage'; } },
+    { k: 'cb', name: 'Câbles', col: 'var(--c4)', has: function (d) { return d.cab === 1; } }
+  ], FK = {}; FAM.forEach(function (f) { FK[f.k] = f; });
+  var BYNC = NCS.map(function () { return []; });
+  DEFS.forEach(function (d) { BYNC[d.n].push(d); FAM.forEach(function (f) { if (f.has(d)) NCS[d.n][f.k] = 1; }); });
+
+  // ---------------------------------------------------------------- weeks (ISO), as the MFT page
+  function isoWeek(s) { var d = new Date(s.slice(0, 10) + 'T00:00:00Z'), day = (d.getUTCDay() + 6) % 7; d.setUTCDate(d.getUTCDate() - day + 3);
+    var y = d.getUTCFullYear(), j4 = new Date(Date.UTC(y, 0, 4)), w = 1 + Math.round(((d - j4) / 864e5 - 3 + ((j4.getUTCDay() + 6) % 7)) / 7); return y + '-W' + (w < 10 ? '0' : '') + w; }
+  function monday(s) { var d = new Date(s.slice(0, 10) + 'T00:00:00Z'); d.setUTCDate(d.getUTCDate() - (d.getUTCDay() + 6) % 7); return d; }
+  var first = monday(NCS.length ? NCS[0].d : D.to), last = monday(D.to), WEEKS = [], WMON = [];
+  for (var dd = new Date(first); dd <= last; dd.setUTCDate(dd.getUTCDate() + 7)) { WEEKS.push(isoWeek(dd.toISOString())); WMON.push(new Date(dd)); }
+  var WIDX = {}; WEEKS.forEach(function (w, i) { WIDX[w] = i; });
+  var NW = WEEKS.length, PARTIAL = new Date(D.to + 'T00:00:00Z').getUTCDay() !== 0;
+  var NCW = NCS.map(function (n) { return WIDX[isoWeek(n.d)]; });
+  var PLANT = WEEKS.map(function () { return 0; }); DEFS.forEach(function (d) { PLANT[NCW[d.n]]++; });
+  var SHUT = PLANT.map(function (v, i) { return v < 10 && !(PARTIAL && i === NW - 1); });   // closure weeks: under 10 defects on the whole plant
+  function valid(i) { return i >= 0 && i < NW && !SHUT[i] && !(PARTIAL && i === NW - 1); }
+  var LASTC = NW - 1; while (LASTC > 0 && !valid(LASTC)) LASTC--;
+  var MOIS = ['janv.', 'févr.', 'mars', 'avr.', 'mai', 'juin', 'juil.', 'août', 'sept.', 'oct.', 'nov.', 'déc.'];
+  function wkShort(i) { return 'S' + +WEEKS[i].slice(6); }
+  function wkLong(i) { var m = WMON[i], e = new Date(m); e.setUTCDate(e.getUTCDate() + 6);
+    return 'S' + +WEEKS[i].slice(6) + ' · ' + m.getUTCDate() + (m.getUTCMonth() !== e.getUTCMonth() ? ' ' + MOIS[m.getUTCMonth()] : '') + '–' + e.getUTCDate() + ' ' + MOIS[e.getUTCMonth()]; }
+  function dayFr(s) { if (!s) return ''; var p = s.slice(0, 10).split('-'); return +p[2] + ' ' + MOIS[+p[1] - 1] + ' ' + p[0]; }
+
+  // ---------------------------------------------------------------- state
+  var LINES = (function () { var c = {}; NCS.forEach(function (n) { if (n.l && n.l !== '—') c[n.l] = (c[n.l] || 0) + 1; }); return Object.keys(c).sort(function (a, b) { return c[b] - c[a]; }); })();
+  var S = { line: 'all', ph: 'SERIE', per: 4, week: LASTC, thr: 10, fam: null, lim: 50 };
+  try { var sv = JSON.parse(localStorage.getItem('elz-fto2') || '{}'); if (sv.thr > 0) S.thr = sv.thr; if (sv.line && (sv.line === 'all' || LINES.indexOf(sv.line) >= 0)) S.line = sv.line; if (sv.ph != null) S.ph = sv.ph; if (sv.per) S.per = sv.per; } catch (e) { }
+  function remember() { try { localStorage.setItem('elz-fto2', JSON.stringify({ thr: S.thr, line: S.line, ph: S.ph, per: S.per })); } catch (e) { } }
+  function inScope(i) { var n = NCS[i]; return (S.line === 'all' || n.l === S.line) && (!S.ph || n.ph === S.ph); }
+  function per() { var o = []; for (var k = Math.max(0, S.week - S.per + 1); k <= S.week; k++) o.push(k); return o; }
+  // the reference: as many working weeks before the period as it has (4 at least), without closure or low-production weeks (the line
+  // under 60 % of its usual MSN per week, from the production plan: the summer), compared per week (as the MFT page)
+  var TYP = {};
+  function volOf(i) { var V = REF.vol, w = WEEKS[i]; if (!V || !w || w.slice(0, 4) !== '2026') return null;
+    var ls = S.line === 'all' ? Object.keys(V) : V[S.line] ? [S.line] : []; if (!ls.length) return null;
+    return ls.reduce(function (t, l) { return t + (V[l][+w.slice(6) - 1] || 0); }, 0); }
+  function lowWeek(i) {
+    var v = volOf(i); if (v == null) return false;
+    if (TYP[S.line] == null) { var a = WEEKS.map(function (w, k) { return volOf(k); }).filter(function (x) { return x > 0; }).sort(function (x, y) { return x - y; }); TYP[S.line] = a.length ? a[Math.floor(a.length / 2)] : 0; }
+    return TYP[S.line] > 0 && v < TYP[S.line] * 0.6;
+  }
+  function refWeeks() { var out = [], n = Math.max(4, S.per); for (var k = per()[0] - 1; k >= 0 && out.length < n; k--) if (valid(k) && !lowWeek(k)) out.unshift(k); return out; }
+  function refLab(ws) { var out = [], i = 0; while (i < ws.length) { var j = i; while (j + 1 < ws.length && ws[j + 1] === ws[j] + 1) j++; out.push(wkShort(ws[i]) + (j > i ? '–' + wkShort(ws[j]) : '')); i = j + 1; } return out.join(', '); }
+
+  // NCs per week, all of them ('nc') or a family's, for the line and the production type
+  function weekly(k) { var a = WEEKS.map(function () { return 0; }); NCS.forEach(function (n, i) { if (inScope(i) && (k === 'nc' || n[k])) a[NCW[i]]++; }); return a; }
+  function sumOver(ser, ws) { return ws.reduce(function (t, i) { return t + (ser[i] || 0); }, 0); }
+
+  // ---------------------------------------------------------------- helpers
+  function $(id) { return document.getElementById(id); }
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+  function num(v, d) { return Number(v).toLocaleString('fr-FR', { maximumFractionDigits: d == null ? 0 : d, minimumFractionDigits: d || 0 }); }
+  function pct(v) { return (v > 0 ? '+' : v < 0 ? '−' : '') + num(Math.abs(v) * 100) + ' %'; }
+  function tipA(head, lines) { return ' data-tip="' + esc([head].concat(lines || []).join('|')) + '"'; }
+  function seg(el, items, cur, attr) { el.innerHTML = items.map(function (x) { return '<button type="button" ' + attr + '="' + esc(x[0]) + '" aria-pressed="' + (String(x[0]) === String(cur)) + '">' + esc(x[1]) + '</button>'; }).join(''); }
+  function width(el, min) { return Math.max(min || 280, Math.floor(el.clientWidth || el.parentNode.clientWidth || 600)); }
+
+  // ---------------------------------------------------------------- render
+  function render() {
+    seg($('lines'), [['all', 'Toutes']].concat(LINES.map(function (l) { return [l, l]; })), S.line, 'data-line');
+    seg($('phases'), [['SERIE', 'Série'], ['REC', 'REC'], ['FTI', 'FTI'], ['', 'Tout']], S.ph, 'data-ph');
+    seg($('per'), [[1, 'Semaine'], [4, '4 semaines'], [13, '13 semaines'], [26, '26 semaines']], S.per, 'data-per');
+    $('wk').innerHTML = WEEKS.map(function (w, i) { return i; }).reverse().map(function (i) { return '<option value="' + i + '"' + (i === S.week ? ' selected' : '') + '>' + esc(wkLong(i) + (PARTIAL && i === NW - 1 ? ' (en cours)' : SHUT[i] ? ' (fermeture)' : '')) + '</option>'; }).join('');
+    $('thr').value = S.thr;
+    $('asof').textContent = 'Données au ' + dayFr(D.to);
+    var ws = per(), rw = refWeeks(), rl = refLab(rw), pw = ws.length;
+    $('title').textContent = (S.line === 'all' ? 'Toutes les lignes' : S.line) + ' · ' + (pw === 1 ? wkLong(S.week) : wkShort(ws[0]) + ' à ' + wkShort(ws[pw - 1]) + ' · ' + pw + ' semaines');
+    var SER = { nc: weekly('nc') }; FAM.forEach(function (f) { SER[f.k] = weekly(f.k); });
+    var tot = sumOver(SER.nc, ws);
+    // figures: the NC count, then each family; per week against the weeks before; the weeks of the period over the threshold
+    var fig = function (name, dot, k) {
+      var v = sumOver(SER[k], ws), r = rw.length ? sumOver(SER[k], rw) / rw.length : null, over = ws.filter(function (i) { return SER[k][i] > S.thr; }).length;
+      var cmp = r ? '<small>' + (pw > 1 ? num(v / pw, 1) + ' / sem. · ' : '') + '<span class="delta ' + (v / pw > r * 1.1 ? 'up' : v / pw < r * 0.9 ? 'down' : '') + '">' + pct(v / pw / r - 1) + ' vs ' + num(r, 1) + (pw > 1 ? ' / sem.' : '') + '</span> <span class="mu">(' + esc(rl) + ')</span></small>' : '<small>—</small>';
+      return '<div class="fig"><span class="k">' + (dot ? '<i class="dot" style="background:' + dot + '"></i>' : '') + esc(name) + '</span><b>' + num(v) + '</b>' + cmp +
+        (k !== 'nc' && tot ? '<small>' + num(v / tot * 100) + ' % des NC</small>' : '') +
+        '<small class="' + (over ? 'hot' : '') + '">' + (pw === 1 ? (over ? 'au-dessus du seuil (' : 'sous le seuil (') + num(S.thr) + ')'
+          : over ? over + (over > 1 ? ' semaines' : ' semaine') + ' au-dessus de ' + num(S.thr) : 'jamais au-dessus de ' + num(S.thr)) + '</small></div>';
+    };
+    $('figs').innerHTML = fig('NC', '', 'nc') + FAM.map(function (f) { return fig(f.name, f.col, f.k); }).join('');
+    // Pareto of the three families: NCs of the period, the reference ramenée à la période as the tick
+    var rows = FAM.map(function (f) { return { f: f, v: sumOver(SER[f.k], ws), r: rw.length ? sumOver(SER[f.k], rw) / rw.length * pw : null }; }).sort(function (a, b) { return b.v - a.v; });
+    var mx = Math.max.apply(null, rows.map(function (x) { return Math.max(x.v, x.r || 0); }).concat([1e-9]));
+    $('refKey').textContent = rl ? 'moy. ' + rl + (pw > 1 ? ', ramenée à ' + pw + ' sem.' : '') : 'pas de semaine avant';
+    $('bFam').classList.toggle('sel', !!S.fam);
+    $('bFam').innerHTML = rows.map(function (x) { var on = S.fam === x.f.k;
+      return '<button type="button" class="bar" data-fam="' + x.f.k + '" aria-pressed="' + on + '"' + tipA(x.f.name, [num(x.v) + ' NC sur la période', x.r != null ? 'avant : ' + num(x.r / pw, 1) + ' par semaine (' + rl + ')' : '', tot ? num(x.v / tot * 100) + ' % des NC de la période' : '']) + '>' +
+        '<span class="nm">' + esc(x.f.name) + '</span><span class="v">' + num(x.v) + '</span><span class="p">' + (tot ? num(x.v / tot * 100) + ' %' : '') + '</span>' +
+        '<span class="tr"><i style="width:' + (x.v / mx * 100) + '%;background:' + x.f.col + '"></i>' + (x.r != null ? '<em style="left:calc(' + (x.r / mx * 100) + '% - 1px)"></em>' : '') + '</span></button>'; }).join('');
+    renderFam(ws);
+    renderWeeks(SER, ws);
+    renderTable(ws);
+  }
+  // a family pressed: what it is made of over the period (NCs per cause, per sub-code)
+  function renderFam(ws) {
+    var card = $('famCard'); card.hidden = !S.fam; if (!S.fam) return;
+    var f = FK[S.fam], set = {}; ws.forEach(function (i) { set[i] = 1; });
+    $('famT').textContent = f.name + ' · ce qui la compose';
+    var list = function (key, el, top) {
+      var m = {}; NCS.forEach(function (n, i) { if (!set[NCW[i]] || !inScope(i) || !n[f.k]) return; var seen = {};
+        BYNC[i].forEach(function (d) { if (!f.has(d)) return; var v = d[key] || '—'; if (!seen[v]) { seen[v] = 1; m[v] = (m[v] || 0) + 1; } }); });
+      var vals = Object.keys(m).sort(function (a, b) { return m[b] - m[a]; }).slice(0, top), mx = Math.max.apply(null, vals.map(function (v) { return m[v]; }).concat([1e-9]));
+      el.innerHTML = vals.length ? vals.map(function (v) { return '<div class="bar"><span class="nm">' + esc(v) + '</span><span class="v">' + num(m[v]) + '</span><span class="p"></span><span class="tr"><i style="width:' + (m[v] / mx * 100) + '%;background:' + f.col + '"></i></span></div>'; }).join('')
+        : '<p class="empty">Aucune NC sur la période.</p>';
+    };
+    list('rca', $('bRca'), 10); list('code', $('bCode'), 10);
+  }
+  // week by week: the NC count and each family, 26 weeks to the period's end, the threshold dashed, the weeks over it in red
+  function renderWeeks(SER, ws) {
+    var box = $('weeks'), W = width(box, 300), lw = W > 720 ? 196 : 0, cw = W - lw, inP = {}; ws.forEach(function (i) { inP[i] = 1; });
+    var span = []; for (var i = Math.max(0, S.week - 25); i <= S.week; i++) span.push(i);
+    $('thrKey').textContent = 'seuil : ' + num(S.thr) + ' NC / semaine';
+    box.innerHTML = [['nc', 'NC', 'var(--ink-2)']].concat(FAM.map(function (f) { return [f.k, f.name, f.col]; })).map(function (row) {
+      var k = row[0], ser = SER[k], H = 74, mt = 14, mb = 18, mx = Math.max.apply(null, span.map(function (i) { return ser[i]; }).concat([S.thr * 1.15, 1])), bw = cw / span.length, Y = function (v) { return mt + (H - mt - mb) * (1 - v / mx); }, g = '';
+      var over = ws.filter(function (i) { return ser[i] > S.thr; });
+      span.forEach(function (i, j) { var v = ser[i], hot = v > S.thr, x = j * bw + bw * 0.16, cur = inP[i], dim = SHUT[i] || (PARTIAL && i === NW - 1);
+        g += '<rect x="' + x.toFixed(1) + '" y="' + Y(v).toFixed(1) + '" width="' + (bw * 0.68).toFixed(1) + '" height="' + Math.max(v ? 1 : 0, Y(0) - Y(v)).toFixed(1) + '" rx="1.5" fill="' + (hot ? 'var(--up)' : row[2]) + '" fill-opacity="' + (cur ? (dim ? .45 : 1) : .3) + '"' +
+          tipA(row[1] + ' · ' + wkLong(i), [num(v) + ' NC' + (hot ? ' · au-dessus du seuil' : '')]) + '/>';
+        if (hot && cur && bw > 18) g += '<text x="' + (x + bw * 0.34).toFixed(1) + '" y="' + (Y(v) - 3).toFixed(1) + '" text-anchor="middle" class="ink b" style="font-size:10.5px">' + v + '</text>';
+        if (j % (bw < 22 ? 4 : 2) === 0 || i === S.week) g += '<text x="' + (x + bw * 0.34).toFixed(1) + '" y="' + (H - 4) + '" text-anchor="middle" style="font-size:10.5px"' + (i === S.week ? ' class="ink b"' : '') + '>' + wkShort(i) + '</text>'; });
+      g += '<line x1="0" x2="' + cw + '" y1="' + Y(S.thr).toFixed(1) + '" y2="' + Y(S.thr).toFixed(1) + '" stroke="var(--ink)" stroke-width="1.2" stroke-dasharray="5 4"/>';
+      return '<div class="wrow"><div class="wl"><b>' + esc(row[1]) + '</b><small>' + num(sumOver(ser, ws)) + ' NC sur la période</small><small class="' + (over.length ? 'hot' : '') + '">' +
+        (over.length ? 'au-dessus : ' + over.map(wkShort).join(', ') : 'jamais au-dessus') + '</small></div>' +
+        '<svg width="' + cw + '" height="' + H + '" viewBox="0 0 ' + cw + ' ' + H + '" role="img" aria-label="' + esc(row[1]) + ' par semaine">' + g + '</svg></div>';
+    }).join('');
+  }
+  // the NCs of the period that have one of the families (the family pressed only, when one is)
+  function renderTable(ws) {
+    var set = {}; ws.forEach(function (i) { set[i] = 1; });
+    var rows = []; NCS.forEach(function (n, i) { if (set[NCW[i]] && inScope(i) && (S.fam ? n[S.fam] : n.br || n.dv || n.cb)) rows.push(i); });
+    rows.sort(function (a, b) { return NCS[b].d < NCS[a].d ? -1 : NCS[b].d > NCS[a].d ? 1 : 0; });
+    $('tblT').textContent = S.fam ? 'Les NC · ' + FK[S.fam].name : 'Les NC de ces trois familles';
+    $('tblN').textContent = num(rows.length) + ' NC';
+    var mk = function (on, col) { return on ? '<span style="color:' + col + '">●</span>' : ''; };
+    $('tblB').innerHTML = rows.length ? rows.slice(0, S.lim).map(function (i) { var n = NCS[i], d = BYNC[i].filter(function (x) { return S.fam ? FK[S.fam].has(x) : FAM.some(function (f) { return f.has(x); }); })[0];
+      return '<tr><td class="n">' + esc(dayFr(n.d)) + '</td><td class="n">' + esc(n.id) + '</td><td class="n">' + esc(n.msn) + '</td><td>' + esc(n.st) + '</td><td class="mk">' + mk(n.br, FK.br.col) + '</td><td class="mk">' + mk(n.dv, FK.dv.col) + '</td><td class="mk">' + mk(n.cb, FK.cb.col) + '</td>' +
+        '<td class="txt">' + esc(d ? (d.rca ? d.rca + ' · ' : '') + d.t : n.t) + '</td></tr>'; }).join('') : '<tr><td colspan="8" class="mu">Aucune NC.</td></tr>';
+    $('tblMore').hidden = rows.length <= S.lim;
+  }
+
+  // ---------------------------------------------------------------- events
+  document.addEventListener('click', function (e) {
+    var t = e.target.closest('button'); if (!t) return; var a = t.getAttribute.bind(t);
+    if (a('data-line') != null) { S.line = a('data-line'); S.lim = 50; remember(); render(); return; }
+    if (a('data-ph') != null) { S.ph = a('data-ph'); remember(); render(); return; }
+    if (a('data-per') != null) { S.per = +a('data-per'); remember(); render(); return; }
+    if (a('data-fam')) { S.fam = S.fam === a('data-fam') ? null : a('data-fam'); S.lim = 50; render(); return; }
+    if (t.id === 'famX') { S.fam = null; render(); return; }
+    if (t.id === 'tblMore') { S.lim += 100; render(); return; }
+  });
+  $('wk').addEventListener('change', function (e) { S.week = +e.target.value; render(); });
+  $('thr').addEventListener('change', function (e) { var v = Math.round(+e.target.value); if (v > 0) { S.thr = v; remember(); } render(); });
+  var tip = $('tip');
+  document.addEventListener('pointermove', function (e) { var t = e.target.closest && e.target.closest('[data-tip]'); if (!t) { tip.hidden = true; return; }
+    var ps = t.getAttribute('data-tip').split('|').filter(Boolean); tip.innerHTML = '<b>' + esc(ps[0]) + '</b>' + ps.slice(1).map(esc).join('<br>'); tip.hidden = false;
+    var x = e.clientX + 14, y = e.clientY + 14, r = tip.getBoundingClientRect(); if (x + r.width > innerWidth - 8) x = e.clientX - r.width - 14; if (y + r.height > innerHeight - 8) y = e.clientY - r.height - 14; tip.style.left = x + 'px'; tip.style.top = y + 'px'; });
+  var rt; addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(render, 150); });
+  render();
+}
+
+// ---------------------------------------------------------------- start: the page's own copy of the tables, or Slate's two queries
+(function () {
+  var MSG = {
+    wait: 'Chargement des données Slate… / Loading the Slate data…',
+    empty: 'La requête q_fto2_nc n’a renvoyé aucune ligne : vérifiez la requête et son jeu de données.',
+    noapi: 'État Slate introuvable : ce JavaScript doit tourner dans un code sandbox Slate dont l’état contient les deux requêtes (voir state.json).',
+    slow: 'Toujours en attente de {q} : vérifiez que la requête existe, porte ce nom et s’exécute sans erreur.'
+  };
+  function showError(msg) {
+    var e = document.getElementById('fto2-err'); if (e) { e.hidden = false; e.textContent = 'Le tableau n\'a pas pu s\'afficher : ' + msg; }
+    var w = document.getElementById('fto2-wait'); if (w) w.hidden = true;
+    if (window.console) console.error('[FTO2 Elizabeth]', msg);
+  }
+  function status(msg, warn) { var e = document.getElementById('fto2-wait'); if (!e) return; e.hidden = !msg; e.textContent = msg || ''; e.className = 'fto2-wait' + (warn ? ' warn' : ''); }
+  window.addEventListener('error', function (ev) { showError((ev && ev.message) || 'erreur inconnue'); });
+  function parse(v) { if (typeof v !== 'string') return v; var s = v.trim(); if (!s) return null; try { return JSON.parse(s); } catch (e) { return null; } }
+  function count(t) { if (!t) return 0; if (Array.isArray(t)) return t.length; var k = Object.keys(t); for (var i = 0; i < k.length; i++) if (t[k[i]] && t[k[i]].length) return t[k[i]].length; return 0; }
+  function loaded(t) { return !!t && (Array.isArray(t) || Object.keys(t).length > 0); }
+  var started = false, got = {};
+  function start(nc, def) {
+    started = true;
+    try {
+      var D = elzFromTables(nc, def);
+      if (!D.ncs.length) { var c = Array.isArray(nc) ? Object.keys(nc[0] || {}) : Object.keys(nc || {}); showError('aucune NC FTO2 de 2026 lisible dans q_fto2_nc (colonnes reçues : ' + c.join(', ') + ')'); return; }
+      status(''); elzMain(D, window.ELZ_REF || {});
+    } catch (e) { showError((e && e.message) || String(e)); }
+  }
+  function tryStart() {
+    if (started) return;
+    var nc = parse(got.nc), def = parse(got.def);
+    if (loaded(nc) && !count(nc)) { status(MSG.empty, true); return; }
+    if (!count(nc) || !loaded(def)) { status(MSG.wait); return; }
+    start(nc, def);
+  }
+  function boot() {
+    if (window.ELZ_TABLES) { start(window.ELZ_TABLES.nc, window.ELZ_TABLES.def); return; }
+    var api = window.SlateFunctions;
+    if (!api || !api.watch) { showError(MSG.noapi); return; }
+    status(MSG.wait);
+    ['nc', 'def'].forEach(function (k) { api.watch(k, function (v) { got[k] = v; tryStart(); }); });
+    setTimeout(function () { if (started) return; var miss = []; if (!count(parse(got.nc))) miss.push('q_fto2_nc'); if (!loaded(parse(got.def))) miss.push('q_fto2_def');
+      if (miss.length) status(MSG.slow.replace('{q}', miss.join(', ')), true); }, 20000);
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot); else boot();
+})();
+</script>
+</body>
+</html>

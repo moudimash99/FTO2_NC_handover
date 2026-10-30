@@ -14,7 +14,7 @@ animation (a double click skips it). Simple: Synthèse and Détail, a few charts
 in Simple (or in the mode last used, where the browser keeps it). The figures below are Expert's Vue d'ensemble.
 
 The views page (Synthèse et Détail) has its own guide, with two ways to set it up: `views/README.md`.
-The MFT page has its own, same setup as level 3: `mft/README.md`.
+The MFT page has its own, same setup as level 3: `mft/README.md`. So has the Tableau Elizabeth: `elizabeth/README.md`.
 
 Everything in this folder is written by `python3 -I build/build_all.py`. Do not edit the files by hand; change the
 template or the build and rebuild.
