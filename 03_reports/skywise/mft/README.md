@@ -46,6 +46,9 @@ with no row, or the columns it received when no 2026 FTO2 NC could be read.
 - **A press on a bar filters the whole page**, as on the dashboard: the figures, the other lists, the defect table and the
   Analyse tab. One value per list (category, cause, sub-code, FIN), several lists can be combined; the chips above say what
   is picked (✕ removes one, "Tout retirer" all). Picks stay when the period changes and are cleared when the line changes.
+- **The comparison "vs …"** is per week and names its weeks: the period against the working weeks just before it, as many as
+  the period has (4 at least). Closure weeks and low-production weeks (the line under 60 % of its usual MSN per week, from the
+  production plan: the summer holidays) are left out, so a month after August is compared with normal weeks.
 - `preview_local_only.html` opens on a laptop with a frozen copy of the data, to look at the page: never paste it into Slate.
 
 ## Build

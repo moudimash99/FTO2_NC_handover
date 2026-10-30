@@ -244,7 +244,7 @@
     <div class="lead"><h2 id="pTitle"></h2><p class="sub" id="pSub" hidden></p></div>
     <div class="row" id="selRow" hidden><span id="selChip"></span></div>
     <div class="figs" id="pFigs"></div>
-    <div class="card"><div class="head"><h3>Catégories</h3><div class="key"><span><i class="tick"></i>moy. 4 sem. préc.</span></div></div><div class="bars" id="bCat"></div></div>
+    <div class="card"><div class="head"><h3>Catégories</h3><div class="key"><span><i class="tick"></i><span id="refKey">moy. 4 sem. préc.</span></span></div></div><div class="bars" id="bCat"></div></div>
     <div class="grid3">
       <div class="card"><div class="head"><h3>Causes</h3></div><div class="bars" id="bRca"></div></div>
       <div class="card"><div class="head"><h3>Sous-codes officiels</h3></div><div class="bars" id="bCode"></div></div>
@@ -442,6 +442,25 @@ var D = window.FTO2_MFT_D;
   // the n working weeks ending at i (included), newest last
   function validBefore(i, n) { var out = []; for (var k = i; k >= 0 && out.length < n; k--) if (valid(k)) out.unshift(k); return out; }
   function per() { var o = []; for (var k = S.from; k <= S.week; k++) o.push(k); return o; }
+  // the reference of a period: the working weeks just before it, as many as the period (4 at least), compared per week
+  // (Mohammad, 30 Oct: a week against the 4 before, a month against the month before, the weeks named)
+  // weeks of low production are left out too (holidays: the line's MSN that week, from the production plan, under 60 % of its usual
+  // week), so that a period after the summer is not compared with August
+  var TYP = {};
+  function volOf(i) { var V = D.vol, w = WEEKS[i]; if (!V || !w || w.slice(0, 4) !== '2026') return null;
+    var ls = S.line === 'all' ? Object.keys(V) : V[S.line] ? [S.line] : []; if (!ls.length) return null;
+    return ls.reduce(function (t, l) { return t + (V[l][+w.slice(6) - 1] || 0); }, 0); }
+  function lowWeek(i) {
+    var v = volOf(i); if (v == null) return false;
+    if (TYP[S.line] == null) { var a = WEEKS.map(function (w, k) { return volOf(k); }).filter(function (x) { return x > 0; }).sort(function (x, y) { return x - y; }); TYP[S.line] = a.length ? a[Math.floor(a.length / 2)] : 0; }
+    return TYP[S.line] > 0 && v < TYP[S.line] * 0.6;
+  }
+  function refWeeks() { var out = [], n = Math.max(4, S.per); for (var k = per()[0] - 1; k >= 0 && out.length < n; k--) if (valid(k) && !lowWeek(k)) out.unshift(k); return out; }
+  function refLab(ws) {   // the weeks in runs, a gap showing the closure weeks left out: 'S29–S31, S35'
+    var out = [], i = 0;
+    while (i < ws.length) { var j = i; while (j + 1 < ws.length && ws[j + 1] === ws[j] + 1) j++; out.push(wkShort(ws[i]) + (j > i ? '–' + wkShort(ws[j]) : '')); i = j + 1; }
+    return out.join(', ');
+  }
 
   // ---------------------------------------------------------------- controls
   function seg(el, items, cur, attr) { el.innerHTML = items.map(function (x) { return '<button type="button" ' + attr + '="' + esc(x[0]) + '" aria-pressed="' + (String(x[0]) === String(cur)) + '">' + esc(x[1]) + (x[2] != null ? '<small>' + esc(x[2]) + '</small>' : '') + '</button>'; }).join(''); }
@@ -464,7 +483,7 @@ var D = window.FTO2_MFT_D;
     DEFS.forEach(function (d) { if (set[NCW[d[0]]] && inScope(d[0]) && selOk(d, k)) { var v = fld(d, k); if (v) m[v] = (m[v] || 0) + 1; } }); return m;
   }
   function barList(el, k, top) {
-    var ws = per(), prev = validBefore(ws[0] - 1, 4), m = counts(ws, k), pm = counts(prev, k), np = prev.length || 1, tot = 0;
+    var ws = per(), prev = refWeeks(), m = counts(ws, k), pm = counts(prev, k), np = prev.length || 1, tot = 0;
     Object.keys(m).forEach(function (v) { tot += m[v]; });
     var vals = Object.keys(m);
     if (k === 'cat') { var main = vals.filter(function (v) { return CATC[v]; }).sort(function (a, b) { return m[b] - m[a]; }), side = vals.filter(function (v) { return !CATC[v]; }).sort(function (a, b) { return m[b] - m[a]; }); vals = main.concat(side); }
@@ -475,7 +494,7 @@ var D = window.FTO2_MFT_D;
     var ref = function (v) { return (pm[v] || 0) / np * S.per; }, mx = Math.max.apply(null, vals.map(function (v) { return Math.max(m[v], ref(v)); }).concat([1e-9])), cum = 0;
     el.classList.toggle('sel', k in S.f);
     el.innerHTML = vals.map(function (v) { cum += m[v]; var on = S.f[k] === v, r = ref(v);
-      return '<button type="button" class="bar" data-k="' + k + '" data-v="' + esc(v) + '" aria-pressed="' + !!on + '"' + tipA(shown(k, v), [num(m[v]) + ' défauts sur la période', 'avant : ' + num(r, 1) + ' (moyenne de ' + np + ' semaines, ramenée à la période)', k === 'cat' ? '' : (VCAT[k] && VCAT[k][v] ? 'catégorie : ' + VCAT[k][v] : '')].filter(Boolean)) + '>' +
+      return '<button type="button" class="bar" data-k="' + k + '" data-v="' + esc(v) + '" aria-pressed="' + !!on + '"' + tipA(shown(k, v), [num(m[v]) + ' défauts sur la période', 'avant : ' + num(r / S.per, 1) + ' par semaine (' + refLab(prev) + ')' + (S.per > 1 ? ', soit ' + num(r, 1) + ' sur ' + S.per + ' semaines' : ''), k === 'cat' ? '' : (VCAT[k] && VCAT[k][v] ? 'catégorie : ' + VCAT[k][v] : '')].filter(Boolean)) + '>' +
         '<span class="nm">' + esc(shown(k, v)) + '</span><span class="v">' + num(m[v]) + '</span><span class="p">' + (k === 'cat' && CATC[v] ? num(cum / tot * 100) + ' %' : num(m[v] / tot * 100) + ' %') + '</span>' +
         '<span class="tr"><i style="width:' + (m[v] / mx * 100) + '%;background:' + valCol(k, v) + '"></i><em style="left:calc(' + (r / mx * 100) + '% - 1px)"></em></span></button>'; }).join('');
   }
@@ -489,13 +508,15 @@ var D = window.FTO2_MFT_D;
     var sel = anySel(), ncs = 0, ncSet = {}; NCS.forEach(function (n, i) { if (set[NCW[i]] && inScope(i)) ncSet[i] = 1; });
     var defs = DEFS.filter(function (d) { return ncSet[d[0]] && selOk(d); }), hit = {};
     if (sel) { defs.forEach(function (d) { hit[d[0]] = 1; }); ncs = Object.keys(hit).length; } else ncs = Object.keys(ncSet).length;
-    var prev = validBefore(ws[0] - 1, 4), pd = 0, pn = 0, pset = {}, phit = {};
+    var prev = refWeeks(), pd = 0, pn = 0, pset = {}, phit = {};
     prev.forEach(function (i) { pset[i] = 1; });
     DEFS.forEach(function (d) { if (pset[NCW[d[0]]] && inScope(d[0]) && selOk(d)) { pd++; phit[d[0]] = 1; } });
     if (sel) pn = Object.keys(phit).length; else NCS.forEach(function (n, i) { if (pset[NCW[i]] && inScope(i)) pn++; });
     var refD = prev.length ? pd / prev.length * S.per : null, refN = prev.length ? pn / prev.length * S.per : null;
     var cm = {}; defs.forEach(function (d) { var c = fld(d, 'cat'); if (CATC[c]) cm[c] = (cm[c] || 0) + 1; }); var topc = Object.keys(cm).sort(function (a, b) { return cm[b] - cm[a]; })[0];
-    var dlt = function (v, r) { return r ? '<small class="delta ' + (v > r * 1.1 ? 'up' : v < r * 0.9 ? 'down' : '') + '">' + pct(v / r - 1) + ' vs ' + num(r, 1) + '</small>' : '<small>—</small>'; };
+    // per week, the period and its reference on the same scale whatever the period's length, the reference weeks named
+    var rl = refLab(prev), dlt = function (v, r) { return r ? '<small>' + (S.per > 1 ? num(v / S.per, 1) + ' / sem. · ' : '') + '<span class="delta ' + (v > r * 1.1 ? 'up' : v < r * 0.9 ? 'down' : '') + '">' + pct(v / r - 1) + ' vs ' + num(r / S.per, 1) + (S.per > 1 ? ' / sem.' : '') + '</span> <span class="mu">(' + esc(rl) + ')</span></small>' : '<small>—</small>'; };
+    $('refKey').textContent = rl ? 'moy. ' + rl + (S.per > 1 ? ', ramenée à ' + S.per + ' sem.' : '') : 'pas de semaine avant';
     $('pFigs').innerHTML = '<div class="fig"><span class="k">NC</span><b>' + num(ncs) + '</b>' + dlt(ncs, refN) + '</div>' +
       '<div class="fig"><span class="k">Défauts</span><b>' + num(defs.length) + '</b>' + dlt(defs.length, refD) + '</div>' +
       '<div class="fig"><span class="k">Défauts par NC</span><b>' + (ncs ? num(defs.length / ncs, 1) : '—') + '</b><small></small></div>' +
