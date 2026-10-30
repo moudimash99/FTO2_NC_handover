@@ -2,8 +2,8 @@
 
 Reads the dashboard's two tables (05_outputs/fto2_dash_nc.csv, fto2_dash_defects.csv) and the A330 / A350 MFT trackers
 (06_input_data/MFT_actions_*.csv, tied to the problem each action targets by 04_reference/mft_actions_mapping.csv).
-Writes 03_reports/FTO2_MFT.html (and build/artifacts/FTO2_MFT.html) from 07_scripts/mft/mft_template.html, and the
-tracker actions as 05_outputs/mft_actions_seed.json: the page keeps its actions in its own store (seeded once from that
+Writes 03_reports/FTO2_MFT.html (and build/artifacts/FTO2_MFT.html) from 07_scripts/mft/mft_template.html, its Slate
+version in 03_reports/skywise/mft/ (build_mft_slate.py), and the tracker actions as 05_outputs/mft_actions_seed.json: the page keeps its actions in its own store (seeded once from that
 file); the page itself carries no action.
 
 Scope as the dashboard's default: NCs raised at FTO2 (plant FTO2 or FT02), created in 2026; the phase is a filter in
@@ -168,6 +168,10 @@ def main():
             f.write(page)
     print("NCs", len(D["ncs"]), "| defect lines", len(D["defs"]), "| data to", D["to"], D["toWeek"], "| tracker actions", len(seeds),
           "| page", round(len(page) / 1024), "KB")
+    import sys
+    sys.path.insert(0, HERE)
+    import build_mft_slate   # the same page for a Slate code sandbox, fed by the level-3 queries: 03_reports/skywise/mft/
+    build_mft_slate.build()
 
 
 if __name__ == "__main__":

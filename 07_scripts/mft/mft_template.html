@@ -862,11 +862,12 @@ var D = /*@@DATA@@*/null;
 
   // ---------------------------------------------------------------- the store: actions shared by everyone who opens the page
   (async function () {
-    var cl = window.claude;
+    var cl = window.FTO2_STORE || window.claude;   // FTO2_STORE: the Slate version's store (03_reports/skywise/mft), same calls
     try { USER = cl && cl.use ? await cl.use('user') : null; } catch (e) { USER = null; }
     try { DB = cl && cl.use ? await cl.use('db') : null; } catch (e) { DB = null; }
     if (USER) { try { UID = await USER.id(); } catch (e) { } try { CANW = await USER.can('data.write'); } catch (e) { CANW = null; } }
     if (!DB) { $('dbNote').hidden = false; $('dbNote').textContent = 'Les actions sont enregistrées dans la page : ouvrez-la depuis Claude, connecté, pour les voir et les modifier.'; renderAll(); return; }
+    if (cl.note) { $('dbNote').hidden = false; $('dbNote').textContent = cl.note(); }
     if (CANW === false) { $('dbNote').hidden = false; $('dbNote').textContent = 'Accès en lecture : vous voyez les actions sans pouvoir les modifier.'; }
     DB.collection('alarmes').onSnapshot(function (snap) { var m = {}; snap.docs.forEach(function (d) { var x = d.data(); if (x && x.key) m[x.key] = x; }); AL.marks = m; alRender(); }, function () { });
     DB.collection('actions').onSnapshot(async function (snap) {
