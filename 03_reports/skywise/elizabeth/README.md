@@ -28,8 +28,9 @@ Branchement 12, MEO Facteur humain 12, Élément Manquant 3, Déverrouillage 2, 
 - **Families, in NCs, each NC in one only** (the first that fits, in this order), so the shares add up to 100 %:
   1. **Câbles**: any cable problem, whatever its category: a cable to remake or resupply (the `cable` column), a damaged or
      cut cable (cause Câble Endommagé, sub-codes Q11-014, Q11-001), a missing cable (T01), a cable of the wrong length
-     (Q12-003), a missing item or a printing defect when its text speaks of a cable; every NC of the cable shop (NC type
-     CABLES); and an NC with no text whose title speaks of a cable (câble, fil, faisceau, harnais, toron).
+     (Q12-003), the sub-categories "Câble à refaire (ligne)", "Dommage – câble" and "Amont · Câble" (cable delivered wrong:
+     printing, length, gauge), a missing item or a printing defect when its text speaks of a cable; every NC of the cable
+     shop (NC type CABLES); and an NC with no text whose title speaks of a cable (câble, fil, faisceau, harnais, toron).
   2. **Branchement** (category Erreur Branchement), 3. **Déverrouillage**, 4. **Élément Endommagé**, 5. **Élément
      Manquant**, 6. **MEO Facteur humain**: an NC with a defect line of that category.
   7. **Autres**: the rest (Grounding/Bonding, Kitting Factory, FOD, Autre; the NCs no rule places).
@@ -38,6 +39,12 @@ Branchement 12, MEO Facteur humain 12, Élément Manquant 3, Déverrouillage 2, 
 - **The A400M**: Skywise gives no long text for its NCs, so they have no defect line; each is placed by its title (Skywise's
   short description, the dataset's `title`) with keywords per family (in the template, `FAM`). 2026 Série: Câbles 38, MEO 11,
   Élément Manquant 3, Élément Endommagé 2, Autres 35 (titles such as "RETOUCHES TEST MSN 162" say nothing of the defect).
+- **New NCs**: until the periodic AI pass labels them, a new NC's defect lines carry the parser's labels (`label_src`
+  "parser"): category, cause and cable flag as usual, but no precise sub-code (a parent code such as "Q11 (non précisé)").
+  The rules do not need one: the cable flag, the cable sub-categories, the cause, the text, the NC type and the title are
+  there either way. Checked by running the page on the whole year relabelled as the parser alone labels it: Câbles 291
+  instead of 282, the other families within a few NCs (the parser and the stored labels agree on the cable flag for 98.8 %
+  of lines, on the category for 93.4 %).
 - A family pressed in the Pareto shows what it is made of (for Câbles, why each NC is there) and the table lists its NCs.
 - **Threshold**: by default a share, 10 %: a family's week is red when the family has more than 10 % of that week's NCs
   (read on working weeks only: a closure week's few NCs make shares that mean nothing). The value can be changed in the page,
@@ -57,4 +64,6 @@ python3 -I 07_scripts/elizabeth/build_elizabeth.py
 
 From `07_scripts/elizabeth/elizabeth_template.html` (its styles are the MFT page's, copied at the build) and the two tables
 in `05_outputs`. Checked here: every NC's family and reason against a count made apart in Python (988 NCs, all the same);
-the page and its Slate version (in a sandboxed frame, as Slate runs it) give the same result, with no error.
+the page and its Slate version (in a sandboxed frame, as Slate runs it) give the same result, with no error; the same tables
+typed as Slate gives them (numbers, true / false, nulls) give the same families; the parser-only labels as above.
+`window.ELZ_CHECK()` in the browser console lists each NC's family and reason.

@@ -23,7 +23,7 @@ function elzFromTables(ncIn, defIn) {
     ncs.push({ id: k, d: d, l: str(r.line) || '—', ph: str(r.phase), msn: id(r.msn), st: tidy(r.station, 80), t: tidy(r.title, 200), type: str(r.type_nc).trim().toUpperCase(), f: '', why: '' }); });
   var defs = [];
   rows(defIn).forEach(function (r) { var i = pos[id(r.nc)]; if (i == null) return;
-    var d = { n: i, cat: tidy(r.cat, 80), rca: tidy(r.rca, 120), code: tidy(r.subcode, 40), cab: Math.round(parseFloat(r.cable) || 0) ? 1 : 0, ct: /c[aâ]ble/i.test(str(r.text)), t: tidy(r.text, 240) };
+    var d = { n: i, cat: tidy(r.cat, 80), rca: tidy(r.rca, 120), code: tidy(r.subcode, 40), sub: tidy(r.sub, 80), cab: r.cable === true || parseFloat(r.cable) > 0 || /^(true|vrai|yes|oui)$/i.test(str(r.cable).trim()) ? 1 : 0, ct: /c[aâ]ble/i.test(str(r.text)), t: tidy(r.text, 240) };
     defs.push(d); });
   return { to: to, ncs: ncs, defs: defs };
 }
@@ -46,16 +46,20 @@ function elzMain(D, REF) {
     { k: 'meo', name: 'MEO Facteur humain', col: 'var(--c1)', cat: 'MEO Facteur humain', kw: /\bmeo\b|mise en oeuvre|mal positionn|mauvaise position|positioning|mal mont|mauvais montage|freinage|serrage|courte|longueur|length/ },
     { k: 'au', name: 'Autres', col: 'var(--dim)' }
   ], FK = {}; FAM.forEach(function (f) { FK[f.k] = f; });
-  var WHY = { flag: 'Câble à refaire ou refournir', dmg: 'Câble endommagé ou coupé', miss: 'Câble manquant', len: 'Longueur de câble', print: 'Impression du câble',
+  var WHY = { flag: 'Câble à refaire ou refournir', dmg: 'Câble endommagé ou coupé', miss: 'Câble manquant', len: 'Longueur de câble', print: 'Câble livré non conforme (impression, longueur, jauge)',
     shop: 'NC de l’atelier câbles', title: 'Titre (NC sans texte)' };
   function fold(t) { return (t.normalize ? t.normalize('NFD').replace(/[\u0300-\u036f]/g, '') : t).toLowerCase(); }
-  function cableLine(d) { return d.cab || d.rca === 'Câble Endommagé' || d.code === 'Q11-014' || d.code === 'Q11-001' || d.code === 'T01' || d.code === 'Q12-003' ||
+  // the sub-categories that are cable problems whatever the labelling: a new NC's lines are labelled by the parser alone, which
+  // gives no precise sub-code (Q11-014, T01...) but these names (and the cable flag) all the same
+  function cabSub(d) { var t = fold(d.sub); return /cable a refaire/.test(t) ? 'flag' : /dommage.{0,3}cable/.test(t) ? 'dmg' : /amont.{0,3}cable/.test(t) ? 'print' : ''; }
+  function cableLine(d) { return d.cab || cabSub(d) || d.rca === 'Câble Endommagé' || d.code === 'Q11-014' || d.code === 'Q11-001' || d.code === 'T01' || d.code === 'Q12-003' ||
     ((d.rca === 'Câble ou Élément Manquant' || d.rca === 'Défaut d\'Impression') && d.ct); }
   function cableWhy(n, ds) {   // why an NC is in Câbles (the first reason that holds), '' when it is not
-    if (ds.some(function (d) { return d.cab; })) return 'flag';
-    if (ds.some(function (d) { return d.rca === 'Câble Endommagé' || d.code === 'Q11-014' || d.code === 'Q11-001'; })) return 'dmg';
+    if (ds.some(function (d) { return d.cab || cabSub(d) === 'flag'; })) return 'flag';
+    if (ds.some(function (d) { return cabSub(d) === 'dmg' || d.rca === 'Câble Endommagé' || d.code === 'Q11-014' || d.code === 'Q11-001'; })) return 'dmg';
     if (ds.some(function (d) { return d.code === 'T01'; })) return 'miss';
     if (ds.some(function (d) { return d.code === 'Q12-003'; })) return 'len';
+    if (ds.some(function (d) { return cabSub(d) === 'print'; })) return 'print';
     var m = ds.filter(function (d) { return (d.rca === 'Câble ou Élément Manquant' || d.rca === 'Défaut d\'Impression') && d.ct; });
     if (m.length) return m.some(function (d) { return d.rca === 'Défaut d\'Impression'; }) ? 'print' : 'miss';
     if (n.type === 'CABLES') return 'shop';
