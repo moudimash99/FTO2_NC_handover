@@ -854,7 +854,8 @@
 .fto2 .vu-slot:empty { display: none; }
 .fto2 #vuSynGrid .vu-slot[data-slot="VN"] { grid-column: span 8; }
 .fto2 #vuSynGrid .vu-slot[data-slot="VT"] { grid-column: span 4; }
-.fto2 #vuSynGrid .vu-slot[data-slot="a:bump"], .fto2 #vuSynGrid .vu-slot[data-slot="VQ"], .fto2 #vuSynGrid .vu-slot[data-slot="a:bub"] { grid-column: span 4; }
+.fto2 #vuSynGrid .vu-slot[data-slot="a:bump"], .fto2 #vuSynGrid .vu-slot[data-slot="VQ"] { grid-column: span 6; }
+.fto2 #vuSynGrid .vu-slot[data-slot="a:bub"] { grid-column: 1 / -1; }
 .fto2 #vuDetGrid .vu-slot[data-slot="a:bump"] { grid-column: span 5; }
 .fto2 #vuDetGrid .vu-slot[data-slot="78"] { grid-column: span 7; }
 .fto2 #vuDetGrid .vu-slot[data-slot="54"] { grid-column: 1 / -1; }
@@ -865,9 +866,19 @@
 .fto2 .vu-par .psec > .figs, .fto2 .vu-par .psec > p.sub, .fto2 .vu-par .chips .hint { display: none; }
 .fto2 .vu-par .grid > .card { grid-column: 1 / -1; }
 .fto2 .vu-par .bar.zero { display: none; }
-.fto2 .vu-band .bhead { position: relative; padding-right: 100px; }
-.fto2 .vu-x { position: absolute; top: 0; right: 0; font: inherit; font-size: 12px; font-weight: 700; color: var(--ink-2); background: var(--surface); border: 1px solid var(--ring); border-radius: 14px; padding: 3px 11px; cursor: pointer; }
-.fto2 .vu-x:hover { color: var(--ink); border-color: var(--ink-2); }
+.fto2 .vu-par #parTop, .fto2 .vu-par #parFold, .fto2 .vu-par .v2-band:not(.vu-band) { display: none !important; }
+.fto2 .t-row { display: flex; align-items: center; justify-content: space-between; gap: 12px 20px; flex-wrap: wrap; }
+.fto2 .mode-sw { position: relative; display: inline-grid; grid-auto-flow: column; grid-auto-columns: 1fr; padding: 3px; border-radius: 999px; background: var(--track); border: 1px solid var(--ring); flex: none; }
+.fto2 .mode-sw button { position: relative; z-index: 1; font: inherit; font-size: 14px; font-weight: 600; padding: 8px 20px; border: 0; background: transparent; color: var(--ink-2); cursor: pointer; border-radius: 999px; transition: color .35s; }
+.fto2 .mode-sw button:hover { color: var(--ink); }
+.fto2 .mode-sw button[aria-pressed="true"] { color: var(--surface); }
+.fto2 .mode-sw .pill { position: absolute; z-index: 0; top: 3px; bottom: 3px; left: 3px; width: calc(50% - 3px); border-radius: 999px; background: var(--ink); transition: transform .5s cubic-bezier(.2,.8,.2,1); }
+.fto2 .mode-sw[data-mode="expert"] .pill { transform: translateX(100%); }
+.fto2 .mode-sw button:focus-visible { outline: 2px solid var(--s1); outline-offset: 2px; }
+.fto2 .vu .vu-band .bhead { position: relative; padding-right: 40px; }
+.fto2 .vu-x { display: none; }
+.fto2 .vu .vu-x { display: inline-grid; place-items: center; position: absolute; top: 0; right: 0; width: 30px; height: 30px; font: inherit; font-size: 15px; line-height: 1; color: var(--muted); background: transparent; border: 1px solid transparent; border-radius: 8px; padding: 0; cursor: pointer; opacity: .7; transition: opacity .2s, border-color .2s, color .2s; }
+.fto2 .vu .vu-band:hover .vu-x, .fto2 .vu .vu-x:focus-visible { opacity: 1; color: var(--ink); border-color: var(--ring); background: var(--surface); }
 .fto2 .vu-up { color: var(--up); font-weight: 700; }
 .fto2 .vu-down { color: var(--down); font-weight: 700; }
 .fto2 .vu-ov { position: fixed; inset: 0; z-index: 50; overflow-y: auto; display: grid; place-items: start center; padding: max(20px, env(safe-area-inset-top, 0px)) max(14px, env(safe-area-inset-right, 0px)) 24px max(14px, env(safe-area-inset-left, 0px)); }
@@ -2417,11 +2428,13 @@ var FTO2ViewsRender = (function () {
           en: ['Components', 'What the cost is made of, month by month', 'NC handling (alert, writing, support, re-check), rework, material, engineering.', 'CNQ model'] },
     VE: { fr: ['Coûts', 'Chaque NC dans le temps, à sa taille', 'Une bulle par NC ; surface : coût ; les cinq plus chères sont nommées.', 'coût CNQ par NC'], en: ['Costs', 'Every NC over time, at its size', 'One bubble per NC; area: cost; the five dearest are named.', 'CNQ cost per NC'] }
   });
-  Object.assign(STR.fr, { tabSyn: 'Synthèse', tabDet: 'Détail', vuOpen: 'Complet', vuClose: 'Fermer',
+  Object.assign(STR.fr, { tabSyn: 'Synthèse', tabDet: 'Détail', vuOpen: 'Agrandir', vuClose: 'Fermer', modeLab: 'Affichage', modeSimple: 'Simple', modeExpert: 'Expert',
+      modeSimpleT: 'Quelques graphiques : Synthèse et Détail', modeExpertT: 'Le tableau de bord complet',
       vuNcY: 'NC depuis janvier', vuNcP: 'NC sur la période', vuRate: 'NC par MSN', vuCost: 'Coût de non-qualité', vuRet: 'Retours clients',
       vuDef: 'Défauts', vuRateY: 'NC par MSN depuis janvier', vuFc: 'prévision fin déc. : {f} · objectif : {t}',
       vuVsT: 'par rapport à l’objectif ({t})', vuPrevP: 'période d’avant : {v}' });
-  Object.assign(STR.en, { tabSyn: 'Summary', tabDet: 'Detail', vuOpen: 'Complete', vuClose: 'Close',
+  Object.assign(STR.en, { tabSyn: 'Summary', tabDet: 'Detail', vuOpen: 'Enlarge', vuClose: 'Close', modeLab: 'View', modeSimple: 'Simple', modeExpert: 'Expert',
+      modeSimpleT: 'A few charts: Summary and Detail', modeExpertT: 'The full dashboard',
       vuNcY: 'NCs since January', vuNcP: 'NCs in the period', vuRate: 'NCs per MSN', vuCost: 'Cost of non-quality', vuRet: 'Customer returns',
       vuDef: 'Defects', vuRateY: 'NCs per MSN since January', vuFc: 'forecast end Dec.: {f} · target: {t}',
       vuVsT: 'against the target ({t})', vuPrevP: 'period before: {v}' });
@@ -2590,7 +2603,7 @@ function ncShareFmt(n) { return (Math.round(n * 10) / 10).toLocaleString(loc(), 
     function drawCard(v, k) {
       var c = card(v, k); if (!c) return; var h = v2Head(k), X = v === 'syn' ? M.syn : M.det;
       c.querySelector('.kicker').textContent = h[0]; c.querySelector('h3').textContent = h[1]; c.querySelector('.sub').textContent = h[2];
-      c.querySelector('.vu-x').innerHTML = '<span aria-hidden="true">⤢</span> ' + esc(S('vuOpen'));
+      var vx = c.querySelector('.vu-x'); vx.innerHTML = '<span aria-hidden="true">⤢</span>'; vx.title = S('vuOpen'); vx.setAttribute('aria-label', S('vuOpen'));
       ({ VN: function () { drawTrend(c, M.syn.trend); }, VT: function () { drawTarget(c, M.syn.target, M.syn.unplanned); }, 'a:bump': function () { drawBump(c, X.bump); },
          VQ: function () { drawVq(c, M.syn.quarters); }, 'a:bub': function () { drawBub(c, M.syn.bubbles); }, '78': function () { drawConn(c, M.det.connections); }, '54': function () { drawTop(c, M.det.top); } })[k]();
     }
@@ -2711,11 +2724,11 @@ function ncShareFmt(n) { return (Math.round(n * 10) / 10).toLocaleString(loc(), 
     }
     function drawBub(c, list) {   // vBub
       if (!list) { none(c, '—'); return; }
-      var W0 = wd(c, 300), H = W0 < 520 ? 320 : 380, ml = G.lang === 'en' ? 76 : 62, mr = 16, mt = 12, mb = 46, pw = W0 - ml - mr, ph = H - mt - mb;
+      var W0 = wd(c, 300), wide = W0 >= 900, H = W0 < 520 ? 320 : wide ? 480 : 380, ml = G.lang === 'en' ? 76 : 62, mr = 16, mt = 12, mb = 46, pw = W0 - ml - mr, ph = H - mt - mb;
       var nMin = Math.min.apply(null, list.map(function (s) { return s.n; })), nMax = Math.max.apply(null, list.map(function (s) { return s.n; })), lo = Math.log10(nMin / 1.5), hi = Math.log10(nMax * 1.5);
       var aMax = Math.max.apply(null, list.map(function (s) { return s.a; })), step = aMax <= 60 ? 10 : aMax <= 120 ? 20 : aMax <= 300 ? 50 : 100, yMax = Math.ceil(aMax * 1.12 / step) * step;
       var cMax = Math.max.apply(null, list.map(function (s) { return s.c; }));
-      function X(n) { return ml + (Math.log10(n) - lo) / (hi - lo) * pw; } function Y(a) { return mt + ph - a / yMax * ph; } function R(cc) { return 3 + 21 * Math.sqrt(cc / cMax); }
+      function X(n) { return ml + (Math.log10(n) - lo) / (hi - lo) * pw; } function Y(a) { return mt + ph - a / yMax * ph; } function R(cc) { return 3 + (wide ? 28 : 21) * Math.sqrt(cc / cMax); }
       var g = '';
       for (var y = 0; y <= yMax; y += step) g += '<line class="gl" x1="' + ml + '" x2="' + (ml + pw) + '" y1="' + r1(Y(y)) + '" y2="' + r1(Y(y)) + '"/>' + tx(ml - 8, Y(y) + 4, eur(y), 'mu', 'end');
       [1, 2, 5, 10, 20, 50, 100, 200, 500, 1000, 2000, 5000].forEach(function (t) { if (Math.log10(t) < lo || Math.log10(t) > hi) return; g += '<line class="gl" y1="' + mt + '" y2="' + (mt + ph) + '" x1="' + r1(X(t)) + '" x2="' + r1(X(t)) + '"/>' + tx(X(t), mt + ph + 16, num(t), 'mu', 'middle'); });
@@ -2739,7 +2752,8 @@ function ncShareFmt(n) { return (Math.round(n * 10) / 10).toLocaleString(loc(), 
         return placed.every(function (p) { return clear(b, p); }) && list.every(function (s) { if (s === self) return true; var r = R(s.c) * 0.7; return clear(b, [X(s.n) - r, Y(s.a) - r, X(s.n) + r, Y(s.a) + r]); });
       }
       var byAvg = list.filter(function (s) { return s.n >= 10; }).sort(function (a, b) { return b.a - a.a; })[0];
-      list.slice(0, 9).concat(byAvg && list.indexOf(byAvg) >= 9 ? [byAvg] : []).forEach(function (s) {
+      var nLab = wide ? 15 : 9;
+      list.slice(0, nLab).concat(byAvg && list.indexOf(byAvg) >= nLab ? [byAvg] : []).forEach(function (s) {
         var x = X(s.n), yy = Y(s.a), r = R(s.c), t = L(s.rca), w = t.length * 6.3 + 4;
         var tries = [[x + r + 4, yy + 4, 'start', [x + r + 2, yy - 9, x + r + 6 + w, yy + 5]], [x - r - 4, yy + 4, 'end', [x - r - 6 - w, yy - 9, x - r - 2, yy + 5]],
           [x, yy - r - 5, 'middle', [x - w / 2, yy - r - 18, x + w / 2, yy - r - 3]], [x, yy + r + 14, 'middle', [x - w / 2, yy + r + 2, x + w / 2, yy + r + 17]]];

@@ -1,7 +1,10 @@
 # Synthèse et Détail in Skywise (Slate): two ways
 
 The views page (`03_reports/FTO2_Vues.html`: the Synthèse and Détail tabs, the dashboard's header and filter bar, the bell)
-packaged for a Slate app in two ways. Both show the same figures as the dashboard: they were checked against each other on
+packaged for a Slate app in two ways. Since 30 October the views are the dashboard's **Simple** mode: the dashboard (and way 1,
+which is the same page) has a "Simple | Expert" switch at the right of the title, Expert being the full dashboard. Way 1 opens
+in Simple; the dashboard's own level 3 (`../level3_datasets`) is the same page, so one of the two is enough in an app. Way 2
+is Simple only (its function computes the views, not the full dashboard). Both show the same figures as the dashboard: they were checked against each other on
 several filter sets (see "Checked here").
 
 | | Way 1: JavaScript only in the page | Way 2: pre-computed by a Slate function |

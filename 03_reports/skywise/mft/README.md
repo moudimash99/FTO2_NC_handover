@@ -38,8 +38,11 @@ with no row, or the columns it received when no 2026 FTO2 NC could be read.
   `04_reference` / `06_input_data`, rebuild, paste the new `fto2_mft.js`.
 - **Actions are saved in the browser**, on the computer where they are entered: a Slate code sandbox has no shared store.
   The first time, the page shows the trackers' actions; new actions, edits, weekly points and the alarms' "Vu" marks stay on
-  that computer and are not shared with the other users of the app. The note above the actions says so. Sharing them needs a
+  that computer and are not shared with the other users of the app. The note above the actions says so. If Slate's sandbox
+  blocks the browser's storage, the note says that instead: edits then last until the page reloads. Sharing them needs a
   table Slate can write to (or a Foundry action), to be set up.
+- The action form saves without a form submission (Slate's sandbox allows none), with its button or Enter, and opens where
+  the click was when the widget is taller than the screen.
 - `preview_local_only.html` opens on a laptop with a frozen copy of the data, to look at the page: never paste it into Slate.
 
 ## Build

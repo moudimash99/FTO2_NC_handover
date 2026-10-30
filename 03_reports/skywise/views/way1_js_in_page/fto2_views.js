@@ -565,14 +565,22 @@ function fto2FromTables(ncIn, defIn, ref, disIn) {
 
   // two pages from one file: the dashboard, and the weekly follow-up (weekly Pareto, MFT actions)
   var PAGE = window.FTO2_PAGE === 'suivi' || window.FTO2_PAGE === 'vues' ? window.FTO2_PAGE : (window.FTO2_PAGE === 'review' || window.FTO2_PAGE === 'mock') && D.dummy ? window.FTO2_PAGE : 'main';
-  var TABS = PAGE === 'suivi' ? ['hebdo', 'mft'] : PAGE === 'vues' ? ['syn', 'det'] : PAGE === 'review' ? ['rev'] : PAGE === 'mock' ? ['ov', 'pareto', 'where', 'cnq', 'client', 'cbl', 'rca', 'pplan', 'hebdo', 'mft'] : ['ov', 'pareto', 'where', 'cnq', 'client', 'cbl', 'rca', 'pplan'];
+  // Simple and Expert (30 Oct, Mohammad): the main page holds both. Simple: Synthèse and Détail, a few charts; Expert: the full dashboard.
+  // A switch in the header goes from one to the other; the views page (PAGE 'vues') is the same page, opening in Simple
+  var DUAL = PAGE === 'main' || PAGE === 'vues', SIMPLE_TABS = ['syn', 'det'], EXPERT_TABS = ['ov', 'pareto', 'where', 'cnq', 'client', 'cbl', 'rca', 'pplan'];
+  var h0 = ''; try { h0 = EMBED ? '' : (location.hash || '').replace('#', ''); } catch (e) {}
+  var MODE = !DUAL ? null : SIMPLE_TABS.indexOf(h0) >= 0 ? 'simple' : EXPERT_TABS.indexOf(h0) >= 0 ? 'expert' : PAGE === 'vues' ? 'simple'
+    : (function () { var m = null; try { m = localStorage.getItem('fto2-dash-mode'); } catch (e) {} return m === 'expert' ? 'expert' : 'simple'; })();
+  var TABS = PAGE === 'suivi' ? ['hebdo', 'mft'] : PAGE === 'review' ? ['rev'] : PAGE === 'mock' ? ['ov', 'pareto', 'where', 'cnq', 'client', 'cbl', 'rca', 'pplan', 'hebdo', 'mft'] : MODE === 'simple' ? SIMPLE_TABS : EXPERT_TABS;
   var G = { lang: 'fr', minor: true, tab: TABS[0] };
   try { var s1 = localStorage.getItem('fto2-dash-lang'); if (s1 === 'fr' || s1 === 'en') G.lang = s1; } catch (e) {}
-  var h0 = ''; try { h0 = EMBED ? '' : (location.hash || '').replace('#', ''); } catch (e) {} if (TABS.indexOf(h0) >= 0) G.tab = h0;
-  document.querySelectorAll('#tabs [role="tab"]').forEach(function (b) { b.hidden = TABS.indexOf(b.getAttribute('data-tab')) < 0; });
-  if (TABS.indexOf('gal') < 0) document.querySelectorAll('#tabs .gap[data-gal]').forEach(function (g) { g.hidden = true; });
-  if (PAGE !== 'main') {
-    document.querySelectorAll('#tabs .gap').forEach(function (g) { g.hidden = true; });
+  if (TABS.indexOf(h0) >= 0) G.tab = h0;
+  function tabsShow() {   // the tabs of the page (of the mode, on the main page); the groups' gaps only in Expert
+    document.querySelectorAll('#tabs [role="tab"]').forEach(function (b) { b.hidden = TABS.indexOf(b.getAttribute('data-tab')) < 0; });
+    document.querySelectorAll('#tabs .gap').forEach(function (g) { g.hidden = !DUAL || MODE === 'simple' || (g.hasAttribute('data-gal') && TABS.indexOf('gal') < 0); });
+  }
+  tabsShow();
+  if (!DUAL) {
     var h1 = document.querySelector('h1[data-t="title"]'); if (h1) h1.setAttribute('data-t', PAGE === 'suivi' ? 'titleSuivi' : PAGE === 'mock' ? 'titleMock' : 'titleRev');
   }
 
@@ -1687,7 +1695,7 @@ function fto2FromTables(ncIn, defIn, ref, disIn) {
       if (g.act) sub.push(S('alAct', { t: g.act.title }));
       return '<div class="al-row"><button type="button" class="al-go" data-algo="' + esc(g.key) + '"><i class="al-dot ' + (g.lvl === 2 ? 'maj' : 'min') + '" title="' + esc(S(g.lvl === 2 ? 'alMaj' : 'alMin')) + '"></i>' +
         '<span class="al-what"><b>' + esc(g.line) + '</b> · ' + esc(alText(g)) + '</span>' + (sub.length ? '<span class="al-sub">' + esc(sub.join(' · ')) + '</span>' : '') +
-        '<span class="al-sub">→ ' + esc(S({ pareto: 'tabPareto', where: 'tabWhere', cbl: 'tabCbl' }[alTab(g.head.kind === 'plane' ? g.head : Object.assign({ kind: g.kind }, g.head))])) + '</span></button>' +
+        '<span class="al-sub">→ ' + esc(S({ pareto: 'tabPareto', where: 'tabWhere', cbl: 'tabCbl', det: 'tabDet' }[alTab(g.head.kind === 'plane' ? g.head : Object.assign({ kind: g.kind }, g.head))])) + '</span></button>' +
         '<span class="al-ops">' + ALARM.spark(g, AL.last, g.lvl === 2 ? 'var(--up)' : 'var(--ink-2)') + (can ? '<button type="button" class="al-vu" data-al' + (isSeen ? 'un' : 'vu') + '="' + esc(g.key) + '">' + esc(S(isSeen ? 'alBack' : 'alSeen')) + '</button>' : '') + '</span></div>';
     };
     var top = show.slice(0, ALARM.P.show), rest = show.slice(ALARM.P.show);
@@ -1725,7 +1733,7 @@ function fto2FromTables(ncIn, defIn, ref, disIn) {
     });
     document.addEventListener('click', function (e) { if (AL.open && !w.contains(e.target)) { AL.open = false; alRender(); } });
     document.addEventListener('keydown', function (e) { if (AL.open && e.key === 'Escape') { AL.open = false; alRender(); document.getElementById('alBtn').focus(); } });
-    if (EMBED || (PAGE !== 'main' && PAGE !== 'vues') || !window.claude || typeof window.claude.use !== 'function') return;
+    if (EMBED || !DUAL || !window.claude || typeof window.claude.use !== 'function') return;
     window.claude.use('user').then(function (u) { if (u && u.id) return u.id().then(function (id) { AL.uid = id; }); }).catch(function () {});
     window.claude.use('db').then(function (db) {
       if (!db) return; AL.db = db;
@@ -2111,7 +2119,7 @@ function fto2FromTables(ncIn, defIn, ref, disIn) {
 
   // 3. Volume x unit cost per root cause, with curves of equal total cost
   function vBub(rs) {
-    var W0 = vWidth('bub', 300), H = W0 < 520 ? 320 : 380, ml = G.lang === 'en' ? 76 : 62, mr = 16, mt = 12, mb = 46, pw = W0 - ml - mr, ph = H - mt - mb;
+    var W0 = vWidth('bub', 300), wide = W0 >= 900, H = W0 < 520 ? 320 : wide ? 480 : 380, ml = G.lang === 'en' ? 76 : 62, mr = 16, mt = 12, mb = 46, pw = W0 - ml - mr, ph = H - mt - mb;   // on a row of its own (Simple's Synthèse): taller, bigger bubbles, more names
     var st = {}; rs.forEach(function (r) { var a = dRca(r), s = st[a] || (st[a] = { n: 0, c: 0, cat: dCat(r) }); s.n++; s.c += dAlloc(r); });
     var list = Object.keys(st).filter(function (x) { return st[x].n >= 3; }).map(function (x) { var s = st[x]; return { k: x, n: s.n, c: s.c, a: s.c / s.n, cat: s.cat }; });
     if (list.length < 2) { vSet('bub', EMPTY); return; }
@@ -2119,7 +2127,7 @@ function fto2FromTables(ncIn, defIn, ref, disIn) {
     var lo = Math.log10(nMin / 1.5), hi = Math.log10(nMax * 1.5);
     var aMax = Math.max.apply(null, list.map(function (s) { return s.a; })), step = aMax <= 60 ? 10 : aMax <= 120 ? 20 : aMax <= 300 ? 50 : 100, yMax = Math.ceil(aMax * 1.12 / step) * step;
     var cMax = Math.max.apply(null, list.map(function (s) { return s.c; }));
-    function X(n) { return ml + (Math.log10(n) - lo) / (hi - lo) * pw; } function Y(a) { return mt + ph - a / yMax * ph; } function R(c) { return 3 + 21 * Math.sqrt(c / cMax); }
+    function X(n) { return ml + (Math.log10(n) - lo) / (hi - lo) * pw; } function Y(a) { return mt + ph - a / yMax * ph; } function R(c) { return 3 + (wide ? 28 : 21) * Math.sqrt(c / cMax); }
     var g = '';
     for (var y = 0; y <= yMax; y += step) g += '<line class="gl" x1="' + ml + '" x2="' + (ml + pw) + '" y1="' + r1(Y(y)) + '" y2="' + r1(Y(y)) + '"/>' + tx(ml - 8, Y(y) + 4, eur(y), 'mu', 'end');
     [1, 2, 5, 10, 20, 50, 100, 200, 500, 1000, 2000, 5000].forEach(function (t) { if (Math.log10(t) < lo || Math.log10(t) > hi) return; g += '<line class="gl" y1="' + mt + '" y2="' + (mt + ph) + '" x1="' + r1(X(t)) + '" x2="' + r1(X(t)) + '"/>' + tx(X(t), mt + ph + 16, num(t), 'mu', 'middle'); });
@@ -2145,7 +2153,8 @@ function fto2FromTables(ncIn, defIn, ref, disIn) {
       return placed.every(function (p) { return clear(b, p); }) && list.every(function (s) { if (s === self) return true; var r = R(s.c) * 0.7; return clear(b, [X(s.n) - r, Y(s.a) - r, X(s.n) + r, Y(s.a) + r]); });
     }
     var byAvg = list.filter(function (s) { return s.n >= 10; }).sort(function (a, b) { return b.a - a.a; })[0];
-    list.slice(0, 9).concat(byAvg && list.indexOf(byAvg) >= 9 ? [byAvg] : []).forEach(function (s) {
+    var nLab = wide ? 15 : 9;
+    list.slice(0, nLab).concat(byAvg && list.indexOf(byAvg) >= nLab ? [byAvg] : []).forEach(function (s) {
       var x = X(s.n), yy = Y(s.a), r = R(s.c), t = L(s.k), w = t.length * 6.3 + 4;
       var tries = [[x + r + 4, yy + 4, 'start', [x + r + 2, yy - 9, x + r + 6 + w, yy + 5]], [x - r - 4, yy + 4, 'end', [x - r - 6 - w, yy - 9, x - r - 2, yy + 5]],
         [x, yy - r - 5, 'middle', [x - w / 2, yy - r - 18, x + w / 2, yy - r - 3]], [x, yy + r + 14, 'middle', [x - w / 2, yy + r + 2, x + w / 2, yy + r + 17]]];
@@ -5024,7 +5033,7 @@ function fto2FromTables(ncIn, defIn, ref, disIn) {
   // rebuilt on the real NCs (keys V*). 2025 (D.y25): the 2025 extract through the pipeline's rules, the parser and the CNQ model, summed
   // per month, scope, phase, line and product, and the 2025 deliveries per product. Target = 2025 - 25 %, budget = 2025 cost - 25 %.
   // Without 2025 for the filter (data-source filter, no 2025 NC), the old placeholders come back, marked on the page.
-  var V2 = PAGE === 'main', V2B = false, V2CUT = 0.75, V2BAND = {};
+  var V2 = DUAL, V2B = false, V2CUT = 0.75, V2BAND = {};
   var V2L = {
     ov: { top: ['VT', 'VN', 'VB', 'a:lead', 'VX'], fold: ['a:cal'] },
     pareto: { top: ['a:bub', 'a:bump', 'a:flow', '78', '76', 'VM', 'VQ', '53'],   // 30 Oct: connection errors by month alone on a row; per million operations beside by product
@@ -5819,21 +5828,23 @@ function fto2FromTables(ncIn, defIn, ref, disIn) {
   document.getElementById('miIn').addEventListener('click', function () { setMinor(true); });
   document.getElementById('miOut').addEventListener('click', function () { setMinor(false); });
 
-  // ---------------------------------------------------------------- Views page (PAGE 'vues', 30 Oct, Mohammad): two monthly views made of this
-  // dashboard's own charts, for the QCMs (Synthèse: the plant, the year) and the QLS (Détail: one line, one month). Each view keeps its own line
-  // and period; Détail's Pareto opens a level at a time (category, then cause, then sub-code), in volume by default, its charts run from January
-  // to that month. Charts show without their notes; a press opens the complete chart over the page (a double click or tap skips the animation).
-  if (PAGE === 'vues') (function () {
-    Object.assign(STR.fr, { tabSyn: 'Synthèse', tabDet: 'Détail', vuOpen: 'Complet', vuClose: 'Fermer',
+  // ---------------------------------------------------------------- Simple mode (30 Oct, Mohammad): two monthly views made of this dashboard's
+  // own charts, for the QCMs (Synthèse: the plant, the year) and the QLS (Détail: one line, one month). Détail's Pareto opens a level at a time
+  // (category, then cause, then sub-code), in volume by default; its charts run from January to that month. Charts show without their notes;
+  // the icon at a chart's corner opens the complete chart over the page. The Expert layout lends Simple its bands, the Pareto tab's boards
+  // and the overview's NC table, and gets them back when the switch goes to Expert. The switch animates (a double click or tap skips).
+  if (DUAL) (function () {
+    Object.assign(STR.fr, { tabSyn: 'Synthèse', tabDet: 'Détail', vuOpen: 'Agrandir', vuClose: 'Fermer', modeLab: 'Affichage', modeSimple: 'Simple', modeExpert: 'Expert',
+      modeSimpleT: 'Quelques graphiques : Synthèse et Détail', modeExpertT: 'Le tableau de bord complet',
       vuNcY: 'NC depuis janvier', vuNcP: 'NC sur la période', vuRate: 'NC par MSN', vuCost: 'Coût de non-qualité', vuRet: 'Retours clients',
       vuDef: 'Défauts', vuRateY: 'NC par MSN depuis janvier', vuFc: 'prévision fin déc. : {f} · objectif : {t}',
       vuVsT: 'par rapport à l’objectif ({t})', vuPrevP: 'période d’avant : {v}' });
-    Object.assign(STR.en, { tabSyn: 'Summary', tabDet: 'Detail', vuOpen: 'Complete', vuClose: 'Close',
+    Object.assign(STR.en, { tabSyn: 'Summary', tabDet: 'Detail', vuOpen: 'Enlarge', vuClose: 'Close', modeLab: 'View', modeSimple: 'Simple', modeExpert: 'Expert',
+      modeSimpleT: 'A few charts: Summary and Detail', modeExpertT: 'The full dashboard',
       vuNcY: 'NCs since January', vuNcP: 'NCs in the period', vuRate: 'NCs per MSN', vuCost: 'Cost of non-quality', vuRet: 'Customer returns',
       vuDef: 'Defects', vuRateY: 'NCs per MSN since January', vuFc: 'forecast end Dec.: {f} · target: {t}',
       vuVsT: 'against the target ({t})', vuPrevP: 'period before: {v}' });
-    var h1v = document.querySelector('h1[data-t]'); if (h1v) h1v.setAttribute('data-t', 'title');   // the dashboard's own header and filters
-    V2 = true; V2B = true; PMODE = 'vol';   // the bands of this page are placed below, not the main page's layout; the Pareto opens in volume
+    var PM = { simple: 'vol', expert: PMODE }; if (MODE === 'simple') PMODE = 'vol';   // each mode keeps its Pareto measure; Simple opens in volume
     V2L.syn = { top: ['VN', 'VT', 'a:bump', 'VQ', 'a:bub'], more: ['VB'] };   // VB: drawn out of sight, for its forecast and budget
     V2L.det = { top: ['a:bump', '78', '54'] };
     var $v = function (id) { return document.getElementById(id); };
@@ -5845,33 +5856,40 @@ function fto2FromTables(ncIn, defIn, ref, disIn) {
     }
     function inCtx(fn) { if (G.tab === 'det') ytd(fn); else fn(); }
 
-    // bands built once, each placed in the open view's slot (the cause ranking shows in both views)
-    var VUB = false;
+    // what Simple borrows from the Expert layout: a mark where it lives, to give it back
+    var HOME = [];
+    function borrow(el) { if (!el || el._vuHome) return; var m = document.createComment('vu'); el.parentNode.insertBefore(m, el); el._vuHome = m; HOME.push(el); }
+    function giveBack() { HOME.forEach(function (el) { var m = el._vuHome; if (m.parentNode && el.previousSibling !== m) m.parentNode.insertBefore(el, m.nextSibling); }); }
+    // the bands are the Expert layout's (built first), each placed in the open view's slot (the cause ranking shows in both views)
+    var VUB = false, LEND = null;
+    function vuX(x) { x.innerHTML = '<span aria-hidden="true">⤢</span>'; x.title = S('vuOpen'); x.setAttribute('aria-label', S('vuOpen')); }
     function vuBuild() {
       if (VUB) return; VUB = true;
+      v2Build();
       [['vuSynGrid', V2L.syn.top], ['vuDetGrid', V2L.det.top]].forEach(function (p) {
         var g = v2Wire($v(p[0]));
         p[1].forEach(function (k) { var s2 = document.createElement('div'); s2.className = 'vu-slot'; s2.setAttribute('data-slot', k); g.appendChild(s2); });
       });
       V2L.syn.top.concat(V2L.det.top, V2L.syn.more).forEach(function (k) {
-        if (V2BAND[k]) return; var b = v2Band(k); if (!b) return;
-        if (V2L.syn.more.indexOf(k) >= 0) { $v('vuSynCalc').appendChild(b); return; }
+        var b = V2BAND[k] || v2Band(k); if (!b) return;
+        if (V2L.syn.more.indexOf(k) >= 0) { if (!b.isConnected) $v('vuSynCalc').appendChild(b); return; }
+        if (b.querySelector('.vu-x')) return;
         b.classList.add('vu-band');
-        var x = document.createElement('button'); x.type = 'button'; x.className = 'vu-x'; x.setAttribute('data-vux', k); x.innerHTML = '<span aria-hidden="true">⤢</span> ' + esc(S('vuOpen'));
+        var x = document.createElement('button'); x.type = 'button'; x.className = 'vu-x'; x.setAttribute('data-vux', k); vuX(x);
         b.querySelector('.bhead').appendChild(x);
       });
-      // Détail: the Pareto tab's two boards (volume / cost switch, the lists, the defect table at the very bottom, under the charts)
-      var par = $v('vuPar'), pp = $v('p-pareto'); par.appendChild(pp.querySelector('.controls')); par.appendChild($v('pVol')); par.appendChild($v('pCost'));
+      // Détail: the Pareto tab's two boards (volume / cost switch, the lists, the defect table at the very bottom, under the charts);
       // Synthèse: the overview's NC table, folded at the bottom
-      var nt = $v('nq') && $v('nq').closest('details'); if (nt) $v('p-syn').appendChild(nt);
+      LEND = [[$v('p-pareto').querySelector(':scope > .controls'), 'vuPar'], [$v('pVol'), 'vuPar'], [$v('pCost'), 'vuPar'], [$v('nq') && $v('nq').closest('details'), 'p-syn']];
       v2Wire($v('vuPanel'));
       applyText();
     }
     function vuPlace() {
-      document.querySelectorAll('#p-' + G.tab + ' .vu-slot').forEach(function (s2) { var b = V2BAND[s2.getAttribute('data-slot')]; if (b && b.parentNode !== s2 && !b.classList.contains('vu-full')) s2.appendChild(b); });
+      LEND.forEach(function (p) { var el = p[0], to = $v(p[1]); if (el && el.parentNode !== to) { borrow(el); to.appendChild(el); } });
+      document.querySelectorAll('#p-' + G.tab + ' .vu-slot').forEach(function (s2) { var b = V2BAND[s2.getAttribute('data-slot')]; if (b && b.parentNode !== s2 && !b.classList.contains('vu-full')) { borrow(b); s2.appendChild(b); } });
       if (G.tab === 'det') {   // the charts sit between the lists and the defect table of the measure shown
         var sec = $v(PMODE === 'vol' ? 'pVol' : 'pCost'), dt = sec.querySelector(':scope > details.detail'), g = $v('vuDetGrid');
-        if (dt && g.nextSibling !== dt) sec.insertBefore(g, dt);
+        if (dt && g.nextSibling !== dt) { borrow(g); sec.insertBefore(g, dt); }
       }
     }
 
@@ -5880,6 +5898,7 @@ function fto2FromTables(ncIn, defIn, ref, disIn) {
     [[pareto, ['pg', 'pgl'], 'pc'], [costPareto, ['kg', 'kgl'], 'kc']].forEach(function (p) {
       var b = p[0], r0 = b.render;
       b.render = function () {
+        if (MODE !== 'simple') { r0(); return; }
         if (!b.f.cat) { delete b.f.rca; delete b.f.code; } else if (!b.f.rca) delete b.f.code;
         delete b.f.line; delete b.f.fin;
         r0();
@@ -5926,7 +5945,7 @@ function fto2FromTables(ncIn, defIn, ref, disIn) {
       if (G.tab !== 'syn' && G.tab !== 'det') { v2R0(); return; }
       vuBuild(); vuPlace();
       if (G.tab === 'det') ytd(function () { v2R0(); RATE_DET = rateOf(GF.line); }); else v2R0();
-      document.querySelectorAll('.vu-x').forEach(function (x) { x.innerHTML = '<span aria-hidden="true">⤢</span> ' + esc(S('vuOpen')); });
+      document.querySelectorAll('.vu-x').forEach(vuX);
       vuFigs();
       if (OPEN) inCtx(function () { v2Draw(OPEN.k); });
     };
@@ -5936,7 +5955,8 @@ function fto2FromTables(ncIn, defIn, ref, disIn) {
     // the complete chart: the band grows out of its place over the page; a double click or tap finishes the animation
     var OPEN = null, RUN = [], OPENED = 0, lastTap = 0, REDUCE = matchMedia('(prefers-reduced-motion: reduce)').matches;
     function anim(el, kf, o) { if (REDUCE || !el.animate) return null; var a = el.animate(kf, o); RUN.push(a); a.finished.then(function () { RUN = RUN.filter(function (x) { return x !== a; }); }, function () { RUN = RUN.filter(function (x) { return x !== a; }); }); return a; }
-    function skip() { RUN.slice().forEach(function (a) { try { a.finish(); } catch (e) {} }); }
+    var SKIPT = 0;
+    function skip() { SKIPT = Date.now(); RUN.slice().forEach(function (a) { try { a.finish(); } catch (e) {} }); }
     function vuOpen(k) {
       var b = V2BAND[k]; if (!b || OPEN) return;
       var q0 = b.getBoundingClientRect(), ph = document.createElement('div'); ph.style.height = q0.height + 'px'; b.parentNode.insertBefore(ph, b);
@@ -5965,14 +5985,16 @@ function fto2FromTables(ncIn, defIn, ref, disIn) {
       a.finished.then(function () { done(); [$v('vuScrim'), o.b].forEach(function (e) { e.getAnimations().forEach(function (x) { x.cancel(); }); }); }, done);
     }
     document.addEventListener('click', function (e) {
+      var md = e.target.closest && e.target.closest('#modeSw [data-mode]'); if (md) { setMode(md.getAttribute('data-mode')); return; }
       var x = e.target.closest && e.target.closest('[data-vux]'); if (x) { vuOpen(x.getAttribute('data-vux')); return; }
       if (e.target.id === 'vuClose') { vuClose(); return; }
       if (e.target.id === 'vuScrim' || e.target.id === 'vuOv') { if (RUN.length || Date.now() - OPENED < 900) skip(); else vuClose(); }   // the second tap of a double tap skips, it does not close
     });
     // the bell (shared alarm engine): an alarm opens Détail on its line, the Pareto open on its category, cause or sub-code
-    STR.fr.tabPareto = STR.fr.tabDet; STR.en.tabPareto = STR.en.tabDet;   // its "→" line names the view (the Pareto tab is not on this page)
-    alTab = function () { return 'pareto'; };
+    var alTab0 = alTab, alGo0 = alGo;   // in Expert, the dashboard's own
+    alTab = function (a) { return MODE === 'simple' ? 'det' : alTab0(a); };
     alGo = function (key) {
+      if (MODE !== 'simple') { alGo0(key); return; }
       var g = (AL.res || []).filter(function (x) { return x.key === key; })[0]; if (!g) return;
       var a = g.head, f = {}, r = null; AL.open = false;
       if (a.lv === 'cat') f.cat = a.v;
@@ -5984,6 +6006,54 @@ function fto2FromTables(ncIn, defIn, ref, disIn) {
       GF.line = g.kind === 'cross' ? '' : g.line; GF.pick = null; pickPrep(); setGF({}); setTab('det');   // an alarm on several lines: all lines
       var el = $v('vuPar'); if (el && el.scrollIntoView) el.scrollIntoView({ block: 'start' });
     };
+
+    // ---- the switch: Simple <-> Expert. The page leaves (shrinks or grows away), then the other mode opens from the switch, a circle
+    // that widens over the page, its tabs sliding in; a double click or tap skips
+    var LASTTAB = { simple: MODE === 'simple' ? G.tab : SIMPLE_TABS[0], expert: MODE === 'expert' ? G.tab : EXPERT_TABS[0] }, SW = false;
+    function modeUI() {
+      var sw = $v('modeSw'); if (!sw) return;
+      sw.hidden = false; sw.setAttribute('data-mode', MODE); sw.setAttribute('aria-label', S('modeLab'));
+      sw.querySelectorAll('[data-mode]').forEach(function (bt) { var m = bt.getAttribute('data-mode');
+        bt.textContent = S(m === 'simple' ? 'modeSimple' : 'modeExpert'); bt.title = S(m === 'simple' ? 'modeSimpleT' : 'modeExpertT'); bt.setAttribute('aria-pressed', String(m === MODE)); });
+    }
+    var applyText0 = applyText; applyText = function () { applyText0(); modeUI(); };
+    function swap(m) {
+      if (OPEN) vuClose(true);
+      LASTTAB[MODE] = G.tab; PM[MODE] = PMODE;
+      if (m === 'expert') {   // give the Expert layout its pieces back, its boards whole again
+        giveBack();
+        ['pg', 'pgl', 'kg', 'kgl', 'pc', 'kc'].forEach(function (id) { var g = $v(id); if (!g) return; g.hidden = false; g.querySelectorAll(':scope > [data-card]').forEach(function (c) { c.hidden = false; }); });
+      }
+      TABS.forEach(function (t) { var p = $v('p-' + t); if (p) p.hidden = true; });
+      MODE = m; PMODE = PM[m]; TABS = m === 'simple' ? SIMPLE_TABS : EXPERT_TABS; tabsShow();
+      try { localStorage.setItem('fto2-dash-mode', m); } catch (e) {}
+      G.tab = LASTTAB[m]; if (!EMBED) { try { history.replaceState(null, '', '#' + G.tab); } catch (x) {} }
+      renderAll();
+    }
+    function setMode(m) {
+      if (m === MODE || SW) return;
+      var tb = $v('tabs'), p0 = $v('p-' + G.tab), bt = document.querySelector('#modeSw [data-mode="' + m + '"]'), E = 'cubic-bezier(.2,.8,.2,1)', far = m === 'expert' ? .96 : 1.04;
+      if (REDUCE || !tb.animate || !p0) { swap(m); return; }
+      SW = true;
+      var a = anim(p0, [{ opacity: 1, transform: 'none' }, { opacity: 0, transform: 'scale(' + far + ')' }], { duration: 240, easing: 'ease-in', fill: 'forwards' });
+      anim(tb, [{ opacity: 1 }, { opacity: 0 }], { duration: 200, easing: 'ease-in', fill: 'forwards' });
+      var next = function () {
+        [p0, tb].forEach(function (e) { e.getAnimations().forEach(function (x) { x.cancel(); }); });
+        swap(m); SW = false;
+        if (Date.now() - SKIPT < 600) return;   // skipped: the new mode at once
+        var p = $v('p-' + G.tab); if (!p) return;
+        var r = p.getBoundingClientRect(), q = bt.getBoundingClientRect(), cx = q.left + q.width / 2 - r.left, cy = q.top + q.height / 2 - r.top;
+        var h = Math.min(r.height, innerHeight * 1.5), R = Math.hypot(Math.max(cx, r.width - cx), Math.max(Math.abs(cy), Math.abs(h - cy))) + 40;
+        anim(p, [{ clipPath: 'circle(20px at ' + r1(cx) + 'px ' + r1(cy) + 'px)', transform: 'scale(' + (2 - far) + ')', opacity: .5 },
+          { clipPath: 'circle(' + r1(R) + 'px at ' + r1(cx) + 'px ' + r1(cy) + 'px)', transform: 'none', opacity: 1 }], { duration: 780, easing: E });
+        [].slice.call(tb.querySelectorAll('[role="tab"]:not([hidden])')).forEach(function (t, i) {
+          anim(t, [{ opacity: 0, transform: 'translateX(' + (m === 'expert' ? 16 : -16) + 'px)' }, { opacity: 1, transform: 'none' }], { duration: 420, delay: 160 + i * 50, easing: E, fill: 'backwards' }); });
+        [].slice.call(p.querySelectorAll(':scope > .figs > .fig')).forEach(function (f, i) {
+          anim(f, [{ opacity: 0, transform: 'translateY(12px)' }, { opacity: 1, transform: 'none' }], { duration: 420, delay: 260 + i * 70, easing: E, fill: 'backwards' }); });
+      };
+      if (a) a.finished.then(next, next); else next();
+    }
+    modeUI();
     document.addEventListener('dblclick', function () { if (RUN.length) skip(); });
     document.addEventListener('pointerdown', function (e) { if (e.pointerType !== 'touch') return; var t = Date.now(); if (RUN.length && t - lastTap < 320) skip(); lastTap = t; });
     document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && OPEN) { skip(); vuClose(); } });

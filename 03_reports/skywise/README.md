@@ -9,6 +9,10 @@ Four levels, to try in order. Each level adds one thing, so when something fails
 | 3. `level3_datasets` | real, from two datasets the notebook writes | the real data, refreshed by the Skywise notebook |
 | 4. `level4_import` | as levels 2 and 3 | a ready-made Slate app to import (worth a try, not testable here) |
 
+**Simple and Expert (30 Oct).** The dashboard has two modes, switched by "Simple | Expert" at the right of the title, with an
+animation (a double click skips it). Simple: Synthèse and Détail, a few charts. Expert: the full dashboard, as before. It opens
+in Simple (or in the mode last used, where the browser keeps it). The figures below are Expert's Vue d'ensemble.
+
 The views page (Synthèse et Détail) has its own guide, with two ways to set it up: `views/README.md`.
 The MFT page has its own, same setup as level 3: `mft/README.md`.
 

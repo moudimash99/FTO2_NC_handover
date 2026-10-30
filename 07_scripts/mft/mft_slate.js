@@ -77,7 +77,8 @@ window.FTO2_STORE = (function () {
   }
   return {
     use: function (k) { return Promise.resolve(k === 'db' ? { collection: collection } : null); },
-    note: function () { return ok ? 'Actions enregistrées dans ce navigateur, sur ce poste : elles ne sont pas partagées avec les autres utilisateurs de l’app.'
+    note: function () { try { localStorage.setItem(KEY + 'probe', '1'); localStorage.removeItem(KEY + 'probe'); } catch (e) { ok = false; }
+      return ok ? 'Actions enregistrées dans ce navigateur, sur ce poste : elles ne sont pas partagées avec les autres utilisateurs de l’app.'
       : 'Le navigateur bloque l’enregistrement : les actions modifiées ici seront perdues au rechargement.'; }
   };
 })();

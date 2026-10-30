@@ -106,7 +106,7 @@
     function drawCard(v, k) {
       var c = card(v, k); if (!c) return; var h = v2Head(k), X = v === 'syn' ? M.syn : M.det;
       c.querySelector('.kicker').textContent = h[0]; c.querySelector('h3').textContent = h[1]; c.querySelector('.sub').textContent = h[2];
-      c.querySelector('.vu-x').innerHTML = '<span aria-hidden="true">⤢</span> ' + esc(S('vuOpen'));
+      var vx = c.querySelector('.vu-x'); vx.innerHTML = '<span aria-hidden="true">⤢</span>'; vx.title = S('vuOpen'); vx.setAttribute('aria-label', S('vuOpen'));
       ({ VN: function () { drawTrend(c, M.syn.trend); }, VT: function () { drawTarget(c, M.syn.target, M.syn.unplanned); }, 'a:bump': function () { drawBump(c, X.bump); },
          VQ: function () { drawVq(c, M.syn.quarters); }, 'a:bub': function () { drawBub(c, M.syn.bubbles); }, '78': function () { drawConn(c, M.det.connections); }, '54': function () { drawTop(c, M.det.top); } })[k]();
     }
@@ -227,11 +227,11 @@
     }
     function drawBub(c, list) {   // vBub
       if (!list) { none(c, '—'); return; }
-      var W0 = wd(c, 300), H = W0 < 520 ? 320 : 380, ml = G.lang === 'en' ? 76 : 62, mr = 16, mt = 12, mb = 46, pw = W0 - ml - mr, ph = H - mt - mb;
+      var W0 = wd(c, 300), wide = W0 >= 900, H = W0 < 520 ? 320 : wide ? 480 : 380, ml = G.lang === 'en' ? 76 : 62, mr = 16, mt = 12, mb = 46, pw = W0 - ml - mr, ph = H - mt - mb;
       var nMin = Math.min.apply(null, list.map(function (s) { return s.n; })), nMax = Math.max.apply(null, list.map(function (s) { return s.n; })), lo = Math.log10(nMin / 1.5), hi = Math.log10(nMax * 1.5);
       var aMax = Math.max.apply(null, list.map(function (s) { return s.a; })), step = aMax <= 60 ? 10 : aMax <= 120 ? 20 : aMax <= 300 ? 50 : 100, yMax = Math.ceil(aMax * 1.12 / step) * step;
       var cMax = Math.max.apply(null, list.map(function (s) { return s.c; }));
-      function X(n) { return ml + (Math.log10(n) - lo) / (hi - lo) * pw; } function Y(a) { return mt + ph - a / yMax * ph; } function R(cc) { return 3 + 21 * Math.sqrt(cc / cMax); }
+      function X(n) { return ml + (Math.log10(n) - lo) / (hi - lo) * pw; } function Y(a) { return mt + ph - a / yMax * ph; } function R(cc) { return 3 + (wide ? 28 : 21) * Math.sqrt(cc / cMax); }
       var g = '';
       for (var y = 0; y <= yMax; y += step) g += '<line class="gl" x1="' + ml + '" x2="' + (ml + pw) + '" y1="' + r1(Y(y)) + '" y2="' + r1(Y(y)) + '"/>' + tx(ml - 8, Y(y) + 4, eur(y), 'mu', 'end');
       [1, 2, 5, 10, 20, 50, 100, 200, 500, 1000, 2000, 5000].forEach(function (t) { if (Math.log10(t) < lo || Math.log10(t) > hi) return; g += '<line class="gl" y1="' + mt + '" y2="' + (mt + ph) + '" x1="' + r1(X(t)) + '" x2="' + r1(X(t)) + '"/>' + tx(X(t), mt + ph + 16, num(t), 'mu', 'middle'); });
@@ -255,7 +255,8 @@
         return placed.every(function (p) { return clear(b, p); }) && list.every(function (s) { if (s === self) return true; var r = R(s.c) * 0.7; return clear(b, [X(s.n) - r, Y(s.a) - r, X(s.n) + r, Y(s.a) + r]); });
       }
       var byAvg = list.filter(function (s) { return s.n >= 10; }).sort(function (a, b) { return b.a - a.a; })[0];
-      list.slice(0, 9).concat(byAvg && list.indexOf(byAvg) >= 9 ? [byAvg] : []).forEach(function (s) {
+      var nLab = wide ? 15 : 9;
+      list.slice(0, nLab).concat(byAvg && list.indexOf(byAvg) >= nLab ? [byAvg] : []).forEach(function (s) {
         var x = X(s.n), yy = Y(s.a), r = R(s.c), t = L(s.rca), w = t.length * 6.3 + 4;
         var tries = [[x + r + 4, yy + 4, 'start', [x + r + 2, yy - 9, x + r + 6 + w, yy + 5]], [x - r - 4, yy + 4, 'end', [x - r - 6 - w, yy - 9, x - r - 2, yy + 5]],
           [x, yy - r - 5, 'middle', [x - w / 2, yy - r - 18, x + w / 2, yy - r - 3]], [x, yy + r + 14, 'middle', [x - w / 2, yy + r + 2, x + w / 2, yy + r + 17]]];

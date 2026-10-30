@@ -578,8 +578,12 @@ var D = {"to":"2026-09-28","toWeek":"2026-W40","ncs":[["216037622","2026-01-05",
     FORM = JSON.parse(JSON.stringify(a || { line: S.line === 'all' ? '' : S.line, title: '', category: '', problem: { mode: 'simple', codes: [] }, defects: '', rootCause: '', analysisOwner: '', analysisStart: '', action: '', actionOwner: '', actionStart: '', status: 'En cours', expected: '', note: '', log: [] }));
     FORM.problem = normProb(FORM.problem); if (!FORM.id && !FORM.author) FORM.author = MYNAME;
     MORE = !!FORM.id && ['category', 'defects', 'rootCause', 'analysisOwner', 'analysisStart', 'expected', 'note'].some(function (k) { return FORM[k]; });
-    drawForm(); $('ov').hidden = false; var t = $('fTitle'); if (t) t.focus();
+    drawForm(); var ov = $('ov'); ov.hidden = false;
+    // in a frame taller than the screen (a Slate widget), the top of the frame can be out of sight: the form opens where the click was
+    ov.style.paddingTop = innerHeight > ((window.screen && screen.availHeight) || 900) ? Math.max(24, Math.min(LASTY - 80, innerHeight - 640)) + 'px' : '';
+    var t = $('fTitle'); if (t) t.focus({ preventScroll: true });
   }
+  var LASTY = 0; document.addEventListener('pointerdown', function (e) { LASTY = e.clientY; }, true);
   function fval(k) { return esc(FORM[k] || ''); }
   function drawForm() {
     var dIn = function (k) { var v = FORM[k] || ''; return /^\d{4}-\d\d-\d\d$/.test(v) ? v : /^\d{4}-\d\d$/.test(v) ? v + '-01' : ''; };
@@ -1080,7 +1084,10 @@ var D = {"to":"2026-09-28","toWeek":"2026-W40","ncs":[["216037622","2026-01-05",
     var er = $('rxErr-' + i); if (er) er.textContent = rxErr(r); var pv = $('fPrev'); if (pv) pv.innerHTML = prevHtml(); });
   $('frm').addEventListener('keydown', function (e) {   // Enter in a value box adds the value instead of saving the action
     if (e.key !== 'Enter' || !FORM) return; var t = e.target;
-    if (t.id === 'fCode') { e.preventDefault(); addCode(); } else if (t.hasAttribute && t.hasAttribute('data-rv')) { e.preventDefault(); addVal(+t.getAttribute('data-rv')); } else if (t.hasAttribute && t.hasAttribute('data-rx')) e.preventDefault(); });
+    if (t.id === 'fCode') { e.preventDefault(); addCode(); } else if (t.hasAttribute && t.hasAttribute('data-rv')) { e.preventDefault(); addVal(+t.getAttribute('data-rv')); } else if (t.hasAttribute && t.hasAttribute('data-rx')) e.preventDefault();
+    else if (t.tagName === 'INPUT' && t.type !== 'checkbox' && t.type !== 'radio') { e.preventDefault(); saveForm(); } });   // Enter saves, as the form would
+  // Slate runs the page in a frame that allows no form submission ('allow-forms'): the save button saves the form itself
+  $('frm').addEventListener('click', function (e) { if (e.target.closest && e.target.closest('#fSave')) { e.preventDefault(); saveForm(); } });
   $('ov').addEventListener('click', function (e) { if (e.target.id === 'ov') { $('ov').hidden = true; FORM = null; } });
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !$('ov').hidden) { $('ov').hidden = true; FORM = null; } });
   $('wkF').addEventListener('change', function (e) { var f = +e.target.value; setRange(f, Math.max(f, S.week)); S.sel = null; renderAll(); });
