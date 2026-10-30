@@ -5,9 +5,10 @@ tables (q_fto2_nc, q_fto2_def, the same as the dashboard's level 3); the page's 
 computes and draws every figure. It is the dashboard template in its 'vues' mode: same charts, same numbers as the dashboard.
 
 Way 2, pre-computed by a Slate function (way2_precomputed/): queries (data) -> one Slate function (logic) -> code sandbox
-(display). The function holds the views' model (build/views/fto2_views_model.js: pure JavaScript, no page, no drawing) and
-returns every number, series and table the views show for the filters the sandbox sends; the sandbox only draws
-(build/views/fto2_views_render.js). The same model file runs in Node to pre-compute the views offline (build/views/precompute.js).
+(display). The function f_fto2_views holds the views' model (fto2_views_model.js: pure JavaScript, no page, no drawing) and
+returns every number, series and table the views show, for the filters the sandbox sends back through the variable
+v_fto2_filters; the sandbox only draws. build/views/build_way2.py assembles both from the dashboard template. The same model
+file runs in Node to pre-compute the views outside Slate (precompute_node.js).
 
     python3 -I build/views_pack.py        (also run by build_all.py)
 
