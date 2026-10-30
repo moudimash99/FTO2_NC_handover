@@ -10,8 +10,13 @@
 /*@@BASECSS@@*/
 /* Elizabeth (30 Oct): the MFT page's look (its styles above, copied at the build); three families and the NC count, a weekly
    threshold. Families: blue-green for connection as everywhere, the category colours otherwise. */
+:root { --cab: #a0522d; }
+@media (prefers-color-scheme: dark) { :root { --cab: #d9935e; } }
+.fdot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 6px; vertical-align: 0; }
 .thr { display: inline-flex; align-items: center; gap: 8px; }
 .thr input { font: inherit; font-size: 14px; width: 68px; padding: 6px 8px; border: 1px solid var(--ring); border-radius: 6px; background: var(--surface); color: var(--ink); font-variant-numeric: tabular-nums; }
+#figs { grid-template-columns: repeat(4, minmax(0, 1fr)); }   /* the NC count and seven families: two rows of four */
+@media (max-width: 720px) { #figs { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 .figs .fig small.hot { color: var(--up); font-weight: 700; }
 .figs .fig .dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; vertical-align: 1px; }
 .wrows { display: grid; gap: 6px; }
@@ -43,18 +48,18 @@ td.mk { text-align: center; font-size: 13px; }
   <div class="figs" id="figs"></div>
   <div class="card"><div class="head"><h3>Pareto</h3><div class="key"><span><i class="tick"></i><span id="refKey"></span></span></div></div><div class="bars" id="bFam"></div></div>
   <div class="card" id="famCard" hidden><div class="head"><h3 id="famT"></h3><button type="button" class="btn sm" id="famX" aria-label="Fermer">✕</button></div>
-    <div class="grid2"><div><h3 class="sub">Causes</h3><div class="bars" id="bRca"></div></div><div><h3 class="sub">Sous-codes</h3><div class="bars" id="bCode"></div></div></div></div>
+    <div class="grid2"><div><h3 class="sub" id="famH1">Causes</h3><div class="bars" id="bRca"></div></div><div><h3 class="sub" id="famH2">Sous-codes</h3><div class="bars" id="bCode"></div></div></div></div>
   <div class="card"><div class="head"><h3>Par semaine</h3><div class="key"><span><i class="thrk"></i><span id="thrKey"></span></span><span><i class="over"></i>au-dessus du seuil</span></div></div><div class="wrows" id="weeks"></div></div>
   <details class="card" id="tblBox"><summary><span id="tblT">Les NC</span> <span class="mu" id="tblN"></span></summary>
-    <div class="tw"><table><thead><tr><th>Date</th><th>NC</th><th>MSN</th><th>Poste</th><th>Branch.</th><th>Déverr.</th><th>Câble</th><th>Défaut</th></tr></thead><tbody id="tblB"></tbody></table></div>
+    <div class="tw"><table><thead><tr><th>Date</th><th>NC</th><th>MSN</th><th>Poste</th><th>Famille</th><th>Défaut</th></tr></thead><tbody id="tblB"></tbody></table></div>
     <div><button type="button" class="btn sm" id="tblMore" hidden>Voir plus</button></div></details>
 </main>
 <div id="tip" hidden></div>
 <script>
 /*@@HEAD@@*/
 // ---------------------------------------------------------------- the two tables (Slate's queries, or the page's copy) -> the page's data
-// NCs raised at FTO2 (plant FTO2 or FT02) created in 2026, as the MFT page; each NC flagged by family: a connection error, an unlocked
-// contact, a cable defect (the cable itself to remake or resupply) among its defect lines. Tables: one array per column, or rows.
+// NCs raised at FTO2 (plant FTO2 or FT02) created in 2026, as the MFT page, with their defect lines; the families are set in elzMain.
+// Tables: one array per column, or rows.
 function elzFromTables(ncIn, defIn) {
   function rows(t) {
     if (!t) return [];
@@ -72,10 +77,10 @@ function elzFromTables(ncIn, defIn) {
   n.sort(function (a, b) { return a.c < b.c ? -1 : a.c > b.c ? 1 : 0; });
   var ncs = [], pos = {}, to = '';
   n.forEach(function (x) { var r = x.r, d = x.c.slice(0, 10), k = id(r.nc); pos[k] = ncs.length; if (d > to) to = d;
-    ncs.push({ id: k, d: d, l: str(r.line) || '—', ph: str(r.phase), msn: id(r.msn), st: tidy(r.station, 80), t: tidy(r.title, 200), br: 0, dv: 0, cb: 0 }); });
+    ncs.push({ id: k, d: d, l: str(r.line) || '—', ph: str(r.phase), msn: id(r.msn), st: tidy(r.station, 80), t: tidy(r.title, 200), type: str(r.type_nc).trim().toUpperCase(), f: '', why: '' }); });
   var defs = [];
   rows(defIn).forEach(function (r) { var i = pos[id(r.nc)]; if (i == null) return;
-    var d = { n: i, cat: tidy(r.cat, 80), rca: tidy(r.rca, 120), code: tidy(r.subcode, 40), cab: Math.round(parseFloat(r.cable) || 0) ? 1 : 0, t: tidy(r.text, 240) };
+    var d = { n: i, cat: tidy(r.cat, 80), rca: tidy(r.rca, 120), code: tidy(r.subcode, 40), cab: Math.round(parseFloat(r.cable) || 0) ? 1 : 0, ct: /c[aâ]ble/i.test(str(r.text)), t: tidy(r.text, 240) };
     defs.push(d); });
   return { to: to, ncs: ncs, defs: defs };
 }
@@ -83,13 +88,48 @@ function elzFromTables(ncIn, defIn) {
 function elzMain(D, REF) {
   'use strict';
   var NCS = D.ncs, DEFS = D.defs;
+  // ---------------------------------------------------------------- families (Mohammad for Elizabeth, 30 Oct)
+  // Each NC in one family only, the first that fits in this order, so the shares add up to 100 %. Câbles: any cable problem, whatever
+  // its category (the cable to remake or resupply, damaged or cut, missing, of the wrong length, its printing: a missing item or a
+  // printing defect only when its text speaks of a cable), every NC of the cable shop (NC type CABLES), and an NC with no text whose
+  // title speaks of a cable. Then the defect categories. An NC with no defect line (the A400M: Skywise gives no long text for it) is
+  // placed by its title (Skywise's short description), with the keywords below. Autres: the rest.
   var FAM = [
-    { k: 'br', name: 'Branchement', col: 'var(--c2)', has: function (d) { return d.cat === 'Erreur Branchement'; } },
-    { k: 'dv', name: 'Déverrouillage', col: 'var(--c5)', has: function (d) { return d.cat === 'Déverrouillage'; } },
-    { k: 'cb', name: 'Câbles', col: 'var(--c4)', has: function (d) { return d.cab === 1; } }
+    { k: 'cb', name: 'Câbles', col: 'var(--cab)', kw: /\b(cables?|fils?|faisceaux?|harnais|torons?)\b/ },
+    { k: 'br', name: 'Branchement', col: 'var(--c2)', cat: 'Erreur Branchement', kw: /invers|branchement|mauvaise borne|non connect|connexion|brochage/ },
+    { k: 'dv', name: 'Déverrouillage', col: 'var(--c5)', cat: 'Déverrouillage', kw: /deverrouill|non verrouill|contact (sorti|recule)/ },
+    { k: 'ee', name: 'Élément Endommagé', col: 'var(--c4)', cat: 'Élément Endommagé', kw: /endommag|abim|casse|raye|rayure|ecras|pince|choc|degrad|tordu|decolle|\bhs\b/ },
+    { k: 'em', name: 'Élément Manquant', col: 'var(--c3)', cat: 'Élément Manquant', kw: /manquant|\bmanque|absent|oubli/ },
+    { k: 'meo', name: 'MEO Facteur humain', col: 'var(--c1)', cat: 'MEO Facteur humain', kw: /\bmeo\b|mise en oeuvre|mal positionn|mauvaise position|positioning|mal mont|mauvais montage|freinage|serrage|courte|longueur|length/ },
+    { k: 'au', name: 'Autres', col: 'var(--dim)' }
   ], FK = {}; FAM.forEach(function (f) { FK[f.k] = f; });
+  var WHY = { flag: 'Câble à refaire ou refournir', dmg: 'Câble endommagé ou coupé', miss: 'Câble manquant', len: 'Longueur de câble', print: 'Impression du câble',
+    shop: 'NC de l’atelier câbles', title: 'Titre (NC sans texte)' };
+  function fold(t) { return (t.normalize ? t.normalize('NFD').replace(/[\u0300-\u036f]/g, '') : t).toLowerCase(); }
+  function cableLine(d) { return d.cab || d.rca === 'Câble Endommagé' || d.code === 'Q11-014' || d.code === 'Q11-001' || d.code === 'T01' || d.code === 'Q12-003' ||
+    ((d.rca === 'Câble ou Élément Manquant' || d.rca === 'Défaut d\'Impression') && d.ct); }
+  function cableWhy(n, ds) {   // why an NC is in Câbles (the first reason that holds), '' when it is not
+    if (ds.some(function (d) { return d.cab; })) return 'flag';
+    if (ds.some(function (d) { return d.rca === 'Câble Endommagé' || d.code === 'Q11-014' || d.code === 'Q11-001'; })) return 'dmg';
+    if (ds.some(function (d) { return d.code === 'T01'; })) return 'miss';
+    if (ds.some(function (d) { return d.code === 'Q12-003'; })) return 'len';
+    var m = ds.filter(function (d) { return (d.rca === 'Câble ou Élément Manquant' || d.rca === 'Défaut d\'Impression') && d.ct; });
+    if (m.length) return m.some(function (d) { return d.rca === 'Défaut d\'Impression'; }) ? 'print' : 'miss';
+    if (n.type === 'CABLES') return 'shop';
+    if (!ds.length && FAM[0].kw.test(fold(n.t))) return 'title';
+    return '';
+  }
   var BYNC = NCS.map(function () { return []; });
-  DEFS.forEach(function (d) { BYNC[d.n].push(d); FAM.forEach(function (f) { if (f.has(d)) NCS[d.n][f.k] = 1; }); });
+  DEFS.forEach(function (d) { BYNC[d.n].push(d); });
+  NCS.forEach(function (n, i) {
+    var ds = BYNC[i], w = cableWhy(n, ds), t = fold(n.t);
+    if (w) { n.f = 'cb'; n.why = w; return; }
+    for (var j = 1; j < FAM.length - 1; j++) { var f = FAM[j];
+      if (ds.length ? ds.some(function (d) { return d.cat === f.cat; }) : f.kw.test(t)) { n.f = f.k; n.why = ds.length ? '' : 'title'; return; } }
+    n.f = 'au'; n.why = ds.length ? '' : 'title';
+  });
+  window.ELZ_CHECK = function () { return NCS.map(function (n) { return [n.id, n.ph, n.f, n.why]; }); };   // checks: each NC's family and why
+  function famLines(n, i, k) { return BYNC[i].filter(function (d) { return k === 'cb' ? cableLine(d) : k === 'au' ? true : d.cat === FK[k].cat; }); }
 
   // ---------------------------------------------------------------- weeks (ISO), as the MFT page
   function isoWeek(s) { var d = new Date(s.slice(0, 10) + 'T00:00:00Z'), day = (d.getUTCDay() + 6) % 7; d.setUTCDate(d.getUTCDate() - day + 3);
@@ -132,7 +172,7 @@ function elzMain(D, REF) {
   function refLab(ws) { var out = [], i = 0; while (i < ws.length) { var j = i; while (j + 1 < ws.length && ws[j + 1] === ws[j] + 1) j++; out.push(wkShort(ws[i]) + (j > i ? '–' + wkShort(ws[j]) : '')); i = j + 1; } return out.join(', '); }
 
   // NCs per week, all of them ('nc') or a family's, for the line and the production type
-  function weekly(k) { var a = WEEKS.map(function () { return 0; }); NCS.forEach(function (n, i) { if (inScope(i) && (k === 'nc' || n[k])) a[NCW[i]]++; }); return a; }
+  function weekly(k) { var a = WEEKS.map(function () { return 0; }); NCS.forEach(function (n, i) { if (inScope(i) && (k === 'nc' || n.f === k)) a[NCW[i]]++; }); return a; }
   function sumOver(ser, ws) { return ws.reduce(function (t, i) { return t + (ser[i] || 0); }, 0); }
   // the threshold (Mohammad, 30 Oct: 10 % rather than 10 NC): by default a family's share of the week's NCs, over 10 %; or a count of
   // NCs per week. A share is read on the working weeks only (a closure week's few NCs make shares that mean nothing)
@@ -172,13 +212,14 @@ function elzMain(D, REF) {
           : over ? over + (over > 1 ? ' semaines' : ' semaine') + ' au-dessus de ' + thrTx() : 'jamais au-dessus de ' + thrTx()) + '</small>') + '</div>';
     };
     $('figs').innerHTML = fig('NC', '', 'nc') + FAM.map(function (f) { return fig(f.name, f.col, f.k); }).join('');
-    // Pareto of the three families: NCs of the period, the reference ramenée à la période as the tick
-    var rows = FAM.map(function (f) { return { f: f, v: sumOver(SER[f.k], ws), r: rw.length ? sumOver(SER[f.k], rw) / rw.length * pw : null }; }).sort(function (a, b) { return b.v - a.v; });
+    // Pareto of the families (each NC in one): NCs of the period, Autres last, the reference ramenée à la période as the tick
+    var rows = FAM.map(function (f) { return { f: f, v: sumOver(SER[f.k], ws), r: rw.length ? sumOver(SER[f.k], rw) / rw.length * pw : null }; })
+      .sort(function (a, b) { return (a.f.k === 'au') - (b.f.k === 'au') || b.v - a.v; }), cum = 0;
     var mx = Math.max.apply(null, rows.map(function (x) { return Math.max(x.v, x.r || 0); }).concat([1e-9]));
     $('refKey').textContent = rl ? 'moy. ' + rl + (pw > 1 ? ', ramenée à ' + pw + ' sem.' : '') : 'pas de semaine avant';
     $('bFam').classList.toggle('sel', !!S.fam);
-    $('bFam').innerHTML = rows.map(function (x) { var on = S.fam === x.f.k;
-      return '<button type="button" class="bar" data-fam="' + x.f.k + '" aria-pressed="' + on + '"' + tipA(x.f.name, [num(x.v) + ' NC sur la période', x.r != null ? 'avant : ' + num(x.r / pw, 1) + ' par semaine (' + rl + ')' : '', tot ? num(x.v / tot * 100) + ' % des NC de la période' : '']) + '>' +
+    $('bFam').innerHTML = rows.map(function (x) { var on = S.fam === x.f.k; cum += x.v;
+      return '<button type="button" class="bar" data-fam="' + x.f.k + '" aria-pressed="' + on + '"' + tipA(x.f.name, [num(x.v) + ' NC sur la période', x.r != null ? 'avant : ' + num(x.r / pw, 1) + ' par semaine (' + rl + ')' : '', tot ? num(x.v / tot * 100) + ' % des NC de la période' + (x.f.k !== 'au' ? ', ' + num(cum / tot * 100) + ' % en cumul' : '') : '']) + '>' +
         '<span class="nm">' + esc(x.f.name) + '</span><span class="v">' + num(x.v) + '</span><span class="p">' + (tot ? num(x.v / tot * 100) + ' %' : '') + '</span>' +
         '<span class="tr"><i style="width:' + (x.v / mx * 100) + '%;background:' + x.f.col + '"></i>' + (x.r != null ? '<em style="left:calc(' + (x.r / mx * 100) + '% - 1px)"></em>' : '') + '</span></button>'; }).join('');
     renderFam(ws);
@@ -190,14 +231,17 @@ function elzMain(D, REF) {
     var card = $('famCard'); card.hidden = !S.fam; if (!S.fam) return;
     var f = FK[S.fam], set = {}; ws.forEach(function (i) { set[i] = 1; });
     $('famT').textContent = f.name + ' · ce qui la compose';
+    $('famH1').textContent = f.k === 'cb' ? 'Pourquoi Câbles' : 'Causes'; $('famH2').textContent = f.k === 'cb' ? 'Causes des lignes câble' : 'Sous-codes';
     var list = function (key, el, top) {
-      var m = {}; NCS.forEach(function (n, i) { if (!set[NCW[i]] || !inScope(i) || !n[f.k]) return; var seen = {};
-        BYNC[i].forEach(function (d) { if (!f.has(d)) return; var v = d[key] || '—'; if (!seen[v]) { seen[v] = 1; m[v] = (m[v] || 0) + 1; } }); });
+      var m = {}; NCS.forEach(function (n, i) { if (!set[NCW[i]] || !inScope(i) || n.f !== f.k) return; var seen = {};
+        if (key === 'why') { var w = WHY[n.why] || 'Autre'; m[w] = (m[w] || 0) + 1; return; }
+        var ls = famLines(n, i, f.k); if (!ls.length) { var tv = 'Titre (NC sans texte)'; m[tv] = (m[tv] || 0) + 1; return; }
+        ls.forEach(function (d) { var v = d[key] || '—'; if (!seen[v]) { seen[v] = 1; m[v] = (m[v] || 0) + 1; } }); });
       var vals = Object.keys(m).sort(function (a, b) { return m[b] - m[a]; }).slice(0, top), mx = Math.max.apply(null, vals.map(function (v) { return m[v]; }).concat([1e-9]));
       el.innerHTML = vals.length ? vals.map(function (v) { return '<div class="bar"><span class="nm">' + esc(v) + '</span><span class="v">' + num(m[v]) + '</span><span class="p"></span><span class="tr"><i style="width:' + (m[v] / mx * 100) + '%;background:' + f.col + '"></i></span></div>'; }).join('')
         : '<p class="empty">Aucune NC sur la période.</p>';
     };
-    list('rca', $('bRca'), 10); list('code', $('bCode'), 10);
+    if (f.k === 'cb') { list('why', $('bRca'), 10); list('rca', $('bCode'), 10); } else { list('rca', $('bRca'), 10); list('code', $('bCode'), 10); }
   }
   // week by week: the NC count and each family, 26 weeks to the period's end, the threshold dashed, the weeks over it in red
   function renderWeeks(SER, ws) {
@@ -220,17 +264,17 @@ function elzMain(D, REF) {
         '<svg width="' + cw + '" height="' + H + '" viewBox="0 0 ' + cw + ' ' + H + '" role="img" aria-label="' + esc(row[1]) + ' par semaine">' + g + '</svg></div>';
     }).join('');
   }
-  // the NCs of the period that have one of the families (the family pressed only, when one is)
+  // the NCs of the period with their family (the family pressed only, when one is); the defect that placed it, or the title
   function renderTable(ws) {
     var set = {}; ws.forEach(function (i) { set[i] = 1; });
-    var rows = []; NCS.forEach(function (n, i) { if (set[NCW[i]] && inScope(i) && (S.fam ? n[S.fam] : n.br || n.dv || n.cb)) rows.push(i); });
+    var rows = []; NCS.forEach(function (n, i) { if (set[NCW[i]] && inScope(i) && (!S.fam || n.f === S.fam)) rows.push(i); });
     rows.sort(function (a, b) { return NCS[b].d < NCS[a].d ? -1 : NCS[b].d > NCS[a].d ? 1 : 0; });
-    $('tblT').textContent = S.fam ? 'Les NC · ' + FK[S.fam].name : 'Les NC de ces trois familles';
+    $('tblT').textContent = S.fam ? 'Les NC · ' + FK[S.fam].name : 'Les NC de la période';
     $('tblN').textContent = num(rows.length) + ' NC';
-    var mk = function (on, col) { return on ? '<span style="color:' + col + '">●</span>' : ''; };
-    $('tblB').innerHTML = rows.length ? rows.slice(0, S.lim).map(function (i) { var n = NCS[i], d = BYNC[i].filter(function (x) { return S.fam ? FK[S.fam].has(x) : FAM.some(function (f) { return f.has(x); }); })[0];
-      return '<tr><td class="n">' + esc(dayFr(n.d)) + '</td><td class="n">' + esc(n.id) + '</td><td class="n">' + esc(n.msn) + '</td><td>' + esc(n.st) + '</td><td class="mk">' + mk(n.br, FK.br.col) + '</td><td class="mk">' + mk(n.dv, FK.dv.col) + '</td><td class="mk">' + mk(n.cb, FK.cb.col) + '</td>' +
-        '<td class="txt">' + esc(d ? (d.rca ? d.rca + ' · ' : '') + d.t : n.t) + '</td></tr>'; }).join('') : '<tr><td colspan="8" class="mu">Aucune NC.</td></tr>';
+    $('tblB').innerHTML = rows.length ? rows.slice(0, S.lim).map(function (i) { var n = NCS[i], f = FK[n.f], d = famLines(n, i, n.f)[0];
+      return '<tr><td class="n">' + esc(dayFr(n.d)) + '</td><td class="n">' + esc(n.id) + '</td><td class="n">' + esc(n.msn) + '</td><td>' + esc(n.st) + '</td>' +
+        '<td><i class="fdot" style="background:' + f.col + '"></i>' + esc(f.name) + (n.f === 'cb' ? ' <span class="mu">· ' + esc(WHY[n.why]) + '</span>' : n.why === 'title' ? ' <span class="mu">· titre</span>' : '') + '</td>' +
+        '<td class="txt">' + esc(d ? (d.rca ? d.rca + ' · ' : '') + d.t : n.t) + '</td></tr>'; }).join('') : '<tr><td colspan="6" class="mu">Aucune NC.</td></tr>';
     $('tblMore').hidden = rows.length <= S.lim;
   }
 

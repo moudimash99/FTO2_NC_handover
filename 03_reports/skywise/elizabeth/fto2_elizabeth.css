@@ -181,8 +181,14 @@
 .fto2 .fto2-err { background: #fdecea; color: #8a1c12; border: 1px solid #f1b0a8; border-radius: 8px; padding: 10px 14px; font-size: 13px; margin: 12px 20px; }
 .fto2 .fto2-wait { background: #eef4f1; color: #1d6b52; border: 1px solid #b9d5ca; border-radius: 8px; padding: 10px 14px; font-size: 13px; margin: 12px 20px; }
 .fto2 .fto2-wait.warn { background: #fff5e6; color: #7a4a00; border-color: #f0c98a; }
+.fto2 { --cab: #a0522d; }
+.fto2 .fdot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 6px; vertical-align: 0; }
 .fto2 .thr { display: inline-flex; align-items: center; gap: 8px; }
 .fto2 .thr input { font: inherit; font-size: 14px; width: 68px; padding: 6px 8px; border: 1px solid var(--ring); border-radius: 6px; background: var(--surface); color: var(--ink); font-variant-numeric: tabular-nums; }
+.fto2 #figs { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+@media (max-width: 720px) {
+.fto2 #figs { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
 .fto2 .figs .fig small.hot { color: var(--up); font-weight: 700; }
 .fto2 .figs .fig .dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; vertical-align: 1px; }
 .fto2 .wrows { display: grid; gap: 6px; }

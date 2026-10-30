@@ -31,7 +31,7 @@ import build_mft as M      # noqa: E402   weekly_volume: MSN per line and week (
 import build_all as B      # noqa: E402   _scope_css
 import skywise_pack as SP  # noqa: E402   the one-file layout, the error box styles, the local stand-in for Slate
 
-NC_COLS = ["nc", "created", "line", "plant", "phase", "msn", "station", "title"]
+NC_COLS = ["nc", "created", "line", "plant", "phase", "msn", "station", "title", "type_nc"]
 DEF_COLS = ["nc", "cat", "rca", "subcode", "cable", "text"]
 
 

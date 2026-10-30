@@ -1,7 +1,8 @@
 # Tableau Elizabeth in Slate
 
-The NC count and three families (Branchement, Déverrouillage, Câbles): figures, a Pareto, and week by week against a
-threshold (by default a family over 10 % of the week's NCs). Its own Slate app, set up as the MFT: two queries, one code sandbox, its state.
+The NC count and seven families (Câbles, Branchement, Déverrouillage, Élément Endommagé, Élément Manquant, MEO Facteur
+humain, Autres), each NC in one family only: figures, a Pareto, and week by week against a threshold (by default a family
+over 10 % of the week's NCs). Its own Slate app, set up as the MFT: two queries, one code sandbox, its state.
 
 ## Setup (in a new Slate app)
 
@@ -16,24 +17,34 @@ threshold (by default a family over 10 % of the week's NCs). Its own Slate app, 
    { "nc": "{{q_fto2_nc}}", "def": "{{q_fto2_def}}" }
    ```
 
-Expected (data of 28 September 2026): all lines, Série, 4 weeks S36 to S39: **118 NC; Branchement 13, Déverrouillage 8,
-Câbles 25**; over 10 % of the week's NCs: Branchement in S36, S37, S39; Déverrouillage in S36, S37; Câbles in S36, S37, S39.
+Expected (data of 28 September 2026): all lines, Série, 4 weeks S36 to S39: **118 NC: Câbles 31, Élément Endommagé 28,
+Branchement 12, MEO Facteur humain 12, Élément Manquant 3, Déverrouillage 2, Autres 30**. All of 2026 (Série, 910 NC): Câbles
+282, Élément Endommagé 223, MEO 123, Branchement 103, Autres 90, Élément Manquant 50, Déverrouillage 39.
 
 ## What the page counts
 
 - **Scope**: NCs raised at FTO2 (plant FTO2 or FT02) created in 2026, as the MFT page; line, production type (Série by
   default) and period (a week, 4, 13 or 26 weeks to the week chosen) in the page.
-- **Families, in NCs**: an NC counts once in a family when one of its defect lines belongs to it. Branchement: category
-  "Erreur Branchement" (inversions, wrong pins, not connected). Déverrouillage: category "Déverrouillage". Câbles: a cable
-  defect, the cable itself to remake or resupply (the `cable` column, the dashboard's "Défauts câble"). An NC can be in
-  several families.
+- **Families, in NCs, each NC in one only** (the first that fits, in this order), so the shares add up to 100 %:
+  1. **Câbles**: any cable problem, whatever its category: a cable to remake or resupply (the `cable` column), a damaged or
+     cut cable (cause Câble Endommagé, sub-codes Q11-014, Q11-001), a missing cable (T01), a cable of the wrong length
+     (Q12-003), a missing item or a printing defect when its text speaks of a cable; every NC of the cable shop (NC type
+     CABLES); and an NC with no text whose title speaks of a cable (câble, fil, faisceau, harnais, toron).
+  2. **Branchement** (category Erreur Branchement), 3. **Déverrouillage**, 4. **Élément Endommagé**, 5. **Élément
+     Manquant**, 6. **MEO Facteur humain**: an NC with a defect line of that category.
+  7. **Autres**: the rest (Grounding/Bonding, Kitting Factory, FOD, Autre; the NCs no rule places).
+  Because each NC counts once, an NC with a cable defect and an unlocked contact is in Câbles only: Déverrouillage keeps
+  39 NCs in 2026 (94 counted on their own).
+- **The A400M**: Skywise gives no long text for its NCs, so they have no defect line; each is placed by its title (Skywise's
+  short description, the dataset's `title`) with keywords per family (in the template, `FAM`). 2026 Série: Câbles 38, MEO 11,
+  Élément Manquant 3, Élément Endommagé 2, Autres 35 (titles such as "RETOUCHES TEST MSN 162" say nothing of the defect).
+- A family pressed in the Pareto shows what it is made of (for Câbles, why each NC is there) and the table lists its NCs.
 - **Threshold**: by default a share, 10 %: a family's week is red when the family has more than 10 % of that week's NCs
   (read on working weeks only: a closure week's few NCs make shares that mean nothing). The value can be changed in the page,
   and the switch beside it turns the threshold into a count of NCs per week (then the NC count has one too). Both are kept
   in the browser when it allows it.
 - **Comparison**: per week, against as many working weeks before the period as it has (4 at least), without closure weeks
   or low-production weeks (summer), the weeks named; as the MFT page.
-- A family pressed in the Pareto shows its causes and sub-codes, and the table lists its NCs.
 
 `preview_local_only.html` opens on a laptop with a frozen copy of the data: never paste it into Slate. The same page with
 its own copy of the data: `03_reports/FTO2_Elizabeth.html`.
@@ -45,5 +56,5 @@ python3 -I 07_scripts/elizabeth/build_elizabeth.py
 ```
 
 From `07_scripts/elizabeth/elizabeth_template.html` (its styles are the MFT page's, copied at the build) and the two tables
-in `05_outputs`. Checked here: the figures above against a count made apart in Python; the page and its Slate version
-(in a sandboxed frame, as Slate runs it) give the same figures, with no error.
+in `05_outputs`. Checked here: every NC's family and reason against a count made apart in Python (988 NCs, all the same);
+the page and its Slate version (in a sandboxed frame, as Slate runs it) give the same result, with no error.
