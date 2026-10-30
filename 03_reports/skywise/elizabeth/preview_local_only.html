@@ -238,7 +238,7 @@ setTimeout(function () { SlateFunctions._set('nc', {"nc":["216055047","216062695
   <div class="ctl"><label id="lLine">Ligne</label><div class="seg" role="group" aria-labelledby="lLine" id="lines"></div></div>
   <div class="ctl"><label id="lPh">Production</label><div class="seg" role="group" aria-labelledby="lPh" id="phases"></div></div>
   <div class="ctl"><label id="lPer">Période</label><div class="seg" role="group" aria-labelledby="lPer" id="per"></div><select id="wk" aria-label="Jusqu’à la semaine"></select></div>
-  <div class="ctl"><label for="thr">Seuil</label><span class="thr"><input type="number" id="thr" min="1" max="500" step="1" value="10"><span class="mu">NC / semaine</span></span></div>
+  <div class="ctl"><label for="thr">Seuil</label><span class="thr"><input type="number" id="thr" min="1" max="500" step="1" value="10"><span class="seg" role="group" aria-label="Unité du seuil" id="thrU"></span></span></div>
 </div></header>
 <main class="wrap">
   <div class="lead"><h2 id="title"></h2></div>
@@ -318,9 +318,9 @@ function elzMain(D, REF) {
 
   // ---------------------------------------------------------------- state
   var LINES = (function () { var c = {}; NCS.forEach(function (n) { if (n.l && n.l !== '—') c[n.l] = (c[n.l] || 0) + 1; }); return Object.keys(c).sort(function (a, b) { return c[b] - c[a]; }); })();
-  var S = { line: 'all', ph: 'SERIE', per: 4, week: LASTC, thr: 10, fam: null, lim: 50 };
-  try { var sv = JSON.parse(localStorage.getItem('elz-fto2') || '{}'); if (sv.thr > 0) S.thr = sv.thr; if (sv.line && (sv.line === 'all' || LINES.indexOf(sv.line) >= 0)) S.line = sv.line; if (sv.ph != null) S.ph = sv.ph; if (sv.per) S.per = sv.per; } catch (e) { }
-  function remember() { try { localStorage.setItem('elz-fto2', JSON.stringify({ thr: S.thr, line: S.line, ph: S.ph, per: S.per })); } catch (e) { } }
+  var S = { line: 'all', ph: 'SERIE', per: 4, week: LASTC, thr: 10, tm: 'pct', fam: null, lim: 50 };
+  try { var sv = JSON.parse(localStorage.getItem('elz-fto2') || '{}'); if (sv.thr > 0) S.thr = sv.thr; if (sv.tm === 'nc' || sv.tm === 'pct') S.tm = sv.tm; if (sv.line && (sv.line === 'all' || LINES.indexOf(sv.line) >= 0)) S.line = sv.line; if (sv.ph != null) S.ph = sv.ph; if (sv.per) S.per = sv.per; } catch (e) { }
+  function remember() { try { localStorage.setItem('elz-fto2', JSON.stringify({ thr: S.thr, tm: S.tm, line: S.line, ph: S.ph, per: S.per })); } catch (e) { } }
   function inScope(i) { var n = NCS[i]; return (S.line === 'all' || n.l === S.line) && (!S.ph || n.ph === S.ph); }
   function per() { var o = []; for (var k = Math.max(0, S.week - S.per + 1); k <= S.week; k++) o.push(k); return o; }
   // the reference: as many working weeks before the period as it has (4 at least), without closure or low-production weeks (the line
@@ -340,6 +340,12 @@ function elzMain(D, REF) {
   // NCs per week, all of them ('nc') or a family's, for the line and the production type
   function weekly(k) { var a = WEEKS.map(function () { return 0; }); NCS.forEach(function (n, i) { if (inScope(i) && (k === 'nc' || n[k])) a[NCW[i]]++; }); return a; }
   function sumOver(ser, ws) { return ws.reduce(function (t, i) { return t + (ser[i] || 0); }, 0); }
+  // the threshold (Mohammad, 30 Oct: 10 % rather than 10 NC): by default a family's share of the week's NCs, over 10 %; or a count of
+  // NCs per week. A share is read on the working weeks only (a closure week's few NCs make shares that mean nothing)
+  function share(SER, k, i) { return SER.nc[i] ? SER[k][i] / SER.nc[i] * 100 : 0; }
+  function hotWeek(SER, k, i) { return S.tm === 'pct' ? k !== 'nc' && valid(i) && SER.nc[i] > 0 && share(SER, k, i) > S.thr : SER[k][i] > S.thr; }
+  function pctTx(v) { return num(v, Math.abs(v - S.thr) < 1 ? 1 : 0); }   // 10,3 % shown as such next to a 10 % threshold
+  function thrTx() { return num(S.thr) + (S.tm === 'pct' ? ' %' : ' NC'); }
 
   // ---------------------------------------------------------------- helpers
   function $(id) { return document.getElementById(id); }
@@ -356,7 +362,7 @@ function elzMain(D, REF) {
     seg($('phases'), [['SERIE', 'Série'], ['REC', 'REC'], ['FTI', 'FTI'], ['', 'Tout']], S.ph, 'data-ph');
     seg($('per'), [[1, 'Semaine'], [4, '4 semaines'], [13, '13 semaines'], [26, '26 semaines']], S.per, 'data-per');
     $('wk').innerHTML = WEEKS.map(function (w, i) { return i; }).reverse().map(function (i) { return '<option value="' + i + '"' + (i === S.week ? ' selected' : '') + '>' + esc(wkLong(i) + (PARTIAL && i === NW - 1 ? ' (en cours)' : SHUT[i] ? ' (fermeture)' : '')) + '</option>'; }).join('');
-    $('thr').value = S.thr;
+    $('thr').value = S.thr; seg($('thrU'), [['pct', '% des NC'], ['nc', 'NC / semaine']], S.tm, 'data-tm');
     $('asof').textContent = 'Données au ' + dayFr(D.to);
     var ws = per(), rw = refWeeks(), rl = refLab(rw), pw = ws.length;
     $('title').textContent = (S.line === 'all' ? 'Toutes les lignes' : S.line) + ' · ' + (pw === 1 ? wkLong(S.week) : wkShort(ws[0]) + ' à ' + wkShort(ws[pw - 1]) + ' · ' + pw + ' semaines');
@@ -364,12 +370,12 @@ function elzMain(D, REF) {
     var tot = sumOver(SER.nc, ws);
     // figures: the NC count, then each family; per week against the weeks before; the weeks of the period over the threshold
     var fig = function (name, dot, k) {
-      var v = sumOver(SER[k], ws), r = rw.length ? sumOver(SER[k], rw) / rw.length : null, over = ws.filter(function (i) { return SER[k][i] > S.thr; }).length;
+      var v = sumOver(SER[k], ws), r = rw.length ? sumOver(SER[k], rw) / rw.length : null, over = ws.filter(function (i) { return hotWeek(SER, k, i); }).length;
       var cmp = r ? '<small>' + (pw > 1 ? num(v / pw, 1) + ' / sem. · ' : '') + '<span class="delta ' + (v / pw > r * 1.1 ? 'up' : v / pw < r * 0.9 ? 'down' : '') + '">' + pct(v / pw / r - 1) + ' vs ' + num(r, 1) + (pw > 1 ? ' / sem.' : '') + '</span> <span class="mu">(' + esc(rl) + ')</span></small>' : '<small>—</small>';
       return '<div class="fig"><span class="k">' + (dot ? '<i class="dot" style="background:' + dot + '"></i>' : '') + esc(name) + '</span><b>' + num(v) + '</b>' + cmp +
         (k !== 'nc' && tot ? '<small>' + num(v / tot * 100) + ' % des NC</small>' : '') +
-        '<small class="' + (over ? 'hot' : '') + '">' + (pw === 1 ? (over ? 'au-dessus du seuil (' : 'sous le seuil (') + num(S.thr) + ')'
-          : over ? over + (over > 1 ? ' semaines' : ' semaine') + ' au-dessus de ' + num(S.thr) : 'jamais au-dessus de ' + num(S.thr)) + '</small></div>';
+        (S.tm === 'pct' && k === 'nc' ? '' : '<small class="' + (over ? 'hot' : '') + '">' + (pw === 1 ? (over ? 'au-dessus du seuil (' : 'sous le seuil (') + thrTx() + ')'
+          : over ? over + (over > 1 ? ' semaines' : ' semaine') + ' au-dessus de ' + thrTx() : 'jamais au-dessus de ' + thrTx()) + '</small>') + '</div>';
     };
     $('figs').innerHTML = fig('NC', '', 'nc') + FAM.map(function (f) { return fig(f.name, f.col, f.k); }).join('');
     // Pareto of the three families: NCs of the period, the reference ramenée à la période as the tick
@@ -403,18 +409,20 @@ function elzMain(D, REF) {
   function renderWeeks(SER, ws) {
     var box = $('weeks'), W = width(box, 300), lw = W > 720 ? 196 : 0, cw = W - lw, inP = {}; ws.forEach(function (i) { inP[i] = 1; });
     var span = []; for (var i = Math.max(0, S.week - 25); i <= S.week; i++) span.push(i);
-    $('thrKey').textContent = 'seuil : ' + num(S.thr) + ' NC / semaine';
+    $('thrKey').textContent = 'seuil : ' + (S.tm === 'pct' ? num(S.thr) + ' % des NC de la semaine' : num(S.thr) + ' NC / semaine');
     box.innerHTML = [['nc', 'NC', 'var(--ink-2)']].concat(FAM.map(function (f) { return [f.k, f.name, f.col]; })).map(function (row) {
-      var k = row[0], ser = SER[k], H = 74, mt = 14, mb = 18, mx = Math.max.apply(null, span.map(function (i) { return ser[i]; }).concat([S.thr * 1.15, 1])), bw = cw / span.length, Y = function (v) { return mt + (H - mt - mb) * (1 - v / mx); }, g = '';
-      var over = ws.filter(function (i) { return ser[i] > S.thr; });
-      span.forEach(function (i, j) { var v = ser[i], hot = v > S.thr, x = j * bw + bw * 0.16, cur = inP[i], dim = SHUT[i] || (PARTIAL && i === NW - 1);
+      var k = row[0], cnt = SER[k], pc = S.tm === 'pct' && k !== 'nc', line = !(S.tm === 'pct' && k === 'nc');   // in %, the families drawn as shares; the NC count has no threshold
+      var ser = span.map(function (i) { return pc ? share(SER, k, i) : cnt[i]; }), H = 74, mt = 14, mb = 18, mx = Math.max.apply(null, ser.concat([line ? S.thr * 1.15 : 0, 1])), bw = cw / span.length, Y = function (v) { return mt + (H - mt - mb) * (1 - v / mx); }, g = '';
+      var over = ws.filter(function (i) { return hotWeek(SER, k, i); });
+      span.forEach(function (i, j) { var v = ser[j], hot = hotWeek(SER, k, i), x = j * bw + bw * 0.16, cur = inP[i], dim = SHUT[i] || (PARTIAL && i === NW - 1);
         g += '<rect x="' + x.toFixed(1) + '" y="' + Y(v).toFixed(1) + '" width="' + (bw * 0.68).toFixed(1) + '" height="' + Math.max(v ? 1 : 0, Y(0) - Y(v)).toFixed(1) + '" rx="1.5" fill="' + (hot ? 'var(--up)' : row[2]) + '" fill-opacity="' + (cur ? (dim ? .45 : 1) : .3) + '"' +
-          tipA(row[1] + ' · ' + wkLong(i), [num(v) + ' NC' + (hot ? ' · au-dessus du seuil' : '')]) + '/>';
-        if (hot && cur && bw > 18) g += '<text x="' + (x + bw * 0.34).toFixed(1) + '" y="' + (Y(v) - 3).toFixed(1) + '" text-anchor="middle" class="ink b" style="font-size:10.5px">' + v + '</text>';
+          tipA(row[1] + ' · ' + wkLong(i), [num(cnt[i]) + ' NC' + (k !== 'nc' ? ' · ' + pctTx(share(SER, k, i)) + ' % des ' + num(SER.nc[i]) + ' NC de la semaine' : ''), hot ? 'au-dessus du seuil (' + thrTx() + ')' : '']) + '/>';
+        if (hot && cur && bw > 18) g += '<text x="' + (x + bw * 0.34).toFixed(1) + '" y="' + (Y(v) - 3).toFixed(1) + '" text-anchor="middle" class="ink b" style="font-size:10.5px">' + (pc ? pctTx(v) + '%' : v) + '</text>';
         if (j % (bw < 22 ? 4 : 2) === 0 || i === S.week) g += '<text x="' + (x + bw * 0.34).toFixed(1) + '" y="' + (H - 4) + '" text-anchor="middle" style="font-size:10.5px"' + (i === S.week ? ' class="ink b"' : '') + '>' + wkShort(i) + '</text>'; });
-      g += '<line x1="0" x2="' + cw + '" y1="' + Y(S.thr).toFixed(1) + '" y2="' + Y(S.thr).toFixed(1) + '" stroke="var(--ink)" stroke-width="1.2" stroke-dasharray="5 4"/>';
-      return '<div class="wrow"><div class="wl"><b>' + esc(row[1]) + '</b><small>' + num(sumOver(ser, ws)) + ' NC sur la période</small><small class="' + (over.length ? 'hot' : '') + '">' +
-        (over.length ? 'au-dessus : ' + over.map(wkShort).join(', ') : 'jamais au-dessus') + '</small></div>' +
+      if (line) g += '<line x1="0" x2="' + cw + '" y1="' + Y(S.thr).toFixed(1) + '" y2="' + Y(S.thr).toFixed(1) + '" stroke="var(--ink)" stroke-width="1.2" stroke-dasharray="5 4"/>';
+      var tp = sumOver(SER.nc, ws);
+      return '<div class="wrow"><div class="wl"><b>' + esc(row[1]) + '</b><small>' + num(sumOver(cnt, ws)) + ' NC sur la période' + (k !== 'nc' && tp ? ' · ' + num(sumOver(cnt, ws) / tp * 100) + ' %' : '') + '</small>' +
+        (line ? '<small class="' + (over.length ? 'hot' : '') + '">' + (over.length ? 'au-dessus : ' + over.map(wkShort).join(', ') : 'jamais au-dessus') + '</small>' : '') + '</div>' +
         '<svg width="' + cw + '" height="' + H + '" viewBox="0 0 ' + cw + ' ' + H + '" role="img" aria-label="' + esc(row[1]) + ' par semaine">' + g + '</svg></div>';
     }).join('');
   }
@@ -438,6 +446,7 @@ function elzMain(D, REF) {
     if (a('data-line') != null) { S.line = a('data-line'); S.lim = 50; remember(); render(); return; }
     if (a('data-ph') != null) { S.ph = a('data-ph'); remember(); render(); return; }
     if (a('data-per') != null) { S.per = +a('data-per'); remember(); render(); return; }
+    if (a('data-tm')) { S.tm = a('data-tm'); remember(); render(); return; }
     if (a('data-fam')) { S.fam = S.fam === a('data-fam') ? null : a('data-fam'); S.lim = 50; render(); return; }
     if (t.id === 'famX') { S.fam = null; render(); return; }
     if (t.id === 'tblMore') { S.lim += 100; render(); return; }
