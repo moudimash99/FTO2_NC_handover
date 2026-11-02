@@ -285,6 +285,7 @@ def notebook_kit(root, out):
                      (os.path.join(root, "cnq_handoever", "cnq", "cnq_disruptions.py"), "cnq/cnq_disruptions.py"),
                      (os.path.join(root, "04_reference", "reference_souscodes_pareto.csv"), "ref/reference_souscodes_pareto.csv"),
                      (os.path.join(root, "04_reference", "souscodes_fr.csv"), "ref/souscodes_fr.csv"),
+                     (os.path.join(root, "04_reference", "a400m_titres_souscodes.csv"), "ref/a400m_titres_souscodes.csv"),   # A400M lines from the title
                      (os.path.join(root, "04_reference", "llm_labels_longtext.csv"), "fto2_ai_labels.csv")):
         shutil.copyfile(src, os.path.join(k, dst))
     open(os.path.join(k, "cnq", "__init__.py"), "w").write("")

@@ -1,5 +1,78 @@
 # FTO2 NC dashboard in Skywise (Slate): migration guide
 
+## Start here: everything into Skywise, step by step
+
+What you end up with: one notebook that writes three tables every time it runs, and one Slate app with two pages, the
+dashboard (Simple and Expert in one page) and the MFT page. The Tableau Elizabeth is optional. Every file named below is in
+this folder (`03_reports/skywise/`).
+
+**Step 1. The data: the notebook (Skywise Code Workspace).**
+
+1. Open the Code Workspace where the pipeline notebook runs today.
+2. Upload the whole folder `level3_datasets/notebook_kit` next to the notebook, as `nc_defect_parser.py` is today. It holds
+   the Python and, in `ref/`, the reference files (official sub-codes, French names, A400M title rules).
+3. Upload `level3_datasets/notebook_kit/fto2_ai_labels.csv` once, as a dataset named **`fto2_ai_labels`**.
+4. Replace the notebook by `level3_datasets/fto2_pipeline_notebook.ipynb`.
+5. In the Data panel, add these datasets with these names (aliases):
+
+   | Dataset | Alias | Read or write |
+   |---|---|---|
+   | Non Conformity | `non_conformity` | read |
+   | `fto2_ai_labels` | `fto2_ai_labels` | read |
+   | Work_Order_Operation | `work_order_operation` | read |
+   | MES Disruptions | `mes_disruptions` | read |
+   | three new datasets | `fto2_dash_nc`, `fto2_dash_defects`, `fto2_dash_disruptions` | write |
+
+6. Run all cells. The last print lists the three tables written.
+
+**Step 2. Sync the three tables to Postgres**, as was done for `fto2_plant`: `fto2_dash_nc`, `fto2_dash_defects` and
+`fto2_dash_disruptions`, same names, schema `foundry_sync`.
+
+**Step 3 (optional, 10 minutes). Check that Slate takes the page, on made-up data.** In any Slate app, add a Code Sandbox and
+paste the three files of `level1_dummy_in_js` into its CSS, HTML and JS tabs. Expected: titles starting with "Fictif", 543 NC.
+Delete it afterwards.
+
+**Step 4. The dashboard page.**
+
+1. Create a new Slate app (do not change the current one until this one works).
+2. Add three queries on the Postgres source `postgate-airbus-2`, with these exact names and the text of these files:
+   `q_fto2_nc` = `level3_datasets/q_fto2_nc.sql`, `q_fto2_def` = `level3_datasets/q_fto2_def.sql`,
+   `q_fto2_dis` = `level3_datasets/q_fto2_dis.sql`.
+3. Add a **Code Sandbox**, full width, about 1,400 px high.
+4. Paste `level3_datasets/fto2_level23.css` into its CSS tab, `fto2_level23.html` into its HTML tab, `fto2_level23.js` into
+   its JS tab.
+5. In the sandbox's **state** box (it shows `"input": "Hello World"` at first), paste the content of
+   `level3_datasets/state.json`.
+6. Expected: "Chargement des données Slate…", then the dashboard. In Expert, Vue d'ensemble, on the data of 28 September 2026:
+   **910 NC, 2 960 défauts, 3,3 défauts par NC, 347,4 k€**.
+
+**Step 5. The MFT page, in the same app.**
+
+1. Add a second page to the app.
+2. Use the same two queries `q_fto2_nc` and `q_fto2_def` (nothing to add: they are the app's).
+3. Add a Code Sandbox, full width, about 1,400 px high. Paste `mft/fto2_mft.css`, `mft/fto2_mft.html` and `mft/fto2_mft.js`
+   into its CSS, HTML and JS tabs, and `mft/state.json` into its state box.
+4. Expected: A350, week S39: 10 NC, 73 défauts, first category MEO Facteur humain.
+5. Know before using it: in Slate, actions typed on the MFT page are saved in the browser of that computer only. Other users
+   do not see them. Sharing them needs a table Slate can write to, to ask IT for.
+
+**Step 6 (optional). The Tableau Elizabeth**: a third page, same as step 5 with the files of `elizabeth/`
+(see `elizabeth/README.md`).
+
+**Not needed:** `views/` (Synthèse and Détail are now the dashboard's Simple mode), `level2_dummy_queries` (a connection test
+on made-up data, only if step 4 fails), `level4_import` (a ready-made app to import, untested).
+
+**Keeping it up to date.**
+
+- New NCs: run the notebook again (step 1.6). The pages show the new data once the sync has run. Nothing to paste.
+- A change made on the laptop (the look of a page, the MFT tracker actions, the production plan, 2025, the A400M title rules):
+  run `python3 -I build/build_all.py` and `python3 -I 07_scripts/mft/build_mft.py`, then paste the new JS (and the CSS and HTML
+  if they changed) into the sandboxes. If `notebook_kit` changed (data rules, A400M rules), upload it again and run the
+  notebook.
+- If a page shows a coloured box instead of the dashboard, the box says what is wrong: see "Level 2" below for the messages.
+
+## The four levels, in detail
+
 Four levels, to try in order. Each level adds one thing, so when something fails you know where.
 
 | Level | Data | What it proves |
@@ -134,7 +207,7 @@ Replace the text of `q_fto2_nc`, `q_fto2_def` and `q_fto2_dis` by `level3_datase
 and `q_fto2_dis.sql`. The JS, CSS, HTML and state stay those of level 2.
 
 Expected: the real dashboard, same figures as the laptop build. Default view on the data of 28 September 2026:
-**910 NC, 2 890 défauts, 3,5 défauts par NC, 347,1 k€, 1,79 NC par MSN** (with the September 2026 operations and the
+**910 NC, 2 960 défauts, 3,3 défauts par NC, 347,4 k€** (since 2 Nov the A400M NCs get a defect line from their title, see `04_reference/a400m_titres_souscodes.csv`) (with the September 2026 operations and the
 Jan-Sep aléas, as on the laptop). Every NC of the selection counts (decided 20 Oct): all phases, all dates and the plant
 switch off show every row of `fto2_dash_nc` (1,127 on the laptop data). "Usine FTO2 uniquement" keeps the NCs whose `plant` is FTO2
 or FT02 (988 on the laptop data, all production types); the Customer returns tab shows `Type_NC_auto` "NC Retour client" with

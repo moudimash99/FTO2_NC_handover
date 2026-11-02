@@ -26,6 +26,7 @@ Needs on the import path: fto2_logic.py and nc_defect_parser.py (02_dashboard_pa
 """
 import os
 import re
+import unicodedata
 
 import numpy as np
 import pandas as pd
@@ -109,7 +110,7 @@ DEF_COLUMNS = [
     ("text", "text", "defect text (220 characters)"),
     ("subcode", "text", "official sub-code"),
     ("fin", "text", "FIN read by the parser"),
-    ("label_src", "text", "ai (stored root-cause label) or parser (no label yet)"),
+    ("label_src", "text", "ai (stored root-cause label), titre (A400M: from the NC title, a400m_titres_souscodes.csv) or parser (no label yet)"),
     ("ai_conf", "text", "confidence of the stored label: high, medium, low"),
     ("cr_nature", "text", "customer returns: damage type (phys, hs, nc, recu)"),
     ("cr_detection", "text", "customer returns: moment of detection"),
@@ -211,7 +212,7 @@ def official_subcode(d, ref_dir):
         desc.setdefault(c[:3] + " (non précisé)", ["Sub-code not specified", "Sous-code non précisé"])
     out = []
     for code, sub, status in zip(d.llm_sous_code.fillna("").astype(str).str.strip(), d.llm_sous_categorie, d.llm_status):
-        if status == "ok" and code in desc:
+        if status in ("ok", "titre") and code in desc:
             out.append(code)
         elif sub in fallback:
             out.append(fallback[sub])
@@ -221,6 +222,52 @@ def official_subcode(d, ref_dir):
             out.append("Non codé")
     s = pd.Series(out, index=d.index)
     return s, desc, {"exact": int(s.isin(ref.sous_code).sum()), "parent_or_none": int((~s.isin(ref.sous_code)).sum())}
+
+
+def title_lines(x, defects, ref_dir):
+    """A400M (2 Nov, Mohammad): the 2026 A400M NCs reach us without their long text, so the parser finds no defect line. One line is
+    made from the NC title (description_short) when a rule of ref_dir/a400m_titres_souscodes.csv matches it: an official sub-code,
+    which gives the line its sub-category, cause and category as any other line. A rule with no sub-code is a check ("Retouches test
+    MSN 161", "Inspection finale"): the title names no defect and the NC keeps no line. Rules are tried in the file's order, on the
+    title without accents, in lower case. The lines are marked titre_sous_code (label status "titre" after the labels step)."""
+    path = os.path.join(ref_dir, "a400m_titres_souscodes.csv")
+    if not os.path.exists(path):
+        return defects, {}
+    rules = pd.read_csv(path, sep=";", dtype=str, keep_default_na=False)
+    sub = pd.read_csv(os.path.join(ref_dir, "reference_souscodes_pareto.csv"), encoding="utf-8-sig")
+    sub = sub[~sub.sous_code.astype(str).str.startswith("(")].set_index("sous_code").sous_categorie   # the 123 sub-codes
+    fold = lambda t: re.sub(r"\s+", " ", unicodedata.normalize("NFD", str(t)).encode("ascii", "ignore").decode().lower()).strip()
+    has = set(defects.notification_number.astype(str))
+    a400 = x["programme"].map(L._ligne) == "A400M"
+    cand = x[a400 & ~x.notification_number.astype(str).isin(has)].drop_duplicates("notification_number")
+    hit = {}
+    for n, t in zip(cand.notification_number.astype(str), cand["description_short"].fillna("")):
+        f = fold(t)
+        for r in rules.itertuples():
+            if re.search(r.motif, f):
+                if r.sous_code:
+                    hit[n] = (r.sous_code, r.cable == "1")
+                break
+    rep = {"a400m_without_line": int(len(cand)), "lines_from_title": len(hit)}
+    if not hit:
+        return defects, rep
+    x2 = cand[cand.notification_number.astype(str).isin(hit)].copy()
+    x2["description_long_text"] = x2["description_short"]   # the parser reads the title as the NC's text: every column as usual
+    d2 = L.build_defects(x2)
+    d2["notification_number"] = d2["notification_number"].astype(str)
+    d2 = d2.sort_values("seq").drop_duplicates("notification_number").copy()   # one line per NC: the title names one defect
+    rep["lines_from_title"] = int(len(d2))
+    code = d2.notification_number.map(lambda n: hit[n][0])
+    d2["seq"], d2["qty"] = 1, 1
+    d2["sous_groupe"] = code.map(sub)
+    d2["defaut_cable"] = d2.notification_number.map(lambda n: hit[n][1])
+    d2["categorie"] = d2.sous_groupe.map(lambda v: PARSER.SOUS_CATEGORIES.get(v, ("Autre",))[0])
+    d2["rca_type"] = d2.sous_groupe.map(lambda v: PARSER.SOUS_CATEGORIES.get(v, (None, "AUTRE"))[1])
+    d2["rca_nom"] = d2.rca_type.map(L.RCA_NAMES).fillna(d2.rca_type)
+    d2["mineur"] = d2.sous_groupe.map(PARSER.est_mineur).astype(bool)
+    d2["sub_code"] = code
+    d2["titre_sous_code"] = code
+    return pd.concat([defects, d2], ignore_index=True), rep
 
 
 # ============================================================ 3. parser, labels, CNQ
@@ -235,6 +282,7 @@ def prepare(x, lab, ref_dir, ops=None, dis=None, say=None):
     report = {}
     say("   parser v4.8 on %d NCs..." % len(x))
     defects = L.build_defects(x)
+    defects, report["a400m_titles"] = title_lines(x, defects, ref_dir)   # A400M: a line from the title when there is no long text
     nc = L.build_nc(x, defects)
     # the parser pack's own perimetre label is not used by the dashboard (20 Oct): only the pipeline's columns decide
     defects = defects.drop(columns=["perimetre"], errors="ignore")
@@ -296,6 +344,10 @@ def prepare(x, lab, ref_dir, ops=None, dis=None, say=None):
     use = d["llm_status"] == "ok"
     for c_llm, c_par in (("llm_sous_categorie", "sous_groupe"), ("llm_defaut_cable", "defaut_cable")):
         d[c_llm] = d[c_llm].where(use, d[c_par])
+    if "titre_sous_code" in d.columns:   # A400M lines made from the title: their sub-code is the rule's, no AI label needed
+        tl = d["titre_sous_code"].fillna("").astype(str) != ""
+        d.loc[tl, "llm_status"] = "titre"
+        d.loc[tl, "llm_sous_code"] = d.loc[tl, "titre_sous_code"]
     d["llm_defaut_cable"] = d["llm_defaut_cable"].astype(str).str.lower().isin(["true", "1"])
     d["llm_categorie"] = d["llm_sous_categorie"].map(lambda s: PARSER.SOUS_CATEGORIES.get(s, ("Autre",))[0])
     for c in ("llm_categorie", "groupe"):   # the dashboard's names for the parser's categories (decided 20 Oct)
@@ -438,7 +490,7 @@ def tables(d, nc, lt, created_to):
         x = extra.get("%s|%d" % (r.notification_number, r.seq), ["", "", ""])
         rows.append([r.notification_number, int(r.seq), r.llm_categorie, r.llm_rca_nom, r.llm_sous_categorie, int(bool(r.llm_mineur)),
                      int(bool(r.llm_defaut_cable)), round(float(r.cnq_cost_allocated_llm), 2), int(r.qty) if pd.notna(r.qty) else 1,
-                     S_(r.text)[:220], r.sous_code_officiel, S_(r.fin), "ai" if ok else "parser", S_(r.llm_confiance) if ok else "", x[0], x[1], x[2]])
+                     S_(r.text)[:220], r.sous_code_officiel, S_(r.fin), "ai" if ok else "titre" if r.llm_status == "titre" else "parser", S_(r.llm_confiance) if ok else "", x[0], x[1], x[2]])
     def_t = pd.DataFrame(rows, columns=[c[0] for c in DEF_COLUMNS])
     return nc_t, def_t
 
@@ -474,7 +526,7 @@ def build(frames, labels, ref_dir, ops=None, dis=None, say=None):
     aec = p["nc"][p["nc"].cnq_on_aec == 1]
     info.update(p["report"])
     info.update({"nc_table": int(len(nc_t)), "defect_table": int(len(def_t)), "level3_aec": round(float(aec.cnq_cost_total.sum()), 2),
-                 "to_label": int((def_t.label_src == "parser").sum())})
+                 "to_label": int((def_t.label_src == "parser").sum()), "from_title": int((def_t.label_src == "titre").sum())})
     dis_t = dis_table(p["dis"])
     info.update({"disruption_table": int(len(dis_t)), "origin": nc_t.origin.value_counts().to_dict()})
     return nc_t, def_t, dis_t, info, lines_to_label(p["d"], p["lt"])
@@ -483,7 +535,7 @@ def build(frames, labels, ref_dir, ops=None, dis=None, say=None):
 def lines_to_label(d, lt):
     """Defect lines without a usable stored label (new, or text changed since it was labelled), for the periodic AI pass.
     snippet is the line's full text: a label is used only while the line's text stays the same as its snippet."""
-    t = d[d.llm_status != "ok"]
+    t = d[~d.llm_status.isin(["ok", "titre"])]   # the A400M title lines need no label
     out = pd.DataFrame({"notification_number": t.notification_number, "seq": t.seq, "snippet": t.text.fillna(""),
                         "parser_sous_categorie": t.sous_groupe, "ligne": t.ligne, "date_creation": t.date_creation,
                         "long_text": t.notification_number.map(lambda n: (lt.get(n, "") or "")[:4000])})

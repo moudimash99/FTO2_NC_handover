@@ -566,7 +566,11 @@ var D = window.FTO2_MFT_D;
     if (TYP[S.line] == null) { var a = WEEKS.map(function (w, k) { return volOf(k); }).filter(function (x) { return x > 0; }).sort(function (x, y) { return x - y; }); TYP[S.line] = a.length ? a[Math.floor(a.length / 2)] : 0; }
     return TYP[S.line] > 0 && v < TYP[S.line] * 0.6;
   }
-  function refWeeks() { var out = [], n = Math.max(4, S.per); for (var k = per()[0] - 1; k >= 0 && out.length < n; k--) if (valid(k) && !lowWeek(k)) out.unshift(k); return out; }
+  // how far back the reference goes (Mohammad, 2 Nov): a week against the 4 weeks before, 1 month (4 weeks) against the 3 months before
+  // (13 weeks), 3 months (13 weeks) against the 12 months before (52 weeks); a custom period against as many weeks as it has (4 at least).
+  // The data start in January 2026: early in the year the reference holds the weeks there are, and says which.
+  var REFN = { 1: 4, 4: 13, 13: 52 };
+  function refWeeks() { var out = [], n = REFN[S.pm] || Math.max(4, S.per); for (var k = per()[0] - 1; k >= 0 && out.length < n; k--) if (valid(k) && !lowWeek(k)) out.unshift(k); return out; }
   function refLab(ws) {   // the weeks in runs, a gap showing the closure weeks left out: 'S29–S31, S35'
     var out = [], i = 0;
     while (i < ws.length) { var j = i; while (j + 1 < ws.length && ws[j + 1] === ws[j] + 1) j++; out.push(wkShort(ws[i]) + (j > i ? '–' + wkShort(ws[j]) : '')); i = j + 1; }
