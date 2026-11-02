@@ -399,7 +399,7 @@ Full detail: `03_reports/dossier_stage_NC.md` (French master dossier) and `NC_de
 | `07_scripts/` | `rec_checks.py`, `cable_check.py`, `llm_longtext/` (how the root-cause labels were made) (+ older working scripts in `archive/`) |
 | `build/` | `build_all.py` (one script for every output), `templates/dashboard.html` (the dashboard page), `build_report.json` (counts and checks of the last run) |
 | `cnq_handoever/` | Mohammad's CNQ model, refreshed on the same data (README section 13) |
-| `08_tools/` | NC entry tool prototypes (JSX), logic flow (Mermaid), old Slate SQL and preview |
+| `08_tools/` | NC entry tool prototypes (JSX), logic flow (Mermaid), old Slate SQL and preview; `nc_writer_slate/`: the Streamlit NC writing tool rebuilt as HTML/CSS/JS for a Slate Code Sandbox widget (README has the Slate setup) |
 | `cnq_handoever/` | CNQ model (pipeline step, Slate queries, offline dashboard, tests); README_handover.md section 4 lists the 19 Oct changes |
 | `CNQ_CHANGES.md` | Every CNQ change: applied, decided, kept for later, needed from the pipeline team |
 | `05_outputs/CNQ_investigation_checklist.html` | Offline checklist of open CNQ checks; click a check to open its list; answers kept in the browser, CSV export |
