@@ -14,7 +14,8 @@
       </div></div>
     </div>
     <div class="titles">
-      <h1 data-t="title"></h1>
+      <div class="t-row"><h1 data-t="title"></h1>
+        <div class="mode-sw" id="modeSw" role="group" hidden><span class="pill" aria-hidden="true"></span><button type="button" data-mode="simple" aria-pressed="false"></button><button type="button" data-mode="expert" aria-pressed="false"></button></div></div>
       <p class="period" id="period"></p>
     </div>
     <section class="fbar" aria-labelledby="fbLab">
@@ -23,6 +24,7 @@
         <div class="fb"><label for="gSrc" data-t="fSrc"></label><select id="gSrc"></select></div>
         <div class="fb"><label for="gOrg" data-t="fOrg"></label><select id="gOrg"></select></div>
         <div class="fb" id="gPlantBox"><span id="gPlantLab" data-t="fPlant"></span><button type="button" role="switch" class="switch" id="gPlant" aria-labelledby="gPlantLab"><i aria-hidden="true"></i><b id="gPlantTxt"></b></button><small class="fb-note" id="gPlantNote" hidden></small></div>
+        <div class="fb" id="gLiabBox"><span id="gLiabLab" data-t="fLiab"></span><button type="button" role="switch" class="switch" id="gLiab" aria-labelledby="gLiabLab"><i aria-hidden="true"></i><b id="gLiabTxt"></b></button></div>
         <div class="fb"><span id="gPhLab" data-t="fPhase"></span><div class="seg" role="radiogroup" aria-labelledby="gPhLab" id="gPhase"></div></div>
         <div class="fb"><label for="gLine" data-t="fLine"></label><select id="gLine"></select></div>
         <div class="fb" id="gDateBox"><label for="gPreset" data-t="fPeriod"></label>

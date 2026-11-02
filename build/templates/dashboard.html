@@ -862,6 +862,7 @@ html.vu-lock { overflow: hidden; }
         <div class="fb"><label for="gSrc" data-t="fSrc"></label><select id="gSrc"></select></div>
         <div class="fb"><label for="gOrg" data-t="fOrg"></label><select id="gOrg"></select></div>
         <div class="fb" id="gPlantBox"><span id="gPlantLab" data-t="fPlant"></span><button type="button" role="switch" class="switch" id="gPlant" aria-labelledby="gPlantLab"><i aria-hidden="true"></i><b id="gPlantTxt"></b></button><small class="fb-note" id="gPlantNote" hidden></small></div>
+        <div class="fb" id="gLiabBox"><span id="gLiabLab" data-t="fLiab"></span><button type="button" role="switch" class="switch" id="gLiab" aria-labelledby="gLiabLab"><i aria-hidden="true"></i><b id="gLiabTxt"></b></button></div>
         <div class="fb"><span id="gPhLab" data-t="fPhase"></span><div class="seg" role="radiogroup" aria-labelledby="gPhLab" id="gPhase"></div></div>
         <div class="fb"><label for="gLine" data-t="fLine"></label><select id="gLine"></select></div>
         <div class="fb" id="gDateBox"><label for="gPreset" data-t="fPeriod"></label>
@@ -1371,12 +1372,12 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
       unit: 'Qualité', title: 'Non-conformités FTO2', period: 'NC créées du {from} au {to}',
       minorLabel: 'Défauts mineurs', minorIn: 'Inclus', minorOut: 'Exclus',
       tabPareto: 'Pareto', tabCost: 'Pareto des coûts', tabWeek: 'Pareto hebdomadaire', tabCnq: 'Coût de non-qualité', tabClient: 'Retours clients', tabCbl: 'Câbles', tabRca: 'Définitions', tabPplan: 'Production',
-      serieSub: 'NC émises à FTO2 (plant FTO2), toutes : supprimées et hors responsabilité FTO2 comprises.', serieSubAll: 'Toutes les NC, émises à FTO2 ou dans d’autres usines (retours clients compris).',
+      serieSub: 'NC émises à FTO2 (plant FTO2), toutes : supprimées et hors responsabilité FTO2 comprises.', serieSubAec: 'NC émises à FTO2 (plant FTO2) dont FTO2 est responsable, supprimées comprises.', serieSubAllAec: 'NC dont FTO2 est responsable, émises à FTO2 ou ailleurs (retours clients compris).', serieSubAll: 'Toutes les NC, émises à FTO2 ou dans d’autres usines (retours clients compris).',
       infoBtn: 'Comment la sélection est faite', inf_title: 'Ce que chaque filtre retire, dans l’ordre', inf_out: 'Retirées', inf_left: 'Restent',
       inf_start: 'NC fournies par le pipeline', inf_startS: '{a} sortie normale · {b} IDs manquants ; le tableau n’en retire aucune d’office',
       inf_period: 'Période', inf_phase: 'Type de production', inf_line: 'Avion', inf_src: 'Source des données', inf_org: 'Origine (pipeline)', inf_plant: 'Usine FTO2 uniquement (plant = FTO2 ou FT02)', inf_pick: 'Clic sur un graphique',
       inf_all: 'tout (non appliqué)', inf_phaseS: 'retire {v}', inf_plantS: 'retire les NC dont le plant n’est pas FTO2 : {c} retours clients · {o} autres{p}',
-      inf_plantNo: 'non : les retours clients et les NC des autres usines restent', inf_end: 'Sélection', inf_endS: '{d} défauts',
+      inf_plantNo: 'non : les retours clients et les NC des autres usines restent', inf_liab: 'Responsabilité FTO2 uniquement', inf_liabS: 'retire les NC dont un autre est responsable : {p}', inf_liabNo: 'non : les NC dont FTO2 n’est pas responsable restent (coût 0 €)', inf_end: 'Sélection', inf_endS: '{d} défauts',
       inf_cost: 'Coût : compté seulement là où FTO2 est responsable. {n} NC de la sélection comptent comme NC avec un coût de 0 € (leur traitement selon le modèle : {e}).',
       inf_minor: 'Défauts mineurs {v} : ce choix change le nombre de défauts, pas le nombre de NC.', inf_nodef: '{n} NC de la sélection n’ont aucune ligne de défaut lisible : comptées en NC et en coût, pas en défauts.',
       inf_cli: 'Onglet Retours clients : il montre les retours clients des mêmes filtres, quel que soit l’interrupteur usine ({n} NC).', inf_in: 'inclus', inf_ex: 'exclus',
@@ -1403,7 +1404,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
       ppH3t: 'Ce qu’on en fait', ppH3: 'NC par MSN = NC d’un mois ÷ MSN produits ce mois-là. Prévision à décembre = taux de la période × MSN prévus. Objectif d’une ligne = son taux 2025 (NC par produit livré) − 25 %, × sa production 2026 ; objectif toutes lignes = somme des lignes, plus les NC hors plan de 2025 − 25 %. Objectif de coût : le même calcul avec le coût. Un produit sans livraison en 2025 (MDCD) garde son rythme 2026 comme objectif.',
       ppH4t: 'À savoir', ppH4: 'A320 : les produits sont de petites pièces comptées à l’unité (183 livrées en 2025), d’où un taux par unité très bas ; c’est pourquoi l’objectif se fait ligne par ligne et pas sur un taux commun. A400M : les textes des NC sont masqués, aucun défaut n’y est lu.',
       fbTitle: 'Filtres', fSrc: 'Source des données', fOrg: 'Origine (pipeline)', org_all: 'Les deux sorties', org_normal: 'Sortie normale', org_missing_ids: 'IDs manquants', src_all: 'Toutes les données', src_sky: 'Skywise uniquement', src_man: 'Listes manuelles (GPS ou Test)', src_gps: 'Registre GPS', src_test: 'Liste Test',
-      fPlant: 'Usine FTO2 uniquement', fYes: 'Oui', fNo: 'Non', fPlantOff: 'Sans effet ici : l’onglet sépare déjà FTO2 et retours clients.',
+      fPlant: 'Usine FTO2 uniquement', fLiab: 'Responsabilité FTO2 uniquement', fYes: 'Oui', fNo: 'Non', fPlantOff: 'Sans effet ici : l’onglet sépare déjà FTO2 et retours clients.',
       fPhase: 'Type de production', ph_all: 'Tous', ph_SERIE: 'Série', ph_REC: 'REC', ph_FTI: 'FTI', fLine: 'Avion', line_all: 'Tous les avions',
       fPeriod: 'Période', pr_ytd: 'Depuis le 1er janvier', pr_m1: 'Dernier mois', pr_m3: '3 derniers mois', pr_m6: '6 derniers mois', pr_m12: '12 derniers mois', pr_all: 'Toutes les dates', pr_custom: 'Dates choisies',
       fFrom: 'Du', fTo: 'Au', fReset: 'Réinitialiser', pkClear: 'Retirer ce filtre', pk_wgrp: 'Trouvée à', pk_age: 'Encore ouvertes', pkAgeV: 'plus de {n} jours après leur création', kmAgeMark: 'filtre : ouvertes après {n} j', kmClick: 'Cliquez : garder les {n} NC encore ouvertes après {d} jours', pk_stcat: 'Poste et catégorie', pk_finmsn: 'FIN et avion', pk_dgrp: 'Décision', pk_lgrp: 'Décision', pk_open: 'Statut', pkOpenV: 'encore ouvertes', kmOpenN: 'Encore ouvertes : {n}', pk_month: 'Mois', pk_week: 'Semaine', pk_day: 'Jour', pk_prod: 'Produit', pk_pprod: 'Produit', pk_msn: 'Avion (MSN)', pk_station: 'Poste', pk_type: 'Type de NC', pk_ntype: 'Type de NC', pk_rule: 'Décision', pk_where: 'Détection', pk_nc: 'NC', pk_hour: 'Heure', pk_cat: 'NC avec un défaut', pk_rca: 'NC avec la cause', pk_sub: 'NC avec le défaut', pk_fin: 'NC avec un défaut sur', pk_code: 'NC avec le sous-code', fbSum: '{n} NC · {d} défauts dans la sélection', fbSumCli: '{n} NC retours clients · {d} défauts dans la sélection',
@@ -1575,12 +1576,12 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
       unit: 'Quality', title: 'FTO2 Non-conformities', period: 'NCs created {from} to {to}',
       minorLabel: 'Minor defects', minorIn: 'Included', minorOut: 'Excluded',
       tabPareto: 'Pareto', tabCost: 'Cost Pareto', tabWeek: 'Weekly Pareto', tabCnq: 'Cost of non-quality', tabClient: 'Customer returns', tabCbl: 'Cables', tabRca: 'Definitions', tabPplan: 'Production',
-      serieSub: 'Every NC raised at FTO2 (plant FTO2), deleted and not-liable ones included.', serieSubAll: 'Every NC, raised at FTO2 or at other plants (customer returns included).',
+      serieSub: 'Every NC raised at FTO2 (plant FTO2), deleted and not-liable ones included.', serieSubAec: 'NCs raised at FTO2 (plant FTO2) that FTO2 is liable for, deleted ones included.', serieSubAllAec: 'NCs FTO2 is liable for, raised at FTO2 or elsewhere (customer returns included).', serieSubAll: 'Every NC, raised at FTO2 or at other plants (customer returns included).',
       infoBtn: 'How the selection is made', inf_title: 'What each filter removes, in order', inf_out: 'Removed', inf_left: 'Left',
       inf_start: 'NCs from the pipeline', inf_startS: '{a} normal output · {b} missing IDs; the page drops none of them by itself',
       inf_period: 'Period', inf_phase: 'Production type', inf_line: 'Aircraft', inf_src: 'Data source', inf_org: 'Origin (pipeline)', inf_plant: 'FTO2 plant only (plant = FTO2 or FT02)', inf_pick: 'Click on a chart',
       inf_all: 'all (not applied)', inf_phaseS: 'removes {v}', inf_plantS: 'removes NCs whose plant is not FTO2: {c} customer returns · {o} others{p}',
-      inf_plantNo: 'off: customer returns and other plants’ NCs stay', inf_end: 'Selection', inf_endS: '{d} defects',
+      inf_plantNo: 'off: customer returns and other plants’ NCs stay', inf_liab: 'FTO2 liable only', inf_liabS: 'removes the NCs someone else is liable for: {p}', inf_liabNo: 'off: NCs FTO2 is not liable for stay (cost €0)', inf_end: 'Selection', inf_endS: '{d} defects',
       inf_cost: 'Cost: counted only where FTO2 is liable. {n} NCs of the selection count as NCs with a cost of €0 (their handling in the model: {e}).',
       inf_minor: 'Minor defects {v}: this changes the number of defects, not the number of NCs.', inf_nodef: '{n} NCs of the selection have no readable defect line: counted as NCs and in the cost, not as defects.',
       inf_cli: 'Customer returns tab: it shows the customer returns under the same filters, whatever the plant switch ({n} NCs).', inf_in: 'included', inf_ex: 'excluded',
@@ -1607,7 +1608,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
       ppH3t: 'What they are used for', ppH3: 'NCs per MSN = a month’s NCs ÷ the MSN built that month. December forecast = the period rate × the MSN planned. A line’s target = its 2025 rate (NCs per product delivered) − 25%, × its 2026 output; all lines = the sum of the lines, plus 2025’s out-of-plan NCs − 25%. Cost target: the same with the cost. A product with no 2025 delivery (MDCD) keeps its 2026 pace as its target.',
       ppH4t: 'Good to know', ppH4: 'A320: the products are small parts counted one by one (183 delivered in 2025), so its rate per unit is very low; this is why the target is built line by line and not on a pooled rate. A400M: NC texts are redacted, so no defect is read there.',
       fbTitle: 'Filters', fSrc: 'Data source', fOrg: 'Origin (pipeline)', org_all: 'Both outputs', org_normal: 'Normal output', org_missing_ids: 'Missing IDs', src_all: 'All data', src_sky: 'Skywise only', src_man: 'Manual lists (GPS or Test)', src_gps: 'GPS register', src_test: 'Test list',
-      fPlant: 'FTO2 plant only', fYes: 'Yes', fNo: 'No', fPlantOff: 'No effect here: this tab already shows FTO2 and customer returns apart.',
+      fPlant: 'FTO2 plant only', fLiab: 'FTO2 liable only', fYes: 'Yes', fNo: 'No', fPlantOff: 'No effect here: this tab already shows FTO2 and customer returns apart.',
       fPhase: 'Production type', ph_all: 'All', ph_SERIE: 'Series', ph_REC: 'REC', ph_FTI: 'FTI', fLine: 'Aircraft', line_all: 'All aircraft',
       fPeriod: 'Period', pr_ytd: 'Year to date', pr_m1: 'Last month', pr_m3: 'Last 3 months', pr_m6: 'Last 6 months', pr_m12: 'Last 12 months', pr_all: 'All dates', pr_custom: 'Custom dates',
       fFrom: 'From', fTo: 'To', fReset: 'Reset', pkClear: 'Remove this filter', pk_wgrp: 'Found at', pk_age: 'Still open', pkAgeV: 'more than {n} days after creation', kmAgeMark: 'filter: open after {n} d', kmClick: 'Click: keep the {n} NCs still open after {d} days', pk_stcat: 'Station and category', pk_finmsn: 'FIN and aircraft', pk_dgrp: 'Decision', pk_lgrp: 'Decision', pk_open: 'Status', pkOpenV: 'still open', kmOpenN: 'Still open: {n}', pk_month: 'Month', pk_week: 'Week', pk_day: 'Day', pk_prod: 'Product', pk_pprod: 'Product', pk_msn: 'Aircraft (MSN)', pk_station: 'Station', pk_type: 'NC type', pk_ntype: 'NC type', pk_rule: 'Decision', pk_where: 'Found at', pk_nc: 'NC', pk_hour: 'Hour', pk_cat: 'NCs with a defect', pk_rca: 'NCs with the cause', pk_sub: 'NCs with the defect', pk_fin: 'NCs with a defect on', pk_code: 'NCs with the sub-code', fbSum: '{n} NCs · {d} defects in the selection', fbSumCli: '{n} customer-return NCs · {d} defects in the selection',
@@ -1802,7 +1803,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
   var REP = D.ncs;
   var DMAX = D.meta.to, DMIN = REP.reduce(function (m, n) { return n[1] < m ? n[1] : m; }, DMAX);
   var LINES = lineOrder(REP.map(function (n) { return n[3]; }));
-  var GF0 = { pick: null, src: 'all', org: '', fto2: true, phase: 'SERIE', line: '', preset: PAGE === 'suivi' ? 'all' : 'ytd', from: '', to: '' }, GF = Object.assign({}, GF0);
+  var GF0 = { pick: null, src: 'all', org: '', fto2: true, aec: false, phase: 'SERIE', line: '', preset: PAGE === 'suivi' ? 'all' : 'ytd', from: '', to: '' }, GF = Object.assign({}, GF0);
   var PRESETS = ['ytd', 'm1', 'm3', 'm6', 'm12', 'all', 'custom'];
   function plusDays(iso, k) { var d = new Date(iso + 'T12:00:00Z'); d.setUTCDate(d.getUTCDate() + k); return isoDay(d); }
   function minusMonths(iso, k) { var d = new Date(iso + 'T12:00:00Z'), dd = d.getUTCDate(); d.setUTCDate(1); d.setUTCMonth(d.getUTCMonth() - k); d.setUTCDate(Math.min(dd, new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth() + 1, 0)).getUTCDate())); return isoDay(d); }
@@ -1817,6 +1818,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
     if (!n) return false;
     if (GF.src !== 'all' && (GF.src === 'man' ? n[39] === 'sky' : n[39] !== GF.src)) return false;
     if (GF.org && (n[41] || 'normal') !== GF.org) return false;   // [41] the pipeline output the NC comes from: normal or missing_ids
+    if (GF.aec && n[5] !== 1) return false;   // "FTO2 liable only" (2 Nov, Mohammad): [5] 1 when FTO2 is in the NC's liability
     if (GF.pick && !pickNc(n)) return false;
     if (GF.phase && n[24] !== GF.phase) return false;
     if (GF.line && !anyLine && n[3] !== GF.line) return false;
@@ -2791,10 +2793,10 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
   // folded. A problem can be marked as seen (the page's store, collection 'alarmes'; not in Slate): it leaves the list for
   // everyone and comes back if it gets worse.
   var AL = { db: null, uid: null, marks: {}, sigK: '', res: null, first: 0, last: -1, open: false, more: false };
-  function alNc(n) { return ours(n) && n[23] !== 'client' && (!GF.phase || n[24] === GF.phase) && (GF.src === 'all' || (GF.src === 'man' ? n[39] !== 'sky' : n[39] === GF.src)) && (!GF.org || (n[41] || 'normal') === GF.org); }
+  function alNc(n) { return ours(n) && n[23] !== 'client' && (!GF.phase || n[24] === GF.phase) && (GF.src === 'all' || (GF.src === 'man' ? n[39] !== 'sky' : n[39] === GF.src)) && (!GF.org || (n[41] || 'normal') === GF.org) && (!GF.aec || n[5] === 1); }
   function alCompute(at) {   // at: a week index instead of the period's end (checks)
     var E = D.eqmsn && D.eqmsn.wdw; if (!E) return null;
-    var last = at != null ? at : ALARM.lastDone(GF.to < D.meta.to ? GF.to : D.meta.to), k = [GF.phase, GF.src, GF.org, last, G.lang].join('|');
+    var last = at != null ? at : ALARM.lastDone(GF.to < D.meta.to ? GF.to : D.meta.to), k = [GF.phase, GF.src, GF.org, GF.aec, last, G.lang].join('|');
     if (k === AL.sigK) return AL.res;
     var items = {}, planes = {}, cnt = { rca: {}, code: {} }, z = function () { var a = []; for (var i = 0; i < 53; i++) a.push(0); return a; }, w0 = 53, PM = D.eqmsn.msn || {};
     function it(line, lv, v, e, hist) { var key = line + '|' + lv + '|' + v; return items[key] || (items[key] = { key: key, line: line, lv: lv, v: v, w: z(), e: e, n: [], d: [], hist: !!hist }); }
@@ -5720,10 +5722,11 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
     pl.setAttribute('aria-checked', String(GF.fto2)); pl.disabled = off;
     var pn = document.getElementById('gPlantNote'); pn.hidden = !off; pn.textContent = off ? S('fPlantOff') : '';
     document.getElementById('gPlantTxt').textContent = S(GF.fto2 ? 'fYes' : 'fNo');
+    document.getElementById('gLiab').setAttribute('aria-checked', String(GF.aec)); document.getElementById('gLiabTxt').textContent = S(GF.aec ? 'fYes' : 'fNo');
     ['gFrom', 'gTo'].forEach(function (id, i) { var el = document.getElementById(id); el.value = i ? GF.to : GF.from; el.min = DMIN; el.max = DMAX; });
     document.getElementById('gDateBox').hidden = PAGE === 'suivi';
     var gp = document.getElementById('gPick'); gp.hidden = !GF.pick; if (GF.pick) { document.getElementById('gPickTxt').textContent = pickLabel(GF.pick); document.getElementById('gPickX').setAttribute('aria-label', S('pkClear')); }
-    document.getElementById('gReset').hidden = ['pick', 'src', 'org', 'fto2', 'phase', 'line', 'preset'].every(function (k) { return GF[k] === GF0[k]; });
+    document.getElementById('gReset').hidden = ['pick', 'src', 'org', 'fto2', 'aec', 'phase', 'line', 'preset'].every(function (k) { return GF[k] === GF0[k]; });
     var cli = G.tab === 'client', nc = cli ? CLI_NC : SEL_NC, set = cli ? CLI : SEL;
     var nd = D.defects.filter(function (r) { return set[r[0]] && keepMinor(r); }).length;
     document.getElementById('fbSum').textContent = S(cli ? 'fbSumCli' : 'fbSum', { n: num(nc.length), d: num(nd) });
@@ -5752,6 +5755,10 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
       oth.forEach(function (n) { var k = n[42] || '—'; pl[k] = (pl[k] || 0) + 1; });
       var top = Object.keys(pl).sort(function (a, b) { return pl[b] - pl[a]; }).slice(0, 4).map(function (k) { return k + ' ' + num(pl[k]); }).join(', ');
       return S('inf_plantS', { c: num(cli), o: num(oth.length), p: top ? ' (' + top + ')' : '' }); }, S('inf_plantNo'));
+    step(S('inf_liab'), !!GF.aec, S('fYes'), function (n) { return n[5] === 1; }, function (g) {
+      var lb = {}; g.forEach(function (n) { var k = String(n[34] || '—').replace(/^\[|\]$/g, '').replace(/^0+(?=\d)/, ''); lb[k] = (lb[k] || 0) + 1; });
+      var top = Object.keys(lb).sort(function (a, b) { return lb[b] - lb[a]; }).slice(0, 4).map(function (k) { return k + ' ' + num(lb[k]); }).join(', ');
+      return top ? S('inf_liabS', { p: top }) : ''; }, S('inf_liabNo'));
     step(S('inf_pick'), !!GF.pick, GF.pick ? pickLabel(GF.pick) : '', function (n) { return pickNc(n); });
     var set = ids(cur), nd = D.defects.filter(function (r) { return set[r[0]] && keepMinor(r); }).length;
     var zero = cur.filter(function (n) { return n[5] !== 1; }), zeroE = sumA(zero.map(function (n) { return n[43] || 0; }));
@@ -5763,11 +5770,11 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
       h += '<div class="fn-row' + (r.off ? ' off' : '') + '"><span class="k">' + esc(r.lab) + ' : ' + esc(r.val) + (r.det ? '<small>' + esc(r.det) + '</small>' : '') + '</span><span class="out">' + (r.off ? '' : '− ' + num(r.out)) + '</span><span class="left">' + num(r.left) + '</span>' + bar(r.left) + '</div>';
     });
     h += '<div class="fn-row end"><span class="k">' + esc(S('inf_end')) + '<small>' + esc(S('inf_endS', { d: num(nd) })) + '</small></span><span class="out"></span><span class="left">' + num(cur.length) + '</span>' + bar(cur.length) + '</div>';
-    var notes = [S('inf_cost', { n: num(zero.length), e: eur(zeroE) }), S('inf_minor', { v: S(G.minor ? 'inf_in' : 'inf_ex') })];
+    var notes = [zero.length ? S('inf_cost', { n: num(zero.length), e: eur(zeroE) }) : '', S('inf_minor', { v: S(G.minor ? 'inf_in' : 'inf_ex') })];
     if (noDef) notes.push(S('inf_nodef', { n: num(noDef) }));
     if (G.tab === 'client') notes.push(S('inf_cli', { n: num(CLI_NC.length) }));
     if (cur.length !== SEL_NC.length) notes.push('⚠ ' + num(cur.length) + ' ≠ ' + num(SEL_NC.length));   // the panel and the page must agree
-    box.innerHTML = h + notes.map(function (t) { return '<p class="fn-note">' + esc(t) + '</p>'; }).join('');
+    box.innerHTML = h + notes.filter(Boolean).map(function (t) { return '<p class="fn-note">' + esc(t) + '</p>'; }).join('');
   }
   document.getElementById('gInfoBtn').addEventListener('click', function () {
     var box = document.getElementById('gInfo'), open = box.hidden; box.hidden = !open; this.setAttribute('aria-expanded', String(open)); renderInfo();
@@ -5779,6 +5786,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
   document.getElementById('gLine').addEventListener('change', function (e) { setGF({ line: e.target.value }); });
   document.getElementById('gPreset').addEventListener('change', function (e) { setGF({ preset: e.target.value }); });
   document.getElementById('gPlant').addEventListener('click', function () { if (!plantOff()) setGF({ fto2: !GF.fto2 }); });
+  document.getElementById('gLiab').addEventListener('click', function () { setGF({ aec: !GF.aec }); });
   var PHS = ['', 'SERIE', 'REC', 'FTI'];
   document.getElementById('gPhase').addEventListener('click', function (e) { var c = e.target.closest('[data-ph]'); if (c) setGF({ phase: c.getAttribute('data-ph') }); });
   document.getElementById('gPhase').addEventListener('keydown', function (e) {
@@ -6377,21 +6385,23 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
   function y25Sel() {
     var Y = D.y25; if (!Y || !Y.rows || GF.src !== 'all' || GF.org === 'missing_ids') return null;
     var c = {}, P = GF.pick; Y.cols.forEach(function (k, i) { c[k] = i; });
+    if (GF.aec && c.aec == null) return null;   // "FTO2 liable only": 2025 needs its liability column
     if (P && ['month', 'prod', 'pprod'].indexOf(P.k) < 0) return null;   // a pick the 2025 extract cannot follow: no 2025 comparison
     var pOk = !P ? null : P.k === 'month' ? function (r) { return String(r[c.month]).slice(5, 7) === P.v.slice(5, 7); } : P.k === 'prod' ? function (r) { return (r[c.product] || 'Other') === P.v; } :
       function (r) { return !!(D.eqmsn && D.eqmsn.map && D.eqmsn.map[String(r[c.product] || '').toUpperCase()] === P.v); };
-    return Y.rows.filter(function (r) { return (r[c.scope] === 'serie' || !GF.fto2) && (!GF.phase || r[c.phase] === GF.phase) && (!GF.line || r[c.line] === GF.line) && (!pOk || pOk(r)); })
+    return Y.rows.filter(function (r) { return (r[c.scope] === 'serie' || !GF.fto2) && (!GF.aec || +r[c.aec] === 1) && (!GF.phase || r[c.phase] === GF.phase) && (!GF.line || r[c.line] === GF.line) && (!pOk || pOk(r)); })
       .map(function (r) { return { m: r[c.month], line: r[c.line], p: r[c.product], nc: r[c.nc], def: G.minor ? r[c.def] : r[c.defMajor], cost: r[c.cost] }; });
   }
   // 2025 defects by cause (parser labels) under the same filters as y25Sel; picks on a category or a cause apply too
   function y25Rca() {
     var Y = D.y25; if (!Y || !Y.rca || GF.src !== 'all' || GF.org === 'missing_ids') return null;
     var c = {}, P = GF.pick; Y.rcaCols.forEach(function (k, i) { c[k] = i; });
+    if (GF.aec && c.aec == null) return null;
     if (P && ['month', 'prod', 'pprod', 'cat', 'rca'].indexOf(P.k) < 0) return null;
     var ok = !P ? null : P.k === 'month' ? function (r) { return String(r[c.month]).slice(5, 7) === P.v.slice(5, 7); } : P.k === 'prod' ? function (r) { return (r[c.product] || 'Other') === P.v; } :
       P.k === 'cat' ? function (r) { return r[c.cat] === P.v; } : P.k === 'rca' ? function (r) { return r[c.rca] === P.v; } :
       function (r) { return !!(D.eqmsn && D.eqmsn.map && D.eqmsn.map[String(r[c.product] || '').toUpperCase()] === P.v); };
-    return Y.rca.filter(function (r) { return (r[c.scope] === 'serie' || !GF.fto2) && (!GF.phase || r[c.phase] === GF.phase) && (!GF.line || r[c.line] === GF.line) && (!ok || ok(r)); })
+    return Y.rca.filter(function (r) { return (r[c.scope] === 'serie' || !GF.fto2) && (!GF.aec || +r[c.aec] === 1) && (!GF.phase || r[c.phase] === GF.phase) && (!GF.line || r[c.line] === GF.line) && (!ok || ok(r)); })
       .map(function (r) { return { m: r[c.month], p: r[c.product], cat: r[c.cat], rca: r[c.rca], d: G.minor ? r[c.def] : r[c.defMajor] }; });
   }
   // a 2025 rate per product delivered, on the production plan's products that had 2025 deliveries (as the line targets): f summed ÷ deliveries
@@ -6972,7 +6982,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
     document.getElementById('period').textContent = S('period', { from: day(GF.from), to: day(GF.to) });
     document.getElementById('asof').textContent = S('asof', { to: day(D.meta.to) });
     document.getElementById('foot1').textContent = S('foot1', dates);
-    document.querySelectorAll('[data-t="serieSub"]').forEach(function (el) { el.textContent = S(GF.fto2 ? 'serieSub' : 'serieSubAll'); });
+    document.querySelectorAll('[data-t="serieSub"]').forEach(function (el) { el.textContent = S((GF.fto2 ? 'serieSub' : 'serieSubAll') + (GF.aec ? 'Aec' : '')); });
     document.getElementById('foot3').textContent = S('foot3', { n: num(D.meta.noLine), o: num(((A || {}).other || [0])[0]), oe: eur(((A || {}).other || [0, 0])[1]) });
     ['nq', 'pq', 'kq', 'wq', 'cq', 'rq', 'whQ'].forEach(function (id) { var q = document.getElementById(id); q.placeholder = S('search'); q.setAttribute('aria-label', S('search')); });
     document.getElementById('lFr').setAttribute('aria-pressed', String(G.lang === 'fr'));

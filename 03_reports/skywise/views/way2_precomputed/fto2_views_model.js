@@ -183,6 +183,7 @@ function gNc(n, anyLine) {
     if (!n) return false;
     if (GF.src !== 'all' && (GF.src === 'man' ? n[39] === 'sky' : n[39] !== GF.src)) return false;
     if (GF.org && (n[41] || 'normal') !== GF.org) return false;   // [41] the pipeline output the NC comes from: normal or missing_ids
+    if (GF.aec && n[5] !== 1) return false;   // "FTO2 liable only" (2 Nov, Mohammad): [5] 1 when FTO2 is in the NC's liability
     if (GF.pick && !pickNc(n)) return false;
     if (GF.phase && n[24] !== GF.phase) return false;
     if (GF.line && !anyLine && n[3] !== GF.line) return false;
@@ -279,10 +280,11 @@ function v2Series(f) {
 function y25Sel() {
     var Y = D.y25; if (!Y || !Y.rows || GF.src !== 'all' || GF.org === 'missing_ids') return null;
     var c = {}, P = GF.pick; Y.cols.forEach(function (k, i) { c[k] = i; });
+    if (GF.aec && c.aec == null) return null;   // "FTO2 liable only": 2025 needs its liability column
     if (P && ['month', 'prod', 'pprod'].indexOf(P.k) < 0) return null;   // a pick the 2025 extract cannot follow: no 2025 comparison
     var pOk = !P ? null : P.k === 'month' ? function (r) { return String(r[c.month]).slice(5, 7) === P.v.slice(5, 7); } : P.k === 'prod' ? function (r) { return (r[c.product] || 'Other') === P.v; } :
       function (r) { return !!(D.eqmsn && D.eqmsn.map && D.eqmsn.map[String(r[c.product] || '').toUpperCase()] === P.v); };
-    return Y.rows.filter(function (r) { return (r[c.scope] === 'serie' || !GF.fto2) && (!GF.phase || r[c.phase] === GF.phase) && (!GF.line || r[c.line] === GF.line) && (!pOk || pOk(r)); })
+    return Y.rows.filter(function (r) { return (r[c.scope] === 'serie' || !GF.fto2) && (!GF.aec || +r[c.aec] === 1) && (!GF.phase || r[c.phase] === GF.phase) && (!GF.line || r[c.line] === GF.line) && (!pOk || pOk(r)); })
       .map(function (r) { return { m: r[c.month], line: r[c.line], p: r[c.product], nc: r[c.nc], def: G.minor ? r[c.def] : r[c.defMajor], cost: r[c.cost] }; });
   }
 function y25Cum(Y, f, months) { var by = {}, c = 0; Y.forEach(function (x) { var k = x.m.slice(5, 7); by[k] = (by[k] || 0) + f(x); }); return [0].concat(months.map(function (m) { c += by[m.slice(5, 7)] || 0; return c; })); }
@@ -296,11 +298,12 @@ function y25Lines() {
 function y25Rca() {
     var Y = D.y25; if (!Y || !Y.rca || GF.src !== 'all' || GF.org === 'missing_ids') return null;
     var c = {}, P = GF.pick; Y.rcaCols.forEach(function (k, i) { c[k] = i; });
+    if (GF.aec && c.aec == null) return null;
     if (P && ['month', 'prod', 'pprod', 'cat', 'rca'].indexOf(P.k) < 0) return null;
     var ok = !P ? null : P.k === 'month' ? function (r) { return String(r[c.month]).slice(5, 7) === P.v.slice(5, 7); } : P.k === 'prod' ? function (r) { return (r[c.product] || 'Other') === P.v; } :
       P.k === 'cat' ? function (r) { return r[c.cat] === P.v; } : P.k === 'rca' ? function (r) { return r[c.rca] === P.v; } :
       function (r) { return !!(D.eqmsn && D.eqmsn.map && D.eqmsn.map[String(r[c.product] || '').toUpperCase()] === P.v); };
-    return Y.rca.filter(function (r) { return (r[c.scope] === 'serie' || !GF.fto2) && (!GF.phase || r[c.phase] === GF.phase) && (!GF.line || r[c.line] === GF.line) && (!ok || ok(r)); })
+    return Y.rca.filter(function (r) { return (r[c.scope] === 'serie' || !GF.fto2) && (!GF.aec || +r[c.aec] === 1) && (!GF.phase || r[c.phase] === GF.phase) && (!GF.line || r[c.line] === GF.line) && (!ok || ok(r)); })
       .map(function (r) { return { m: r[c.month], p: r[c.product], cat: r[c.cat], rca: r[c.rca], d: G.minor ? r[c.def] : r[c.defMajor] }; });
   }
 function y25Rate(rows, f, keep) {   // keep(p): only these products of the plan (connection errors: A330 and A350)
@@ -330,10 +333,10 @@ function v2Tgt(f25, f26) {
       tm: function (m) { var i = PD.months.indexOf(m); return sumA(lines.map(function (a) { return i < 0 ? 0 : a.rt * a.vol[i] + a.own[i]; })) + out * V2CUT * (V2W[+m.slice(5, 7)] || 1) / wsum; },
       year: sumA(lines.map(function (a) { return a.year; })) + out * V2CUT };
   }
-function alNc(n) { return ours(n) && n[23] !== 'client' && (!GF.phase || n[24] === GF.phase) && (GF.src === 'all' || (GF.src === 'man' ? n[39] !== 'sky' : n[39] === GF.src)) && (!GF.org || (n[41] || 'normal') === GF.org); }
+function alNc(n) { return ours(n) && n[23] !== 'client' && (!GF.phase || n[24] === GF.phase) && (GF.src === 'all' || (GF.src === 'man' ? n[39] !== 'sky' : n[39] === GF.src)) && (!GF.org || (n[41] || 'normal') === GF.org) && (!GF.aec || n[5] === 1); }
 function alCompute(at) {   // at: a week index instead of the period's end (checks)
     var E = D.eqmsn && D.eqmsn.wdw; if (!E) return null;
-    var last = at != null ? at : ALARM.lastDone(GF.to < D.meta.to ? GF.to : D.meta.to), k = [GF.phase, GF.src, GF.org, last, G.lang].join('|');
+    var last = at != null ? at : ALARM.lastDone(GF.to < D.meta.to ? GF.to : D.meta.to), k = [GF.phase, GF.src, GF.org, GF.aec, last, G.lang].join('|');
     if (k === AL.sigK) return AL.res;
     var items = {}, planes = {}, cnt = { rca: {}, code: {} }, z = function () { var a = []; for (var i = 0; i < 53; i++) a.push(0); return a; }, w0 = 53, PM = D.eqmsn.msn || {};
     function it(line, lv, v, e, hist) { var key = line + '|' + lv + '|' + v; return items[key] || (items[key] = { key: key, line: line, lv: lv, v: v, w: z(), e: e, n: [], d: [], hist: !!hist }); }
