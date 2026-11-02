@@ -33,7 +33,7 @@ def refs():
     t = pd.read_csv(os.path.join(ROOT, "04_reference", "eqmsn_produits.csv"), encoding="utf-8")
     fr = pd.read_csv(os.path.join(ROOT, "04_reference", "souscodes_fr.csv"), encoding="utf-8-sig").set_index("sous_code").description_fr.to_dict()
     return {"plan": {str(a).upper(): B.EQ_NAMES.get(b, b) for a, b in zip(t.produit_nc, t.produit_eqmsn)}, "alias": B.product_alias_rules(),
-            "codes": {str(k): M.tidy(v, 90) for k, v in fr.items() if M.tidy(v, 90)}, "vol": M.weekly_volume(), "msnEnd": M.msn_end(),
+            "codes": {str(k): M.tidy(v, 90) for k, v in fr.items() if M.tidy(v, 90)}, "codesEn": M.codes_en(), "vol": M.weekly_volume(), "msnEnd": M.msn_end(),
             "actions": M.seed_actions()}
 
 

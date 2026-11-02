@@ -31,6 +31,10 @@ with no row, or the columns it received when no 2026 FTO2 NC could be read.
 
 ## What to know
 
+- **French or English**: FR / EN at the top right, as on the dashboard; the browser remembers the choice. Category and cause
+  names use the dashboard's English names, sub-codes the official sheet's English descriptions. Actions keep the words they were
+  typed in.
+
 - **Data**: the NCs raised at FTO2 (plant FTO2 or FT02) created in 2026 and their defect lines, read from the two queries each
   time the page opens. When the notebook rewrites the datasets, the page follows; nothing to rebuild.
 - **Fixed references, written in the JS** (as the dashboard's): sub-code names, the production plan's products, MSN built
