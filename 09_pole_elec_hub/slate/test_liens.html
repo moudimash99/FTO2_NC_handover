@@ -1,0 +1,22 @@
+<!-- Test des liens dans Slate. A coller dans le meme type de widget que le hub
+     (si le widget a des cases separees : le haut dans HTML, le contenu de <script> dans JS).
+     Cliquer 1, 2 et 3 en clic simple, puis lire les lignes en dessous. -->
+<div style="font:14px/1.6 'Segoe UI',sans-serif;padding:12px">
+  <p><a id="l1" href="https://sites.google.com/airbus.com/myqa-tool-fr/accueil" target="_blank">1. Lien vers MyQA, nouvel onglet</a></p>
+  <p><a id="l2" href="https://sites.google.com/airbus.com/myqa-tool-fr/accueil" target="_top">2. Lien vers MyQA, meme onglet (remplace Slate)</a></p>
+  <p><button id="b3">3. Ouvrir un nouvel onglet par script</button></p>
+  <pre id="out" style="background:#f3f5f8;padding:8px;border-radius:6px"></pre>
+</div>
+<script>
+var out = document.getElementById("out");
+function log(s) { out.textContent += s + "\n"; }
+log("A. Dans un cadre : " + (window.self !== window.top ? "oui" : "non"));
+log("B. Origine : " + self.origin + (self.origin === "null" ? "  (cadre restreint)" : ""));
+document.getElementById("l1").addEventListener("click", function () { log("C. Clic recu sur le lien 1"); });
+document.getElementById("l2").addEventListener("click", function () { log("D. Clic recu sur le lien 2"); });
+document.getElementById("b3").addEventListener("click", function () {
+  var w = window.open("about:blank", "_blank");
+  log("E. Nouvel onglet par script : " + (w ? "AUTORISE" : "BLOQUE"));
+  if (w) w.close();
+});
+</script>

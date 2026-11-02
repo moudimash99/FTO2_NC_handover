@@ -1,0 +1,42 @@
+{
+  "title": "Pôle Élec",
+  "subtitle": "Quality Hub",
+  "site": "FTO2 · OLME · Toulouse",
+  "drawing": "QH-FTO2-001",
+  "revision": "C",
+  "updated": "20/10/2026",
+  "sections": [
+    {"id": "prod", "code": "PROD", "name": "Production & suivi", "color": "#f2a33a",
+     "items": [
+       {"id": "pps", "name": "PPS", "desc": "Practical Problem Solving", "icon": "target", "wire": "#f2a33a", "url": "#"},
+       {"id": "serie", "name": "Serie Follow-up", "desc": "Suivi de la série", "icon": "follow", "wire": "#f4d35e", "stripe": "#1b1d20", "url": "#"},
+       {"id": "fod", "name": "FOD", "desc": "Foreign Object Debris", "icon": "fod", "wire": "#e8743b", "stripe": "#ffffff", "url": "#"}
+     ]},
+    {"id": "nc", "code": "NC", "name": "Non-conformités", "color": "#ef5350",
+     "items": [
+       {"id": "ncw", "name": "NC Writing", "desc": "Rédiger une NC · standard DEFAUTS v1", "icon": "pen", "wire": "#ef5350", "url": "#"},
+       {"id": "ncd", "name": "NC Dashboard", "desc": "Pareto des défauts · 9 catégories", "icon": "pareto", "wire": "#ec5f9b", "stripe": "#ffffff", "tag": "v4.8", "url": "#"},
+       {"id": "alert", "name": "Alert Quality", "desc": "Alertes qualité", "icon": "alert", "wire": "#a77bf3", "alert": true, "url": "#"}
+     ]},
+    {"id": "cnq", "code": "CNQ", "name": "Coût de non-qualité", "color": "#3ec27f",
+     "items": [
+       {"id": "cnqd", "name": "CNQ Dashboard", "desc": "Coût des NC sur 3 niveaux", "icon": "euro", "wire": "#3ec27f", "new": true, "url": "#"},
+       {"id": "cnqc", "name": "CNQ Checklist", "desc": "Vérifications à mener", "icon": "check", "wire": "#9bd64b", "stripe": "#1b1d20", "new": true, "url": "#"}
+     ]},
+    {"id": "qa", "code": "QA", "name": "Assurance qualité", "color": "#4a90f7",
+     "items": [
+       {"id": "qcm", "name": "QCM", "desc": "NC Eradication", "icon": "quiz", "wire": "#4a90f7", "url": "#"},
+       {"id": "qam", "name": "QA Management", "desc": "Gestion QA", "icon": "stamp", "wire": "#36c2d6", "stripe": "#ffffff", "url": "#"}
+     ]}
+  ],
+  "news": [
+    {"date": "20/10/2026", "text": "Nouveau hub Pôle Élec : tous les outils qualité au même endroit."},
+    {"date": "19/10/2026", "text": "Coût de non-qualité : modèle mis à jour (cnq-2026.10.19) et checklist d'investigation."},
+    {"date": "07/10/2026", "text": "Pareto des défauts v4.8 : 9 catégories validées."}
+  ],
+  "docs": [
+    {"name": "Standard de rédaction DEFAUTS v1", "url": "#"},
+    {"name": "Taxonomie Pareto v4.8", "url": "#"},
+    {"name": "Modèle CNQ : changements du 19/10", "url": "#"}
+  ]
+}
