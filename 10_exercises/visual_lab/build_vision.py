@@ -1,10 +1,10 @@
-"""Build the FTO2 vision prototype (09_vision/FTO2_Vision.html), the visual lab (FTO2_Visual_Lab.html) and expected.json.
+"""Build the FTO2 vision prototype (10_exercises/visual_lab/FTO2_Vision.html), the visual lab (FTO2_Visual_Lab.html) and expected.json.
 
 Inputs: the dashboard outputs (05_outputs/fto2_nc.csv, fto2_defects.csv, made by build/build_all.py) and the
-2025 NCs (09_vision/data/*_2025.csv, made by prep_2025.py). Every figure on the page is computed in the page from
+2025 NCs (10_exercises/visual_lab/data/*_2025.csv, made by prep_2025.py). Every figure on the page is computed in the page from
 these rows; this script only packs them and writes the values the check expects for a few filter settings.
 
-    python3 09_vision/build_vision.py
+    python3 10_exercises/visual_lab/build_vision.py
 """
 import json
 import os
@@ -15,7 +15,7 @@ import numpy as np
 import pandas as pd
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-REPO = os.path.dirname(HERE)
+REPO = os.path.dirname(os.path.dirname(HERE))
 sys.path.insert(0, HERE)
 from pins import consecutive, pin_pair  # noqa: E402
 

@@ -6,6 +6,6 @@ Executes the notebook cell by cell on a Jupyter kernel (needs `nbformat nbclient
 
 ```
 python3 -I build_data.py <repo>/06_input_data <nc2025_dir> <W>/skywise_mock.pkl
-cd <W> && python3 -I <repo>/07_scripts/rec_test_local/runner.py <repo>/07_scripts/rec_test_local <W>/skywise_mock.pkl <repo>/07_scripts/rec_rule_test.ipynb <W>/executed.ipynb [full]
+cd <W> && python3 -I <repo>/10_exercises/rec_rule_test/rec_test_local/runner.py <repo>/10_exercises/rec_rule_test/rec_test_local <W>/skywise_mock.pkl <repo>/10_exercises/rec_rule_test/rec_rule_test.ipynb <W>/executed.ipynb [full]
 ```
 `<nc2025_dir>` holds `split_part_nc_*.csv` from `06_input_data/work_orders_disruptions_nc2025.rar`.

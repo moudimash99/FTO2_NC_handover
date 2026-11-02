@@ -1,7 +1,7 @@
 // Page check for FTO2_Vision.html: no script error, and the figures the page computes for four filter settings
 // (counts, costs, and every 2025 → 2026 comparison at equal production) equal the ones build_vision.py wrote to
 // expected.json. Also checks the page never scrolls sideways at phone width.
-//   NODE_PATH=$(npm root -g) node 09_vision/check_vision.js [screenshot folder]
+//   NODE_PATH=$(npm root -g) node 10_exercises/visual_lab/check_vision.js [screenshot folder]
 const { chromium } = require('playwright');
 const path = require('path');
 const fs = require('fs');

@@ -1,7 +1,7 @@
 // Page check for FTO2_Visual_Lab.html: no script error, and the figures the lab draws for three line settings (defects
 // in the journey and the rain, aircraft and NC dots in the lifelines, the river and its outline at equal production)
 // equal the ones build_vision.py wrote to expected.json. Also checks the page never scrolls sideways at phone width.
-//   NODE_PATH=$(npm root -g) node 09_vision/check_lab.js [screenshot folder]
+//   NODE_PATH=$(npm root -g) node 10_exercises/visual_lab/check_lab.js [screenshot folder]
 const { chromium } = require('playwright');
 const path = require('path');
 const fs = require('fs');

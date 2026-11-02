@@ -2,14 +2,14 @@
 
 Input: the folder unpacked from 06_input_data/work_orders_disruptions_nc2025.rar (branch main),
        which holds split_part_nc_1..4.csv (Skywise NCs, plant FTO2, created 3 Jan 2025 - 30 Jan 2026).
-Output: 09_vision/data/nc_2025.csv and 09_vision/data/defects_2025.csv.
+Output: 10_exercises/visual_lab/data/nc_2025.csv and 10_exercises/visual_lab/data/defects_2025.csv.
 
 Scope, as the 2026 pipeline: FTO2 in liability, not deleted, user_department without ERMA.
 Phase (production type), as Programme_auto: FTI if constituent_assembly starts with WY or WA,
 REC if workflow_list matches the REC pattern, else SERIE. Defects come from parser v4.8 (02_dashboard_pack).
 
     unar -o <W> 06_input_data/work_orders_disruptions_nc2025.rar
-    python3 -I 09_vision/prep_2025.py <W>/wo <repo>
+    python3 -I 10_exercises/visual_lab/prep_2025.py <W>/wo <repo>
 """
 import glob
 import os
@@ -20,7 +20,7 @@ import pandas as pd
 
 SRC, REPO = sys.argv[1], sys.argv[2]
 sys.path.insert(0, os.path.join(REPO, "02_dashboard_pack", "skywise_nc_dashboard_v48", "1_pipeline"))
-sys.path.insert(0, os.path.join(REPO, "09_vision"))
+sys.path.insert(0, os.path.join(REPO, "10_exercises", "visual_lab"))
 import fto2_logic as L  # noqa: E402
 from pins import pin_pair  # noqa: E402
 
@@ -53,8 +53,8 @@ out = pd.DataFrame({
     "fin": defects.fin, "pin_a": pins.str[0], "pin_b": pins.str[1],
 })
 
-os.makedirs(os.path.join(REPO, "09_vision", "data"), exist_ok=True)
-nc.to_csv(os.path.join(REPO, "09_vision", "data", "nc_2025.csv"), index=False)
-out.to_csv(os.path.join(REPO, "09_vision", "data", "defects_2025.csv"), index=False)
+os.makedirs(os.path.join(REPO, "10_exercises", "visual_lab", "data"), exist_ok=True)
+nc.to_csv(os.path.join(REPO, "10_exercises", "visual_lab", "data", "nc_2025.csv"), index=False)
+out.to_csv(os.path.join(REPO, "10_exercises", "visual_lab", "data", "defects_2025.csv"), index=False)
 s = nc[nc.in_scope == 1]
 print("2025 NCs:", len(nc), "| in FTO2 scope:", len(s), s.phase.value_counts().to_dict(), "| defects on them:", out.notification_number.isin(s.notification_number).sum())

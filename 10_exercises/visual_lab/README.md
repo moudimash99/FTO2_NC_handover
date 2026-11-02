@@ -1,4 +1,9 @@
-# 09_vision: where the dashboard can go next
+# Visual lab: where the dashboard can go next
+
+**Exercise, not official.** Kept on main as an exercise (Mohammad, 2 Nov): nothing here feeds the dashboard, the MFT page or the
+Slate apps. It lived on the branch `claude/vision-wow` in the folder `09_vision` until 2 Nov; the text below is as written then.
+The saved pages work as they are (their checks pass from this folder). Rebuilding them on today's data stops on a
+category renamed since then (MEO Câblage is now MEO Facteur humain): not fixed, since nothing depends on it.
 
 A working prototype of the next dashboard, built overnight on 19–20 Oct 2026 on its own branch (`claude/vision-wow`)
 so it does not touch the dashboard work on `claude/funny-johnson-q41xki`. Nothing in `build/`, `03_reports/` or
@@ -21,10 +26,10 @@ so it does not touch the dashboard work on `claude/funny-johnson-q41xki`. Nothin
 
 ```
 unar -o <W> 06_input_data/work_orders_disruptions_nc2025.rar      # from branch main; only to refresh 2025
-python3 -I 09_vision/prep_2025.py <W>/wo .
-python3 09_vision/build_vision.py                                  # reads 05_outputs/fto2_nc.csv, fto2_defects.csv
-NODE_PATH=$(npm root -g) node 09_vision/check_vision.js            # all checks passed
-NODE_PATH=$(npm root -g) node 09_vision/check_lab.js               # all checks passed
+python3 -I 10_exercises/visual_lab/prep_2025.py <W>/wo .
+python3 10_exercises/visual_lab/build_vision.py                                  # reads 05_outputs/fto2_nc.csv, fto2_defects.csv
+NODE_PATH=$(npm root -g) node 10_exercises/visual_lab/check_vision.js            # all checks passed
+NODE_PATH=$(npm root -g) node 10_exercises/visual_lab/check_lab.js               # all checks passed
 ```
 
 ## Rules the page follows
