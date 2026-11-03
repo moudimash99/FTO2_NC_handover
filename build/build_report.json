@@ -29,13 +29,12 @@
     "deliveries": 343.0
   },
   "labels": {
-    "ok": 3098,
-    "a_labelliser": 391,
+    "ok": 3489,
     "titre": 90
   },
   "subcodes": {
-    "exact": 3055,
-    "parent_or_none": 524
+    "exact": 3368,
+    "parent_or_none": 211
   },
   "unknown_cnq_classes": [],
   "rework_orders": {
@@ -59,10 +58,10 @@
     "classification": "root cause (long text)",
     "nc_on_aec": 945,
     "level1": 444081.44,
-    "level2": 320571.1,
-    "level3": 418283.75,
-    "cable_allocated": 128120.88,
-    "cable_share": 0.3063,
+    "level2": 320514.95,
+    "level3": 417793.0,
+    "cable_allocated": 127891.22,
+    "cable_share": 0.3061,
     "level3_parser": 420541.28,
     "cable_share_parser": 0.3044
   },
@@ -76,7 +75,7 @@
       "ncs": 1142,
       "ncs_without_defect_line": 20,
       "defects": 3436,
-      "cnq": 487545.67
+      "cnq": 487054.74
     },
     "client": {
       "ncs": 69,
@@ -106,8 +105,8 @@
     "nc_on_aec": 945,
     "nc_no_master_data": 0,
     "level1_airbus_aec": 444081.44,
-    "level2_global_aec": 320571.1,
-    "level3_detailed_aec": 418283.75
+    "level2_global_aec": 320514.95,
+    "level3_detailed_aec": 417793.0
   },
   "customer_returns": {
     "ncs": 69,
@@ -167,5 +166,5 @@
       "FTO2_NC_Dashboard_level3.slate.json"
     ]
   },
-  "review_disagreements": 444
+  "review_disagreements": 494
 }

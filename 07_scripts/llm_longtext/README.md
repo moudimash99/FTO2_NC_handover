@@ -15,3 +15,8 @@ Steps (paths in the scripts point to the session scratchpad; change `S`/`R` to r
 5. `fix.py`, `fix2.py` – the two manual review passes (5 collar cases aligned to Frettage; 32 loose E4 moves
    "câble manquant, à fournir" sent back from Amont to Manquant – câble).
 6. The labels were saved as `04_reference/llm_labels_longtext.csv`; `build/build_all.py` joins them and writes every output (the earlier `out_build.py` is gone).
+
+
+## Second round (4 Nov 2026): the new lines only
+
+391 defect lines of 146 NCs (Sep - 26 Oct, from the raw extract `06_input_data/nc_2026_skywise_fto2_2026-10-26.csv`) had no label. `prep_new.py` writes the lines the build has no usable label for (status not ok) as batches in the same format; five Claude sub-agents in the session (no external API) labelled them with the same `guide.md`, each checked with `validate.py` (OK); `merge_new.py` appends them to `04_reference/llm_labels_longtext.csv` (snippet = the parser's text of the line, so a label is used only while the text is unchanged). Confidence: 282 high, 105 medium, 4 low. The scripts' folder paths point to the session scratchpad: change `S` to rerun. Same next time: run `prep_new.py`, label, `merge_new.py`, rebuild.
