@@ -41,7 +41,8 @@ function mftFromTables(ncIn, defIn, R) {
   rows(defIn).forEach(function (r) { var i = pos[id(r.nc)]; if (i == null) return;
     defs.push([i, code('cat', r.cat), code('rca', r.rca), code('sub', r.sub), code('code', r.subcode), code('fin', r.fin), Math.round(parseFloat(r.minor) || 0), tidy(r.text)]); });
   var codes = {}; dic.code.forEach(function (c) { if (c) codes[c] = tidy((R.codes || {})[c] || '', 90); });
-  return { to: to, toWeek: to ? isoWeek(to) : '', ncs: ncs, defs: defs, dic: dic, codes: codes, vol: R.vol || null, msnEnd: R.msnEnd || {} };
+  var codesEn = {}; dic.code.forEach(function (c) { if (c && (R.codesEn || {})[c]) codesEn[c] = R.codesEn[c]; });   // the English page (2 Nov)
+  return { to: to, toWeek: to ? isoWeek(to) : '', ncs: ncs, defs: defs, dic: dic, codes: codes, codesEn: codesEn, vol: R.vol || null, msnEnd: R.msnEnd || {} };
 }
 
 // ---------------------------------------------------------------- the store: the page's actions and alarm marks, in this browser
@@ -77,7 +78,9 @@ window.FTO2_STORE = (function () {
   }
   return {
     use: function (k) { return Promise.resolve(k === 'db' ? { collection: collection } : null); },
-    note: function () { try { localStorage.setItem(KEY + 'probe', '1'); localStorage.removeItem(KEY + 'probe'); } catch (e) { ok = false; }
+    note: function (lang) { try { localStorage.setItem(KEY + 'probe', '1'); localStorage.removeItem(KEY + 'probe'); } catch (e) { ok = false; }
+      if (lang === 'en') return ok ? 'Actions saved in this browser, on this computer: they are not shared with the app’s other users.'
+        : 'The browser blocks saving: actions changed here will be lost on reload.';
       return ok ? 'Actions enregistrées dans ce navigateur, sur ce poste : elles ne sont pas partagées avec les autres utilisateurs de l’app.'
       : 'Le navigateur bloque l’enregistrement : les actions modifiées ici seront perdues au rechargement.'; }
   };

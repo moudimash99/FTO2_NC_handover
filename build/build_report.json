@@ -1,11 +1,12 @@
 {
   "inputs": {
     "fto2_dashboard_data_12.csv": 1000,
-    "fto2_dashboard_data_missing_ids_3.csv": 127
+    "fto2_dashboard_data_missing_ids_3.csv": 127,
+    "nc_2026_skywise_fto2_2026-10-26.csv": 154
   },
-  "nc_rows": 1127,
+  "nc_rows": 1281,
   "created_from": "2025-12-15",
-  "created_to": "2026-09-28",
+  "created_to": "2026-10-26",
   "order_inputs": {
     "wo_s03_operations_fto2_sep2026.csv.gz": 2743
   },
@@ -17,81 +18,83 @@
     "serie": 1119,
     "client": 0,
     "autre": 0,
-    "level3_aec": 376228.05,
+    "level3_aec": 376561.55,
     "created_from": "2025-01-03",
     "created_to": "2025-12-23",
     "serie_SERIE": {
       "ncs": 1000,
-      "defects": 3156,
-      "level3": 366581.6
+      "defects": 3234,
+      "level3": 366915.1
     },
     "deliveries": 343.0
   },
   "labels": {
-    "ok": 3098
+    "ok": 3098,
+    "a_labelliser": 391,
+    "titre": 90
   },
   "subcodes": {
-    "exact": 2956,
-    "parent_or_none": 142
+    "exact": 3055,
+    "parent_or_none": 524
   },
   "unknown_cnq_classes": [],
   "rework_orders": {
-    "ncs_with_link": 800,
+    "ncs_with_link": 927,
     "operations": 2743,
     "state": {
-      "not_found": 699,
+      "not_found": 823,
       "used": 71,
-      "open": 17,
+      "open": 20,
       "no_time": 13
     }
   },
   "aleas": {
     "rows": 2500,
-    "ncs_with_alea": 200,
-    "quality_without_nc": 108,
+    "ncs_with_alea": 201,
+    "quality_without_nc": 107,
     "block": 89,
     "block_hours": 66.9
   },
   "cnq": {
     "classification": "root cause (long text)",
-    "nc_on_aec": 856,
-    "level1": 403488.79,
-    "level2": 289955.77,
-    "level3": 376510.72,
-    "cable_allocated": 101369.72,
-    "cable_share": 0.2692,
-    "level3_parser": 378768.25,
-    "cable_share_parser": 0.2673
+    "nc_on_aec": 945,
+    "level1": 444081.44,
+    "level2": 320571.1,
+    "level3": 418283.75,
+    "cable_allocated": 128120.88,
+    "cable_share": 0.3063,
+    "level3_parser": 420541.28,
+    "cable_share_parser": 0.3044
   },
   "scope": {
-    "serie": 988,
+    "serie": 1142,
     "autre": 70,
     "client": 69
   },
   "report_scope": {
     "serie": {
-      "ncs": 988,
-      "ncs_without_defect_line": 89,
-      "defects": 2968,
-      "cnq": 412161.66
+      "ncs": 1142,
+      "ncs_without_defect_line": 20,
+      "defects": 3436,
+      "cnq": 487545.67
     },
     "client": {
       "ncs": 69,
-      "ncs_without_defect_line": 4,
-      "defects": 69,
-      "cnq": 26257.32
+      "ncs_without_defect_line": 0,
+      "defects": 73,
+      "cnq": 26312.33
     },
     "autre": {
       "ncs": 70,
-      "ncs_without_defect_line": 9,
-      "defects": 61,
-      "cnq": 19108.3
+      "ncs_without_defect_line": 0,
+      "defects": 70,
+      "cnq": 19307.92
     }
   },
   "defects_by_scope": {
-    "serie": 2968,
-    "client": 69,
-    "autre": 61
+    "serie": 3436,
+    "client": 73,
+    "autre": 70
   },
   "cnq_package_checks": {
     "build_dashboard.py": "OK",
@@ -99,16 +102,16 @@
     "test_dashboard.js": "OK"
   },
   "cnq_package_totals": {
-    "nc_rows": 1127,
-    "nc_on_aec": 856,
+    "nc_rows": 1281,
+    "nc_on_aec": 945,
     "nc_no_master_data": 0,
-    "level1_airbus_aec": 403488.79,
-    "level2_global_aec": 289955.77,
-    "level3_detailed_aec": 376510.72
+    "level1_airbus_aec": 444081.44,
+    "level2_global_aec": 320571.1,
+    "level3_detailed_aec": 418283.75
   },
   "customer_returns": {
     "ncs": 69,
-    "defects": 69,
+    "defects": 73,
     "damage_types": {
       "phys": 16,
       "hs": 4,
@@ -126,23 +129,38 @@
   "eqmsn": {
     "products": 10,
     "total_std": 640.46,
-    "total_wd": 644.27,
+    "total_wd": 625.13,
     "msn_dates": 795,
-    "msn_asof": "2026-10-07"
+    "msn_asof": "2026-11-03",
+    "msn_repaired": [
+      "A330 740VU 2141",
+      "A330 740VU 2142",
+      "A330 740VU 2143",
+      "A330 740VU 2144",
+      "A330 740VU 2148",
+      "A330 740VU 2150",
+      "A330 PTVU 2132",
+      "A330 PTVU 2133",
+      "A330 PTVU 2134",
+      "A330 PTVU 2135",
+      "A330 PTVU 2136",
+      "A330 PTVU 2137",
+      "A330 PTVU 2138"
+    ]
   },
   "dash_tables": {
-    "nc": 1127,
-    "defects": 3098,
-    "disruptions": 108
+    "nc": 1281,
+    "defects": 3579,
+    "disruptions": 107
   },
   "skywise": {
     "level1": {
       "ncs": 713,
       "defects": 1463,
       "aleas": 99,
-      "js_kb": 1555
+      "js_kb": 1568
     },
-    "level23_js_kb": 957,
+    "level23_js_kb": 971,
     "pipeline_notebook": true,
     "level4": [
       "FTO2_NC_Dashboard_level2.slate.json",

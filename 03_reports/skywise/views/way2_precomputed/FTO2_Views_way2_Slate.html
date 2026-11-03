@@ -489,6 +489,7 @@
 .fto2 .pp-card { background: var(--surface); border: 1px solid var(--ring); border-radius: 10px; padding: 18px 20px 16px; display: grid; gap: 10px; align-content: start; min-width: 0; }
 .fto2 .pp-card h3 { font-family: var(--font-display); font-weight: 400; font-size: clamp(20px, 2vw, 24px); line-height: 1.15; margin: 0; }
 .fto2 .pp-wide { grid-column: 1 / -1; }
+.fto2 .yy-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px 16px; flex-wrap: wrap; }
 .fto2 .pp-how p { margin: 0 0 8px; max-width: 900px; }
 .fto2 .pp-how h4 { margin: 12px 0 4px; font-size: 14px; }
 .fto2 .cb-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -1591,12 +1592,12 @@ var FTO2ViewsRender = (function () {
           en: ['Components', 'What the cost is made of, month by month', 'NC handling (alert, writing, support, re-check), rework, material, engineering.', 'CNQ model'] },
     VE: { fr: ['Coûts', 'Chaque NC dans le temps, à sa taille', 'Une bulle par NC ; surface : coût ; les cinq plus chères sont nommées.', 'coût CNQ par NC'], en: ['Costs', 'Every NC over time, at its size', 'One bubble per NC; area: cost; the five dearest are named.', 'CNQ cost per NC'] }
   });
-  Object.assign(STR.fr, { tabSyn: 'Synthèse', tabDet: 'Détail', vuOpen: 'Agrandir', vuClose: 'Fermer', modeLab: 'Affichage', modeSimple: 'Simple', modeExpert: 'Expert',
+  Object.assign(STR.fr, { tabSyn: 'Synthèse', tabDet: 'Détail', vuOpen: 'Agrandir', vuClose: 'Fermer', modeLab: 'Affichage', modeSimple: 'Essentiel', modeExpert: 'Deep dive',
       modeSimpleT: 'Quelques graphiques : Synthèse et Détail', modeExpertT: 'Le tableau de bord complet',
       vuNcY: 'NC depuis janvier', vuNcP: 'NC sur la période', vuRate: 'NC par MSN', vuCost: 'Coût de non-qualité', vuRet: 'Retours clients',
       vuDef: 'Défauts', vuRateY: 'NC par MSN depuis janvier', vuFc: 'prévision fin déc. : {f} · objectif : {t}',
       vuVsT: 'par rapport à l’objectif ({t})', vuPrevP: 'période d’avant : {v}' });
-  Object.assign(STR.en, { tabSyn: 'Summary', tabDet: 'Detail', vuOpen: 'Enlarge', vuClose: 'Close', modeLab: 'View', modeSimple: 'Simple', modeExpert: 'Expert',
+  Object.assign(STR.en, { tabSyn: 'Summary', tabDet: 'Detail', vuOpen: 'Enlarge', vuClose: 'Close', modeLab: 'View', modeSimple: 'Essential', modeExpert: 'Deep dive',
       modeSimpleT: 'A few charts: Summary and Detail', modeExpertT: 'The full dashboard',
       vuNcY: 'NCs since January', vuNcP: 'NCs in the period', vuRate: 'NCs per MSN', vuCost: 'Cost of non-quality', vuRet: 'Customer returns',
       vuDef: 'Defects', vuRateY: 'NCs per MSN since January', vuFc: 'forecast end Dec.: {f} · target: {t}',

@@ -1,0 +1,33 @@
+motif;sous_code;cable;exemple
+retouche|inspection|controle final|incoming|defauts harnais;;0;Retouches test MSN 161 (un contrôle : le titre ne dit pas le défaut)
+\bvis\b.*court|visserie court|longueur vis;Q04-003;0;Visserie courtes dans inserts structure
+erreur de (gauge|jauge)|mauvaise jauge;Q12-001;1;Mauvaise jauge de câbles
+type de cables?;Q12-002;1;Erreur de type de câbles
+trop court|sous longueur|coupes? court;Q12-003;1;Câble trop court
+non imprim|marquage cable;Q12-004;1;2 câbles reçus non imprimés
+cables?\b.{0,15}manquant|manque \d* ?cables?;T01;1;Câble manquant DR16
+sachet;Q03-008;0;OVHP-MB234 Mqt sachet sur prises OLME TO
+manque \d* ?prises?|mqt cran;Q03-004;0;Cock D&G Manque 3 prises F/O (2220VB)
+visserie manquante|fixation manquante|manque .*fix|goupille;Q03-003;0;Visserie manquante
+freinage|torquage rampe;Q05-002;0;Prise 7LZ1 B FREINAGE NON CONFORME
+torquage;Q05-001;0;TORQUAGE BARRETTE 315VT
+rails? .*tordu;Q11-012;0;Rails barrettes tordues
+backshell;Q11-003;0;OVHP*G*C8*Backshell prise 21VC-A HS
+amalgam;Q11-007;0;Perche Bande amalgamante déchirée 7VP
+cables? coupes?$;Q11-001;1;Câble coupé
+(cable|quadrax|harnais).*(abime|endommag|\bhs\b|degrad);Q11-014;1;Câble endommagé AD24 route 2M
+etiquette.*(endommag|decoll|dechir);Q11-002;0;Etiquettes endommagées
+etiquette|stamp .*illisible;Q12-005;0;Lot d'étiquette à recommander
+detromp|pions? mal;Q04-009;0;Pions mal positionnés
+bleu de metal;Q09-002;0;Mauvaise MEO bleu de métal porte 305
+cheminement|chem\.;Q06-001;0;Erreur de cheminement
+derivation;Q06-002;0;OHP-G Dérivation mal positionnée 2400VB
+blindage;Q06-007;0;Mauvaise MEO reprises de blindage
+mauvaise meo du cable|shunt;Q06-001;0;Mauvaise MEO du câble
+contactor|cntor|relais|prise .*non conforme;Q04-005;0;Contactor en statut NCR
+obturateur;Q04-001;0;Support obturateur non conforme
+\bfod\b;Q16-005;0;FOD sur harnais SEFEE
+insert|douille|bague|fixation cassee|rondelle;Q10-006;0;INSERT douille autofréine NAS1836 NC
+entretoise|invers|position plaque|stiffener;Q04-003;0;Plaque sous meuble inversée
+platine;Q10-001;0;Platine M8743611700000 endommagée
+trou|percage|rivet|cote|meuble|rampe|impact|butee|porte;Q10-002;0;Trous ovalisés hors tolérence

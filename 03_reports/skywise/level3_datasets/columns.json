@@ -315,7 +315,7 @@
   {
    "name": "label_src",
    "type": "text",
-   "meaning": "ai (stored root-cause label) or parser (no label yet)"
+   "meaning": "ai (stored root-cause label), titre (A400M: from the NC title, a400m_titres_souscodes.csv) or parser (no label yet)"
   },
   {
    "name": "ai_conf",

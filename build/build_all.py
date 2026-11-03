@@ -50,13 +50,48 @@ def say(*a):
 
 
 # ============================================================ 1. raw exports -> parser
+def _raw_times_as_export(raw):
+    """A raw Skywise extract gives local times ("2026-10-19 14:01:44", +02:00) and their UTC twins (creation_utc_time...); the
+    exports give UTC as "2026-10-19T12:01:44Z". The times become the exports' form, from the UTC columns (completion_time, which
+    has none, from its local time and offset), so that every NC reads the same way."""
+    iso = lambda t: t.dt.strftime("%Y-%m-%dT%H:%M:%SZ").where(t.notna(), None)
+    for c in ("creation_time", "changed_time", "closure_time", "completion_time"):
+        u = c.replace("_time", "_utc_time")
+        if u in raw.columns:
+            raw[c] = iso(pd.to_datetime(raw[u], errors="coerce", format="%Y-%m-%d %H:%M:%S"))
+        elif c in raw.columns:
+            local = pd.to_datetime(raw[c], errors="coerce", format="%Y-%m-%d %H:%M:%S")
+            off = raw.get(c + "_tz", pd.Series("", index=raw.index)).fillna("").astype(str)
+            mins = off.str.extract(r"([+-])(\d\d):(\d\d)").apply(
+                lambda m: (1 if m[0] == "+" else -1) * (int(m[1]) * 60 + int(m[2])) if isinstance(m[0], str) else 0, axis=1)
+            raw[c] = iso(local - pd.to_timedelta(mins, unit="m"))
+    return raw
+
+
 def load_exports():
+    """The pipeline notebook's NC exports (06_input_data/fto2_dashboard_data*.csv), plus the NCs of raw Skywise extracts
+    (06_input_data/nc_2026_skywise_*.csv, e.g. the extract of 3 Nov: FTO2 NCs created 1 Sep - 26 Oct) that the exports do not
+    hold, through the notebook's own rules (fto2_core.pipeline_rules, as for 2025). An NC in an export keeps its export row: the
+    exports carry the GPS register and Test list columns that a raw extract does not."""
     files = sorted(glob.glob(os.path.join(ROOT, "06_input_data", "fto2_dashboard_data*.csv")))
     frames = []
     for f in files:
         x = pd.read_csv(f, low_memory=False, dtype={"notification_number": str})
         x["_source"] = os.path.basename(f)
         frames.append(x)
+    key = lambda s: s.astype(str).str.strip().str.replace(r"\.0$", "", regex=True).str.lstrip("0")
+    have = set().union(*[set(key(x["notification_number"])) for x in frames]) if frames else set()
+    raws = sorted(glob.glob(os.path.join(ROOT, "06_input_data", "nc_2026_skywise_*.csv*")))
+    for f in raws:
+        raw = pd.read_csv(f, dtype=str, keep_default_na=False, na_values=[""], low_memory=False)
+        raw["notification_number"] = key(raw["notification_number"])
+        raw = raw[~raw["notification_number"].isin(have)].copy()
+        raw = _raw_times_as_export(raw)
+        r = core.pipeline_rules(raw, core.station_pairs(frames))
+        r["_source"] = os.path.basename(f)
+        have |= set(r["notification_number"])
+        frames.append(r)
+        files.append(f)
     x, info = core.merge_exports(frames)
     REPORT["inputs"] = {os.path.basename(f): int((x["_source"] == os.path.basename(f)).sum()) for f in files}
     REPORT.update(info)
@@ -422,7 +457,8 @@ def eqmsn(nc):
         pd.DataFrame(rows, columns=["niveau", "nom", "semaine", "msn"]).to_csv(os.path.join(OUT, "fto2_msn_semaine.csv"), index=False, encoding="utf-8")
     REPORT["eqmsn"] = {"products": len(out["std"]), "total_std": round(sum(sum(v) for v in out["std"].values()), 2),
                        "total_wd": round(sum(sum(v) for v in out.get("wd", {}).values()), 2),
-                       "msn_dates": len(out["msn"] or {}), "msn_asof": out["msnAsof"]}
+                       "msn_dates": len(out["msn"] or {}), "msn_asof": out["msnAsof"],
+                       "msn_repaired": sorted(set(PRODUCTION_REPAIRED))}   # '#N/A' MSNs filled from an older export
     return out
 
 
@@ -448,17 +484,31 @@ def alias_product(rules, plan, line, prod, station):
     return prod
 
 
+PRODUCTION_REPAIRED = []   # MSNs whose '#N/A' in the newest Avances / Retards export was filled from an older export
+
+
 def _production_export():
     """The newest 'Tableau Avances / Retards' export (06_input_data/Avances_Retards_*.csv): its date and one record per MSN and
     product, {line, prod, msn, plan, real} with the 8 milestone dates (Impression, Enclenchement, SE, MECA, INTE, TEST, QUALITE,
-    Départ OTA) of the 'date prévue du début' and 'date réelle' rows. (None, []) without the file."""
+    Départ OTA) of the 'date prévue du début' and 'date réelle' rows. (None, []) without the file.
+    A row whose MSN reads "#N/A" (an Excel error in the export: the 3 Nov export lost it on 13 A330 aircraft of late 2025) takes
+    its MSN, and its planned dates that read "#N/A", from the latest older export with the same line, product and rank."""
     import csv, datetime as dt
     files = sorted(glob.glob(os.path.join(ROOT, "06_input_data", "Avances_Retards_*.csv")))
     if not files:
         return None, []
     asof = dt.date.fromisoformat(os.path.basename(files[-1])[len("Avances_Retards_"):-4])
-    rows = list(csv.reader(open(files[-1], encoding="utf-8")))
-    h = next(i for i, r in enumerate(rows) if r[:3] == ["S/HS", "Prog", "Produit"])
+
+    def plan_rows(path):
+        rows = list(csv.reader(open(path, encoding="utf-8")))
+        h = next(i for i, r in enumerate(rows) if r[:3] == ["S/HS", "Prog", "Produit"])
+        return rows[h + 1:]
+    bad = lambda v: v.strip() in ("", "#N/A")
+    older = {}   # (line, product, rank) -> the planned row of an older export with a real MSN; the newest older export wins
+    for f in files[:-1]:
+        for r in plan_rows(f):
+            if len(r) >= 15 and r[14] == "date prévue du début" and not bad(r[3]):
+                older[(r[1].strip(), r[2].strip(), r[4].strip())] = r
 
     def day(s):
         try:
@@ -466,9 +516,14 @@ def _production_export():
         except ValueError:
             return None
     recs, cur = [], None
-    for r in rows[h + 1:]:
+    for r in plan_rows(files[-1]):
         if len(r) < 15:
             continue
+        if r[14] == "date prévue du début" and bad(r[3]):
+            o = older.get((r[1].strip(), r[2].strip(), r[4].strip()))
+            if o:
+                r = r[:3] + [o[3]] + r[4:5] + [x if not bad(x) else y for x, y in zip(r[5:13], o[5:13])] + r[13:]
+                PRODUCTION_REPAIRED.append("%s %s %s" % (r[1].strip(), r[2].strip(), o[3].strip()))
         if r[14] == "date prévue du début" and r[3].strip():
             cur = {"line": r[1].strip(), "prod": EQ_NAMES.get(r[2].strip(), r[2].strip()), "msn": r[3].strip(), "plan": [day(x) for x in r[5:13]], "real": [None] * 8}
             recs.append(cur)

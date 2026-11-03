@@ -81,9 +81,22 @@ def data():
             continue   # [NC index, category, cause, sub-category, sub-code, FIN, minor, text]
         defs.append([i, code("cat", r.cat), code("rca", r.rca), code("sub", r.sub), code("code", r.subcode), code("fin", r.fin), int(r.minor or 0), tidy(r.text)])
     fr = pd.read_csv(os.path.join(ROOT, "04_reference", "souscodes_fr.csv"), encoding="utf-8-sig").set_index("sous_code").description_fr.to_dict()
+    en = codes_en()
     to = n.created.max()[:10]
     return {"to": to, "toWeek": week(to), "ncs": ncs, "defs": defs, "dic": dic,
-            "codes": {c: tidy(fr.get(c, ""), 90) for c in dic["code"] if c}, "vol": weekly_volume(), "msnEnd": msn_end()}
+            "codes": {c: tidy(fr.get(c, ""), 90) for c in dic["code"] if c},
+            "codesEn": {c: en[c] for c in dic["code"] if c in en},   # the English page (2 Nov)
+            "vol": weekly_volume(), "msnEnd": msn_end()}
+
+
+
+def codes_en():
+    """English sub-code descriptions for the English page (2 Nov): the official sheet's, as the dashboard (fto2_core.official_subcode)."""
+    ref = pd.read_csv(os.path.join(ROOT, "04_reference", "reference_souscodes_pareto.csv"), encoding="utf-8-sig")
+    out = {str(c): tidy(d, 90) for c, d in zip(ref.sous_code, ref.object_desc) if not str(c).startswith("(") and tidy(d, 90)}
+    out.update({"Q11 (composant)": "Component (sub-code not specified)", "Non codé": "No code"})
+    out.update({str(c)[:3] + " (non précisé)": "Sub-code not specified" for c in ref.sous_code if not str(c).startswith("(")})
+    return out
 
 
 def plan_products():
