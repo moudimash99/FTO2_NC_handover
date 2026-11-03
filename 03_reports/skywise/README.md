@@ -40,7 +40,8 @@ set `KEEP_OLD_OUTPUTS = False` in the first code cell.
 4. Paste `level3_datasets/fto2_level23.css`, `fto2_level23.html` and `fto2_level23.js` into its CSS, HTML and JS tabs.
 5. Paste `level3_datasets/state.json` into its state box (it shows `"input": "Hello World"` at first).
 
-Check: on the data of 28 September 2026, Deep dive, Vue d'ensemble shows **910 NC, 2 960 défauts, 347,4 k€**.
+Check: on the laptop data to 26 October 2026 (Série, Responsabilité: FTO2 only, the defaults), Deep dive, Vue d'ensemble shows
+**868 NC, 3 160 défauts, 388 k€**. Skywise holds a few more days of NCs, so its figures are a little higher.
 
 **4. The MFT page** (a second page in the same app)
 
@@ -48,7 +49,8 @@ Check: on the data of 28 September 2026, Deep dive, Vue d'ensemble shows **910 N
 2. Add a Code Sandbox, full width, about 1,400 px high. Paste `mft/fto2_mft.css`, `mft/fto2_mft.html`, `mft/fto2_mft.js`
    into its CSS, HTML and JS tabs, and `mft/state.json` into its state box.
 
-Check: A350, week S39 shows 10 NC, 73 défauts.
+Check: the page opens on the line with the most NCs, on the last full week (laptop data to 26 October: A330, S43, 11 NC, 21 défauts).
+The browser remembers the line last chosen.
 
 Good to know: actions typed on the MFT page are saved in that computer's browser only. Other users do not see them.
 Sharing them needs a table Slate can write to, to ask IT for.
@@ -60,12 +62,15 @@ data, only if something fails), `level4_import` (untested).
 
 ## Already set up on 23 October? What to change
 
-1. Upload `level3_datasets/notebook_kit` again, the whole folder.
-2. Run the notebook once.
-3. Paste the new `fto2_level23.css`, `.html` and `.js` into the dashboard's sandbox.
-4. Add the MFT page (step 4) if you want it.
+1. Upload `level3_datasets/notebook_kit` again, the whole folder (it holds the current cost rates, the A400M title rules and the
+   data steps).
+2. Replace the `fto2_ai_labels` dataset with `level3_datasets/notebook_kit/fto2_ai_labels.csv` (3,489 rows: the labels of every
+   defect line to 26 October).
+3. Run the notebook once.
+4. Paste the new `fto2_level23.css`, `.html` and `.js` into the dashboard's sandbox.
+5. Paste the new `mft/fto2_mft.js` into the MFT sandbox, or add the MFT page (step 4 above) if it is not there yet.
 
-The notebook file, the datasets, the sync, the queries and the state box stay as they are.
+The notebook file, the other datasets, the sync, the queries and the state boxes stay as they are.
 
 ## Keep it up to date
 
