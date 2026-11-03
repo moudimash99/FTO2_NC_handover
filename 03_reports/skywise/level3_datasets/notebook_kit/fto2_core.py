@@ -608,27 +608,34 @@ def station_pairs(frames):
     return dict(s.drop_duplicates("station").values)
 
 
+def liab_cat(nc):
+    """Who is liable for each NC, in the dashboard's three groups (3 Nov, Mohammad): "f" FTO2 (cnq_on_aec), "s" a supplier (a liability
+    code made of digits only: 129 of the 133 SUPPLIER NCs of 2026, 189 of 191 in 2025), "o" anyone else (another Airbus site, other, blank)."""
+    code = nc["liability"].fillna("").astype(str).str.replace(r"[\[\]\s]", "", regex=True).str.upper().str.lstrip("0")
+    return pd.Series(np.where(nc["cnq_on_aec"].fillna(0).astype(int) == 1, "f", np.where(code.str.fullmatch(r"\d+"), "s", "o")), index=nc.index)
+
+
 def year_causes(p, year):
     """The year's defect lines per month, scope, phase, line, product, category and root cause, from year_baseline's third output
     (the parser's labels: the 2025 extract has no stored labels): (columns, rows) with rows
-    [month, scope, phase, line, product, category, root cause, defect lines, major defect lines, FTO2 liable (1 / 0)]."""
+    [month, scope, phase, line, product, category, root cause, defect lines, major defect lines, liable (f FTO2, s supplier, o other)]."""
     nc, d = p["nc"], p["d"]
     nc = nc[nc.date_creation.astype(str).str.startswith(str(year))]
-    cols = ["notification_number"] + [c for c in ("date_creation", "scope", "phase", "ligne", "produit", "cnq_on_aec") if c not in d.columns]
+    cols = ["notification_number"] + [c for c in ("date_creation", "scope", "phase", "ligne", "produit", "cnq_on_aec", "liability") if c not in d.columns]
     m = d.drop(columns=[c for c in ("date_creation",) if c in d.columns]).merge(nc[cols + (["date_creation"] if "date_creation" not in cols else [])], on="notification_number")
     m["month"] = m.date_creation.astype(str).str[:7]
     m["prod"] = m.produit.fillna("").astype(str).replace("", "Other")
     m["major"] = (~m.llm_mineur.astype(bool)).astype(int)
-    m["aec"] = (m.cnq_on_aec.fillna(0).astype(int) == 1).astype(int)   # the dashboard's "FTO2 liable only" switch
-    g = m.groupby(["month", "scope", "phase", "ligne", "prod", "llm_categorie", "llm_rca_nom", "aec"], dropna=False).agg(n=("seq", "size"), dm=("major", "sum")).reset_index()
-    rows = [[r.month, r.scope, S_(r.phase), S_(r.ligne), r.prod, S_(r.llm_categorie), S_(r.llm_rca_nom), int(r.n), int(r.dm), int(r.aec)] for r in g.itertuples()]
-    return ["month", "scope", "phase", "line", "product", "cat", "rca", "def", "defMajor", "aec"], rows
+    m["liab"] = liab_cat(m)   # the dashboard's "Responsabilité" ticks
+    g = m.groupby(["month", "scope", "phase", "ligne", "prod", "llm_categorie", "llm_rca_nom", "liab"], dropna=False).agg(n=("seq", "size"), dm=("major", "sum")).reset_index()
+    rows = [[r.month, r.scope, S_(r.phase), S_(r.ligne), r.prod, S_(r.llm_categorie), S_(r.llm_rca_nom), int(r.n), int(r.dm), r.liab] for r in g.itertuples()]
+    return ["month", "scope", "phase", "line", "product", "cat", "rca", "def", "defMajor", "liab"], rows
 
 
 def year_baseline(raw, station_desc, ref_dir, year, alias=None):
     """One year of NCs through the pipeline's rules, the parser and the CNQ model (no stored labels: parser classes), summed per
     month, report scope, phase, line and product: [month, scope, phase, line, product, NCs, defect lines, major defect lines,
-    level-3 cost, level-2, level-1, FTO2 liable (1 / 0)]. The work minutes are the model's (no rework-order operations for that year).
+    level-3 cost, level-2, level-1, liable (f FTO2, s supplier, o other), level-3 cost whoever is liable]. The work minutes are the model's (no rework-order operations for that year).
     Same scope rule as the dashboard (serie = plant FTO2 or FT02; client = customer return)."""
     x, _ = merge_exports([pipeline_rules(raw, station_desc)])
     empty = pd.DataFrame(columns=["notification_number", "seq", "snippet", "llm_sous_categorie", "llm_sous_code", "llm_defaut_cable", "llm_confiance", "llm_symptome"])
@@ -638,17 +645,18 @@ def year_baseline(raw, station_desc, ref_dir, year, alias=None):
         p["nc"]["produit"] = [alias(S_(l), S_(q) or "Other", S_(t)) for l, q, t in zip(p["nc"].ligne, p["nc"].produit, st)]
     nc, d = p["nc"], p["d"]
     nc = nc[nc.date_creation.str.startswith(str(year))].copy()
+    nc["c3all"] = nc["cnq_cost_total"]   # the cost of the work whoever is liable (the REC cost switch)
     for c in ("cnq_cost_total", "cnq_cost_global", "cnq_cost_airbus"):   # FTO2's cost: only where FTO2 is liable
         nc[c] = nc[c] * nc["cnq_on_aec"]
     maj = d[~d.llm_mineur.astype(bool)].groupby("notification_number").size()
     nc["major"] = nc.notification_number.map(maj).fillna(0).astype(int)
     nc["month"] = nc.date_creation.str[:7]
     nc["prod"] = nc.produit.fillna("").astype(str).replace("", "Other")
-    nc["aec"] = (nc.cnq_on_aec.fillna(0).astype(int) == 1).astype(int)   # the dashboard's "FTO2 liable only" switch
-    g = nc.groupby(["month", "scope", "phase", "ligne", "prod", "aec"], dropna=False).agg(
+    nc["liab"] = liab_cat(nc)   # the dashboard's "Responsabilité" ticks
+    g = nc.groupby(["month", "scope", "phase", "ligne", "prod", "liab"], dropna=False).agg(
         n=("notification_number", "size"), d=("cnq_defect_lines", "sum"), dm=("major", "sum"),
-        c3=("cnq_cost_total", "sum"), c2=("cnq_cost_global", "sum"), c1=("cnq_cost_airbus", "sum")).reset_index()
-    rows = [[r.month, r.scope, S_(r.phase), S_(r.ligne), r.prod, int(r.n), int(r.d), int(r.dm), round(float(r.c3), 2), round(float(r.c2), 2), round(float(r.c1), 2), int(r.aec)]
+        c3=("cnq_cost_total", "sum"), c2=("cnq_cost_global", "sum"), c1=("cnq_cost_airbus", "sum"), c3all=("c3all", "sum")).reset_index()
+    rows = [[r.month, r.scope, S_(r.phase), S_(r.ligne), r.prod, int(r.n), int(r.d), int(r.dm), round(float(r.c3), 2), round(float(r.c2), 2), round(float(r.c1), 2), r.liab, round(float(r.c3all), 2)]
             for r in g.itertuples()]
     aec = nc[nc.cnq_on_aec == 1]
     info = {"ncs": int(len(nc)), "serie": int((nc.scope == "serie").sum()), "client": int((nc.scope == "client").sum()), "autre": int((nc.scope == "autre").sum()),

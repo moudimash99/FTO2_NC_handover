@@ -102,6 +102,16 @@
 .fto2 svg [data-pick]:hover { opacity: .78; }
 .fto2 td.pickc { text-decoration: underline dotted var(--muted); text-underline-offset: 3px; }
 .fto2 td.pickc:hover, .fto2 td.nc[data-pick]:hover { color: var(--s1); }
+.fto2 .fb-multi { position: relative; }
+.fto2 .fb-multi > summary { list-style: none; cursor: pointer; font: inherit; font-size: 14px; padding: 7px 30px 7px 12px; border: 1px solid var(--ring); border-radius: 8px; background: var(--surface); color: var(--ink); white-space: nowrap; position: relative; min-width: 9em; }
+.fto2 .fb-multi > summary::-webkit-details-marker { display: none; }
+.fto2 .fb-multi > summary::after { content: "▾"; position: absolute; right: 11px; top: 50%; transform: translateY(-50%); color: var(--ink-2); font-size: 12px; }
+.fto2 .fb-multi[open] > summary { border-color: var(--ink-2); }
+.fto2 .fb-menu { position: absolute; z-index: 30; top: calc(100% + 4px); left: 0; min-width: 100%; background: var(--surface); border: 1px solid var(--ring); border-radius: 8px; box-shadow: 0 8px 24px rgba(0,0,0,.12); padding: 6px; display: grid; gap: 2px; }
+.fto2 .fb-menu label { display: flex; align-items: center; gap: 9px; padding: 7px 10px; border-radius: 6px; font-size: 14px; cursor: pointer; white-space: nowrap; color: var(--ink); text-transform: none; letter-spacing: 0; font-weight: 400; }
+.fto2 .fb-menu label:hover { background: var(--band); }
+.fto2 .fb-menu input { width: 16px; height: 16px; accent-color: var(--s1); margin: 0; }
+.fto2 .fb-menu small { color: var(--muted); margin-left: auto; padding-left: 12px; font-variant-numeric: tabular-nums; }
 .fto2 .fb-reset { font: inherit; font-size: 13px; color: var(--s1); background: none; border: 1px solid var(--ring); border-radius: 6px; padding: 5px 12px; cursor: pointer; }
 .fto2 .fb-note { font-size: 11.5px; color: var(--muted); max-width: 16em; line-height: 1.3; }
 .fto2 .fb-sumrow { display: flex; align-items: center; gap: 6px 14px; flex-wrap: wrap; }

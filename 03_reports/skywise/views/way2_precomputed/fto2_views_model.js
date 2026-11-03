@@ -41,6 +41,7 @@ function fto2FromTables(ncIn, defIn, ref, disIn) {
       numOrNull(r.age_days), day(r.closed), str(r.type_nc), str(r.liability), str(r.sap_defect), str(r.sap_cause_group), str(r.sap_cause), str(r.status), str(r.source) || 'sky',
       [num(r.min_alert), num(r.min_writing), num(r.min_support), num(r.min_setup), num(r.min_hands_on), num(r.min_recheck), num(r.hours_engineering), int(r.final_inspection),
         str(r.work_source), str(r.order_state), str(r.rework_orders), str(r.alert_source), str(r.aleas)], str(r.origin) || 'normal', str(r.plant), k ? 0 : num(r.cost_total)];
+    if (!k) a._w = [num(r.cost_airbus), num(r.cost_global), num(r.cost_total), num(r.cost_admin), num(r.cost_work), num(r.cost_material), num(r.cost_engineering)];   // REC cost switch (3 Nov)
     ncs.push(a); byNc[id] = { a: a, plant: str(r.plant), lt: str(r.long_text) };
   });
   // products the production plan does not name, put back on their plan product (04_reference/produits_alias.csv, the same rules as
@@ -71,6 +72,10 @@ function fto2FromTables(ncIn, defIn, ref, disIn) {
     if (a[23] === 'client') { client[k] = [str(r.cr_nature), str(r.cr_detection), str(r.cr_symptom), '', n.plant, a[34]]; lt[id] = n.lt; }
     if (a[23] && str(r.label_src) === 'ai' && str(r.ai_conf) === 'high' && text.length >= 30 && text.length <= 170) pool.push([a[1], id, str(r.rca), text]);
   });
+  // REC cost switch (3 Nov): a defect line of an NC FTO2 is not liable for gets an equal share of the cost of the NC's work, used when the
+  // switch says "Toutes les NC" (its stored share is 0: the cost model only shares FTO2's cost)
+  var nLines = {}; defects.forEach(function (d) { nLines[d[0]] = (nLines[d[0]] || 0) + 1; });
+  defects.forEach(function (d) { var a = byNc[d[0]].a; if (a._w) d._w = a._w[2] / nLines[d[0]]; });
   // root-cause page: three recent, clearly labelled examples per root cause
   pool.sort(function (x, y) { return x[0] < y[0] ? 1 : x[0] > y[0] ? -1 : 0; });
   var ex = {};
@@ -183,7 +188,7 @@ function gNc(n, anyLine) {
     if (!n) return false;
     if (GF.src !== 'all' && (GF.src === 'man' ? n[39] === 'sky' : n[39] !== GF.src)) return false;
     if (GF.org && (n[41] || 'normal') !== GF.org) return false;   // [41] the pipeline output the NC comes from: normal or missing_ids
-    if (GF.aec && n[5] !== 1) return false;   // "FTO2 liable only" (2 Nov, Mohammad): [5] 1 when FTO2 is in the NC's liability
+    if (GF.liab !== 'fso' && GF.liab.indexOf(liabCat(n)) < 0) return false;   // "Responsabilité" ticks (3 Nov): FTO2 only by default
     if (GF.pick && !pickNc(n)) return false;
     if (GF.phase && n[24] !== GF.phase) return false;
     if (GF.line && !anyLine && n[3] !== GF.line) return false;
@@ -194,6 +199,7 @@ function gScope(n) { return !GF.fto2 || ours(n); }
 function ids(a) { var o = {}; a.forEach(function (n) { o[n[0]] = 1; }); return o; }
 function select() {
     if (GF.preset !== 'custom') { var r = presetRange(GF.preset); GF.from = r[0]; GF.to = r[1]; }
+    costMode();
     SEL_NC = REP.filter(function (n) { return gNc(n) && gScope(n); });
     SER_NC = SEL_NC.filter(function (n) { return ours(n) && n[23] !== 'client'; });   // FTO2's, without the customer returns (shown apart, never counted twice)
     CLI_NC = REP.filter(function (n) { return n[23] === 'client' && gNc(n); });
@@ -280,12 +286,12 @@ function v2Series(f) {
 function y25Sel() {
     var Y = D.y25; if (!Y || !Y.rows || GF.src !== 'all' || GF.org === 'missing_ids') return null;
     var c = {}, P = GF.pick; Y.cols.forEach(function (k, i) { c[k] = i; });
-    if (GF.aec && c.aec == null) return null;   // "FTO2 liable only": 2025 needs its liability column
+    if (GF.liab !== 'fso' && c.liab == null) return null;   // the "Responsabilité" ticks: 2025 needs its liability column
     if (P && ['month', 'prod', 'pprod'].indexOf(P.k) < 0) return null;   // a pick the 2025 extract cannot follow: no 2025 comparison
     var pOk = !P ? null : P.k === 'month' ? function (r) { return String(r[c.month]).slice(5, 7) === P.v.slice(5, 7); } : P.k === 'prod' ? function (r) { return (r[c.product] || 'Other') === P.v; } :
       function (r) { return !!(D.eqmsn && D.eqmsn.map && D.eqmsn.map[String(r[c.product] || '').toUpperCase()] === P.v); };
-    return Y.rows.filter(function (r) { return (r[c.scope] === 'serie' || !GF.fto2) && (!GF.aec || +r[c.aec] === 1) && (!GF.phase || r[c.phase] === GF.phase) && (!GF.line || r[c.line] === GF.line) && (!pOk || pOk(r)); })
-      .map(function (r) { return { m: r[c.month], line: r[c.line], p: r[c.product], nc: r[c.nc], def: G.minor ? r[c.def] : r[c.defMajor], cost: r[c.cost] }; });
+    return Y.rows.filter(function (r) { return (r[c.scope] === 'serie' || !GF.fto2) && (GF.liab === 'fso' || GF.liab.indexOf(r[c.liab]) >= 0) && (!GF.phase || r[c.phase] === GF.phase) && (!GF.line || r[c.line] === GF.line) && (!pOk || pOk(r)); })
+      .map(function (r) { return { m: r[c.month], line: r[c.line], p: r[c.product], nc: r[c.nc], def: G.minor ? r[c.def] : r[c.defMajor], cost: COSTALL && c.costAll != null ? r[c.costAll] : r[c.cost] }; });
   }
 function y25Cum(Y, f, months) { var by = {}, c = 0; Y.forEach(function (x) { var k = x.m.slice(5, 7); by[k] = (by[k] || 0) + f(x); }); return [0].concat(months.map(function (m) { c += by[m.slice(5, 7)] || 0; return c; })); }
 function y25Lines() {
@@ -298,12 +304,12 @@ function y25Lines() {
 function y25Rca() {
     var Y = D.y25; if (!Y || !Y.rca || GF.src !== 'all' || GF.org === 'missing_ids') return null;
     var c = {}, P = GF.pick; Y.rcaCols.forEach(function (k, i) { c[k] = i; });
-    if (GF.aec && c.aec == null) return null;
+    if (GF.liab !== 'fso' && c.liab == null) return null;
     if (P && ['month', 'prod', 'pprod', 'cat', 'rca'].indexOf(P.k) < 0) return null;
     var ok = !P ? null : P.k === 'month' ? function (r) { return String(r[c.month]).slice(5, 7) === P.v.slice(5, 7); } : P.k === 'prod' ? function (r) { return (r[c.product] || 'Other') === P.v; } :
       P.k === 'cat' ? function (r) { return r[c.cat] === P.v; } : P.k === 'rca' ? function (r) { return r[c.rca] === P.v; } :
       function (r) { return !!(D.eqmsn && D.eqmsn.map && D.eqmsn.map[String(r[c.product] || '').toUpperCase()] === P.v); };
-    return Y.rca.filter(function (r) { return (r[c.scope] === 'serie' || !GF.fto2) && (!GF.aec || +r[c.aec] === 1) && (!GF.phase || r[c.phase] === GF.phase) && (!GF.line || r[c.line] === GF.line) && (!ok || ok(r)); })
+    return Y.rca.filter(function (r) { return (r[c.scope] === 'serie' || !GF.fto2) && (GF.liab === 'fso' || GF.liab.indexOf(r[c.liab]) >= 0) && (!GF.phase || r[c.phase] === GF.phase) && (!GF.line || r[c.line] === GF.line) && (!ok || ok(r)); })
       .map(function (r) { return { m: r[c.month], p: r[c.product], cat: r[c.cat], rca: r[c.rca], d: G.minor ? r[c.def] : r[c.defMajor] }; });
   }
 function y25Rate(rows, f, keep) {   // keep(p): only these products of the plan (connection errors: A330 and A350)
@@ -333,10 +339,10 @@ function v2Tgt(f25, f26) {
       tm: function (m) { var i = PD.months.indexOf(m); return sumA(lines.map(function (a) { return i < 0 ? 0 : a.rt * a.vol[i] + a.own[i]; })) + out * V2CUT * (V2W[+m.slice(5, 7)] || 1) / wsum; },
       year: sumA(lines.map(function (a) { return a.year; })) + out * V2CUT };
   }
-function alNc(n) { return ours(n) && n[23] !== 'client' && (!GF.phase || n[24] === GF.phase) && (GF.src === 'all' || (GF.src === 'man' ? n[39] !== 'sky' : n[39] === GF.src)) && (!GF.org || (n[41] || 'normal') === GF.org) && (!GF.aec || n[5] === 1); }
+function alNc(n) { return ours(n) && n[23] !== 'client' && (!GF.phase || n[24] === GF.phase) && (GF.src === 'all' || (GF.src === 'man' ? n[39] !== 'sky' : n[39] === GF.src)) && (!GF.org || (n[41] || 'normal') === GF.org) && (GF.liab === 'fso' || GF.liab.indexOf(liabCat(n)) >= 0); }
 function alCompute(at) {   // at: a week index instead of the period's end (checks)
     var E = D.eqmsn && D.eqmsn.wdw; if (!E) return null;
-    var last = at != null ? at : ALARM.lastDone(GF.to < D.meta.to ? GF.to : D.meta.to), k = [GF.phase, GF.src, GF.org, GF.aec, last, G.lang].join('|');
+    var last = at != null ? at : ALARM.lastDone(GF.to < D.meta.to ? GF.to : D.meta.to), k = [GF.phase, GF.src, GF.org, GF.liab, last, G.lang].join('|');
     if (k === AL.sigK) return AL.res;
     var items = {}, planes = {}, cnt = { rca: {}, code: {} }, z = function () { var a = []; for (var i = 0; i < 53; i++) a.push(0); return a; }, w0 = 53, PM = D.eqmsn.msn || {};
     function it(line, lv, v, e, hist) { var key = line + '|' + lv + '|' + v; return items[key] || (items[key] = { key: key, line: line, lv: lv, v: v, w: z(), e: e, n: [], d: [], hist: !!hist }); }
