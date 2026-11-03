@@ -134,7 +134,7 @@ def year_2025(x):
     rules, plan = product_alias_rules(), {str(k).upper() for k in pd.read_csv(os.path.join(ROOT, "04_reference", "eqmsn_produits.csv"), encoding="utf-8").produit_nc}
     alias = lambda line, prod, station: alias_product(rules, plan, line, prod, station)   # products off the plan put back on their plan product
     rows, info, p = core.year_baseline(raw, core.station_pairs([x]), os.path.join(ROOT, "04_reference"), 2025, alias)
-    out = {"cols": ["month", "scope", "phase", "line", "product", "nc", "def", "defMajor", "cost", "cost2", "cost1", "aec"], "rows": rows,
+    out = {"cols": ["month", "scope", "phase", "line", "product", "nc", "def", "defMajor", "cost", "cost2", "cost1", "liab", "costAll"], "rows": rows,
            "from": info["created_from"], "to": info["created_to"], "prod": None, "msn": None}
     out["rcaCols"], out["rca"] = core.year_causes(p, 2025)   # 2025 defects by cause (parser labels), for the 2025 / 2026 cause charts
     n25 = p["nc"][p["nc"].date_creation.astype(str).str.startswith("2025") & (p["nc"].scope == "serie")]
