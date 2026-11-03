@@ -1,11 +1,12 @@
 {
   "inputs": {
     "fto2_dashboard_data_12.csv": 1000,
-    "fto2_dashboard_data_missing_ids_3.csv": 127
+    "fto2_dashboard_data_missing_ids_3.csv": 127,
+    "nc_2026_skywise_fto2_2026-10-26.csv": 154
   },
-  "nc_rows": 1127,
+  "nc_rows": 1281,
   "created_from": "2025-12-15",
-  "created_to": "2026-09-28",
+  "created_to": "2026-10-26",
   "order_inputs": {
     "wo_s03_operations_fto2_sep2026.csv.gz": 2743
   },
@@ -29,52 +30,53 @@
   },
   "labels": {
     "ok": 3098,
-    "titre": 83
+    "a_labelliser": 391,
+    "titre": 90
   },
   "subcodes": {
-    "exact": 3039,
-    "parent_or_none": 142
+    "exact": 3055,
+    "parent_or_none": 524
   },
   "unknown_cnq_classes": [],
   "rework_orders": {
-    "ncs_with_link": 800,
+    "ncs_with_link": 927,
     "operations": 2743,
     "state": {
-      "not_found": 699,
+      "not_found": 823,
       "used": 71,
-      "open": 17,
+      "open": 20,
       "no_time": 13
     }
   },
   "aleas": {
     "rows": 2500,
-    "ncs_with_alea": 200,
-    "quality_without_nc": 108,
+    "ncs_with_alea": 201,
+    "quality_without_nc": 107,
     "block": 89,
     "block_hours": 66.9
   },
   "cnq": {
     "classification": "root cause (long text)",
-    "nc_on_aec": 856,
-    "level1": 403488.79,
-    "level2": 289991.77,
-    "level3": 376915.72,
-    "cable_allocated": 115488.75,
-    "cable_share": 0.3064,
-    "level3_parser": 379173.25,
-    "cable_share_parser": 0.3043
+    "nc_on_aec": 945,
+    "level1": 444081.44,
+    "level2": 320571.1,
+    "level3": 418283.75,
+    "cable_allocated": 128120.88,
+    "cable_share": 0.3063,
+    "level3_parser": 420541.28,
+    "cable_share_parser": 0.3044
   },
   "scope": {
-    "serie": 988,
+    "serie": 1142,
     "autre": 70,
     "client": 69
   },
   "report_scope": {
     "serie": {
-      "ncs": 988,
-      "ncs_without_defect_line": 19,
-      "defects": 3038,
-      "cnq": 412552.83
+      "ncs": 1142,
+      "ncs_without_defect_line": 20,
+      "defects": 3436,
+      "cnq": 487545.67
     },
     "client": {
       "ncs": 69,
@@ -90,7 +92,7 @@
     }
   },
   "defects_by_scope": {
-    "serie": 3038,
+    "serie": 3436,
     "client": 73,
     "autre": 70
   },
@@ -100,12 +102,12 @@
     "test_dashboard.js": "OK"
   },
   "cnq_package_totals": {
-    "nc_rows": 1127,
-    "nc_on_aec": 856,
+    "nc_rows": 1281,
+    "nc_on_aec": 945,
     "nc_no_master_data": 0,
-    "level1_airbus_aec": 403488.79,
-    "level2_global_aec": 289991.77,
-    "level3_detailed_aec": 376915.72
+    "level1_airbus_aec": 444081.44,
+    "level2_global_aec": 320571.1,
+    "level3_detailed_aec": 418283.75
   },
   "customer_returns": {
     "ncs": 69,
@@ -147,18 +149,18 @@
     ]
   },
   "dash_tables": {
-    "nc": 1127,
-    "defects": 3181,
-    "disruptions": 108
+    "nc": 1281,
+    "defects": 3579,
+    "disruptions": 107
   },
   "skywise": {
     "level1": {
       "ncs": 713,
       "defects": 1463,
       "aleas": 99,
-      "js_kb": 1560
+      "js_kb": 1568
     },
-    "level23_js_kb": 962,
+    "level23_js_kb": 971,
     "pipeline_notebook": true,
     "level4": [
       "FTO2_NC_Dashboard_level2.slate.json",

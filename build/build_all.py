@@ -50,13 +50,48 @@ def say(*a):
 
 
 # ============================================================ 1. raw exports -> parser
+def _raw_times_as_export(raw):
+    """A raw Skywise extract gives local times ("2026-10-19 14:01:44", +02:00) and their UTC twins (creation_utc_time...); the
+    exports give UTC as "2026-10-19T12:01:44Z". The times become the exports' form, from the UTC columns (completion_time, which
+    has none, from its local time and offset), so that every NC reads the same way."""
+    iso = lambda t: t.dt.strftime("%Y-%m-%dT%H:%M:%SZ").where(t.notna(), None)
+    for c in ("creation_time", "changed_time", "closure_time", "completion_time"):
+        u = c.replace("_time", "_utc_time")
+        if u in raw.columns:
+            raw[c] = iso(pd.to_datetime(raw[u], errors="coerce", format="%Y-%m-%d %H:%M:%S"))
+        elif c in raw.columns:
+            local = pd.to_datetime(raw[c], errors="coerce", format="%Y-%m-%d %H:%M:%S")
+            off = raw.get(c + "_tz", pd.Series("", index=raw.index)).fillna("").astype(str)
+            mins = off.str.extract(r"([+-])(\d\d):(\d\d)").apply(
+                lambda m: (1 if m[0] == "+" else -1) * (int(m[1]) * 60 + int(m[2])) if isinstance(m[0], str) else 0, axis=1)
+            raw[c] = iso(local - pd.to_timedelta(mins, unit="m"))
+    return raw
+
+
 def load_exports():
+    """The pipeline notebook's NC exports (06_input_data/fto2_dashboard_data*.csv), plus the NCs of raw Skywise extracts
+    (06_input_data/nc_2026_skywise_*.csv, e.g. the extract of 3 Nov: FTO2 NCs created 1 Sep - 26 Oct) that the exports do not
+    hold, through the notebook's own rules (fto2_core.pipeline_rules, as for 2025). An NC in an export keeps its export row: the
+    exports carry the GPS register and Test list columns that a raw extract does not."""
     files = sorted(glob.glob(os.path.join(ROOT, "06_input_data", "fto2_dashboard_data*.csv")))
     frames = []
     for f in files:
         x = pd.read_csv(f, low_memory=False, dtype={"notification_number": str})
         x["_source"] = os.path.basename(f)
         frames.append(x)
+    key = lambda s: s.astype(str).str.strip().str.replace(r"\.0$", "", regex=True).str.lstrip("0")
+    have = set().union(*[set(key(x["notification_number"])) for x in frames]) if frames else set()
+    raws = sorted(glob.glob(os.path.join(ROOT, "06_input_data", "nc_2026_skywise_*.csv*")))
+    for f in raws:
+        raw = pd.read_csv(f, dtype=str, keep_default_na=False, na_values=[""], low_memory=False)
+        raw["notification_number"] = key(raw["notification_number"])
+        raw = raw[~raw["notification_number"].isin(have)].copy()
+        raw = _raw_times_as_export(raw)
+        r = core.pipeline_rules(raw, core.station_pairs(frames))
+        r["_source"] = os.path.basename(f)
+        have |= set(r["notification_number"])
+        frames.append(r)
+        files.append(f)
     x, info = core.merge_exports(frames)
     REPORT["inputs"] = {os.path.basename(f): int((x["_source"] == os.path.basename(f)).sum()) for f in files}
     REPORT.update(info)

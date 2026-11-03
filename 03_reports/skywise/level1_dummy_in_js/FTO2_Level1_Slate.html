@@ -489,6 +489,7 @@
 .fto2 .pp-card { background: var(--surface); border: 1px solid var(--ring); border-radius: 10px; padding: 18px 20px 16px; display: grid; gap: 10px; align-content: start; min-width: 0; }
 .fto2 .pp-card h3 { font-family: var(--font-display); font-weight: 400; font-size: clamp(20px, 2vw, 24px); line-height: 1.15; margin: 0; }
 .fto2 .pp-wide { grid-column: 1 / -1; }
+.fto2 .yy-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px 16px; flex-wrap: wrap; }
 .fto2 .pp-how p { margin: 0 0 8px; max-width: 900px; }
 .fto2 .pp-how h4 { margin: 12px 0 4px; font-size: 14px; }
 .fto2 .cb-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -1203,6 +1204,7 @@
     <div class="lead"><h2 data-t="ppTitle"></h2><p class="sub" data-t="ppSub"></p></div>
     <div class="figs" id="ppFigs"></div>
     <div class="pp-grid">
+      <div class="card pp-card pp-wide"><div class="yy-head"><h3 data-t="yyT"></h3><span id="yyGrp"></span></div><p class="sub" data-t="yyS"></p><div id="yyC"></div><div class="vlegend" id="yyL"></div></div>
       <div class="card pp-card"><h3 data-t="ppLines"></h3><p class="sub" data-t="ppLinesS"></p><div class="table-wrap" id="ppLinesT"></div></div>
       <div class="card pp-card"><h3 data-t="ppMonth"></h3><p class="sub" data-t="ppMonthS"></p><div id="ppMonthC"></div><div class="vlegend" id="ppMonthL"></div></div>
       <div class="card pp-card pp-wide"><h3 data-t="ppProds"></h3><p class="sub" data-t="ppProdsS"></p><div class="table-wrap" id="ppProdsT"></div><div class="sub" id="ppOut"></div></div>
@@ -2863,6 +2865,9 @@ function fto2FromTables(ncIn, defIn, ref, disIn) {
   // folded. A problem can be marked as seen (the page's store, collection 'alarmes'; not in Slate): it leaves the list for
   // everyone and comes back if it gets worse.
   var AL = { db: null, uid: null, marks: {}, sigK: '', res: null, first: 0, last: -1, open: false, more: false };
+  // a sub-code that only says the defect has none yet: "T04 (non précisé)" (a new line not yet labelled by the AI pass), "Non codé".
+  // New lines all land there until they are labelled, which looks like a rise: no alarm on them (3 Nov)
+  var PLACEHOLDER = /\(non précisé\)$|^Non codé$/;
   function alNc(n) { return ours(n) && n[23] !== 'client' && (!GF.phase || n[24] === GF.phase) && (GF.src === 'all' || (GF.src === 'man' ? n[39] !== 'sky' : n[39] === GF.src)) && (!GF.org || (n[41] || 'normal') === GF.org) && (!GF.aec || n[5] === 1); }
   function alCompute(at) {   // at: a week index instead of the period's end (checks)
     var E = D.eqmsn && D.eqmsn.wdw; if (!E) return null;
@@ -2879,7 +2884,7 @@ function fto2FromTables(ncIn, defIn, ref, disIn) {
       add(it(l, 'all', '', e), i, n[0], dk);
       if (c) add(it(l, 'cat', c, e), i, n[0], dk);
       if (ca) { add(it(l, 'rca', ca, e), i, n[0], dk); tally(cnt.rca, l + '|' + ca, c); }
-      if (co) { add(it(l, 'code', co, e), i, n[0], dk); tally(cnt.code, l + '|' + co, ca); }
+      if (co && !PLACEHOLDER.test(co)) { add(it(l, 'code', co, e), i, n[0], dk); tally(cnt.code, l + '|' + co, ca); }   // no alarm on a placeholder sub-code (3 Nov)
       if (n[27]) add(it(l, 'station', n[27], e, true), i, n[0], dk);
       if (n[8]) add(it(l, 'where', n[8], e, true), i, n[0], dk);
     });
@@ -3103,6 +3108,71 @@ function fto2FromTables(ncIn, defIn, ref, disIn) {
     p.addEventListener('pointerleave', hideTip);
     document.getElementById('cbQ').addEventListener('input', function (e) { CB_Q = e.target.value; cbList(cbRows()); });
   })();
+  // ---------------------------------------------------------------- 2025 and 2026 month by month (Mohammad, 3 Nov): NCs, MSN and NCs per MSN, in three
+  // panels on the same months (no second scale). The line group of the per-MSN charts (A330 + A350, or A320; a line chosen in the filter
+  // bar wins), split by line. Every filter applies except the period: January 2025 to the last NC. MSN 2025: products delivered in the
+  // month (Livraisons 2025, as the 2025 targets); MSN 2026: products built, spread over the working days (the plan, as the other charts).
+  // The two years count MSN differently: the rate's line breaks between them, each year has its own average.
+  Object.assign(STR.fr, { yyT: '2025 et 2026, mois par mois', yyS: 'MSN 2025 : produits livrés dans le mois. MSN 2026 : produits fabriqués, répartis sur les jours ouvrés.',
+    yyNc: 'NC', yyMsn: 'MSN', yyRate: 'NC par MSN', yyAvg: 'moy. {y} : {v}', yyNo25: 'Pas de 2025 avec ce filtre.', yyPart: 'Clair : mois en cours, jusqu’au {d}', yyTo: 'jusqu’au {d}' });
+  Object.assign(STR.en, { yyT: '2025 and 2026, month by month', yyS: 'MSN 2025: products delivered in the month. MSN 2026: products built, spread over the working days.',
+    yyNc: 'NCs', yyMsn: 'MSN', yyRate: 'NCs per MSN', yyAvg: '{y} avg: {v}', yyNo25: 'No 2025 with this filter.', yyPart: 'Light: current month, to {d}', yyTo: 'to {d}' });
+  function renderYY() {
+    var box = document.getElementById('yyC'); if (!box) return;
+    var E = pSrc(); if (!E || E !== D.eqmsn || !PD) { box.innerHTML = ''; document.getElementById('yyL').innerHTML = ''; return; }
+    document.getElementById('yyGrp').innerHTML = grpSeg();
+    var LN = GF.line ? [GF.line] : G320 ? ['A320'] : ['A330', 'A350'], inL = function (l) { return LN.indexOf(l) >= 0; };
+    var last = D.meta.to.slice(0, 7), Y5 = D.y25, m25 = (Y5 && Y5.months) || [], R5 = y25Sel(), months = m25.slice();
+    PD.months.forEach(function (m) { if (m <= last && months.indexOf(m) < 0) months.push(m); });
+    var cols = months.map(function (m) { var o = { m: m, nc: {}, msn: {} }; LN.forEach(function (l) { o.nc[l] = 0; o.msn[l] = 0; }); return o; }), at = {};
+    cols.forEach(function (o, j) { at[o.m] = j; });
+    var L25 = (Y5 && Y5.prod) || {};
+    Object.keys(L25).forEach(function (p) { var l = E.line[p]; if (!inL(l)) return; m25.forEach(function (m, i) { var j = at[m]; if (j != null) cols[j].msn[l] += L25[p][i] || 0; }); });
+    PD.all.forEach(function (p) { var l = E.line[p]; if (!inL(l)) return; PD.months.forEach(function (m, i) { var j = at[m]; if (j != null) cols[j].msn[l] += (PD.prod[p][i] || 0) * (PD.part[i] == null ? 1 : PD.part[i]); }); });
+    (R5 || []).forEach(function (x) { if (!inL(x.line)) return; var j = at[x.m]; if (j != null) cols[j].nc[x.line] += x.nc; });
+    var k0 = [GF.preset, GF.from, GF.to]; GF.preset = 'custom'; GF.from = D.meta.from || '2026-01-01'; GF.to = D.meta.to;   // 2026: every NC to the last, whatever the period
+    try { REP.forEach(function (n) { if (!gNc(n) || !gScope(n) || !inL(n[3])) return; var j = at[n[1].slice(0, 7)]; if (j != null) cols[j].nc[n[3]]++; }); }
+    finally { GF.preset = k0[0]; GF.from = k0[1]; GF.to = k0[2]; }
+    cols.forEach(function (o) { o.n = sumA(LN.map(function (l) { return o.nc[l]; })); o.e = sumA(LN.map(function (l) { return o.msn[l]; })); o.r = o.e >= 0.5 ? o.n / o.e : null; o.y = o.m.slice(0, 4); });
+    var partial = +D.meta.to.slice(8, 10) < new Date(Date.UTC(+D.meta.to.slice(0, 4), +D.meta.to.slice(5, 7), 0)).getUTCDate();   // the last month is not over
+    var avg = {}; ['2025', '2026'].forEach(function (y) { var c = cols.filter(function (o) { return o.y === y && o.e >= 0.5; }), e = sumA(c.map(function (o) { return o.e; })); avg[y] = e ? sumA(c.map(function (o) { return o.n; })) / e : null; });
+    var W = Math.max(320, box.clientWidth || 900), ml = 40, mr = W < 560 ? 12 : 96, pw = W - ml - mr, n = cols.length, bw = pw / n, X = function (j) { return ml + j * bw; };
+    var P = [{ k: 'nc', t: S('yyNc'), h: 110 }, { k: 'msn', t: S('yyMsn'), h: 80 }, { k: 'r', t: S('yyRate'), h: 110 }], gap = 30, y0 = 18, g = '';
+    P.forEach(function (p) { p.top = y0; y0 += p.h + gap; });
+    var H = y0 - gap + 40;
+    P.forEach(function (p) {
+      var vals = cols.map(function (o) { return p.k === 'nc' ? o.n : p.k === 'msn' ? o.e : o.r || 0; }), nt = pNice(Math.max.apply(null, vals.concat(p.k === 'r' ? [avg['2025'] || 0, avg['2026'] || 0] : [])) * 1.1, 3);
+      var Yv = function (v) { return p.top + p.h - v / nt.top * p.h; };
+      g += tx(ml, p.top - 6, p.t, 'ink b');
+      for (var t0 = 0; t0 <= nt.top + 1e-9; t0 += nt.step) g += '<line x1="' + ml + '" x2="' + (W - mr) + '" y1="' + r1(Yv(t0)) + '" y2="' + r1(Yv(t0)) + '" stroke="var(--grid)"/>' + tx(ml - 6, Yv(t0) + 4, p.k === 'r' ? f1(t0) : num(t0), 'mu', 'end');
+      if (p.k !== 'r') {
+        cols.forEach(function (o, j) { var acc = 0, lt = partial && j === n - 1; LN.forEach(function (l) { var v = p.k === 'nc' ? o.nc[l] : o.msn[l]; if (v <= 0) return;
+          g += '<rect x="' + r1(X(j) + bw * 0.16) + '" y="' + r1(Yv(acc + v)) + '" width="' + r1(bw * 0.68) + '" height="' + r1(Math.max(0.5, Yv(acc) - Yv(acc + v) - (LN.length > 1 ? 1 : 0))) + '" rx="2" fill="' + lineCol(l) + '"' + (lt ? ' fill-opacity=".45"' : '') + '/>'; acc += v; }); });
+      } else {
+        ['2025', '2026'].forEach(function (y) {   // one line per year: the two years count MSN differently
+          var pts = []; cols.forEach(function (o, j) { if (o.y === y && o.r != null) pts.push([X(j) + bw / 2, Yv(o.r)]); });
+          if (pts.length > 1) g += '<path d="M' + pts.map(function (q) { return r1(q[0]) + ',' + r1(q[1]); }).join('L') + '" fill="none" stroke="var(--ink)" stroke-width="2"/>';
+          pts.forEach(function (q) { g += '<circle cx="' + r1(q[0]) + '" cy="' + r1(q[1]) + '" r="3.2" fill="var(--ink)" stroke="var(--surface)" stroke-width="1.5"/>'; });
+          var js = cols.map(function (o, j) { return o.y === y ? j : -1; }).filter(function (j) { return j >= 0; });
+          if (avg[y] != null && js.length) { var ya = Yv(avg[y]);
+            g += '<line x1="' + r1(X(js[0]) + 2) + '" x2="' + r1(X(js[js.length - 1]) + bw - 2) + '" y1="' + r1(ya) + '" y2="' + r1(ya) + '" stroke="var(--ink-2)" stroke-width="1.5" stroke-dasharray="5 4"/>';
+            if (mr > 40) { var other = avg[y === '2025' ? '2026' : '2025'], yo = other != null ? Yv(other) : null, d = yo == null ? 99 : ya - yo;   // the two labels kept 14 px apart
+              g += tx(W - mr + 6, ya + 4 + (Math.abs(d) < 14 ? (d >= 0 ? 1 : -1) * (14 - Math.abs(d)) / 2 + (d === 0 && y === '2025' ? 7 : 0) : 0), S('yyAvg', { y: y, v: f2(avg[y]) }), 'mu'); } }
+        });
+      }
+    });
+    var by = P[2].top + P[2].h;   // month initials, the year under its months, a rule between the years
+    cols.forEach(function (o, j) { g += tx(X(j) + bw / 2, by + 14, v2Mo(o.m, bw, j), 'mu', 'middle'); });
+    ['2025', '2026'].forEach(function (y) { var js = cols.map(function (o, j) { return o.y === y ? j : -1; }).filter(function (j) { return j >= 0; }); if (js.length) g += tx((X(js[0]) + X(js[js.length - 1]) + bw) / 2, by + 32, y, 'ink b', 'middle'); });
+    var jb = cols.findIndex(function (o) { return o.y === '2026'; }); if (jb > 0) g += '<line x1="' + r1(X(jb)) + '" x2="' + r1(X(jb)) + '" y1="' + (P[0].top - 4) + '" y2="' + r1(by + 20) + '" stroke="var(--ink-2)" stroke-dasharray="2 3"/>';
+    cols.forEach(function (o, j) {   // one hover target per month, over the three panels
+      var lines = [S('yyNc') + ' : ' + num(o.n) + (LN.length > 1 ? ' (' + LN.map(function (l) { return l + ' ' + num(o.nc[l]); }).join(' · ') + ')' : ''), S('yyMsn') + ' : ' + f1(o.e), S('yyRate') + ' : ' + (o.r != null ? f2(o.r) : '—')];
+      if (G.lang === 'en') lines = lines.map(function (t) { return t.replace(' : ', ': '); });
+      g += '<rect x="' + r1(X(j)) + '" y="' + (P[0].top - 4) + '" width="' + r1(bw) + '" height="' + r1(by - P[0].top + 4) + '" fill="transparent"' + tip(monthName(o.m) + ' ' + o.y + (partial && j === n - 1 ? ' · ' + S('yyTo', { d: day(D.meta.to, { day: 'numeric', month: 'short' }) }) : ''), lines) + '/>';
+    });
+    box.innerHTML = svg(W, H, g, S('yyT')) + (R5 ? '' : '<p class="mu">' + esc(S('yyNo25')) + '</p>');
+    document.getElementById('yyL').innerHTML = LN.map(function (l) { return sw(lineCol(l), l); }).join('') + (partial ? '<span class="mu">' + esc(S('yyPart', { d: day(D.meta.to, { day: 'numeric', month: 'long' }) })) + '</span>' : '');
+  }
   function renderPplan() {
     if (G.tab !== 'pplan') return;
     var E = pSrc(), box = document.getElementById('ppLinesT'); if (!box) return;
@@ -3147,6 +3217,7 @@ function fto2FromTables(ncIn, defIn, ref, disIn) {
     // how the numbers are made and used
     var asof = D.eqmsn.asof ? day(D.eqmsn.asof) : '';
     var cur = PD.cur != null ? ' ' + S('ppCur', { m: day(D.meta.to, { month: 'long' }), d: day(D.meta.to), p: pct0(PD.part[PD.cur] * 100) }) : '';
+    renderYY();
     document.getElementById('ppHow').innerHTML = ['ppH1', 'ppH2', 'ppH3', 'ppH4'].map(function (k) { return '<h4>' + esc(S(k + 't')) + '</h4><p>' + esc(S(k, { d: asof, n: num(u.n), p: u.top.join(', ') }) + (k === 'ppH1' ? cur : '')) + '</p>'; }).join('');
   }
 

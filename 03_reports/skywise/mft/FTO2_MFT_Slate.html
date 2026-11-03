@@ -695,7 +695,7 @@ var D = window.FTO2_MFT_D;
     // new this week: causes and sub-codes absent from the 8 working weeks before
     var p8 = validBefore(S.week - 1, 8), nw = [];
     ['rca', 'code'].forEach(function (k) { var now = counts([S.week], k), before = counts(p8, k);
-      Object.keys(now).forEach(function (v) { if (!before[v]) nw.push({ k: k, v: v, n: now[v] }); }); });
+      Object.keys(now).forEach(function (v) { if (!before[v] && !(k === 'code' && PLACEHOLDER.test(v))) nw.push({ k: k, v: v, n: now[v] }); }); });
     nw.sort(function (a, b) { return b.n - a.n; });
     $('aNew').innerHTML = nw.length ? nw.slice(0, 8).map(function (x) { return '<div class="it"><div class="nm"><i style="background:' + valCol(x.k, x.v) + '"></i><span>' + esc(shown(x.k, x.v)) + '</span></div><div class="d">' + esc(lev(x.k)) + ' · ' + T(x.n > 1 ? '{n} défauts cette semaine' : '{n} défaut cette semaine', { n: num(x.n) }) + '</div><div class="r">' + plusBtn(x.k, x.v) + '</div></div>'; }).join('')
       : '<p class="empty">' + esc(T('Rien de nouveau cette semaine.')) + '</p>';
@@ -1176,6 +1176,9 @@ var D = window.FTO2_MFT_D;
     return { P: P, run: run, seen: seen, week: week, lastDone: lastDone, docId: docId, sig: sig, spark: spark };
   })();
   /* ===== ALARM ENGINE END ===== */
+  // a sub-code that only says the defect has none yet ("T04 (non précisé)": a new line not yet labelled by the AI pass; "Non codé"):
+  // new lines all land there until labelled, which looks like a rise, so no alarm and not "new" (3 Nov)
+  var PLACEHOLDER = /\(non précisé\)$|^Non codé$/;
   var AL = { open: false, more: false, marks: {}, res: null, sigK: '', first: 0, last: -1 };
   function alCompute() {
     var V = D.vol; if (!V) return null;
@@ -1194,7 +1197,7 @@ var D = window.FTO2_MFT_D;
       add(it(l, 'all', ''), i, n[0], j);
       if (c) add(it(l, 'cat', c), i, n[0], j);
       if (ca) { add(it(l, 'rca', ca), i, n[0], j); tally(cnt.rca, l + '|' + ca, c); }
-      if (co) { add(it(l, 'code', co), i, n[0], j); tally(cnt.code, l + '|' + co, ca); }
+      if (co && !PLACEHOLDER.test(co)) { add(it(l, 'code', co), i, n[0], j); tally(cnt.code, l + '|' + co, ca); }   // no alarm on a placeholder sub-code (3 Nov)
       if (st) add(it(l, 'station', st, true), i, n[0], j);
       if (wh) add(it(l, 'where', wh, true), i, n[0], j);
     });

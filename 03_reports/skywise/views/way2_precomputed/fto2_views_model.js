@@ -349,7 +349,7 @@ function alCompute(at) {   // at: a week index instead of the period's end (chec
       add(it(l, 'all', '', e), i, n[0], dk);
       if (c) add(it(l, 'cat', c, e), i, n[0], dk);
       if (ca) { add(it(l, 'rca', ca, e), i, n[0], dk); tally(cnt.rca, l + '|' + ca, c); }
-      if (co) { add(it(l, 'code', co, e), i, n[0], dk); tally(cnt.code, l + '|' + co, ca); }
+      if (co && !PLACEHOLDER.test(co)) { add(it(l, 'code', co, e), i, n[0], dk); tally(cnt.code, l + '|' + co, ca); }   // no alarm on a placeholder sub-code (3 Nov)
       if (n[27]) add(it(l, 'station', n[27], e, true), i, n[0], dk);
       if (n[8]) add(it(l, 'where', n[8], e, true), i, n[0], dk);
     });
