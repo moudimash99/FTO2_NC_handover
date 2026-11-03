@@ -72,6 +72,9 @@ data, only if something fails), `level4_import` (untested).
 
 The notebook file, the other datasets, the sync, the queries and the state boxes stay as they are.
 
+Already pasted the files of 3 November? Since then (running month, MFT count switch): paste the new
+`fto2_level23.js` into the dashboard's sandbox, and the new `mft/fto2_mft.css`, `.html` and `.js` into the MFT sandbox.
+
 ## Keep it up to date
 
 - **New NCs:** run the notebook. The pages follow once the sync has run.

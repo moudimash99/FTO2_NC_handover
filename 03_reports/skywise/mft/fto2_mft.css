@@ -22,6 +22,7 @@
 .fto2 .brand span { font-size: 12px; color: var(--muted); }
 .fto2 .ctl { display: flex; align-items: center; gap: 8px; min-width: 0; }
 .fto2 .ctl.per { flex-wrap: wrap; }
+.fto2 .ctl.cnt { margin: 14px 0 -4px; flex-wrap: wrap; }
 .fto2 .ctl.per select { width: 11.5em; min-width: 0; flex: 0 1 11.5em; }
 .fto2 .ctl.per #lF, .fto2 .ctl.per #lT { text-transform: none; letter-spacing: 0; font-size: 13px; font-weight: 500; }
 @media (max-width: 620px) {
