@@ -422,7 +422,8 @@ def eqmsn(nc):
         pd.DataFrame(rows, columns=["niveau", "nom", "semaine", "msn"]).to_csv(os.path.join(OUT, "fto2_msn_semaine.csv"), index=False, encoding="utf-8")
     REPORT["eqmsn"] = {"products": len(out["std"]), "total_std": round(sum(sum(v) for v in out["std"].values()), 2),
                        "total_wd": round(sum(sum(v) for v in out.get("wd", {}).values()), 2),
-                       "msn_dates": len(out["msn"] or {}), "msn_asof": out["msnAsof"]}
+                       "msn_dates": len(out["msn"] or {}), "msn_asof": out["msnAsof"],
+                       "msn_repaired": sorted(set(PRODUCTION_REPAIRED))}   # '#N/A' MSNs filled from an older export
     return out
 
 
@@ -448,17 +449,31 @@ def alias_product(rules, plan, line, prod, station):
     return prod
 
 
+PRODUCTION_REPAIRED = []   # MSNs whose '#N/A' in the newest Avances / Retards export was filled from an older export
+
+
 def _production_export():
     """The newest 'Tableau Avances / Retards' export (06_input_data/Avances_Retards_*.csv): its date and one record per MSN and
     product, {line, prod, msn, plan, real} with the 8 milestone dates (Impression, Enclenchement, SE, MECA, INTE, TEST, QUALITE,
-    Départ OTA) of the 'date prévue du début' and 'date réelle' rows. (None, []) without the file."""
+    Départ OTA) of the 'date prévue du début' and 'date réelle' rows. (None, []) without the file.
+    A row whose MSN reads "#N/A" (an Excel error in the export: the 3 Nov export lost it on 13 A330 aircraft of late 2025) takes
+    its MSN, and its planned dates that read "#N/A", from the latest older export with the same line, product and rank."""
     import csv, datetime as dt
     files = sorted(glob.glob(os.path.join(ROOT, "06_input_data", "Avances_Retards_*.csv")))
     if not files:
         return None, []
     asof = dt.date.fromisoformat(os.path.basename(files[-1])[len("Avances_Retards_"):-4])
-    rows = list(csv.reader(open(files[-1], encoding="utf-8")))
-    h = next(i for i, r in enumerate(rows) if r[:3] == ["S/HS", "Prog", "Produit"])
+
+    def plan_rows(path):
+        rows = list(csv.reader(open(path, encoding="utf-8")))
+        h = next(i for i, r in enumerate(rows) if r[:3] == ["S/HS", "Prog", "Produit"])
+        return rows[h + 1:]
+    bad = lambda v: v.strip() in ("", "#N/A")
+    older = {}   # (line, product, rank) -> the planned row of an older export with a real MSN; the newest older export wins
+    for f in files[:-1]:
+        for r in plan_rows(f):
+            if len(r) >= 15 and r[14] == "date prévue du début" and not bad(r[3]):
+                older[(r[1].strip(), r[2].strip(), r[4].strip())] = r
 
     def day(s):
         try:
@@ -466,9 +481,14 @@ def _production_export():
         except ValueError:
             return None
     recs, cur = [], None
-    for r in rows[h + 1:]:
+    for r in plan_rows(files[-1]):
         if len(r) < 15:
             continue
+        if r[14] == "date prévue du début" and bad(r[3]):
+            o = older.get((r[1].strip(), r[2].strip(), r[4].strip()))
+            if o:
+                r = r[:3] + [o[3]] + r[4:5] + [x if not bad(x) else y for x, y in zip(r[5:13], o[5:13])] + r[13:]
+                PRODUCTION_REPAIRED.append("%s %s %s" % (r[1].strip(), r[2].strip(), o[3].strip()))
         if r[14] == "date prévue du début" and r[3].strip():
             cur = {"line": r[1].strip(), "prod": EQ_NAMES.get(r[2].strip(), r[2].strip()), "msn": r[3].strip(), "plan": [day(x) for x in r[5:13]], "real": [None] * 8}
             recs.append(cur)

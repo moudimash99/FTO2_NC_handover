@@ -1,6 +1,6 @@
 # FTO2 NC dashboard in Skywise
 
-What you end up with: one notebook that writes three tables, and one Slate app with the dashboard (Simple and Expert in one
+What you end up with: one notebook that writes three tables, and one Slate app with the dashboard (Essentiel and Deep dive in one
 page) and the MFT page. The Tableau Elizabeth is optional. Every file named below is in this folder.
 
 Details (what each level proves, what the notebook changes, what was tested): `DETAILS.md`.
@@ -40,7 +40,7 @@ set `KEEP_OLD_OUTPUTS = False` in the first code cell.
 4. Paste `level3_datasets/fto2_level23.css`, `fto2_level23.html` and `fto2_level23.js` into its CSS, HTML and JS tabs.
 5. Paste `level3_datasets/state.json` into its state box (it shows `"input": "Hello World"` at first).
 
-Check: on the data of 28 September 2026, Expert, Vue d'ensemble shows **910 NC, 2 960 défauts, 347,4 k€**.
+Check: on the data of 28 September 2026, Deep dive, Vue d'ensemble shows **910 NC, 2 960 défauts, 347,4 k€**.
 
 **4. The MFT page** (a second page in the same app)
 
@@ -55,7 +55,7 @@ Sharing them needs a table Slate can write to, to ask IT for.
 
 **5. The Tableau Elizabeth** (optional): a third page, same as the MFT with the files of `elizabeth/`.
 
-Not needed: `views/` (now the dashboard's Simple mode), `level1_dummy_in_js` and `level2_dummy_queries` (tests on made-up
+Not needed: `views/` (now the dashboard's Essentiel mode), `level1_dummy_in_js` and `level2_dummy_queries` (tests on made-up
 data, only if something fails), `level4_import` (untested).
 
 ## Already set up on 23 October? What to change

@@ -127,9 +127,24 @@
   "eqmsn": {
     "products": 10,
     "total_std": 640.46,
-    "total_wd": 644.27,
+    "total_wd": 625.13,
     "msn_dates": 795,
-    "msn_asof": "2026-10-07"
+    "msn_asof": "2026-11-03",
+    "msn_repaired": [
+      "A330 740VU 2141",
+      "A330 740VU 2142",
+      "A330 740VU 2143",
+      "A330 740VU 2144",
+      "A330 740VU 2148",
+      "A330 740VU 2150",
+      "A330 PTVU 2132",
+      "A330 PTVU 2133",
+      "A330 PTVU 2134",
+      "A330 PTVU 2135",
+      "A330 PTVU 2136",
+      "A330 PTVU 2137",
+      "A330 PTVU 2138"
+    ]
   },
   "dash_tables": {
     "nc": 1127,
