@@ -221,7 +221,7 @@ def parts(root, scope_css):
     t = open(os.path.join(root, "build", "templates", "dashboard.html"), encoding="utf-8").read()
     css = re.sub(r"/\*.*?\*/", "", t.split("<style>", 1)[1].split("</style>", 1)[0], flags=re.S)
     fonts = re.search(r'<link rel="stylesheet" href="(https://fonts\.googleapis\.com/[^"]+)">', t)
-    html = t[t.index('<div class="wrap">'):t.index("<script>")].strip()
+    html = t[t.index('<div class="wrap">'):t.index('<script type="application/json" id="fto2-data">')].strip()   # the page, without its data
     main = t[t.index("<script>\n(function ()") + len("<script>\n"):t.rindex("</script>")].strip()
     a, b = t.index("/* ===== ADAPTER START ===== */"), t.index("/* ===== ADAPTER END ===== */") + len("/* ===== ADAPTER END ===== */")
     adapter = t[a:b].replace(ADAPTER_RUN, "")

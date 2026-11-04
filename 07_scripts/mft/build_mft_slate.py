@@ -47,10 +47,10 @@ def parts():
     fonts = re.search(r'<link rel="stylesheet" href="(https://fonts\.googleapis\.com/[^"]+)">', t)
     css = (('/* Fonts: if Slate blocks this address, the page falls back to the system fonts. */\n@import url("%s");\n' % fonts.group(1)) if fonts else "") + \
         B._scope_css(css) + SP.EXTRA_CSS
-    body = t[t.index('<header class="top">'):t.index("<script>")].strip()
+    body = t[t.index('<header class="top">'):t.index('<script type="application/json" id="mft-data">')].strip()   # the page, without its data
     html = '<div class="fto2">\n<div id="fto2-err" class="fto2-err" hidden></div>\n<div id="fto2-wait" class="fto2-wait" hidden></div>\n%s\n</div>\n' % body
     main = t[t.index("<script>") + len("<script>"):t.rindex("</script>")].strip()
-    head = "var D = /*@@DATA@@*/null;"
+    head = "var D = JSON.parse(document.getElementById('mft-data').textContent);   // the data, written by the build beside the code"
     assert main.count(head) == 1 and "/*@@ALARMS@@*/" in main
     main = main.replace(head, "var D = window.FTO2_MFT_D;", 1).replace("/*@@ALARMS@@*/", js_al, 1)
     return css, html, main

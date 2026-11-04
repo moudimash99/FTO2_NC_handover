@@ -33,8 +33,8 @@ L3 = os.path.join(ROOT, "03_reports", "skywise", "level3_datasets")
 def dash_data():
     """The main page's data block: {'tables': {nc, def, dis}, 'ref': {...}}."""
     src = open(os.path.join(ROOT, "03_reports", "FTO2_NC_Dashboard.html"), encoding="utf-8").read()
-    a = src.index("window.DASH = ") + len("window.DASH = ")
-    b = src.index(";\nwindow.FTO2_PAGE", a)
+    a = src.index('<script type="application/json" id="fto2-data">') + len('<script type="application/json" id="fto2-data">')
+    b = src.index("</script>", a)
     return json.loads(src[a:b].replace("<\\/", "</"))
 
 

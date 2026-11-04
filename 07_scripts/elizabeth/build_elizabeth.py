@@ -54,7 +54,10 @@ def build(say=print):
     ref = SP._blob({"vol": M.weekly_volume()})
     T = tables()
     # the page, with its copy of the tables
-    page = t.replace("/*@@HEAD@@*/", "window.ELZ_REF = %s;\nwindow.ELZ_TABLES = %s;" % (ref, SP._blob(T)), 1)
+    data = '<script type="application/json" id="elz-data">%s</script>\n<script>' % SP._blob({"ref": {"vol": M.weekly_volume()}, "tables": T})
+    head = "var ELZ_DATA = JSON.parse(document.getElementById('elz-data').textContent);   // the data, written by the build beside the code\n" \
+           "window.ELZ_REF = ELZ_DATA.ref;\nwindow.ELZ_TABLES = ELZ_DATA.tables;"
+    page = t.replace("<script>", data, 1).replace("/*@@HEAD@@*/", head, 1)
     assert "@@" not in page
     for out in (os.path.join(ROOT, "03_reports", "FTO2_Elizabeth.html"), os.path.join(ROOT, "build", "artifacts", "FTO2_Elizabeth.html")):
         os.makedirs(os.path.dirname(out), exist_ok=True)

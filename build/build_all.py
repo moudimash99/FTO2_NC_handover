@@ -279,7 +279,7 @@ def slate_pack(data, template="dashboard.html", page="main"):
     t = open(os.path.join(ROOT, "build", "templates", template), encoding="utf-8").read()
     css = re.sub(r"/\*.*?\*/", "", t.split("<style>", 1)[1].split("</style>", 1)[0], flags=re.S)
     fonts = re.search(r'<link rel="stylesheet" href="(https://fonts\.googleapis\.com/[^"]+)">', t)
-    html = t[t.index('<div class="wrap">'):t.index("<script>")].strip()
+    html = t[t.index('<div class="wrap">'):t.index('<script type="application/json" id="fto2-data">')].strip()   # the page, without its data
     main = t[t.index("<script>\n(function ()") + len("<script>\n"):t.rindex("</script>")].strip()
     d = dict(data)
     d.pop("direct", None)                                          # not used by the page

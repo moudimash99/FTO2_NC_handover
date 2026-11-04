@@ -17,8 +17,8 @@ sys.path.insert(0, HERE)
 import build_all   # noqa: E402   _page: the page writer shared by every dashboard page
 
 src = open(os.path.join(ROOT, "03_reports", "FTO2_NC_Dashboard.html"), encoding="utf-8").read()
-a = src.index("window.DASH = ") + len("window.DASH = ")
-b = src.index(";\nwindow.FTO2_PAGE", a)
+a = src.index('<script type="application/json" id="fto2-data">') + len('<script type="application/json" id="fto2-data">')
+b = src.index("</script>", a)
 data = json.loads(src[a:b].replace("<\\/", "</"))
 build_all._page("dashboard.html", data, "FTO2_NC_Dashboard.html")   # Simple and Expert (30 Oct): the main page holds the views too
 build_all._page("dashboard.html", data, "FTO2_Vues.html", page="vues", title="FTO2 · Synthèse et détail")

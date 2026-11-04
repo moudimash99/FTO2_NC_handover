@@ -1207,8 +1207,9 @@ html.vu-lock { overflow: hidden; }
   <footer><p id="foot1"></p><p data-t="foot2"></p><p id="foot3"></p><p data-t="foot4"></p><p data-t="foot5"></p></footer>
 </div>
 
+<script type="application/json" id="fto2-data">__DATA__</script>
 <script>
-window.DASH = __DATA__;
+window.DASH = JSON.parse(document.getElementById('fto2-data').textContent);   // the data, written by the build beside the code
 window.FTO2_PAGE = window.FTO2_PAGE || '__PAGE__';
 </script>
 <script>

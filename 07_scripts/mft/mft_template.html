@@ -249,8 +249,9 @@ header.top .al-wrap { margin-left: auto; }
 <div id="tip" hidden></div>
 <div class="ov" id="ov" hidden><form class="frm" id="frm" novalidate></form></div>
 
+<script type="application/json" id="mft-data">/*@@DATA@@*/null</script>
 <script>
-var D = /*@@DATA@@*/null;
+var D = JSON.parse(document.getElementById('mft-data').textContent);   // the data, written by the build beside the code
 (function () {
   'use strict';
   // ---------------------------------------------------------------- data

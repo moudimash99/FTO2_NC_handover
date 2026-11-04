@@ -43,11 +43,17 @@ def page_data():
     out = {}
     with open(os.path.join(ROOT, "03_reports", "FTO2_NC_Dashboard.html"), encoding="utf-8") as f:
         page = f.read()
-    dash = json_after(page, "window.DASH = ", ";\nwindow.FTO2_PAGE")
+    if '<script type="application/json" id="fto2-data">' in page:
+        dash = json_after(page, '<script type="application/json" id="fto2-data">', "</script>")
+    else:   # pages built before the data moved out of the code
+        dash = json_after(page, "window.DASH = ", ";\nwindow.FTO2_PAGE")
     out["dashboard.ref"] = dash.get("ref")
     with open(os.path.join(ROOT, "03_reports", "FTO2_MFT.html"), encoding="utf-8") as f:
         page = f.read()
-    out["mft.data"] = json_after(page, "var D = ", ";\n")
+    if '<script type="application/json" id="mft-data">' in page:
+        out["mft.data"] = json_after(page, '<script type="application/json" id="mft-data">', "</script>")
+    else:
+        out["mft.data"] = json_after(page, "var D = ", ";\n")
     return out
 
 
