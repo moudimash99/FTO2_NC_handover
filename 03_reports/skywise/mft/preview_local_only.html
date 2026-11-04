@@ -363,7 +363,8 @@ function mftFromTables(ncIn, defIn, R) {
 
 // ---------------------------------------------------------------- the store: the page's actions and alarm marks, in this browser
 // Same calls as the page's shared store (collection, doc, set, update, delete, onSnapshot). Slate gives a code sandbox no shared
-// store, so they are kept in this browser's storage; the first time, the actions are the trackers' (FTO2_MFT_REF.actions).
+// store: the shared actions are the table config/1_actions_mft.csv (they reach the page in FTO2_MFT_REF.actions and replace
+// this browser's copy at every load); an action typed on the page is kept in this browser only, until it is added to the table.
 window.FTO2_STORE = (function () {
   var mem = {}, subs = {}, ok = true, KEY = 'mft-fto2-slate-';
   function copy(o) { return JSON.parse(JSON.stringify(o)); }
@@ -371,7 +372,8 @@ window.FTO2_STORE = (function () {
   function load(c) {
     if (mem[c]) return mem[c];
     var v = null; try { v = JSON.parse(localStorage.getItem(KEY + c) || 'null'); } catch (e) { ok = false; }
-    if (!v) { v = {}; if (c === 'actions') (window.FTO2_MFT_REF.actions || []).forEach(function (a) { v[a.id] = copy(a); }); }
+    v = v || {};
+    if (c === 'actions') (window.FTO2_MFT_REF.actions || []).forEach(function (a) { v[a.id] = copy(a); });   // the table wins
     mem[c] = v; save(c); return v;
   }
   function emit(c) { setTimeout(function () {
