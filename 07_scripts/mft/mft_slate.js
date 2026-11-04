@@ -41,7 +41,7 @@ function mftFromTables(ncIn, defIn, R) {
     defs.push([i, code('cat', r.cat), code('rca', r.rca), code('sub', r.sub), code('code', r.subcode), code('fin', r.fin), Math.round(parseFloat(r.minor) || 0), tidy(r.text)]); });
   var codes = {}; dic.code.forEach(function (c) { if (c) codes[c] = tidy((R.codes || {})[c] || '', 90); });
   var codesEn = {}; dic.code.forEach(function (c) { if (c && (R.codesEn || {})[c]) codesEn[c] = R.codesEn[c]; });   // the English page (2 Nov)
-  return { to: to, toWeek: to ? isoWeek(to) : '', ncs: ncs, defs: defs, dic: dic, codes: codes, codesEn: codesEn, vol: R.vol || null, msnEnd: R.msnEnd || {} };
+  return { to: to, toWeek: to ? isoWeek(to) : '', ncs: ncs, defs: defs, dic: dic, codes: codes, codesEn: codesEn, vol: R.vol || null, msnEnd: R.msnEnd || {}, settings: R.settings };
 }
 
 // ---------------------------------------------------------------- the store: the page's actions and alarm marks, in this browser

@@ -24,6 +24,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, ROOT)
 from fto2 import config   # noqa: E402   the settings in config/
+from fto2 import reference as REF   # noqa: E402   the pages' settings
 
 
 def week(d):
@@ -70,7 +71,7 @@ def data():
     return {"to": to, "toWeek": week(to), "ncs": ncs, "defs": defs, "dic": dic,
             "codes": {c: tidy(fr.get(c, ""), 90) for c in dic["code"] if c},
             "codesEn": {c: en[c] for c in dic["code"] if c in en},   # the English page (2 Nov)
-            "vol": weekly_volume(), "msnEnd": msn_end()}
+            "vol": weekly_volume(), "msnEnd": msn_end(), "settings": REF.page_settings()}
 
 
 

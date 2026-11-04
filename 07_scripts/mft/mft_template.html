@@ -257,9 +257,13 @@ var D = JSON.parse(document.getElementById('mft-data').textContent);   // the da
   // ---------------------------------------------------------------- data
   var DIC = D.dic, NCS = D.ncs, DEFS = D.defs, CODES = D.codes || {};
   // the dashboard's nine categories and colours (2 Nov: Kitting Factory, FOD and Autre are categories like the others, as on the dashboard since 29 Oct)
-  var CATS = ['MEO Facteur humain', 'Erreur Branchement', 'Élément Manquant', 'Élément Endommagé', 'Déverrouillage', 'Grounding/Bonding', 'Kitting Factory', 'FOD', 'Autre'];
-  var CATC = {}; CATS.forEach(function (c, i) { CATC[c] = 'var(--c' + (i + 1) + ')'; });
-  var LINEC = { A350: 'var(--l1)', A330: 'var(--l2)', A320: 'var(--l3)', A400M: 'var(--l4)' };
+  // the pages' settings, from config/ through the backend (fto2/reference.py page_settings)
+  var SET = D.settings;
+  window.FTO2_ALARM_P = SET.alarmes;   // the alarm settings, read by the alarm block below (config/3_alarmes.csv)
+  // the dashboard's categories and colours (config/2_categories.csv) and line colours (config/2_lignes.csv)
+  var CATS = SET.categories.filter(function (c) { return c.couleur; }).map(function (c) { return c.nom; });
+  var CATC = {}; SET.categories.forEach(function (c) { if (c.couleur) CATC[c.nom] = 'var(--c' + c.couleur + ')'; });
+  var LINEC = {}; Object.keys(SET.lignes).forEach(function (l) { LINEC[l] = 'var(--l' + SET.lignes[l] + ')'; });
   var LEVELS = { cat: 'Catégorie', rca: 'Cause', sub: 'Sous-catégorie', code: 'Sous-code', grp: 'Code', fin: 'FIN', where: 'Lieu de détection', station: 'Poste', msn: 'MSN', prod: 'Produit' };
   var WHERE_FR = { 'Final inspection': 'Contrôle final', 'TEST': 'Test', 'Cables': 'Câbles', 'In-process (internal)': 'En cours de fabrication', 'Supplier': 'Fournisseur', 'QUALITE': 'Qualité', 'Customer return': 'Retour client', 'NC Interne': 'NC interne' };
   var STATUSES = ['À lancer', 'En cours', 'Clos', 'Abandonnée'];
@@ -386,7 +390,7 @@ var D = JSON.parse(document.getElementById('mft-data').textContent);   // the da
   var NW = WEEKS.length, PARTIAL = new Date(D.to + 'T00:00:00Z').getUTCDay() !== 0;   // the week of the last NC is incomplete unless it ends on Sunday
   var NCW = NCS.map(function (n) { return WIDX[isoWeek(n[1])]; });
   var PLANT = WEEKS.map(function () { return 0; }); DEFS.forEach(function (d) { PLANT[NCW[d[0]]]++; });
-  var SHUT = PLANT.map(function (v, i) { return v < 10 && !(PARTIAL && i === NW - 1); });
+  var SHUT = PLANT.map(function (v, i) { return v < SET.semaine_fermeture && !(PARTIAL && i === NW - 1); });
   function valid(i) { return i >= 0 && i < NW && !SHUT[i] && !(PARTIAL && i === NW - 1); }
   var LASTC = NW - 1; while (LASTC > 0 && !valid(LASTC)) LASTC--;   // the last complete, working week
   var MOIS = ['janv.', 'févr.', 'mars', 'avr.', 'mai', 'juin', 'juil.', 'août', 'sept.', 'oct.', 'nov.', 'déc.'], MOIS_EN = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -437,12 +441,12 @@ var D = JSON.parse(document.getElementById('mft-data').textContent);   // the da
   function lowWeek(i) {
     var v = volOf(i); if (v == null) return false;
     if (TYP[S.line] == null) { var a = WEEKS.map(function (w, k) { return volOf(k); }).filter(function (x) { return x > 0; }).sort(function (x, y) { return x - y; }); TYP[S.line] = a.length ? a[Math.floor(a.length / 2)] : 0; }
-    return TYP[S.line] > 0 && v < TYP[S.line] * 0.6;
+    return TYP[S.line] > 0 && v < TYP[S.line] * SET.semaine_faible;
   }
   // how far back the reference goes (Mohammad, 2 Nov): a week against the 4 weeks before, 1 month (4 weeks) against the 3 months before
   // (13 weeks), 3 months (13 weeks) against the 12 months before (52 weeks); a custom period against as many weeks as it has (4 at least).
   // The data start in January 2026: early in the year the reference holds the weeks there are, and says which.
-  var REFN = { 1: 4, 4: 13, 13: 52 };
+  var REFN = SET.mft_fenetres;   // config/2_reglages_pages.csv
   function refWeeks() { var out = [], n = REFN[S.pm] || Math.max(4, S.per); for (var k = per()[0] - 1; k >= 0 && out.length < n; k--) if (valid(k) && !lowWeek(k)) out.unshift(k); return out; }
   function refLab(ws) {   // the weeks in runs, a gap showing the closure weeks left out: 'S29–S31, S35'
     var out = [], i = 0;
@@ -568,8 +572,8 @@ var D = JSON.parse(document.getElementById('mft-data').textContent);   // the da
     var item = function (x, cls) { var c = valCol('rca', x.v);
       return '<div class="it"><div class="nm"><i style="background:' + c + '"></i><span>' + esc(L(x.v)) + '</span></div><div class="d">' + num(x.b, 1) + ' → ' + num(x.a, 1) + T(' / sem.') + '</div>' +
         '<div class="r"><span class="delta ' + cls + '">' + (isFinite(x.r) ? pct(x.r) : T('nouveau')) + '</span>' + spark(ser[x.v], wsS, c) + plusBtn('rca', x.v) + '</div></div>'; };
-    var up = rows.filter(function (x) { return x.n4 >= 4 && x.a > x.b * 1.25; }).sort(function (a, b) { return (b.a - b.b) - (a.a - a.b); }).slice(0, 6);
-    var dn = rows.filter(function (x) { return x.b * 8 >= 6 && x.a < x.b * 0.75; }).sort(function (a, b) { return (a.a - a.b) - (b.a - b.b); }).slice(0, 6);
+    var up = rows.filter(function (x) { return x.n4 >= SET.mft_hausse_min && x.a > x.b * SET.mft_hausse_facteur; }).sort(function (a, b) { return (b.a - b.b) - (a.a - a.b); }).slice(0, 6);
+    var dn = rows.filter(function (x) { return x.b * 8 >= SET.mft_baisse_min && x.a < x.b * SET.mft_baisse_facteur; }).sort(function (a, b) { return (a.a - a.b) - (b.a - b.b); }).slice(0, 6);
     $('aUp').innerHTML = up.length ? up.map(function (x) { return item(x, 'up'); }).join('') : '<p class="empty">' + esc(T('Aucune cause en nette hausse.')) + '</p>';
     $('aDown').innerHTML = dn.length ? dn.map(function (x) { return item(x, 'down'); }).join('') : '<p class="empty">' + esc(T('Aucune cause en nette baisse.')) + '</p>';
     // new this week: causes and sub-codes absent from the 8 working weeks before
@@ -583,7 +587,7 @@ var D = JSON.parse(document.getElementById('mft-data').textContent);   // the da
     var w8 = {}; validBefore(S.week, 8).forEach(function (i) { w8[i] = 1; }); var fm = {};
     DEFS.forEach(function (d) { if (!w8[NCW[d[0]]] || !inScope(d[0]) || !selOk(d, 'fin')) return; var f = fld(d, 'fin'); if (!f) return; var o = fm[f] || (fm[f] = { ac: {}, n: 0, rca: {} }); o.ac[DIC.msn[NCS[d[0]][4]] || 'NC ' + NCS[d[0]][0]] = 1; o.n++; var r = fld(d, 'rca'); o.rca[r] = (o.rca[r] || 0) + 1; });
     var fins = Object.keys(fm).map(function (f) { var o = fm[f]; return { f: f, k: Object.keys(o.ac).length, n: o.n, r: Object.keys(o.rca).sort(function (a, b) { return o.rca[b] - o.rca[a]; })[0] }; })
-      .filter(function (x) { return x.k >= 3; }).sort(function (a, b) { return b.k - a.k || b.n - a.n; }).slice(0, 8);
+      .filter(function (x) { return x.k >= SET.mft_fin_min; }).sort(function (a, b) { return b.k - a.k || b.n - a.n; }).slice(0, 8);
     $('aFin').innerHTML = fins.length ? fins.map(function (x) { return '<div class="it"><div class="nm"><i style="background:' + valCol('rca', x.r) + '"></i><span>' + esc(x.f) + '</span></div><div class="d">' + T('{k} avions · {n} défauts · surtout {r}', { k: num(x.k), n: num(x.n), r: esc(L(x.r)) }) + '</div><div class="r">' + plusBtn('fin', x.f) + '</div></div>'; }).join('')
       : '<p class="empty">' + esc(T('Aucun repère sur 3 avions ou plus.')) + '</p>';
   }
@@ -645,13 +649,13 @@ var D = JSON.parse(document.getElementById('mft-data').textContent);   // the da
     var roll = WEEKS.map(function (w, i) { if (!valid(i)) return null; var b = validBefore(i, 4); return mean(b.map(function (k) { return ser[k]; })); });
     var o = { ser: ser, roll: roll, si: si, st: 'nostart', fromAnalysis: !a.actionStart && !!a.analysisStart }; if (si == null) return o;
     var pre = validBefore(si - 1, 8); o.pre = pre; if (pre.length < 4) { o.st = 'noref'; return o; }
-    o.base = mean(pre.map(function (k) { return ser[k]; })); o.tgt = o.base * 0.7;
+    o.base = mean(pre.map(function (k) { return ser[k]; })); o.tgt = o.base * SET.action_coef;
     var post = []; for (var k = Math.max(si, 0); k <= LASTC; k++) if (valid(k)) post.push(k); o.post = post;
     if (!o.base) { o.st = 'noref'; return o; }
     if (post.length < 4) { o.st = 'early'; o.cur = post.length ? roll[post[post.length - 1]] : null; return o; }
     o.cur = roll[post[post.length - 1]]; o.chg = o.cur / o.base - 1; o.steady = 0;
     for (var j = post.length - 1; j >= 0 && roll[post[j]] <= o.tgt + 1e-9; j--) o.steady++;
-    o.st = o.steady >= 4 ? 'met' : o.chg <= -0.3 ? 'below' : o.chg <= -0.1 ? 'down' : o.chg >= 0.1 ? 'up' : 'flat';
+    o.st = o.steady >= SET.action_semaines ? 'met' : o.chg <= -SET.action_baisse ? 'below' : o.chg <= -SET.action_tendance ? 'down' : o.chg >= SET.action_tendance ? 'up' : 'flat';
     return o;
   }
   var VLAB = { met: 'Objectif atteint', below: 'Sous l’objectif', down: 'En baisse', up: 'En hausse', flat: 'Stable', early: 'Trop tôt pour juger', noref: 'Pas de référence', nostart: 'Date de début à saisir', none: 'Problème à préciser' };
@@ -840,7 +844,7 @@ var D = JSON.parse(document.getElementById('mft-data').textContent);   // the da
   /*@@ALARMS@@*/
   // a sub-code that only says the defect has none yet ("T04 (non précisé)": a new line not yet labelled by the AI pass; "Non codé"):
   // new lines all land there until labelled, which looks like a rise, so no alarm and not "new" (3 Nov)
-  var PLACEHOLDER = /\(non précisé\)$|^Non codé$/;
+  var PLACEHOLDER = new RegExp(SET.placeholder);   // sub-codes "not specified": no alarm on them (config/2_reglages_pages.csv)
   var AL = { open: false, more: false, marks: {}, res: null, sigK: '', first: 0, last: -1 };
   function alCompute() {
     var V = D.vol; if (!V) return null;

@@ -1,0 +1,19 @@
+nom;valeur;description
+objectif_baisse;0.25;Objectif = taux 2025 moins ce pourcentage (0.25 = −25 %)
+poids_mois;7=0.6|8=0.6;Poids d'un mois dans l'objectif mensuel (mois=poids) : juillet et août comptent pour 60 % d'un mois
+semaine_fermeture_moins_de;10;Une semaine avec moins de défauts que ce nombre (toute l'usine) est une semaine de fermeture : hors moyennes
+msn_minimum;0.5;Un produit ou un mois compte dans les taux par MSN à partir de ce volume de MSN
+souscodes_non_precis;\(non précisé\)$|^Non codé$;Sous-codes « non précisés » (regex) : pas d'alarme sur eux
+defaut_phase;SERIE;Type de production affiché à l'ouverture : SERIE, REC, FTI ou vide (tous)
+defaut_responsabilite;f;Cases Responsabilité cochées à l'ouverture : f (FTO2), s (fournisseurs), o (autres), ex. fs
+defaut_periode;ytd;Période à l'ouverture : ytd (depuis le 1er janvier), m1, m3, m6, m12, all
+semaine_faible_moins_de;0.6;Une semaine qui produit moins que cette part d'une semaine normale de la ligne est faible : hors références (page MFT, Tableau Elizabeth)
+mft_fenetres;1=4|4=13|13=52;Page MFT : période (semaines) = semaines de référence avant elle (1 semaine contre 4, 1 mois contre 3 mois, 3 mois contre 12 mois)
+mft_hausse_min_defauts;4;Page MFT, « Ce qui monte » : au moins ce nombre de défauts sur les 4 dernières semaines
+mft_hausse_facteur;1.25;... et au moins ce facteur par rapport aux 8 semaines avant
+mft_baisse_min_base;6;Page MFT, « Ce qui baisse » : au moins ce nombre de défauts sur les 8 semaines avant
+mft_baisse_facteur;0.75;... et au plus ce facteur
+mft_fin_min_avions;3;Page MFT, « FIN récurrents » : un FIN sur au moins ce nombre d'avions en 8 semaines
+action_objectif_baisse;0.3;Action MFT : objectif = moyenne des 8 semaines avant moins ce pourcentage (0.3 = −30 %)
+action_semaines_tenues;4;Action MFT : l'objectif est atteint quand il tient ce nombre de semaines
+action_seuil_tendance;0.1;Action MFT : au-delà de ± ce pourcentage, « en baisse » ou « en hausse »

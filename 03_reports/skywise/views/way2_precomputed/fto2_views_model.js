@@ -97,7 +97,7 @@ function fto2FromTables(ncIn, defIn, ref, disIn) {
   // the disruption block (optional third table): quality aléas that led to no NC [id, opened, line, station, work order, minutes, in block, reason, status, comment]
   var dis = disIn ? rows(disIn).map(function (r) { return [str(r.id), day(r.opened), str(r.line), str(r.station), str(r.work_order), num(r.minutes), int(r.in_block), str(r.reason), str(r.status), str(r.comment)]; })
     .filter(function (a) { return a[0] && a[1]; }) : null;
-  return { defects: defects, ncs: ncs, rca: rca, client: client, lt: lt, codes: ref.codes || {}, actions: ref.actions || [], cnqp: cnqp, eqmsn: eq, y25: ref.y25 || null, dis: dis, cables: ref.cables || null,
+  return { defects: defects, ncs: ncs, rca: rca, client: client, lt: lt, codes: ref.codes || {}, actions: ref.actions || [], cnqp: cnqp, eqmsn: eq, y25: ref.y25 || null, dis: dis, cables: ref.cables || null, settings: ref.settings,
     meta: { from: ref.from || '2026-01-01', to: to, aside: { other: [notLiable.length, nlSum] },
       noLine: ncs.filter(function (a) { var p = String(a[42] || '').trim().toUpperCase(); return (p === 'FTO2' || p === 'FT02') && a[21] === 0; }).length, modelTotal: sum(aec) } };
 }
@@ -148,11 +148,11 @@ function fto2FromTables(ncIn, defIn, ref, disIn) {
     'Longueur trop courte à la def': 'Too short in the drawing', 'Mauvais numéro': 'Wrong number', 'Pincé / écrasé': 'Pinched / crushed',
     'Défaut isolant (bobine)': 'Insulation defect (reel)', 'Entaillé / isolant abîmé': 'Nicked / insulation damaged', 'Coupe à la main': 'Cut by hand' };
     var TYPE_ALIAS = { 'NC Interne': 'INTERNE', 'NC Retour client': 'RETOUR CLIENT', 'CLIENT': 'RETOUR CLIENT' };
-    var CAT_ORDER = ['MEO Facteur humain', 'Erreur Branchement', 'Élément Manquant', 'Élément Endommagé', 'Déverrouillage', 'Grounding/Bonding', 'Kitting Factory', 'FOD', 'Autre', 'Non classé'];
-    var ASIDE = { 'Non classé': 1, '__none': 1 };
+    var CAT_ORDER = SET.categories.map(function (c) { return c.nom; });
+    var ASIDE = { '__none': 1 };
     var MAIN_CATS = CAT_ORDER.filter(function (c) { return !ASIDE[c]; }).concat(['aside']);
     var CONN_LINES = { A330: 1, A350: 1 };
-    var V2W = { 7: 0.6, 8: 0.6 };
+    var V2W = SET.poids_mois;
     var PRESETS = ['ytd', 'm1', 'm3', 'm6', 'm12', 'all', 'custom'];
     var AL = { db: null, uid: null, marks: {}, sigK: '', res: null, first: 0, last: -1, open: false, more: false };
     var LINES = lineOrder(REP.map(function (n) { return n[3]; }));
@@ -248,10 +248,10 @@ function pAgg(P) {
       o.FC = sumA(P.prod[p].slice(P.fc)) + (P.cur != null ? P.prod[p][P.cur] * (1 - P.part[P.cur]) : 0); });   // to come: the rest of the running month, then the months after
     return a;
   }
-function pOk() { return P_().filter(function (o) { return o.EQ >= 0.5; }); }
+function pOk() { return P_().filter(function (o) { return o.EQ >= EQMIN; }); }
 function pAct() { return PD.months.map(function (m, i) { return i; }).filter(function (i) { return PD.mask[i]; }); }
 function P_() { return PD.prods.map(function (p) { return PA[p]; }); }
-function pMonthly(f, keep) { var os = P_().filter(keep || function () { return true; }); return pAct().map(function (i) { var e = sumA(os.map(function (o) { return o.eqm[i]; })); return { i: i, e: e, v: sumA(os.map(function (o) { return f(o, i); })) }; }).filter(function (x) { return x.e >= 0.5; }); }
+function pMonthly(f, keep) { var os = P_().filter(keep || function () { return true; }); return pAct().map(function (i) { var e = sumA(os.map(function (o) { return o.eqm[i]; })); return { i: i, e: e, v: sumA(os.map(function (o) { return f(o, i); })) }; }).filter(function (x) { return x.e >= EQMIN; }); }
 function connOk(o) { return !!CONN_LINES[o.line]; }
 function v2Months() {
     var a = [], d = new Date(GF.from.slice(0, 7) + '-01T00:00:00Z'), end = (GF.to < D.meta.to ? GF.to : D.meta.to).slice(0, 7), fc = [];
@@ -269,7 +269,7 @@ function v2Fc(f, M) {
     if (C) res[M.fc[0]] += per(C.i, 1 - C.part) + pace * w(C.m) * (1 - C.part);   // the rest of the running month, with the first month to come
     return { m: res, out: out, outFc: pace * K.f };
   }
-function v2InPlan(n) { var E = pSrc(), p = E && E.map && E.map[String(n[26] || '').toUpperCase()]; return p && PA && PA[p] && PA[p].EQ >= 0.5 && PD.idx[n[0]] != null ? p : null; }
+function v2InPlan(n) { var E = pSrc(), p = E && E.map && E.map[String(n[26] || '').toUpperCase()]; return p && PA && PA[p] && PA[p].EQ >= EQMIN && PD.idx[n[0]] != null ? p : null; }
 function v2OutK(M) {
     var w = function (m) { return V2W[+m.slice(5, 7)] || 1; }, C = PD && PD.cur != null && M.fc.length && M.act[M.act.length - 1] === PD.months[PD.cur] ? { m: PD.months[PD.cur], i: PD.cur, part: PD.part[PD.cur] } : null;
     var a = sumA(M.act.map(w)) - (C ? w(C.m) * (1 - C.part) : 0), f = sumA(M.fc.map(w)) + (C ? w(C.m) * (1 - C.part) : 0);
@@ -420,8 +420,7 @@ function alWk(i) { return S('alWk', { n: i + 1 }); }
   // ("Inversion (T04)"), a parent gives way to the child carrying 60 % of its rise, stations / places / products / cables join the
   // problem sharing more than half of their NCs; a problem an action covers says so. Weeks: 0 = ISO week 1 of 2026.
   var ALARM = (function () {
-    var P = { recent: 4, base: 12, zMin: 2.5, gMin: 1.5, zMaj: 3, gMaj: 2, exMaj: 10, quiet: 4, minX: 3, hist: 3, share: 0.5,
-      crossCarry: 0.7, block: 8, step: 1.1, creepZ: 3, creepG: 2, planeK: 2.5, planePlus: 3, planeMin: 6, show: 5 };
+    var P = window.FTO2_ALARM_P;   // the alarm settings (config/3_alarmes.csv), set by the page before this block
     var LF = [0];
     function lf(n) { for (var i = LF.length; i <= n; i++) LF[i] = LF[i - 1] + Math.log(i); return LF[n]; }
     function tail(x, n, p) {   // P(K >= x) for K binomial (n, p)

@@ -1,0 +1,21 @@
+nom;valeur;description
+recent;4;Semaines récentes comparées
+base;12;Semaines de référence avant elles
+zMin;2.5;Alarme mineure : écart en sigma
+gMin;1.5;... et encore en sigma sans la plus grosse semaine
+zMaj;3;Alarme majeure : écart en sigma
+gMaj;2;... et encore en sigma sans la plus grosse semaine
+exMaj;10;... et au moins ce nombre de défauts de plus que d'habitude
+quiet;4;Semaines sous 1 sigma pour fermer une alarme
+minX;3;Pas d'alarme sous ce nombre de défauts
+hist;3;Semaines d'historique montrées
+share;0.5;Part des NC communes pour regrouper postes / lieux / produits avec un problème
+crossCarry;0.7;Plusieurs lignes : aucune ligne ne porte plus que cette part de la hausse
+block;8;Hausse lente : blocs de semaines
+step;1.1;Hausse lente : chaque bloc au moins x ce facteur
+creepZ;3;Hausse lente : écart en sigma entre le premier et le dernier bloc
+creepG;2;... et sans la plus grosse semaine
+planeK;2.5;Avion hors norme : plus de k fois la médiane de son produit
+planePlus;3;... et plus que le 90e centile + ce nombre
+planeMin;6;... et au moins ce nombre de NC
+show;5;Alarmes affichées au plus

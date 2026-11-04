@@ -1310,7 +1310,7 @@ function fto2FromTables(ncIn, defIn, ref, disIn) {
   // the disruption block (optional third table): quality aléas that led to no NC [id, opened, line, station, work order, minutes, in block, reason, status, comment]
   var dis = disIn ? rows(disIn).map(function (r) { return [str(r.id), day(r.opened), str(r.line), str(r.station), str(r.work_order), num(r.minutes), int(r.in_block), str(r.reason), str(r.status), str(r.comment)]; })
     .filter(function (a) { return a[0] && a[1]; }) : null;
-  return { defects: defects, ncs: ncs, rca: rca, client: client, lt: lt, codes: ref.codes || {}, actions: ref.actions || [], cnqp: cnqp, eqmsn: eq, y25: ref.y25 || null, dis: dis, cables: ref.cables || null,
+  return { defects: defects, ncs: ncs, rca: rca, client: client, lt: lt, codes: ref.codes || {}, actions: ref.actions || [], cnqp: cnqp, eqmsn: eq, y25: ref.y25 || null, dis: dis, cables: ref.cables || null, settings: ref.settings,
     meta: { from: ref.from || '2026-01-01', to: to, aside: { other: [notLiable.length, nlSum] },
       noLine: ncs.filter(function (a) { var p = String(a[42] || '').trim().toUpperCase(); return (p === 'FTO2' || p === 'FT02') && a[21] === 0; }).length, modelTotal: sum(aec) } };
 }
@@ -1321,6 +1321,10 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
 (function () {
   'use strict';
   var D = window.DASH, EMBED = !!window.FTO2_EMBED;
+  // the pages' settings, from config/ through the backend (fto2/reference.py page_settings): target cut, month weights, shutdown
+  // weeks, MSN minimum, filters at opening, categories, line colours, alarm settings
+  var SET = D.settings, EQMIN = SET.msn_minimum;
+  window.FTO2_ALARM_P = SET.alarmes; window.FTO2_PLACEHOLDER = SET.placeholder;
   // defect row: [nc, seq, date, week, line, perimetre, catP, rcaP, subP, minorP, cableP, cat, rca, sub, minor, cable, allocP, alloc, snippet, (empty), scope, phase, officialSubCode]
   // NC row:     [nc, date, week, line, perimetre, onAEC, rule, ruleLabel, whereFound, c1, c2, c3P, c3, admin, workP, work, matP, mat, eng, cableP, cable, lines, title, scope, phase,
   //              msn, product, station, hour, lead, open, age, closure date, type, liability, SAP defect, SAP cause group, SAP cause, status, data source]
@@ -1758,8 +1762,8 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
   var WHERE_EN = { 'TEST': 'Test', 'In-process (internal)': 'Internal', 'NC Retour client': 'Customer return', 'NC Interne': 'Internal', 'QUALITE': 'Quality', 'NC Fournisseur': 'Supplier' };
   var RULE_FR = { 'Rework to drawing': 'Retouche', 'Exchange': 'Échange', 'Rejection': 'Rebut / rejet', 'Rejection with a rework order': 'Rejet avec ordre de retouche', 'Scrap': 'Rebut', 'Request for design change': 'Demande de DQN',
     'Accept as is': 'Accepté en l’état', 'Potential non-conformity': 'NC potentielle', 'No decision': 'Sans décision', 'Deleted NC': 'NC supprimée', 'Unknown decision code': 'Décision inconnue' };
-  var CAT_ORDER = ['MEO Facteur humain', 'Erreur Branchement', 'Élément Manquant', 'Élément Endommagé', 'Déverrouillage', 'Grounding/Bonding', 'Kitting Factory', 'FOD', 'Autre', 'Non classé'];
-  var ASIDE = { 'Non classé': 1, '__none': 1 };   // Kitting Factory, FOD and Autre are categories like the others since 29 Oct (Mohammad: no more 'tracked separately')
+  var CAT_ORDER = SET.categories.map(function (c) { return c.nom; });   // config/2_categories.csv
+  var ASIDE = { '__none': 1 }; SET.categories.forEach(function (c) { if (c.a_part) ASIDE[c.nom] = 1; });   // shown aside, no category colour
 
   // two pages from one file: the dashboard, and the weekly follow-up (weekly Pareto, MFT actions)
   var PAGE = window.FTO2_PAGE === 'suivi' || window.FTO2_PAGE === 'vues' ? window.FTO2_PAGE : (window.FTO2_PAGE === 'review' || window.FTO2_PAGE === 'mock') && D.dummy ? window.FTO2_PAGE : 'main';
@@ -1823,7 +1827,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
   var REP = D.ncs;
   var DMAX = D.meta.to, DMIN = REP.reduce(function (m, n) { return n[1] < m ? n[1] : m; }, DMAX);
   var LINES = lineOrder(REP.map(function (n) { return n[3]; }));
-  var GF0 = { pick: null, src: 'all', org: '', fto2: true, liab: 'f', cost: 'fto2', phase: 'SERIE', line: '', preset: PAGE === 'suivi' ? 'all' : 'ytd', from: '', to: '' }, GF = Object.assign({}, GF0);
+  var GF0 = { pick: null, src: 'all', org: '', fto2: true, liab: SET.defauts.liab, cost: 'fto2', phase: SET.defauts.phase, line: '', preset: PAGE === 'suivi' ? 'all' : SET.defauts.preset, from: '', to: '' }, GF = Object.assign({}, GF0);
   var PRESETS = ['ytd', 'm1', 'm3', 'm6', 'm12', 'all', 'custom'];
   function plusDays(iso, k) { var d = new Date(iso + 'T12:00:00Z'); d.setUTCDate(d.getUTCDate() + k); return isoDay(d); }
   function minusMonths(iso, k) { var d = new Date(iso + 'T12:00:00Z'), dd = d.getUTCDate(); d.setUTCDate(1); d.setUTCMonth(d.getUTCMonth() - k); d.setUTCDate(Math.min(dd, new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth() + 1, 0)).getUTCDate())); return isoDay(d); }
@@ -2056,7 +2060,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
 
   // ---------------------------------------------------------------- 1. Overview: headline figures, each chart counts NCs of the selection
   // NC row extras: [32] closure date, [33] NC type, [34] liability, [35] SAP defect code, [36] SAP cause group, [37] SAP cause, [38] status
-  var PROG_COL = { A350: 'var(--l1)', A330: 'var(--l2)', A320: 'var(--l3)', A400M: 'var(--l4)' };   // no blue or green: those are the categories' (20 Oct)
+  var PROG_COL = {}; Object.keys(SET.lignes).forEach(function (l) { PROG_COL[l] = 'var(--l' + SET.lignes[l] + ')'; });   // line colours (config/2_lignes.csv)
   function lineCol(l) { return PROG_COL[l] || 'var(--dim)'; }   // one colour per line on every chart
   // a product takes the colour of its line (the line of most of its NCs), as on Localisation; 'Other' stays grey (29 Oct)
   var PROD_LINE = (function () { var c = {}, r = {}; D.ncs.forEach(function (n) { var p = n[26] || 'Other', o = c[p] || (c[p] = {}); o[n[3]] = (o[n[3]] || 0) + 1; });
@@ -2262,7 +2266,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
   function lvlOf(lvl, r) { return lvl === 'cat' ? dCat(r) : lvl === 'rca' ? dRca(r) : dCode(r); }
   function lvlGet(r) { return lvlOf(W.lvl, r); }
   function lvlName(lvl, v) { return lvl === 'code' ? codeName(v) : L(v); }
-  var WEEK_ALL = {}; D.defects.forEach(function (r) { if (ours(NC[r[0]])) WEEK_ALL[r[3]] = (WEEK_ALL[r[3]] || 0) + 1; });  // shutdown weeks: fewer than 10 defects
+  var WEEK_ALL = {}; D.defects.forEach(function (r) { if (ours(NC[r[0]])) WEEK_ALL[r[3]] = (WEEK_ALL[r[3]] || 0) + 1; });  // shutdown weeks: fewer defects than SET.semaine_fermeture
   var weekly = Board({
     grid: 'wg', chips: 'wc', search: 'wq', count: 'wn', thead: 'wth', tbody: 'wtb', more: 'wm', kicker: 'kmDef',
     rows: function () { var set = toSet(winWeeks()); return wBase().filter(function (r) { return set[r[3]]; }); },
@@ -2294,7 +2298,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
     document.getElementById('wf1').textContent = num(rs.length);
     document.getElementById('wf2').textContent = num(nN);
     var perW = {}; rs.forEach(function (r) { perW[r[3]] = (perW[r[3]] || 0) + 1; });
-    var open = ws.filter(function (w) { return (WEEK_ALL[w] || 0) >= 10; }), nOpen = open.reduce(function (s, w) { return s + (perW[w] || 0); }, 0);
+    var open = ws.filter(function (w) { return (WEEK_ALL[w] || 0) >= SET.semaine_fermeture; }), nOpen = open.reduce(function (s, w) { return s + (perW[w] || 0); }, 0);
     if (ws.length > 1) { document.getElementById('wf3').textContent = open.length ? num(Math.round(nOpen / open.length)) : '—'; document.getElementById('wf3l').textContent = S('wPerWeek'); }
     else { var nd = Object.keys(ncD).length; document.getElementById('wf3').textContent = nd ? (Math.round(rs.length / nd * 10) / 10).toLocaleString(loc()) : '—'; document.getElementById('wf3l').textContent = S('wPerNc'); }
     document.getElementById('wf4').textContent = tr ? L(tr) : '—';
@@ -2625,8 +2629,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
   // ("Inversion (T04)"), a parent gives way to the child carrying 60 % of its rise, stations / places / products / cables join the
   // problem sharing more than half of their NCs; a problem an action covers says so. Weeks: 0 = ISO week 1 of 2026.
   var ALARM = (function () {
-    var P = { recent: 4, base: 12, zMin: 2.5, gMin: 1.5, zMaj: 3, gMaj: 2, exMaj: 10, quiet: 4, minX: 3, hist: 3, share: 0.5,
-      crossCarry: 0.7, block: 8, step: 1.1, creepZ: 3, creepG: 2, planeK: 2.5, planePlus: 3, planeMin: 6, show: 5 };
+    var P = window.FTO2_ALARM_P;   // the alarm settings (config/3_alarmes.csv), set by the page before this block
     var LF = [0];
     function lf(n) { for (var i = LF.length; i <= n; i++) LF[i] = LF[i - 1] + Math.log(i); return LF[n]; }
     function tail(x, n, p) {   // P(K >= x) for K binomial (n, p)
@@ -2830,7 +2833,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
   var AL = { db: null, uid: null, marks: {}, sigK: '', res: null, first: 0, last: -1, open: false, more: false };
   // a sub-code that only says the defect has none yet: "T04 (non précisé)" (a new line not yet labelled by the AI pass), "Non codé".
   // New lines all land there until they are labelled, which looks like a rise: no alarm on them (3 Nov)
-  var PLACEHOLDER = /\(non précisé\)$|^Non codé$/;
+  var PLACEHOLDER = new RegExp(window.FTO2_PLACEHOLDER);   // sub-codes "not specified": no alarm on them (config/2_reglages_pages.csv)
   function alNc(n) { return ours(n) && n[23] !== 'client' && (!GF.phase || n[24] === GF.phase) && (GF.src === 'all' || (GF.src === 'man' ? n[39] !== 'sky' : n[39] === GF.src)) && (!GF.org || (n[41] || 'normal') === GF.org) && (GF.liab === 'fso' || GF.liab.indexOf(liabCat(n)) >= 0); }
   function alCompute(at) {   // at: a week index instead of the period's end (checks)
     var E = D.eqmsn && D.eqmsn.wdw; if (!E) return null;
@@ -3096,9 +3099,9 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
     var k0 = [GF.preset, GF.from, GF.to]; GF.preset = 'custom'; GF.from = D.meta.from || '2026-01-01'; GF.to = D.meta.to;   // 2026: every NC to the last, whatever the period
     try { REP.forEach(function (n) { if (!gNc(n) || !gScope(n) || !inL(n[3])) return; var j = at[n[1].slice(0, 7)]; if (j != null) cols[j].nc[n[3]]++; }); }
     finally { GF.preset = k0[0]; GF.from = k0[1]; GF.to = k0[2]; }
-    cols.forEach(function (o) { o.n = sumA(LN.map(function (l) { return o.nc[l]; })); o.e = sumA(LN.map(function (l) { return o.msn[l]; })); o.r = o.e >= 0.5 ? o.n / o.e : null; o.y = o.m.slice(0, 4); });
+    cols.forEach(function (o) { o.n = sumA(LN.map(function (l) { return o.nc[l]; })); o.e = sumA(LN.map(function (l) { return o.msn[l]; })); o.r = o.e >= EQMIN ? o.n / o.e : null; o.y = o.m.slice(0, 4); });
     var partial = +D.meta.to.slice(8, 10) < new Date(Date.UTC(+D.meta.to.slice(0, 4), +D.meta.to.slice(5, 7), 0)).getUTCDate();   // the last month is not over
-    var avg = {}; ['2025', '2026'].forEach(function (y) { var c = cols.filter(function (o) { return o.y === y && o.e >= 0.5; }), e = sumA(c.map(function (o) { return o.e; })); avg[y] = e ? sumA(c.map(function (o) { return o.n; })) / e : null; });
+    var avg = {}; ['2025', '2026'].forEach(function (y) { var c = cols.filter(function (o) { return o.y === y && o.e >= EQMIN; }), e = sumA(c.map(function (o) { return o.e; })); avg[y] = e ? sumA(c.map(function (o) { return o.n; })) / e : null; });
     var W = Math.max(320, box.clientWidth || 900), ml = 40, mr = W < 560 ? 12 : 96, pw = W - ml - mr, n = cols.length, bw = pw / n, X = function (j) { return ml + j * bw; };
     var P = [{ k: 'nc', t: S('yyNc'), h: 110 }, { k: 'msn', t: S('yyMsn'), h: 80 }, { k: 'r', t: S('yyRate'), h: 110 }], gap = 30, y0 = 18, g = '';
     P.forEach(function (p) { p.top = y0; y0 += p.h + gap; });
@@ -3143,13 +3146,13 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
     PD = pData(); PA = pAgg(PD);
     var L25 = (D.y25 && D.y25.prod) || {}, d25 = function (p) { return L25[p] ? sumA(L25[p]) : 0; }, yr = function (p) { return sumA(PD.prod[p] || []); };
     var T = v2Tgt(function (x) { return x.nc; }, function (o) { return o.NC; }), tl = {}; (T ? T.lines : []).forEach(function (a) { tl[a.l] = a; });
-    var by = {}; P_().forEach(function (o) { var l = o.line || '—', a = by[l] || (by[l] = { l: l, eq: 0, yr: 0, d25: 0, nc: 0 }); a.eq += o.EQ; a.yr += yr(o.p); a.d25 += d25(o.p); a.nc += o.EQ >= 0.5 ? o.NC : 0; });   // under 0.5 MSN: out of plan (v2InPlan)
+    var by = {}; P_().forEach(function (o) { var l = o.line || '—', a = by[l] || (by[l] = { l: l, eq: 0, yr: 0, d25: 0, nc: 0 }); a.eq += o.EQ; a.yr += yr(o.p); a.d25 += d25(o.p); a.nc += o.EQ >= EQMIN ? o.NC : 0; });   // under 0.5 MSN: out of plan (v2InPlan)
     var u = v2Unplanned(); Object.keys(u.by).forEach(function (l) { var a = by[l] || (by[l] = { l: l, eq: 0, yr: 0, d25: 0, nc: 0 }); a.nc += u.by[l].n; });   // NCs with no plan product: in their line, no row of their own (30 Oct)
     var lines = lineOrder(Object.keys(by)).map(function (l) { return by[l]; }), sumK = function (k) { return sumA(lines.map(function (a) { return a[k]; })); };
     // 2025 NCs (série, the same filter), by line and by plan product
     var Y5 = y25Sel() || [], E5 = pSrc(), n25p = {}, n25l = {}; Y5.forEach(function (x) { var p = E5 && E5.map && E5.map[String(x.p || '').toUpperCase()]; if (p) n25p[p] = (n25p[p] || 0) + x.nc; var l = x.line || '—'; n25l[l] = (n25l[l] || 0) + x.nc; });
     lines.forEach(function (a) { a.n25 = n25l[a.l] || 0; });
-    var f = function (v) { return v ? f1(v) : '—'; }, rt = function (n, e) { return e >= 0.5 ? f2(n / e) : '—'; };
+    var f = function (v) { return v ? f1(v) : '—'; }, rt = function (n, e) { return e >= EQMIN ? f2(n / e) : '—'; };
     document.getElementById('ppFigs').innerHTML = [[f1(sumK('eq')), S('ppF1')], [f1(sumK('yr')), S('ppF2')], [num(Math.round(sumK('d25'))), S('ppF3')], [num(sumK('nc')) + ' / ' + num(SEL_NC.length), S('ppF4')]]
       .map(function (x) { return '<div class="fig"><b>' + esc(x[0]) + '</b><span>' + esc(x[1]) + '</span></div>'; }).join('');
     var th = function (a) { return '<thead><tr>' + a.map(function (h, j) { return '<th scope="col"' + (j ? ' class="r"' : '') + '>' + esc(S(h)) + '</th>'; }).join('') + '</tr></thead>'; };
@@ -3256,7 +3259,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
   // ---------------------------------------------------------------- 5. Insights (selection)
   // Category colours: validated categorical order (blue, aqua, yellow, magenta, green, violet); orange stays reserved for cable.
   var A = { pin: null, top0: null, lor: null, km: null, msn: null };
-  var CATC = { 'MEO Facteur humain': 1, 'Erreur Branchement': 2, 'Élément Manquant': 3, 'Élément Endommagé': 4, 'Déverrouillage': 5, 'Grounding/Bonding': 6, 'Kitting Factory': 7, 'FOD': 8, 'Autre': 9 };   // 7-9 validated with the six (light and dark), 29 Oct
+  var CATC = {}; SET.categories.forEach(function (c) { if (c.couleur) CATC[c.nom] = c.couleur; });   // colour 1-9 of each category (config/2_categories.csv)
   var MAIN_CATS = CAT_ORDER.filter(function (c) { return !ASIDE[c]; }).concat(['aside']);
   function catKey(c) { return ASIDE[c] ? 'aside' : c; }
   function catFill(c) { return CATC[c] ? 'var(--c' + CATC[c] + ')' : 'var(--dim)'; }
@@ -5173,7 +5176,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
       o.FC = sumA(P.prod[p].slice(P.fc)) + (P.cur != null ? P.prod[p][P.cur] * (1 - P.part[P.cur]) : 0); });   // to come: the rest of the running month, then the months after
     return a;
   }
-  function pOk() { return P_().filter(function (o) { return o.EQ >= 0.5; }); }
+  function pOk() { return P_().filter(function (o) { return o.EQ >= EQMIN; }); }
   function P_() { return PD.prods.map(function (p) { return PA[p]; }); }
   function pTot(f) { return sumA(P_().filter(function (o) { return o.EQ > 0; }).map(f)); }
   function pNice(mx, n) { var raw = Math.max(mx, 1e-9) / (n || 4), p = Math.pow(10, Math.floor(Math.log10(raw))), f = raw / p, st = (f <= 1 ? 1 : f <= 2 ? 2 : f <= 2.5 ? 2.5 : f <= 5 ? 5 : 10) * p; return { step: st, top: Math.ceil(mx / st) * st || st }; }
@@ -5198,7 +5201,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
   function pMonthAxis(X, y, idx) { return idx.map(function (i) { return tx(X(i), y, monthName(PD.months[i]), i >= PD.fc ? 'mu' : 'mu', 'middle'); }).join(''); }
 
   // monthly totals over the products of the selection (the volume is only the denominator)
-  function pMonthly(f, keep) { var os = P_().filter(keep || function () { return true; }); return pAct().map(function (i) { var e = sumA(os.map(function (o) { return o.eqm[i]; })); return { i: i, e: e, v: sumA(os.map(function (o) { return f(o, i); })) }; }).filter(function (x) { return x.e >= 0.5; }); }
+  function pMonthly(f, keep) { var os = P_().filter(keep || function () { return true; }); return pAct().map(function (i) { var e = sumA(os.map(function (o) { return o.eqm[i]; })); return { i: i, e: e, v: sumA(os.map(function (o) { return f(o, i); })) }; }).filter(function (x) { return x.e >= EQMIN; }); }
   // connection errors per MSN: A330 and A350 only (Mohammad, 20 Oct); A320's products are small parts counted one by one, its many units pull the rate down
   var CONN_LINES = { A330: 1, A350: 1 };
   function connOk(o) { return !!CONN_LINES[o.line]; }
@@ -5319,12 +5322,12 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
     var W0 = gWd(k), idx = pAct(), os = pOk().filter(function (o) { return o.NC; }).sort(function (a, b) { return b.NC - a.NC; }).slice(0, 5);
     if (!os.length || idx.length < 2) { pEmpty(k); return; }
     var ml = 40, mr = 84, mt = 14, h = 220, H = mt + h + 26, pw = W0 - ml - mr, mx = 0, g = '';
-    os.forEach(function (o) { idx.forEach(function (i) { if (o.eqm[i] >= 0.5) mx = Math.max(mx, o.nc[i] / o.eqm[i]); }); });
+    os.forEach(function (o) { idx.forEach(function (i) { if (o.eqm[i] >= EQMIN) mx = Math.max(mx, o.nc[i] / o.eqm[i]); }); });
     var nt = pNice(mx); function X(j) { return ml + j / (idx.length - 1) * pw; } function Y(v) { return mt + h - v / nt.top * h; }
     g += pGridY(ml, pw, Y, nt, f1) + idx.map(function (i, j) { return tx(X(j), H - 6, monthName(PD.months[i]), 'mu', 'middle'); }).join('');
     var ends = [];
     os.forEach(function (o) {
-      var pts = idx.map(function (i, j) { return o.eqm[i] >= 0.5 ? [X(j), Y(o.nc[i] / o.eqm[i]), i] : null; }).filter(Boolean); if (!pts.length) return;
+      var pts = idx.map(function (i, j) { return o.eqm[i] >= EQMIN ? [X(j), Y(o.nc[i] / o.eqm[i]), i] : null; }).filter(Boolean); if (!pts.length) return;
       g += '<path d="' + pts.map(function (p, j) { return (j ? 'L' : 'M') + r1(p[0]) + ',' + r1(p[1]); }).join('') + '" fill="none" stroke="' + PCOL[o.p] + '" stroke-width="2"/>';
       pts.forEach(function (p) { g += '<circle cx="' + r1(p[0]) + '" cy="' + r1(p[1]) + '" r="3" fill="' + PCOL[o.p] + '"' + tip(o.p + ' · ' + monthName(PD.months[p[2]]), [gx('perEq', { v: f2(o.nc[p[2]] / o.eqm[p[2]]) }), gx('ncEq', { n: num(o.nc[p[2]]), e: f1(o.eqm[p[2]]) })]) + '/>'; });
       ends.push({ p: o.p, y: pts[pts.length - 1][1], x: pts[pts.length - 1][0] });
@@ -5339,12 +5342,12 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
     var W0 = gWd(k), idx = pAct(), os = pOk().sort(function (a, b) { return b.EQ - a.EQ; });
     if (!os.length) { pEmpty(k); return; }
     var lab = 80, rh = 26, top = 18, cw = (W0 - lab - 4) / idx.length, H = top + os.length * rh + 4, vals = [], g = '';
-    os.forEach(function (o) { idx.forEach(function (i) { if (o.eqm[i] >= 0.5) vals.push(o.nc[i] / o.eqm[i]); }); });
+    os.forEach(function (o) { idx.forEach(function (i) { if (o.eqm[i] >= EQMIN) vals.push(o.nc[i] / o.eqm[i]); }); });
     var cap = quant(vals.sort(function (a, b) { return a - b; }), 0.9) || 1;
     idx.forEach(function (i, j) { g += tx(lab + (j + 0.5) * cw, 12, monthName(PD.months[i]), 'mu', 'middle'); });
     os.forEach(function (o, r) {
       var y = top + r * rh; g += tx(lab - 8, y + 17, o.p, 'ink', 'end');
-      idx.forEach(function (i, j) { var x = lab + j * cw, ok = o.eqm[i] >= 0.5, v = ok ? o.nc[i] / o.eqm[i] : 0, t = Math.round(8 + 92 * Math.min(1, v / cap));
+      idx.forEach(function (i, j) { var x = lab + j * cw, ok = o.eqm[i] >= EQMIN, v = ok ? o.nc[i] / o.eqm[i] : 0, t = Math.round(8 + 92 * Math.min(1, v / cap));
         g += '<rect x="' + r1(x + 1) + '" y="' + (y + 1) + '" width="' + r1(cw - 2) + '" height="' + (rh - 2) + '" rx="2" fill="' + (ok ? tint('--seq', t) : 'var(--track)') + '"' + ppk('pprod', o.p) + tip(o.p + ' · ' + monthName(PD.months[i]), ok ? [gx('perEq', { v: f2(v) }), gx('ncEq', { n: num(o.nc[i]), e: f1(o.eqm[i]) })] : ['—']) + '/>';
         if (cw > 30) g += tx(x + cw / 2, y + 17, ok ? f1(v) : '—', ok && t > 55 ? 'gk' : 'mu', 'middle', ' style="font-size:10.5px"'); });
     });
@@ -5396,7 +5399,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
   function g64b(k) {
     var W0 = gWd(k), os = pOk().filter(function (o) { return o.NC > 0 && connOk(o); }).map(function (o) {
       var n = o.NC, l = n * Math.pow(1 - 1 / (9 * n) - 1.96 / (3 * Math.sqrt(n)), 3), u = (n + 1) * Math.pow(1 - 1 / (9 * (n + 1)) + 1.96 / (3 * Math.sqrt(n + 1)), 3);
-      var ms = pAct().filter(function (i) { return o.eqm[i] >= 0.5; }).map(function (i) { return { i: i, v: o.nc[i] / o.eqm[i] }; });
+      var ms = pAct().filter(function (i) { return o.eqm[i] >= EQMIN; }).map(function (i) { return { i: i, v: o.nc[i] / o.eqm[i] }; });
       return { o: o, r: n / o.EQ, l: Math.max(l, 0) / o.EQ, u: u / o.EQ, ms: ms }; }).sort(function (a, b) { return b.r - a.r; });
     if (!os.length) { pEmpty(k); return; }
     var hb = V2BAND[k] && V2BAND[k].querySelector('.sub'); if (hb) hb.textContent = gx('relSub');
@@ -5739,7 +5742,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
 
   // 79. slope chart: Q1 against Q3 rate per product, log scale
   function g79(k) {
-    var W0 = gWd(k), q = function (o, a, b) { var e = 0, n = 0; for (var i = a; i <= b; i++) { e += o.eqm[i]; n += o.nc[i]; } return e >= 0.5 && n > 0 ? n / e : null; };
+    var W0 = gWd(k), q = function (o, a, b) { var e = 0, n = 0; for (var i = a; i <= b; i++) { e += o.eqm[i]; n += o.nc[i]; } return e >= EQMIN && n > 0 ? n / e : null; };
     var rows = P_().map(function (o) { return { o: o, a: q(o, 0, 2), b: q(o, 6, 8) }; }).filter(function (r) { return r.a != null && r.b != null; });
     if (!rows.length) { pEmpty(k); return; }
     var vs = []; rows.forEach(function (r) { vs.push(r.a, r.b); });
@@ -5757,7 +5760,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
   function g80(k) {
     var W0 = gWd(k), idx = pAct(), os = pOk().filter(function (o) { return o.NC; });
     if (!os.length || idx.length < 2) { pEmpty(k); return; }
-    var rank = idx.map(function (i) { var r = os.filter(function (o) { return o.eqm[i] >= 0.5; }).sort(function (a, b) { return b.nc[i] / b.eqm[i] - a.nc[i] / a.eqm[i]; }), m = {}; r.forEach(function (o, j) { m[o.p] = j + 1; }); return m; });
+    var rank = idx.map(function (i) { var r = os.filter(function (o) { return o.eqm[i] >= EQMIN; }).sort(function (a, b) { return b.nc[i] / b.eqm[i] - a.nc[i] / a.eqm[i]; }), m = {}; r.forEach(function (o, j) { m[o.p] = j + 1; }); return m; });
     var n = os.length, ml = 30, mr = 90, mt = 18, rh = 26, H = mt + n * rh + 20, pw = W0 - ml - mr, g = '';
     function X(j) { return ml + j / (idx.length - 1) * pw; } function Y(r) { return mt + (r - 1) * rh + rh / 2; }
     for (var r = 1; r <= n; r++) g += tx(ml - 10, Y(r) + 4, num(r), 'mu', 'end');
@@ -6226,7 +6229,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
     var box = document.getElementById('mkTgt'); if (!box || !pSrc()) return;
     var eq = pTot(function (o) { return o.EQ; }), rate = eq ? pTot(function (o) { return o.NC; }) / eq : NaN;
     var rows = pMonthly(function (o, i) { return o.nc[i]; }).slice(-3), r3 = rows.length ? sumA(rows.map(function (x) { return x.v; })) / sumA(rows.map(function (x) { return x.e; })) : NaN;
-    var base = parseFloat(String(MK.base).replace(',', '.')) || 0, tgt = base ? base * 0.75 : NaN, gap = base ? rate / tgt - 1 : NaN, fmt = function (v) { return isFinite(v) ? f2(v) : '—'; };
+    var base = parseFloat(String(MK.base).replace(',', '.')) || 0, tgt = base ? base * SET.objectif_coef : NaN, gap = base ? rate / tgt - 1 : NaN, fmt = function (v) { return isFinite(v) ? f2(v) : '—'; };
     var tile = function (lab, v, sm, cls) { return '<div><span>' + esc(lab) + '</span><b' + (cls ? ' class="' + cls + '"' : '') + '>' + esc(v) + '</b>' + (sm ? '<small>' + esc(sm) + '</small>' : '') + '</div>'; };
     var h = '<div class="mk-tiles">' + tile(S('mkNow'), fmt(rate), S('mkPerEq')) + tile(S('mkLast3'), fmt(r3), S('mkPerEq')) +
       tile(S('mkTarget'), fmt(tgt), base ? S('mkTgtCalc', { b: f2(base) }) : '') + tile(S('mkGap'), isFinite(gap) ? (gap > 0 ? '+' : '') + pct(gap * 100) : '—', '', isFinite(gap) ? (gap > 0 ? 'up' : 'down') : '') + '</div>';
@@ -6337,7 +6340,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
   // rebuilt on the real NCs (keys V*). 2025 (D.y25): the 2025 extract through the pipeline's rules, the parser and the CNQ model, summed
   // per month, scope, phase, line and product, and the 2025 deliveries per product. Target = 2025 - 25 %, budget = 2025 cost - 25 %.
   // Without 2025 for the filter (data-source filter, no 2025 NC), the old placeholders come back, marked on the page.
-  var V2 = DUAL, V2B = false, V2CUT = 0.75, V2BAND = {};
+  var V2 = DUAL, V2B = false, V2CUT = SET.objectif_coef, V2BAND = {};   // target = 2025 rate x V2CUT (config/2_reglages_pages.csv)
   var V2L = {
     ov: { top: ['VT', 'VN', 'VB', 'a:lead', 'VX'], fold: ['a:cal'] },
     pareto: { top: ['a:bub', 'a:bump', 'a:flow', '78', '76', 'VM', 'VQ', '53'],   // 30 Oct: connection errors by month alone on a row; per million operations beside by product
@@ -6488,7 +6491,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
   }
   // the product of the plan an NC is counted under (its product has ≥ 0.5 MSN built in the period and the NC is in the per-MSN
   // data), else null: the NC is out of the plan. One test for every total, so the rows always add up to the Overview.
-  function v2InPlan(n) { var E = pSrc(), p = E && E.map && E.map[String(n[26] || '').toUpperCase()]; return p && PA && PA[p] && PA[p].EQ >= 0.5 && PD.idx[n[0]] != null ? p : null; }
+  function v2InPlan(n) { var E = pSrc(), p = E && E.map && E.map[String(n[26] || '').toUpperCase()]; return p && PA && PA[p] && PA[p].EQ >= EQMIN && PD.idx[n[0]] != null ? p : null; }
   // weights of the months done (a) and to come (f) for the out-of-plan NCs, July and August lighter (V2W); the running month
   // (pData) counts in both, by the share of its days gone and left
   function v2OutK(M) {
@@ -6557,7 +6560,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
     document.getElementById('v2ObjC').textContent = S('v2ObjC');
     if (!PD) { box.innerHTML = ''; return; }
     var by = {}; P_().forEach(function (o) { var l = o.line || '—', a = by[l] || (by[l] = { l: l, nc: 0, eq: 0 }); a.nc += o.NC; a.eq += o.EQ; });
-    var rows = lineOrder(Object.keys(by)).map(function (l) { return by[l]; }).filter(function (a) { return a.eq >= 0.5; });
+    var rows = lineOrder(Object.keys(by)).map(function (l) { return by[l]; }).filter(function (a) { return a.eq >= EQMIN; });
     if (rows.length > 1) rows.unshift({ l: S('allLines'), nc: sumA(rows.map(function (r) { return r.nc; })), eq: sumA(rows.map(function (r) { return r.eq; })), all: true });
     box.innerHTML = rows.map(function (r) {
       var v = r.nc / r.eq, t = v * V2CUT, mx = Math.max(v, t) * 1.25 || 1, gap = v / t - 1;   // placeholder target: 2026 - 25 %
@@ -6591,13 +6594,13 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
   }
   function v2Target(k) {
     var by = {}; P_().forEach(function (o) { var l = o.line || '—', a = by[l] || (by[l] = { l: l, nc: 0, eq: 0 }); a.nc += o.NC; a.eq += o.EQ; });
-    var rows = lineOrder(Object.keys(by)).map(function (l) { return by[l]; }).filter(function (a) { return a.eq >= 0.5; });
+    var rows = lineOrder(Object.keys(by)).map(function (l) { return by[l]; }).filter(function (a) { return a.eq >= EQMIN; });
     if (!rows.length) { pEmpty(k); return; }
     if (rows.length > 1) rows.unshift({ l: S('allLines'), nc: sumA(rows.map(function (r) { return r.nc; })), eq: sumA(rows.map(function (r) { return r.eq; })), all: true });
     var B = y25Lines(), anyPh = false;
     rows.forEach(function (r) {
       if (r.all) return; var b = B && B[r.l]; r.v = r.nc / r.eq;
-      if (b && b.eq >= 0.5 && b.nc > 0) { r.b = b.nc / b.eq; r.t = r.b * V2CUT; } else { r.t = r.v * V2CUT; r.ph = true; anyPh = true; }   // no 2025 for that line: placeholder, 2026 - 25 %
+      if (b && b.eq >= EQMIN && b.nc > 0) { r.b = b.nc / b.eq; r.t = r.b * V2CUT; } else { r.t = r.v * V2CUT; r.ph = true; anyPh = true; }   // no 2025 for that line: placeholder, 2026 - 25 %
     });
     var A0 = rows[0] && rows[0].all ? rows[0] : null;
     if (A0) {   // all lines: the sum of the lines' targets (in NCs), never a pooled rate that A320's many small parts would loosen (20 Oct)
@@ -6634,7 +6637,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
       (rows.some(function (r) { return r.b != null; }) ? '<span><i class="sw" style="border-radius:50%;background:var(--surface);border:1.6px solid var(--muted)"></i>' + esc(S('v2Rate25s')) + '</span>' : '') + v2UnplannedNote());
   }
 
-  var V2W = { 7: 0.6, 8: 0.6 };   // weight of a month in the monthly target: July and August are 60 % of a normal month (holidays)
+  var V2W = SET.poids_mois;   // weight of a month in the monthly target (config/2_reglages_pages.csv): July and August lighter
   // the year's target line by line (Mohammad, 20 Oct): each line's 2025 rate per product delivered - 25 %, times the line's 2026
   // volume month by month, summed over the lines; the NCs whose product is not in the production plan (no volume) keep their 2025
   // value - 25 %, spread over the months like a normal year. f25 / f26: the measure of a 2025 row / of a 2026 product (NCs or cost).
@@ -6778,7 +6781,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
     var wk = WEEKS.filter(function (w) { var mo = isoDay(isoMonday(w)); return weekEnd(w) >= GF.from && mo <= GF.to && !isPartial(w); });
     if (wk.length < 6) { pEmpty(k); return; }
     // shutdown weeks (fewer than 10 série defects, as in the weekly tab) stay out of the mean and the limits
-    var c = wk.map(function (w) { return cnt[w] || 0; }), sh = wk.map(function (w) { return (WEEK_ALL[w] || 0) < 10; }), n = c.length, on = c.filter(function (v, j) { return !sh[j]; }), mean = avgOf(on), mr = [];
+    var c = wk.map(function (w) { return cnt[w] || 0; }), sh = wk.map(function (w) { return (WEEK_ALL[w] || 0) < SET.semaine_fermeture; }), n = c.length, on = c.filter(function (v, j) { return !sh[j]; }), mean = avgOf(on), mr = [];
     if (on.length < 6) { pEmpty(k); return; }
     for (var i = 1; i < on.length; i++) mr.push(Math.abs(on[i] - on[i - 1]));
     // σ (standard deviation) = mean week-to-week jump ÷ 1.128 (d2 for two points); 2 σ = attention, 3 σ = alarm (Mohammad, 30 Oct)
@@ -7228,10 +7231,10 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
     function rateOf(l) {
       if (!PD || !PA) return null;
       var by = {}; P_().forEach(function (o) { var k = o.line || '—', a = by[k] || (by[k] = { nc: 0, eq: 0 }); a.nc += o.NC; a.eq += o.EQ; });
-      var B = y25Lines(), ls = lineOrder(Object.keys(by)).filter(function (k) { return by[k].eq >= 0.5 && (!l || k === l); });
+      var B = y25Lines(), ls = lineOrder(Object.keys(by)).filter(function (k) { return by[k].eq >= EQMIN && (!l || k === l); });
       if (!ls.length) return null;
       var nc = 0, eq = 0, tn = 0;
-      ls.forEach(function (k) { var a = by[k], b = B && B[k], t = b && b.eq >= 0.5 && b.nc > 0 ? b.nc / b.eq * V2CUT : a.nc / a.eq * V2CUT; nc += a.nc; eq += a.eq; tn += t * a.eq; });
+      ls.forEach(function (k) { var a = by[k], b = B && B[k], t = b && b.eq >= EQMIN && b.nc > 0 ? b.nc / b.eq * V2CUT : a.nc / a.eq * V2CUT; nc += a.nc; eq += a.eq; tn += t * a.eq; });
       return { v: nc / eq, t: tn / eq };
     }
     function stats(k) { var b = V2BAND[k]; return b ? [].map.call(b.querySelectorAll('.v2stats > div > b'), function (x) { return x.textContent; }) : []; }

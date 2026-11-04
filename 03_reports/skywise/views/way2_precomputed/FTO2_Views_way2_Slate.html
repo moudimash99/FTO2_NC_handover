@@ -920,8 +920,8 @@
 var FTO2ViewsRender = (function () {
     var MONTHS_FR = ['janv.', 'févr.', 'mars', 'avr.', 'mai', 'juin', 'juil.', 'août', 'sept.', 'oct.', 'nov.', 'déc.'];
     var MONTHS_EN = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-    var CATC = { 'MEO Facteur humain': 1, 'Erreur Branchement': 2, 'Élément Manquant': 3, 'Élément Endommagé': 4, 'Déverrouillage': 5, 'Grounding/Bonding': 6, 'Kitting Factory': 7, 'FOD': 8, 'Autre': 9 };
-    var PROG_COL = { A350: 'var(--l1)', A330: 'var(--l2)', A320: 'var(--l3)', A400M: 'var(--l4)' };
+    var CATC = {};
+    var PROG_COL = {};
     var EN = {
     'MEO Facteur humain': 'Workmanship (human factor)', 'Erreur Branchement': 'Connection error', 'Élément Manquant': 'Missing item',
     'Élément Endommagé': 'Damaged item', 'Déverrouillage': 'Unlocked contact', 'Grounding/Bonding': 'Grounding/Bonding',
@@ -937,8 +937,8 @@ var FTO2ViewsRender = (function () {
     'Structure Endommagée': 'Damaged structure', 'Défaut de Métallisation': 'Bonding defect', "Défaut d'Impression": 'Printing defect',
     'Erreur Dossier': 'Documentation error'
   };
-    var CAT_ORDER = ['MEO Facteur humain', 'Erreur Branchement', 'Élément Manquant', 'Élément Endommagé', 'Déverrouillage', 'Grounding/Bonding', 'Kitting Factory', 'FOD', 'Autre', 'Non classé'];
-    var ASIDE = { 'Non classé': 1, '__none': 1 };
+    var CAT_ORDER = SET.categories.map(function (c) { return c.nom; });
+    var ASIDE = { '__none': 1 };
     var MAIN_CATS = CAT_ORDER.filter(function (c) { return !ASIDE[c]; }).concat(['aside']);
     var RULE_FR = { 'Rework to drawing': 'Retouche', 'Exchange': 'Échange', 'Rejection': 'Rebut / rejet', 'Rejection with a rework order': 'Rejet avec ordre de retouche', 'Scrap': 'Rebut', 'Request for design change': 'Demande de DQN',
     'Accept as is': 'Accepté en l’état', 'Potential non-conformity': 'NC potentielle', 'No decision': 'Sans décision', 'Deleted NC': 'NC supprimée', 'Unknown decision code': 'Décision inconnue' };

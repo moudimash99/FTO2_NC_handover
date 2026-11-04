@@ -30,11 +30,26 @@ def folder():
     return LAPTOP_DIR if os.path.isdir(LAPTOP_DIR) else SKYWISE_DIR
 
 
+def _check_columns(path, name):
+    """Every line must have as many ';' columns as the header: a ';' typed inside a text shifts the columns."""
+    import csv
+    with open(path, encoding="utf-8-sig", newline="") as f:
+        rows = list(csv.reader(f, delimiter=";"))
+    if not rows:
+        raise ConfigError("%s is empty: it needs at least its header line" % name)
+    n = len(rows[0])
+    for i, r in enumerate(rows[1:], start=2):
+        if r and len(r) > n:
+            raise ConfigError("%s line %d has %d columns, the header has %d: a ';' inside a text? Put that text in quotes "
+                              "or replace the ';'" % (name, i, len(r), n))
+
+
 def table(name, columns=None):
     """A settings table as text (no value is converted). `columns`: the columns it must have."""
     path = os.path.join(folder(), name)
     if not os.path.exists(path):
         raise ConfigError("settings table %s not found in %s" % (name, folder()))
+    _check_columns(path, name)
     try:
         t = pd.read_csv(path, sep=";", dtype=str, keep_default_na=False, encoding="utf-8-sig")
     except Exception as e:   # a broken file: say which one

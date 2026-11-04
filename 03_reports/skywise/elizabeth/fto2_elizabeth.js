@@ -100,7 +100,8 @@ function elzMain(D, REF) {
   var NW = WEEKS.length, PARTIAL = new Date(D.to + 'T00:00:00Z').getUTCDay() !== 0;
   var NCW = NCS.map(function (n) { return WIDX[isoWeek(n.d)]; });
   var PLANT = WEEKS.map(function () { return 0; }); DEFS.forEach(function (d) { PLANT[NCW[d.n]]++; });
-  var SHUT = PLANT.map(function (v, i) { return v < 10 && !(PARTIAL && i === NW - 1); });   // closure weeks: under 10 defects on the whole plant
+  var SET = REF.settings;   // the pages' settings, from config/ through the backend (fto2/reference.py page_settings)
+  var SHUT = PLANT.map(function (v, i) { return v < SET.semaine_fermeture && !(PARTIAL && i === NW - 1); });   // closure weeks: few defects on the whole plant
   function valid(i) { return i >= 0 && i < NW && !SHUT[i] && !(PARTIAL && i === NW - 1); }
   var LASTC = NW - 1; while (LASTC > 0 && !valid(LASTC)) LASTC--;
   var MOIS = ['janv.', 'févr.', 'mars', 'avr.', 'mai', 'juin', 'juil.', 'août', 'sept.', 'oct.', 'nov.', 'déc.'];
@@ -125,7 +126,7 @@ function elzMain(D, REF) {
   function lowWeek(i) {
     var v = volOf(i); if (v == null) return false;
     if (TYP[S.line] == null) { var a = WEEKS.map(function (w, k) { return volOf(k); }).filter(function (x) { return x > 0; }).sort(function (x, y) { return x - y; }); TYP[S.line] = a.length ? a[Math.floor(a.length / 2)] : 0; }
-    return TYP[S.line] > 0 && v < TYP[S.line] * 0.6;
+    return TYP[S.line] > 0 && v < TYP[S.line] * SET.semaine_faible;
   }
   function refWeeks() { var out = [], n = Math.max(4, S.per); for (var k = per()[0] - 1; k >= 0 && out.length < n; k--) if (valid(k) && !lowWeek(k)) out.unshift(k); return out; }
   function refLab(ws) { var out = [], i = 0; while (i < ws.length) { var j = i; while (j + 1 < ws.length && ws[j + 1] === ws[j] + 1) j++; out.push(wkShort(ws[i]) + (j > i ? '–' + wkShort(ws[j]) : '')); i = j + 1; } return out.join(', '); }

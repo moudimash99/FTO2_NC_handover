@@ -1,0 +1,11 @@
+categorie;ordre;couleur;a_part;commentaire
+MEO Facteur humain;1;1;non;couleur : 1 à 9, les couleurs de catégorie de la charte (bleu, vert, jaune, rose...)
+Erreur Branchement;2;2;non;
+Élément Manquant;3;3;non;
+Élément Endommagé;4;4;non;
+Déverrouillage;5;5;non;
+Grounding/Bonding;6;6;non;
+Kitting Factory;7;7;non;
+FOD;8;8;non;
+Autre;9;9;non;
+Non classé;10;;oui;a_part = oui : montré à part, sans couleur de catégorie

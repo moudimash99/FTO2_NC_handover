@@ -374,7 +374,7 @@ def mft_block(eq):
     asof, pm = production_msn()
     return {"plan": {str(a).upper(): EQ_NAMES.get(b, b) for a, b in zip(t.produit_nc, t.produit_eqmsn)}, "alias": product_alias_rules(),
             "codes": {str(k): _tidy(v, 90) for k, v in fr.items() if _tidy(v, 90)}, "codesEn": codes_en(), "vol": weekly_volume(eq),
-            "msnEnd": {k: v[1] for k, v in (pm or {}).items()}, "actions": mft_actions_page()}
+            "msnEnd": {k: v[1] for k, v in (pm or {}).items()}, "actions": mft_actions_page(), "settings": page_settings()}
 
 
 def dashboard_block(d, nc, code_desc, y25):
@@ -384,7 +384,8 @@ def dashboard_block(d, nc, code_desc, y25):
     eq = eqmsn(nc)
     return {"from": config.parameter("date_debut"), "codes": code_desc, "actions": mft_actions(), "cnqp": cq,
             "eqmsn": {k: v for k, v in eq.items() if k != "line"} if eq else None,
-            "rca": [dict(o, ex=[]) for o in rca_reference(d, code_desc)], "y25": y25, "cables": cable_requests()}
+            "rca": [dict(o, ex=[]) for o in rca_reference(d, code_desc)], "y25": y25, "cables": cable_requests(),
+            "settings": page_settings()}
 
 
 CHUNK = 30000   # characters per row of the reference table: long texts are cut into rows that any database keeps
@@ -400,3 +401,43 @@ def ref_table(blocks):
         for i in range(0, max(len(text), 1), CHUNK):
             rows.append({"partie": part, "morceau": i // CHUNK, "texte": text[i:i + CHUNK]})
     return pd.DataFrame(rows, columns=["partie", "morceau", "texte"])
+
+
+def _num(v, where):
+    try:
+        f = float(str(v).replace(",", "."))
+    except ValueError:
+        raise config.ConfigError("%s: '%s' is not a number" % (where, v))
+    return int(f) if f.is_integer() and "." not in str(v) and "," not in str(v) else f
+
+
+def page_settings():
+    """The settings the pages use (config/2_reglages_pages.csv, 2_categories.csv, 2_lignes.csv, 3_alarmes.csv)."""
+    F = "2_reglages_pages.csv"
+    get = lambda k: config.parameter(k, F)
+    weights = {}
+    for item in config.parameter_list("poids_mois", F):
+        m, w = item.split("=")
+        weights[str(int(m))] = _num(w, F + ", poids_mois")
+    cats = config.table("2_categories.csv", ["categorie", "ordre", "couleur", "a_part"])
+    cats = sorted(cats.to_dict("records"), key=lambda r: _num(r["ordre"], "2_categories.csv, ordre"))
+    lines = config.table("2_lignes.csv", ["ligne", "couleur"])
+    alarms = config.table("3_alarmes.csv", ["nom", "valeur"])
+    windows = {}
+    for item in config.parameter_list("mft_fenetres", F):
+        a, b = item.split("=")
+        windows[str(int(a))] = int(b)
+    n = lambda k: _num(get(k), F + ", " + k)
+    return {"objectif_baisse": n("objectif_baisse"), "objectif_coef": round(1 - n("objectif_baisse"), 12), "poids_mois": weights,
+            "semaine_faible": n("semaine_faible_moins_de"), "mft_fenetres": windows,
+            "mft_hausse_min": n("mft_hausse_min_defauts"), "mft_hausse_facteur": n("mft_hausse_facteur"),
+            "mft_baisse_min": n("mft_baisse_min_base"), "mft_baisse_facteur": n("mft_baisse_facteur"), "mft_fin_min": n("mft_fin_min_avions"),
+            "action_baisse": n("action_objectif_baisse"), "action_coef": round(1 - n("action_objectif_baisse"), 12),
+            "action_semaines": n("action_semaines_tenues"), "action_tendance": n("action_seuil_tendance"),
+            "semaine_fermeture": _num(get("semaine_fermeture_moins_de"), F), "msn_minimum": _num(get("msn_minimum"), F),
+            "placeholder": config.parameter("souscodes_non_precis", F, keep_spaces=True).strip(),
+            "defauts": {"phase": get("defaut_phase"), "liab": get("defaut_responsabilite"), "preset": get("defaut_periode")},
+            "categories": [{"nom": r["categorie"], "couleur": int(r["couleur"]) if r["couleur"].strip() else None,
+                            "a_part": r["a_part"].strip().lower() == "oui"} for r in cats],
+            "lignes": {r["ligne"]: int(r["couleur"]) for _, r in lines.iterrows()},
+            "alarmes": {r["nom"].strip(): _num(r["valeur"], "3_alarmes.csv, " + r["nom"]) for _, r in alarms.iterrows()}}

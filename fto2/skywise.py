@@ -186,7 +186,8 @@ def run(Dataset, Column, say=None):
     y25 = reference.year_2025(raw_year, stations) if len(raw_year) else None
     eq = reference.eqmsn(prepared["nc"])
     blocks = {"dashboard": reference.dashboard_block(prepared["d"], prepared["nc"], prepared["codes"], y25),
-              "mft": reference.mft_block(eq), "elizabeth": {"vol": reference.weekly_volume(eq)}}
+              "mft": reference.mft_block(eq),
+              "elizabeth": {"vol": reference.weekly_volume(eq), "settings": reference.page_settings()}}
     ref_t = reference.ref_table(blocks)
     Dataset.get("fto2_dash_ref").write_table(ref_t)
     print("✅ fto2_dash_ref:", len(ref_t), "rows (the pages' reference data)")
