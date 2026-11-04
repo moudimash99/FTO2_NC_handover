@@ -14,13 +14,15 @@ Steps:
   C. both, with the lists' columns; while 'garder_anciennes_sorties' is oui, the former four outputs are written as before
   D. the dashboard's three tables: parser, root-cause labels, rework orders, aléas, cost model -> fto2_dash_nc,
      fto2_dash_defects, fto2_dash_disruptions; plus fto2_lines_to_label.csv for the next labelling pass
+  E. the reference data of the three pages (production plan, comparison year, cables, MFT actions, cost settings, cause tree)
+     -> fto2_dash_ref
 All the settings come from data/config/ (2_parametres.csv, 2_sources.csv and the rule tables).
 """
 import time
 
 import pandas as pd
 
-from . import config, manual_lists, selection
+from . import config, manual_lists, reference, selection
 
 # the columns of the non_conformity dataset the run reads
 NC_COLUMNS = [
@@ -159,7 +161,7 @@ def run(Dataset, Column, say=None):
                .select(*ALEA_COLUMNS).read_table(format="pandas"))
         say(f"   {len(dis)} aléas")
     say("Dashboard tables: parser, root-cause labels, rework orders, aléas, cost model...")
-    nc_t, def_t, dis_t, info, to_label = core.build(frames, labels, ops=ops, dis=dis, say=say)
+    nc_t, def_t, dis_t, info, to_label, prepared = core.build(frames, labels, ops=ops, dis=dis, say=say)
 
     say("Writing fto2_dash_nc, fto2_dash_defects, fto2_dash_disruptions...")
     Dataset.get("fto2_dash_nc").write_table(nc_t)
@@ -171,5 +173,22 @@ def run(Dataset, Column, say=None):
           "| defect lines without an AI label (parser label used):", info["to_label"])
     print("rework orders:", info["rework_orders"], "| aléas:", info.get("aleas", "not read"))
     to_label.to_csv("fto2_lines_to_label.csv", index=False)
-    say(f"Done. {len(to_label)} defect lines to label -> fto2_lines_to_label.csv")
+    say(f"{len(to_label)} defect lines to label -> fto2_lines_to_label.csv")
+
+    year = int(config.parameter("annee_comparaison"))
+    say(f"Reading the NCs of {year} (comparison year)...")
+    nc = config.parameter("dataset_nc", manual_lists.SOURCES)
+    raw_year = (Dataset.get(nc).where((Column.get("plant") == plant) & (Column.get("creation_time") >= f"{year}-01-01 00:00:00")
+                                      & (Column.get("creation_time") < f"{year + 1}-01-01 00:00:00"))
+                .select(*NC_COLUMNS).read_table(format="pandas"))
+    say(f"   {len(raw_year)} NCs")
+    stations = station_descriptions(config.parameter("postes", manual_lists.SOURCES))
+    y25 = reference.year_2025(raw_year, stations) if len(raw_year) else None
+    eq = reference.eqmsn(prepared["nc"])
+    blocks = {"dashboard": reference.dashboard_block(prepared["d"], prepared["nc"], prepared["codes"], y25),
+              "mft": reference.mft_block(eq), "elizabeth": {"vol": reference.weekly_volume(eq)}}
+    ref_t = reference.ref_table(blocks)
+    Dataset.get("fto2_dash_ref").write_table(ref_t)
+    print("✅ fto2_dash_ref:", len(ref_t), "rows (the pages' reference data)")
+    say("Done.")
     return nc_t, def_t, dis_t

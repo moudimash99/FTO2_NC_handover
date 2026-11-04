@@ -505,8 +505,9 @@ def dis_table(block):
 
 
 def build(frames, labels, ops=None, dis=None, say=None):
-    """Everything in one call, as the Skywise notebook uses it: (nc_t, def_t, dis_t, info, to_label). ops: rework-order operations or
-    None; dis: MES disruptions or None; say: optional progress printer."""
+    """Everything in one call, as the Skywise notebook uses it: (nc_t, def_t, dis_t, info, to_label, prepared). ops: rework-order
+    operations or None; dis: MES disruptions or None; say: optional progress printer. prepared: prepare()'s result, for the
+    reference data (fto2/reference.py)."""
     say = say or (lambda msg: None)
     x, info = merge_exports(frames)
     say("   %d NCs after merging the selections" % len(x))
@@ -519,7 +520,7 @@ def build(frames, labels, ops=None, dis=None, say=None):
                  "to_label": int((def_t.label_src == "parser").sum()), "from_title": int((def_t.label_src == "titre").sum())})
     dis_t = dis_table(p["dis"])
     info.update({"disruption_table": int(len(dis_t)), "origin": nc_t.origin.value_counts().to_dict()})
-    return nc_t, def_t, dis_t, info, lines_to_label(p["d"], p["lt"])
+    return nc_t, def_t, dis_t, info, lines_to_label(p["d"], p["lt"]), p
 
 
 def lines_to_label(d, lt):

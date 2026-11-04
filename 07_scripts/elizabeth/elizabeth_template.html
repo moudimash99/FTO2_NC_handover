@@ -332,9 +332,10 @@ function elzMain(D, REF) {
   }
   function tryStart() {
     if (started) return;
-    var nc = parse(got.nc), def = parse(got.def);
+    var nc = parse(got.nc), def = parse(got.def), R = window.ELZ_REF ? {} : fto2RefBlocks(got.ref);
     if (loaded(nc) && !count(nc)) { status(MSG.empty, true); return; }
-    if (!count(nc) || !loaded(def)) { status(MSG.wait); return; }
+    if (!count(nc) || !loaded(def) || !R) { status(MSG.wait); return; }   // the queries can arrive one after the other
+    if (!window.ELZ_REF) window.ELZ_REF = R.elizabeth || {};
     start(nc, def);
   }
   function boot() {
@@ -342,8 +343,9 @@ function elzMain(D, REF) {
     var api = window.SlateFunctions;
     if (!api || !api.watch) { showError(MSG.noapi); return; }
     status(MSG.wait);
-    ['nc', 'def'].forEach(function (k) { api.watch(k, function (v) { got[k] = v; tryStart(); }); });
+    ['nc', 'def', 'ref'].forEach(function (k) { api.watch(k, function (v) { got[k] = v; tryStart(); }); });
     setTimeout(function () { if (started) return; var miss = []; if (!count(parse(got.nc))) miss.push('q_fto2_nc'); if (!loaded(parse(got.def))) miss.push('q_fto2_def');
+      if (!window.ELZ_REF && !fto2RefBlocks(got.ref)) miss.push('q_fto2_ref');
       if (miss.length) status(MSG.slow.replace('{q}', miss.join(', ')), true); }, 20000);
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot); else boot();

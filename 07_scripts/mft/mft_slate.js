@@ -1,8 +1,7 @@
 /* @@STAMP@@ */
-// Fixed references, written at the build: sub-code names, the production plan's products and their alias rules, MSN built per
-// line and week, the end of build of each MSN (the alarms), and the MFT trackers' actions (the store's first content).
-window.FTO2_MFT_REF = @@REF@@;
-
+// The reference data (sub-code names, the production plan's products and their alias rules, MSN built per line and week, the
+// end of build of each MSN, the MFT actions) comes from the query q_fto2_ref, part "mft" (dataset fto2_dash_ref).
+@@REF_READER@@
 // ---------------------------------------------------------------- the two Slate tables -> the page's data
 // As 07_scripts/mft/build_mft.py data() does from the CSV files: NCs raised at FTO2 (plant FTO2 or FT02) created in 2026, their
 // defect lines, values numbered in dictionaries. Tables as Slate gives them (one array per column) or as rows.
@@ -113,12 +112,12 @@ function mftMain() {
   var got = {}, started = false;
   function tryStart() {
     if (started) return;
-    var nc = parse(got.nc), def = parse(got.def);
+    var nc = parse(got.nc), def = parse(got.def), R = fto2RefBlocks(got.ref);
     if (loaded(nc) && !count(nc)) { status(MSG.empty, true); return; }
-    if (!count(nc) || !loaded(def)) { status(MSG.wait); return; }   // both queries are needed: they can arrive one after the other
+    if (!count(nc) || !loaded(def) || !R) { status(MSG.wait); return; }   // the queries can arrive one after the other
     started = true;
     try {
-      var D = window.FTO2_MFT_D = mftFromTables(nc, def, window.FTO2_MFT_REF);
+      var D = window.FTO2_MFT_D = mftFromTables(nc, def, window.FTO2_MFT_REF = R.mft);
       if (!D.ncs.length) {   // rows arrived but none is a 2026 FTO2 NC: say what came, to fix the query or the state
         var c = Array.isArray(nc) ? Object.keys(nc[0] || {}) : Object.keys(nc);
         showError('aucune NC FTO2 de 2026 lisible dans q_fto2_nc (colonnes reçues : ' + c.join(', ') + ') / no readable 2026 FTO2 NC in q_fto2_nc (columns received: ' + c.join(', ') + ')');
@@ -132,10 +131,10 @@ function mftMain() {
     var api = window.SlateFunctions;
     if (!api || !api.watch) { showError(MSG.noapi); return; }
     status(MSG.wait);
-    ['nc', 'def'].forEach(function (k) { api.watch(k, function (v) { got[k] = v; tryStart(); }); });
+    ['nc', 'def', 'ref'].forEach(function (k) { api.watch(k, function (v) { got[k] = v; tryStart(); }); });
     setTimeout(function () {
       if (started) return;
-      var miss = []; if (!count(parse(got.nc))) miss.push('q_fto2_nc'); if (!loaded(parse(got.def))) miss.push('q_fto2_def');
+      var miss = []; if (!count(parse(got.nc))) miss.push('q_fto2_nc'); if (!loaded(parse(got.def))) miss.push('q_fto2_def'); if (!fto2RefBlocks(got.ref)) miss.push('q_fto2_ref');
       if (miss.length) status(MSG.slow.replace(/\{q\}/g, miss.join(', ')), true);
     }, 20000);
   }

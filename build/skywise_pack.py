@@ -25,13 +25,31 @@ ADAPTER_RUN = "if (window.DASH && window.DASH.tables) window.DASH = fto2FromTabl
 EXTRA_CSS = (".fto2 .fto2-err { background: #fdecea; color: #8a1c12; border: 1px solid #f1b0a8; border-radius: 8px; padding: 10px 14px; font-size: 13px; margin: 12px 20px; }\n"
              ".fto2 .fto2-wait { background: #eef4f1; color: #1d6b52; border: 1px solid #b9d5ca; border-radius: 8px; padding: 10px 14px; font-size: 13px; margin: 12px 20px; }\n"
              ".fto2 .fto2-wait.warn { background: #fff5e6; color: #7a4a00; border-color: #f0c98a; }\n")
-STATE = {"nc": "{{q_fto2_nc}}", "def": "{{q_fto2_def}}", "dis": "{{q_fto2_dis}}"}
+STATE = {"nc": "{{q_fto2_nc}}", "def": "{{q_fto2_def}}", "dis": "{{q_fto2_dis}}", "ref": "{{q_fto2_ref}}"}
+# the reference data of the pages (dataset fto2_dash_ref, written by the notebook): one row per piece of JSON text
+REF_SQL = ('-- FTO2 pages: reference data (production plan, 2025, cables, MFT actions, cost settings, cause tree), written by the\n'
+           '-- Skywise notebook as dataset fto2_dash_ref: one row per piece of JSON text. Slate query q_fto2_ref.\n'
+           'SELECT\n    partie,\n    morceau,\n    texte\nFROM "foundry_sync"."fto2_dash_ref"\nORDER BY partie, morceau\n')
+# joins the rows of q_fto2_ref back into {dashboard: {...}, mft: {...}, elizabeth: {...}}; null until the query has arrived
+JS_REF_READER = """function fto2RefBlocks(v) {
+  if (typeof v === 'string') { try { v = JSON.parse(v); } catch (e) { return null; } }
+  if (!v || (!Array.isArray(v) && !Object.keys(v).length)) return null;
+  var rows = Array.isArray(v) ? v : (v.partie || []).map(function (p, i) { return { partie: p, morceau: v.morceau[i], texte: v.texte[i] }; });
+  if (!rows.length) return null;
+  var by = {}, out = {};
+  rows.forEach(function (r) { (by[r.partie] = by[r.partie] || []).push(r); });
+  Object.keys(by).forEach(function (p) {
+    out[p] = JSON.parse(by[p].sort(function (a, b) { return +a.morceau - +b.morceau; }).map(function (r) { return r.texte; }).join(''));
+  });
+  return out;
+}
+"""
 
 JS_HEAD = """/* @@STAMP@@ */
 window.FTO2_EMBED = true;
 window.FTO2_PAGE = 'main';
-window.FTO2_REF = @@REF@@;
-"""
+window.FTO2_REF = @@REF@@;   // null: the reference data comes from the query q_fto2_ref
+""" + JS_REF_READER
 JS_SHOW_ERROR = """  function showError(msg) {
     var e = document.getElementById('fto2-err');
     if (e) { e.hidden = false; e.textContent = 'Le tableau de bord n\\'a pas pu s\\'afficher / The dashboard could not load: ' + msg; }
@@ -62,7 +80,7 @@ JS_L23 = JS_HEAD + """@@ADAPTER@@
   var MSG = {
     wait: 'Chargement des données Slate… / Loading the Slate data…',
     empty: 'La requête q_fto2_nc n’a renvoyé aucune ligne : vérifiez la requête et son jeu de données. / The q_fto2_nc query returned no row: check the query and its dataset.',
-    noapi: 'État Slate introuvable : ce JavaScript doit tourner dans un code sandbox Slate dont l’état contient les deux requêtes (voir state.json). / No Slate state: this JavaScript must run in a Slate code sandbox whose state holds the two queries (see state.json).',
+    noapi: 'État Slate introuvable : ce JavaScript doit tourner dans un code sandbox Slate dont l’état contient les requêtes (voir state.json). / No Slate state: this JavaScript must run in a Slate code sandbox whose state holds the queries (see state.json).',
     cut: 'Attention : exactement {n} lignes reçues pour {q} ; Slate a peut-être coupé la requête (limite de lignes). / Exactly {n} rows received for {q}: Slate may have cut the query (row limit).',
     slow: 'Toujours en attente de {q} : vérifiez que la requête existe, porte ce nom et s’exécute sans erreur. / Still waiting for {q}: check that the query exists, has this name and runs without error.'
   };
@@ -93,16 +111,17 @@ JS_L23 = JS_HEAD + """@@ADAPTER@@
     if (tb) { nc = nc || tb.nc; def = def || tb.def; dis = dis || tb.dis; }
     return [nc, def, typeof dis === 'object' ? dis : null];
   }
+  function reference() { return window.FTO2_REF ? { dashboard: window.FTO2_REF } : fto2RefBlocks(got.ref); }
   function tryStart() {
     if (started || !ready) return;
-    var t = tables(), nc = t[0], def = t[1], dis = t[2], n1 = count(nc), n2 = count(def);
+    var t = tables(), nc = t[0], def = t[1], dis = t[2], n1 = count(nc), n2 = count(def), R = reference();
     if (loaded(nc) && !n1) { status(MSG.empty, true); return; }
-    if (!n1 || !loaded(def)) { status(MSG.wait); return; }   // both queries are needed: they can arrive one after the other
+    if (!n1 || !loaded(def) || !R) { status(MSG.wait); return; }   // the queries can arrive one after the other
     if (!loaded(dis) && !disTimer) { disTimer = setTimeout(function () { disTimer = 'over'; tryStart(); }, 4000); return; }   // the block's query: optional
     if (!loaded(dis) && disTimer !== 'over') return;
     started = true;
     try {
-      window.DASH = fto2FromTables(nc, def, window.FTO2_REF, loaded(dis) ? dis : null);
+      window.DASH = fto2FromTables(nc, def, R.dashboard, loaded(dis) ? dis : null);
       if (!window.DASH.ncs.length) {   // rows arrived but none could be read: say what came, to fix the query or the state
         var c = Array.isArray(nc) ? Object.keys(nc[0] || {}) : Object.keys(nc);
         showError('aucune NC lisible dans q_fto2_nc (colonnes reçues : ' + c.join(', ') + ') / no readable NC in q_fto2_nc (columns received: ' + c.join(', ') + ')');
@@ -118,7 +137,7 @@ JS_L23 = JS_HEAD + """@@ADAPTER@@
     } catch (err) { showError((err && err.message) || String(err)); }
   }
   var api = window.SlateFunctions;
-  if (api && typeof api.watch === 'function') ['nc', 'def', 'dis', 'tables'].forEach(function (k) { api.watch(k, function (v) { got[k] = v; tryStart(); }); });
+  if (api && typeof api.watch === 'function') ['nc', 'def', 'dis', 'tables', 'ref'].forEach(function (k) { api.watch(k, function (v) { got[k] = v; tryStart(); }); });
   function boot() {
     ready = true;
     if (!document.getElementById('tabs')) { showError('HTML part missing: paste the HTML part into the HTML box.'); return; }
@@ -130,6 +149,7 @@ JS_L23 = JS_HEAD + """@@ADAPTER@@
       var t = tables(), miss = [];
       if (!count(t[0])) miss.push('q_fto2_nc');
       if (!loaded(t[1])) miss.push('q_fto2_def');
+      if (!reference()) miss.push('q_fto2_ref');
       if (miss.length) status(MSG.slow.replace(/\\{q\\}/g, miss.join(', ')), true);
     }, 20000);
   }
@@ -169,15 +189,26 @@ FAKE_SLATE = """<script>
 /* LOCAL PREVIEW ONLY - not for Slate. Stands in for Slate's SlateFunctions: the state starts empty, then the two query
    results arrive (one array per column, as Slate returns them). In Slate, this block does not exist. */
 window.SlateFunctions = (function () {
-  var cbs = {}, state = { nc: null, def: null, dis: null };
+  var cbs = {}, state = { nc: null, def: null, dis: null, ref: null };
   return {
     watch: function (k, cb) { (cbs[k] = cbs[k] || []).push(cb); cb(state[k], undefined); },
     _set: function (k, v) { var old = state[k]; state[k] = v; (cbs[k] || []).forEach(function (cb) { cb(v, old); }); }
   };
 })();
-setTimeout(function () { SlateFunctions._set('nc', @@NC@@); SlateFunctions._set('def', @@DEF@@); SlateFunctions._set('dis', @@DIS@@); }, 800);
+setTimeout(function () { SlateFunctions._set('nc', @@NC@@); SlateFunctions._set('def', @@DEF@@); SlateFunctions._set('dis', @@DIS@@); SlateFunctions._set('ref', @@REF@@); }, 800);
 </script>
 """
+
+
+def ref_columns(root):
+    """05_outputs/fto2_dash_ref.csv (written by build_all.py) as Slate gives a query result, for the local previews."""
+    t = pd.read_csv(os.path.join(root, "05_outputs", "fto2_dash_ref.csv"), dtype={"texte": str}, keep_default_na=False)
+    return {"partie": t.partie.tolist(), "morceau": [int(v) for v in t.morceau], "texte": t.texte.tolist()}
+
+
+def fake_slate(nc, dis, dfx, ref):
+    """The local stand-in for Slate with these query results (JSON text each)."""
+    return FAKE_SLATE.replace("@@NC@@", nc).replace("@@DEF@@", dfx).replace("@@DIS@@", dis).replace("@@REF@@", ref)
 
 
 def _sub(tpl, **kw):
@@ -354,14 +385,14 @@ def build(ref, root, scope_css, say):
         open(os.path.join(sky, "level1_dummy_in_js", "FTO2_Level1_Slate.html"), "w", encoding="utf-8").write(one)
         report["level1"] = {"ncs": len(nc), "defects": len(df), "aleas": len(dis), "js_kb": len(js.encode()) // 1024}
         # level 2 local preview: the same tables handed over as Slate would
-        pre = FAKE_SLATE.replace("@@NC@@", _blob(tables["nc"])).replace("@@DEF@@", _blob(tables["def"])).replace("@@DIS@@", _blob(tables["dis"]))
+        pre = fake_slate(_blob(tables["nc"]), _blob(tables["dis"]), _blob(tables["def"]), _blob(ref_columns(root)))
     else:
         say("skywise: no build/dummy/*.csv (run build/dummy_tables.py): level 1 skipped")
         pre = None
 
     # levels 2 and 3: the same JS, data from the sandbox's state
-    stamp23 = "FTO2 NC dashboard, Skywise levels 2 and 3: data from the Slate queries q_fto2_nc, q_fto2_def and q_fto2_dis (optional) through the code sandbox's state. Generated by build/build_all.py; do not edit by hand."
-    js23 = _sub(JS_L23, stamp=stamp23, ref=ref_blob, adapter=adapter, main=main)
+    stamp23 = "FTO2 NC dashboard, Skywise levels 2 and 3: data from the Slate queries q_fto2_nc, q_fto2_def, q_fto2_ref and q_fto2_dis (optional) through the code sandbox's state. Generated by build/build_all.py; do not edit by hand."
+    js23 = _sub(JS_L23, stamp=stamp23, ref="null", adapter=adapter, main=main)
     l2, l3 = os.path.join(sky, "level2_dummy_queries"), os.path.join(sky, "level3_datasets")
     for out in (l2, l3):
         one = write_level(out, "fto2_level23", stamp23, "FTO2 NC Dashboard - levels 2 and 3", css, html, js23)
@@ -374,7 +405,7 @@ def build(ref, root, scope_css, say):
     sql3 = (("q_fto2_nc", level3_sql("fto2_dash_nc", NC_COLUMNS, "FTO2 NC dashboard, level 3: one row per NC (dataset fto2_dash_nc, written by the Skywise notebook). Slate query q_fto2_nc.", "created, nc")),
             ("q_fto2_def", level3_sql("fto2_dash_defects", DEF_COLUMNS, "FTO2 NC dashboard, level 3: one row per defect line (dataset fto2_dash_defects). Slate query q_fto2_def.", "nc, seq")),
             ("q_fto2_dis", level3_sql("fto2_dash_disruptions", DIS_COLUMNS, "FTO2 NC dashboard, level 3: one row per quality aléa with no NC, the disruption block (dataset fto2_dash_disruptions). Slate query q_fto2_dis.", "opened, id")))
-    for name, sql in sql3:
+    for name, sql in sql3 + (("q_fto2_ref", REF_SQL),):
         open(os.path.join(l3, name + ".sql"), "w", encoding="utf-8").write(sql)
     notebook_kit(root, l3)
     for f in ("notebook_cell.py",):   # replaced by the one-step pipeline notebook
@@ -391,9 +422,9 @@ def build(ref, root, scope_css, say):
     q2 = [os.path.join(l2, "q_fto2_%s_dummy.sql" % k) for k in ("nc", "def", "dis")]
     if all(os.path.exists(f) for f in q2):
         sql2 = [("q_fto2_" + k, open(f, encoding="utf-8").read()) for k, f in zip(("nc", "def", "dis"), q2)]
-        app2 = slate_app("FTO2 NC Dashboard (level 2, fictitious data)", css, html, js23, sql2)
+        app2 = slate_app("FTO2 NC Dashboard (level 2, fictitious data)", css, html, js23, sql2 + [("q_fto2_ref", REF_SQL)])
         json.dump(app2, open(os.path.join(l4, "FTO2_NC_Dashboard_level2.slate.json"), "w", encoding="utf-8"), ensure_ascii=False, indent=1)
-    app3 = slate_app("FTO2 NC Dashboard", css, html, js23, sql3)
+    app3 = slate_app("FTO2 NC Dashboard", css, html, js23, sql3 + (("q_fto2_ref", REF_SQL),))
     json.dump(app3, open(os.path.join(l4, "FTO2_NC_Dashboard_level3.slate.json"), "w", encoding="utf-8"), ensure_ascii=False, indent=1)
     report["level4"] = sorted(f for f in os.listdir(l4) if f.endswith(".json"))
     say("skywise levels:", report)

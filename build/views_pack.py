@@ -57,7 +57,7 @@ def way1(data, say=print):
     json.dump(app, open(os.path.join(out, "FTO2_Views_way1.slate.json"), "w", encoding="utf-8"), ensure_ascii=False, indent=1)
     # local preview: the real tables handed over as Slate would (never paste this file into Slate)
     t = data["tables"]
-    pre = SP.FAKE_SLATE.replace("@@NC@@", SP._blob(t["nc"])).replace("@@DEF@@", SP._blob(t["def"])).replace("@@DIS@@", SP._blob(t.get("dis") or {}))
+    pre = SP.fake_slate(SP._blob(t["nc"]), SP._blob(t.get("dis") or {}), SP._blob(t["def"]), "null")
     open(os.path.join(out, "preview_local_only.html"), "w", encoding="utf-8").write(
         one.replace("<!-- ===== HTML START ===== -->", pre + "<!-- ===== HTML START ===== -->", 1))
     say("views way 1:", {f: os.path.getsize(os.path.join(out, f)) // 1024 for f in sorted(os.listdir(out))}, "KB")
