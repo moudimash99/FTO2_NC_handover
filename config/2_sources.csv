@@ -1,0 +1,14 @@
+nom;valeur;description
+dataset_nc;non_conformity;Dataset Skywise des NC (nom donné dans le panneau Data du notebook)
+dataset_labels;fto2_ai_labels;Dataset des étiquettes de cause par ligne de défaut
+dataset_ordres;work_order_operation;Opérations des ordres de travail (vide = pas lu)
+dataset_aleas;mes_disruptions;Aléas MES (vide = pas lu)
+postes;data/fto2_station_mapping.csv;Fichier des postes : STATION A320 / Désignations A320, etc.
+liste_gps;data/GPS NC INT_SERIE ELEC 2026 - NC REGISTRE.csv;Registre GPS
+liste_gps_lignes_avant_entete;3;Lignes à sauter avant l'en-tête du registre GPS
+liste_gps_colonne_numero;N°  NC / AM / AF;Colonne du numéro de NC, exactement comme dans le fichier (espaces compris)
+liste_gps_colonne_date; Date SAP;Colonne de la date (jj/mm/aaaa), exactement comme dans le fichier (espaces compris)
+liste_test;data/NC TEST - NC.csv;Liste Test
+liste_test_lignes_avant_entete;2;Lignes à sauter avant l'en-tête de la liste Test
+liste_test_colonne_numero;N° NC;Colonne du numéro de NC
+liste_test_colonne_date;Dates;Colonne de la date (jj/mm/aaaa)

@@ -23,6 +23,8 @@ OUT = os.path.join(ROOT, "03_reports", "skywise", "mft")
 L3 = os.path.join(ROOT, "03_reports", "skywise", "level3_datasets")
 sys.path.insert(0, HERE)
 sys.path.insert(0, os.path.join(ROOT, "build"))
+sys.path.insert(0, ROOT)
+from fto2 import config     # noqa: E402   the settings in config/
 import build_mft as M      # noqa: E402   the references and the alarm parts, as the page built from the CSV files
 import build_all as B      # noqa: E402   _scope_css, the product alias rules and plan names
 import skywise_pack as SP  # noqa: E402   the one-file layout, the error box styles, the local stand-in for Slate
@@ -30,8 +32,8 @@ import skywise_pack as SP  # noqa: E402   the one-file layout, the error box sty
 
 def refs():
     import pandas as pd
-    t = pd.read_csv(os.path.join(ROOT, "04_reference", "eqmsn_produits.csv"), encoding="utf-8")
-    fr = pd.read_csv(os.path.join(ROOT, "04_reference", "souscodes_fr.csv"), encoding="utf-8-sig").set_index("sous_code").description_fr.to_dict()
+    t = config.frame("2_produits_plan.csv")
+    fr = config.frame("3_souscodes_fr.csv").set_index("sous_code").description_fr.to_dict()
     return {"plan": {str(a).upper(): B.EQ_NAMES.get(b, b) for a, b in zip(t.produit_nc, t.produit_eqmsn)}, "alias": B.product_alias_rules(),
             "codes": {str(k): M.tidy(v, 90) for k, v in fr.items() if M.tidy(v, 90)}, "codesEn": M.codes_en(), "vol": M.weekly_volume(), "msnEnd": M.msn_end(),
             "actions": M.seed_actions()}

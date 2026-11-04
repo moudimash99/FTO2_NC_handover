@@ -1,0 +1,10 @@
+code;libelle;commentaire
+RWK;Rework;
+REJ;Reject;
+EXC;Echange;
+NDC;DQN;
+SCR;Scrap;
+ACC;Accept as is i.a.w design criteria;
+PNC;Potential Non Conformity;
+DQN;Request for Design Change;
+(autre);Unknown;Tout code absent de la liste

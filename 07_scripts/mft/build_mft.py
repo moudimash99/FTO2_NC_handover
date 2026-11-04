@@ -1,7 +1,7 @@
 """MFT page for the weekly QLS review: one line at a time, the week's Pareto, a short analysis and the action follow-up.
 
 Reads the dashboard's two tables (05_outputs/fto2_dash_nc.csv, fto2_dash_defects.csv) and the A330 / A350 MFT trackers
-(06_input_data/MFT_actions_*.csv, tied to the problem each action targets by 04_reference/mft_actions_mapping.csv).
+(config/1_actions_mft.csv, written from the trackers by scripts/actions_mft_depuis_suivis.py).
 Writes 03_reports/FTO2_MFT.html (and build/artifacts/FTO2_MFT.html) from 07_scripts/mft/mft_template.html, its Slate
 version in 03_reports/skywise/mft/ (build_mft_slate.py), and the tracker actions as 05_outputs/mft_actions_seed.json: the page keeps its actions in its own store (seeded once from that
 file); the page itself carries no action.
@@ -16,12 +16,14 @@ import json
 import os
 import re
 
+import sys
+
 import pandas as pd
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 HERE = os.path.dirname(os.path.abspath(__file__))
-FR_MONTHS = {"janvier": 1, "fevrier": 2, "février": 2, "mars": 3, "avril": 4, "mai": 5, "juin": 6, "juillet": 7, "aout": 8,
-             "août": 8, "septembre": 9, "octobre": 10, "novembre": 11, "decembre": 12, "décembre": 12}
+sys.path.insert(0, ROOT)
+from fto2 import config   # noqa: E402   the settings in config/
 
 
 def week(d):
@@ -35,29 +37,11 @@ def tidy(s, n=320):
     return re.sub(r"\s+", " ", str(s)).strip()[:n]
 
 
-def month_day(s):
-    """'février 2026' -> '2026-02-01'; '' when no month is written."""
-    m = re.search(r"([A-Za-zÀ-ÿ]+)\s+(20\d\d)", str(s or ""))
-    if not m or m.group(1).lower() not in FR_MONTHS:
-        return ""
-    return "%s-%02d-01" % (m.group(2), FR_MONTHS[m.group(1).lower()])
-
-
-def status(s):
-    s = tidy(s).lower()
-    if not s:
-        return ""
-    if s.startswith("clos") or s.startswith("ferm") or s.startswith("termin"):
-        return "Clos"
-    if s in ("e/c", "ec") or s.startswith("en cours"):
-        return "En cours"
-    return "À lancer" if s.startswith("à lancer") or s.startswith("a lancer") else tidy(s).capitalize()
-
-
 def data():
     n = pd.read_csv(os.path.join(ROOT, "05_outputs", "fto2_dash_nc.csv"), dtype=str, keep_default_na=False, encoding="utf-8-sig")
     d = pd.read_csv(os.path.join(ROOT, "05_outputs", "fto2_dash_defects.csv"), dtype=str, keep_default_na=False, encoding="utf-8-sig")
-    n = n[n.plant.str.strip().str.upper().isin(["FTO2", "FT02"]) & (n.created >= "2026-01-01")].sort_values("created")
+    home, since = config.parameter_list("usines_maison"), config.parameter("date_debut")   # config/2_parametres.csv
+    n = n[n.plant.str.strip().str.upper().isin(home) & (n.created >= since)].sort_values("created")
     dic = {k: [] for k in ("line", "phase", "msn", "station", "where", "cat", "rca", "sub", "code", "fin", "prod")}
     plan_prod = plan_products()
     idx = {k: {} for k in dic}
@@ -80,7 +64,7 @@ def data():
         if i is None:
             continue   # [NC index, category, cause, sub-category, sub-code, FIN, minor, text]
         defs.append([i, code("cat", r.cat), code("rca", r.rca), code("sub", r.sub), code("code", r.subcode), code("fin", r.fin), int(r.minor or 0), tidy(r.text)])
-    fr = pd.read_csv(os.path.join(ROOT, "04_reference", "souscodes_fr.csv"), encoding="utf-8-sig").set_index("sous_code").description_fr.to_dict()
+    fr = config.frame("3_souscodes_fr.csv").set_index("sous_code").description_fr.to_dict()
     en = codes_en()
     to = n.created.max()[:10]
     return {"to": to, "toWeek": week(to), "ncs": ncs, "defs": defs, "dic": dic,
@@ -92,7 +76,7 @@ def data():
 
 def codes_en():
     """English sub-code descriptions for the English page (2 Nov): the official sheet's, as the dashboard (fto2_core.official_subcode)."""
-    ref = pd.read_csv(os.path.join(ROOT, "04_reference", "reference_souscodes_pareto.csv"), encoding="utf-8-sig")
+    ref = config.frame("3_souscodes.csv")
     out = {str(c): tidy(d, 90) for c, d in zip(ref.sous_code, ref.object_desc) if not str(c).startswith("(") and tidy(d, 90)}
     out.update({"Q11 (composant)": "Component (sub-code not specified)", "Non codé": "No code"})
     out.update({str(c)[:3] + " (non précisé)": "Sub-code not specified" for c in ref.sous_code if not str(c).startswith("(")})
@@ -105,7 +89,7 @@ def plan_products():
     import sys
     sys.path.insert(0, os.path.join(ROOT, "build"))
     import build_all as B
-    ref = pd.read_csv(os.path.join(ROOT, "04_reference", "eqmsn_produits.csv"), encoding="utf-8")
+    ref = config.frame("2_produits_plan.csv")
     plan = {str(a).upper(): B.EQ_NAMES.get(b, b) for a, b in zip(ref.produit_nc, ref.produit_eqmsn)}
     rules = B.product_alias_rules()
     return lambda line, prod, station: plan.get(B.alias_product(rules, set(plan), line, prod or "Other", station).upper(), "")
@@ -142,28 +126,17 @@ def alarm_parts():
 
 
 def seed_actions():
-    """The trackers' actions in the page's own shape, each tied to the problem it targets."""
-    mp = pd.read_csv(os.path.join(ROOT, "04_reference", "mft_actions_mapping.csv"), encoding="utf-8-sig", dtype=str)
+    """The MFT actions (config/1_actions_mft.csv) in the page's own shape, each tied to the problem it targets."""
     out = []
-    for line in ("A330", "A350"):
-        t = pd.read_csv(os.path.join(ROOT, "06_input_data", "MFT_actions_%s.csv" % line), skiprows=2, dtype=str).dropna(how="all")
-        two = "Statut.1" in t.columns   # A350: analysis status, then action status; A330: one status, the action's
-        for k, a in enumerate(t.itertuples(index=False)):
-            a = dict(zip(t.columns, a))
-            cat, dft = tidy(a.get("NC Category (Type)")), tidy(a.get("Défauts"), 1200)
-            m = mp[(mp.programme == line) & (mp.nc_category.str.strip() == cat) & mp.defauts_debut.map(lambda p: dft.startswith(p))]
-            prob = {"level": m.iloc[0].niveau, "values": m.iloc[0].valeur.split("|")} if not m.empty else {"level": "", "values": []}
-            st = status(a.get("Statut.1") if two else a.get("Statut")) or status(a.get("Statut"))
-            out.append({"id": "trk-%s-%d" % (line.lower(), k + 1), "line": line, "category": cat, "title": m.iloc[0].libelle_fr if not m.empty else cat,
-                        "problem": prob, "defects": dft, "rootCause": tidy(a.get("Analyse de cause racine"), 2000),
-                        "analysisOwner": tidy(a.get("Porteur de l'analyse")), "analysisStart": month_day(a.get("Début de l'analyse")),
-                        "analysisStatus": status(a.get("Statut")) if two else "", "action": tidy(a.get("Action"), 2000),
-                        "actionOwner": tidy(a.get("Porteur de l'action")), "actionStart": month_day(a.get("Début de l'action")),
-                        "status": st or "En cours", "expected": month_day(a.get("Quand (bénéfices estimés)")) or tidy(a.get("Quand (bénéfices estimés)")),
-                        "note": tidy(a.get("Informations complémentaires"), 600), "source": "Tracker MFT %s" % line,
-                        "log": [], "createdBy": "", "createdAt": "2026-10-23"})
+    for _, a in config.table("1_actions_mft.csv").iterrows():
+        out.append({"id": a["id"], "line": a["ligne"], "category": a["categorie"], "title": a["titre"],
+                    "problem": {"level": a["niveau"], "values": a["valeurs"].split("|") if a["valeurs"] else []},
+                    "defects": a["defauts"], "rootCause": a["cause_racine"], "analysisOwner": a["porteur_analyse"],
+                    "analysisStart": a["debut_analyse"], "analysisStatus": a["statut_analyse"], "action": a["action"],
+                    "actionOwner": a["porteur_action"], "actionStart": a["debut_action"], "status": a["statut"],
+                    "expected": a["benefices_attendus"], "note": a["note"], "source": a["suivi"],
+                    "log": [], "createdBy": "", "createdAt": "2026-10-23"})
     return out
-
 
 def main():
     D = data()

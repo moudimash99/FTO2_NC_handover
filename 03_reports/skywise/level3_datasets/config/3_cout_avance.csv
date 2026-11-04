@@ -1,0 +1,16 @@
+nom;valeur;description
+version_modele;cnq-2026.10.20b;Version du modèle de coût, affichée sur la page
+usine_responsable;FTO2;Responsabilité = ce code -> la NC compte dans le coût FTO2
+types_controle_final;CONTROLE FINAL;Types de NC trouvées au contrôle final (rédaction plus longue)
+types_sans_alerte;TEST|CONTROLE FINAL;Types de NC sans alerte opérateur (trouvées au test ou au contrôle final)
+prefixes_ordre_retouche;AW|WO|RS;Préfixes d'un ordre de retouche dans linked_document (rejet avec retouche = REJ_RW)
+classes_branchement;Inversion|Erreur de branchement|Non connecté;Classes d'erreur de branchement (la première prend son temps, les suivantes minutes_branchement_suivant)
+types_internes;INTERNE|NC INTERNE;Types de NC internes (travail x facteur_travail_nc_interne)
+utiliser_temps_ordres;oui;oui : le temps planifié des ordres de retouche S03 remplace le temps du modèle
+types_ordres;S03;Types d'ordres SAP de retouche
+unites_minutes;IM=0.6|MIN=1|H=60;Unités SAP en minutes (IM = 1/100 heure)
+utiliser_temps_aleas;oui;oui : le temps perdu déclaré sur l'aléa remplace minutes_alerte
+types_aleas;QLS;Début du type des aléas qualité (QLS)
+fenetre_alea_heures;-2|72;Une NC suit un aléa si elle est créée entre ces heures autour de l'aléa (avant|après)
+aleas_erma_regex;1101VB|MIP;Aléas ERMA possibles (laissés hors du bloc aléas)
+colonne_cout_retour_client;customer_return_cost;Colonne du montant réel d'un retour client, quand il est connu

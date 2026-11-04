@@ -22,12 +22,12 @@ import tempfile
 import pandas as pd
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-sys.path.insert(0, os.path.join(ROOT, "02_dashboard_pack", "skywise_nc_dashboard_v48", "1_pipeline"))
-sys.path.insert(0, os.path.join(ROOT, "cnq_handoever"))
+sys.path.insert(0, ROOT)   # the fto2 backend package and config/
 sys.path.insert(0, os.path.join(ROOT, "build"))
-import fto2_logic as L                    # noqa: E402
-import nc_defect_parser as PARSER         # noqa: E402
-import cnq.cnq_params as P                # noqa: E402
+from fto2.parser import fto2_logic as L                 # noqa: E402
+from fto2.parser import nc_defect_parser as PARSER      # noqa: E402
+from fto2.cost import params as P         # noqa: E402
+from fto2 import config                   # noqa: E402
 from fto2_core import NC_COLUMNS, DEF_COLUMNS, DIS_COLUMNS, CAT_RENAME   # noqa: E402
 
 SQL_DIR = os.path.join(ROOT, "03_reports", "skywise", "level2_dummy_queries")
@@ -46,7 +46,7 @@ def q(s):
 def taxonomy():
     """Sub-categories with their category, root cause, minor flag, minutes and material (CNQ model), official code, and how
     often each appears and how often it is a cable defect in the current data (weights for the fictitious lines)."""
-    ref = pd.read_csv(os.path.join(ROOT, "04_reference", "reference_souscodes_pareto.csv"), encoding="utf-8-sig")
+    ref = config.frame("3_souscodes.csv")
     ref = ref[~ref.sous_code.astype(str).str.startswith("(")]
     first = ref.groupby("sous_categorie").sous_code.first()
     fallback = {"Câble à refaire (ligne)": "Q06-001", "Composant HS": "Q11 (composant)", "Composant – cause non écrite": "Q11 (composant)",

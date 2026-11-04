@@ -29,17 +29,16 @@ import numpy as np
 import pandas as pd
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-PACK = os.path.join(ROOT, "02_dashboard_pack", "skywise_nc_dashboard_v48", "1_pipeline")
 CNQ = os.path.join(ROOT, "cnq_handoever")
 OUT = os.path.join(ROOT, "05_outputs")
 REP = os.path.join(ROOT, "03_reports")
-sys.path.insert(0, PACK)
-sys.path.insert(0, CNQ)
-import fto2_logic as L                                   # noqa: E402
-import nc_defect_parser as PARSER                        # noqa: E402
-from cnq.cnq_core import compute_cnq, parameters_as_tables  # noqa: E402
+sys.path.insert(0, ROOT)                                 # the fto2 backend package and config/
+from fto2 import config                                 # noqa: E402   the settings in config/
+from fto2.parser import fto2_logic as L                 # noqa: E402   the defect reader and the NC columns
+from fto2.parser import nc_defect_parser as PARSER      # noqa: E402
+from fto2.cost.model import compute_cnq, parameters_as_tables  # noqa: E402   the cost model, settings in config/
 sys.path.insert(0, os.path.join(ROOT, "build"))
-import fto2_core as core                                # noqa: E402   the data steps, shared with the Skywise notebook
+from fto2 import core                                   # noqa: E402   the data steps, shared with the Skywise notebook
 
 REPORT = {}
 CODE_DESC = {}   # official sub-code -> [en, fr], filled by the data steps
@@ -126,27 +125,26 @@ def load_disruptions():
 def year_2025(x):
     """2025 for the year comparisons: the raw Skywise NC extract of 2025 (06_input_data/nc_2025_skywise_fto2.csv.gz) through the
     pipeline's rules, the parser and the CNQ model, summed per month, scope, phase, line and product; and the 2025 deliveries per
-    product (06_input_data/Livraisons_MSN_2025.csv, the Livraisons 2025 sheet). None when the extract is missing."""
+    product (config/1_livraisons_2025.csv, from the Livraisons 2025 sheet). None when the extract is missing."""
     path = os.path.join(ROOT, "06_input_data", "nc_2025_skywise_fto2.csv.gz")
     if not os.path.exists(path):
         return None
     raw = pd.read_csv(path, dtype=str, keep_default_na=False, na_values=[""])
-    rules, plan = product_alias_rules(), {str(k).upper() for k in pd.read_csv(os.path.join(ROOT, "04_reference", "eqmsn_produits.csv"), encoding="utf-8").produit_nc}
+    rules, plan = product_alias_rules(), {str(k).upper() for k in config.frame("2_produits_plan.csv").produit_nc}
     alias = lambda line, prod, station: alias_product(rules, plan, line, prod, station)   # products off the plan put back on their plan product
-    rows, info, p = core.year_baseline(raw, core.station_pairs([x]), os.path.join(ROOT, "04_reference"), 2025, alias)
+    rows, info, p = core.year_baseline(raw, core.station_pairs([x]), 2025, alias)
     out = {"cols": ["month", "scope", "phase", "line", "product", "nc", "def", "defMajor", "cost", "cost2", "cost1", "liab", "costAll"], "rows": rows,
            "from": info["created_from"], "to": info["created_to"], "prod": None, "msn": None}
     out["rcaCols"], out["rca"] = core.year_causes(p, 2025)   # 2025 defects by cause (parser labels), for the 2025 / 2026 cause charts
     n25 = p["nc"][p["nc"].date_creation.astype(str).str.startswith("2025") & (p["nc"].scope == "serie")]
     msn = n25.msn.fillna("").astype(str).str.replace(r"\.0$", "", regex=True).str.lstrip("0")
     out["byMsn"] = {"%s|%s" % k: int(v) for k, v in n25.assign(m=msn)[msn != ""].groupby(["ligne", "m"]).size().items()}   # 2025 NCs per aircraft: built partly in 2025
-    lv = os.path.join(ROOT, "06_input_data", "Livraisons_MSN_2025.csv")
-    if os.path.exists(lv):
-        t = pd.read_csv(lv, encoding="utf-8")
+    if os.path.exists(config.path("1_livraisons_2025.csv")):
+        t = config.frame("1_livraisons_2025.csv")
         months = [c for c in t.columns if c.startswith("2025-")]
         out["prod"] = {EQ_NAMES.get(k, k): [float(v) for v in vals] for k, vals in zip(t.produit_eqmsn, t[months].values)}
         out["months"] = months
-        ln = pd.read_csv(os.path.join(ROOT, "06_input_data", "Livraisons_MSN_2025_lignes.csv"), encoding="utf-8")
+        ln = config.frame("1_livraisons_2025_lignes.csv")
         out["msn"] = dict(zip(ln.ligne, ln.msn_entiers_livres_2025.astype(int)))
     s = [r for r in rows if r[1] == "serie" and r[2] == "SERIE"]
     REPORT["y2025"] = dict(info, serie_SERIE={"ncs": sum(r[5] for r in s), "defects": sum(r[6] for r in s), "level3": round(sum(r[8] for r in s), 2)},
@@ -162,7 +160,7 @@ def main():
     lab = pd.read_csv(os.path.join(ROOT, "04_reference", "llm_labels_longtext.csv"), dtype={"notification_number": str}, encoding="utf-8-sig")
     y25 = year_2025(x.copy())
     say("2025:", REPORT.get("y2025"))
-    p = core.prepare(x, lab, os.path.join(ROOT, "04_reference"), ops, dis)   # parser, labels, CNQ, rework orders, aléas, scope: build/fto2_core.py
+    p = core.prepare(x, lab, ops, dis)   # parser, labels, CNQ, rework orders, aléas, scope: build/fto2_core.py
     d, nc_ref, lt, nc_in = p["d"], p["nc"], p["lt"], p["nc_in"]
     nl_, dl_ = p["nc_llm"], p["def_llm"]
     CODE_DESC.update(p["codes"])
@@ -362,7 +360,7 @@ def build_dashboard(d, nc, lt, y25=None, dis_t=None):
     actions = mft_actions()
     data = {"defects": defs, "ncs": ncs, "direct": direct, "rca": rca_reference(d), "client": client, "lt": lt_client, "codes": CODE_DESC, "actions": actions,
             "cnqp": cnq_explain(d), "cables": cable_requests(),
-            "meta": {"from": "2026-01-01", "to": REPORT["created_to"], "aside": aside, "noLine": no_line,
+            "meta": {"from": config.parameter("date_debut"), "to": REPORT["created_to"], "aside": aside, "noLine": no_line,
                      "modelTotal": round(float(aec.cnq_cost_total.sum()), 2)}}
     # every page carries the production file (rates per MSN); only the review pages carry the made-up gallery data (never in the Slate files)
     sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))   # -I leaves the script folder off the path
@@ -410,34 +408,22 @@ def reference_block(data):
             "rca": [dict(o, ex=[]) for o in data["rca"]], "y25": data.get("y25"), "cables": data.get("cables")}
 
 
-EQ_NAMES = {"MIP": "MIP A350", "MIP(2)": "MIP A400M"}   # the production file's names, as the page shows them (MIP(2) is the A400M MIP: Mohammad, 29 Oct)
+EQ_NAMES, _ = config.mapping("2_produits_noms_plan.csv", "nom_plan", "nom_affiche")   # the production files' product names, as the page shows them
 
 
 def eqmsn(nc):
-    """Production volume for the Production tab: EqMSN per product and month of 2026 (06_input_data/EqMSN_2026.xlsx, both the
-    Standard and the Adjusted sheet; "wd": the same counted on working days, see working_day_volume, the page's default), the NC
-    product labels it matches (04_reference/eqmsn_produits.csv) and each product's line, taken from the NCs. None if the file is
+    """Production volume for the Production tab: EqMSN per product and month of 2026 (config/1_eqmsn_mois.csv, written from the
+    EqMSN Excel file by scripts/eqmsn_depuis_excel.py: the Standard and the Adjusted sheet; "wd": the same counted on working days, see working_day_volume, the page's default), the NC
+    product labels it matches (config/2_produits_plan.csv) and each product's line, taken from the NCs. None if the file is
     missing."""
-    path = os.path.join(ROOT, "06_input_data", "EqMSN_2026.xlsx")
-    if not os.path.exists(path):
+    if not os.path.exists(config.path("1_eqmsn_mois.csv")):
         return None
-    import openpyxl
-    wb = openpyxl.load_workbook(path, read_only=True, data_only=True)
-    out = {"asof": "2026-10-07", "forecastFrom": "2026-10",   # export of 07/10/2026; the Notes sheet says October to December are forecast
-           "months": ["2026-%02d" % m for m in range(1, 13)]}
-    for sheet, key in (("Standard", "std"), ("Adjusted", "adj")):
-        rows, start = {}, False
-        for r in wb[sheet].iter_rows(values_only=True):
-            if r[0] == "Produit":
-                start = True
-                continue
-            if not start or r[0] in (None, "Total"):
-                if start and r[0] == "Total":
-                    break
-                continue
-            rows[EQ_NAMES.get(str(r[0]), str(r[0]))] = [round(float(v or 0), 2) for v in r[1:13]]
-        out[key] = rows
-    ref = pd.read_csv(os.path.join(ROOT, "04_reference", "eqmsn_produits.csv"), encoding="utf-8")
+    t = config.table("1_eqmsn_mois.csv")
+    months = sorted(c for c in t.columns if c[:4].isdigit() and c[4] == "-")
+    out = {"asof": max(t["export_du"]), "forecastFrom": max(t["prevision_a_partir_de"]), "months": months}
+    for version in ("std", "adj"):
+        out[version] = {r["produit"]: [float(r[m]) for m in months] for _, r in t[t["version"] == version].iterrows()}
+    ref = config.frame("2_produits_plan.csv")
     out["map"] = {str(a).upper(): EQ_NAMES.get(b, b) for a, b in zip(ref.produit_nc, ref.produit_eqmsn)}
     out["toConfirm"] = [EQ_NAMES.get(b, b) for b, c in zip(ref.produit_eqmsn, ref.a_confirmer) if c == "oui"]
     lines = {}
@@ -463,13 +449,13 @@ def eqmsn(nc):
 
 
 def product_alias_rules():
-    """NC products the production plan does not name, put back on the plan product they belong to (04_reference/produits_alias.csv,
+    """NC products the production plan does not name, put back on the plan product they belong to (config/2_produits_alias.csv,
     agreed with Mohammad 29 Oct): [line, product regex, station regex or '', plan product]. The first rule that matches wins, and a
     rule applies only to a product that is not itself in the plan. The page applies the same rules to the 2026 NCs (fto2FromTables)."""
-    path = os.path.join(ROOT, "04_reference", "produits_alias.csv")
+    path = config.path("2_produits_alias.csv")
     if not os.path.exists(path):
         return []
-    t = pd.read_csv(path, dtype=str, keep_default_na=False, encoding="utf-8")
+    t = config.table("2_produits_alias.csv", ["ligne", "produit_nc", "poste", "produit_cible"])
     return [[r.ligne, r.produit_nc, r.poste, r.produit_cible] for r in t.itertuples()]
 
 
@@ -484,57 +470,30 @@ def alias_product(rules, plan, line, prod, station):
     return prod
 
 
-PRODUCTION_REPAIRED = []   # MSNs whose '#N/A' in the newest Avances / Retards export was filled from an older export
+PRODUCTION_REPAIRED = []   # MSNs whose '#N/A' in the Avances / Retards export was filled from an older export
+MILESTONES = ["impression", "enclenchement", "se", "meca", "inte", "test", "qualite", "depart_ota"]
 
 
 def _production_export():
-    """The newest 'Tableau Avances / Retards' export (06_input_data/Avances_Retards_*.csv): its date and one record per MSN and
-    product, {line, prod, msn, plan, real} with the 8 milestone dates (Impression, Enclenchement, SE, MECA, INTE, TEST, QUALITE,
-    Départ OTA) of the 'date prévue du début' and 'date réelle' rows. (None, []) without the file.
-    A row whose MSN reads "#N/A" (an Excel error in the export: the 3 Nov export lost it on 13 A330 aircraft of late 2025) takes
-    its MSN, and its planned dates that read "#N/A", from the latest older export with the same line, product and rank."""
-    import csv, datetime as dt
-    files = sorted(glob.glob(os.path.join(ROOT, "06_input_data", "Avances_Retards_*.csv")))
-    if not files:
+    """The production plan per aircraft (config/1_plan_msn.csv, written from the 'Tableau Avances / Retards' export by
+    scripts/plan_depuis_avances_retards.py; rows can be corrected by hand): the export date and one record per MSN and product,
+    {line, prod, msn, plan, real} with the 8 milestone dates (Impression, Enclenchement, SE, MECA, INTE, TEST, QUALITE,
+    Départ OTA). (None, []) without the table."""
+    import datetime as dt
+    if not os.path.exists(config.path("1_plan_msn.csv")):
         return None, []
-    asof = dt.date.fromisoformat(os.path.basename(files[-1])[len("Avances_Retards_"):-4])
-
-    def plan_rows(path):
-        rows = list(csv.reader(open(path, encoding="utf-8")))
-        h = next(i for i, r in enumerate(rows) if r[:3] == ["S/HS", "Prog", "Produit"])
-        return rows[h + 1:]
-    bad = lambda v: v.strip() in ("", "#N/A")
-    older = {}   # (line, product, rank) -> the planned row of an older export with a real MSN; the newest older export wins
-    for f in files[:-1]:
-        for r in plan_rows(f):
-            if len(r) >= 15 and r[14] == "date prévue du début" and not bad(r[3]):
-                older[(r[1].strip(), r[2].strip(), r[4].strip())] = r
-
-    def day(s):
-        try:
-            return dt.datetime.strptime(s.strip(), "%d/%m/%Y").date()
-        except ValueError:
-            return None
-    recs, cur = [], None
-    for r in plan_rows(files[-1]):
-        if len(r) < 15:
-            continue
-        if r[14] == "date prévue du début" and bad(r[3]):
-            o = older.get((r[1].strip(), r[2].strip(), r[4].strip()))
-            if o:
-                r = r[:3] + [o[3]] + r[4:5] + [x if not bad(x) else y for x, y in zip(r[5:13], o[5:13])] + r[13:]
-                PRODUCTION_REPAIRED.append("%s %s %s" % (r[1].strip(), r[2].strip(), o[3].strip()))
-        if r[14] == "date prévue du début" and r[3].strip():
-            cur = {"line": r[1].strip(), "prod": EQ_NAMES.get(r[2].strip(), r[2].strip()), "msn": r[3].strip(), "plan": [day(x) for x in r[5:13]], "real": [None] * 8}
-            recs.append(cur)
-        elif r[14] == "date réelle" and cur:
-            cur["real"] = [day(x) for x in r[5:13]]
+    t = config.table("1_plan_msn.csv")
+    day = lambda s: dt.date.fromisoformat(s) if s else None
+    dates = [x for x in t["export_du"] if x]
+    asof = dt.date.fromisoformat(max(dates)) if dates else None
+    recs = [{"line": r["ligne"], "prod": r["produit"], "msn": r["msn"], "plan": [day(r["prevu_" + m]) for m in MILESTONES],
+             "real": [day(r["reel_" + m]) for m in MILESTONES]} for _, r in t.iterrows()]
+    PRODUCTION_REPAIRED[:] = ["%s %s %s" % (r["ligne"], r["produit"], r["msn"]) for _, r in t.iterrows() if r["note"]]
     return asof, recs
 
 
 def production_msn():
-    """Each aircraft's build dates from the 'Tableau Avances / Retards' export (06_input_data/Avances_Retards_*.csv, newest file):
-    four rows per MSN and product (planned start of each milestone, reason, real date, advance / delay). Per line|MSN:
+    """Each aircraft's build dates from the production plan (config/1_plan_msn.csv, from the 'Tableau Avances / Retards' export). Per line|MSN:
     [start, end, products] where start = the first real milestone date (else the planned Impression date) and end = the real OTA
     (else the planned OTA), the earliest start and latest end over the aircraft's products. A real date after the export or more
     than 200 days from its plan is a typo and is ignored. Checked against the export's own 'en cours' flag on 07/10/2026: 130 of
@@ -581,7 +540,7 @@ def working_day_volume(asof, recs, weekly=False):
     weekly=True: the same per ISO week of 2026, by line and by product, for the alarms: {"line": {line: 53 weeks}, "prod": {product:
     53 weeks}}, week 1 first."""
     import datetime as dt
-    cal = pd.read_csv(os.path.join(ROOT, "04_reference", "calendrier_production.csv"), encoding="utf-8")
+    cal = config.frame("1_calendrier_production.csv")
     cal = [(dt.date.fromisoformat(a), dt.date.fromisoformat(b), float(w)) for a, b, w in zip(cal.debut, cal.fin, cal.poids)]
     hol = set().union(*(_french_holidays(y) for y in range(asof.year - 2, asof.year + 3)))
 
@@ -635,24 +594,22 @@ def working_day_volume(asof, recs, weekly=False):
 
 
 def cable_requests():
-    """The cable team's requests for new cables (06_input_data/cables_2026.json: the rows behind the "Suivi NC câbles" page,
-    https://claude.ai/artifact/17wJtGR1KwavRspXDnJdMz, file of 26 Oct, made there from 06_input_data/cable_team_tracker_A30_NC_cables.csv:
-    reason, imputation, the cause proposed from the analysis comment, the cable numbers and type read in it). For the Câbles tab, one
-    row per request: [row, week, date, NC, programme, MSN, reason, imputation, proposed cause, cables, cable type, comment, 1 if it
-    has an action or a status]. None without the file."""
-    path = os.path.join(ROOT, "06_input_data", "cables_2026.json")
-    if not os.path.exists(path):
+    """The cable team's requests for new cables (config/1_demandes_cables.csv, written from the team's tracker by
+    scripts/cables_depuis_suivi.py, rows can be corrected by hand). For the Câbles tab, one row per request: [row, week, date, NC,
+    programme, MSN, reason, origin, proposed cause, cables, cable type, comment, 1 if it has an action or a status]. None without
+    the table."""
+    if not os.path.exists(config.path("1_demandes_cables.csv")):
         return None
-    rows = json.load(open(path, encoding="utf-8"))
-    out = [[r["ligne"], r["semaine"], r["date"], r["nc"], r["programme"], r["msn"], r["motif"], r["origine"], r["cause"], r["cables"],
-            r["type"], r["commentaire"], 1 if (r.get("action") or r.get("statut")) else 0] for r in rows]
+    t = config.table("1_demandes_cables.csv")
+    out = [[int(r["ligne"]), r["semaine"], r["date"], r["nc"], r["programme"], r["msn"], r["motif"], r["origine"], r["cause"], r["cables"],
+            r["type"], r["commentaire"], 1 if (r["action"] or r["statut"]) else 0] for _, r in t.iterrows()]
     REPORT["cables"] = {"requests": len(out), "from": min(r[2] for r in out), "to": max(r[2] for r in out)}
     return out
 
 def cnq_explain(d):
     """The CNQ parameters the "explain the calculation" part shows: times and rates, which steps each decision charges,
     minutes and material per defect class, the Airbus standard per decision, and the defect lines counted more than once."""
-    import cnq.cnq_params as P
+    from fto2.cost import params as P
     kind = lambda b: "DERIVED" if b.startswith("TEAM RULE") else "RULE" if b.startswith("Rule from AEC") else b.split(" ")[0].upper()
     R = getattr(P, "STEP_RATES", None) or {}
     return {"p": {"rate": P.RATE_STANDARD, "rateEng": P.RATE_ENGINEERING, "rateProd": getattr(P, "RATE_PROD", P.RATE_STANDARD),
@@ -674,48 +631,28 @@ def nc_extras(r):
     return core.nc_extras(r, REPORT["created_to"])
 
 
-FR_MONTHS = {"janvier": 1, "fevrier": 2, "février": 2, "mars": 3, "avril": 4, "mai": 5, "juin": 6, "juillet": 7, "aout": 8, "août": 8,
-             "septembre": 9, "octobre": 10, "novembre": 11, "decembre": 12, "décembre": 12}
-
-
-def _month(s):
-    m = re.search(r"([A-Za-zÀ-ÿ]+)\s+(20\d\d)", str(s or ""))
-    if not m or m.group(1).lower() not in FR_MONTHS:
-        return ""
-    return "%s-%02d" % (m.group(2), FR_MONTHS[m.group(1).lower()])
-
-
 def mft_actions():
-    """Actions of the A330 and A350 MFT trackers, each tied to the problem it targets (04_reference/mft_actions_mapping.csv,
-    to be checked by the line quality team): [line, label fr, label en, level, values, analysis month, action month, status,
-    expected benefit month, defects text, root cause, action]."""
-    mp = pd.read_csv(os.path.join(ROOT, "04_reference", "mft_actions_mapping.csv"), encoding="utf-8-sig", dtype=str)
+    """Actions of the MFT trackers (config/1_actions_mft.csv), each tied to the problem it targets; actions with no problem are
+    left out: [line, label fr, label en, level, values, analysis month, action month, status, expected benefit month, defects
+    text, root cause, action]."""
+    month = lambda d: d[:7] if re.match(r"^\d{4}-\d{2}-\d{2}$", d) else ""
     out = []
-    for prog in ("A330", "A350"):
-        t = pd.read_csv(os.path.join(ROOT, "06_input_data", "MFT_actions_%s.csv" % prog), skiprows=2, dtype=str).dropna(how="all")
-        st = "Statut.1" if "Statut.1" in t.columns else "Statut"
-        for _, a in t.iterrows():
-            cat, dft = S_(a.get("NC Category (Type)")).strip(), S_(a.get("Défauts")).strip()
-            m = mp[(mp.programme == prog) & (mp.nc_category.str.strip() == cat) & mp.defauts_debut.map(lambda p: dft.startswith(p))]
-            if m.empty:
-                say("MFT action not mapped:", prog, cat, dft[:40])
-                continue
-            m = m.iloc[0]
-            clean = lambda s: re.sub(r"\s+", " ", S_(s)).strip()[:400]
-            out.append([prog, m.libelle_fr, m.libelle_en, m.niveau, m.valeur.split("|"), _month(a.get("Début de l'analyse")),
-                        _month(a.get("Début de l'action")), clean(a.get(st)), _month(a.get("Quand (bénéfices estimés)")),
-                        clean(dft), clean(a.get("Analyse de cause racine")), clean(a.get("Action"))])
+    for _, a in config.table("1_actions_mft.csv").iterrows():
+        if not a["niveau"]:
+            continue
+        out.append([a["ligne"], a["titre"], a["titre_en"], a["niveau"], a["valeurs"].split("|"), month(a["debut_analyse"]),
+                    month(a["debut_action"]), (a["statut_suivi"] if a["source"] == "auto" else a["statut"])[:400], month(a["benefices_attendus"]),
+                    a["defauts"][:400], a["cause_racine"][:400], a["action"][:400]])
     REPORT["mft_actions"] = len(out)
     return out
 
 
 def rca_reference(d):
     """The RCA page: hierarchy official sub-code -> sub-category -> RCA -> category, definitions, real examples."""
-    ref = os.path.join(ROOT, "04_reference")
-    sc = pd.read_csv(os.path.join(ref, "sous_categories.csv"), encoding="utf-8-sig")
-    codes = pd.read_csv(os.path.join(ref, "reference_souscodes_pareto.csv"), encoding="utf-8-sig")
+    sc = config.frame("3_sous_categories.csv")
+    codes = config.frame("3_souscodes.csv")
     codes = codes[~codes.sous_code.astype(str).str.startswith("(")]
-    defs = pd.read_csv(os.path.join(ref, "rca_definitions.csv"), encoding="utf-8-sig").set_index("rca_nom")
+    defs = config.frame("2_causes_definitions.csv").set_index("rca_nom")
     pool = d[(d.scope != "") & (d.llm_status == "ok") & (d.llm_confiance == "high") & d.text.fillna("").str.len().between(30, 170)]
     pool = pool.sort_values("date_creation", ascending=False)
     out = []

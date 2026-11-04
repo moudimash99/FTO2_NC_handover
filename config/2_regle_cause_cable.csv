@@ -1,0 +1,18 @@
+ordre;resultat;colonne;test;valeur;commentaire
+1;Longueur trop courte à la def;commentaire;regex;\bdef\b|d[ée]finition;Cause proposée d'une demande de câble, lue dans le commentaire d'analyse
+2;Coupe à la main;commentaire;contient;à la main|a la main;
+3;Marquage laser absent ou illisible;commentaire;regex;las[ée]ris|non imprim|rep[ée]rage;
+4;Mauvaise jauge / type;commentaire;regex;au lieu d|mauvaise ga|jauge|gauge;
+5;Mauvais numéro;commentaire;contient;mauvais num;
+6;Défaut isolant (bobine);commentaire;regex;d[ée]faut.{0,20}isolant;
+7;Longueur machine (réglage / isolant);commentaire;regex;isolant|machine;Seulement pour l'origine Impression – machine
+7;Longueur machine (réglage / isolant);origine;egal;Impression – machine;
+8;Oubli dans le lot;commentaire;contient;manquant;Seulement pour l'impression
+8;Oubli dans le lot;origine;egal;Impression – machine|Impression – opérateur;
+9;Mauvais cheminement;commentaire;contient;chemin;
+10;Mauvaise mise en œuvre (sertissage, buscan…);commentaire;regex;mise en o|mise en œ|sertiss|buscan|\bmoe\b|mauvaise meo;
+11;Pincé / écrasé;commentaire;regex;pinc|[ée]cras;
+12;Entaillé / isolant abîmé;commentaire;regex;entaill|coupures? sur l.isolant;
+13;Coupé en production (geste à préciser);commentaire;regex;coup[ée].{0,30}(?:prod|op[ée]rateur)|prod.{0,25}coup;Seulement pour la production ligne
+13;Coupé en production (geste à préciser);origine;egal;Production ligne;
+99;Inconnu – à analyser;;toujours;;Aucune règle trouvée

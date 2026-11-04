@@ -11713,7 +11713,7 @@ Task Description :
 Rework done and checked iaw wo1029181729
 15.04.2026 13:30:41 CET ( OLLM31/AIRBUS OPERATIONS SAS ) 
 * NC envoyé à la qualité pour clôture .",client
-10717407,10717407,,nan,TOF,open,,2026-04-17,True,1,0,0,0,0,1,0,0,0,0,0,Élément Endommagé,4.8,,,,,,,26H,,26H155,,,,,AF,,NC Retour client,INTERNE,SERIE,Other,Qualite,GPS,[Mechanical],[Human Factors],[Working Error],2026-04-17T07:34:14Z,fto2_dashboard_data_missing_ids_3.csv,,57500151.0,missing_ids,INTERNE,,,,,,,0,0,UNKNOWN,Unknown decision code,0,Other or blank,0,0,In-process (internal),1,2.0,1,41.0,flat,30.0,0.0,0.0,0.0,,0.0,0.0,84.05,53.5,0.0,0.0,0.0,0.0,137.55,0.0,0.0,0.0,0.0,137.55,0.0,0,137.55,137.55,69.56,0.0,Complete,2026-04,2026-W16,cnq-2026.10.20b,137.55,0.0,0.0,137.55,False,False,"* 17.04.2026 07:26:42 ( ) 
+10717407,10717407,,Autre,TOF,open,,2026-04-17,True,1,0,0,0,0,1,0,0,0,0,0,Élément Endommagé,4.8,,,,,,,26H,,26H155,,,,,AF,,NC Retour client,INTERNE,SERIE,Other,Qualite,GPS,[Mechanical],[Human Factors],[Working Error],2026-04-17T07:34:14Z,fto2_dashboard_data_missing_ids_3.csv,,57500151.0,missing_ids,INTERNE,,,,,,,0,0,UNKNOWN,Unknown decision code,0,Other or blank,0,0,In-process (internal),1,2.0,1,41.0,flat,30.0,0.0,0.0,0.0,,0.0,0.0,84.05,53.5,0.0,0.0,0.0,0.0,137.55,0.0,0.0,0.0,0.0,137.55,0.0,0,137.55,137.55,69.56,0.0,Complete,2026-04,2026-W16,cnq-2026.10.20b,137.55,0.0,0.0,137.55,False,False,"* 17.04.2026 07:26:42 ( ) 
 Localisation : COCKPIT
 ______________________________
 Non-conformité 0001 :
@@ -11741,7 +11741,7 @@ Task Completed : 0150 `` DO00 ``
 Task Description :
 NC prise en compte par OF 1029232186 .",serie
 216971047,216971047,MT,A400M,FTO2,closed,[SUPPLIER],2026-04-09,True,1,0,1,0,0,0,0,0,0,0,0,MEO Câblage,4.8,EXC,Exchange,[196706],[SUPPLIER],Y4,SEFEE,M4QOHP,QUALITÉ OHP,4QEH6I07,QLOT1/AIRBUS OPERATIONS SAS,Prise 7LZ1 B FREINAGE NON CONFORME,163.0,WO,NC,2026-04-17T09:00:06Z,NC Fournisseur,FOURNISSEUR,SERIE,OHP,Qualite,GPS,[Wire locking],"[Jigs, Tools, Machines, Programs & Protec]",[Wrong / unsuitable],2026-04-09T10:02:27Z,fto2_dashboard_data_12.csv,[AW_001029256415],1028441290.0,normal,FOURNISSEUR,1029256415,not_found,0.0,0.0,,,0,1,EXC,Exchange,0,Supplier,0,0,Supplier,1,1.0,1,41.0,flat,30.0,60.0,0.0,0.0,,30.0,0.0,84.05,53.5,76.0,0.0,0.0,53.5,267.05,0.0,0.0,0.0,0.0,267.05,0.0,0,267.05,267.05,542.42,0.0,Part value unknown,2026-04,2026-W15,cnq-2026.10.20b,267.05,0.0,0.0,267.05,False,False,Removed for classification reason,serie
-10717423,10717423,,nan,TOF,open,,2026-04-17,True,1,0,0,0,0,1,0,0,0,0,0,Élément Endommagé,4.8,,,,,,,26H,,26H155,,,,,AF,,NC Retour client,INTERNE,SERIE,Other,Qualite,GPS,[Mechanical],[Human Factors],[Working Error],2026-04-17T07:38:58Z,fto2_dashboard_data_missing_ids_3.csv,,57500157.0,missing_ids,INTERNE,,,,,,,0,0,UNKNOWN,Unknown decision code,0,Other or blank,0,0,In-process (internal),1,2.0,1,41.0,flat,30.0,0.0,0.0,0.0,,0.0,0.0,84.05,53.5,0.0,0.0,0.0,0.0,137.55,0.0,0.0,0.0,0.0,137.55,0.0,0,137.55,137.55,69.56,0.0,Complete,2026-04,2026-W16,cnq-2026.10.20b,137.55,0.0,0.0,137.55,False,False,"* 17.04.2026 07:38:01 ( ) 
+10717423,10717423,,Autre,TOF,open,,2026-04-17,True,1,0,0,0,0,1,0,0,0,0,0,Élément Endommagé,4.8,,,,,,,26H,,26H155,,,,,AF,,NC Retour client,INTERNE,SERIE,Other,Qualite,GPS,[Mechanical],[Human Factors],[Working Error],2026-04-17T07:38:58Z,fto2_dashboard_data_missing_ids_3.csv,,57500157.0,missing_ids,INTERNE,,,,,,,0,0,UNKNOWN,Unknown decision code,0,Other or blank,0,0,In-process (internal),1,2.0,1,41.0,flat,30.0,0.0,0.0,0.0,,0.0,0.0,84.05,53.5,0.0,0.0,0.0,0.0,137.55,0.0,0.0,0.0,0.0,137.55,0.0,0,137.55,137.55,69.56,0.0,Complete,2026-04,2026-W16,cnq-2026.10.20b,137.55,0.0,0.0,137.55,False,False,"* 17.04.2026 07:38:01 ( ) 
 Localisation : COCKPIT
 ______________________________
 Non-conformité 0001 :
@@ -11749,7 +11749,7 @@ Type de non-conf. : Mécanique
 * Suite à une erreur de mise en oeuvre , les
 backshells ont ete endommagés
 * ______________________________",autre
-10717427,10717427,,nan,TOF,closed,,2026-04-17,True,1,0,0,0,0,1,0,0,0,0,0,Élément Endommagé,4.8,,,,,,,26H,,26H155,,,,,AF,2026-04-17T09:24:15Z,NC Retour client,INTERNE,SERIE,Other,Qualite,GPS,[Mechanical],[Human Factors],[Working Error],2026-04-17T07:45:23Z,fto2_dashboard_data_missing_ids_3.csv,,57502348.0,missing_ids,INTERNE,,,,,,,0,0,UNKNOWN,Unknown decision code,0,Other or blank,0,0,In-process (internal),1,2.0,1,41.0,flat,30.0,0.0,0.0,0.0,,0.0,0.0,84.05,53.5,0.0,0.0,0.0,0.0,137.55,0.0,0.0,0.0,0.0,137.55,0.0,0,137.55,137.55,69.56,0.0,Complete,2026-04,2026-W16,cnq-2026.10.20b,137.55,0.0,0.0,137.55,False,False,"* 17.04.2026 07:44:34 ( ) 
+10717427,10717427,,Autre,TOF,closed,,2026-04-17,True,1,0,0,0,0,1,0,0,0,0,0,Élément Endommagé,4.8,,,,,,,26H,,26H155,,,,,AF,2026-04-17T09:24:15Z,NC Retour client,INTERNE,SERIE,Other,Qualite,GPS,[Mechanical],[Human Factors],[Working Error],2026-04-17T07:45:23Z,fto2_dashboard_data_missing_ids_3.csv,,57502348.0,missing_ids,INTERNE,,,,,,,0,0,UNKNOWN,Unknown decision code,0,Other or blank,0,0,In-process (internal),1,2.0,1,41.0,flat,30.0,0.0,0.0,0.0,,0.0,0.0,84.05,53.5,0.0,0.0,0.0,0.0,137.55,0.0,0.0,0.0,0.0,137.55,0.0,0,137.55,137.55,69.56,0.0,Complete,2026-04,2026-W16,cnq-2026.10.20b,137.55,0.0,0.0,137.55,False,False,"* 17.04.2026 07:44:34 ( ) 
 Localisation : COCKPIT
 ______________________________
 Non-conformité 0001 :
@@ -11757,7 +11757,7 @@ Type de non-conf. : Mécanique
 * Suite à une erreur de mise en oeuvre , les
 backshells ont ete endommagés
 * ______________________________",autre
-10717425,10717425,,nan,TOF,closed,,2026-04-17,True,1,0,0,0,0,1,0,0,0,0,0,Élément Endommagé,4.8,,,,,,,26H,,26H155,,,,,AF,2026-04-17T09:26:01Z,NC Retour client,INTERNE,SERIE,Other,Qualite,GPS,[Mechanical],[Human Factors],[Working Error],2026-04-17T07:41:47Z,fto2_dashboard_data_missing_ids_3.csv,,57502348.0,missing_ids,INTERNE,,,,,,,0,0,UNKNOWN,Unknown decision code,0,Other or blank,0,0,In-process (internal),1,2.0,1,41.0,flat,30.0,0.0,0.0,0.0,,0.0,0.0,84.05,53.5,0.0,0.0,0.0,0.0,137.55,0.0,0.0,0.0,0.0,137.55,0.0,0,137.55,137.55,69.56,0.0,Complete,2026-04,2026-W16,cnq-2026.10.20b,137.55,0.0,0.0,137.55,False,False,"* 17.04.2026 07:40:58 ( ) 
+10717425,10717425,,Autre,TOF,closed,,2026-04-17,True,1,0,0,0,0,1,0,0,0,0,0,Élément Endommagé,4.8,,,,,,,26H,,26H155,,,,,AF,2026-04-17T09:26:01Z,NC Retour client,INTERNE,SERIE,Other,Qualite,GPS,[Mechanical],[Human Factors],[Working Error],2026-04-17T07:41:47Z,fto2_dashboard_data_missing_ids_3.csv,,57502348.0,missing_ids,INTERNE,,,,,,,0,0,UNKNOWN,Unknown decision code,0,Other or blank,0,0,In-process (internal),1,2.0,1,41.0,flat,30.0,0.0,0.0,0.0,,0.0,0.0,84.05,53.5,0.0,0.0,0.0,0.0,137.55,0.0,0.0,0.0,0.0,137.55,0.0,0,137.55,137.55,69.56,0.0,Complete,2026-04,2026-W16,cnq-2026.10.20b,137.55,0.0,0.0,137.55,False,False,"* 17.04.2026 07:40:58 ( ) 
 Localisation : COCKPIT
 ______________________________
 Non-conformité 0001 :
@@ -12098,7 +12098,7 @@ travail fait par le REC
 Task Completed : 0600 `` APQ0 ``
 Task Description :
 The work is done and controlled by Quality REC .",client
-10717925,10717925,,nan,TOF,open,,2026-04-20,True,1,0,0,0,0,1,0,0,0,0,0,Élément Endommagé,4.8,,,,,,,26H,,26H155,,,,,AF,,NC Retour client,DAMAGES,SERIE,Other,Qualite,GPS,[Mechanical],[Human Factors],[Working Error],2026-04-20T10:46:04Z,fto2_dashboard_data_missing_ids_3.csv,,57502349.0,missing_ids,DAMAGES,,,,,,,0,0,UNKNOWN,Unknown decision code,0,Other or blank,0,0,Damage,1,1.0,1,41.0,flat,30.0,0.0,0.0,0.0,,0.0,0.0,84.05,53.5,0.0,0.0,0.0,0.0,137.55,0.0,0.0,0.0,0.0,137.55,0.0,0,137.55,137.55,69.56,0.0,Complete,2026-04,2026-W17,cnq-2026.10.20b,137.55,0.0,0.0,137.55,False,False,"* 20.04.2026 10:44:13 ( SSEL1BWL ) 
+10717925,10717925,,Autre,TOF,open,,2026-04-20,True,1,0,0,0,0,1,0,0,0,0,0,Élément Endommagé,4.8,,,,,,,26H,,26H155,,,,,AF,,NC Retour client,DAMAGES,SERIE,Other,Qualite,GPS,[Mechanical],[Human Factors],[Working Error],2026-04-20T10:46:04Z,fto2_dashboard_data_missing_ids_3.csv,,57502349.0,missing_ids,DAMAGES,,,,,,,0,0,UNKNOWN,Unknown decision code,0,Other or blank,0,0,Damage,1,1.0,1,41.0,flat,30.0,0.0,0.0,0.0,,0.0,0.0,84.05,53.5,0.0,0.0,0.0,0.0,137.55,0.0,0.0,0.0,0.0,137.55,0.0,0,137.55,137.55,69.56,0.0,Complete,2026-04,2026-W17,cnq-2026.10.20b,137.55,0.0,0.0,137.55,False,False,"* 20.04.2026 10:44:13 ( SSEL1BWL ) 
 Localisation : COCKPIT
 ______________________________
 Non-conformité 0001 :
@@ -20872,7 +20872,7 @@ l'ARINC CONTRE-PLAQUE N°6
 01.07.2026 08:02:21 CET ( MLECDBOG QRTE/AIRBUS OPERATIONS SAS ) 
 Aprés concertation il a été décidé de placer la FO fabriquée au titre de
 l'OF de rattrapage 1020110372 au rébut. *",serie
-10739560,10739560,,nan,TOF,deleted,,2026-06-24,True,1,0,0,0,0,1,0,0,0,0,0,Élément Endommagé,4.8,,,,,,,26H,,26H157,,,,,AF,2026-07-01T09:28:42Z,NC Retour client,INTERNE,SERIE,Other,Qualite,GPS,[Distortion],[Human Factors],[Accident],2026-06-24T11:07:57Z,fto2_dashboard_data_missing_ids_3.csv,,57549738.0,missing_ids,INTERNE,,,,,,,0,0,DELETED,Deleted NC,0,Other or blank,0,0,In-process (internal),1,2.0,1,41.0,flat,30.0,0.0,0.0,0.0,,0.0,0.0,84.05,53.5,0.0,0.0,0.0,0.0,137.55,0.0,0.0,0.0,0.0,137.55,0.0,0,137.55,137.55,69.56,0.0,Complete,2026-06,2026-W26,cnq-2026.10.20b,137.55,0.0,0.0,137.55,False,False,"* 24.06.2026 11:04:52 ( SSEL1BWL ) 
+10739560,10739560,,Autre,TOF,deleted,,2026-06-24,True,1,0,0,0,0,1,0,0,0,0,0,Élément Endommagé,4.8,,,,,,,26H,,26H157,,,,,AF,2026-07-01T09:28:42Z,NC Retour client,INTERNE,SERIE,Other,Qualite,GPS,[Distortion],[Human Factors],[Accident],2026-06-24T11:07:57Z,fto2_dashboard_data_missing_ids_3.csv,,57549738.0,missing_ids,INTERNE,,,,,,,0,0,DELETED,Deleted NC,0,Other or blank,0,0,In-process (internal),1,2.0,1,41.0,flat,30.0,0.0,0.0,0.0,,0.0,0.0,84.05,53.5,0.0,0.0,0.0,0.0,137.55,0.0,0.0,0.0,0.0,137.55,0.0,0,137.55,137.55,69.56,0.0,Complete,2026-06,2026-W26,cnq-2026.10.20b,137.55,0.0,0.0,137.55,False,False,"* 24.06.2026 11:04:52 ( SSEL1BWL ) 
 Localisation : CABIN
 MAIN DECK
 ______________________________
@@ -22435,7 +22435,7 @@ NC prise en compte par OF 1030158587.
 Task Completed : 1000 `` ATQ0 ``
 Task Description :
 remis en conformité",serie
-10745486,10745486,,nan,TOF,open,,2026-07-10,True,1,0,1,0,0,0,0,0,0,0,0,MEO Câblage,4.8,,,,,,,26H,,26HV01,,,,,AF,,NC Retour client,CONTROLE FINAL,SERIE,Other,Qualite,GPS,[Pressure mark],[Human Factors],[Accident],2026-07-10T11:18:21Z,fto2_dashboard_data_missing_ids_3.csv,,57562201.0,missing_ids,CONTROLE FINAL,,,,,,,0,0,UNKNOWN,Unknown decision code,0,Other or blank,1,0,Final inspection,0,1.0,1,0.0,,60.0,0.0,0.0,0.0,,0.0,0.0,0.0,107.0,0.0,0.0,0.0,0.0,107.0,0.0,0.0,0.0,0.0,107.0,0.0,0,107.0,53.5,69.56,0.0,Complete,2026-07,2026-W28,cnq-2026.10.20b,107.0,0.0,0.0,53.5,False,False,"* 10.07.2026 11:18:12 ( )
+10745486,10745486,,Autre,TOF,open,,2026-07-10,True,1,0,1,0,0,0,0,0,0,0,0,MEO Câblage,4.8,,,,,,,26H,,26HV01,,,,,AF,,NC Retour client,CONTROLE FINAL,SERIE,Other,Qualite,GPS,[Pressure mark],[Human Factors],[Accident],2026-07-10T11:18:21Z,fto2_dashboard_data_missing_ids_3.csv,,57562201.0,missing_ids,CONTROLE FINAL,,,,,,,0,0,UNKNOWN,Unknown decision code,0,Other or blank,1,0,Final inspection,0,1.0,1,0.0,,60.0,0.0,0.0,0.0,,0.0,0.0,0.0,107.0,0.0,0.0,0.0,0.0,107.0,0.0,0.0,0.0,0.0,107.0,0.0,0,107.0,53.5,69.56,0.0,Complete,2026-07,2026-W28,cnq-2026.10.20b,107.0,0.0,0.0,53.5,False,False,"* 10.07.2026 11:18:12 ( )
 Localisation : CABIN
 MAIN DECK
 ______________________________
@@ -26261,7 +26261,7 @@ NC prise en compte par OF 1030721069.
 Task Completed : 0200 `` ATW0 ``
 Task Description :
 Travail effectué",serie
-10758225,10758225,,nan,TOF,closed,,2026-09-07,True,1,0,0,0,1,0,0,0,0,0,0,Élément Manquant,4.8,,,,,,,26E,,26E157,,,,,AF,2026-09-08T12:55:39Z,NC Retour client,CONTROLE FINAL,SERIE,Other,Qualite,GPS,[Missing Stamps],[Documentation and Records],[Wrong/Incorrect Documentation or Records],2026-09-07T08:57:38Z,fto2_dashboard_data_missing_ids_3.csv,,57675203.0,missing_ids,CONTROLE FINAL,,,,,,,0,0,UNKNOWN,Unknown decision code,0,Other or blank,1,0,Final inspection,0,1.0,1,0.0,,60.0,0.0,0.0,0.0,,0.0,0.0,0.0,107.0,0.0,0.0,0.0,0.0,107.0,0.0,0.0,0.0,0.0,107.0,0.0,0,107.0,53.5,69.56,0.0,Complete,2026-09,2026-W37,cnq-2026.10.20b,107.0,0.0,0.0,53.5,False,False,"* 07.09.2026 08:55:39 ( ) 
+10758225,10758225,,Autre,TOF,closed,,2026-09-07,True,1,0,0,0,1,0,0,0,0,0,0,Élément Manquant,4.8,,,,,,,26E,,26E157,,,,,AF,2026-09-08T12:55:39Z,NC Retour client,CONTROLE FINAL,SERIE,Other,Qualite,GPS,[Missing Stamps],[Documentation and Records],[Wrong/Incorrect Documentation or Records],2026-09-07T08:57:38Z,fto2_dashboard_data_missing_ids_3.csv,,57675203.0,missing_ids,CONTROLE FINAL,,,,,,,0,0,UNKNOWN,Unknown decision code,0,Other or blank,1,0,Final inspection,0,1.0,1,0.0,,60.0,0.0,0.0,0.0,,0.0,0.0,0.0,107.0,0.0,0.0,0.0,0.0,107.0,0.0,0.0,0.0,0.0,107.0,0.0,0,107.0,53.5,69.56,0.0,Complete,2026-09,2026-W37,cnq-2026.10.20b,107.0,0.0,0.0,53.5,False,False,"* 07.09.2026 08:55:39 ( ) 
 Non-conformité 0001 :
 Type de non-conf. : Tampons/Poinçons manquants
 * Sur l'OF de fabrication , il manque le stamp du
@@ -27176,7 +27176,7 @@ Task Description :
 Work is done
 15.09.2026 12:29:32 CET ( OLLM31/AIRBUS OPERATIONS SAS ) 
 * NC envoyé à la qualité pour contrôle et clôture .",client
-10759661,10759661,,nan,TOF,closed,,2026-09-10,True,1,0,1,0,0,0,0,0,0,0,0,MEO Câblage,4.8,,,,,,,26H,,26HV01,,,,,AF,2026-09-16T07:32:15Z,NC Retour client,INTERNE,SERIE,Other,Qualite,GPS,[Cut],[Human Factors],[Working Error],2026-09-10T11:17:35Z,fto2_dashboard_data_missing_ids_3.csv,,57663732.0,missing_ids,INTERNE,,,,,,,0,0,UNKNOWN,Unknown decision code,0,Other or blank,0,0,In-process (internal),1,2.0,1,41.0,flat,30.0,0.0,0.0,0.0,,0.0,0.0,84.05,53.5,0.0,0.0,0.0,0.0,137.55,0.0,0.0,0.0,0.0,137.55,0.0,0,137.55,137.55,69.56,0.0,Complete,2026-09,2026-W37,cnq-2026.10.20b,137.55,0.0,0.0,137.55,False,False,"* 10.09.2026 11:14:13 ( SSEL1BWL ) 
+10759661,10759661,,Autre,TOF,closed,,2026-09-10,True,1,0,1,0,0,0,0,0,0,0,0,MEO Câblage,4.8,,,,,,,26H,,26HV01,,,,,AF,2026-09-16T07:32:15Z,NC Retour client,INTERNE,SERIE,Other,Qualite,GPS,[Cut],[Human Factors],[Working Error],2026-09-10T11:17:35Z,fto2_dashboard_data_missing_ids_3.csv,,57663732.0,missing_ids,INTERNE,,,,,,,0,0,UNKNOWN,Unknown decision code,0,Other or blank,0,0,In-process (internal),1,2.0,1,41.0,flat,30.0,0.0,0.0,0.0,,0.0,0.0,84.05,53.5,0.0,0.0,0.0,0.0,137.55,0.0,0.0,0.0,0.0,137.55,0.0,0,137.55,137.55,69.56,0.0,Complete,2026-09,2026-W37,cnq-2026.10.20b,137.55,0.0,0.0,137.55,False,False,"* 10.09.2026 11:14:13 ( SSEL1BWL ) 
 Localisation : CABIN
 MAIN DECK
 ______________________________
@@ -27464,7 +27464,7 @@ F925.10185.000.25 à 412 VU
 * Nous demandons la re fabrication des étiquettes.
 * 17.09.2026 10:51:48 CET ( QLOT1/AIRBUS OPERATIONS SAS ) 
 En cas de realloc du CA sous délégation , avez-vous créé une nouvelle NC ? Non",serie
-10759629,10759629,,nan,TOF,closed,,2026-09-10,True,1,0,1,0,0,0,0,0,0,0,0,MEO Câblage,4.8,,,,,,,26H,,26HV18,,,,,AF,2026-09-16T07:39:18Z,NC Retour client,INTERNE,SERIE,Other,Qualite,GPS,[Cut],[Human Factors],[Working Error],2026-09-10T11:05:15Z,fto2_dashboard_data_missing_ids_3.csv,,57661283.0,missing_ids,INTERNE,,,,,,,0,0,UNKNOWN,Unknown decision code,0,Other or blank,0,0,In-process (internal),1,2.0,1,41.0,flat,30.0,0.0,0.0,0.0,,0.0,0.0,84.05,53.5,0.0,0.0,0.0,0.0,137.55,0.0,0.0,0.0,0.0,137.55,0.0,0,137.55,137.55,69.56,0.0,Complete,2026-09,2026-W37,cnq-2026.10.20b,137.55,0.0,0.0,137.55,False,False,"* 10.09.2026 10:58:14 ( SSEL1BWL ) 
+10759629,10759629,,Autre,TOF,closed,,2026-09-10,True,1,0,1,0,0,0,0,0,0,0,0,MEO Câblage,4.8,,,,,,,26H,,26HV18,,,,,AF,2026-09-16T07:39:18Z,NC Retour client,INTERNE,SERIE,Other,Qualite,GPS,[Cut],[Human Factors],[Working Error],2026-09-10T11:05:15Z,fto2_dashboard_data_missing_ids_3.csv,,57661283.0,missing_ids,INTERNE,,,,,,,0,0,UNKNOWN,Unknown decision code,0,Other or blank,0,0,In-process (internal),1,2.0,1,41.0,flat,30.0,0.0,0.0,0.0,,0.0,0.0,84.05,53.5,0.0,0.0,0.0,0.0,137.55,0.0,0.0,0.0,0.0,137.55,0.0,0,137.55,137.55,69.56,0.0,Complete,2026-09,2026-W37,cnq-2026.10.20b,137.55,0.0,0.0,137.55,False,False,"* 10.09.2026 10:58:14 ( SSEL1BWL ) 
 Localisation : CABIN
 MAIN DECK
 ______________________________
@@ -33847,7 +33847,7 @@ Type of nonconformity : Electrical Assembly Installation
 l'installation que l'ergot sur le warning horn 6330420000 est
 endomagé.
 * Nous demandons le remplacement de l'équipement.",client
-10764780,10764780,,nan,TOF,open,,2026-09-25,True,1,0,0,0,0,1,0,0,0,0,0,Élément Endommagé,4.8,,,,,,,26H,,26HV01,,,,,AF,,NC Retour client,INTERNE,SERIE,Other,Qualite,GPS,[Distortion],[Human Factors],[Working Error],2026-09-25T10:04:41Z,fto2_dashboard_data_missing_ids_3.csv,,57675903.0,missing_ids,INTERNE,,,,,,,0,0,UNKNOWN,Unknown decision code,0,Other or blank,0,0,In-process (internal),1,2.0,1,41.0,flat,30.0,0.0,0.0,0.0,,0.0,0.0,84.05,53.5,0.0,0.0,0.0,0.0,137.55,0.0,0.0,0.0,0.0,137.55,0.0,0,137.55,137.55,69.56,0.0,Complete,2026-09,2026-W39,cnq-2026.10.20b,137.55,0.0,0.0,137.55,False,False,"* 25.09.2026 10:03:47 ( SSEL1BWL ) 
+10764780,10764780,,Autre,TOF,open,,2026-09-25,True,1,0,0,0,0,1,0,0,0,0,0,Élément Endommagé,4.8,,,,,,,26H,,26HV01,,,,,AF,,NC Retour client,INTERNE,SERIE,Other,Qualite,GPS,[Distortion],[Human Factors],[Working Error],2026-09-25T10:04:41Z,fto2_dashboard_data_missing_ids_3.csv,,57675903.0,missing_ids,INTERNE,,,,,,,0,0,UNKNOWN,Unknown decision code,0,Other or blank,0,0,In-process (internal),1,2.0,1,41.0,flat,30.0,0.0,0.0,0.0,,0.0,0.0,84.05,53.5,0.0,0.0,0.0,0.0,137.55,0.0,0.0,0.0,0.0,137.55,0.0,0,137.55,137.55,69.56,0.0,Complete,2026-09,2026-W39,cnq-2026.10.20b,137.55,0.0,0.0,137.55,False,False,"* 25.09.2026 10:03:47 ( SSEL1BWL ) 
 Localisation : CABIN
 MAIN DECK
 ______________________________
@@ -33857,7 +33857,7 @@ Type de non-conf. : Déformation
 DE LA FERULE QUI NE RESPECT PAS LA TOLERANCE DU
 GAP DE 0,4MM
 ______________________________",autre
-10762881,10762881,,nan,TOF,open,,2026-09-21,True,1,0,0,0,0,1,0,0,0,0,0,Élément Endommagé,4.8,,,,,,,26H,,26HV01,,,,,AF,,NC Retour client,INTERNE,SERIE,Other,Qualite,GPS,[Damaged Parts / Non conform parts],[Human Factors],[Working Error],2026-09-21T13:02:27Z,fto2_dashboard_data_missing_ids_3.csv,,57675902.0,missing_ids,INTERNE,,,,,,,0,0,UNKNOWN,Unknown decision code,0,Other or blank,0,0,In-process (internal),1,2.0,1,41.0,flat,30.0,0.0,0.0,0.0,,0.0,0.0,84.05,53.5,0.0,0.0,0.0,0.0,137.55,0.0,0.0,0.0,0.0,137.55,0.0,0,137.55,137.55,69.56,0.0,Complete,2026-09,2026-W39,cnq-2026.10.20b,137.55,0.0,0.0,137.55,False,False,"* 21.09.2026 11:24:54 ( SSEL1BWL ) 
+10762881,10762881,,Autre,TOF,open,,2026-09-21,True,1,0,0,0,0,1,0,0,0,0,0,Élément Endommagé,4.8,,,,,,,26H,,26HV01,,,,,AF,,NC Retour client,INTERNE,SERIE,Other,Qualite,GPS,[Damaged Parts / Non conform parts],[Human Factors],[Working Error],2026-09-21T13:02:27Z,fto2_dashboard_data_missing_ids_3.csv,,57675902.0,missing_ids,INTERNE,,,,,,,0,0,UNKNOWN,Unknown decision code,0,Other or blank,0,0,In-process (internal),1,2.0,1,41.0,flat,30.0,0.0,0.0,0.0,,0.0,0.0,84.05,53.5,0.0,0.0,0.0,0.0,137.55,0.0,0.0,0.0,0.0,137.55,0.0,0,137.55,137.55,69.56,0.0,Complete,2026-09,2026-W39,cnq-2026.10.20b,137.55,0.0,0.0,137.55,False,False,"* 21.09.2026 11:24:54 ( SSEL1BWL ) 
 Localisation : CABIN
 MAIN DECK
 ______________________________
@@ -33867,14 +33867,14 @@ Type de non-conf. : Pièces endommagées/non conformes
 MISE EN OEUVRE SUR LES 2 , COTE T
 PLATE ET COTE 7803VC
 ______________________________",autre
-10762876,10762876,,nan,TOF,open,,2026-09-21,True,1,0,0,0,0,1,0,0,0,0,0,Élément Endommagé,4.8,,,,,,,26H,,26HV01,,,,,AF,,NC Retour client,INTERNE,SERIE,Other,Qualite,GPS,[Distortion],[Human Factors],[Working Error],2026-09-21T11:18:55Z,fto2_dashboard_data_missing_ids_3.csv,,57675027.0,missing_ids,INTERNE,,,,,,,0,0,UNKNOWN,Unknown decision code,0,Other or blank,0,0,In-process (internal),1,2.0,1,41.0,flat,30.0,0.0,0.0,0.0,,0.0,0.0,84.05,53.5,0.0,0.0,0.0,0.0,137.55,0.0,0.0,0.0,0.0,137.55,0.0,0,137.55,137.55,69.56,0.0,Complete,2026-09,2026-W39,cnq-2026.10.20b,137.55,0.0,0.0,137.55,False,False,"* 21.09.2026 11:17:15 ( SSEL1BWL ) 
+10762876,10762876,,Autre,TOF,open,,2026-09-21,True,1,0,0,0,0,1,0,0,0,0,0,Élément Endommagé,4.8,,,,,,,26H,,26HV01,,,,,AF,,NC Retour client,INTERNE,SERIE,Other,Qualite,GPS,[Distortion],[Human Factors],[Working Error],2026-09-21T11:18:55Z,fto2_dashboard_data_missing_ids_3.csv,,57675027.0,missing_ids,INTERNE,,,,,,,0,0,UNKNOWN,Unknown decision code,0,Other or blank,0,0,In-process (internal),1,2.0,1,41.0,flat,30.0,0.0,0.0,0.0,,0.0,0.0,84.05,53.5,0.0,0.0,0.0,0.0,137.55,0.0,0.0,0.0,0.0,137.55,0.0,0,137.55,137.55,69.56,0.0,Complete,2026-09,2026-W39,cnq-2026.10.20b,137.55,0.0,0.0,137.55,False,False,"* 21.09.2026 11:17:15 ( SSEL1BWL ) 
 Non-conformité 0001 :
 Type de non-conf. : Déformation
 * SUR LE HARNAIS 4626VB , NOUS CONSTATONS UN MAUVAIS
 SERISSAGE DE LA FERULE SUR LES 2 COTES DU HARNAIS
 , COTE T PLATE ET COTE 7542VC
 ______________________________",autre
-10762870,10762870,,nan,TOF,open,,2026-09-21,True,1,0,0,0,0,1,0,0,0,0,0,Élément Endommagé,4.8,,,,,,,26H,,26HV01,,,,,AF,,NC Retour client,INTERNE,SERIE,Other,Qualite,GPS,[Damaged Parts / Non conform parts],[Human Factors],[Working Error],2026-09-21T11:11:38Z,fto2_dashboard_data_missing_ids_3.csv,,57675025.0,missing_ids,INTERNE,,,,,,,0,0,UNKNOWN,Unknown decision code,0,Other or blank,0,0,In-process (internal),1,2.0,1,41.0,flat,30.0,0.0,0.0,0.0,,0.0,0.0,84.05,53.5,0.0,0.0,0.0,0.0,137.55,0.0,0.0,0.0,0.0,137.55,0.0,0,137.55,137.55,69.56,0.0,Complete,2026-09,2026-W39,cnq-2026.10.20b,137.55,0.0,0.0,137.55,False,False,"* 21.09.2026 11:08:01 ( SSEL1BWL ) 
+10762870,10762870,,Autre,TOF,open,,2026-09-21,True,1,0,0,0,0,1,0,0,0,0,0,Élément Endommagé,4.8,,,,,,,26H,,26HV01,,,,,AF,,NC Retour client,INTERNE,SERIE,Other,Qualite,GPS,[Damaged Parts / Non conform parts],[Human Factors],[Working Error],2026-09-21T11:11:38Z,fto2_dashboard_data_missing_ids_3.csv,,57675025.0,missing_ids,INTERNE,,,,,,,0,0,UNKNOWN,Unknown decision code,0,Other or blank,0,0,In-process (internal),1,2.0,1,41.0,flat,30.0,0.0,0.0,0.0,,0.0,0.0,84.05,53.5,0.0,0.0,0.0,0.0,137.55,0.0,0.0,0.0,0.0,137.55,0.0,0,137.55,137.55,69.56,0.0,Complete,2026-09,2026-W39,cnq-2026.10.20b,137.55,0.0,0.0,137.55,False,False,"* 21.09.2026 11:08:01 ( SSEL1BWL ) 
 Localisation : CABIN
 MAIN DECK
 ______________________________
@@ -33884,7 +33884,7 @@ Type de non-conf. : Pièces endommagées/non conformes
 OEUVRE NON CONFORME SUR LES 2 COTES DU
  , COTE T PLATE ET COTE 7802VC
 ______________________________",autre
-10762863,10762863,,nan,TOF,open,,2026-09-21,True,1,0,0,0,0,1,0,0,0,0,0,Élément Endommagé,4.8,,,,,,,26H,,26HV01,,,,,AF,,NC Retour client,INTERNE,SERIE,Other,Qualite,GPS,[Distortion],[Human Factors],[Working Error],2026-09-21T11:01:34Z,fto2_dashboard_data_missing_ids_3.csv,,57675898.0,missing_ids,INTERNE,,,,,,,0,0,UNKNOWN,Unknown decision code,0,Other or blank,0,0,In-process (internal),1,2.0,1,41.0,flat,30.0,0.0,0.0,0.0,,0.0,0.0,84.05,53.5,0.0,0.0,0.0,0.0,137.55,0.0,0.0,0.0,0.0,137.55,0.0,0,137.55,137.55,69.56,0.0,Complete,2026-09,2026-W39,cnq-2026.10.20b,137.55,0.0,0.0,137.55,False,False,"* 21.09.2026 10:59:35 ( SSEL1BWL ) 
+10762863,10762863,,Autre,TOF,open,,2026-09-21,True,1,0,0,0,0,1,0,0,0,0,0,Élément Endommagé,4.8,,,,,,,26H,,26HV01,,,,,AF,,NC Retour client,INTERNE,SERIE,Other,Qualite,GPS,[Distortion],[Human Factors],[Working Error],2026-09-21T11:01:34Z,fto2_dashboard_data_missing_ids_3.csv,,57675898.0,missing_ids,INTERNE,,,,,,,0,0,UNKNOWN,Unknown decision code,0,Other or blank,0,0,In-process (internal),1,2.0,1,41.0,flat,30.0,0.0,0.0,0.0,,0.0,0.0,84.05,53.5,0.0,0.0,0.0,0.0,137.55,0.0,0.0,0.0,0.0,137.55,0.0,0,137.55,137.55,69.56,0.0,Complete,2026-09,2026-W39,cnq-2026.10.20b,137.55,0.0,0.0,137.55,False,False,"* 21.09.2026 10:59:35 ( SSEL1BWL ) 
 Localisation : CABIN
 MAIN DECK
 ______________________________
@@ -33894,7 +33894,7 @@ Type de non-conf. : Déformation
 SERTISSAGE DE LA FERULE SUR LES 2 COTES DU
  , COTE T PLATE ET COTE 7540VC
 ______________________________",autre
-10762858,10762858,,nan,TOF,open,,2026-09-21,True,1,0,0,0,0,1,0,0,0,0,0,Élément Endommagé,4.8,,,,,,,26H,,26HV01,,,,,AF,,NC Retour client,INTERNE,SERIE,Other,Qualite,GPS,[Damaged Parts / Non conform parts],[Human Factors],[Working Error],2026-09-21T10:48:22Z,fto2_dashboard_data_missing_ids_3.csv,,57677571.0,missing_ids,INTERNE,,,,,,,0,0,UNKNOWN,Unknown decision code,0,Other or blank,0,0,In-process (internal),1,2.0,1,41.0,flat,30.0,0.0,0.0,0.0,,0.0,0.0,84.05,53.5,0.0,0.0,0.0,0.0,137.55,0.0,0.0,0.0,0.0,137.55,0.0,0,137.55,137.55,69.56,0.0,Complete,2026-09,2026-W39,cnq-2026.10.20b,137.55,0.0,0.0,137.55,False,False,"* 21.09.2026 10:45:44 ( SSEL1BWL ) 
+10762858,10762858,,Autre,TOF,open,,2026-09-21,True,1,0,0,0,0,1,0,0,0,0,0,Élément Endommagé,4.8,,,,,,,26H,,26HV01,,,,,AF,,NC Retour client,INTERNE,SERIE,Other,Qualite,GPS,[Damaged Parts / Non conform parts],[Human Factors],[Working Error],2026-09-21T10:48:22Z,fto2_dashboard_data_missing_ids_3.csv,,57677571.0,missing_ids,INTERNE,,,,,,,0,0,UNKNOWN,Unknown decision code,0,Other or blank,0,0,In-process (internal),1,2.0,1,41.0,flat,30.0,0.0,0.0,0.0,,0.0,0.0,84.05,53.5,0.0,0.0,0.0,0.0,137.55,0.0,0.0,0.0,0.0,137.55,0.0,0,137.55,137.55,69.56,0.0,Complete,2026-09,2026-W39,cnq-2026.10.20b,137.55,0.0,0.0,137.55,False,False,"* 21.09.2026 10:45:44 ( SSEL1BWL ) 
 Localisation : CABIN
 MAIN DECK
 ______________________________
@@ -33904,7 +33904,7 @@ Type de non-conf. : Pièces endommagées/non conformes
 OEUVRE NON CONFORME SUR LES 2 COTES DU
  , COTE T PLATE ET COTE 7804VC
 ______________________________",autre
-10762835,10762835,,nan,TOF,open,,2026-09-21,True,1,0,0,0,0,1,0,0,0,0,0,Élément Endommagé,4.8,,,,,,,26H,,26HV01,,,,,AF,,NC Retour client,INTERNE,SERIE,Other,Qualite,GPS,[Damaged Parts / Non conform parts],[Human Factors],[Working Error],2026-09-21T10:08:24Z,fto2_dashboard_data_missing_ids_3.csv,,57675037.0,missing_ids,INTERNE,,,,,,,0,0,UNKNOWN,Unknown decision code,0,Other or blank,0,0,In-process (internal),1,2.0,1,41.0,flat,30.0,0.0,0.0,0.0,,0.0,0.0,84.05,53.5,0.0,0.0,0.0,0.0,137.55,0.0,0.0,0.0,0.0,137.55,0.0,0,137.55,137.55,69.56,0.0,Complete,2026-09,2026-W39,cnq-2026.10.20b,137.55,0.0,0.0,137.55,False,False,"* 21.09.2026 10:05:17 ( SSEL1BWL ) 
+10762835,10762835,,Autre,TOF,open,,2026-09-21,True,1,0,0,0,0,1,0,0,0,0,0,Élément Endommagé,4.8,,,,,,,26H,,26HV01,,,,,AF,,NC Retour client,INTERNE,SERIE,Other,Qualite,GPS,[Damaged Parts / Non conform parts],[Human Factors],[Working Error],2026-09-21T10:08:24Z,fto2_dashboard_data_missing_ids_3.csv,,57675037.0,missing_ids,INTERNE,,,,,,,0,0,UNKNOWN,Unknown decision code,0,Other or blank,0,0,In-process (internal),1,2.0,1,41.0,flat,30.0,0.0,0.0,0.0,,0.0,0.0,84.05,53.5,0.0,0.0,0.0,0.0,137.55,0.0,0.0,0.0,0.0,137.55,0.0,0,137.55,137.55,69.56,0.0,Complete,2026-09,2026-W39,cnq-2026.10.20b,137.55,0.0,0.0,137.55,False,False,"* 21.09.2026 10:05:17 ( SSEL1BWL ) 
 Localisation : CABIN
 MAIN DECK
 ______________________________

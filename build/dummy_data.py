@@ -3,7 +3,7 @@
 Nothing here describes FTO2. Counts, costs, aircraft, MSNs, stations, products, FINs, production volumes, objectives and
 actions are drawn at random with a fixed seed, around plausible orders of magnitude, so that charts can be judged before
 the real data exists. Only the names of the categories, root causes (RCA) and sub-categories are real: they are the
-reference taxonomy (04_reference/sous_categories.csv), not data.
+reference taxonomy (config/3_sous_categories.csv), not data.
 
 make(root) writes 05_outputs/dummy/*.csv (with a README) and returns the compact structure embedded in the page.
 """
@@ -82,7 +82,7 @@ def _week_label(d):
 
 def make(root, seed=SEED):
     R = random.Random(seed)
-    tax = list(csv.DictReader(open(os.path.join(root, "04_reference", "sous_categories.csv"), encoding="utf-8-sig")))
+    tax = list(csv.DictReader(open(os.path.join(root, "config", "3_sous_categories.csv"), encoding="utf-8-sig"), delimiter=";"))
     rcas = {}
     for t in tax:
         rcas.setdefault(t["categorie"], {}).setdefault(t["rca_nom"], []).append(t["sous_categorie"])

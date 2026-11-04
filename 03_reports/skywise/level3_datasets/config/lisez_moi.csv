@@ -1,0 +1,40 @@
+fichier;niveau;ce_que_ca_change;qui_modifie;lu_par
+1_actions_mft.csv;1 courant;Actions MFT : une ligne par action, le problème visé, les dates, le statut. Ajouter une action = ajouter une ligne (source = manuel);Toute l'équipe;build/build_all.py (mft_actions), 07_scripts/mft/build_mft.py
+1_calendrier_production.csv;1 courant;Jours de fermeture et ponts (poids 0 ou 0,5) : le volume MSN des mois et des semaines;Toute l'équipe;build/build_all.py (working_day_volume)
+1_demandes_cables.csv;1 courant;"Demandes de câbles de l'équipe câbles (onglet Câbles). Écrit par scripts/cables_depuis_suivi.py ; une ligne corrigée à la main passe en source = manuel";Toute l'équipe;build/build_all.py (cable_requests)
+1_eqmsn_mois.csv;1 courant;EqMSN par produit et par mois (feuilles Standard et Adjusted). Écrit par scripts/eqmsn_depuis_excel.py;Toute l'équipe;build/build_all.py (eqmsn)
+1_livraisons_2025.csv;1 courant;Produits livrés par mois en 2025 : la base des objectifs et des comparaisons 2025;Toute l'équipe;build/build_all.py (year_2025)
+1_livraisons_2025_lignes.csv;1 courant;MSN entiers livrés en 2025 par ligne;Toute l'équipe;build/build_all.py (year_2025)
+1_plan_msn.csv;1 courant;"Plan de production par avion et produit : dates prévues et réelles des 8 jalons. Écrit par scripts/plan_depuis_avances_retards.py ; une ligne corrigée à la main passe en source = manuel";Toute l'équipe;build/build_all.py (_production_export)
+2_actions_mft_problemes.csv;2 règles;Lien entre une action des suivis MFT et le problème qu'elle vise (cause, catégorie...);Responsable du tableau de bord;scripts/actions_mft_depuis_suivis.py
+2_cables_origines.csv;2 règles;Imputation du suivi câbles -> origine affichée;Responsable du tableau de bord;scripts/cables_depuis_suivi.py
+2_causes_definitions.csv;2 règles;Définitions des causes (onglet Définitions);Responsable du tableau de bord;build/build_all.py (rca_reference)
+2_causes_noms.csv;2 règles;Nom affiché de chaque cause (le code vient du lecteur de défauts);Responsable du tableau de bord;fto2/parser/fto2_logic.py
+2_cout_decisions.csv;2 règles;Étapes comptées pour chaque décision (Rework, Scrap, DQN...);Responsable du tableau de bord;fto2/cost/params.py
+2_cout_parametres.csv;2 règles;Taux horaires et minutes par étape du coût de non-qualité;Responsable du tableau de bord;fto2/cost/params.py
+2_cout_qui_fait_quoi.csv;2 règles;Quelle fonction (production, qualité, ME) fait chaque étape, donc à quel taux;Responsable du tableau de bord;fto2/cost/params.py
+2_decisions.csv;2 règles;Libellé de chaque code de décision (RWK, REJ, SCR...);Responsable du tableau de bord;fto2/selection.py
+2_libelles_lieu_detection.csv;2 règles;Libellé anglais de chaque lieu de détection;Responsable du tableau de bord;fto2/cost/params.py
+2_parametres.csv;2 règles;Usine suivie, première date comptée, année des listes GPS / Test, date de lecture des ordres et aléas, anciennes sorties, limite de NC;Responsable du tableau de bord;fto2/skywise.py, fto2/parser/fto2_logic.py, fto2/core.py, 07_scripts/mft/build_mft.py
+2_produits_alias.csv;2 règles;Produits des NC absents du plan, ramenés au produit du plan dont ils font partie;Responsable du tableau de bord;build/build_all.py
+2_produits_noms_plan.csv;2 règles;Nom d'un produit dans le plan de production -> nom affiché (MIP -> MIP A350);Responsable du tableau de bord;build/build_all.py, scripts/
+2_produits_plan.csv;2 règles;Produit des NC -> produit du plan de production (EqMSN);Responsable du tableau de bord;build/build_all.py, 07_scripts/mft
+2_regle_cause_cable.csv;2 règles;Cause proposée d'une demande de câble, lue dans le commentaire d'analyse;Responsable du tableau de bord;scripts/cables_depuis_suivi.py
+2_regle_exclusion.csv;2 règles;NC laissées de côté (ERMA, NC supprimées d'une autre usine);Responsable du tableau de bord;fto2/selection.py
+2_regle_ligne.csv;2 règles;Ligne (A350, A330, A320, A400M) de chaque programme;Responsable du tableau de bord;fto2/parser/fto2_logic.py
+2_regle_origine.csv;2 règles;Qui a ouvert la NC : Test ou Qualité;Responsable du tableau de bord;fto2/selection.py
+2_regle_perimetre.csv;2 règles;Où la NC est émise : série (à l'usine), retour client, autre;Responsable du tableau de bord;fto2/core.py
+2_regle_phase.csv;2 règles;Type de production de chaque NC : SERIE, REC ou FTI;Responsable du tableau de bord;fto2/selection.py
+2_regle_produit.csv;2 règles;Produit de chaque NC, à partir de l'article et du poste;Responsable du tableau de bord;fto2/selection.py
+2_regle_responsabilite.csv;2 règles;Les trois cases Responsabilité : FTO2, Fournisseurs, Autres;Responsable du tableau de bord;fto2/core.py
+2_regle_type_nc.csv;2 règles;Type de NC (Contrôle final, Câbles, Interne, Retour client...), dans l'ordre de priorité;Responsable du tableau de bord;fto2/selection.py
+2_sources.csv;2 règles;Noms des datasets Skywise et des fichiers (postes, registre GPS, liste Test) et leurs colonnes;Responsable du tableau de bord;fto2/skywise.py, fto2/manual_lists.py
+3_a400m_titres.csv;3 expert;A400M : sous-code lu dans le titre de la NC (la première règle trouvée gagne);Technique;fto2/core.py (title_lines)
+3_cout_airbus.csv;3 expert;Coût standard Airbus par décision (niveau 1);Technique;fto2/cost/params.py
+3_cout_avance.csv;3 expert;Autres réglages du modèle de coût (listes, interrupteurs, fenêtre des aléas);Technique;fto2/cost/params.py
+3_cout_ordres_operations.csv;3 expert;Lecture des opérations des ordres de retouche (préparation ou travail);Technique;fto2/cost/params.py
+3_cout_temps_defauts.csv;3 expert;"Minutes et matière par type de défaut ; les classes « calcule_depuis » valent facteur x leur base";Technique;fto2/cost/params.py
+3_sous_categories.csv;3 expert;Sous-catégories : catégorie, cause, mineur, sous-codes;Technique;build/build_all.py (rca_reference)
+3_souscodes.csv;3 expert;Les 123 sous-codes officiels : sous-catégorie, groupe, cause;Technique;fto2/core.py, build/build_all.py, 07_scripts/mft
+3_souscodes_fr.csv;3 expert;Description française de chaque sous-code;Technique;fto2/core.py, 07_scripts/mft
+(dans le code) fto2/parser/nc_defect_parser.py;3 expert;Les règles de lecture du texte des NC (mots-clés, priorités : câble, puis branchement, puis déverrouillage);Technique uniquement;-

@@ -1,0 +1,5 @@
+ordre;resultat;colonne;test;valeur;commentaire
+1;FTI;constituent_assembly;commence_par;WY|WA;Assemblage FTI (ex. WA999). Passe avant REC.
+2;REC;workflow_list;mot;REC;Le mot REC seul dans le workflow
+3;REC;workflow_list;contient;-CRE|-PNC|A30-REJ-PVU2;Workflows REC connus
+99;SERIE;;toujours;;Tout le reste

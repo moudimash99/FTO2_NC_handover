@@ -1,0 +1,11 @@
+valeur;libelle_en
+CONTROLE FINAL;Final inspection
+INTERNE;In-process (internal)
+CABLES;Cables
+FOURNISSEUR;Supplier
+CLIENT;Customer return
+DEMANDE DE DQN;Design query request
+DAMAGES;Damage
+CASSE;Breakage
+CASSE INTERNE;Breakage
+UNKNOWN;Not recorded

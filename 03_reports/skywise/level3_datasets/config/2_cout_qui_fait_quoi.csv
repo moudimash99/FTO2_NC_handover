@@ -1,0 +1,7 @@
+etape;fonction;description
+alert;production;Alerte de l'opérateur
+writing;qualite;Rédaction de la NC
+support;me;Support technique
+setup;production;Préparation autour du travail
+hands_on;production;Travail (retouche)
+recheck;qualite;Re-contrôle et clôture

@@ -1,0 +1,19 @@
+nom;valeur;unite;description
+taux_production;123;EUR/h;Production : alerte de l'opérateur, préparation, travail, temps perdu sur les aléas
+taux_qualite;107;EUR/h;Qualité : rédaction de la NC, re-contrôle et clôture
+taux_me;76;EUR/h;ME : support technique (vérification, devis, ordre de travail)
+taux_ingenierie;78.16;EUR/h;Étude d'ingénierie des demandes de DQN (taux Airbus)
+minutes_alerte;41;min;L'opérateur lève l'alerte (temps moyen déclaré sur les aléas qualité suivis d'une NC)
+minutes_redaction;30;min;Le contrôleur qualité rédige la NC
+minutes_redaction_controle_final;60;min;... quand la NC est trouvée au contrôle final
+minutes_support;60;min;Support technique : vérification, devis, ordre de travail
+minutes_preparation;50;min;Autour du travail : badgeage, aller chercher, installation
+minutes_travail_minimum;60;min;Le travail d'une NC retouchée ne descend pas sous ce temps
+minutes_recontrole;30;min;Re-contrôle et clôture de la NC
+minutes_travail_sans_defaut;10;min;Travail quand une NC retouchée n'a aucune ligne de défaut
+minutes_defaut_inconnu;10;min;Travail d'un type de défaut absent de 3_cout_temps_defauts.csv
+minutes_branchement_suivant;15;min;Chaque erreur de branchement après la première dans la même NC
+facteur_travail_nc_interne;2;x;Le travail des NC internes est multiplié par ce facteur
+minutes_redaction_niveau2;30;min;Niveau 2 (global) : temps moyen de rédaction d'une NC
+minutes_travail_niveau2;60;min;Niveau 2 (global) : travail moyen d'une NC retouchée
+forfait_retour_client;0;EUR;Montant fixe ajouté à chaque retour client (0 tant que l'équipe n'a pas fixé de chiffre)

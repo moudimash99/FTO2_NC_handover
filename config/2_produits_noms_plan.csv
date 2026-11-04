@@ -1,0 +1,3 @@
+nom_plan;nom_affiche;commentaire
+MIP;MIP A350;Nom du produit dans le plan de production (EqMSN, Avances / Retards) -> nom affiché
+MIP(2);MIP A400M;MIP(2) est le MIP de l'A400M

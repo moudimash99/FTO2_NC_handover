@@ -2,10 +2,11 @@
 /* Fonts: if Slate blocks this address, the page falls back to the system fonts. */
 @import url("https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=Newsreader:opsz,wght@6..72,400;6..72,500&display=swap");
 .fto2 {
-  --page: #f6f7f5; --surface: #ffffff; --band: #eef1ed; --ink: #15171a; --ink-2: #474c52; --muted: #737980; --grid: #e2e6e1;
+  --page: #ffffff; --surface: #ffffff; --band: #f1f4f0; --ink: #15171a; --ink-2: #474c52; --muted: #737980; --grid: #e4e8e3;
   --track: #eceeea; --ring: rgba(21,23,26,.12); --accent: #15171a; --accent-ink: #ffffff; --focus: #1d6b52;
-  --up: #b13a2a; --up-soft: rgba(177,58,42,.10); --down: #1d6b52; --down-soft: rgba(29,107,82,.10); --warn: #9a6400; --warn-soft: rgba(154,100,0,.12);
-  --c1: #2a78d6; --c2: #1baf7a; --c3: #eda100; --c4: #e87ba4; --c5: #008300; --c6: #6250d6; --dim: #c5cbc6;
+  --up: #a33b2b; --up-soft: rgba(163,59,43,.10); --down: #1d6b52; --down-soft: rgba(29,107,82,.10); --warn: #9a6400; --warn-soft: rgba(154,100,0,.12);
+  --c1: #2a78d6; --c2: #1baf7a; --c3: #eda100; --c4: #e87ba4; --c5: #008300; --c6: #6250d6; --c7: #0097a7; --c8: #8a7300; --c9: #a23b72; --dim: #c5cbc6;
+  --l1: #7e3fb0; --l2: #e57a24; --l3: #cf3f7a; --l4: #95561c;   
   --font-ui: "Hanken Grotesk", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
   --font-display: "Newsreader", Georgia, "Times New Roman", serif;
 }
@@ -21,6 +22,7 @@
 .fto2 .brand span { font-size: 12px; color: var(--muted); }
 .fto2 .ctl { display: flex; align-items: center; gap: 8px; min-width: 0; }
 .fto2 .ctl.per { flex-wrap: wrap; }
+.fto2 .ctl.cnt { margin: 14px 0 -4px; flex-wrap: wrap; }
 .fto2 .ctl.per select { width: 11.5em; min-width: 0; flex: 0 1 11.5em; }
 .fto2 .ctl.per #lF, .fto2 .ctl.per #lT { text-transform: none; letter-spacing: 0; font-size: 13px; font-weight: 500; }
 @media (max-width: 620px) {
@@ -92,7 +94,10 @@
 .fto2 .pill.v-met, .fto2 .pill.v-below, .fto2 .pill.v-down { background: var(--down-soft); color: var(--down); }
 .fto2 .pill.v-up { background: var(--up-soft); color: var(--up); }
 .fto2 .pill.v-flat, .fto2 .pill.v-early, .fto2 .pill.v-noref, .fto2 .pill.v-none { background: var(--band); color: var(--ink-2); }
-.fto2 .linechip { font-size: 12px; font-weight: 700; letter-spacing: .04em; border: 1px solid var(--ring); border-radius: 6px; padding: 1px 7px; }
+.fto2 .linechip { font-size: 12px; font-weight: 700; letter-spacing: .04em; border: 1px solid var(--ring); border-left: 4px solid var(--lc, var(--ring)); border-radius: 6px; padding: 1px 7px; }
+.fto2 header.top .wrap { position: relative; }
+.fto2 header.top .seg.lang { position: absolute; top: 12px; right: max(16px, env(safe-area-inset-right, 0px)); }
+.fto2 header.top .seg.lang button { padding: 5px 10px; font-size: 12.5px; }
 .fto2 table { width: 100%; border-collapse: collapse; font-size: 13px; }
 .fto2 th { text-align: left; font-size: 11px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); border-bottom: 1px solid var(--grid); padding: 6px 8px; white-space: nowrap; }
 .fto2 td { border-bottom: 1px solid var(--grid); padding: 6px 8px; vertical-align: top; }
