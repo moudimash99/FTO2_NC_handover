@@ -322,3 +322,81 @@ def rca_reference(d, code_desc):
     return out
 
 
+
+
+# ---------------------------------------------------------------- the blocks the pages read
+def _tidy(s, n=320):
+    if s is None or (isinstance(s, float) and s != s):   # empty cells read as NaN
+        return ""
+    return re.sub(r"\s+", " ", str(s)).strip()[:n]
+
+
+def weekly_volume(eq):
+    """MSN built per line and ISO week (working days), the alarms' denominator: {line: 53 weeks, week 1 first}."""
+    if not eq or not eq.get("wdw"):
+        return None
+    out = {}
+    for line, weeks in eq["wdw"]["line"].items():
+        v = [0.0] * 53
+        for i, x in enumerate(weeks[:53]):
+            v[i] = float(x)
+        out[line] = v
+    return out
+
+
+def codes_en():
+    """English sub-code descriptions (the official sheet's), as the dashboard."""
+    ref = config.frame("3_souscodes.csv")
+    out = {str(c): _tidy(d, 90) for c, d in zip(ref.sous_code, ref.object_desc) if not str(c).startswith("(") and _tidy(d, 90)}
+    out.update({"Q11 (composant)": "Component (sub-code not specified)", "Non codé": "No code"})
+    out.update({str(c)[:3] + " (non précisé)": "Sub-code not specified" for c in ref.sous_code if not str(c).startswith("(")})
+    return out
+
+
+def mft_actions_page():
+    """The MFT actions (config/1_actions_mft.csv) in the MFT page's shape, each tied to the problem it targets."""
+    out = []
+    for _, a in config.table("1_actions_mft.csv").iterrows():
+        out.append({"id": a["id"], "line": a["ligne"], "category": a["categorie"], "title": a["titre"],
+                    "problem": {"level": a["niveau"], "values": a["valeurs"].split("|") if a["valeurs"] else []},
+                    "defects": a["defauts"], "rootCause": a["cause_racine"], "analysisOwner": a["porteur_analyse"],
+                    "analysisStart": a["debut_analyse"], "analysisStatus": a["statut_analyse"], "action": a["action"],
+                    "actionOwner": a["porteur_action"], "actionStart": a["debut_action"], "status": a["statut"],
+                    "expected": a["benefices_attendus"], "note": a["note"], "source": a["suivi"],
+                    "log": [], "createdBy": "", "createdAt": "2026-10-23"})
+    return out
+
+
+def mft_block(eq):
+    """What the MFT page needs besides the two tables."""
+    t = config.frame("2_produits_plan.csv")
+    fr = config.frame("3_souscodes_fr.csv").set_index("sous_code").description_fr.to_dict()
+    asof, pm = production_msn()
+    return {"plan": {str(a).upper(): EQ_NAMES.get(b, b) for a, b in zip(t.produit_nc, t.produit_eqmsn)}, "alias": product_alias_rules(),
+            "codes": {str(k): _tidy(v, 90) for k, v in fr.items() if _tidy(v, 90)}, "codesEn": codes_en(), "vol": weekly_volume(eq),
+            "msnEnd": {k: v[1] for k, v in (pm or {}).items()}, "actions": mft_actions_page()}
+
+
+def dashboard_block(d, nc, code_desc, y25):
+    """What the dashboard needs besides the NC, defect and aléa tables (the examples, quantities and product lines are rebuilt
+    from the tables by the page)."""
+    cq = {k: v for k, v in cnq_explain(d).items() if k != "qty"}
+    eq = eqmsn(nc)
+    return {"from": config.parameter("date_debut"), "codes": code_desc, "actions": mft_actions(), "cnqp": cq,
+            "eqmsn": {k: v for k, v in eq.items() if k != "line"} if eq else None,
+            "rca": [dict(o, ex=[]) for o in rca_reference(d, code_desc)], "y25": y25, "cables": cable_requests()}
+
+
+CHUNK = 30000   # characters per row of the reference table: long texts are cut into rows that any database keeps
+
+
+def ref_table(blocks):
+    """The reference blocks as a table for Skywise (dataset fto2_dash_ref): one row per piece of text, columns
+    partie (dashboard, mft, elizabeth), morceau (0, 1, 2... in order) and texte (JSON). The pages join the pieces back."""
+    import json
+    rows = []
+    for part, block in blocks.items():
+        text = json.dumps(block, ensure_ascii=False, separators=(",", ":"))
+        for i in range(0, max(len(text), 1), CHUNK):
+            rows.append({"partie": part, "morceau": i // CHUNK, "texte": text[i:i + CHUNK]})
+    return pd.DataFrame(rows, columns=["partie", "morceau", "texte"])

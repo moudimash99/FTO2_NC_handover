@@ -362,7 +362,11 @@ def build_dashboard(d, nc, lt, y25=None, dis_t=None):
     def_t.to_csv(os.path.join(OUT, "fto2_dash_defects.csv"), index=False, encoding="utf-8-sig")
     dis_t.to_csv(os.path.join(OUT, "fto2_dash_disruptions.csv"), index=False, encoding="utf-8-sig")
     REPORT["dash_tables"] = {"nc": int(len(nc_t)), "defects": int(len(def_t)), "disruptions": int(len(dis_t))}
-    src = {"tables": {"nc": colmajor(nc_t), "def": colmajor(def_t), "dis": colmajor(dis_t)}, "ref": reference_block(data)}
+    # the reference data, as the Skywise notebook writes it (dataset fto2_dash_ref): the dashboard's, the MFT page's, Elizabeth's
+    blocks = {"dashboard": REF.dashboard_block(d, nc, CODE_DESC, y25), "mft": REF.mft_block(data["eqmsn"]),
+              "elizabeth": {"vol": REF.weekly_volume(data["eqmsn"])}}
+    REF.ref_table(blocks).to_csv(os.path.join(OUT, "fto2_dash_ref.csv"), index=False, encoding="utf-8-sig")
+    src = {"tables": {"nc": colmajor(nc_t), "def": colmajor(def_t), "dis": colmajor(dis_t)}, "ref": blocks["dashboard"]}
     _page("dashboard.html", src, "FTO2_NC_Dashboard.html")
     # the proposed final layout, chart by chart, with the choices to make (review page, local only)
     _page("dashboard.html", local, "FTO2_Revue_Proposition.html", page="review")

@@ -50,8 +50,12 @@ class _Col:
         return Column(lambda df: df[self.name].astype(str) != str(v))
 
     def __ge__(self, v):
-        return Column(lambda df: pd.to_datetime(df[self.name], utc=True, errors="coerce") >= pd.Timestamp(v, tz="UTC")
+        return Column(lambda df: pd.to_datetime(df[self.name], utc=True, errors="coerce", format="mixed") >= pd.Timestamp(v, tz="UTC")
                       if "time" in self.name else df[self.name] >= v)
+
+    def __lt__(self, v):
+        return Column(lambda df: pd.to_datetime(df[self.name], utc=True, errors="coerce", format="mixed") < pd.Timestamp(v, tz="UTC")
+                      if "time" in self.name else df[self.name] < v)
 
     def isin(self, values):
         return Column(lambda df: df[self.name].astype(str).isin([str(v) for v in values]))
@@ -108,6 +112,8 @@ def main():
     nc = pd.concat(exports, ignore_index=True).drop_duplicates("notification_number")
     nc["liability"] = nc["liability"].map(_as_list)
     nc["notification_number"] = nc["notification_number"].astype(str).str.replace(r"\.0$", "", regex=True)
+    y25 = pd.read_csv(os.path.join(ROOT, "06_input_data", "nc_2025_skywise_fto2.csv.gz"), dtype=str, keep_default_na=False, na_values=[""])
+    nc = pd.concat([nc, y25[~y25.notification_number.isin(nc.notification_number)]], ignore_index=True)   # the 2025 NCs, for the comparison year
     Dataset.tables = {
         "non_conformity": nc,
         "fto2_ai_labels": pd.read_csv(os.path.join(ROOT, "04_reference", "llm_labels_longtext.csv"), dtype={"notification_number": str}, encoding="utf-8-sig"),
@@ -173,6 +179,20 @@ def main():
     print("defect lines on those NCs: rehearsal %d, laptop %d" % (len(nd), len(ld)))
     if len(nd) != len(ld):
         bad += 1
+    # the reference data: the same blocks as the laptop build's 05_outputs/fto2_dash_ref.csv
+    import json
+    def blocks(t):
+        t = t.astype({"morceau": int})
+        return {p: json.loads("".join(g.sort_values("morceau").texte)) for p, g in t.groupby("partie")}
+    lap_ref = blocks(pd.read_csv(os.path.join(ROOT, "05_outputs", "fto2_dash_ref.csv"), dtype={"texte": str}, keep_default_na=False))
+    got_ref = blocks(Dataset.written["fto2_dash_ref"])
+    for part in lap_ref:
+        for k in lap_ref[part]:
+            same = lap_ref[part][k] == got_ref.get(part, {}).get(k)
+            if not same:
+                bad += 1
+                print("  reference %s > %s differs" % (part, k))
+    print("reference data: %d blocks compared" % sum(len(v) for v in lap_ref.values()))
     print("written datasets:", sorted(Dataset.written))
     print("OK: the notebook gives the laptop's figures" if not bad else "DIFFERENCES above")
     sys.exit(1 if bad else 0)
