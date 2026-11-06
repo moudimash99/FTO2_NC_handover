@@ -352,11 +352,14 @@ def notebook_kit(root, out):
         shutil.rmtree(k)
     shutil.copytree(os.path.join(root, "fto2"), os.path.join(k, "fto2"), ignore=shutil.ignore_patterns("__pycache__", "*.pyc"))
     shutil.copyfile(os.path.join(root, "04_reference", "llm_labels_longtext.csv"), os.path.join(k, "fto2_ai_labels.csv"))
-    shutil.copyfile(os.path.join(root, "docs", "code_guide.md"), os.path.join(k, "CODE_GUIDE.md"))   # where to look, by type of question
+    # the three guides, next to what they explain: the logic and the front end with the code, the settings with the settings
+    shutil.copyfile(os.path.join(root, "docs", "logic.md"), os.path.join(k, "logic.md"))
+    shutil.copyfile(os.path.join(root, "docs", "front_end.md"), os.path.join(k, "front_end.md"))
     c = os.path.join(out, "config")
     if os.path.isdir(c):
         shutil.rmtree(c)
     shutil.copytree(os.path.join(root, "config"), c)
+    shutil.copyfile(os.path.join(root, "docs", "config.md"), os.path.join(c, "README.md"))
     return k
 
 

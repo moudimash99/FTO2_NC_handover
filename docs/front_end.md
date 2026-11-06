@@ -1,125 +1,282 @@
-# How the pages work (front end)
+# Front end: how the pages' code works
 
-This is for the person who changes how a page looks or adds a chart. To change a rule, a rate or a target, you don't need
-any of this: see `comment_faire.md`.
+The front end is the three pages of the Slate app: the **dashboard**, the **MFT page** and the **Tableau Elizabeth**. They
+read the tables the notebook writes, then filter, add up and draw. This guide explains their code.
 
-## The short version
+The three guides: `config.md` (the settings tables; in the Code Workspace also as `data/config/README.md`), `logic.md` (the
+notebook's code) and `front_end.md` (the pages' code); these two are also in `notebook_kit/`.
 
-- Each page is one HTML file built from a template. The template holds the page's look (CSS), its layout (HTML) and its code
-  (plain JavaScript, no framework, no outside library).
-- The page receives tables (one row per NC, one row per defect line) and a block of reference data. It filters them, adds them
-  up and draws the charts as SVG.
-- The same code runs on the laptop (an HTML file) and in Skywise (pasted into a Slate code sandbox).
-- The calculations that are more than adding up (targets and forecast, alarms, cost explanation) are in a separate file,
-  `build/templates/model.js`. It can also run as Slate functions (see the end).
+**Contents**
 
-## The files
+1. [The big picture](#1-the-big-picture)
+2. [How the data reaches a page](#2-how-the-data-reaches-a-page)
+3. [The dashboard's code](#3-the-dashboards-code)
+4. [Finding and changing a chart](#4-finding-and-changing-a-chart)
+5. [The alarms (the bell)](#5-the-alarms-the-bell)
+6. [The MFT page's code](#6-the-mft-pages-code)
+7. [The Tableau Elizabeth's code](#7-the-tableau-elizabeths-code)
+8. [Editing a page in Slate](#8-editing-a-page-in-slate)
+9. [When a page shows a box](#9-when-a-page-shows-a-box)
 
-| Page | Template | Built by | Output |
-|---|---|---|---|
-| Dashboard (Essentiel and Deep dive) | `build/templates/dashboard.html` and `build/templates/model.js` | `build/build_all.py` | `03_reports/FTO2_NC_Dashboard.html` |
-| MFT page | `07_scripts/mft/mft_template.html` | `07_scripts/mft/build_mft.py` | `03_reports/FTO2_MFT.html` |
-| Tableau Elizabeth | `07_scripts/elizabeth/elizabeth_template.html` | `07_scripts/elizabeth/build_elizabeth.py` | `03_reports/FTO2_Elizabeth.html` |
+---
 
-The build also writes the Skywise versions into `03_reports/skywise/` (the CSS, HTML and JS to paste into Slate).
-**Never edit the files in `03_reports/`**: the next build overwrites them. Edit the templates, then build again.
+## 1. The big picture
 
-The MFT page shares the dashboard's alarm engine: the build copies the block between `ALARM ENGINE START` and `ALARM ENGINE END`
-of `dashboard.html` into it. So both pages always raise the same alarms.
+```
+ Postgres (synced from the notebook's tables)
+        |
+ Slate queries: q_fto2_nc, q_fto2_def, q_fto2_dis, q_fto2_ref
+        |
+ the sandbox's state box: links each query to a name the page knows
+        |
+ the page's code (JS): waits for the data, turns it into lists, then
+     filters  ->  adds up  ->  draws (SVG charts, tables)
+```
 
-## How the dashboard template is laid out
+Each page is one Slate **code sandbox** with four parts:
 
-`build/templates/dashboard.html`, from top to bottom:
+| Part | What it holds |
+|---|---|
+| CSS | the look: colours, sizes, spacing |
+| HTML | the frame: header, filter bar, tabs, one empty box per chart |
+| JS | the code: plain JavaScript, no outside library |
+| State | the links to the queries, e.g. `{"nc": "{{q_fto2_nc}}", ...}` |
 
-1. **CSS** (`<style>`): colours are variables at the top (`--ink`, `--s1`, `--up`, `--down`...), then one block per part of the
-   page. In Slate every rule is prefixed with `.fto2` by the build, so the dashboard's styles don't leak into the Slate page.
-2. **HTML** (`<div class="wrap">`): the header, the filter bar, the tabs, and one panel per tab (`id="p-ov"`, `p-pareto`...).
-   Most charts are empty boxes that the code fills.
-3. **The data block** (`<script id="fto2-data">`): filled by the build on the laptop. In Skywise the data comes from the
-   queries instead.
-4. **The adapter** (between `ADAPTER START` and `ADAPTER END`): `fto2FromTables` turns the tables into the page's data `D`.
-5. **The page's code**, one big function. In order:
-   - the texts in French and English (`STR`), and the settings (`SET`, from `config/`);
-   - the calculations: `model.js` is put in at the line `/*@@MODEL@@*/`, then the layer that takes them either from the page
-     or from Slate;
-   - then one section per tab, each starting with a comment line `// ---- 1. Overview`, `2. Pareto`, `4. Cost`...;
-   - the alarm engine (`ALARM`), the filter bar, the tabs, and at the end the Essentiel mode.
+**The rule of the split:** the notebook decides and calculates (which NC counts, what each defect is, what it costs; see
+`logic.md`). The pages only filter, add up and draw. A number wrong everywhere is a notebook question; a number wrong on one
+chart only is a page question.
 
-## The data inside the page
+## 2. How the data reaches a page
 
-`D.ncs` is a list of NCs, each one a list of values by position. The positions most used:
+1. **The queries** read the four tables in Postgres (`foundry_sync` schema). Their SQL only lists the columns.
+2. **The state box** gives each query result a name: `nc` (one row per NC), `def` (one row per defect line), `dis` (the aléas
+   with no NC, dashboard only), `ref` (the reference data).
+3. **The loader**, at the very end of the JS, watches those four names. When all have arrived, it starts the page. If one is
+   missing for too long, it shows a box saying which one (section 9).
+4. **The reference data** comes in pieces of text (`partie`, `morceau`, `texte`). `fto2RefBlocks`, at the top of the JS, glues
+   each part's pieces back together and reads them as one block: the production plan, 2025, the cable requests, the MFT
+   actions, the cost settings, the cause tree, and the page settings (target, filters at opening, colours, alarm settings).
+5. **The adapter** `fto2FromTables` (between `ADAPTER START` and `ADAPTER END`) turns the two tables into the page's data `D`.
+
+**The data inside the page.** `D.ncs` is a list of NCs, each one a list of values by position:
 
 | | | | |
 |---|---|---|---|
-| `[0]` NC number | `[1]` creation date | `[3]` line (A350...) | `[5]` 1 if FTO2 is liable |
-| `[6]` cost rule | `[8]` where found | `[12]` cost (level 3) | `[23]` serie / client / autre |
-| `[24]` phase (SERIE, REC, FTI) | `[25]` MSN | `[26]` product | `[27]` station |
-| `[33]` NC type | `[39]` data source | `[40]` cost steps (minutes...) | `[42]` plant |
+| `[0]` NC number | `[1]` creation date | `[2]` week | `[3]` line |
+| `[5]` 1 if FTO2 is liable | `[6]` cost decision | `[8]` where found | `[12]` cost |
+| `[21]` defect lines | `[22]` title | `[23]` serie / client / autre | `[24]` phase |
+| `[25]` MSN | `[26]` product | `[27]` station | `[29]` days to close |
+| `[30]` open | `[33]` NC type | `[39]` data source | `[40]` cost steps (minutes...) |
+| `[41]` origin | `[42]` plant | | |
 
-`D.defects` is a list of defect lines: `[0]` NC number, `[1]` line number, `[11]` category, `[12]` root cause, `[13]`
-sub-category, `[14]` minor, `[17]` share of the cost, `[18]` text, `[22]` sub-code, `[23]` FIN.
+`D.defects` is a list of defect lines: `[0]` NC number, `[1]` line number, `[11]` category, `[12]` cause, `[13]` sub-category,
+`[14]` minor, `[15]` cable, `[17]` share of the cost, `[18]` text, `[22]` sub-code, `[23]` FIN.
 
-The full list is in the adapter (`fto2FromTables`), next to the table columns it reads. The columns themselves are described
-in `fto2/core.py` (`NC_COLUMNS`, `DEF_COLUMNS`).
+The full list, position by position, is in `fto2FromTables`, next to the column of the table each value comes from.
 
-## What happens when someone clicks
+## 3. The dashboard's code
 
-1. A filter changes (filter bar, or a click on a bar or a point of a chart).
-2. The page updates its filters `GF` and calls `select()`. `select()` makes the list of NCs on screen: `SEL_NC` (everything
-   the filters keep), `SER_NC` (FTO2's own, without customer returns), `CLI_NC` (customer returns).
-3. `renderAll()` redraws every tab. Each chart reads `SEL_NC`, counts, and writes its SVG into its box.
+### The layout of its JS
 
-A click on a chart value works through `data-pick="kind|value"` on the SVG element. The page catches the click, sets
-`GF.pick`, and every tab follows. Tooltips work the same way: `data-tip="title|line|line"`.
+Search for these markers to find your way, from top to bottom:
 
-## Adding or changing a chart
+| Marker | What is there |
+|---|---|
+| `fto2RefBlocks` | glues the reference data back together |
+| `ADAPTER START` … `ADAPTER END` | `fto2FromTables`: the tables become `D` |
+| `function main()` | the page itself starts here |
+| `var STR = {` | every text of the page, in French (`fr`) and English (`en`) |
+| `MODEL START` … `MODEL END` | the calculations, with no drawing (see below) |
+| `the calculations: here, or in Slate` | small functions the charts call for the targets, the alarms and the cost explanation; the page computes them itself |
+| `// ---- 1. Overview`, `2. Pareto`, `3. Weekly Pareto`, `4. Cost`... | one section per tab, with that tab's charts |
+| `ALARM ENGINE START` … `END` | the alarm statistics (section 5) |
+| `Dashboard v2 (main page)` | which charts appear on which tab, and their drawing functions (section 4) |
+| `filter bar` | the filters and what happens when they change |
+| `language, tabs, minor switch` | the language switch, the tabs, `renderAll` |
+| `Simple mode` | the Essentiel mode (Synthèse and Détail) |
+| the end of the file | the loader (section 2) and the error box |
 
-1. Find a chart that looks like what you want, and its function (search for its title's text key in `STR`, then for that key).
-2. Copy the function, change what it counts. Keep reading the NCs from `SEL_NC`, so the filters apply.
-3. Draw with the helpers: `svg()`, `tx()` (a text), `tip()` (a tooltip), `pk()` (a click that filters), `gSet()` (put the
-   chart and its legend in its box).
-4. Put every text in `STR.fr` and `STR.en`, and use it with `S('key')`. The dashboard stays in French by default.
-5. Build, open `03_reports/FTO2_NC_Dashboard.html`, check it in both languages, then run the checks (`tests/README.md`).
-   The snapshot will show the new chart as a difference: that is expected. Check it, then update the reference.
+Sections marked "local page only", the Gallery, the Review and the Mock-up are not shown in Skywise: leave them.
 
-## In Skywise
+### The calculations (`MODEL START` … `MODEL END`)
 
-The dashboard is a Slate **code sandbox**. Its JavaScript is the same page code, wrapped by a small piece of "glue" (written
-by `build/skywise_pack.py`). The glue:
+The part of the page that computes without drawing, in eight numbered sections:
 
-- waits for the queries (`q_fto2_nc`, `q_fto2_def`, `q_fto2_dis`, `q_fto2_ref`) through the sandbox's state, then starts the page;
-- shows a box with a plain message if something is missing (a query that doesn't answer, no rows, a cut result).
+1. **helpers**: read a defect line or an NC, group the NC types, the categories (`CAT_ORDER`, from the settings);
+2. **selection**: the filters (`GF`) and `select()`, which makes the lists of NCs on screen;
+3. **production**: the production plan matched to the selected NCs: MSN built per product and month (`pData`, `pAgg`);
+4. **targets and forecast**: 2025 under the same filters (`y25Sel`), the target line by line (`v2Tgt`), the forecast to
+   December (`v2Series`, `v2Fc`);
+5. **cost explanation**: the minutes and euros of each step of an NC, for "Expliquer le calcul";
+6. **alarms**: what the bell follows (`alCompute`);
+7. and 8. the same results packed as plain data (used only by an optional Slate set-up).
 
-Things to know when you change the page for Skywise:
+### What happens when someone clicks
 
-- **No double braces** (two `{` in a row) in the JavaScript. Slate would read them as a binding.
-- **No outside resources.** Only the Google font is imported; if Slate blocks it, the page falls back to standard fonts.
-- **No data in the code.** Data and reference data come from the queries. `tests/test_pages.py` fails if a big block of data is
-  written in the JavaScript.
-- **Light mode only** in Slate. The dark-mode styles are dropped by the build.
+1. **A filter changes** (the filter bar, or a click on a chart). The filters are kept in `GF`: dates (`from`, `to`), period
+   (`preset`), line, phase, Responsabilité boxes (`liab`), plant switch (`fto2`), data source, cost mode, and a clicked value
+   (`pick`).
+2. `setGF` stores the change and calls `select()`, which makes the lists of NCs on screen:
+   - `SEL_NC`: every NC the filters keep;
+   - `SER_NC`: FTO2's own NCs, without customer returns;
+   - `CLI_NC`: the customer returns.
+3. `renderAll()` redraws every tab. Each chart counts from those lists, so every chart follows the filters.
 
-## The calculations, here or in Slate
+**A click on a chart** works through `data-pick="kind|value"` on the drawn element (`pk()` writes it). The page catches the
+click (`pickSet`), sets `GF.pick`, and every tab follows. A chip in the filter bar shows it; ✕ removes it.
 
-`build/templates/model.js` holds the calculations that are more than adding up: the selection, production per MSN, the
-targets and forecast, the cost explanation of an NC, and the alarm list. It draws nothing.
+**A tooltip** works through `data-tip="title|line|line"` on the drawn element (`tip()` writes it).
 
-The page reaches three of them through small functions: `objectif()` and `lignes()` for the targets, `alarmesNow()` for the
-bell, `cxOf()` for the cost explanation. Each one either computes in the page or takes the answer from Slate:
+**A tab change** (`setTab`) shows the tab and draws what that tab needs.
 
-- **On the laptop, or in Skywise without functions:** the page computes everything.
-- **In Skywise with the Slate functions** (`03_reports/skywise/level3_datasets/fonctions/`): the page sends its filters to
-  Slate, the chart says "Calcul dans Slate…" for a moment, and the page draws the answer. If Slate doesn't answer within 15 s,
-  the page computes it itself and says so.
+**The ⓘ panel** ("Comment la sélection est faite", section `the ⓘ panel`) replays the same filters one by one and says what
+each removes.
 
-Because the page and the functions use the very same file, they can't give different numbers. `tests/test_slate_functions.py`
-runs the functions as Slate does, and the snapshot of the Skywise page with the functions is compared with the laptop page.
+### Texts and languages
 
-## Checking a change
+Every text is in `STR`: `STR.fr` and `STR.en`, by key. The code uses `S('key')`, with values filled in where `{n}`, `{v}`...
+appear. The HTML uses `data-t="key"`, filled in by `applyText()`. The chart titles are in `GSTR` (section 4). To change a
+text, change it in both languages.
+
+### Essentiel and Deep dive
+
+`MODE` is `simple` (Essentiel) or `expert` (Deep dive). Essentiel shows two tabs (Synthèse, Détail) made of charts borrowed
+from the Deep dive tabs (`V2L.syn`, `V2L.det`). Détail's charts run from January to the end of the period (`ytd`).
+
+## 4. Finding and changing a chart
+
+### Where each chart is placed
+
+In the section `Dashboard v2 (main page)`, **`V2L`** lists the chart cards of each tab, by key:
 
 ```
-python3 -I build/build_all.py
-python3 -m unittest discover -s tests -t .
+ov:     top: ['VT', 'VN', 'VB', 'a:lead', 'VX'], fold: ['a:cal']
+pareto: top: ['a:bub', 'a:bump', 'a:flow', '78', '76', 'VM', 'VQ', '53'] ...
+where:  top: ['VP', '61', 'a:prod', '54', 'a:msn', 'VF', 'a:station'] ...
 ```
 
-then the full comparison of every number the pages show (about 30 minutes): `tests/README.md`. A change that should not move
-any number must give "identical". A change that should move some numbers: check that only those moved.
+`top` is shown, `fold` is in the "more" fold. Move a key to move a chart; remove it to hide the chart.
+
+### Which code draws a chart
+
+There are three kinds of keys:
+
+| Key | Drawn by | Title from |
+|---|---|---|
+| `VT`, `VN`, `VB`... | the function named in `V2F` (e.g. `VT: v2Target`, `VN: v2Trend`) | `GSTR.VT.fr` / `.en`: [short name, title, subtitle, data used] |
+| a number (`53`, `78`...) | the function given for that number in `PSPEC` | `GSTR['53']` |
+| `a:name` (`a:lead`, `a:bump`...) | `RV_ANA.name` | `STR`: `k_name`, `t_name`, `s_name` |
+
+**To find a chart's code from the page:** take a few words of its title, search them in the JS: they lead to its `GSTR` or
+`STR` entry, whose key leads to its function.
+
+### The drawing helpers
+
+A chart function counts from `SEL_NC` (or `D.defects` filtered the same way), then draws SVG with:
+
+| Helper | Does |
+|---|---|
+| `svg(w, h, inner, label)` | the frame of a chart |
+| `tx(x, y, text, class, anchor)` | a text |
+| `tip(title, lines)` | a tooltip on an element |
+| `pk(kind, value)` | a click that filters the dashboard |
+| `gSet(key, html, legend)` | puts the chart and its legend in its card |
+| `pEmpty(key)` | "no data" in a card |
+| `num`, `eur`, `pct`, `f1`, `f2` | number formats, in the page's language |
+| `lineCol(line)`, `catTok(category)` | the colour of a line, of a category (from the settings) |
+
+**Changing a chart:** change what it counts or how it draws in its function; keep reading from `SEL_NC` so the filters
+apply; put any new text in `STR` (both languages).
+
+**Adding a chart:** copy a similar chart's function under a new key, add the key to `V2F` and its titles to `GSTR`, then add
+the key to `V2L` on the tab you want.
+
+### The colours
+
+Colours are CSS variables at the top of the CSS (`--ink`, `--s1`, `--up`, `--down`...). The colours of the lines and of the
+categories come from the settings (`2_lignes.csv`, `2_categories.csv`). Every style rule starts with `.fto2`, so the
+dashboard's styles stay inside its sandbox: keep that on new rules.
+
+## 5. The alarms (the bell)
+
+**What it does:** line by line, it compares the defects of the last 4 finished weeks with the 12 weeks before, per MSN built.
+It rings when the rise is too big to be chance: minor or major. It also catches slow rises over several months and aircraft
+with far more NCs than usual. The settings (weeks, thresholds, how many shown) come from `3_alarmes.csv`.
+
+**The code:**
+
+| Part | Where |
+|---|---|
+| The statistics | between `ALARM ENGINE START` and `ALARM ENGINE END`: `run` (the test), `seen` (an alarm marked as seen), `spark` (the small curve) |
+| What is followed | `alCompute` (in `MODEL`, section 6): all defects, categories, causes, sub-codes, stations, where found, products, cable requests, aircraft, per line |
+| The bell on screen | `alRender` (the list), `alGo` (a click opens the problem), `alText` / `alName` (the wording) |
+
+**The MFT page has its own copy of the alarm engine.** If you change one, change the other the same way, or the two pages will
+ring differently.
+
+## 6. The MFT page's code
+
+One line at a time: the week's Pareto, the analysis, and the follow-up of the MFT actions. Its JS, from top to bottom:
+
+| Section | What is there |
+|---|---|
+| `the two Slate tables -> the page's data` | its own adapter (simpler than the dashboard's) |
+| `the store` | where actions typed on the page are kept: **in this browser only** |
+| `data`, `weeks (ISO)`, `state`, `helpers` | the data, the week numbers, what the user chose (line, phase, period) |
+| `controls` | the line, phase and period buttons |
+| `tab 1: the week's Pareto` | the Pareto of the week against the weeks before |
+| `tab 2: analysis` | what goes up, what goes down, recurring FINs |
+| `tab 3: actions` | the action follow-up: each action against its target |
+| `the action form` | adding or editing an action on the page |
+| `the bell` | the alarm engine (its own copy) and its list |
+| `events` | the clicks |
+| `Slate: wait for the two queries` | the loader |
+
+**Where the actions come from:** `1_actions_mft.csv` in the settings, through `ref`. They replace the browser's copy at every
+load. An action typed on the page stays in that browser until someone adds it to the table.
+
+**Its thresholds** ("what goes up", "what goes down", recurring FINs, action targets) come from `2_reglages_pages.csv`
+(the `mft_` and `action_` rows).
+
+## 7. The Tableau Elizabeth's code
+
+A line's NCs, three families of problems, a Pareto, and the weeks over a threshold (10 NCs a week by default). Its JS:
+
+| Section | What is there |
+|---|---|
+| `the two tables -> the page's data` | `elzFromTables`: its own adapter |
+| `families` | how an NC is put in a family (cables first, then the others); `cableWhy` says why an NC counts as a cable problem |
+| `weeks (ISO)` | week numbers, shutdown and low weeks |
+| `state`, `helpers` | line, phase, period, threshold; remembered in the browser |
+| `render` | the drawing |
+| `events` | the clicks |
+| `start` | the loader |
+
+## 8. Editing a page in Slate
+
+1. **Copy the current JS** (or CSS, HTML) out of the sandbox and keep it as it is: it is your way back.
+2. Make the change in a text editor (the dashboard's JS is long; Slate's editor is slow with it), then paste it back.
+3. Check the page: both languages, Essentiel and Deep dive, a few filters. Note the headline figures before and after: only
+   what you meant to change should move.
+4. If the page breaks, paste the previous version back.
+
+**Three rules for code in Slate:**
+
+- **Never two `{` in a row** in the JS. Slate reads them as a link to a query and breaks the code.
+- **Every CSS rule starts with `.fto2`**, so the styles don't leak into the rest of the Slate page.
+- **No data in the code.** Data and settings come from the queries. A list or a value that someone may want to change belongs
+  in a settings table (`config.md`), read by the notebook and passed to the page through `ref`.
+
+**A new column from the notebook** (`logic.md`, section 6): add it to the query's SQL in Slate, read it in the adapter
+(`fto2FromTables`: add it to the NC's or the defect line's list), then use it in a chart.
+
+## 9. When a page shows a box
+
+| The box says | What it means | Where to look |
+|---|---|---|
+| Still waiting for a query, with its name | The query doesn't exist under that name, or fails | The query's name and SQL in Slate |
+| "La requête … n'a renvoyé aucune ligne" | The query works but the table is empty | The sync, then the notebook's run |
+| "aucune NC lisible … colonnes reçues : …" | The query returns columns the page doesn't expect | Compare them with the table's columns |
+| "exactement N lignes reçues" | Slate probably cut the result | A row limit on the query |
+| An error with a line of code | The JS has a mistake | Paste the previous JS back |
+| The HTML part is missing | The HTML tab is empty | Paste the HTML part |

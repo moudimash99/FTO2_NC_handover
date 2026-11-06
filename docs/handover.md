@@ -42,7 +42,7 @@ notebook). One table per subject, and each one opens in Excel. The number at the
 **1** anyone, **2** someone careful, **3** someone technical. `config/lisez_moi.csv` lists them all and says what each one
 changes.
 
-Examples: what counts as REC, an hourly rate, the target, a new product, the production plan, an MFT action. **`config/README.md`**
+Examples: what counts as REC, an hourly rate, the target, a new product, the production plan, an MFT action. **`docs/config.md`**
 explains every table and how to fill it in; the same tasks in French are in `docs/comment_faire.md`.
 
 After a change, run the notebook. If a table is badly filled, the run stops and says which file, which line and what to fix.
@@ -51,7 +51,8 @@ After a change, run the notebook. If a table is badly filled, the run stops and 
 on the new file (`docs/comment_faire.md`). A row you corrected by hand (column `source` = `manuel`) is kept when the script
 runs again.
 
-**Changing how a page looks, or adding a chart**, needs someone at ease with JavaScript: `docs/front_end.md`.
+**Changing how a page looks, or adding a chart**, needs someone at ease with JavaScript: `docs/front_end.md`. The
+notebook's code is explained in `docs/logic.md`.
 
 **Changing how NCs are read or costed** (the backend, in Python): `fto2/`, one file per subject. The notebook and the laptop
 build use the same code.

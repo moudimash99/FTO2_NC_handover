@@ -1,9 +1,11 @@
-# The settings: a guide to the `config/` folder
+# Settings (config): how they work and how to fill them
 
-Everything about the dashboard that someone may want to change, without touching the code, is in this folder. It holds 43
-small tables. This guide explains what is in them, how they are built, and how to fill them in.
+Everything about the dashboard that someone may want to change without touching the code is a small table in the folder
+`data/config/`, next to the notebook in the Code Workspace. There are 43 tables. This guide explains what is in them, how
+they are built, how to fill them in, and how the code reads them.
 
-In the Code Workspace, this folder is `data/config/`, next to the notebook.
+The three guides: `config.md` (the settings tables; in the Code Workspace also as `data/config/README.md`), `logic.md` (the
+notebook's code) and `front_end.md` (the pages' code); these two are also in `notebook_kit/`.
 
 **Contents**
 
@@ -13,6 +15,7 @@ In the Code Workspace, this folder is `data/config/`, next to the notebook.
 4. [The five kinds of tables](#4-the-five-kinds-of-tables)
 5. [Every table, one by one](#5-every-table-one-by-one)
 6. [Common tasks](#6-common-tasks)
+7. [How the code reads the tables](#7-how-the-code-reads-the-tables)
 
 ---
 
@@ -252,4 +255,44 @@ The defects are sorted in three layers: **category** (e.g. Erreur Branchement) â
 | Change what the dashboard shows at opening | `2_reglages_pages.csv` | `defaut_phase`, `defaut_responsabilite`, `defaut_periode`. |
 | Change a category's colour or order | `2_categories.csv` | `couleur` (1 to 9), `ordre`. |
 | Rename a dataset Skywise gives us | `2_sources.csv` | The new name in `valeur`. |
+
+---
+
+## 7. How the code reads the tables
+
+Nothing is copied from a table into the code: the notebook reads every table **each time it runs**. That is why a change
+needs only a new run.
+
+**Who reads what.** `lisez_moi.csv`, column `lu_par`, names the code file that reads each table. In short:
+
+| Tables | Read by (in `notebook_kit/fto2/`) | What happens to them |
+|---|---|---|
+| `2_regle_*.csv` (the rules) | `selection.py`, `core.py`, `parser/fto2_logic.py`, through `rules.py` | Applied to every NC to give it a label (phase, line, product, type, scope...) |
+| `2_cout_*.csv`, `3_cout_*.csv` (the cost) | `cost/params.py` | Turned into the cost model's settings, used by `cost/model.py` |
+| `2_parametres.csv`, `2_sources.csv` | `skywise.py`, `config.py`, `manual_lists.py` | Which plant, from which date, which datasets and files to read |
+| `1_*.csv` (production plan, actions, cables...) and the page settings (`2_reglages_pages.csv`, `2_categories.csv`, `2_lignes.csv`, `3_alarmes.csv`) | `reference.py` | Packed into the table `fto2_dash_ref`, which the pages read |
+| categories, causes, sub-codes | `reference.py`, `core.py`, `parser/fto2_logic.py` | Names and definitions shown on the pages, official sub-codes of the defect lines |
+
+So the pages never read `data/config/` themselves: they get the settings they need through `fto2_dash_ref`, rewritten at
+each run.
+
+**The checks before anything is computed** (`notebook_kit/fto2/config.py`):
+
+- the table exists and is not empty;
+- every line has as many `;` columns as the first row ("line N has X columns, the header has Y");
+- the columns a table must have are all there ("the column(s) X are missing");
+- a name-and-value setting that the code asks for exists ("the line 'X' is missing");
+- `oui` / `non` settings hold `oui` or `non`.
+
+**The checks of a rule table** (`notebook_kit/fto2/rules.py`, function `check`): `ordre` is a number, the test is one of the
+list and has a value when it needs one, the column exists in the NC data, a regular expression is valid, `resultat` is not
+empty, and there is a default rule (`toujours`). Every problem
+is reported with the file and the line, in plain words.
+
+**How a rule table is applied** (`rules.py`, function `apply`): for each NC, the rules are tried in `ordre`; the rows of one
+rule are combined (all must be true); the first rule that holds gives the result; the `toujours` rule gives the default. The
+same function serves every rule table, so all of them behave the same way.
+
+**Settings with several values** (`FTO2|FT02`, `7=0.6|8=0.6`) are split on `|` by `config.parameter_list`; the cost tables
+accept a comma or a dot for decimals (`cost/params.py`).
 

@@ -19,8 +19,7 @@ Skywise data (NCs, work orders, aléas)          config/  (the settings, one tab
 
 - **`config/`**: everything someone may want to change. One `;` table per subject, opens in Excel. The first character of
   the name is the level: `1_` everyday (anyone), `2_` rules (someone careful), `3_` expert (technical).
-  `config/lisez_moi.csv` lists every table, what it changes and who should edit it. **`config/README.md`** is the full guide:
-  how the tables are built and how to fill each one.
+  `config/lisez_moi.csv` lists every table, what it changes and who should edit it.
 - **`scripts/`**: turn a raw file into its everyday table (Avances / Retards, EqMSN, cable tracker, MFT trackers).
   A row corrected by hand (source = manuel) is kept when the script runs again.
 - **`fto2/`**: the backend. One file per subject; the same code runs on the laptop and in the Skywise notebook.
@@ -49,8 +48,13 @@ Needs Python 3 with pandas, numpy and openpyxl (`requirements.txt`); the page ch
 See `docs/comment_faire.md`: change a rule (e.g. what counts as REC), a rate, a target, a product, update the production plan,
 add an MFT action, and check that nothing else moved.
 
-How the pages themselves work (to change a chart or add one): `docs/front_end.md`.
+## The three guides
 
-For the team in Skywise: `docs/code_guide.md` (where to look, by type of question) travels in the notebook kit as
-`CODE_GUIDE.md`, and `config/README.md` (every settings table) travels with the settings as `data/config/README.md`.
-Both are written for someone who only sees the Code Workspace and the Slate app.
+| Guide | Explains |
+|---|---|
+| `docs/config.md` | the settings tables: how they are built, how to fill each one, how the code reads them |
+| `docs/logic.md` | the notebook's code: the run step by step, every file, the cost model, the tables it writes |
+| `docs/front_end.md` | the pages' code: how the data arrives, the dashboard's layout, finding and changing a chart, the MFT page, Elizabeth |
+
+They are written for someone who only sees the Code Workspace and the Slate app, and the build puts them there: `logic.md`
+and `front_end.md` in the notebook kit, `config.md` as `data/config/README.md`.
