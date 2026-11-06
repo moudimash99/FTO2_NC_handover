@@ -3,7 +3,7 @@
 Everything about the dashboard that someone may want to change, without touching the code, is in this folder. It holds 43
 small tables. This guide explains what is in them, how they are built, and how to fill them in.
 
-In Skywise the same folder sits next to the notebook, as `data/config/`. Change it there; the laptop copy is for testing.
+In the Code Workspace, this folder is `data/config/`, next to the notebook.
 
 **Contents**
 
@@ -51,13 +51,13 @@ The number at the start of each file name says who should edit it.
 ## 3. After a change
 
 1. Save the table.
-2. Run the notebook in Skywise (on the laptop: `python3 -I build/build_all.py`).
+2. Run the notebook.
 3. If a table is badly filled, the run stops and says **which file, which line, and what to fix**. For example:
    "2_regle_phase.csv line 4: test 'contien' is not one of contient, mot, commence_par...".
 4. Look at the dashboard: the change should show where you expect it, and nowhere else.
 
-For a level 2 or 3 change, a technical person can also run the checks (see `tests/README.md`): they say exactly which
-figures moved.
+For a level 2 or 3 change, note the dashboard's headline figures before the change, and compare after: only what you
+expected should move.
 
 ## 4. The five kinds of tables
 
@@ -131,16 +131,16 @@ rule table needs one.
 Example: `2_produits_plan.csv`, which maps the product name on an NC to its name in the production plan
 (`MIP A350` → `MIP`). The left column is what is found, the right column what it becomes. One row per value.
 
-### 4.5 Tables made by a script, with hand corrections
+### 4.5 Tables first filled from a raw file
 
-Some level-1 tables are made from a raw file by a script in `scripts/` (the production plan, the EqMSN volumes, the cable
-requests, the MFT actions). They have a last column **`source`**:
+Some level-1 tables were first filled from a raw file: the production plan (from the Avances / Retards file), the EqMSN
+volumes (from the EqMSN Excel file), the cable requests (from the cables team's tracker) and the MFT actions (from the MFT
+trackers). Keep them up to date by adding or correcting rows directly. They have a last column **`source`**:
 
-- `auto`: written by the script. The next run of the script replaces it.
-- `manuel`: typed or corrected by a person. **The script never touches it.**
+- `auto`: the row came from the raw file;
+- `manuel`: the row was typed or corrected by a person.
 
-So, to correct a row the script wrote: change it and set its `source` to `manuel`. To give it back to the script: set it back
-to `auto`, or delete the row, and run the script again.
+When you add or correct a row, set its `source` to `manuel`: it marks the rows a person is responsible for.
 
 ---
 
@@ -169,8 +169,8 @@ Two rules of thumb: put special cases **before** general ones (a smaller `ordre`
 
 | Table | Level | What a row is | How to fill it |
 |---|---|---|---|
-| `1_plan_msn.csv` | 1 | One aircraft (MSN) and product: line, product, MSN, rank, then the **planned** (`prevu_`) and **real** (`reel_`) date of the 8 milestones (impression, enclenchement, SE, méca, inté, test, qualité, départ OTA), the export date | Made by `scripts/plan_depuis_avances_retards.py` from the Avances / Retards file. To fix an aircraft: correct its dates and set `source` = `manuel`. |
-| `1_eqmsn_mois.csv` | 1 | One product and version (`std` = Standard sheet, `adj` = Adjusted sheet): its EqMSN for each month, the export date, the first forecast month | Made by `scripts/eqmsn_depuis_excel.py` from the EqMSN Excel file. |
+| `1_plan_msn.csv` | 1 | One aircraft (MSN) and product: line, product, MSN, rank, then the **planned** (`prevu_`) and **real** (`reel_`) date of the 8 milestones (impression, enclenchement, SE, méca, inté, test, qualité, départ OTA), the export date | Add a row per new aircraft and product; correct the dates as the aircraft moves on. Set `source` = `manuel` on rows you type or correct. |
+| `1_eqmsn_mois.csv` | 1 | One product and version (`std` = Standard sheet, `adj` = Adjusted sheet): its EqMSN for each month, the export date, the first forecast month | Copy the new month values from the EqMSN Excel file (both versions), update the export date and the first forecast month. |
 | `1_calendrier_production.csv` | 1 | A period of shutdown or slow production: start, end, **weight** (0 = closed, 0.5 = half a normal week), reason | Add a row for each new shutdown or bridge day. It changes the MSN volume of the months and weeks concerned. |
 | `1_livraisons_2025.csv` | 1 | One 2025 delivered product: its name, its name in the plan, its line, the count per month of 2025, the total | The basis of the targets. Change only if the 2025 figures were wrong. |
 | `1_livraisons_2025_lignes.csv` | 1 | One line: whole MSN delivered in 2025 | Same. |
@@ -224,10 +224,10 @@ The defects are sorted in three layers: **category** (e.g. Erreur Branchement) �
 | Table | Level | What a row is | How to fill it |
 |---|---|---|---|
 | `1_actions_mft.csv` | 1 | One MFT action: id, line, title (French and English), **the problem it targets** (`niveau` + `valeurs`), analysis and action owners, dates, status, expected benefit, the tracker it comes from, `source` | To add an action: one row with `source` = `manuel`. `niveau` says what kind of problem: `cat` a category, `rca` a cause, `sub` a sub-category, `code` a sub-code, `where` a place of detection. `valeurs`: the names exactly as on the dashboard, several separated by `\|`. |
-| `2_actions_mft_problemes.csv` | 2 | Links a row of the MFT trackers (programme, category, start of the defect text) to the problem it targets (`niveau`, `valeur`); `a_verifier` = to be checked | Used by `scripts/actions_mft_depuis_suivis.py`. |
-| `1_demandes_cables.csv` | 1 | One cable request of the cables team: week, date, NC, programme, MSN, reason, imputation, origin, proposed cause, cables, comment, `source` | Made by `scripts/cables_depuis_suivi.py`. Correct a row and set `source` = `manuel`. |
-| `2_cables_origines.csv` | 2 | An imputation of the cable tracker → the origin shown (`(autre)` = anything else) | |
-| `2_regle_cause_cable.csv` | 2 | Rule table (section 4.3): the proposed cause of a cable request, from keywords in its analysis comment | Add a keyword to a rule, or a new rule before the last one. |
+| `2_actions_mft_problemes.csv` | 2 | Links a row of the MFT trackers (programme, category, start of the defect text) to the problem it targets (`niveau`, `valeur`); `a_verifier` = to be checked | Only used when the actions are refilled from the trackers; the notebook doesn't read it. |
+| `1_demandes_cables.csv` | 1 | One cable request of the cables team: week, date, NC, programme, MSN, reason, imputation, origin, proposed cause, cables, comment, `source` | Add a row per new request; set `source` = `manuel` on rows you type or correct. |
+| `2_cables_origines.csv` | 2 | An imputation of the cable tracker → the origin shown (`(autre)` = anything else) | Only used when the requests are refilled from the tracker. |
+| `2_regle_cause_cable.csv` | 2 | Rule table (section 4.3): the proposed cause of a cable request, from keywords in its analysis comment | Only used when the requests are refilled from the tracker. |
 
 ### General settings and data sources
 
@@ -246,11 +246,10 @@ The defects are sorted in three layers: **category** (e.g. Erreur Branchement) �
 | Change an hourly rate | `2_cout_parametres.csv` | Change `valeur` of `taux_production`, `taux_qualite` or `taux_me`. |
 | Change the target | `2_reglages_pages.csv` | `objectif_baisse`: 0.30 for −30 %. |
 | Add a product | `2_regle_produit.csv`, then `2_produits_plan.csv` | A rule that recognises it, then its name in the plan. |
-| Update the production plan | `1_plan_msn.csv` | Run `python3 -I scripts/plan_depuis_avances_retards.py "<the Avances_Retards file>"`, or correct an aircraft by hand (`source` = `manuel`). |
+| Update the production plan | `1_plan_msn.csv` | Add the new aircraft, correct the dates that moved; `source` = `manuel` on those rows. |
 | Add a shutdown | `1_calendrier_production.csv` | Start, end, weight 0 (closed) or 0.5 (half), reason. |
 | Add an MFT action | `1_actions_mft.csv` | One row, `source` = `manuel` (see above). It appears on the MFT page for everyone at the next notebook run. |
 | Change what the dashboard shows at opening | `2_reglages_pages.csv` | `defaut_phase`, `defaut_responsabilite`, `defaut_periode`. |
 | Change a category's colour or order | `2_categories.csv` | `couleur` (1 to 9), `ordre`. |
 | Rename a dataset Skywise gives us | `2_sources.csv` | The new name in `valeur`. |
 
-The same tasks, in French with more examples: `docs/comment_faire.md`.

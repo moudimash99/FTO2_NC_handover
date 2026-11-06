@@ -50,3 +50,7 @@ See `docs/comment_faire.md`: change a rule (e.g. what counts as REC), a rate, a 
 add an MFT action, and check that nothing else moved.
 
 How the pages themselves work (to change a chart or add one): `docs/front_end.md`.
+
+For the team in Skywise: `docs/code_guide.md` (where to look, by type of question) travels in the notebook kit as
+`CODE_GUIDE.md`, and `config/README.md` (every settings table) travels with the settings as `data/config/README.md`.
+Both are written for someone who only sees the Code Workspace and the Slate app.
