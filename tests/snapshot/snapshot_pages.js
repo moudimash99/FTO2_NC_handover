@@ -104,6 +104,17 @@ async function dashStep(p, s) {
     if (!done) throw new Error('pick not found on any tab: ' + a);
   } else throw new Error('unknown step ' + kind);
   await p.waitForTimeout(WAIT.click);
+  await settle(p);
+}
+
+// a Skywise page with Slate functions (tests/slate/make_pages.py) has some figures computed in Slate: wait for every answer
+async function settle(p) {
+  if (!(await p.evaluate(() => !!window.FTO2_SLATE))) return;
+  for (let i = 0, calm = 0; i < 200 && calm < 3; i++) {
+    const n = await p.evaluate(() => (window.FTO2_SLATE.waiting ? window.FTO2_SLATE.waiting() : 0) + (window.SlateFunctions && window.SlateFunctions._busy ? window.SlateFunctions._busy() : 0));
+    calm = n ? 0 : calm + 1;
+    await p.waitForTimeout(100);
+  }
 }
 
 function visibleTabs(p) {
@@ -130,16 +141,19 @@ async function dashboard(browser) {
     }, [v.mode || 'expert', v.lang || 'fr']);
     await p.goto('file://' + PAGES.dashboard);
     await p.waitForTimeout(v.mode === 'simple' ? WAIT.mode : WAIT.load);
+    await settle(p);
     for (const s of v.steps || []) await dashStep(p, s);
     const rec = { summary: clean(await p.textContent('#fbSum')), liab: clean(await p.textContent('#gLiabTxt')), tabs: {} };
     for (const t of await visibleTabs(p)) {
       await p.evaluate((id) => document.getElementById(id).click(), t);
       await p.waitForTimeout(v.mode === 'simple' ? WAIT.mode : WAIT.tab);
+      await settle(p);
       rec.tabs[t] = await capturePanel(p, '#p-' + t.slice(4));
     }
     await p.click('#gInfoBtn').catch(() => {});
     await p.waitForTimeout(300);
     rec.info = clean(await p.textContent('#gInfo').catch(() => ''));
+    await settle(p);
     const bell = await p.$('#alBtn:not([hidden])');
     if (bell) { await bell.click(); await p.waitForTimeout(400); rec.alarms = await capturePanel(p, '#alPop'); }
     rec.errors = errors;

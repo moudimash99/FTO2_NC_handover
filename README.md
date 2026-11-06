@@ -3,6 +3,8 @@
 Three pages on the non-conformities (NC) of plant FTO2: the **dashboard** (Essentiel and Deep dive), the **MFT page** (weekly
 Pareto, analysis, action tracking) and the **Tableau Elizabeth**. They run in Skywise (Slate) and as files on a laptop.
 
+New here? Start with **`docs/handover.md`**: what the pages are, how to keep them running, what is still open.
+
 ## How it fits together
 
 ```
@@ -21,6 +23,8 @@ Skywise data (NCs, work orders, aléas)          config/  (the settings, one tab
 - **`scripts/`**: turn a raw file into its everyday table (Avances / Retards, EqMSN, cable tracker, MFT trackers).
   A row corrected by hand (source = manuel) is kept when the script runs again.
 - **`fto2/`**: the backend. One file per subject; the same code runs on the laptop and in the Skywise notebook.
+- **`build/templates/`**: the dashboard page (`dashboard.html`) and its calculations (`model.js`, shared with the optional
+  Slate functions).
 - **`build/`**, **`07_scripts/mft/`**, **`07_scripts/elizabeth/`**: build the pages and their Skywise files.
 - **`tests/`**: the checks, and the reference snapshot of every number the pages show.
 - **`03_reports/skywise/`**: what goes into Skywise, and `README.md` there: how to set it up.
@@ -43,3 +47,5 @@ Needs Python 3 with pandas, numpy and openpyxl (`requirements.txt`); the page ch
 
 See `docs/comment_faire.md`: change a rule (e.g. what counts as REC), a rate, a target, a product, update the production plan,
 add an MFT action, and check that nothing else moved.
+
+How the pages themselves work (to change a chart or add one): `docs/front_end.md`.

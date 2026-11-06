@@ -21,7 +21,9 @@ import uuid
 
 import pandas as pd
 
-ADAPTER_RUN = "if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.tables.nc, window.DASH.tables.def, window.DASH.ref, window.DASH.tables.dis);\n"
+import page_template   # the page template with its calculations (build/templates/model.js)
+
+ADAPTER_RUN = "if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.tables.nc, window.DASH.tables.def, window.DASH.ref, window.DASH.tables.dis, window.DASH.tables.cout);\n"
 EXTRA_CSS = (".fto2 .fto2-err { background: #fdecea; color: #8a1c12; border: 1px solid #f1b0a8; border-radius: 8px; padding: 10px 14px; font-size: 13px; margin: 12px 20px; }\n"
              ".fto2 .fto2-wait { background: #eef4f1; color: #1d6b52; border: 1px solid #b9d5ca; border-radius: 8px; padding: 10px 14px; font-size: 13px; margin: 12px 20px; }\n"
              ".fto2 .fto2-wait.warn { background: #fff5e6; color: #7a4a00; border-color: #f0c98a; }\n")
@@ -82,7 +84,10 @@ JS_L23 = JS_HEAD + """@@ADAPTER@@
     empty: 'La requête q_fto2_nc n’a renvoyé aucune ligne : vérifiez la requête et son jeu de données. / The q_fto2_nc query returned no row: check the query and its dataset.',
     noapi: 'État Slate introuvable : ce JavaScript doit tourner dans un code sandbox Slate dont l’état contient les requêtes (voir state.json). / No Slate state: this JavaScript must run in a Slate code sandbox whose state holds the queries (see state.json).',
     cut: 'Attention : exactement {n} lignes reçues pour {q} ; Slate a peut-être coupé la requête (limite de lignes). / Exactly {n} rows received for {q}: Slate may have cut the query (row limit).',
-    slow: 'Toujours en attente de {q} : vérifiez que la requête existe, porte ce nom et s’exécute sans erreur. / Still waiting for {q}: check that the query exists, has this name and runs without error.'
+    slow: 'Toujours en attente de {q} : vérifiez que la requête existe, porte ce nom et s’exécute sans erreur. / Still waiting for {q}: check that the query exists, has this name and runs without error.',
+    fnDown: 'La fonction Slate {f} {fr} : ce calcul est fait dans la page. / The Slate function {f} {en}: the page computes it itself.',
+    fnLate: ['n’a pas répondu en 15 s', 'gave no answer within 15 s'],
+    fnErr: ['a échoué ({m})', 'failed ({m})']
   };
 """ + JS_SHOW_ERROR + """  function status(msg, warn) {
     var e = document.getElementById('fto2-wait');
@@ -92,7 +97,32 @@ JS_L23 = JS_HEAD + """@@ADAPTER@@
   function main() {
 @@MAIN@@
   }
-  var got = {}, started = false, ready = false, disTimer = null;
+  var got = {}, started = false, ready = false, disTimer = null, cxTimer = null;
+  // The calculations Slate runs as functions (03_reports/skywise/level3_datasets/fonctions/): the state key "fonctions" lists them
+  // ("objectifs alarmes cout", or "objectifs alarmes" with the cost explanation from the notebook's table, state key "cout_table").
+  // The page asks through the state key "filtres" and the sandbox event fto2Filtres (which sets the variable v_fto2_filtres); each
+  // answer arrives in the state key of its name. No double brace in this file: Slate would read it as a binding.
+  var SLF = { use: {}, latest: {}, take: null }, sent = null, fired = true, fnMsg = false;
+  function fonctions(v) { String(v || '').split(/[\s,;]+/).forEach(function (n) { if (n === 'objectifs' || n === 'alarmes' || n === 'cout') SLF.use[n] = true; }); }
+  function writeState(key, v) {   // setState: an object merged into the state, or (key, value); both forms are accepted
+    if (api.setState.length >= 2) { api.setState(key, v); return; }
+    var st = {}; try { st = (api.getState && api.getState()) || {}; } catch (e) {}
+    var nx = {}; Object.keys(st).forEach(function (k) { nx[k] = st[k]; }); nx[key] = v;
+    api.setState(nx);
+  }
+  function fire() { if (fired) return; fired = true; api.triggerEvent('fto2Filtres'); }
+  SLF.ask = function (requests) {
+    if (!api.setState || !api.triggerEvent) throw new Error('SlateFunctions.setState / triggerEvent missing');
+    var v = { demandes: requests }; sent = JSON.stringify(v); fired = false;
+    writeState('filtres', v);
+    setTimeout(fire, 400);   // the event reads the state: fired once the state shows the new filters (watch below), at the latest after 0.4 s
+  };
+  SLF.show = function (waiting, failed) {   // only a failure is shown; the charts themselves say "Calcul dans Slate…"
+    var f = Object.keys(failed || {});
+    if (f.length) { fnMsg = true; status(f.map(function (n) { var e = failed[n], w = e === 'late' ? MSG.fnLate : MSG.fnErr.map(function (x) { return x.replace('{m}', e); });
+      return MSG.fnDown.replace(/\{f\}/g, 'f_fto2_' + n).replace('{fr}', w[0]).replace('{en}', w[1]); }).join(' '), true); }
+    else if (fnMsg) { fnMsg = false; status(''); }
+  };
   function parse(v) {   // a query result arrives as an object of columns; accept JSON text too
     if (typeof v !== 'string') return v;
     var s = v.trim(); if (!s) return null;
@@ -119,9 +149,18 @@ JS_L23 = JS_HEAD + """@@ADAPTER@@
     if (!n1 || !loaded(def) || !R) { status(MSG.wait); return; }   // the queries can arrive one after the other
     if (!loaded(dis) && !disTimer) { disTimer = setTimeout(function () { disTimer = 'over'; tryStart(); }, 4000); return; }   // the block's query: optional
     if (!loaded(dis) && disTimer !== 'over') return;
+    var st0 = {}; try { st0 = (api.getState && api.getState()) || {}; } catch (e) {}
+    if ('cout_table' in st0 && !loaded(parse(got.cout_table)) && cxTimer !== 'over') {   // the notebook's cost explanation, when the state reads it
+      if (!cxTimer) cxTimer = setTimeout(function () { cxTimer = 'over'; tryStart(); }, 8000);
+      return;
+    }
     started = true;
     try {
-      window.DASH = fto2FromTables(nc, def, R.dashboard, loaded(dis) ? dis : null);
+      try { fonctions((api.getState && api.getState() || {}).fonctions); } catch (e) {}
+      fonctions(got.fonctions);
+      if (Object.keys(SLF.use).length) window.FTO2_SLATE = SLF;
+      var cx = parse(got.cout_table);
+      window.DASH = fto2FromTables(nc, def, R.dashboard, loaded(dis) ? dis : null, !SLF.use.cout && loaded(cx) ? cx : null);
       if (!window.DASH.ncs.length) {   // rows arrived but none could be read: say what came, to fix the query or the state
         var c = Array.isArray(nc) ? Object.keys(nc[0] || {}) : Object.keys(nc);
         showError('aucune NC lisible dans q_fto2_nc (colonnes reçues : ' + c.join(', ') + ') / no readable NC in q_fto2_nc (columns received: ' + c.join(', ') + ')');
@@ -137,7 +176,11 @@ JS_L23 = JS_HEAD + """@@ADAPTER@@
     } catch (err) { showError((err && err.message) || String(err)); }
   }
   var api = window.SlateFunctions;
-  if (api && typeof api.watch === 'function') ['nc', 'def', 'dis', 'tables', 'ref'].forEach(function (k) { api.watch(k, function (v) { got[k] = v; tryStart(); }); });
+  if (api && typeof api.watch === 'function') {
+    ['nc', 'def', 'dis', 'tables', 'ref', 'fonctions', 'cout_table'].forEach(function (k) { api.watch(k, function (v) { got[k] = v; tryStart(); }); });
+    ['objectifs', 'alarmes', 'cout'].forEach(function (k) { api.watch(k, function (v) { var x = parse(v); if (!x) return; SLF.latest[k] = x; if (SLF.take) SLF.take(k, x); }); });
+    api.watch('filtres', function (v) { if (sent && (typeof v === 'string' ? v : JSON.stringify(v)) === sent) setTimeout(fire, 0); });
+  }
   function boot() {
     ready = true;
     if (!document.getElementById('tabs')) { showError('HTML part missing: paste the HTML part into the HTML box.'); return; }
@@ -249,7 +292,7 @@ def _typed(df, columns):
 
 def parts(root, scope_css):
     """CSS (scoped to .fto2, the fonts import first), HTML, the page's main JavaScript and the table adapter, from the template."""
-    t = open(os.path.join(root, "build", "templates", "dashboard.html"), encoding="utf-8").read()
+    t = page_template.read("dashboard.html")
     css = re.sub(r"/\*.*?\*/", "", t.split("<style>", 1)[1].split("</style>", 1)[0], flags=re.S)
     fonts = re.search(r'<link rel="stylesheet" href="(https://fonts\.googleapis\.com/[^"]+)">', t)
     html = t[t.index('<div class="wrap">'):t.index('<script type="application/json" id="fto2-data">')].strip()   # the page, without its data
@@ -407,6 +450,10 @@ def build(ref, root, scope_css, say):
             ("q_fto2_dis", level3_sql("fto2_dash_disruptions", DIS_COLUMNS, "FTO2 NC dashboard, level 3: one row per quality aléa with no NC, the disruption block (dataset fto2_dash_disruptions). Slate query q_fto2_dis.", "opened, id")))
     for name, sql in sql3 + (("q_fto2_ref", REF_SQL),):
         open(os.path.join(l3, name + ".sql"), "w", encoding="utf-8").write(sql)
+    # the Slate functions (targets and forecast, alarms, cost explanation), two ways to set them up: level3_datasets/fonctions/
+    import slate_functions
+    from fto2.cost import explain
+    report["slate_functions"] = slate_functions.write(os.path.join(l3, "fonctions"), JS_REF_READER, STATE, [c for c, _, _ in explain.COLUMNS], say)
     notebook_kit(root, l3)
     for f in ("notebook_cell.py",):   # replaced by the one-step pipeline notebook
         if os.path.exists(os.path.join(l3, "notebook_kit", f)):

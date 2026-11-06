@@ -121,16 +121,22 @@
   "dash_tables": {
     "nc": 1281,
     "defects": 3579,
-    "disruptions": 107
+    "disruptions": 107,
+    "cout": 4860
   },
   "skywise": {
     "level1": {
       "ncs": 713,
       "defects": 1463,
       "aleas": 99,
-      "js_kb": 1581
+      "js_kb": 1595
     },
-    "level23_js_kb": 705,
+    "level23_js_kb": 723,
+    "slate_functions": {
+      "f_fto2_objectifs.js": 52,
+      "f_fto2_alarmes.js": 69,
+      "f_fto2_cout.js": 52
+    },
     "pipeline_notebook": true,
     "level4": [
       "FTO2_NC_Dashboard_level2.slate.json",

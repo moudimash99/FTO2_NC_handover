@@ -1,10 +1,11 @@
 /* FTO2 Synthèse et détail, way 2: the views' model (pure JavaScript: no page, no drawing). Runs as the Slate function f_fto2_views, in Node or in a page. Assembled by build/views/build_way2.py from the dashboard template; do not edit by hand. */
 var FTO2Views = (function () {
 /* ===== ADAPTER START ===== */
-// The page's data from its two tables, one row per NC and one row per defect line (columns: build/fto2_core.py, NC_COLUMNS and
+// The page's data from its two tables, one row per NC and one row per defect line (columns: fto2/core.py, NC_COLUMNS and
 // DEF_COLUMNS), plus the fixed references (code sheet, MFT actions, cost parameters, production plan, root-cause tree).
-// A table comes as a Slate query result (one array per column) or as rows (an array of objects).
-function fto2FromTables(ncIn, defIn, ref, disIn) {
+// A table comes as a Slate query result (one array per column) or as rows (an array of objects). Optional: disIn the disruption
+// block's aléas, cxIn the cost explanation worked out by the notebook (fto2/cost/explain.py, table fto2_dash_cout).
+function fto2FromTables(ncIn, defIn, ref, disIn, cxIn) {
   ref = ref || {};
   function rows(t) {
     if (!t) return [];
@@ -95,9 +96,23 @@ function fto2FromTables(ncIn, defIn, ref, disIn) {
   var nlSum = r2(notLiable.reduce(function (s, v) { return s + v; }, 0));
   var cnqp = {}; for (var k2 in (ref.cnqp || {})) cnqp[k2] = ref.cnqp[k2]; cnqp.qty = qty;
   // the disruption block (optional third table): quality aléas that led to no NC [id, opened, line, station, work order, minutes, in block, reason, status, comment]
+  // the cost explanation worked out by the notebook, per NC: {eur: 6 steps, factor, adj (FTO2's cost), adjAll (every NC's cost),
+  // lines: [seq, minutes, material, class, class in English]}; null without the table (the page works it out itself)
+  var cx = null;
+  if (cxIn) {
+    cx = {};
+    rows(cxIn).forEach(function (r) {
+      var id = str(r.nc).trim().replace(/\.0$/, ''), n = byNc[id], seq = int(r.seq); if (!n) return;
+      var o = cx[id] || (cx[id] = { eur: [0, 0, 0, 0, 0, 0], factor: 1, adj: 0, adjAll: 0, lines: [] });
+      if (!seq) { var d = num(r.adjust); o.eur = [num(r.eur_alert), num(r.eur_writing), num(r.eur_support), num(r.eur_setup), num(r.eur_hands_on), num(r.eur_recheck)];
+        o.factor = num(r.work_factor) || 1; o.adjAll = Math.abs(d) >= 0.05 ? d : 0; o.adj = n.a[5] === 1 ? o.adjAll : 0; return; }
+      var c = str(r.defect_class); o.lines.push([seq, num(r.minutes), num(r.material), c || '—', str(r.defect_class_en) || c || '—']);
+    });
+    Object.keys(cx).forEach(function (id) { cx[id].lines.sort(function (a, b) { return a[0] - b[0]; }); });
+  }
   var dis = disIn ? rows(disIn).map(function (r) { return [str(r.id), day(r.opened), str(r.line), str(r.station), str(r.work_order), num(r.minutes), int(r.in_block), str(r.reason), str(r.status), str(r.comment)]; })
     .filter(function (a) { return a[0] && a[1]; }) : null;
-  return { defects: defects, ncs: ncs, rca: rca, client: client, lt: lt, codes: ref.codes || {}, actions: ref.actions || [], cnqp: cnqp, eqmsn: eq, y25: ref.y25 || null, dis: dis, cables: ref.cables || null, settings: ref.settings,
+  return { defects: defects, ncs: ncs, rca: rca, client: client, lt: lt, codes: ref.codes || {}, actions: ref.actions || [], cnqp: cnqp, eqmsn: eq, y25: ref.y25 || null, dis: dis, cx: cx, cables: ref.cables || null, settings: ref.settings,
     meta: { from: ref.from || '2026-01-01', to: to, aside: { other: [notLiable.length, nlSum] },
       noLine: ncs.filter(function (a) { var p = String(a[42] || '').trim().toUpperCase(); return (p === 'FTO2' || p === 'FT02') && a[21] === 0; }).length, modelTotal: sum(aec) } };
 }
@@ -154,7 +169,8 @@ function fto2FromTables(ncIn, defIn, ref, disIn) {
     var CONN_LINES = { A330: 1, A350: 1 };
     var V2W = SET.poids_mois;
     var PRESETS = ['ytd', 'm1', 'm3', 'm6', 'm12', 'all', 'custom'];
-    var AL = { db: null, uid: null, marks: {}, sigK: '', res: null, first: 0, last: -1, open: false, more: false };
+    var AL = { db: null, uid: null, marks: {}, open: false, more: false };
+    var ALC = { sigK: '', res: null, first: 0, last: -1 };
     var LINES = lineOrder(REP.map(function (n) { return n[3]; }));
   var RCA_CAT = {}, CODE_CAT = {};
   (function () { var a = {}, b = {}; D.defects.forEach(function (r) { var c = catKey(dCat(r)), x = dRca(r), y = dCode(r);
@@ -206,7 +222,6 @@ function select() {
     SEL = ids(SEL_NC); SER = ids(SER_NC); CLI = ids(CLI_NC);
   }
 function isoDay(dt) { return dt.toISOString().slice(0, 10); }
-function ncType(n) { var t = String(n[33] || '').trim(); return TYPE_ALIAS[t] || t; }
 function prodName(p) { return p === 'Other' ? S('prodUnknown') : p; }
 function cbLab(v) { return G.lang === 'en' && CB_EN[v] ? CB_EN[v] : v; }
 function catKey(c) { return ASIDE[c] ? 'aside' : c; }
@@ -343,7 +358,7 @@ function alNc(n) { return ours(n) && n[23] !== 'client' && (!GF.phase || n[24] =
 function alCompute(at) {   // at: a week index instead of the period's end (checks)
     var E = D.eqmsn && D.eqmsn.wdw; if (!E) return null;
     var last = at != null ? at : ALARM.lastDone(GF.to < D.meta.to ? GF.to : D.meta.to), k = [GF.phase, GF.src, GF.org, GF.liab, last, G.lang].join('|');
-    if (k === AL.sigK) return AL.res;
+    if (k === ALC.sigK) return ALC.res;
     var items = {}, planes = {}, cnt = { rca: {}, code: {} }, z = function () { var a = []; for (var i = 0; i < 53; i++) a.push(0); return a; }, w0 = 53, PM = D.eqmsn.msn || {};
     function it(line, lv, v, e, hist) { var key = line + '|' + lv + '|' + v; return items[key] || (items[key] = { key: key, line: line, lv: lv, v: v, w: z(), e: e, n: [], d: [], hist: !!hist }); }
     function add(o, i, id, dk) { o.w[i]++; (o.n[i] || (o.n[i] = [])).push(id); if (dk) (o.d[i] || (o.d[i] = [])).push(dk); if (i < w0) w0 = i; }
@@ -381,11 +396,11 @@ function alCompute(at) {   // at: a week index instead of the period's end (chec
     });
     var dom = function (m) { m = m || {}; return Object.keys(m).sort(function (a, b) { return m[b] - m[a]; })[0] || ''; };
     var first = w0 + ALARM.P.recent + ALARM.P.base - 1;
-    AL.first = first; AL.last = last; AL.sigK = k;
-    AL.res = last < first ? [] : ALARM.run(Object.keys(items).map(function (x) { return items[x]; }), first, last, function (a) {
+    ALC.first = first; ALC.last = last; ALC.sigK = k;
+    ALC.res = last < first ? [] : ALARM.run(Object.keys(items).map(function (x) { return items[x]; }), first, last, function (a) {
       return a.lv === 'cat' ? a.line + '|all|' : a.lv === 'rca' ? a.line + '|cat|' + dom(cnt.rca[a.line + '|' + a.v]) : a.lv === 'code' ? a.line + '|rca|' + dom(cnt.code[a.line + '|' + a.v]) : ''; },
       Object.keys(planes).map(function (x) { return planes[x]; }), acts);
-    return AL.res;
+    return ALC.res;
   }
 function alName(a) {
     var v = a.v, cd = a.lv === 'code' ? codeDesc(v).split(' (')[0] : '';
@@ -622,6 +637,8 @@ function alWk(i) { return S('alWk', { n: i + 1 }); }
     // The functions it calls (selection, production plan, forecast, targets, 2025, alarms) are the dashboard's own, copied in
     // unchanged by build/views/build_way2.py, so a rule changed in the dashboard reaches this model at the next build.
 
+    // the NC type as written in the data, aliases merged ('NC Interne' -> 'INTERNE'), for the views' NC lists
+    function ncType(n) { var t = String(n[33] || '').trim(); return TYPE_ALIAS[t] || t; }
     function round1(x) { return Math.round(x * 10) / 10; }
     function inYtd(fn) {   // Détail: its charts run from January (or the period's start if earlier) to the period's end
       var k = [GF.preset, GF.from, GF.to], y0 = GF.to.slice(0, 4) + '-01-01';

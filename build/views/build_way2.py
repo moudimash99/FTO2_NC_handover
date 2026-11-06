@@ -15,16 +15,18 @@ import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(os.path.dirname(HERE))
-TEMPLATE = os.path.join(ROOT, "build", "templates", "dashboard.html")
+TEMPLATE = os.path.join(ROOT, "build", "templates", "dashboard.html")   # read with build/page_template.py (its calculations put in)
+sys.path.insert(0, os.path.join(ROOT, "build"))
+import page_template  # noqa: E402
 
 # the dashboard's own functions the model calls (selection, production plan, forecast, targets, 2025, alarms, labels)
 PULL_FN = ["S", "L", "tidy", "whereName", "lineOrder", "dCat", "dRca", "dSub", "dMinor", "dCable", "dAlloc", "keepMinor", "dCode", "dFin", "codeDesc", "codeName",
            "plusDays", "minusMonths", "presetRange", "gNc", "ours", "gScope", "ids", "select", "isoDay",
-           "ncType", "prodName", "cbLab", "catKey",
+           "prodName", "cbLab", "catKey",
            "pSrc", "sumA", "pData", "pAgg", "pOk", "pAct", "P_", "pMonthly", "connOk",
            "v2Months", "v2Plan", "v2Fc", "v2InPlan", "v2OutK", "v2Series", "y25Sel", "y25Cum", "y25Lines", "y25Rca", "y25Rate", "v2Tgt",
            "alNc", "alCompute", "alName", "alText", "alWk"]
-PULL_VAR = ["EN", "WHERE_FR", "WHERE_EN", "CB_EN", "TYPE_ALIAS", "CAT_ORDER", "ASIDE", "MAIN_CATS", "CONN_LINES", "V2W", "PRESETS", "AL"]
+PULL_VAR = ["EN", "WHERE_FR", "WHERE_EN", "CB_EN", "TYPE_ALIAS", "CAT_ORDER", "ASIDE", "MAIN_CATS", "CONN_LINES", "V2W", "PRESETS", "AL", "ALC"]
 # the page's words the alarm texts use (French and English, as in the dashboard)
 STR_KEYS = ["alAll", "alSt", "alCab", "alUp", "alCross", "alCreep", "alPlane", "alWk", "alDont", "alAlso", "alAct", "prodUnknown", "noLine"]
 
@@ -122,7 +124,7 @@ def strings(s):
 
 
 def model_js(stamp):
-    s = open(TEMPLATE, encoding="utf-8").read()
+    s = page_template.read()
     adapter = between(s, "/* ===== ADAPTER START ===== */", "/* ===== ADAPTER END ===== */")
     adapter = "\n".join(l for l in adapter.split("\n") if not l.startswith("if (window.DASH && window.DASH.tables)"))
     alarm = between(s, "/* ===== ALARM ENGINE START ===== */", "/* ===== ALARM ENGINE END ===== */")
@@ -211,7 +213,7 @@ def pull_adds(s, at):
 
 
 def render_js(stamp):
-    s = open(TEMPLATE, encoding="utf-8").read()
+    s = page_template.read()
     at = s.index("/* ===== ADAPTER END ===== */")
     core = open(os.path.join(HERE, "render_core.js"), encoding="utf-8").read()
     parts = ["/* %s */" % stamp, "var FTO2ViewsRender = (function () {"]

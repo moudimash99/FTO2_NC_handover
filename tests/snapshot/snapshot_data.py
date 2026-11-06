@@ -20,7 +20,7 @@ OUTPUTS = os.path.join(ROOT, "05_outputs")
 TABLES = [
     "fto2_dash_nc.csv", "fto2_dash_defects.csv", "fto2_dash_disruptions.csv",
     "fto2_nc.csv", "fto2_defects.csv", "fto2_nc_cnq.csv", "fto2_defects_cnq.csv",
-    "fto2_msn_semaine.csv", "mft_actions_seed.json",
+    "fto2_msn_semaine.csv", "mft_actions_seed.json", "fto2_dash_cout.csv",
 ]
 
 

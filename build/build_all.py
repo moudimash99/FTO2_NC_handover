@@ -37,8 +37,10 @@ from fto2 import config                                 # noqa: E402   the setti
 from fto2.parser import fto2_logic as L                 # noqa: E402   the defect reader and the NC columns
 from fto2.parser import nc_defect_parser as PARSER      # noqa: E402
 from fto2.cost.model import compute_cnq, parameters_as_tables  # noqa: E402   the cost model, settings in config/
+from fto2.cost import explain                                   # noqa: E402   the cost explanation of each NC (fto2_dash_cout)
 sys.path.insert(0, os.path.join(ROOT, "build"))
 from fto2 import core                                   # noqa: E402   the data steps, shared with the Skywise notebook
+import page_template                                    # noqa: E402   the page template with its calculations (build/templates/model.js)
 from fto2 import reference as REF                       # noqa: E402   the reference data (plan, 2025, cables, actions...)
 from fto2.reference import (EQ_NAMES, alias_product, cable_requests, cnq_explain, mft_actions, product_alias_rules,  # noqa: E402,F401
                             production_msn, rca_reference, reference_block, working_day_volume)
@@ -216,7 +218,7 @@ def refresh_cnq_package(nc_in, d):
 
 # ============================================================ pages
 def _page(template, data, name, page="main", title=None):
-    t = open(os.path.join(ROOT, "build", "templates", template), encoding="utf-8").read().replace("__PAGE__", page)
+    t = page_template.read(template).replace("__PAGE__", page)
     if title:
         t = t.replace("<title>FTO2 NC Dashboard</title>", "<title>" + title + "</title>", 1)
     page = t.replace("__DATA__", json.dumps(data, ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/"))
@@ -262,7 +264,7 @@ def _scope_css(css, scope=".fto2"):
 def slate_pack(data, template="dashboard.html", page="main"):
     """The dashboard as three pieces for a Slate code box (HTML, CSS, JavaScript), in 03_reports/slate/.
     No outside resources (fonts, libraries), styles scoped to .fto2, page title and address left alone, errors shown on the page."""
-    t = open(os.path.join(ROOT, "build", "templates", template), encoding="utf-8").read()
+    t = page_template.read(template)
     css = re.sub(r"/\*.*?\*/", "", t.split("<style>", 1)[1].split("</style>", 1)[0], flags=re.S)
     fonts = re.search(r'<link rel="stylesheet" href="(https://fonts\.googleapis\.com/[^"]+)">', t)
     html = t[t.index('<div class="wrap">'):t.index('<script type="application/json" id="fto2-data">')].strip()   # the page, without its data
@@ -367,6 +369,11 @@ def build_dashboard(d, nc, lt, y25=None, dis_t=None):
     blocks = {"dashboard": REF.dashboard_block(d, nc, CODE_DESC, y25), "mft": REF.mft_block(data["eqmsn"]),
               "elizabeth": {"vol": REF.weekly_volume(data["eqmsn"]), "settings": REF.page_settings()}}
     REF.ref_table(blocks).to_csv(os.path.join(OUT, "fto2_dash_ref.csv"), index=False, encoding="utf-8-sig")
+    # the cost explanation of each NC as the notebook works it out (fto2_dash_cout): read by the page only in the Skywise set-up
+    # with two Slate functions; the laptop page works it out itself
+    cx_t = explain.table(nc_t, def_t, blocks["dashboard"]["cnqp"])
+    cx_t.to_csv(os.path.join(OUT, "fto2_dash_cout.csv"), index=False, encoding="utf-8-sig")
+    REPORT["dash_tables"]["cout"] = int(len(cx_t))
     src = {"tables": {"nc": colmajor(nc_t), "def": colmajor(def_t), "dis": colmajor(dis_t)}, "ref": blocks["dashboard"]}
     _page("dashboard.html", src, "FTO2_NC_Dashboard.html")
     # the proposed final layout, chart by chart, with the choices to make (review page, local only)

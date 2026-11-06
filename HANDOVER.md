@@ -1,5 +1,7 @@
 # FTO2 NC analysis — full handover
 
+> The short, plain handover is `docs/handover.md`: read it first. This file is the detailed log of the work, with dates; some folder names in it are older than the current layout.
+
 Written 12 Oct 2026 for the agent taking over this work; updated 19 Oct 2026 (CNQ model, work orders, MES aléas, 2025 NCs: see `CNQ_CHANGES.md`). Owner: Mohammad Machaka (intern, Quality, Airbus Operations electrical centre FTO2 / OLME, Toulouse). Manager: Emmanuelle.
 
 Read sections 1, 2 and 9 first. Everything else is reference. Every number below was computed on the files in this bundle; scripts to reproduce the recent ones are in `07_scripts/`.

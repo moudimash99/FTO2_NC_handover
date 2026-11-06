@@ -3,6 +3,8 @@
     // The functions it calls (selection, production plan, forecast, targets, 2025, alarms) are the dashboard's own, copied in
     // unchanged by build/views/build_way2.py, so a rule changed in the dashboard reaches this model at the next build.
 
+    // the NC type as written in the data, aliases merged ('NC Interne' -> 'INTERNE'), for the views' NC lists
+    function ncType(n) { var t = String(n[33] || '').trim(); return TYPE_ALIAS[t] || t; }
     function round1(x) { return Math.round(x * 10) / 10; }
     function inYtd(fn) {   // Détail: its charts run from January (or the period's start if earlier) to the period's end
       var k = [GF.preset, GF.from, GF.to], y0 = GF.to.slice(0, 4) + '-01-01';

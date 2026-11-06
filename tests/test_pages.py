@@ -11,7 +11,8 @@ import unittest
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SKYWISE_JS = ["03_reports/skywise/level3_datasets/fto2_level23.js", "03_reports/skywise/mft/fto2_mft.js",
-              "03_reports/skywise/elizabeth/fto2_elizabeth.js"]
+              "03_reports/skywise/elizabeth/fto2_elizabeth.js"] + \
+             ["03_reports/skywise/level3_datasets/fonctions/f_fto2_%s.js" % f for f in ("objectifs", "alarmes", "cout")]   # the Slate functions
 LONGEST_LITERAL = 2000   # characters: a longer array or object written in the code would be data
 
 

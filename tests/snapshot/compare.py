@@ -1,6 +1,8 @@
 """Compare two snapshots (made by snapshot_data.py and snapshot_pages.js) and say what differs.
 
-    python3 -I tests/snapshot/compare.py <reference folder> <new folder>
+    python3 -I tests/snapshot/compare.py <reference folder> <new folder> [data dashboard mft elizabeth]
+
+Compares the four snapshots, or only the ones named after the folders.
 
 Exits 0 when everything matches, 1 otherwise. Text must match exactly. Numbers inside the data tables may differ
 by a rounding of 1e-9 at most. Prints at most a few differences per item, with the text around each one.
@@ -70,11 +72,12 @@ def walk(ref, new, where, out):
 
 
 def main():
-    if len(sys.argv) != 3:
+    if len(sys.argv) < 3:
         sys.exit(__doc__)
     ref_dir, new_dir = sys.argv[1], sys.argv[2]
     ok = True
-    for name in ("data.json.gz", "dashboard.json.gz", "mft.json.gz", "elizabeth.json.gz"):
+    only = sys.argv[3:] or ["data", "dashboard", "mft", "elizabeth"]
+    for name in [x + ".json.gz" for x in only]:
         ref, new = load(ref_dir, name), load(new_dir, name)
         if ref is None:
             continue

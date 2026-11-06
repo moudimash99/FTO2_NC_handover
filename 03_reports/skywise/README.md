@@ -65,6 +65,10 @@ the notebook. An action typed on the MFT page itself stays in that browser only,
 Not needed: `views/` (now the dashboard's Essentiel mode), `level1_dummy_in_js` and `level2_dummy_queries` (tests on made-up
 data, only if something fails), `level4_import` (untested).
 
+**6. Optional: the calculations in Slate functions.** The targets and forecast, the alarms and the cost explanation can run
+as Slate functions instead of in the page, so that the page only draws. Two ways to set it up, both explained in
+`level3_datasets/fonctions/README.md`. The page works without them.
+
 ## Already set up? What to change (4 November: settings in tables, reference data from the notebook)
 
 1. Upload `level3_datasets/notebook_kit` again, the whole folder: it now holds the folder `fto2/`. Delete the files the old kit

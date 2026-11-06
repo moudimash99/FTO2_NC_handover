@@ -23,6 +23,7 @@ import time
 import pandas as pd
 
 from . import config, manual_lists, reference, selection
+from .cost import explain
 
 # the columns of the non_conformity dataset the run reads
 NC_COLUMNS = [
@@ -191,5 +192,13 @@ def run(Dataset, Column, say=None):
     ref_t = reference.ref_table(blocks)
     Dataset.get("fto2_dash_ref").write_table(ref_t)
     print("✅ fto2_dash_ref:", len(ref_t), "rows (the pages' reference data)")
+    # the cost explanation of each NC, for the Slate set-up with two functions (03_reports/skywise/level3_datasets/fonctions/):
+    # optional, so a missing dataset only prints a note
+    try:
+        cx_t = explain.table(nc_t, def_t, blocks["dashboard"]["cnqp"])
+        Dataset.get("fto2_dash_cout").write_table(cx_t)
+        print("✅ fto2_dash_cout:", len(cx_t), "rows (the cost explanation of each NC)")
+    except Exception as e:
+        print("fto2_dash_cout not written (%s). Only the Slate set-up with two functions reads it: add the dataset to the Data panel to use it." % e)
     say("Done.")
     return nc_t, def_t, dis_t

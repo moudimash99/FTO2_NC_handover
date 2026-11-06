@@ -1299,10 +1299,11 @@ function fto2RefBlocks(v) {
   return out;
 }
 /* ===== ADAPTER START ===== */
-// The page's data from its two tables, one row per NC and one row per defect line (columns: build/fto2_core.py, NC_COLUMNS and
+// The page's data from its two tables, one row per NC and one row per defect line (columns: fto2/core.py, NC_COLUMNS and
 // DEF_COLUMNS), plus the fixed references (code sheet, MFT actions, cost parameters, production plan, root-cause tree).
-// A table comes as a Slate query result (one array per column) or as rows (an array of objects).
-function fto2FromTables(ncIn, defIn, ref, disIn) {
+// A table comes as a Slate query result (one array per column) or as rows (an array of objects). Optional: disIn the disruption
+// block's aléas, cxIn the cost explanation worked out by the notebook (fto2/cost/explain.py, table fto2_dash_cout).
+function fto2FromTables(ncIn, defIn, ref, disIn, cxIn) {
   ref = ref || {};
   function rows(t) {
     if (!t) return [];
@@ -1393,9 +1394,23 @@ function fto2FromTables(ncIn, defIn, ref, disIn) {
   var nlSum = r2(notLiable.reduce(function (s, v) { return s + v; }, 0));
   var cnqp = {}; for (var k2 in (ref.cnqp || {})) cnqp[k2] = ref.cnqp[k2]; cnqp.qty = qty;
   // the disruption block (optional third table): quality aléas that led to no NC [id, opened, line, station, work order, minutes, in block, reason, status, comment]
+  // the cost explanation worked out by the notebook, per NC: {eur: 6 steps, factor, adj (FTO2's cost), adjAll (every NC's cost),
+  // lines: [seq, minutes, material, class, class in English]}; null without the table (the page works it out itself)
+  var cx = null;
+  if (cxIn) {
+    cx = {};
+    rows(cxIn).forEach(function (r) {
+      var id = str(r.nc).trim().replace(/\.0$/, ''), n = byNc[id], seq = int(r.seq); if (!n) return;
+      var o = cx[id] || (cx[id] = { eur: [0, 0, 0, 0, 0, 0], factor: 1, adj: 0, adjAll: 0, lines: [] });
+      if (!seq) { var d = num(r.adjust); o.eur = [num(r.eur_alert), num(r.eur_writing), num(r.eur_support), num(r.eur_setup), num(r.eur_hands_on), num(r.eur_recheck)];
+        o.factor = num(r.work_factor) || 1; o.adjAll = Math.abs(d) >= 0.05 ? d : 0; o.adj = n.a[5] === 1 ? o.adjAll : 0; return; }
+      var c = str(r.defect_class); o.lines.push([seq, num(r.minutes), num(r.material), c || '—', str(r.defect_class_en) || c || '—']);
+    });
+    Object.keys(cx).forEach(function (id) { cx[id].lines.sort(function (a, b) { return a[0] - b[0]; }); });
+  }
   var dis = disIn ? rows(disIn).map(function (r) { return [str(r.id), day(r.opened), str(r.line), str(r.station), str(r.work_order), num(r.minutes), int(r.in_block), str(r.reason), str(r.status), str(r.comment)]; })
     .filter(function (a) { return a[0] && a[1]; }) : null;
-  return { defects: defects, ncs: ncs, rca: rca, client: client, lt: lt, codes: ref.codes || {}, actions: ref.actions || [], cnqp: cnqp, eqmsn: eq, y25: ref.y25 || null, dis: dis, cables: ref.cables || null, settings: ref.settings,
+  return { defects: defects, ncs: ncs, rca: rca, client: client, lt: lt, codes: ref.codes || {}, actions: ref.actions || [], cnqp: cnqp, eqmsn: eq, y25: ref.y25 || null, dis: dis, cx: cx, cables: ref.cables || null, settings: ref.settings,
     meta: { from: ref.from || '2026-01-01', to: to, aside: { other: [notLiable.length, nlSum] },
       noLine: ncs.filter(function (a) { var p = String(a[42] || '').trim().toUpperCase(); return (p === 'FTO2' || p === 'FT02') && a[21] === 0; }).length, modelTotal: sum(aec) } };
 }
@@ -1406,7 +1421,10 @@ function fto2FromTables(ncIn, defIn, ref, disIn) {
     empty: 'La requête q_fto2_nc n’a renvoyé aucune ligne : vérifiez la requête et son jeu de données. / The q_fto2_nc query returned no row: check the query and its dataset.',
     noapi: 'État Slate introuvable : ce JavaScript doit tourner dans un code sandbox Slate dont l’état contient les requêtes (voir state.json). / No Slate state: this JavaScript must run in a Slate code sandbox whose state holds the queries (see state.json).',
     cut: 'Attention : exactement {n} lignes reçues pour {q} ; Slate a peut-être coupé la requête (limite de lignes). / Exactly {n} rows received for {q}: Slate may have cut the query (row limit).',
-    slow: 'Toujours en attente de {q} : vérifiez que la requête existe, porte ce nom et s’exécute sans erreur. / Still waiting for {q}: check that the query exists, has this name and runs without error.'
+    slow: 'Toujours en attente de {q} : vérifiez que la requête existe, porte ce nom et s’exécute sans erreur. / Still waiting for {q}: check that the query exists, has this name and runs without error.',
+    fnDown: 'La fonction Slate {f} {fr} : ce calcul est fait dans la page. / The Slate function {f} {en}: the page computes it itself.',
+    fnLate: ['n’a pas répondu en 15 s', 'gave no answer within 15 s'],
+    fnErr: ['a échoué ({m})', 'failed ({m})']
   };
   function showError(msg) {
     var e = document.getElementById('fto2-err');
@@ -1525,7 +1543,7 @@ function fto2FromTables(ncIn, defIn, ref, disIn) {
       pinNo25: 'Pas de comparaison 2025 : les textes des défauts 2025 ne sont pas dans les données.', pinCols: ['FIN', 'Broches', 'Voisines', 'Avions'], pinY: 'oui', pinN: 'non', ppCurTip: '{p} compté comme produit au {d}, le reste prévu', ppCurL: 'Mois en cours ({m}) : la part des jours passés au {d}, le reste plus clair.',
       ppCur: 'Les NC vont au-delà de ce que le plan donne comme produit : {m} compte pour la part de ses jours passés au {d} ({p} de son volume prévu), le reste du mois va dans la prévision. Ainsi les NC de ce mois comptent partout, comme dans la Vue d’ensemble.',
       ppL: 'Ligne', ppP: 'Produit', ppEq: 'MSN produits 2026', ppYr: 'MSN prévus 2026', ppD25: 'Livrés 2025', ppNc25: 'NC 2025', ppNc: 'NC 2026', ppRate: 'NC par MSN 2026', ppR25: 'Taux 2025', ppTgt: 'Objectif 2026 (NC par MSN)', ppTgtY: 'Objectif 2026 (NC)', pp25m: '2025 − 25 %',
-      ppNone: 'Le plan de production réel n’est pas chargé.', ppHowT: 'Comment ces chiffres sont faits et utilisés',
+      ppNone: 'Le plan de production réel n’est pas chargé.', slWait: 'Calcul dans Slate…', ppHowT: 'Comment ces chiffres sont faits et utilisés',
       ppH1t: 'D’où viennent les volumes', ppH1: '2026 : le tableau Avances / Retards (export du {d}). Un MSN compte pour 1, réparti sur les jours travaillés entre son impression et son OTA : du lundi au vendredi, hors jours fériés et fermetures ; les semaines de congés autour de la fermeture d’été comptent pour moitié. Juillet et août font ainsi environ 60 % d’un mois normal. 2025 : la feuille Livraisons 2025, produits livrés par mois.',
       ppH2t: 'Comment une NC est rattachée à un produit', ppH2: 'Le produit de la NC (Produit_auto du pipeline) est relié à un produit du plan. {n} NC n’ont pas de produit du plan ({p}) : elles comptent dans tous les totaux, mais pas dans les taux par MSN, les prévisions par produit ni les objectifs par ligne.',
       ppH3t: 'Ce qu’on en fait', ppH3: 'NC par MSN = NC d’un mois ÷ MSN produits ce mois-là. Prévision à décembre = taux de la période × MSN prévus. Objectif d’une ligne = son taux 2025 (NC par produit livré) − 25 %, × sa production 2026 ; objectif toutes lignes = somme des lignes, plus les NC hors plan de 2025 − 25 %. Objectif de coût : le même calcul avec le coût. Un produit sans livraison en 2025 (MDCD) garde son rythme 2026 comme objectif.',
@@ -1729,7 +1747,7 @@ function fto2FromTables(ncIn, defIn, ref, disIn) {
       pinNo25: 'No 2025 comparison: the 2025 defect texts are not in the data.', pinCols: ['FIN', 'Pins', 'Next to each other', 'Aircraft'], pinY: 'yes', pinN: 'no', ppCurTip: '{p} counted as built at {d}, the rest planned', ppCurL: 'Running month ({m}): the share of its days gone at {d}, the rest lighter.',
       ppCur: 'The NCs run past what the plan gives as built: {m} counts for the share of its days gone at {d} ({p} of its planned volume), the rest of the month goes to the forecast. So that month’s NCs count everywhere, as on the Overview.',
       ppL: 'Line', ppP: 'Product', ppEq: 'MSN built 2026', ppYr: 'MSN planned 2026', ppD25: 'Delivered 2025', ppNc25: 'NCs 2025', ppNc: 'NCs 2026', ppRate: 'NCs per MSN 2026', ppR25: '2025 rate', ppTgt: 'Target 2026 (NCs per MSN)', ppTgtY: 'Target 2026 (NCs)', pp25m: '2025 − 25%',
-      ppNone: 'The real production plan is not loaded.', ppHowT: 'How these figures are made and used',
+      ppNone: 'The real production plan is not loaded.', slWait: 'Computing in Slate…', ppHowT: 'How these figures are made and used',
       ppH1t: 'Where the volumes come from', ppH1: '2026: the Tableau Avances / Retards (export of {d}). One MSN counts as 1, spread over the working days from its printing to its OTA: Monday to Friday, without public holidays and shutdowns; the holiday weeks around the summer shutdown count as half. July and August thus come to about 60% of a normal month. 2025: the Livraisons 2025 sheet, products delivered per month.',
       ppH2t: 'How an NC is matched to a product', ppH2: 'The NC’s product (the pipeline’s Produit_auto) is linked to a product of the plan. {n} NCs have no product of the plan ({p}): they count in every total, but not in the per-MSN rates, the per-product forecasts or the line targets.',
       ppH3t: 'What they are used for', ppH3: 'NCs per MSN = a month’s NCs ÷ the MSN built that month. December forecast = the period rate × the MSN planned. A line’s target = its 2025 rate (NCs per product delivered) − 25%, × its 2026 output; all lines = the sum of the lines, plus 2025’s out-of-plan NCs − 25%. Cost target: the same with the cost. A product with no 2025 delivery (MDCD) keeps its 2026 pace as its target.',
@@ -1865,8 +1883,6 @@ function fto2FromTables(ncIn, defIn, ref, disIn) {
   var WHERE_EN = { 'TEST': 'Test', 'In-process (internal)': 'Internal', 'NC Retour client': 'Customer return', 'NC Interne': 'Internal', 'QUALITE': 'Quality', 'NC Fournisseur': 'Supplier' };
   var RULE_FR = { 'Rework to drawing': 'Retouche', 'Exchange': 'Échange', 'Rejection': 'Rebut / rejet', 'Rejection with a rework order': 'Rejet avec ordre de retouche', 'Scrap': 'Rebut', 'Request for design change': 'Demande de DQN',
     'Accept as is': 'Accepté en l’état', 'Potential non-conformity': 'NC potentielle', 'No decision': 'Sans décision', 'Deleted NC': 'NC supprimée', 'Unknown decision code': 'Décision inconnue' };
-  var CAT_ORDER = SET.categories.map(function (c) { return c.nom; });   // config/2_categories.csv
-  var ASIDE = { '__none': 1 }; SET.categories.forEach(function (c) { if (c.a_part) ASIDE[c.nom] = 1; });   // shown aside, no category colour
 
   // two pages from one file: the dashboard, and the weekly follow-up (weekly Pareto, MFT actions)
   var PAGE = window.FTO2_PAGE === 'suivi' || window.FTO2_PAGE === 'vues' ? window.FTO2_PAGE : (window.FTO2_PAGE === 'review' || window.FTO2_PAGE === 'mock') && D.dummy ? window.FTO2_PAGE : 'main';
@@ -1912,18 +1928,44 @@ function fto2FromTables(ncIn, defIn, ref, disIn) {
   function tidy(s) { return String(s || '').replace(/\s*\*\s*/g, ' ').replace(/\s+([,.;:)])/g, '$1').replace(/\(\s+/g, '(').replace(/\s+/g, ' ').replace(/^[\s:–-]+/, '').trim(); }
   function whereName(w) { return G.lang === 'fr' ? (WHERE_FR[w] || w) : (WHERE_EN[w] || w); }
   function ruleName(r) { return G.lang === 'fr' ? (RULE_FR[r] || r) : r; }
+  /* ===== MODEL START ===== */
+  // ================================================================================================================
+  // The calculations of the dashboard, with no drawing. This file is inserted into the page (build/templates/dashboard.html,
+  // at /*@@MODEL@@*/) and into the three Slate functions (03_reports/skywise/level3_datasets/fonctions/), so the page and
+  // Skywise compute with the same code. It reads D (the data from fto2FromTables), SET (the settings), GF (the filters) and
+  // G (language, minor defects); it touches no page element.
+  //
+  //   1. helpers           read a defect line or an NC, group NC types, the categories
+  //   2. selection         the filters: which NCs are shown (GF), the period, the responsibility ticks, a clicked value
+  //   3. production        the production plan matched to the NCs of the selection: MSN built per product and month
+  //   4. targets, forecast 2025 under the same filters, the target line by line, the forecast to December
+  //   5. cost explanation  minutes and euros of each step of an NC, for "Expliquer le calcul"
+  //   6. alarms            the bell's list (the statistics themselves are in the alarm engine, ALARM)
+  //   7. results           what the Slate functions return: objectifs(), alarmes(), cout()
+  //   8. requests          in a Slate function: the filters the page asks for, and the answer
+  // ================================================================================================================
+
+  // ---------------------------------------------------------------- 1. helpers
   function lineOrder(vals) { return ['A350', 'A330', 'A320', 'A400M', 'Autre'].filter(function (c) { return vals.indexOf(c) >= 0; }); }
-  function phaseOrder(v) { return ['SERIE', 'REC', 'FTI'].filter(function (c) { return v.indexOf(c) >= 0; }).concat(v.filter(function (c) { return ['SERIE', 'REC', 'FTI'].indexOf(c) < 0; })); }
-  function catOrder(vals) { return CAT_ORDER.filter(function (c) { return vals.indexOf(c) >= 0; }); }
   function dCat(r) { return r[11]; } function dRca(r) { return r[12]; } function dSub(r) { return r[13]; }
   function dMinor(r) { return r[14]; } function dCable(r) { return r[15]; } function dAlloc(r) { return r[17]; }
   function keepMinor(r) { return G.minor || !dMinor(r); }
   function dCode(r) { return r[22] || ''; }
   function dFin(r) { return r[23] || ''; }
-  function codeDesc(c) { var x = D.codes[c]; return x ? x[G.lang === 'fr' ? 1 : 0] : ''; }
-  function codeName(c) { var x = codeDesc(c); return x ? c + ' · ' + x : c; }
   var NC = {}; D.ncs.forEach(function (n) { NC[n[0]] = n; });
+  function isoDay(dt) { return dt.toISOString().slice(0, 10); }
+  function sumA(a) { return a.reduce(function (s, v) { return s + v; }, 0); }
+  var CAT_ORDER = SET.categories.map(function (c) { return c.nom; });   // config/2_categories.csv
+  var ASIDE = { '__none': 1 }; SET.categories.forEach(function (c) { if (c.a_part) ASIDE[c.nom] = 1; });   // shown aside, no category colour
+  var CATC = {}; SET.categories.forEach(function (c) { if (c.couleur) CATC[c.nom] = c.couleur; });   // colour 1-9 of each category (config/2_categories.csv)
+  var MAIN_CATS = CAT_ORDER.filter(function (c) { return !ASIDE[c]; }).concat(['aside']);
+  function catKey(c) { return ASIDE[c] ? 'aside' : c; }
+  var NCTYPES = ['cab', 'fin', 'test', 'int', 'sup', 'oth'];
+  function ncType(n) { var t = String(n[33] || '').toUpperCase(); return t === 'CABLES' ? 'cab' : t === 'CONTROLE FINAL' ? 'fin' : t === 'TEST' ? 'test' : /INTERNE/.test(t) ? 'int' : t === 'FOURNISSEUR' ? 'sup' : 'oth'; }
+  function wGroup(w) { return w === 'Final inspection' ? 'fin' : w === 'TEST' ? 'test' : w === 'Cables' ? 'cab' : (w === 'In-process (internal)' || w === 'NC Interne') ? 'int' : 'oth'; }
+  function dGroup(r) { return r === 'Rework to drawing' ? 'rw' : (r === 'Rejection' || r === 'Scrap') ? 'rej' : r === 'Exchange' ? 'exc' : 'oth'; }
 
+  // ---------------------------------------------------------------- 2. selection
   // ---------------------------------------------------------------- global filters (bar under the title): every tab reads its NCs through them
   // every NC of the pipeline's selection counts (decided 20 Oct). [23] where it was raised: 'serie' = at FTO2, 'client' = customer return,
   // 'autre' = another plant; [39] data source: 'sky' Skywise only, 'gps' / 'test' also in that manual list
@@ -1982,6 +2024,416 @@ function fto2FromTables(ncIn, defIn, ref, disIn) {
     PICK_NC = null; var p = GF.pick; if (!p || !PICK_DEF[p.k]) return;
     PICK_NC = {}; D.defects.forEach(function (r) { if (String(PICK_DEF[p.k](r)) === String(p.v)) PICK_NC[r[0]] = 1; });
   }
+  function ours(n) { var p = String(n[42] || '').trim().toUpperCase(); return p === 'FTO2' || p === 'FT02'; }   // FTO2's NCs: [42] plant FTO2 / FT02 (as Type_NC_auto); on a GPS / Test list too only if at that plant (Mohammad, 20 Oct)
+  function gScope(n) { return !GF.fto2 || ours(n); }   // FTO2 plant only: the plant column, nothing else
+  // the selection: SEL follows every filter; SER = SEL's FTO2 NCs without the customer returns; CLI = the customer returns, whatever the switch (the tabs that show both apart)
+  var SEL_NC = [], SER_NC = [], CLI_NC = [], SEL = {}, SER = {}, CLI = {};
+  function ids(a) { var o = {}; a.forEach(function (n) { o[n[0]] = 1; }); return o; }
+  function select() {
+    if (GF.preset !== 'custom') { var r = presetRange(GF.preset); GF.from = r[0]; GF.to = r[1]; }
+    costMode();
+    SEL_NC = REP.filter(function (n) { return gNc(n) && gScope(n); });
+    SER_NC = SEL_NC.filter(function (n) { return ours(n) && n[23] !== 'client'; });   // FTO2's, without the customer returns (shown apart, never counted twice)
+    CLI_NC = REP.filter(function (n) { return n[23] === 'client' && gNc(n); });
+    SEL = ids(SEL_NC); SER = ids(SER_NC); CLI = ids(CLI_NC);
+  }
+  function inSelAnyLine(r) { var n = NC[r[0]]; return gNc(n, true) && gScope(n); }
+  select();
+
+  // ---------------------------------------------------------------- 3. production
+  var PR = { src: D.eqmsn ? 'real' : 'dummy', ver: D.eqmsn && D.eqmsn.wd ? 'wd' : 'std' }, PD = null, PA = null, PCOL = {};
+  function pSrc() { return PR.src === 'real' && D.eqmsn ? D.eqmsn : DM && DM.eqmsn ? DM.eqmsn : null; }
+  var CABLE_RCA = { 'Câble Endommagé': 1, 'Câble ou Élément Manquant': 1 };   // fictitious data only: no cable flag there
+  // the NCs of the selection matched to a product of the output table, months of the period that are not forecast. When the NCs
+  // reach into the plan's forecast months (export of 7 Oct, NCs to mid-October), those months count as built up to the last NC
+  // day: the month of the last NC with its planned volume × the share of its days gone (P.part), the rest of it goes to the
+  // forecast. Before (20 Oct) October's NCs fell out of every per-MSN total: Localisation 930 NCs against 994 on the Overview.
+  function pData() {
+    var E = pSrc(), real = E === D.eqmsn, P = { real: real, E: E, months: E.months, fc: E.months.indexOf(E.forecastFrom), prod: E[PR.ver] || E.std, line: E.line, ncs: [], defs: [], cli: [], miss: {}, total: 0, idx: {} };
+    if (P.fc < 0) P.fc = P.months.length;
+    P.part = P.months.map(function () { return 1; });
+    var L = real ? P.months.indexOf(D.meta.to.slice(0, 7)) : -1;
+    if (L >= P.fc) { var dm = new Date(Date.UTC(+D.meta.to.slice(0, 4), +D.meta.to.slice(5, 7), 0)).getUTCDate(); P.part[L] = Math.min(1, +D.meta.to.slice(8, 10) / dm); P.fc = L + 1; P.cur = L; }
+    P.all = Object.keys(P.prod).sort(function (a, b) { return sumA(P.prod[b]) - sumA(P.prod[a]); });
+    var cnt = {}; (real ? REP.map(function (n) { return E.map[String(n[26] || '').toUpperCase()]; }) : GN.map(function (n) { return n[5]; })).forEach(function (p) { if (p) cnt[p] = (cnt[p] || 0) + 1; });
+    PCOL = {}; P.all.slice().sort(function (a, b) { return (cnt[b] || 0) - (cnt[a] || 0) || sumA(P.prod[b]) - sumA(P.prod[a]); }).forEach(function (p, i) { PCOL[p] = i < 6 ? 'var(--c' + (i + 1) + ')' : 'var(--dim)'; });
+    P.prods = P.all.filter(function (p) { return !real || !GF.line || P.line[p] === GF.line; });
+    P.mask = P.months.map(function (m, i) { return i < P.fc && (!real || (m + '-31' >= GF.from && m + '-01' <= GF.to)); });
+    function month(d) { var i = P.months.indexOf(d.slice(0, 7)); return i >= 0 && P.mask[i] ? i : -1; }
+    if (real) {
+      SEL_NC.forEach(function (n) {
+        P.total++; var p = E.map[String(n[26] || '').toUpperCase()], m = month(n[1]);
+        if (!p || P.prods.indexOf(p) < 0) { var lb = n[26] || '—'; P.miss[lb] = (P.miss[lb] || 0) + 1; return; }
+        if (m < 0) return; P.idx[n[0]] = P.ncs.length; P.ncs.push({ id: n[0], m: m, p: p, cost: n[12], days: n[29], late: n[8] === 'Final inspection' || n[8] === 'TEST' });
+      });
+      D.defects.forEach(function (r) { var i = P.idx[r[0]]; if (i != null && keepMinor(r)) P.defs.push({ n: i, cat: dCat(r), rca: dRca(r), cost: dAlloc(r), cable: !!dCable(r) }); });
+      CLI_NC.forEach(function (n) { var p = E.map[String(n[26] || '').toUpperCase()], m = month(n[1]); if (p && P.prods.indexOf(p) >= 0 && m >= 0) P.cli.push({ p: p, m: m }); });
+    } else {
+      GN.forEach(function (n, i) { P.total++; var m = month(n[1]); if (m < 0) return; P.idx[i] = P.ncs.length; P.ncs.push({ id: n[0], m: m, p: n[5], cost: gCost(n), days: n[8], late: n[9] === 'cf' || n[9] === 'test' }); if (n[9] === 'client') P.cli.push({ p: n[5], m: m }); });
+      GD.forEach(function (d, j) { var i = P.idx[d[0]]; if (i != null) P.defs.push({ n: i, cat: d[1], rca: d[2], cost: GALLOC[j], cable: !!CABLE_RCA[d[2]] }); });
+    }
+    return P;
+  }
+  function pAgg(P) {
+    var z = function () { return P.months.map(function () { return 0; }); }, a = {};
+    P.prods.forEach(function (p) { a[p] = { p: p, line: P.line[p] || '', eqm: P.prod[p].map(function (v, i) { return P.mask[i] ? v * P.part[i] : 0; }), nc: z(), def: z(), cost: z(), cab: z(), cli: z(), late: z(), connm: z(), conn: {}, cats: {}, catm: {}, rcas: {}, days: [] }; });
+    P.ncs.forEach(function (x) { var o = a[x.p]; o.nc[x.m]++; o.cost[x.m] += x.cost; if (x.late) o.late[x.m]++; if (x.days != null) o.days.push(x.days); });
+    P.defs.forEach(function (d) { var x = P.ncs[d.n], o = a[x.p]; o.def[x.m]++; if (d.cable) o.cab[x.m]++; if (d.cat === 'Erreur Branchement') { o.conn[d.rca] = (o.conn[d.rca] || 0) + 1; o.connm[x.m]++; } var c = catKey(d.cat); o.cats[c] = (o.cats[c] || 0) + 1; (o.catm[c] || (o.catm[c] = z()))[x.m]++; o.rcas[d.rca] = (o.rcas[d.rca] || 0) + 1; });
+    P.cli.forEach(function (x) { a[x.p].cli[x.m]++; });
+    P.prods.forEach(function (p) { var o = a[p]; o.EQ = sumA(o.eqm); o.NC = sumA(o.nc); o.DEF = sumA(o.def); o.COST = sumA(o.cost); o.CAB = sumA(o.cab); o.CLI = sumA(o.cli); o.LATE = sumA(o.late); o.r = o.EQ ? o.NC / o.EQ : null;
+      o.FC = sumA(P.prod[p].slice(P.fc)) + (P.cur != null ? P.prod[p][P.cur] * (1 - P.part[P.cur]) : 0); });   // to come: the rest of the running month, then the months after
+    return a;
+  }
+  function pOk() { return P_().filter(function (o) { return o.EQ >= EQMIN; }); }
+  function P_() { return PD.prods.map(function (p) { return PA[p]; }); }
+
+  // ---------------------------------------------------------------- 4. targets and forecast
+  var V2CUT = SET.objectif_coef;   // target = 2025 rate x V2CUT (config/2_reglages_pages.csv: objectif_baisse)
+  function v2Months() {
+    var a = [], d = new Date(GF.from.slice(0, 7) + '-01T00:00:00Z'), end = (GF.to < D.meta.to ? GF.to : D.meta.to).slice(0, 7), fc = [];
+    while (d.toISOString().slice(0, 7) <= end) { a.push(d.toISOString().slice(0, 7)); d.setUTCMonth(d.getUTCMonth() + 1); }
+    if (GF.to >= D.meta.to) { var y = end.slice(0, 4); d = new Date(end + '-01T00:00:00Z'); d.setUTCMonth(d.getUTCMonth() + 1); while (d.toISOString().slice(0, 4) === y) { fc.push(d.toISOString().slice(0, 7)); d.setUTCMonth(d.getUTCMonth() + 1); } }
+    return { act: a, fc: fc };
+  }
+  function v2Plan(m) { if (!PD) return null; var i = PD.months.indexOf(m); return i < 0 ? null : sumA(PD.prods.map(function (p) { return PD.prod[p][i] || 0; })); }
+  // the forecast, the same on every chart (20 Oct): product by product, the product's value per MSN built in the period × its MSN planned
+  // that month, plus the NCs out of the production plan at their own monthly pace (July and August as V2W). A single overall pace over-
+  // forecasts: A320's planned volume grows at the end of the year while A320 has few NCs per unit. null without the real production plan.
+  function v2Fc(f, M) {
+    var E = pSrc(); if (!PD || !PA || !E || E !== D.eqmsn) return null;
+    var byP = {}, out = 0, w = function (m) { return V2W[+m.slice(5, 7)] || 1; }, K = v2OutK(M), C = K.cur;
+    SEL_NC.forEach(function (n) { var v = f(n), p = v2InPlan(n); if (p) byP[p] = (byP[p] || 0) + v; else out += v; });
+    var pace = K.a ? out / K.a : 0, res = {}, per = function (i, sh) { return sumA(Object.keys(byP).map(function (p) { return i < 0 ? 0 : byP[p] / PA[p].EQ * (PD.prod[p][i] || 0) * sh; })); };
+    M.fc.forEach(function (m) { res[m] = per(PD.months.indexOf(m), 1) + pace * w(m); });
+    if (C) res[M.fc[0]] += per(C.i, 1 - C.part) + pace * w(C.m) * (1 - C.part);   // the rest of the running month, with the first month to come
+    return { m: res, out: out, outFc: pace * K.f };
+  }
+  // the product of the plan an NC is counted under (its product has ≥ 0.5 MSN built in the period and the NC is in the per-MSN
+  // data), else null: the NC is out of the plan. One test for every total, so the rows always add up to the Overview.
+  function v2InPlan(n) { var E = pSrc(), p = E && E.map && E.map[String(n[26] || '').toUpperCase()]; return p && PA && PA[p] && PA[p].EQ >= EQMIN && PD.idx[n[0]] != null ? p : null; }
+  // weights of the months done (a) and to come (f) for the out-of-plan NCs, July and August lighter (V2W); the running month
+  // (pData) counts in both, by the share of its days gone and left
+  function v2OutK(M) {
+    var w = function (m) { return V2W[+m.slice(5, 7)] || 1; }, C = PD && PD.cur != null && M.fc.length && M.act[M.act.length - 1] === PD.months[PD.cur] ? { m: PD.months[PD.cur], i: PD.cur, part: PD.part[PD.cur] } : null;
+    var a = sumA(M.act.map(w)) - (C ? w(C.m) * (1 - C.part) : 0), f = sumA(M.fc.map(w)) + (C ? w(C.m) * (1 - C.part) : 0);
+    return { a: a, f: f, k: a ? f / a : 0, cur: C };
+  }
+  // monthly sums of f over the selection; forecast months: v2Fc (else the period's value per planned MSN × the MSN planned that month, else the last 3 months' mean)
+  function v2Series(f) {
+    var M = v2Months(), by = {}; SEL_NC.forEach(function (n) { var m = n[1].slice(0, 7); by[m] = (by[m] || 0) + f(n); });
+    var act = M.act.map(function (m) { return { m: m, v: by[m] || 0 }; }), pa = 0, va = 0;
+    act.forEach(function (x) { var p = v2Plan(x.m); if (p) { pa += p; va += x.v; } });
+    var l3 = act.slice(-3), m3 = l3.length ? sumA(l3.map(function (x) { return x.v; })) / l3.length : 0;
+    var F = v2Fc(f, M), fc = M.fc.map(function (m) { var p = v2Plan(m); return { m: m, v: F ? F.m[m] : pa && p != null ? va / pa * p : m3, f: true }; });
+    return { act: act, fc: fc, tot: sumA(act.map(function (x) { return x.v; })), ftot: sumA(fc.map(function (x) { return x.v; })) };
+  }
+  // 2025 under the same filters (plant switch, phase, line); null when there is no 2025 block, the data-source filter is on (the
+  // 2025 extract is not split by manual list) or only the missing-ID NCs are shown. The 2025 extract holds no customer return.
+  function y25Sel() {
+    var Y = D.y25; if (!Y || !Y.rows || GF.src !== 'all' || GF.org === 'missing_ids') return null;
+    var c = {}, P = GF.pick; Y.cols.forEach(function (k, i) { c[k] = i; });
+    if (GF.liab !== 'fso' && c.liab == null) return null;   // the "Responsabilité" ticks: 2025 needs its liability column
+    if (P && ['month', 'prod', 'pprod'].indexOf(P.k) < 0) return null;   // a pick the 2025 extract cannot follow: no 2025 comparison
+    var pOk = !P ? null : P.k === 'month' ? function (r) { return String(r[c.month]).slice(5, 7) === P.v.slice(5, 7); } : P.k === 'prod' ? function (r) { return (r[c.product] || 'Other') === P.v; } :
+      function (r) { return !!(D.eqmsn && D.eqmsn.map && D.eqmsn.map[String(r[c.product] || '').toUpperCase()] === P.v); };
+    return Y.rows.filter(function (r) { return (r[c.scope] === 'serie' || !GF.fto2) && (GF.liab === 'fso' || GF.liab.indexOf(r[c.liab]) >= 0) && (!GF.phase || r[c.phase] === GF.phase) && (!GF.line || r[c.line] === GF.line) && (!pOk || pOk(r)); })
+      .map(function (r) { return { m: r[c.month], line: r[c.line], p: r[c.product], nc: r[c.nc], def: G.minor ? r[c.def] : r[c.defMajor], cost: COSTALL && c.costAll != null ? r[c.costAll] : r[c.cost] }; });
+  }
+  // 2025 defects by cause (parser labels) under the same filters as y25Sel; picks on a category or a cause apply too
+  function y25Rca() {
+    var Y = D.y25; if (!Y || !Y.rca || GF.src !== 'all' || GF.org === 'missing_ids') return null;
+    var c = {}, P = GF.pick; Y.rcaCols.forEach(function (k, i) { c[k] = i; });
+    if (GF.liab !== 'fso' && c.liab == null) return null;
+    if (P && ['month', 'prod', 'pprod', 'cat', 'rca'].indexOf(P.k) < 0) return null;
+    var ok = !P ? null : P.k === 'month' ? function (r) { return String(r[c.month]).slice(5, 7) === P.v.slice(5, 7); } : P.k === 'prod' ? function (r) { return (r[c.product] || 'Other') === P.v; } :
+      P.k === 'cat' ? function (r) { return r[c.cat] === P.v; } : P.k === 'rca' ? function (r) { return r[c.rca] === P.v; } :
+      function (r) { return !!(D.eqmsn && D.eqmsn.map && D.eqmsn.map[String(r[c.product] || '').toUpperCase()] === P.v); };
+    return Y.rca.filter(function (r) { return (r[c.scope] === 'serie' || !GF.fto2) && (GF.liab === 'fso' || GF.liab.indexOf(r[c.liab]) >= 0) && (!GF.phase || r[c.phase] === GF.phase) && (!GF.line || r[c.line] === GF.line) && (!ok || ok(r)); })
+      .map(function (r) { return { m: r[c.month], p: r[c.product], cat: r[c.cat], rca: r[c.rca], d: G.minor ? r[c.def] : r[c.defMajor] }; });
+  }
+  // a 2025 rate per product delivered, on the production plan's products that had 2025 deliveries (as the line targets): f summed ÷ deliveries
+  function y25Rate(rows, f, keep) {   // keep(p): only these products of the plan (connection errors: A330 and A350)
+    var L = D.y25 && D.y25.prod, E = pSrc(); if (!rows || !L || !PD || E !== D.eqmsn) return null;
+    var has = function (p) { return L[p] && sumA(L[p]) > 0 && PD.prods.indexOf(p) >= 0 && (!keep || keep(p)); }, del = 0, v = 0;
+    PD.prods.forEach(function (p) { if (has(p)) del += sumA(L[p]); });
+    rows.forEach(function (x) { var p = E.map[String(x.p || '').toUpperCase()]; if (p && has(p)) v += f(x); });
+    return del > 0 ? { v: v, del: del, r: v / del } : null;
+  }
+  // a 2025 sum by month of the year ('01'..'12'), and its running total over the months shown (actual + forecast, 'YYYY-MM')
+  function y25Cum(Y, f, months) { var by = {}, c = 0; Y.forEach(function (x) { var k = x.m.slice(5, 7); by[k] = (by[k] || 0) + f(x); }); return [0].concat(months.map(function (m) { c += by[m.slice(5, 7)] || 0; return c; })); }
+  // 2025 NCs per product delivered, per line, on the products of the 2025 deliveries (Livraisons 2025) mapped as the 2026 production plan
+  function y25Lines() {
+    var Y = y25Sel(), L = D.y25 && D.y25.prod, E = pSrc(); if (!Y || !L || !PD || E !== D.eqmsn) return null;
+    var out = {}, has = function (p) { return L[p] && sumA(L[p]) > 0 && PD.prods.indexOf(p) >= 0; };
+    PD.prods.forEach(function (p) { if (!has(p)) return; var l = PD.line[p] || '—', a = out[l] || (out[l] = { nc: 0, eq: 0 }); a.eq += sumA(L[p]); });
+    Y.forEach(function (x) { var p = E.map[String(x.p || '').toUpperCase()]; if (p && has(p) && out[PD.line[p] || '—']) out[PD.line[p] || '—'].nc += x.nc; });
+    return out;
+  }
+  var V2W = SET.poids_mois;   // weight of a month in the monthly target (config/2_reglages_pages.csv): July and August lighter
+  // the year's target line by line (Mohammad, 20 Oct): each line's 2025 rate per product delivered - 25 %, times the line's 2026
+  // volume month by month, summed over the lines; the NCs whose product is not in the production plan (no volume) keep their 2025
+  // value - 25 %, spread over the months like a normal year. f25 / f26: the measure of a 2025 row / of a 2026 product (NCs or cost).
+  // null without 2025 under the filters or without the real production plan (the charts then keep their former target).
+  function v2Tgt(f25, f26) {
+    var Y = y25Sel(), L = D.y25 && D.y25.prod, E = pSrc(); if (!Y || !L || !PD || !PA || E !== D.eqmsn) return null;
+    var has = function (p) { return L[p] && sumA(L[p]) > 0; }, by = {}, out = 0, z = function () { return PD.months.map(function () { return 0; }); };
+    // a product with no 2025 delivery (MDCD) does not take its line's 2025 rate: its target is its own 2026 pace × its planned
+    // volume, with no cut (Mohammad, 29 Oct); its 2025 NCs show in the 2025 bar only
+    PD.prods.forEach(function (p) { var l = PD.line[p] || '—', a = by[l] || (by[l] = { l: l, v25: 0, n25o: 0, del: 0, vol: z(), own: z(), v26: 0, eq26: 0 });
+      if (has(p)) { a.del += sumA(L[p]); PD.prod[p].forEach(function (v, i) { a.vol[i] += v || 0; }); a.v26 += f26(PA[p]); a.eq26 += PA[p].EQ; }
+      else { var r = PA[p] && PA[p].EQ > 0 ? f26(PA[p]) / PA[p].EQ : 0; PD.prod[p].forEach(function (v, i) { a.own[i] += r * (v || 0); }); } });
+    Y.forEach(function (x) { var p = E.map[String(x.p || '').toUpperCase()], a = p && has(p) && by[PD.line[p] || '—'];
+      if (a) { a.v25 += f25(x); return; }
+      if (p && by[PD.line[p] || '—']) { by[PD.line[p] || '—'].n25o += f25(x); return; }   // in the plan, not delivered in 2025
+      out += f25(x);   // out of the plan: kept with its plane type (x25), for the bars by plane type
+      var l = x.line || '—', b = by[l] || (by[l] = { l: l, v25: 0, del: 0, vol: z(), v26: 0, eq26: 0, noPlan: true }); b.x25 = (b.x25 || 0) + f25(x); });
+    var lines = lineOrder(Object.keys(by)).map(function (l) { var a = by[l]; a.r25 = a.del > 0 && a.v25 > 0 ? a.v25 / a.del : null; a.x25 = a.x25 || 0; a.xT = a.x25 * V2CUT;
+      a.rt = (a.r25 != null ? a.r25 : a.eq26 ? a.v26 / a.eq26 : 0) * V2CUT; a.ph = a.r25 == null && !a.noPlan && sumA(a.vol) > 0; a.own = a.own || z(); a.n25o = a.n25o || 0; a.year = a.rt * sumA(a.vol) + sumA(a.own); return a; });   // no 2025 for a line: its 2026 rate - 25 %
+    var wsum = 0; for (var mm = 1; mm <= 12; mm++) wsum += V2W[mm] || 1;
+    return { lines: lines, out25: out, outT: out * V2CUT,
+      tm: function (m) { var i = PD.months.indexOf(m); return sumA(lines.map(function (a) { return i < 0 ? 0 : a.rt * a.vol[i] + a.own[i]; })) + out * V2CUT * (V2W[+m.slice(5, 7)] || 1) / wsum; },
+      year: sumA(lines.map(function (a) { return a.year; })) + out * V2CUT };
+  }
+
+  // ---------------------------------------------------------------- 5. cost explanation
+  var CXP = D.cnqp || null;   // the cost model's settings (config/2_cout_*.csv, 3_cout_*.csv), from the backend
+  var CX_STEPS = [['alert', 'alert'], ['writing', 'write'], ['support', 'support'], ['setup', 'work'], ['hands', 'work'], ['recheck', 'recheck']];
+  var CX_RF = { alert: 0, write: 1, support: 2, work: 3, recheck: 4, eng: 5, part: 6, label: 7, basis: 8 };
+  function cxSteps(n) { return n[40] || [0, 0, 0, 0, 0, 0, 0, 0]; }
+  // EUR per hour of a step, by who does it (production, quality, ME); one rate before 20 Oct
+  function cxRate(k) { var P = CXP.p, R = P.rates || {}; return R[k] != null ? R[k] : P.rate; }
+  function cxEur(st) { return CX_STEPS.reduce(function (a, s2, j) { return a + (st[j] || 0) / 60 * cxRate(s2[0]); }, 0); }
+  function cxRule(n) { return CXP.rules[n[6]] || null; }
+  function cxAdj(n) {   // customer return: the flat extra or the real amount, i.e. what the level-3 cost holds beyond the steps (0 today)
+    var f = cxRule(n), st = cxSteps(n); if (!f || !costed(n)) return 0;   // not FTO2's liability: cost 0, shown as its own line
+    var on = [f[0], f[1], f[2], f[3], f[3], f[4]], e = CX_STEPS.reduce(function (a, s2, j) { return a + (on[j] ? st[j] / 60 * cxRate(s2[0]) : 0); }, 0), d = n[12] - (e + n[18] + n[17]);
+    return Math.abs(d) >= 0.05 ? d : 0;
+  }
+  function cxLines(nc) { return D.defects.filter(function (r) { return r[0] === nc; }).sort(function (a, b2) { return a[1] - b2[1]; }); }
+  // minutes and material of one defect line, from its class (root-cause labelling, the one behind the figures); seen counts the
+  // connection errors met so far in the NC: only the first takes its class time, each following one P.connNext
+  function cxLine(r, seen) {
+    var P = CXP.p, c = CXP.cls[dSub(r)], q = CXP.qty[r[0] + '|' + r[1]] || 1, per = c ? c[0] : P.defDefault, m = per * q;
+    if (seen && P.connCls && P.connCls.indexOf(dSub(r)) >= 0) { var first = Math.max(0, Math.min(q, 1 - seen.n)); seen.n += q; m = per * first + P.connNext * (q - first); }
+    return { m: m, a: (c ? c[1] : 0) * q, cls: dSub(r) && G.lang === 'en' && c ? c[2] : (dSub(r) || '—') };
+  }
+  function cxFactor(n) { var P = CXP.p, t = String(n[33] || '').toUpperCase(); return (P.intTypes || []).some(function (x) { return String(x).toUpperCase() === t; }) ? (P.intFactor || 1) : 1; }
+
+  // ---------------------------------------------------------------- 6. alarms
+  var ALC = { sigK: '', res: null, first: 0, last: -1 };   // the last computation: its key, the alarms, the weeks it covers
+  // a sub-code that only says the defect has none yet: "T04 (non précisé)" (a new line not yet labelled by the AI pass), "Non codé".
+  // New lines all land there until they are labelled, which looks like a rise: no alarm on them (3 Nov)
+  var PLACEHOLDER = new RegExp(window.FTO2_PLACEHOLDER);   // sub-codes "not specified": no alarm on them (config/2_reglages_pages.csv)
+  function alNc(n) { return ours(n) && n[23] !== 'client' && (!GF.phase || n[24] === GF.phase) && (GF.src === 'all' || (GF.src === 'man' ? n[39] !== 'sky' : n[39] === GF.src)) && (!GF.org || (n[41] || 'normal') === GF.org) && (GF.liab === 'fso' || GF.liab.indexOf(liabCat(n)) >= 0); }
+  function alCompute(at) {   // at: a week index instead of the period's end (checks)
+    var E = D.eqmsn && D.eqmsn.wdw; if (!E) return null;
+    var last = at != null ? at : ALARM.lastDone(GF.to < D.meta.to ? GF.to : D.meta.to), k = [GF.phase, GF.src, GF.org, GF.liab, last, G.lang].join('|');
+    if (k === ALC.sigK) return ALC.res;
+    var items = {}, planes = {}, cnt = { rca: {}, code: {} }, z = function () { var a = []; for (var i = 0; i < 53; i++) a.push(0); return a; }, w0 = 53, PM = D.eqmsn.msn || {};
+    function it(line, lv, v, e, hist) { var key = line + '|' + lv + '|' + v; return items[key] || (items[key] = { key: key, line: line, lv: lv, v: v, w: z(), e: e, n: [], d: [], hist: !!hist }); }
+    function add(o, i, id, dk) { o.w[i]++; (o.n[i] || (o.n[i] = [])).push(id); if (dk) (o.d[i] || (o.d[i] = [])).push(dk); if (i < w0) w0 = i; }
+    function tally(m, k2, v) { var q = m[k2] || (m[k2] = {}); q[v] = (q[v] || 0) + 1; }
+    D.defects.forEach(function (r) {
+      var n = NC[r[0]]; if (!n || !alNc(n)) return;
+      var l = n[3], e = E.line[l], i = ALARM.week(n[1]), dk = r[0] + '|' + r[1]; if (!e || i < 0) return;
+      var c = dCat(r), ca = dRca(r), co = dCode(r);
+      add(it(l, 'all', '', e), i, n[0], dk);
+      if (c) add(it(l, 'cat', c, e), i, n[0], dk);
+      if (ca) { add(it(l, 'rca', ca, e), i, n[0], dk); tally(cnt.rca, l + '|' + ca, c); }
+      if (co && !PLACEHOLDER.test(co)) { add(it(l, 'code', co, e), i, n[0], dk); tally(cnt.code, l + '|' + co, ca); }   // no alarm on a placeholder sub-code (3 Nov)
+      if (n[27]) add(it(l, 'station', n[27], e, true), i, n[0], dk);
+      if (n[8]) add(it(l, 'where', n[8], e, true), i, n[0], dk);
+    });
+    D.ncs.forEach(function (n) {   // products: NCs per MSN of the product; aircraft: NCs per aircraft and product
+      if (!alNc(n) || !E.prod || !D.eqmsn.map) return;
+      var p = D.eqmsn.map[String(n[26] || '').toUpperCase()], i = ALARM.week(n[1]); if (!p || i < 0) return;
+      if (E.prod[p]) add(it(n[3], 'prod', p, E.prod[p]), i, n[0]);
+      var m = String(n[25] || ''), pm = PM[n[3] + '|' + m.replace(/^0+/, '')]; if (!m || !pm) return;
+      var pk2 = n[3] + '|' + m + '|' + p, o = planes[pk2], end = ALARM.week(pm[1]);
+      if (!o) o = planes[pk2] = { key: pk2, line: n[3], msn: m, prod: p, w: z(), n: [], end: end < 0 ? 99 : end };
+      o.w[i]++; (o.n[i] || (o.n[i] = [])).push(n[0]);
+    });
+    (D.cables || []).forEach(function (a) {   // cable requests per MSN of the line
+      var l = a[4] === 'A321' ? 'A320' : a[4], e = E.line[l], i = ALARM.week(a[2]); if (!e || i < 0) return;
+      add(it(l, 'cimp', a[7], e), i, a[3]); add(it(l, 'cmot', a[6], e), i, a[3]);
+    });
+    // the actions in progress (MFT trackers): the NCs of their problem, to say that one already covers an alarm
+    var AF = { cat: dCat, rca: dRca, sub: dSub, code: dCode }, acts = (D.actions || []).filter(function (a) { return a[6] && !/CLOS|TERMIN|ABANDON/i.test(a[7] || ''); }).map(function (a) {
+      var vals = {}, o = { line: a[0], title: a[G.lang === 'fr' ? 1 : 2], start: ALARM.week(a[6] + '-01'), defs: {} };
+      (a[4] || []).forEach(function (v) { vals[v] = 1; });
+      D.defects.forEach(function (r) { var n = NC[r[0]]; if (!n || n[3] !== a[0] || !alNc(n)) return; var v = a[3] === 'where' ? n[8] : AF[a[3]] ? AF[a[3]](r) : null; if (v != null && vals[v]) o.defs[r[0] + '|' + r[1]] = 1; });
+      return o;
+    });
+    var dom = function (m) { m = m || {}; return Object.keys(m).sort(function (a, b) { return m[b] - m[a]; })[0] || ''; };
+    var first = w0 + ALARM.P.recent + ALARM.P.base - 1;
+    ALC.first = first; ALC.last = last; ALC.sigK = k;
+    ALC.res = last < first ? [] : ALARM.run(Object.keys(items).map(function (x) { return items[x]; }), first, last, function (a) {
+      return a.lv === 'cat' ? a.line + '|all|' : a.lv === 'rca' ? a.line + '|cat|' + dom(cnt.rca[a.line + '|' + a.v]) : a.lv === 'code' ? a.line + '|rca|' + dom(cnt.code[a.line + '|' + a.v]) : ''; },
+      Object.keys(planes).map(function (x) { return planes[x]; }), acts);
+    return ALC.res;
+  }
+
+  // ---------------------------------------------------------------- 7. results (what the Slate functions return)
+  // Each result is plain data (no function inside), so that a Slate function can hand it to the page. The page computes the
+  // same results itself when no Slate function is used (the laptop, or Skywise without the functions).
+
+  // the measures the targets are computed for: [value of a 2026 NC, value of a 2025 row, value of a 2026 product]
+  var MEASURES = {
+    nc: [function () { return 1; }, function (x) { return x.nc; }, function (o) { return o.NC; }],
+    cost: [function (n) { return n[12]; }, function (x) { return x.cost; }, function (o) { return o.COST; }]
+  };
+  // the targets and the forecast for the current filters: per measure, the months (done and to come) and the target line by line
+  function objectifs() {
+    var out = { months: v2Months() }, all = out.months.act.concat(out.months.fc);
+    Object.keys(MEASURES).forEach(function (k) {
+      var m = MEASURES[k], S2 = v2Series(m[0]), T = v2Tgt(m[1], m[2]);
+      if (T) {   // the target of each month as a table: tm(m) is a function, which a Slate function cannot hand over
+        var tmm = {}; all.concat(PD ? PD.months : []).forEach(function (mm) { tmm[mm] = T.tm(mm); });
+        T = { lines: T.lines, out25: T.out25, outT: T.outT, year: T.year, tmm: tmm };
+      }
+      out[k] = { S2: S2, T: T };
+    });
+    out.lines = lineTargets();
+    out.outK = PD ? v2OutK(out.months).k : 0;   // the NCs out of the production plan: months to come against months done
+    return out;
+  }
+  // each line's NCs per MSN against its target: 2026 rate (v), 2025 rate (b), target (t = b x V2CUT, or v x V2CUT as a placeholder (ph)
+  // when the line has no 2025); lines with less than EQMIN MSN built are left out
+  function lineTargets() {
+    if (!PD || !PA) return null;
+    var by = {}; P_().forEach(function (o) { var l = o.line || '—', a = by[l] || (by[l] = { l: l, nc: 0, eq: 0 }); a.nc += o.NC; a.eq += o.EQ; });
+    var B = y25Lines();
+    return lineOrder(Object.keys(by)).map(function (l) { return by[l]; }).filter(function (a) { return a.eq >= EQMIN; }).map(function (r) {
+      var b = B && B[r.l]; r.v = r.nc / r.eq;
+      if (b && b.eq >= EQMIN && b.nc > 0) { r.b = b.nc / b.eq; r.t = r.b * V2CUT; } else { r.t = r.v * V2CUT; r.ph = true; }
+      return r;
+    });
+  }
+  // the bell's list for the current filters: the alarms and the weeks they cover
+  function alarmes() { var res = alCompute(); return { res: res, first: ALC.first, last: ALC.last }; }
+  // "Expliquer le calcul" for one NC: euros of each step, work factor, adjustment (customer return: what the cost holds beyond the
+  // steps; for the current cost mode) and each defect line [seq, minutes, material EUR, class in French, class in English]
+  function coutNc(n, lines) {   // lines: the NC's defect lines in order (cxLines), when already at hand
+    var st = cxSteps(n), seen = { n: 0 };
+    return { eur: CX_STEPS.map(function (s2, j) { return (st[j] || 0) / 60 * cxRate(s2[0]); }), factor: cxFactor(n), adj: cxAdj(n),
+      lines: (lines || cxLines(n[0])).map(function (r) { var c = cxLine(r, seen), sub = dSub(r), k = CXP.cls[sub]; return [r[1], c.m, c.a, sub || '—', sub && k ? k[2] : sub || '—']; }) };
+  }
+  // every NC, for the Slate function: the adjustment for FTO2's cost (adj) and for the cost of every NC (adjAll: REC phase, "Toutes les NC")
+  function cout() {
+    if (!CXP) return null;
+    var out = {}, keep = [GF.cost, GF.phase], by = {};
+    D.defects.forEach(function (r) { (by[r[0]] || (by[r[0]] = [])).push(r); });   // each NC's lines, in the order of cxLines
+    D.ncs.forEach(function (n) { out[n[0]] = coutNc(n, (by[n[0]] || []).sort(function (a, b2) { return a[1] - b2[1]; })); });
+    GF.cost = 'all'; GF.phase = 'REC'; costMode();   // only the adjustment changes with the cost mode
+    D.ncs.forEach(function (n) { out[n[0]].adjAll = cxAdj(n); });
+    GF.cost = keep[0]; GF.phase = keep[1]; costMode();
+    return out;
+  }
+
+  // ---------------------------------------------------------------- 8. in a Slate function: the filters the page asks for
+  // The page sends a list of requests through the Slate variable v_fto2_filtres: {n: calculation, k: its key, f: the filters}.
+  // Each function computes the requests for its own calculation, for each set of filters, and answers {results: {key: result}}.
+  function appliquer(f) {   // put the page's filters in place, then the selection and the production that follow from them
+    var g = f.gf || {}; Object.keys(g).forEach(function (k) { GF[k] = g[k]; }); GF.preset = 'custom';
+    G.minor = f.minor !== false; G.lang = f.lang === 'en' ? 'en' : 'fr';
+    if (f.pr) { PR.src = f.pr[0]; PR.ver = f.pr[1]; }
+    pickPrep(); select(); PD = pSrc() ? pData() : null; PA = PD ? pAgg(PD) : null;
+  }
+  function repondre(name, requests) {
+    var run = { objectifs: objectifs, alarmes: alarmes }[name], out = {};
+    (requests || []).forEach(function (q) { if (q && q.n === name && !(q.k in out)) { appliquer(q.f || {}); out[q.k] = run(); } });
+    return { results: out };
+  }
+  /* ===== MODEL END ===== */
+
+  // ---------------------------------------------------------------- the calculations: here, or in Slate
+  // The targets and forecast (objectifs), the bell's alarms (alarmes) and the cost explanation (cout) come from the code inserted
+  // above (build/templates/model.js). In Skywise each can run as a Slate function instead (03_reports/skywise/level3_datasets/
+  // fonctions/): the page asks Slate for the filters of each chart that needs it, the chart says "Calcul dans Slate…" meanwhile,
+  // and the page draws again when the answer comes. Without the functions (the laptop, or Skywise without them) the page computes
+  // them itself, as it does when a function fails or gives no answer within 15 s. The cost explanation can also come from the
+  // notebook's table fto2_dash_cout (D.cx).
+  var SL = window.FTO2_SLATE || null;   // set by the Skywise glue: {use: {name: true}, ask(requests), show(waiting, failed), latest}
+  var CALC = { res: { objectifs: {}, alarmes: {}, cout: {} }, wait: {}, down: {}, timer: null, live: false };   // live: the page has drawn once
+  var CALC_KEY = {   // what a result depends on: one answer per value
+    objectifs: function () { return JSON.stringify([GF.from, GF.to, GF.src, GF.org, GF.fto2, GF.liab, GF.cost, GF.phase, GF.line, GF.pick, G.minor, PR.src, PR.ver]); },
+    alarmes: function () { return JSON.stringify([GF.phase, GF.src, GF.org, GF.liab, GF.to < D.meta.to ? GF.to : D.meta.to, G.lang]); },
+    cout: function () { return 'all'; }   // every NC at once, whatever the filters
+  };
+  function inSlate(name) { return !!(SL && SL.use && SL.use[name] && !CALC.down[name]); }
+  // a result computed in Slate for the current filters; null while Slate computes it (the page asks for it)
+  function calcSlate(name) {
+    var k = CALC_KEY[name](), c = CALC.res[name];
+    if (Object.prototype.hasOwnProperty.call(c, k)) return c[k];
+    if (!CALC.wait[name + k]) {
+      CALC.wait[name + k] = { n: name, k: k, at: Date.now(), f: { gf: { from: GF.from, to: GF.to, src: GF.src, org: GF.org, fto2: GF.fto2, liab: GF.liab, cost: GF.cost, phase: GF.phase, line: GF.line, pick: GF.pick }, minor: G.minor, lang: G.lang, pr: [PR.src, PR.ver] } };
+      calcSend();
+    }
+    return null;
+  }
+  // once per round of drawing: the requests still waiting go to Slate (the cost explanation is computed once, with no request)
+  function calcSend() {
+    if (CALC.timer) return;
+    CALC.timer = setTimeout(function () {
+      CALC.timer = null;
+      var all = Object.keys(CALC.wait).map(function (x) { return CALC.wait[x]; }), ask = all.filter(function (w) { return w.n !== 'cout'; }).slice(-8);
+      calcShow();
+      if (ask.length) try { SL.ask(ask.map(function (w) { return { n: w.n, k: w.k, f: w.f }; })); } catch (e) { calcDown(ask[0].n, (e && e.message) || String(e)); return; }
+      setTimeout(calcLate, 15000);
+    }, 0);
+  }
+  function calcLate() { var now = Date.now(), late = {}; Object.keys(CALC.wait).forEach(function (x) { if (now - CALC.wait[x].at >= 14900) late[CALC.wait[x].n] = 1; }); Object.keys(late).forEach(function (n) { calcDown(n, 'late'); }); }
+  // a function that failed or did not answer: computed here from now on (until the page is opened again), with a note
+  function calcDown(name, why) {
+    CALC.down[name] = why || 'error';
+    Object.keys(CALC.wait).forEach(function (x) { if (CALC.wait[x].n === name) delete CALC.wait[x]; });
+    calcShow(); if (CALC.live) renderAll();
+  }
+  function calcShow() {
+    if (!SL || !SL.show) return;
+    var w = {}; Object.keys(CALC.wait).forEach(function (x) { w[CALC.wait[x].n] = 1; });
+    SL.show(Object.keys(w), CALC.down);
+  }
+  // an answer of a Slate function, handed over by the Skywise glue: {results: {key: result}} or {error: text}
+  function calcTake(name, v) {
+    if (!v || !CALC.res[name]) return;
+    if (v.error) { calcDown(name, v.error); return; }
+    var got = 0;
+    Object.keys(v.results || {}).forEach(function (k) { CALC.res[name][k] = v.results[k]; if (CALC.wait[name + k]) { delete CALC.wait[name + k]; got++; } });
+    if (got) { calcShow(); if (CALC.live) renderAll(); }
+  }
+  // the targets and forecast of one measure ('nc' or 'cost'): S2 the months done and to come, T the target line by line
+  // (T.tm(m): the target of month m); null while Slate computes them
+  function objectif(k) {
+    var m = MEASURES[k];
+    if (!inSlate('objectifs')) return { S2: v2Series(m[0]), T: v2Tgt(m[1], m[2]) };
+    var o = calcSlate('objectifs'); if (!o) return null;
+    var T = o[k].T; if (T && !T.tm) T.tm = function (mm) { return T.tmm[mm] || 0; };
+    return { S2: o[k].S2, T: T };
+  }
+  // each line's NCs per MSN against its target (lineTargets in model.js); null while Slate computes them
+  function lignes() { if (!inSlate('objectifs')) return lineTargets() || []; var o = calcSlate('objectifs'); return o ? o.lines || [] : null; }
+  // the NCs out of the production plan: months to come against months done (v2OutK in model.js); null while Slate computes it
+  function horsPlanK() { if (!inSlate('objectifs')) return v2OutK(v2Months()).k; var o = calcSlate('objectifs'); return o ? o.outK : null; }
+  // the bell's list: {res, first, last}; null while Slate computes it
+  function alarmesNow() { return inSlate('alarmes') ? calcSlate('alarmes') : alarmes(); }
+  // the cost explanation of one NC (coutNc in model.js): from the Slate function, the notebook's table, else worked out here;
+  // null while Slate computes it
+  function cxOf(n) {
+    var c = null;
+    if (inSlate('cout')) { var all = calcSlate('cout'); if (!all) return null; c = all[n[0]]; }
+    else if (D.cx) c = D.cx[n[0]];
+    if (!c) return coutNc(n);
+    return COSTALL && c.adjAll != null ? Object.assign({}, c, { adj: c.adjAll }) : c;
+  }
+  function cxAdjOf(n) { if (!inSlate('cout') && !D.cx) return cxAdj(n); var c = cxOf(n); return c ? c.adj : 0; }
+  // for the Skywise glue: take() hands over an answer, waiting() says how many answers the page still waits for
+  if (SL) { SL.take = calcTake; SL.waiting = function () { return Object.keys(CALC.wait).length; }; Object.keys(SL.latest || {}).forEach(function (k) { calcTake(k, SL.latest[k]); }); }
+  function phaseOrder(v) { return ['SERIE', 'REC', 'FTI'].filter(function (c) { return v.indexOf(c) >= 0; }).concat(v.filter(function (c) { return ['SERIE', 'REC', 'FTI'].indexOf(c) < 0; })); }
+  function catOrder(vals) { return CAT_ORDER.filter(function (c) { return vals.indexOf(c) >= 0; }); }
+  function codeDesc(c) { var x = D.codes[c]; return x ? x[G.lang === 'fr' ? 1 : 0] : ''; }
+  function codeName(c) { var x = codeDesc(c); return x ? c + ' · ' + x : c; }
+
   function pk(k, v) { return v == null || v === '' ? '' : ' data-pick="' + esc(k + '|' + v) + '"'; }
   function ppk(k, v) { return D.eqmsn && pSrc() === D.eqmsn ? pk(k, v) : ''; }   // NC-rate charts: only on the real production plan
   function pickLabel(p) {
@@ -2004,25 +2456,9 @@ function fto2FromTables(ncIn, defIn, ref, disIn) {
     var el = e.target.closest && e.target.closest('[data-pick]'); if (!el) return;
     var s2 = el.getAttribute('data-pick'), i = s2.indexOf('|'); pickSet(s2.slice(0, i), s2.slice(i + 1));
   });
-  function ours(n) { var p = String(n[42] || '').trim().toUpperCase(); return p === 'FTO2' || p === 'FT02'; }   // FTO2's NCs: [42] plant FTO2 / FT02 (as Type_NC_auto); on a GPS / Test list too only if at that plant (Mohammad, 20 Oct)
-  function gScope(n) { return !GF.fto2 || ours(n); }   // FTO2 plant only: the plant column, nothing else
-  // the selection: SEL follows every filter; SER = SEL's FTO2 NCs without the customer returns; CLI = the customer returns, whatever the switch (the tabs that show both apart)
-  var SEL_NC = [], SER_NC = [], CLI_NC = [], SEL = {}, SER = {}, CLI = {};
-  function ids(a) { var o = {}; a.forEach(function (n) { o[n[0]] = 1; }); return o; }
-  function select() {
-    if (GF.preset !== 'custom') { var r = presetRange(GF.preset); GF.from = r[0]; GF.to = r[1]; }
-    costMode();
-    SEL_NC = REP.filter(function (n) { return gNc(n) && gScope(n); });
-    SER_NC = SEL_NC.filter(function (n) { return ours(n) && n[23] !== 'client'; });   // FTO2's, without the customer returns (shown apart, never counted twice)
-    CLI_NC = REP.filter(function (n) { return n[23] === 'client' && gNc(n); });
-    SEL = ids(SEL_NC); SER = ids(SER_NC); CLI = ids(CLI_NC);
-  }
-  function inSelAnyLine(r) { var n = NC[r[0]]; return gNc(n, true) && gScope(n); }
-  select();
 
   // ---------------------------------------------------------------- weeks
   function isoMonday(wk) { var y = +wk.slice(0, 4), w = +wk.slice(6), j4 = new Date(Date.UTC(y, 0, 4)), dow = (j4.getUTCDay() + 6) % 7, mon = new Date(j4); mon.setUTCDate(j4.getUTCDate() - dow + (w - 1) * 7); return mon; }
-  function isoDay(dt) { return dt.toISOString().slice(0, 10); }
   function isoWeekOf(dt) { var th = new Date(dt); th.setUTCDate(th.getUTCDate() + 3); var y = th.getUTCFullYear(), j4 = new Date(Date.UTC(y, 0, 4)), dow = (j4.getUTCDay() + 6) % 7, m1 = new Date(j4); m1.setUTCDate(j4.getUTCDate() - dow); return y + '-W' + String(Math.floor((dt - m1) / 604800000) + 1).padStart(2, '0'); }
   var WEEKS = (function () {
     var ws = REP.filter(ours).map(function (n) { return n[2]; }).filter(function (w) { return w >= D.meta.from.slice(0, 4); }).sort(), out = [];
@@ -2170,7 +2606,6 @@ function fto2FromTables(ncIn, defIn, ref, disIn) {
     Object.keys(c).forEach(function (p) { var b = '', bv = 0; Object.keys(c[p]).forEach(function (l) { if (c[p][l] > bv) { bv = c[p][l]; b = l; } }); r[p] = b; }); return r; })();
   function prodCol(p) { return p === 'Other' ? 'var(--dim)' : lineCol(PROD_LINE[p]); }
   var TYPE_ALIAS = { 'NC Interne': 'INTERNE', 'NC Retour client': 'RETOUR CLIENT', 'CLIENT': 'RETOUR CLIENT' };
-  function ncType(n) { var t = String(n[33] || '').trim(); return TYPE_ALIAS[t] || t; }
   function typeName(t) { return STR[G.lang]['ty_' + t] || t; }
   function stName(s) { return STR[G.lang]['st_' + s] || s || '—'; }
   function median(a) { if (!a.length) return null; a = a.slice().sort(function (x, y) { return x - y; }); var i = Math.floor(a.length / 2); return a.length % 2 ? a[i] : (a[i - 1] + a[i]) / 2; }
@@ -2194,8 +2629,6 @@ function fto2FromTables(ncIn, defIn, ref, disIn) {
   }
   // two lines per month: NCs created, NCs closed; a month click keeps the NCs created that month
   // cost of non-quality split by NC type, one 100 % bar; NC Interne and Casse interne count as Interne
-  var NCTYPES = ['cab', 'fin', 'test', 'int', 'sup', 'oth'];
-  function ncType(n) { var t = String(n[33] || '').toUpperCase(); return t === 'CABLES' ? 'cab' : t === 'CONTROLE FINAL' ? 'fin' : t === 'TEST' ? 'test' : /INTERNE/.test(t) ? 'int' : t === 'FOURNISSEUR' ? 'sup' : 'oth'; }
   function cnqSplit(vals, m, rs, b) {
     var d = this, tot = sumA(vals.map(function (v) { return m[v] || 0; })) || 1e-9, sh = { cab: 100, fin: 78, test: 58, int: 40, sup: 24 };
     var fill = function (v) { return v === 'oth' ? 'var(--dim)' : sh[v] === 100 ? 'var(--s1)' : tint('--s1', sh[v]); };
@@ -2492,31 +2925,10 @@ function fto2FromTables(ncIn, defIn, ref, disIn) {
   // NC row [40] = the model's minutes [alert, writing, support, setup, hands-on, re-check], engineering hours, final-inspection flag,
   // then where setup and hands-on come from ('order': planned time of the rework orders, 'model', '' no work), the orders' state, their numbers,
   // where the alert time comes from ('alea': declared on the quality aléas that led to the NC, 'flat', '' not charged) and those aléas.
-  var CXP = D.cnqp || null, CX = { nc: null, lines: false };
-  var CX_STEPS = [['alert', 'alert'], ['writing', 'write'], ['support', 'support'], ['setup', 'work'], ['hands', 'work'], ['recheck', 'recheck']];
-  var CX_RF = { alert: 0, write: 1, support: 2, work: 3, recheck: 4, eng: 5, part: 6, label: 7, basis: 8 };
+  var CX = { nc: null, lines: false };   // the NC shown in "Expliquer le calcul"
   function eur2(x) { return (+x).toLocaleString(loc(), { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + (G.lang === 'fr' ? ' €' : ' EUR'); }
   function dec(x) { return (+x).toLocaleString(loc(), { maximumFractionDigits: 2 }); }
   function mn(x) { return (Math.round(x * 10) / 10).toLocaleString(loc()) + ' min'; }
-  function cxSteps(n) { return n[40] || [0, 0, 0, 0, 0, 0, 0, 0]; }
-  // EUR per hour of a step, by who does it (production, quality, ME); one rate before 20 Oct
-  function cxRate(k) { var P = CXP.p, R = P.rates || {}; return R[k] != null ? R[k] : P.rate; }
-  function cxEur(st) { return CX_STEPS.reduce(function (a, s2, j) { return a + (st[j] || 0) / 60 * cxRate(s2[0]); }, 0); }
-  function cxRule(n) { return CXP.rules[n[6]] || null; }
-  function cxAdj(n) {   // customer return: the flat extra or the real amount, i.e. what the level-3 cost holds beyond the steps (0 today)
-    var f = cxRule(n), st = cxSteps(n); if (!f || !costed(n)) return 0;   // not FTO2's liability: cost 0, shown as its own line
-    var on = [f[0], f[1], f[2], f[3], f[3], f[4]], e = CX_STEPS.reduce(function (a, s2, j) { return a + (on[j] ? st[j] / 60 * cxRate(s2[0]) : 0); }, 0), d = n[12] - (e + n[18] + n[17]);
-    return Math.abs(d) >= 0.05 ? d : 0;
-  }
-  function cxLines(nc) { return D.defects.filter(function (r) { return r[0] === nc; }).sort(function (a, b2) { return a[1] - b2[1]; }); }
-  // minutes and material of one defect line, from its class (root-cause labelling, the one behind the figures); seen counts the
-  // connection errors met so far in the NC: only the first takes its class time, each following one P.connNext
-  function cxLine(r, seen) {
-    var P = CXP.p, c = CXP.cls[dSub(r)], q = CXP.qty[r[0] + '|' + r[1]] || 1, per = c ? c[0] : P.defDefault, m = per * q;
-    if (seen && P.connCls && P.connCls.indexOf(dSub(r)) >= 0) { var first = Math.max(0, Math.min(q, 1 - seen.n)); seen.n += q; m = per * first + P.connNext * (q - first); }
-    return { m: m, a: (c ? c[1] : 0) * q, cls: dSub(r) && G.lang === 'en' && c ? c[2] : (dSub(r) || '—') };
-  }
-  function cxFactor(n) { var P = CXP.p, t = String(n[33] || '').toUpperCase(); return (P.intTypes || []).some(function (x) { return String(x).toUpperCase() === t; }) ? (P.intFactor || 1) : 1; }
   // example NCs, picked from the selection: the most recent NC of each kind
   var CX_EX = [
     ['ex_one', function (n) { return n[6] === 'RWK' && n[21] === 1 && !cxSteps(n)[7]; }],
@@ -2550,14 +2962,15 @@ function fto2FromTables(ncIn, defIn, ref, disIn) {
         '<div class="ce">' + esc(v != null ? '= ' + S('cxPerNc', { c: eur2(v / 60 * cxRate(k)) }) : S('cxHandsV')) + ' · ' + esc(S('cxAtRate', { r: dec(cxRate(k)) })) + '</div><div class="cs">' + esc(subs[k]) + '</div>' +
         '<div class="sel">' + S('cxSel', { c: '<b>' + esc(eur(stepTot[j])) + '</b>', p: esc(shr(stepTot[j])) }) + '</div></li>';
     }).join('');
-    var dqn = CXP.rules.DQN, eh = dqn ? dqn[CX_RF.eng] : 0, other = sum(SEL_NC, cxAdj), stepsAll = sumA(stepTot);
+    var cw = inSlate('cout') && !calcSlate('cout');   // the cost explanation still computing in Slate
+    var dqn = CXP.rules.DQN, eh = dqn ? dqn[CX_RF.eng] : 0, other = cw ? 0 : sum(SEL_NC, cxAdjOf), stepsAll = sumA(stepTot);
     var part = function (cls, name, v, how) { return '<div class="cxp' + cls + '"><span class="cn">' + esc(name) + '</span><span class="cv">' + esc(eur(v)) + '</span><span class="cs">' + esc(how) + '</span></div>'; }, op = function (o) { return '<span class="cxop" aria-hidden="true">' + o + '</span>'; };
     document.getElementById('cxPlus').innerHTML = '<h4>' + esc(S('cxSumH', { n: num(SEL_NC.length) })) + '</h4><div class="cxeq">' +
       part('', S('cxSteps6'), stepsAll, S('cxShare', { p: shr(stepsAll) }) + ' · ' + S('cxSteps6V')) + op('+') +
       part(' eng', S('cxEng'), engTot, S('cxShare', { p: shr(engTot) }) + ' · ' + S('cxEngV', { h: dec(eh), r: dec(P.rateEng), c: eur2(eh * P.rateEng) }) + ' ' + S('cxPerDqn')) + op('+') +
       part(' mat', S('cxMat'), matTot, S('cxShare', { p: shr(matTot) }) + ' · ' + S('cxMatV')) +
       (Math.abs(other) >= 0.5 ? op(other < 0 ? '−' : '+') + part(' adj', S('r_adj'), Math.abs(other), S('cxShare', { p: shr(Math.abs(other)) })) : '') + op('=') +
-      part(' tot', S('cxTot'), tot, S('cxTotV', { n: num(SEL_NC.length) })) + '</div>';
+      part(' tot', S('cxTot'), tot, S('cxTotV', { n: num(SEL_NC.length) })) + '</div>' + (cw ? '<p class="sub">' + esc(S('slWait')) + '</p>' : '');
     document.getElementById('cxFormula').textContent = S('cxFormula', { p: dec(cxRate('hands')), q: dec(cxRate('writing')), m: dec(cxRate('support')), f: num(P.floor) });
     var nOrd = SEL_NC.filter(function (n) { return cxSteps(n)[8] === 'order'; }).length, nAlea = SEL_NC.filter(function (n) { return cxSteps(n)[11] === 'alea'; }).length;
     var rules = [S('cxR1'), S('cxR2', { a: num((CXP.cls[(P.connCls || [])[0]] || [P.defDefault])[0]), b: num(P.connNext || 0) }), S('cxR3', { f: dec(P.intFactor || 1) }), S('cxR4')]
@@ -2586,10 +2999,11 @@ function fto2FromTables(ncIn, defIn, ref, disIn) {
   function renderCxNc() {
     var out = document.getElementById('cxOut'), n = CX.nc != null ? NC[CX.nc] : null;
     if (!n) { out.innerHTML = CX.nc != null ? '<p class="sub">' + esc(S('cxNone')) + '</p>' : ''; return; }
+    var C = cxOf(n); if (!C) { out.innerHTML = '<p class="sub">' + esc(S('slWait')) + '</p>'; return; }   // euros of each step, work factor, adjustment, each line
     var P = CXP.p, r = P.rate, f = cxRule(n) || [0, 0, 0, 0, 0, 0, 0, n[7], ''], st = cxSteps(n), fin = st[7], lines = cxLines(n[0]), sep = G.lang === 'fr' ? ' : ' : ': ';
     var fact = function (k, v) { return '<span>' + esc(S(k)) + sep + '<b>' + esc(v) + '</b></span>'; };
     var h = '<div class="cx-facts">' + fact('fx_nc', n[0]) + fact('fx_date', shortDay(n[1])) + fact('fx_line', n[3] || '—') + fact('fx_dec', ruleName(n[7])) + fact('fx_where', whereName(n[8])) + fact('fx_lines', num(lines.length)) + '</div>';
-    var ord = st[8] === 'order', fx = ord ? 1 : cxFactor(n), x2 = function (t) { return fx !== 1 ? S('n_x2', { s: t, f: dec(fx) }) : t; }, base = st[3] / fx;
+    var ord = st[8] === 'order', fx = ord ? 1 : C.factor, x2 = function (t) { return fx !== 1 ? S('n_x2', { s: t, f: dec(fx) }) : t; }, base = st[3] / fx;
     if (st[10]) h = h.replace('</div>', fact('fx_order', st[10] + ' · ' + S('os_' + (st[9] || 'none'))) + '</div>');
     if (n[41] === 'missing_ids') h = h.replace('</div>', fact('fx_org', S('org_missing_ids')) + '</div>');
     var notes = {
@@ -2600,13 +3014,13 @@ function fto2FromTables(ncIn, defIn, ref, disIn) {
     var H = S('cxH'), totMin = 0, totEur = 0;
     var tb = '<div class="table-wrap"><table class="cxt"><thead><tr><th scope="col">' + esc(H[0]) + '</th><th scope="col">' + esc(H[1]) + '</th><th scope="col" class="r">' + esc(H[2]) + '</th><th scope="col" class="r">' + esc(H[3]) + '</th></tr></thead><tbody>';
     CX_STEPS.forEach(function (s2, j) {
-      var on = !!f[CX_RF[s2[1]]], m = st[j]; if (on) { totMin += m; totEur += m / 60 * cxRate(s2[0]); }
-      tb += '<tr' + (on ? '' : ' class="off"') + '><td>' + esc(S('cs_' + s2[0])) + '</td><td>' + esc(on ? notes[s2[0]] : S('n_off')) + '</td><td class="r">' + (on ? esc(mn(m)) : '–') + '</td><td class="r">' + (on ? esc(eur2(m / 60 * cxRate(s2[0]))) : '–') + '</td></tr>';
+      var on = !!f[CX_RF[s2[1]]], m = st[j]; if (on) { totMin += m; totEur += C.eur[j]; }
+      tb += '<tr' + (on ? '' : ' class="off"') + '><td>' + esc(S('cs_' + s2[0])) + '</td><td>' + esc(on ? notes[s2[0]] : S('n_off')) + '</td><td class="r">' + (on ? esc(mn(m)) : '–') + '</td><td class="r">' + (on ? esc(eur2(C.eur[j])) : '–') + '</td></tr>';
     });
     if (st[6]) tb += '<tr><td>' + esc(S('r_eng')) + '</td><td>' + esc(S('r_eng_how', { h: dec(st[6]), r: dec(P.rateEng) })) + '</td><td class="r">–</td><td class="r">' + esc(eur2(n[18])) + '</td></tr>';
     if (f[3]) tb += '<tr><td>' + esc(S('r_mat')) + '</td><td>' + esc(S('r_mat_how')) + '</td><td class="r">–</td><td class="r">' + esc(eur2(n[17])) + '</td></tr>';
     if (f[6]) tb += '<tr><td>' + esc(S('r_part')) + '</td><td>' + esc(S('r_part_how')) + '</td><td class="r">–</td><td class="r">' + esc(eur2(0)) + '</td></tr>';
-    var adj = cxAdj(n);
+    var adj = C.adj;
     if (adj) tb += '<tr><td>' + esc(S('r_adj')) + '</td><td></td><td class="r">–</td><td class="r">' + esc(eur2(adj)) + '</td></tr>';
     if (!costed(n) && totMin) tb += '<tr><td>' + esc(S('r_notaec')) + '</td><td>' + esc(S('r_notaec_how')) + '</td><td class="r">–</td><td class="r">' + esc(eur2(-totEur)) + '</td></tr>';
     tb += '<tr class="total"><td>' + esc(S('r_tot')) + '</td><td></td><td class="r">' + esc(mn(totMin)) + '</td><td class="r">' + esc(eur2(n[12])) + '</td></tr></tbody></table></div>';
@@ -2615,10 +3029,10 @@ function fto2FromTables(ncIn, defIn, ref, disIn) {
       esc(S('x1_line', { c: '\u0001', l: ruleName(n[7]) })).replace('\u0001', '<b>' + esc(eur2(n[9])) + '</b>') + '</div></div>';
     var dl = '';
     if (lines.length) {
-      var D2 = S('dlH'), sm = 0, sa = 0, seen = { n: 0 };
+      var D2 = S('dlH'), sm = 0, sa = 0;
       dl = '<details class="vdata" id="cxLines"' + (CX.lines ? ' open' : '') + '><summary>' + esc(S('d_lines', { n: num(lines.length) })) + '</summary><div class="table-wrap"><table class="cxt"><thead><tr>' +
         D2.map(function (x, j) { return '<th scope="col"' + (j >= 3 ? ' class="r"' : '') + '>' + esc(x) + '</th>'; }).join('') + '</tr></thead><tbody>' +
-        lines.map(function (ln, j) { var c = cxLine(ln, seen); sm += c.m; sa += c.a; return '<tr><td>' + (j + 1) + '</td><td class="txt">' + esc(tidy(ln[18])) + '</td><td>' + esc(c.cls) + '</td><td class="r">' + esc(mn(c.m)) + '</td><td class="r">' + esc(eur2(c.a)) + '</td></tr>'; }).join('') +
+        lines.map(function (ln, j) { var c = C.lines[j]; sm += c[1]; sa += c[2]; return '<tr><td>' + (j + 1) + '</td><td class="txt">' + esc(tidy(ln[18])) + '</td><td>' + esc(G.lang === 'en' ? c[4] : c[3]) + '</td><td class="r">' + esc(mn(c[1])) + '</td><td class="r">' + esc(eur2(c[2])) + '</td></tr>'; }).join('') +
         '<tr class="total"><td></td><td>' + esc(f[3] ? (ord ? S('dl_ord') : x2(S('dl_on'))) : S('dl_off')) + '</td><td></td><td class="r">' + esc(mn(sm)) + '</td><td class="r">' + esc(eur2(sa)) + '</td></tr></tbody></table></div></details>';
     }
     out.innerHTML = h + tb + lv + dl;
@@ -2933,58 +3347,7 @@ function fto2FromTables(ncIn, defIn, ref, disIn) {
   // aircraft filter (the other lines counted below), as of the last finished week of the period; five lines at most, the others
   // folded. A problem can be marked as seen (the page's store, collection 'alarmes'; not in Slate): it leaves the list for
   // everyone and comes back if it gets worse.
-  var AL = { db: null, uid: null, marks: {}, sigK: '', res: null, first: 0, last: -1, open: false, more: false };
-  // a sub-code that only says the defect has none yet: "T04 (non précisé)" (a new line not yet labelled by the AI pass), "Non codé".
-  // New lines all land there until they are labelled, which looks like a rise: no alarm on them (3 Nov)
-  var PLACEHOLDER = new RegExp(window.FTO2_PLACEHOLDER);   // sub-codes "not specified": no alarm on them (config/2_reglages_pages.csv)
-  function alNc(n) { return ours(n) && n[23] !== 'client' && (!GF.phase || n[24] === GF.phase) && (GF.src === 'all' || (GF.src === 'man' ? n[39] !== 'sky' : n[39] === GF.src)) && (!GF.org || (n[41] || 'normal') === GF.org) && (GF.liab === 'fso' || GF.liab.indexOf(liabCat(n)) >= 0); }
-  function alCompute(at) {   // at: a week index instead of the period's end (checks)
-    var E = D.eqmsn && D.eqmsn.wdw; if (!E) return null;
-    var last = at != null ? at : ALARM.lastDone(GF.to < D.meta.to ? GF.to : D.meta.to), k = [GF.phase, GF.src, GF.org, GF.liab, last, G.lang].join('|');
-    if (k === AL.sigK) return AL.res;
-    var items = {}, planes = {}, cnt = { rca: {}, code: {} }, z = function () { var a = []; for (var i = 0; i < 53; i++) a.push(0); return a; }, w0 = 53, PM = D.eqmsn.msn || {};
-    function it(line, lv, v, e, hist) { var key = line + '|' + lv + '|' + v; return items[key] || (items[key] = { key: key, line: line, lv: lv, v: v, w: z(), e: e, n: [], d: [], hist: !!hist }); }
-    function add(o, i, id, dk) { o.w[i]++; (o.n[i] || (o.n[i] = [])).push(id); if (dk) (o.d[i] || (o.d[i] = [])).push(dk); if (i < w0) w0 = i; }
-    function tally(m, k2, v) { var q = m[k2] || (m[k2] = {}); q[v] = (q[v] || 0) + 1; }
-    D.defects.forEach(function (r) {
-      var n = NC[r[0]]; if (!n || !alNc(n)) return;
-      var l = n[3], e = E.line[l], i = ALARM.week(n[1]), dk = r[0] + '|' + r[1]; if (!e || i < 0) return;
-      var c = dCat(r), ca = dRca(r), co = dCode(r);
-      add(it(l, 'all', '', e), i, n[0], dk);
-      if (c) add(it(l, 'cat', c, e), i, n[0], dk);
-      if (ca) { add(it(l, 'rca', ca, e), i, n[0], dk); tally(cnt.rca, l + '|' + ca, c); }
-      if (co && !PLACEHOLDER.test(co)) { add(it(l, 'code', co, e), i, n[0], dk); tally(cnt.code, l + '|' + co, ca); }   // no alarm on a placeholder sub-code (3 Nov)
-      if (n[27]) add(it(l, 'station', n[27], e, true), i, n[0], dk);
-      if (n[8]) add(it(l, 'where', n[8], e, true), i, n[0], dk);
-    });
-    D.ncs.forEach(function (n) {   // products: NCs per MSN of the product; aircraft: NCs per aircraft and product
-      if (!alNc(n) || !E.prod || !D.eqmsn.map) return;
-      var p = D.eqmsn.map[String(n[26] || '').toUpperCase()], i = ALARM.week(n[1]); if (!p || i < 0) return;
-      if (E.prod[p]) add(it(n[3], 'prod', p, E.prod[p]), i, n[0]);
-      var m = String(n[25] || ''), pm = PM[n[3] + '|' + m.replace(/^0+/, '')]; if (!m || !pm) return;
-      var pk2 = n[3] + '|' + m + '|' + p, o = planes[pk2], end = ALARM.week(pm[1]);
-      if (!o) o = planes[pk2] = { key: pk2, line: n[3], msn: m, prod: p, w: z(), n: [], end: end < 0 ? 99 : end };
-      o.w[i]++; (o.n[i] || (o.n[i] = [])).push(n[0]);
-    });
-    (D.cables || []).forEach(function (a) {   // cable requests per MSN of the line
-      var l = a[4] === 'A321' ? 'A320' : a[4], e = E.line[l], i = ALARM.week(a[2]); if (!e || i < 0) return;
-      add(it(l, 'cimp', a[7], e), i, a[3]); add(it(l, 'cmot', a[6], e), i, a[3]);
-    });
-    // the actions in progress (MFT trackers): the NCs of their problem, to say that one already covers an alarm
-    var AF = { cat: dCat, rca: dRca, sub: dSub, code: dCode }, acts = (D.actions || []).filter(function (a) { return a[6] && !/CLOS|TERMIN|ABANDON/i.test(a[7] || ''); }).map(function (a) {
-      var vals = {}, o = { line: a[0], title: a[G.lang === 'fr' ? 1 : 2], start: ALARM.week(a[6] + '-01'), defs: {} };
-      (a[4] || []).forEach(function (v) { vals[v] = 1; });
-      D.defects.forEach(function (r) { var n = NC[r[0]]; if (!n || n[3] !== a[0] || !alNc(n)) return; var v = a[3] === 'where' ? n[8] : AF[a[3]] ? AF[a[3]](r) : null; if (v != null && vals[v]) o.defs[r[0] + '|' + r[1]] = 1; });
-      return o;
-    });
-    var dom = function (m) { m = m || {}; return Object.keys(m).sort(function (a, b) { return m[b] - m[a]; })[0] || ''; };
-    var first = w0 + ALARM.P.recent + ALARM.P.base - 1;
-    AL.first = first; AL.last = last; AL.sigK = k;
-    AL.res = last < first ? [] : ALARM.run(Object.keys(items).map(function (x) { return items[x]; }), first, last, function (a) {
-      return a.lv === 'cat' ? a.line + '|all|' : a.lv === 'rca' ? a.line + '|cat|' + dom(cnt.rca[a.line + '|' + a.v]) : a.lv === 'code' ? a.line + '|rca|' + dom(cnt.code[a.line + '|' + a.v]) : ''; },
-      Object.keys(planes).map(function (x) { return planes[x]; }), acts);
-    return AL.res;
-  }
+  var AL = { db: null, uid: null, marks: {}, open: false, more: false };   // the bell's own state; the alarms themselves: ALC (model.js)
   function alName(a) {
     var v = a.v, cd = a.lv === 'code' ? codeDesc(v).split(' (')[0] : '';
     var s = a.lv === 'all' ? S('alAll') : a.lv === 'cat' || a.lv === 'rca' ? L(v) : a.lv === 'code' ? v + (cd ? ' · ' + cd : '') : a.lv === 'where' ? whereName(v) :
@@ -3000,7 +3363,7 @@ function fto2FromTables(ncIn, defIn, ref, disIn) {
   }
   function alRender() {
     var btn = document.getElementById('alBtn'), pop = document.getElementById('alPop'); if (!btn) return;
-    var res = alCompute(); btn.hidden = !res; if (!res) { pop.hidden = true; return; }
+    var A2 = alarmesNow(), res = A2 && A2.res; btn.hidden = !res; if (!res) { pop.hidden = true; return; }   // null while Slate computes them
     var onLine = function (g) { return !GF.line || g.line.split(' + ').indexOf(GF.line) >= 0; };
     var mine = res.filter(onLine), other = res.length - mine.length;
     var show = mine.filter(function (g) { return !ALARM.seen(g, AL.marks[g.key]); }), hid = mine.filter(function (g) { return ALARM.seen(g, AL.marks[g.key]); });
@@ -3019,18 +3382,18 @@ function fto2FromTables(ncIn, defIn, ref, disIn) {
       return '<div class="al-row"><button type="button" class="al-go" data-algo="' + esc(g.key) + '"><i class="al-dot ' + (g.lvl === 2 ? 'maj' : 'min') + '" title="' + esc(S(g.lvl === 2 ? 'alMaj' : 'alMin')) + '"></i>' +
         '<span class="al-what"><b>' + esc(g.line) + '</b> · ' + esc(alText(g)) + '</span>' + (sub.length ? '<span class="al-sub">' + esc(sub.join(' · ')) + '</span>' : '') +
         '<span class="al-sub">→ ' + esc(S({ pareto: 'tabPareto', where: 'tabWhere', cbl: 'tabCbl', det: 'tabDet' }[alTab(g.head.kind === 'plane' ? g.head : Object.assign({ kind: g.kind }, g.head))])) + '</span></button>' +
-        '<span class="al-ops">' + ALARM.spark(g, AL.last, g.lvl === 2 ? 'var(--up)' : 'var(--ink-2)') + (can ? '<button type="button" class="al-vu" data-al' + (isSeen ? 'un' : 'vu') + '="' + esc(g.key) + '">' + esc(S(isSeen ? 'alBack' : 'alSeen')) + '</button>' : '') + '</span></div>';
+        '<span class="al-ops">' + ALARM.spark(g, A2.last, g.lvl === 2 ? 'var(--up)' : 'var(--ink-2)') + (can ? '<button type="button" class="al-vu" data-al' + (isSeen ? 'un' : 'vu') + '="' + esc(g.key) + '">' + esc(S(isSeen ? 'alBack' : 'alSeen')) + '</button>' : '') + '</span></div>';
     };
     var top = show.slice(0, ALARM.P.show), rest = show.slice(ALARM.P.show);
-    pop.innerHTML = '<div class="al-head"><h3 id="alT">' + esc(S('alT', { w: alWk(AL.last) })) + '</h3><button type="button" class="al-x" id="alX" aria-label="' + esc(S('alClose')) + '">✕</button></div>' +
-      (AL.last < AL.first ? '<p class="mu">' + esc(S('alShort')) + '</p>' : top.length ? top.map(function (g) { return row(g, false); }).join('') : '<p class="mu">' + esc(S('alNone')) + '</p>') +
+    pop.innerHTML = '<div class="al-head"><h3 id="alT">' + esc(S('alT', { w: alWk(A2.last) })) + '</h3><button type="button" class="al-x" id="alX" aria-label="' + esc(S('alClose')) + '">✕</button></div>' +
+      (A2.last < A2.first ? '<p class="mu">' + esc(S('alShort')) + '</p>' : top.length ? top.map(function (g) { return row(g, false); }).join('') : '<p class="mu">' + esc(S('alNone')) + '</p>') +
       (rest.length ? '<details class="al-seen"' + (AL.more ? ' open' : '') + ' id="alMore"><summary>' + esc(S('alMore', { n: rest.length })) + '</summary>' + rest.map(function (g) { return row(g, false); }).join('') + '</details>' : '') +
       (other ? '<p class="mu al-other">' + esc(S('alOther', { n: other })) + '</p>' : '') +
       (hid.length ? '<details class="al-seen"><summary>' + esc(S('alSeenL', { n: hid.length })) + '</summary>' + hid.map(function (g) { return row(g, true); }).join('') + '</details>' : '');
     var mo = document.getElementById('alMore'); if (mo) mo.addEventListener('toggle', function () { AL.more = mo.open; });
   }
   function alGo(key) {
-    var g = (AL.res || []).filter(function (x) { return x.key === key; })[0]; if (!g) return;
+    var g = ((alarmesNow() || {}).res || []).filter(function (x) { return x.key === key; })[0]; if (!g) return;
     var a = g.head, tab = alTab(g.kind === 'plane' ? a : Object.assign({ kind: g.kind }, a));
     AL.open = false; GF.line = g.kind === 'cross' ? '' : g.line;
     if (tab === 'cbl') { GF.pick = null; CBF = { origine: a.lv === 'cimp' ? a.v : '', motif: a.lv === 'cmot' ? a.v : '', cause: '', cable: '' }; }
@@ -3039,7 +3402,7 @@ function fto2FromTables(ncIn, defIn, ref, disIn) {
     var p = document.getElementById('p-' + tab); if (p && p.scrollIntoView) p.scrollIntoView({ block: 'start' });
   }
   function alMark(key, on) {
-    var g = (AL.res || []).filter(function (x) { return x.key === key; })[0]; if (!AL.db || !g) return;
+    var g = ((alarmesNow() || {}).res || []).filter(function (x) { return x.key === key; })[0]; if (!AL.db || !g) return;
     var ref = AL.db.collection('alarmes').doc(ALARM.docId(key));
     (on ? ref.set({ key: key, line: g.line, since: g.since, lvl: g.lvl, ex: Math.round(g.ex * 10) / 10, at: new Date().toISOString().slice(0, 10), by: AL.uid || '' }) : ref.delete()).catch(function () {});
   }
@@ -3248,7 +3611,8 @@ function fto2FromTables(ncIn, defIn, ref, disIn) {
     if (!E || E !== D.eqmsn) { box.innerHTML = '<p class="empty">' + esc(S('ppNone')) + '</p>'; return; }
     PD = pData(); PA = pAgg(PD);
     var L25 = (D.y25 && D.y25.prod) || {}, d25 = function (p) { return L25[p] ? sumA(L25[p]) : 0; }, yr = function (p) { return sumA(PD.prod[p] || []); };
-    var T = v2Tgt(function (x) { return x.nc; }, function (o) { return o.NC; }), tl = {}; (T ? T.lines : []).forEach(function (a) { tl[a.l] = a; });
+    var O = objectif('nc'); if (!O) { box.innerHTML = '<p class="empty">' + esc(S('slWait')) + '</p>'; return; }
+    var T = O.T, tl = {}; (T ? T.lines : []).forEach(function (a) { tl[a.l] = a; });
     var by = {}; P_().forEach(function (o) { var l = o.line || '—', a = by[l] || (by[l] = { l: l, eq: 0, yr: 0, d25: 0, nc: 0 }); a.eq += o.EQ; a.yr += yr(o.p); a.d25 += d25(o.p); a.nc += o.EQ >= EQMIN ? o.NC : 0; });   // under 0.5 MSN: out of plan (v2InPlan)
     var u = v2Unplanned(); Object.keys(u.by).forEach(function (l) { var a = by[l] || (by[l] = { l: l, eq: 0, yr: 0, d25: 0, nc: 0 }); a.nc += u.by[l].n; });   // NCs with no plan product: in their line, no row of their own (30 Oct)
     var lines = lineOrder(Object.keys(by)).map(function (l) { return by[l]; }), sumK = function (k) { return sumA(lines.map(function (a) { return a[k]; })); };
@@ -3362,9 +3726,6 @@ function fto2FromTables(ncIn, defIn, ref, disIn) {
   // ---------------------------------------------------------------- 5. Insights (selection)
   // Category colours: validated categorical order (blue, aqua, yellow, magenta, green, violet); orange stays reserved for cable.
   var A = { pin: null, top0: null, lor: null, km: null, msn: null };
-  var CATC = {}; SET.categories.forEach(function (c) { if (c.couleur) CATC[c.nom] = c.couleur; });   // colour 1-9 of each category (config/2_categories.csv)
-  var MAIN_CATS = CAT_ORDER.filter(function (c) { return !ASIDE[c]; }).concat(['aside']);
-  function catKey(c) { return ASIDE[c] ? 'aside' : c; }
   function catFill(c) { return CATC[c] ? 'var(--c' + CATC[c] + ')' : 'var(--dim)'; }
   function catOn(c) { return CATC[c] ? 'var(--on' + CATC[c] + ')' : 'var(--on0)'; }
   function catLabel(c) { return c === 'aside' ? S('asideGroup') : L(c); }
@@ -3465,8 +3826,6 @@ function fto2FromTables(ncIn, defIn, ref, disIn) {
   }
 
   // 2. Flow (Sankey): where the NC was found -> defect category -> decision
-  function wGroup(w) { return w === 'Final inspection' ? 'fin' : w === 'TEST' ? 'test' : w === 'Cables' ? 'cab' : (w === 'In-process (internal)' || w === 'NC Interne') ? 'int' : 'oth'; }
-  function dGroup(r) { return r === 'Rework to drawing' ? 'rw' : (r === 'Rejection' || r === 'Scrap') ? 'rej' : r === 'Exchange' ? 'exc' : 'oth'; }
   function vFlow(rs) {
     var W0 = vWidth('flow', 640), H = 420, top = 30, pad = 12, nw = 10;
     var lm = {}, mr = {}, tl = {}, tm = {}, tr = {}, T = 0;
@@ -5235,56 +5594,11 @@ function fto2FromTables(ncIn, defIn, ref, disIn) {
     '80': { fr: ['Classement', 'Rang mensuel des produits par taux', 'Rang 1 : taux le plus élevé du mois ; produits avec au moins 0,5 MSN dans le mois.', 'production MSN · NC'], en: ['Ranking', 'Monthly rank of products by rate', 'Rank 1: highest rate of the month; products with at least 0.5 MSN that month.', 'MSN output · NCs'] }
   });
 
-  var PR = { src: D.eqmsn ? 'real' : 'dummy', ver: D.eqmsn && D.eqmsn.wd ? 'wd' : 'std' }, PD = null, PA = null, PCOL = {};
-  function pSrc() { return PR.src === 'real' && D.eqmsn ? D.eqmsn : DM && DM.eqmsn ? DM.eqmsn : null; }
-  var CABLE_RCA = { 'Câble Endommagé': 1, 'Câble ou Élément Manquant': 1 };   // fictitious data only: no cable flag there
-  function sumA(a) { return a.reduce(function (s, v) { return s + v; }, 0); }
-  // the NCs of the selection matched to a product of the output table, months of the period that are not forecast. When the NCs
-  // reach into the plan's forecast months (export of 7 Oct, NCs to mid-October), those months count as built up to the last NC
-  // day: the month of the last NC with its planned volume × the share of its days gone (P.part), the rest of it goes to the
-  // forecast. Before (20 Oct) October's NCs fell out of every per-MSN total: Localisation 930 NCs against 994 on the Overview.
-  function pData() {
-    var E = pSrc(), real = E === D.eqmsn, P = { real: real, E: E, months: E.months, fc: E.months.indexOf(E.forecastFrom), prod: E[PR.ver] || E.std, line: E.line, ncs: [], defs: [], cli: [], miss: {}, total: 0, idx: {} };
-    if (P.fc < 0) P.fc = P.months.length;
-    P.part = P.months.map(function () { return 1; });
-    var L = real ? P.months.indexOf(D.meta.to.slice(0, 7)) : -1;
-    if (L >= P.fc) { var dm = new Date(Date.UTC(+D.meta.to.slice(0, 4), +D.meta.to.slice(5, 7), 0)).getUTCDate(); P.part[L] = Math.min(1, +D.meta.to.slice(8, 10) / dm); P.fc = L + 1; P.cur = L; }
-    P.all = Object.keys(P.prod).sort(function (a, b) { return sumA(P.prod[b]) - sumA(P.prod[a]); });
-    var cnt = {}; (real ? REP.map(function (n) { return E.map[String(n[26] || '').toUpperCase()]; }) : GN.map(function (n) { return n[5]; })).forEach(function (p) { if (p) cnt[p] = (cnt[p] || 0) + 1; });
-    PCOL = {}; P.all.slice().sort(function (a, b) { return (cnt[b] || 0) - (cnt[a] || 0) || sumA(P.prod[b]) - sumA(P.prod[a]); }).forEach(function (p, i) { PCOL[p] = i < 6 ? 'var(--c' + (i + 1) + ')' : 'var(--dim)'; });
-    P.prods = P.all.filter(function (p) { return !real || !GF.line || P.line[p] === GF.line; });
-    P.mask = P.months.map(function (m, i) { return i < P.fc && (!real || (m + '-31' >= GF.from && m + '-01' <= GF.to)); });
-    function month(d) { var i = P.months.indexOf(d.slice(0, 7)); return i >= 0 && P.mask[i] ? i : -1; }
-    if (real) {
-      SEL_NC.forEach(function (n) {
-        P.total++; var p = E.map[String(n[26] || '').toUpperCase()], m = month(n[1]);
-        if (!p || P.prods.indexOf(p) < 0) { var lb = n[26] || '—'; P.miss[lb] = (P.miss[lb] || 0) + 1; return; }
-        if (m < 0) return; P.idx[n[0]] = P.ncs.length; P.ncs.push({ id: n[0], m: m, p: p, cost: n[12], days: n[29], late: n[8] === 'Final inspection' || n[8] === 'TEST' });
-      });
-      D.defects.forEach(function (r) { var i = P.idx[r[0]]; if (i != null && keepMinor(r)) P.defs.push({ n: i, cat: dCat(r), rca: dRca(r), cost: dAlloc(r), cable: !!dCable(r) }); });
-      CLI_NC.forEach(function (n) { var p = E.map[String(n[26] || '').toUpperCase()], m = month(n[1]); if (p && P.prods.indexOf(p) >= 0 && m >= 0) P.cli.push({ p: p, m: m }); });
-    } else {
-      GN.forEach(function (n, i) { P.total++; var m = month(n[1]); if (m < 0) return; P.idx[i] = P.ncs.length; P.ncs.push({ id: n[0], m: m, p: n[5], cost: gCost(n), days: n[8], late: n[9] === 'cf' || n[9] === 'test' }); if (n[9] === 'client') P.cli.push({ p: n[5], m: m }); });
-      GD.forEach(function (d, j) { var i = P.idx[d[0]]; if (i != null) P.defs.push({ n: i, cat: d[1], rca: d[2], cost: GALLOC[j], cable: !!CABLE_RCA[d[2]] }); });
-    }
-    return P;
-  }
-  function pAgg(P) {
-    var z = function () { return P.months.map(function () { return 0; }); }, a = {};
-    P.prods.forEach(function (p) { a[p] = { p: p, line: P.line[p] || '', eqm: P.prod[p].map(function (v, i) { return P.mask[i] ? v * P.part[i] : 0; }), nc: z(), def: z(), cost: z(), cab: z(), cli: z(), late: z(), connm: z(), conn: {}, cats: {}, catm: {}, rcas: {}, days: [] }; });
-    P.ncs.forEach(function (x) { var o = a[x.p]; o.nc[x.m]++; o.cost[x.m] += x.cost; if (x.late) o.late[x.m]++; if (x.days != null) o.days.push(x.days); });
-    P.defs.forEach(function (d) { var x = P.ncs[d.n], o = a[x.p]; o.def[x.m]++; if (d.cable) o.cab[x.m]++; if (d.cat === 'Erreur Branchement') { o.conn[d.rca] = (o.conn[d.rca] || 0) + 1; o.connm[x.m]++; } var c = catKey(d.cat); o.cats[c] = (o.cats[c] || 0) + 1; (o.catm[c] || (o.catm[c] = z()))[x.m]++; o.rcas[d.rca] = (o.rcas[d.rca] || 0) + 1; });
-    P.cli.forEach(function (x) { a[x.p].cli[x.m]++; });
-    P.prods.forEach(function (p) { var o = a[p]; o.EQ = sumA(o.eqm); o.NC = sumA(o.nc); o.DEF = sumA(o.def); o.COST = sumA(o.cost); o.CAB = sumA(o.cab); o.CLI = sumA(o.cli); o.LATE = sumA(o.late); o.r = o.EQ ? o.NC / o.EQ : null;
-      o.FC = sumA(P.prod[p].slice(P.fc)) + (P.cur != null ? P.prod[p][P.cur] * (1 - P.part[P.cur]) : 0); });   // to come: the rest of the running month, then the months after
-    return a;
-  }
-  function pOk() { return P_().filter(function (o) { return o.EQ >= EQMIN; }); }
-  function P_() { return PD.prods.map(function (p) { return PA[p]; }); }
   function pTot(f) { return sumA(P_().filter(function (o) { return o.EQ > 0; }).map(f)); }
   function pNice(mx, n) { var raw = Math.max(mx, 1e-9) / (n || 4), p = Math.pow(10, Math.floor(Math.log10(raw))), f = raw / p, st = (f <= 1 ? 1 : f <= 2 ? 2 : f <= 2.5 ? 2.5 : f <= 5 ? 5 : 10) * p; return { step: st, top: Math.ceil(mx / st) * st || st }; }
   function pGridY(ml, pw, Y, nt, fmt) { var g = ''; for (var t = 0; t <= nt.top + 1e-9; t += nt.step) g += '<line x1="' + ml + '" x2="' + (ml + pw) + '" y1="' + r1(Y(t)) + '" y2="' + r1(Y(t)) + '" stroke="var(--grid)"/>' + tx(ml - 6, Y(t) + 4, (fmt || num)(Math.round(t * 100) / 100), 'mu', 'end'); return g; }
   function pEmpty(k) { gSet(k, '<p class="empty">' + esc(gx('noData')) + '</p>'); }
+  function pWait(k) { gSet(k, '<p class="empty">' + esc(S('slWait')) + '</p>'); }   // a chart whose numbers Slate is computing
   function pAct() { return PD.months.map(function (m, i) { return i; }).filter(function (i) { return PD.mask[i]; }); }
   function pSub(o) { return gx('ncEq', { n: num(o.NC), e: f1(o.EQ) }); }
   function pProdLeg(ps) { var dim = ps.filter(function (p) { return PCOL[p] === 'var(--dim)'; }); return ps.filter(function (p) { return PCOL[p] !== 'var(--dim)'; }).map(function (p) { return sw(PCOL[p], p); }).join('') + (dim.length ? sw('var(--dim)', dim.join(', ')) : ''); }
@@ -6443,7 +6757,7 @@ function fto2FromTables(ncIn, defIn, ref, disIn) {
   // rebuilt on the real NCs (keys V*). 2025 (D.y25): the 2025 extract through the pipeline's rules, the parser and the CNQ model, summed
   // per month, scope, phase, line and product, and the 2025 deliveries per product. Target = 2025 - 25 %, budget = 2025 cost - 25 %.
   // Without 2025 for the filter (data-source filter, no 2025 NC), the old placeholders come back, marked on the page.
-  var V2 = DUAL, V2B = false, V2CUT = SET.objectif_coef, V2BAND = {};   // target = 2025 rate x V2CUT (config/2_reglages_pages.csv)
+  var V2 = DUAL, V2B = false, V2BAND = {};
   var V2L = {
     ov: { top: ['VT', 'VN', 'VB', 'a:lead', 'VX'], fold: ['a:cal'] },
     pareto: { top: ['a:bub', 'a:bump', 'a:flow', '78', '76', 'VM', 'VQ', '53'],   // 30 Oct: connection errors by month alone on a row; per million operations beside by product
@@ -6573,86 +6887,6 @@ function fto2FromTables(ncIn, defIn, ref, disIn) {
     if (end.slice(0, 7) !== m) return { p: 1, d: n, n: n };
     var d = +end.slice(8, 10); return { p: d >= n ? 1 : d / n, d: d, n: n };
   }
-  function v2Months() {
-    var a = [], d = new Date(GF.from.slice(0, 7) + '-01T00:00:00Z'), end = (GF.to < D.meta.to ? GF.to : D.meta.to).slice(0, 7), fc = [];
-    while (d.toISOString().slice(0, 7) <= end) { a.push(d.toISOString().slice(0, 7)); d.setUTCMonth(d.getUTCMonth() + 1); }
-    if (GF.to >= D.meta.to) { var y = end.slice(0, 4); d = new Date(end + '-01T00:00:00Z'); d.setUTCMonth(d.getUTCMonth() + 1); while (d.toISOString().slice(0, 4) === y) { fc.push(d.toISOString().slice(0, 7)); d.setUTCMonth(d.getUTCMonth() + 1); } }
-    return { act: a, fc: fc };
-  }
-  function v2Plan(m) { if (!PD) return null; var i = PD.months.indexOf(m); return i < 0 ? null : sumA(PD.prods.map(function (p) { return PD.prod[p][i] || 0; })); }
-  // the forecast, the same on every chart (20 Oct): product by product, the product's value per MSN built in the period × its MSN planned
-  // that month, plus the NCs out of the production plan at their own monthly pace (July and August as V2W). A single overall pace over-
-  // forecasts: A320's planned volume grows at the end of the year while A320 has few NCs per unit. null without the real production plan.
-  function v2Fc(f, M) {
-    var E = pSrc(); if (!PD || !PA || !E || E !== D.eqmsn) return null;
-    var byP = {}, out = 0, w = function (m) { return V2W[+m.slice(5, 7)] || 1; }, K = v2OutK(M), C = K.cur;
-    SEL_NC.forEach(function (n) { var v = f(n), p = v2InPlan(n); if (p) byP[p] = (byP[p] || 0) + v; else out += v; });
-    var pace = K.a ? out / K.a : 0, res = {}, per = function (i, sh) { return sumA(Object.keys(byP).map(function (p) { return i < 0 ? 0 : byP[p] / PA[p].EQ * (PD.prod[p][i] || 0) * sh; })); };
-    M.fc.forEach(function (m) { res[m] = per(PD.months.indexOf(m), 1) + pace * w(m); });
-    if (C) res[M.fc[0]] += per(C.i, 1 - C.part) + pace * w(C.m) * (1 - C.part);   // the rest of the running month, with the first month to come
-    return { m: res, out: out, outFc: pace * K.f };
-  }
-  // the product of the plan an NC is counted under (its product has ≥ 0.5 MSN built in the period and the NC is in the per-MSN
-  // data), else null: the NC is out of the plan. One test for every total, so the rows always add up to the Overview.
-  function v2InPlan(n) { var E = pSrc(), p = E && E.map && E.map[String(n[26] || '').toUpperCase()]; return p && PA && PA[p] && PA[p].EQ >= EQMIN && PD.idx[n[0]] != null ? p : null; }
-  // weights of the months done (a) and to come (f) for the out-of-plan NCs, July and August lighter (V2W); the running month
-  // (pData) counts in both, by the share of its days gone and left
-  function v2OutK(M) {
-    var w = function (m) { return V2W[+m.slice(5, 7)] || 1; }, C = PD && PD.cur != null && M.fc.length && M.act[M.act.length - 1] === PD.months[PD.cur] ? { m: PD.months[PD.cur], i: PD.cur, part: PD.part[PD.cur] } : null;
-    var a = sumA(M.act.map(w)) - (C ? w(C.m) * (1 - C.part) : 0), f = sumA(M.fc.map(w)) + (C ? w(C.m) * (1 - C.part) : 0);
-    return { a: a, f: f, k: a ? f / a : 0, cur: C };
-  }
-  // monthly sums of f over the selection; forecast months: v2Fc (else the period's value per planned MSN × the MSN planned that month, else the last 3 months' mean)
-  function v2Series(f) {
-    var M = v2Months(), by = {}; SEL_NC.forEach(function (n) { var m = n[1].slice(0, 7); by[m] = (by[m] || 0) + f(n); });
-    var act = M.act.map(function (m) { return { m: m, v: by[m] || 0 }; }), pa = 0, va = 0;
-    act.forEach(function (x) { var p = v2Plan(x.m); if (p) { pa += p; va += x.v; } });
-    var l3 = act.slice(-3), m3 = l3.length ? sumA(l3.map(function (x) { return x.v; })) / l3.length : 0;
-    var F = v2Fc(f, M), fc = M.fc.map(function (m) { var p = v2Plan(m); return { m: m, v: F ? F.m[m] : pa && p != null ? va / pa * p : m3, f: true }; });
-    return { act: act, fc: fc, tot: sumA(act.map(function (x) { return x.v; })), ftot: sumA(fc.map(function (x) { return x.v; })) };
-  }
-  // 2025 under the same filters (plant switch, phase, line); null when there is no 2025 block, the data-source filter is on (the
-  // 2025 extract is not split by manual list) or only the missing-ID NCs are shown. The 2025 extract holds no customer return.
-  function y25Sel() {
-    var Y = D.y25; if (!Y || !Y.rows || GF.src !== 'all' || GF.org === 'missing_ids') return null;
-    var c = {}, P = GF.pick; Y.cols.forEach(function (k, i) { c[k] = i; });
-    if (GF.liab !== 'fso' && c.liab == null) return null;   // the "Responsabilité" ticks: 2025 needs its liability column
-    if (P && ['month', 'prod', 'pprod'].indexOf(P.k) < 0) return null;   // a pick the 2025 extract cannot follow: no 2025 comparison
-    var pOk = !P ? null : P.k === 'month' ? function (r) { return String(r[c.month]).slice(5, 7) === P.v.slice(5, 7); } : P.k === 'prod' ? function (r) { return (r[c.product] || 'Other') === P.v; } :
-      function (r) { return !!(D.eqmsn && D.eqmsn.map && D.eqmsn.map[String(r[c.product] || '').toUpperCase()] === P.v); };
-    return Y.rows.filter(function (r) { return (r[c.scope] === 'serie' || !GF.fto2) && (GF.liab === 'fso' || GF.liab.indexOf(r[c.liab]) >= 0) && (!GF.phase || r[c.phase] === GF.phase) && (!GF.line || r[c.line] === GF.line) && (!pOk || pOk(r)); })
-      .map(function (r) { return { m: r[c.month], line: r[c.line], p: r[c.product], nc: r[c.nc], def: G.minor ? r[c.def] : r[c.defMajor], cost: COSTALL && c.costAll != null ? r[c.costAll] : r[c.cost] }; });
-  }
-  // 2025 defects by cause (parser labels) under the same filters as y25Sel; picks on a category or a cause apply too
-  function y25Rca() {
-    var Y = D.y25; if (!Y || !Y.rca || GF.src !== 'all' || GF.org === 'missing_ids') return null;
-    var c = {}, P = GF.pick; Y.rcaCols.forEach(function (k, i) { c[k] = i; });
-    if (GF.liab !== 'fso' && c.liab == null) return null;
-    if (P && ['month', 'prod', 'pprod', 'cat', 'rca'].indexOf(P.k) < 0) return null;
-    var ok = !P ? null : P.k === 'month' ? function (r) { return String(r[c.month]).slice(5, 7) === P.v.slice(5, 7); } : P.k === 'prod' ? function (r) { return (r[c.product] || 'Other') === P.v; } :
-      P.k === 'cat' ? function (r) { return r[c.cat] === P.v; } : P.k === 'rca' ? function (r) { return r[c.rca] === P.v; } :
-      function (r) { return !!(D.eqmsn && D.eqmsn.map && D.eqmsn.map[String(r[c.product] || '').toUpperCase()] === P.v); };
-    return Y.rca.filter(function (r) { return (r[c.scope] === 'serie' || !GF.fto2) && (GF.liab === 'fso' || GF.liab.indexOf(r[c.liab]) >= 0) && (!GF.phase || r[c.phase] === GF.phase) && (!GF.line || r[c.line] === GF.line) && (!ok || ok(r)); })
-      .map(function (r) { return { m: r[c.month], p: r[c.product], cat: r[c.cat], rca: r[c.rca], d: G.minor ? r[c.def] : r[c.defMajor] }; });
-  }
-  // a 2025 rate per product delivered, on the production plan's products that had 2025 deliveries (as the line targets): f summed ÷ deliveries
-  function y25Rate(rows, f, keep) {   // keep(p): only these products of the plan (connection errors: A330 and A350)
-    var L = D.y25 && D.y25.prod, E = pSrc(); if (!rows || !L || !PD || E !== D.eqmsn) return null;
-    var has = function (p) { return L[p] && sumA(L[p]) > 0 && PD.prods.indexOf(p) >= 0 && (!keep || keep(p)); }, del = 0, v = 0;
-    PD.prods.forEach(function (p) { if (has(p)) del += sumA(L[p]); });
-    rows.forEach(function (x) { var p = E.map[String(x.p || '').toUpperCase()]; if (p && has(p)) v += f(x); });
-    return del > 0 ? { v: v, del: del, r: v / del } : null;
-  }
-  // a 2025 sum by month of the year ('01'..'12'), and its running total over the months shown (actual + forecast, 'YYYY-MM')
-  function y25Cum(Y, f, months) { var by = {}, c = 0; Y.forEach(function (x) { var k = x.m.slice(5, 7); by[k] = (by[k] || 0) + f(x); }); return [0].concat(months.map(function (m) { c += by[m.slice(5, 7)] || 0; return c; })); }
-  // 2025 NCs per product delivered, per line, on the products of the 2025 deliveries (Livraisons 2025) mapped as the 2026 production plan
-  function y25Lines() {
-    var Y = y25Sel(), L = D.y25 && D.y25.prod, E = pSrc(); if (!Y || !L || !PD || E !== D.eqmsn) return null;
-    var out = {}, has = function (p) { return L[p] && sumA(L[p]) > 0 && PD.prods.indexOf(p) >= 0; };
-    PD.prods.forEach(function (p) { if (!has(p)) return; var l = PD.line[p] || '—', a = out[l] || (out[l] = { nc: 0, eq: 0 }); a.eq += sumA(L[p]); });
-    Y.forEach(function (x) { var p = E.map[String(x.p || '').toUpperCase()]; if (p && has(p) && out[PD.line[p] || '—']) out[PD.line[p] || '—'].nc += x.nc; });
-    return out;
-  }
   // month label that fits a slot of w px: 'janv', then 'J', then every other month
   function v2Mo(m, w, i) { var t = monthName(m); return w >= 30 ? t.slice(0, 4) : w >= 12 ? t.charAt(0).toUpperCase() : i % 2 ? '' : t.charAt(0).toUpperCase(); }
   function v2Up(s2) { return ' style="fill:var(--up)"' + (s2 || ''); }
@@ -6696,15 +6930,10 @@ function fto2FromTables(ncIn, defIn, ref, disIn) {
     put('nfR', spark(rN.map(function (x) { return x.e ? x.v / x.e : 0; }), true), null);
   }
   function v2Target(k) {
-    var by = {}; P_().forEach(function (o) { var l = o.line || '—', a = by[l] || (by[l] = { l: l, nc: 0, eq: 0 }); a.nc += o.NC; a.eq += o.EQ; });
-    var rows = lineOrder(Object.keys(by)).map(function (l) { return by[l]; }).filter(function (a) { return a.eq >= EQMIN; });
+    var L2 = lignes(); if (!L2) { pWait(k); return; }   // each line: 2026 rate v, 2025 rate b, target t (no 2025 for that line: placeholder ph, 2026 - 25 %)
+    var rows = L2.map(function (r) { return Object.assign({}, r); }), anyPh = rows.some(function (r) { return r.ph; });
     if (!rows.length) { pEmpty(k); return; }
     if (rows.length > 1) rows.unshift({ l: S('allLines'), nc: sumA(rows.map(function (r) { return r.nc; })), eq: sumA(rows.map(function (r) { return r.eq; })), all: true });
-    var B = y25Lines(), anyPh = false;
-    rows.forEach(function (r) {
-      if (r.all) return; var b = B && B[r.l]; r.v = r.nc / r.eq;
-      if (b && b.eq >= EQMIN && b.nc > 0) { r.b = b.nc / b.eq; r.t = r.b * V2CUT; } else { r.t = r.v * V2CUT; r.ph = true; anyPh = true; }   // no 2025 for that line: placeholder, 2026 - 25 %
-    });
     var A0 = rows[0] && rows[0].all ? rows[0] : null;
     if (A0) {   // all lines: the sum of the lines' targets (in NCs), never a pooled rate that A320's many small parts would loosen (20 Oct)
       var ln = rows.slice(1), bn = ln.filter(function (r) { return r.b != null; }); A0.stack = ln; A0.v = A0.nc / A0.eq;
@@ -6740,31 +6969,6 @@ function fto2FromTables(ncIn, defIn, ref, disIn) {
       (rows.some(function (r) { return r.b != null; }) ? '<span><i class="sw" style="border-radius:50%;background:var(--surface);border:1.6px solid var(--muted)"></i>' + esc(S('v2Rate25s')) + '</span>' : '') + v2UnplannedNote());
   }
 
-  var V2W = SET.poids_mois;   // weight of a month in the monthly target (config/2_reglages_pages.csv): July and August lighter
-  // the year's target line by line (Mohammad, 20 Oct): each line's 2025 rate per product delivered - 25 %, times the line's 2026
-  // volume month by month, summed over the lines; the NCs whose product is not in the production plan (no volume) keep their 2025
-  // value - 25 %, spread over the months like a normal year. f25 / f26: the measure of a 2025 row / of a 2026 product (NCs or cost).
-  // null without 2025 under the filters or without the real production plan (the charts then keep their former target).
-  function v2Tgt(f25, f26) {
-    var Y = y25Sel(), L = D.y25 && D.y25.prod, E = pSrc(); if (!Y || !L || !PD || !PA || E !== D.eqmsn) return null;
-    var has = function (p) { return L[p] && sumA(L[p]) > 0; }, by = {}, out = 0, z = function () { return PD.months.map(function () { return 0; }); };
-    // a product with no 2025 delivery (MDCD) does not take its line's 2025 rate: its target is its own 2026 pace × its planned
-    // volume, with no cut (Mohammad, 29 Oct); its 2025 NCs show in the 2025 bar only
-    PD.prods.forEach(function (p) { var l = PD.line[p] || '—', a = by[l] || (by[l] = { l: l, v25: 0, n25o: 0, del: 0, vol: z(), own: z(), v26: 0, eq26: 0 });
-      if (has(p)) { a.del += sumA(L[p]); PD.prod[p].forEach(function (v, i) { a.vol[i] += v || 0; }); a.v26 += f26(PA[p]); a.eq26 += PA[p].EQ; }
-      else { var r = PA[p] && PA[p].EQ > 0 ? f26(PA[p]) / PA[p].EQ : 0; PD.prod[p].forEach(function (v, i) { a.own[i] += r * (v || 0); }); } });
-    Y.forEach(function (x) { var p = E.map[String(x.p || '').toUpperCase()], a = p && has(p) && by[PD.line[p] || '—'];
-      if (a) { a.v25 += f25(x); return; }
-      if (p && by[PD.line[p] || '—']) { by[PD.line[p] || '—'].n25o += f25(x); return; }   // in the plan, not delivered in 2025
-      out += f25(x);   // out of the plan: kept with its plane type (x25), for the bars by plane type
-      var l = x.line || '—', b = by[l] || (by[l] = { l: l, v25: 0, del: 0, vol: z(), v26: 0, eq26: 0, noPlan: true }); b.x25 = (b.x25 || 0) + f25(x); });
-    var lines = lineOrder(Object.keys(by)).map(function (l) { var a = by[l]; a.r25 = a.del > 0 && a.v25 > 0 ? a.v25 / a.del : null; a.x25 = a.x25 || 0; a.xT = a.x25 * V2CUT;
-      a.rt = (a.r25 != null ? a.r25 : a.eq26 ? a.v26 / a.eq26 : 0) * V2CUT; a.ph = a.r25 == null && !a.noPlan && sumA(a.vol) > 0; a.own = a.own || z(); a.n25o = a.n25o || 0; a.year = a.rt * sumA(a.vol) + sumA(a.own); return a; });   // no 2025 for a line: its 2026 rate - 25 %
-    var wsum = 0; for (var mm = 1; mm <= 12; mm++) wsum += V2W[mm] || 1;
-    return { lines: lines, out25: out, outT: out * V2CUT,
-      tm: function (m) { var i = PD.months.indexOf(m); return sumA(lines.map(function (a) { return i < 0 ? 0 : a.rt * a.vol[i] + a.own[i]; })) + out * V2CUT * (V2W[+m.slice(5, 7)] || 1) / wsum; },
-      year: sumA(lines.map(function (a) { return a.year; })) + out * V2CUT };
-  }
   // left of a cumulative chart: 2025 and the year's target as two stacked bars, one colour per line, the part out of the plan grey
   function v2TgtBars(T, Y, x0, bw, fmt, H, key) {
     var g = '', bars = [['2025', T.lines.map(function (a) { return [a.l, a.v25 + a.n25o + a.x25, a.x25]; })], [S(key), T.lines.map(function (a) { return [a.l, a.year + a.xT, a.xT]; })]];   // by plane type, its NCs out of the plan included (21 Oct)
@@ -6777,9 +6981,10 @@ function fto2FromTables(ncIn, defIn, ref, disIn) {
   }
   function v2LineKeys(T) { return T.lines.map(function (a) { return sw(lineCol(a.l), a.l + (a.ph ? ' (' + S('v2Ph') + ')' : '')); }).join(''); }
   function v2Trend(k) {
-    var S2 = v2Series(function () { return 1; }), all = S2.act.concat(S2.fc); if (!S2.act.length) { pEmpty(k); return; }
+    var O = objectif('nc'); if (!O) { pWait(k); return; }
+    var S2 = O.S2, all = S2.act.concat(S2.fc); if (!S2.act.length) { pEmpty(k); return; }
     var R5 = y25Sel(), n25 = R5 ? sumA(R5.map(function (x) { return x.nc; })) : 0, real = n25 > 0;   // without 2025 for the filter: placeholder 2025 = this year
-    var T = real ? v2Tgt(function (x) { return x.nc; }, function (o) { return o.NC; }) : null;   // the target line by line (needs the production plan)
+    var T = real ? O.T : null;   // the target line by line (needs the production plan)
     var year = S2.tot + S2.ftot, y25 = real ? n25 : year, tgt = T ? T.year : y25 * V2CUT, c25 = real ? y25Cum(R5, function (x) { return x.nc; }, all.map(function (x) { return x.m; })) : null;
     var wsum = 0; for (var mm = 1; mm <= 12; mm++) wsum += V2W[mm] || 1;
     var mTgt = T ? T.tm : function (m) { return tgt * (V2W[+m.slice(5, 7)] || 1) / wsum; };
@@ -6824,9 +7029,10 @@ function fto2FromTables(ncIn, defIn, ref, disIn) {
   }
 
   function v2Budget(k) {
-    var S2 = v2Series(function (n) { return n[12]; }); if (!S2.act.length) { pEmpty(k); return; }
+    var O = objectif('cost'); if (!O) { pWait(k); return; }
+    var S2 = O.S2; if (!S2.act.length) { pEmpty(k); return; }
     var R5 = y25Sel(), b25 = R5 ? sumA(R5.map(function (x) { return x.cost; })) : 0, real = b25 > 0;   // without 2025 for the filter: placeholder budget = forecast - 25 %
-    var T = real ? v2Tgt(function (x) { return x.cost; }, function (o) { return o.COST; }) : null;   // the budget line by line (needs the production plan)
+    var T = real ? O.T : null;   // the budget line by line (needs the production plan)
     var all = S2.act.concat(S2.fc), year = S2.tot + S2.ftot, bud = T ? T.year : (real ? b25 : year) * V2CUT, cum = [0], c = 0;
     var c25 = real ? y25Cum(R5, function (x) { return x.cost; }, all.map(function (x) { return x.m; })) : null;
     all.forEach(function (x) { c += x.v; cum.push(c); });
@@ -7054,7 +7260,8 @@ function fto2FromTables(ncIn, defIn, ref, disIn) {
     });
     os.forEach(function (r, i) { g += tx(lab - 10, top + i * rh + 16, r.o.p, 'ink', 'end'); });
     // two more rows so the columns add up to the selection: the NCs out of the production plan (done only), then the total
-    var u = v2Unplanned(), uv = [u.n, u.d, u.c], kf = v2OutK(v2Months()).k, uf = uv.map(function (v) { return v * kf; });   // out of plan: its own monthly pace (v2Fc)
+    var kf = horsPlanK(); if (kf == null) { pWait(k); return; }
+    var u = v2Unplanned(), uv = [u.n, u.d, u.c], uf = uv.map(function (v) { return v * kf; });   // out of plan: its own monthly pace (v2Fc)
     var ul = lineOrder(Object.keys(u.by)), yU = top + os.length * rh, yT = yU + ul.length * rh + 6;   // one row per plane type (21 Oct)
     yT = yU + 6;   // no row of their own: they are in the total and listed under the chart
     g += '<line x1="0" x2="' + W0 + '" y1="' + (yT - 2) + '" y2="' + (yT - 2) + '" stroke="var(--grid)"/>' + tx(lab - 10, yT + 16, S('total'), 'ink b', 'end');
@@ -7333,11 +7540,10 @@ function fto2FromTables(ncIn, defIn, ref, disIn) {
     // numbers: the plant's trend and cost as their charts compute them; NC per MSN and its target as the target chart
     function rateOf(l) {
       if (!PD || !PA) return null;
-      var by = {}; P_().forEach(function (o) { var k = o.line || '—', a = by[k] || (by[k] = { nc: 0, eq: 0 }); a.nc += o.NC; a.eq += o.EQ; });
-      var B = y25Lines(), ls = lineOrder(Object.keys(by)).filter(function (k) { return by[k].eq >= EQMIN && (!l || k === l); });
+      var L2 = lignes(), ls = (L2 || []).filter(function (a) { return !l || a.l === l; });   // null while Slate computes the targets
       if (!ls.length) return null;
       var nc = 0, eq = 0, tn = 0;
-      ls.forEach(function (k) { var a = by[k], b = B && B[k], t = b && b.eq >= EQMIN && b.nc > 0 ? b.nc / b.eq * V2CUT : a.nc / a.eq * V2CUT; nc += a.nc; eq += a.eq; tn += t * a.eq; });
+      ls.forEach(function (a) { nc += a.nc; eq += a.eq; tn += a.t * a.eq; });
       return { v: nc / eq, t: tn / eq };
     }
     function stats(k) { var b = V2BAND[k]; return b ? [].map.call(b.querySelectorAll('.v2stats > div > b'), function (x) { return x.textContent; }) : []; }
@@ -7417,7 +7623,7 @@ function fto2FromTables(ncIn, defIn, ref, disIn) {
     alTab = function (a) { return MODE === 'simple' ? 'det' : alTab0(a); };
     alGo = function (key) {
       if (MODE !== 'simple') { alGo0(key); return; }
-      var g = (AL.res || []).filter(function (x) { return x.key === key; })[0]; if (!g) return;
+      var g = ((alarmesNow() || {}).res || []).filter(function (x) { return x.key === key; })[0]; if (!g) return;
       var a = g.head, f = {}, r = null; AL.open = false;
       if (a.lv === 'cat') f.cat = a.v;
       else if (a.lv === 'rca' || a.lv === 'code') {
@@ -7480,10 +7686,35 @@ function fto2FromTables(ncIn, defIn, ref, disIn) {
     document.addEventListener('pointerdown', function (e) { if (e.pointerType !== 'touch') return; var t = Date.now(); if (RUN.length && t - lastTap < 320) skip(); lastTap = t; });
     document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && OPEN) { skip(); vuClose(); } });
   })();
-  renderAll();
+  renderAll(); CALC.live = true;
 })();
   }
-  var got = {}, started = false, ready = false, disTimer = null;
+  var got = {}, started = false, ready = false, disTimer = null, cxTimer = null;
+  // The calculations Slate runs as functions (03_reports/skywise/level3_datasets/fonctions/): the state key "fonctions" lists them
+  // ("objectifs alarmes cout", or "objectifs alarmes" with the cost explanation from the notebook's table, state key "cout_table").
+  // The page asks through the state key "filtres" and the sandbox event fto2Filtres (which sets the variable v_fto2_filtres); each
+  // answer arrives in the state key of its name. No double brace in this file: Slate would read it as a binding.
+  var SLF = { use: {}, latest: {}, take: null }, sent = null, fired = true, fnMsg = false;
+  function fonctions(v) { String(v || '').split(/[\s,;]+/).forEach(function (n) { if (n === 'objectifs' || n === 'alarmes' || n === 'cout') SLF.use[n] = true; }); }
+  function writeState(key, v) {   // setState: an object merged into the state, or (key, value); both forms are accepted
+    if (api.setState.length >= 2) { api.setState(key, v); return; }
+    var st = {}; try { st = (api.getState && api.getState()) || {}; } catch (e) {}
+    var nx = {}; Object.keys(st).forEach(function (k) { nx[k] = st[k]; }); nx[key] = v;
+    api.setState(nx);
+  }
+  function fire() { if (fired) return; fired = true; api.triggerEvent('fto2Filtres'); }
+  SLF.ask = function (requests) {
+    if (!api.setState || !api.triggerEvent) throw new Error('SlateFunctions.setState / triggerEvent missing');
+    var v = { demandes: requests }; sent = JSON.stringify(v); fired = false;
+    writeState('filtres', v);
+    setTimeout(fire, 400);   // the event reads the state: fired once the state shows the new filters (watch below), at the latest after 0.4 s
+  };
+  SLF.show = function (waiting, failed) {   // only a failure is shown; the charts themselves say "Calcul dans Slate…"
+    var f = Object.keys(failed || {});
+    if (f.length) { fnMsg = true; status(f.map(function (n) { var e = failed[n], w = e === 'late' ? MSG.fnLate : MSG.fnErr.map(function (x) { return x.replace('{m}', e); });
+      return MSG.fnDown.replace(/\{f\}/g, 'f_fto2_' + n).replace('{fr}', w[0]).replace('{en}', w[1]); }).join(' '), true); }
+    else if (fnMsg) { fnMsg = false; status(''); }
+  };
   function parse(v) {   // a query result arrives as an object of columns; accept JSON text too
     if (typeof v !== 'string') return v;
     var s = v.trim(); if (!s) return null;
@@ -7510,9 +7741,18 @@ function fto2FromTables(ncIn, defIn, ref, disIn) {
     if (!n1 || !loaded(def) || !R) { status(MSG.wait); return; }   // the queries can arrive one after the other
     if (!loaded(dis) && !disTimer) { disTimer = setTimeout(function () { disTimer = 'over'; tryStart(); }, 4000); return; }   // the block's query: optional
     if (!loaded(dis) && disTimer !== 'over') return;
+    var st0 = {}; try { st0 = (api.getState && api.getState()) || {}; } catch (e) {}
+    if ('cout_table' in st0 && !loaded(parse(got.cout_table)) && cxTimer !== 'over') {   // the notebook's cost explanation, when the state reads it
+      if (!cxTimer) cxTimer = setTimeout(function () { cxTimer = 'over'; tryStart(); }, 8000);
+      return;
+    }
     started = true;
     try {
-      window.DASH = fto2FromTables(nc, def, R.dashboard, loaded(dis) ? dis : null);
+      try { fonctions((api.getState && api.getState() || {}).fonctions); } catch (e) {}
+      fonctions(got.fonctions);
+      if (Object.keys(SLF.use).length) window.FTO2_SLATE = SLF;
+      var cx = parse(got.cout_table);
+      window.DASH = fto2FromTables(nc, def, R.dashboard, loaded(dis) ? dis : null, !SLF.use.cout && loaded(cx) ? cx : null);
       if (!window.DASH.ncs.length) {   // rows arrived but none could be read: say what came, to fix the query or the state
         var c = Array.isArray(nc) ? Object.keys(nc[0] || {}) : Object.keys(nc);
         showError('aucune NC lisible dans q_fto2_nc (colonnes reçues : ' + c.join(', ') + ') / no readable NC in q_fto2_nc (columns received: ' + c.join(', ') + ')');
@@ -7528,7 +7768,11 @@ function fto2FromTables(ncIn, defIn, ref, disIn) {
     } catch (err) { showError((err && err.message) || String(err)); }
   }
   var api = window.SlateFunctions;
-  if (api && typeof api.watch === 'function') ['nc', 'def', 'dis', 'tables', 'ref'].forEach(function (k) { api.watch(k, function (v) { got[k] = v; tryStart(); }); });
+  if (api && typeof api.watch === 'function') {
+    ['nc', 'def', 'dis', 'tables', 'ref', 'fonctions', 'cout_table'].forEach(function (k) { api.watch(k, function (v) { got[k] = v; tryStart(); }); });
+    ['objectifs', 'alarmes', 'cout'].forEach(function (k) { api.watch(k, function (v) { var x = parse(v); if (!x) return; SLF.latest[k] = x; if (SLF.take) SLF.take(k, x); }); });
+    api.watch('filtres', function (v) { if (sent && (typeof v === 'string' ? v : JSON.stringify(v)) === sent) setTimeout(fire, 0); });
+  }
   function boot() {
     ready = true;
     if (!document.getElementById('tabs')) { showError('HTML part missing: paste the HTML part into the HTML box.'); return; }
