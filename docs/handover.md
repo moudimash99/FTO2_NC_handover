@@ -42,8 +42,8 @@ notebook). One table per subject, and each one opens in Excel. The number at the
 **1** anyone, **2** someone careful, **3** someone technical. `config/lisez_moi.csv` lists them all and says what each one
 changes.
 
-Examples: what counts as REC, an hourly rate, the target, a new product, the production plan, an MFT action. The how-to with
-examples is `docs/comment_faire.md` (in French).
+Examples: what counts as REC, an hourly rate, the target, a new product, the production plan, an MFT action. **`config/README.md`**
+explains every table and how to fill it in; the same tasks in French are in `docs/comment_faire.md`.
 
 After a change, run the notebook. If a table is badly filled, the run stops and says which file, which line and what to fix.
 

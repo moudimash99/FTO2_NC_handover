@@ -19,7 +19,8 @@ Skywise data (NCs, work orders, aléas)          config/  (the settings, one tab
 
 - **`config/`**: everything someone may want to change. One `;` table per subject, opens in Excel. The first character of
   the name is the level: `1_` everyday (anyone), `2_` rules (someone careful), `3_` expert (technical).
-  `config/lisez_moi.csv` lists every table, what it changes and who should edit it.
+  `config/lisez_moi.csv` lists every table, what it changes and who should edit it. **`config/README.md`** is the full guide:
+  how the tables are built and how to fill each one.
 - **`scripts/`**: turn a raw file into its everyday table (Avances / Retards, EqMSN, cable tracker, MFT trackers).
   A row corrected by hand (source = manuel) is kept when the script runs again.
 - **`fto2/`**: the backend. One file per subject; the same code runs on the laptop and in the Skywise notebook.
