@@ -1,5 +1,7 @@
 # FTO2 NC dashboard in Skywise
 
+**Everything to download is in one file: `FTO2_Skywise_installation.zip`** (in this folder, kept up to date by the build).
+
 What you end up with: one notebook that writes four tables, and one Slate app with the dashboard (Essentiel and Deep dive in
 one page) and the MFT page. The Tableau Elizabeth is optional. Every file named below is in this folder.
 

@@ -83,3 +83,5 @@ def build(say=print):
 
 if __name__ == "__main__":
     build()
+    import install_zip   # the Skywise set-up's zip, with this page's new files
+    install_zip.write()

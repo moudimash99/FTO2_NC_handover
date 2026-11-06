@@ -159,6 +159,9 @@ def main():
     sys.path.insert(0, HERE)
     import build_mft_slate   # the same page for a Slate code sandbox, fed by the level-3 queries: 03_reports/skywise/mft/
     build_mft_slate.build()
+    sys.path.insert(0, os.path.join(ROOT, "build"))
+    import install_zip   # the Skywise set-up's zip, with this page's new files
+    install_zip.write()
 
 
 if __name__ == "__main__":

@@ -389,6 +389,8 @@ def build_dashboard(d, nc, lt, y25=None, dis_t=None):
     REPORT["skywise"] = skywise_pack.build(src["ref"], ROOT, _scope_css, say)
     import views_pack   # Synthèse and Détail for Slate, two ways (03_reports/skywise/views): build/views_pack.py
     views_pack.build(say)
+    import install_zip   # every file of the Skywise set-up in one download: 03_reports/skywise/FTO2_Skywise_installation.zip
+    install_zip.write(say)
 
 
 def colmajor(df):
