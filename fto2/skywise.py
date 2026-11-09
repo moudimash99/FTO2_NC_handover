@@ -179,9 +179,15 @@ def run(Dataset, Column, say=None):
     year = int(config.parameter("annee_comparaison"))
     say(f"Reading the NCs of {year} (comparison year)...")
     nc = config.parameter("dataset_nc", manual_lists.SOURCES)
-    raw_year = (Dataset.get(nc).where((Column.get("plant") == plant) & (Column.get("creation_time") >= f"{year}-01-01 00:00:00")
-                                      & (Column.get("creation_time") < f"{year + 1}-01-01 00:00:00"))
+    # two conditions only: Skywise's filter fails when three are joined with & (TypeError in OpAndWrapper); the end of the
+    # year is cut here instead
+    raw_year = (Dataset.get(nc).where((Column.get("plant") == plant) & (Column.get("creation_time") >= f"{year}-01-01 00:00:00"))
                 .select(*NC_COLUMNS).read_table(format="pandas"))
+    try:   # a date column (Skywise) or text in mixed formats
+        created = pd.to_datetime(raw_year["creation_time"], errors="coerce", utc=True, format="mixed")
+    except (TypeError, ValueError):   # older pandas: no format="mixed"
+        created = pd.to_datetime(raw_year["creation_time"], errors="coerce", utc=True)
+    raw_year = raw_year[created < pd.Timestamp(f"{year + 1}-01-01", tz="UTC")].reset_index(drop=True)
     say(f"   {len(raw_year)} NCs")
     stations = station_descriptions(config.parameter("postes", manual_lists.SOURCES))
     y25 = reference.year_2025(raw_year, stations) if len(raw_year) else None
