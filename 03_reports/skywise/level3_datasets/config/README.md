@@ -1,7 +1,7 @@
 # Settings (config): how they work and how to fill them
 
 Everything about the dashboard that someone may want to change without touching the code is a small table in the folder
-`data/config/`, next to the notebook in the Code Workspace. There are 43 tables. This guide explains what is in them, how
+`data/config/`, next to the notebook in the Code Workspace. There are 44 tables. This guide explains what is in them, how
 they are built, how to fill them in, and how the code reads them.
 
 The three guides: `config.md` (the settings tables; in the Code Workspace also as `data/config/README.md`), `logic.md` (the
@@ -185,7 +185,7 @@ Two rules of thumb: put special cases **before** general ones (a smaller `ordre`
 
 How the cost works, simply: each NC goes through up to six **steps** (alert, writing, technical support, preparation, hands-on
 work, re-check). Each step takes some **minutes**, paid at the **hourly rate** of whoever does it. Engineering hours (design
-queries) and material are added.
+queries), material, and the price of a rejected, scrapped or exchanged part are added.
 
 | Table | Level | What it holds | How to fill it |
 |---|---|---|---|
@@ -247,7 +247,7 @@ The defects are sorted in three layers: **category** (e.g. Erreur Branchement) �
 | I want to... | Table | What to do |
 |---|---|---|
 | Count a new kind of REC | `2_regle_phase.csv` | Add the workflow text to the `valeur` of a REC row (`-CRE\|-PNC\|-RCX`), or add a row before the `99` rule. |
-| Price the rejected parts | `1_prix_pieces.csv` | One row per part: `reference;prix_unitaire_eur`. Or tie a part to an NC: add its NC number. |
+| Price the rejected parts | `1_prix_pieces.csv` | One row per part: `reference;prix_unitaire_eur`. Or tie a part to an NC: add its NC number. Full guide: `part_prices.md`. |
 | Change an hourly rate | `2_cout_parametres.csv` | Change `valeur` of `taux_production`, `taux_qualite` or `taux_me`. |
 | Change the target | `2_reglages_pages.csv` | `objectif_baisse`: 0.30 for −30 %. |
 | Add a product | `2_regle_produit.csv`, then `2_produits_plan.csv` | A rule that recognises it, then its name in the plan. |
@@ -272,7 +272,8 @@ needs only a new run.
 | `2_regle_*.csv` (the rules) | `selection.py`, `core.py`, `parser/fto2_logic.py`, through `rules.py` | Applied to every NC to give it a label (phase, line, product, type, scope...) |
 | `2_cout_*.csv`, `3_cout_*.csv` (the cost) | `cost/params.py` | Turned into the cost model's settings, used by `cost/model.py` |
 | `2_parametres.csv`, `2_sources.csv` | `skywise.py`, `config.py`, `manual_lists.py` | Which plant, from which date, which datasets and files to read |
-| `1_*.csv` (production plan, actions, cables...) and the page settings (`2_reglages_pages.csv`, `2_categories.csv`, `2_lignes.csv`, `3_alarmes.csv`) | `reference.py` | Packed into the table `fto2_dash_ref`, which the pages read |
+| `1_prix_pieces.csv` (part prices) | `cost/parts.py` | Each NC's part found (by its reference in the NC's text, or tied by hand) and priced; the cost model adds it for the decisions that count the part |
+| the other `1_*.csv` (production plan, actions, cables...) and the page settings (`2_reglages_pages.csv`, `2_categories.csv`, `2_lignes.csv`, `3_alarmes.csv`) | `reference.py` | Packed into the table `fto2_dash_ref`, which the pages read |
 | categories, causes, sub-codes | `reference.py`, `core.py`, `parser/fto2_logic.py` | Names and definitions shown on the pages, official sub-codes of the defect lines |
 
 So the pages never read `data/config/` themselves: they get the settings they need through `fto2_dash_ref`, rewritten at
@@ -296,5 +297,9 @@ rule are combined (all must be true); the first rule that holds gives the result
 same function serves every rule table, so all of them behave the same way.
 
 **Settings with several values** (`FTO2|FT02`, `7=0.6|8=0.6`) are split on `|` by `config.parameter_list`; the cost tables
-accept a comma or a dot for decimals (`cost/params.py`).
+and `1_prix_pieces.csv` accept a comma or a dot for decimals (`cost/params.py`, `cost/parts.py`).
+
+**The part prices** (`cost/parts.py`) are checked too: a price or a quantity that isn't a number stops the run with
+"1_prix_pieces.csv: '…' is not a number (line N)". Without the table, no part is priced, as before. The full guide to that
+table: `part_prices.md`.
 

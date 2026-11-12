@@ -63,7 +63,7 @@ The files of `notebook_kit/fto2/`:
 | `manual_lists.py` | Reads the GPS register and the Test list. |
 | `parser/` | The defect reader: turns an NC's long text into defect lines. |
 | `core.py` | From the NCs to the dashboard's tables: defects, labels, rework orders, aléas, cost, scope. |
-| `cost/` | The cost model. |
+| `cost/` | The cost model, with the rework orders, the aléas and the part prices. |
 | `reference.py` | Everything the pages need besides the NC tables (production plan, 2025, cables, actions, settings). |
 | `everyday_tables.py` | Writes a level-1 table from a raw file while keeping the rows a person corrected. |
 
@@ -94,14 +94,18 @@ number, then go through the same rules.
 4. **Labels:** each defect line takes its AI label from `fto2_ai_labels`, **only if the line's text is still the same as when
    it was labelled**. Otherwise it keeps the defect reader's label and is listed "to label". Then the category, cause,
    "minor" flag and official sub-code follow from the label.
-5. **Cost:** the cost model runs on every NC (`cost/model.py`, section 4).
-6. **Scope:** where each NC was raised: `serie`, `client` (customer return), `autre` (`2_regle_perimetre.csv`).
-7. **Tables:** `core.tables` puts it all into the two tables, column by column, and `core.dis_table` makes the aléa table.
-8. **Lines to label:** `core.lines_to_label` writes `fto2_lines_to_label.csv` next to the notebook: the lines without a
+5. **Part prices:** each NC gets the price of its rejected, scrapped or exchanged part, from `1_prix_pieces.csv`
+   (`cost/parts.py`: a reference found in the NC's title or long text, or a part tied to the NC by hand).
+6. **Cost:** the cost model runs on every NC (`cost/model.py`, section 4).
+7. **Scope:** where each NC was raised: `serie`, `client` (customer return), `autre` (`2_regle_perimetre.csv`).
+8. **Tables:** `core.tables` puts it all into the two tables, column by column, and `core.dis_table` makes the aléa table.
+9. **Lines to label:** `core.lines_to_label` writes `fto2_lines_to_label.csv` next to the notebook: the lines without a
    usable AI label, with their full text, ready for the next labelling pass.
 
-**E. The reference data** (`reference.py`): the production plan, the comparison year (2025: its NCs go through the same
-rules, defect reader and cost model, then are summed per month), the cable requests, the MFT actions, the cost settings, the
+**E. The reference data** (`reference.py`): the production plan, the comparison year (2025: its NCs are read from Skywise
+with two conditions, plant and from 1 January, then cut at the year's end in Python, because Skywise's filter fails on three
+conditions joined with `&`; they go through the same rules, defect reader, part prices and cost model, then are summed per
+month), the cable requests, the MFT actions, the cost settings, the
 cause tree and the page settings. They are packed into `fto2_dash_ref` (section 5).
 
 ## 4. Each file explained
@@ -150,7 +154,7 @@ date), keeps the NCs dated from `annee_listes_manuelles` on, and marks each NC w
 
 ### `core.py`: from the NCs to the dashboard tables
 
-- `prepare`: steps D1 to D6 above.
+- `prepare`: steps D1 to D7 above.
 - `official_subcode`: the official sub-code of each defect line, from its label.
 - `title_lines`: the A400M lines read from the NC title.
 - `nc_extras`: the NC fields the charts need (MSN, product, station, creation hour, days to close, open or not, age, NC type,
@@ -166,8 +170,9 @@ date), keeps the NCs dated from `annee_listes_manuelles` on, and marks each NC w
 
 **In plain words:** each NC goes through up to six steps: the operator's alert, writing the NC, technical support, preparing
 the job, the hands-on work, and the re-check. Each step takes minutes, paid at the hourly rate of whoever does it
-(production, quality or ME). Engineering hours (design queries) and material are added. The decision (rework, scrap, design
-query...) says which steps are charged.
+(production, quality or ME). Engineering hours (design queries), material, and the price of a rejected, scrapped or
+exchanged part are added. The decision (rework, scrap, design query...) says which steps are charged, and whether the part
+counts.
 
 `model.py`, function `compute_cnq`, in this order:
 
@@ -183,9 +188,15 @@ query...) says which steps are charged.
 5. **Two comparison levels:** "global" (average times for every NC) and "Airbus standard" (the official cost per decision).
 6. **Back to the lines:** each line gets its share of the NC's cost (its own work and material, plus an equal part of the rest).
 
-The other files: `params.py` turns the cost tables of `data/config/` into the model's settings; `orders.py` reads the rework
-orders' operations and their planned time; `disruptions.py` links the aléas to NCs and builds the block of aléas with no NC;
-`parts.py` gives the rejected, scrapped or exchanged part its price, from `1_prix_pieces.csv` (a reference found in the NC's text, or a part tied to the NC by hand); `explain.py` writes each NC's cost explanation as a table (only for an optional Slate set-up, not used).
+The other files:
+
+| File | What it does |
+|---|---|
+| `params.py` | Turns the cost tables of `data/config/` into the model's settings |
+| `orders.py` | Reads the rework orders' operations and their planned time; gives each NC's orders a state (used, open, no_time, not_found) |
+| `disruptions.py` | Links the aléas to NCs (same work order, from 2 h before to 72 h after) and builds the block of aléas with no NC |
+| `parts.py` | The part's price: `part_values` reads `1_prix_pieces.csv`; a reference with a price is searched in each NC's title and long text (spaces and case ignored, at least 5 characters); an NC row ties a part to an NC by hand (and stops the text search for it); the value is the sum of price × quantity, or none when no part is found. Guide: `part_prices.md` |
+| `explain.py` | Writes each NC's cost explanation as a table (only for an optional Slate set-up, not used) |
 
 The model runs twice: once on the AI labels (the dashboard's figures) and once on the defect reader's own labels (kept for
 comparison).
@@ -236,6 +247,7 @@ see `config.md`.
 | How defects are read from the text | `parser/nc_defect_parser.py` (expert) |
 | A new column in the dashboard tables | `core.py`: add it to `NC_COLUMNS` / `DEF_COLUMNS` and fill it in `tables`; then add it to the query in Slate and read it in the page (`front_end.md`) |
 | How the cost is calculated | `cost/model.py` |
+| How a part is found and priced | `cost/parts.py` (the prices themselves: `1_prix_pieces.csv`) |
 | What the pages receive besides the tables | `reference.py` |
 
 **Testing a change in the Code Workspace:**
@@ -252,5 +264,6 @@ see `config.md`.
 | Names a file of `data/config/` and a line | A settings table is badly filled | Fix that line (`config.md`, section 1) |
 | "settings table … not found" | A table was renamed, moved or deleted | Put it back in `data/config/` |
 | A dataset name that isn't found | The dataset isn't in the notebook's Data panel, or was renamed | Add it, or change its name in `2_sources.csv` |
+| "1_prix_pieces.csv: '…' is not a number" | A price or quantity in the parts price list has text in it | Fix that line |
 | "fto2_dash_cout not written" | Normal: that table is only for an optional set-up | Nothing |
 | Any other error | The last step printed says where it was | The file of that step (section 3) |

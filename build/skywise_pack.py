@@ -355,6 +355,7 @@ def notebook_kit(root, out):
     # the three guides, next to what they explain: the logic and the front end with the code, the settings with the settings
     shutil.copyfile(os.path.join(root, "docs", "logic.md"), os.path.join(k, "logic.md"))
     shutil.copyfile(os.path.join(root, "docs", "front_end.md"), os.path.join(k, "front_end.md"))
+    shutil.copyfile(os.path.join(root, "docs", "part_prices.md"), os.path.join(k, "part_prices.md"))
     c = os.path.join(out, "config")
     if os.path.isdir(c):
         shutil.rmtree(c)
