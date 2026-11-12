@@ -54,6 +54,7 @@ add an MFT action, and check that nothing else moved.
 |---|---|
 | `docs/config.md` | the settings tables: how they are built, how to fill each one, how the code reads them |
 | `docs/logic.md` | the notebook's code: the run step by step, every file, the cost model, the tables it writes |
+| `docs/part_prices.md` | the price list of rejected, scrapped and exchanged parts: set-up and how to fill it |
 | `docs/front_end.md` | the pages' code: how the data arrives, the dashboard's layout, finding and changing a chart, the MFT page, Elizabeth |
 
 They are written for someone who only sees the Code Workspace and the Slate app, and the build puts them there: `logic.md`

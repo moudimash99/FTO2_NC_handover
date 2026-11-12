@@ -247,7 +247,7 @@ The defects are sorted in three layers: **category** (e.g. Erreur Branchement) â
 | I want to... | Table | What to do |
 |---|---|---|
 | Count a new kind of REC | `2_regle_phase.csv` | Add the workflow text to the `valeur` of a REC row (`-CRE\|-PNC\|-RCX`), or add a row before the `99` rule. |
-| Price the rejected parts | `1_prix_pieces.csv` | One row per part: `reference;prix_unitaire_eur`. Or tie a part to an NC: add its NC number. |
+| Price the rejected parts | `1_prix_pieces.csv` | One row per part: `reference;prix_unitaire_eur`. Or tie a part to an NC: add its NC number. Full guide: `part_prices.md`. |
 | Change an hourly rate | `2_cout_parametres.csv` | Change `valeur` of `taux_production`, `taux_qualite` or `taux_me`. |
 | Change the target | `2_reglages_pages.csv` | `objectif_baisse`: 0.30 for âˆ’30 %. |
 | Add a product | `2_regle_produit.csv`, then `2_produits_plan.csv` | A rule that recognises it, then its name in the plan. |
