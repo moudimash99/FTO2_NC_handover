@@ -193,6 +193,7 @@ queries) and material are added.
 | `2_cout_decisions.csv` | 2 | One decision (RWK rework, REJ reject, SCR scrap, EXC exchange, DQN design query...): `1` or `0` for each step it charges (alerte, redaction, support, travail, recontrole), its engineering hours, `valeur_piece` (1 = the part's value counts), its label, and `base` (where the rule comes from) | A new decision code: add a row. |
 | `2_cout_qui_fait_quoi.csv` | 2 | Each step → who does it (`production`, `qualite`, `me`), so which rate it is paid at | |
 | `3_cout_temps_defauts.csv` | 3 | One **type of defect**: minutes of work, material in euros, English name, reference sub-code, and `base` (where the time comes from). A type can instead be **computed from another** (`calcule_depuis`) × a factor (`facteur`): "wrong reference" = 2 × "missing" | Expert: these minutes drive most of the cost. |
+| `1_prix_pieces.csv` | 1 | **The value of the part** on a rejection, scrap or exchange. Two kinds of row: **a reference and its unit price** (no NC): every NC whose title or text contains that reference gets that price; **an NC number and a reference** (quantity in `quantite`, 1 when empty): that NC used that part, priced by its own `prix_unitaire_eur` or else by the reference's row | Paste your price list as rows `reference;prix` (prices with a dot or a comma). For an NC whose text doesn't name the part, add a row with its NC number. References shorter than 5 characters are not searched. An NC tied by hand is not searched in the text. Only the decisions with `valeur_piece` = 1 in `2_cout_decisions.csv` count it. |
 | `3_cout_airbus.csv` | 3 | Airbus standard cost per decision (level 1 of the cost) | Only if the official standard changes. |
 | `3_cout_avance.csv` | 3 | Name / value: model version, which NC types are "final inspection" or "internal", the prefixes of a rework order, the connection-error classes, whether the planned time of rework orders and the declared time of aléas replace the model's times (`oui`/`non`), the time window that links an aléa to an NC | Expert. |
 | `3_cout_ordres_operations.csv` | 3 | How to read a rework order's operations: a pattern in the operation text → which step it counts as (preparation or work) | Expert. |
@@ -246,6 +247,7 @@ The defects are sorted in three layers: **category** (e.g. Erreur Branchement) �
 | I want to... | Table | What to do |
 |---|---|---|
 | Count a new kind of REC | `2_regle_phase.csv` | Add the workflow text to the `valeur` of a REC row (`-CRE\|-PNC\|-RCX`), or add a row before the `99` rule. |
+| Price the rejected parts | `1_prix_pieces.csv` | One row per part: `reference;prix_unitaire_eur`. Or tie a part to an NC: add its NC number. |
 | Change an hourly rate | `2_cout_parametres.csv` | Change `valeur` of `taux_production`, `taux_qualite` or `taux_me`. |
 | Change the target | `2_reglages_pages.csv` | `objectif_baisse`: 0.30 for −30 %. |
 | Add a product | `2_regle_produit.csv`, then `2_produits_plan.csv` | A rule that recognises it, then its name in the plan. |

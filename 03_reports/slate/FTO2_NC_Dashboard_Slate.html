@@ -1473,7 +1473,7 @@ window.DASH = {"defects":[["216055047",1,"2026-01-06","2026-W02","A350","",0,0,0
       n_floor: 'relevée de {a} à {b} min pour que préparation et intervention atteignent {f} min', n_noline: 'aucune ligne de défaut : forfait de {x} min',
       n_lines: '{n} ligne(s) de défaut, détaillées ci-dessous', n_off: 'non compté pour cette décision',
       r_eng: 'Étude d’ingénierie', r_eng_how: '{h} h à {r} €/h', r_mat: 'Matière', r_mat_how: 'somme de la matière des lignes de défaut',
-      r_part: 'Valeur de la pièce', r_part_how: 'pas de prix dans les données : comptée 0 €', r_adj: 'Retour client : forfait ou montant réel', r_tot: 'Total niveau 3',
+      r_part: 'Valeur de la pièce', r_part_how: 'pas dans la liste des prix des pièces : comptée 0 €', r_part_list: 'prix de la liste des pièces', r_adj: 'Retour client : forfait ou montant réel', r_tot: 'Total niveau 3',
       x2_line: 'Niveau 2, moyenne globale : {m} min aux temps moyens, soit {c}.', x1_line: 'Niveau 1, standard Airbus : {c} pour une décision « {l} », quel que soit le nombre de défauts.',
       d_lines: 'Voir les {n} lignes de défaut de cette NC', dlH: ['#', 'Texte saisi', 'Classe (cause racine)', 'Minutes', 'Matière'],
       dl_on: 'Somme, reprise ci-dessus en intervention et matière', dl_off: 'Somme, non comptée : cette décision ne comporte pas de travail',
@@ -1677,7 +1677,7 @@ window.DASH = {"defects":[["216055047",1,"2026-01-06","2026-W02","A350","",0,0,0
       n_floor: 'raised from {a} to {b} min so setup and hands-on work reach {f} min', n_noline: 'no defect line: flat {x} min',
       n_lines: '{n} defect line(s), listed below', n_off: 'not charged for this decision',
       r_eng: 'Engineering study', r_eng_how: '{h} h at {r} EUR/h', r_mat: 'Material', r_mat_how: 'sum of the material of the defect lines',
-      r_part: 'Value of the part', r_part_how: 'no price in the data: counted as 0 EUR', r_adj: 'Customer return: flat amount or real amount', r_tot: 'Total, level 3',
+      r_part: 'Value of the part', r_part_how: 'not in the parts price list: counted as 0 EUR', r_part_list: 'price from the parts list', r_adj: 'Customer return: flat amount or real amount', r_tot: 'Total, level 3',
       x2_line: 'Level 2, global average: {m} min at average times, which is {c}.', x1_line: 'Level 1, Airbus standard: {c} for a “{l}” decision, whatever the number of defects.',
       d_lines: 'Show the {n} defect lines of this NC', dlH: ['#', 'What was written', 'Class (root cause)', 'Minutes', 'Material'],
       dl_on: 'Sum, used above as hands-on work and material', dl_off: 'Sum, not charged: this decision has no work',
@@ -2805,12 +2805,15 @@ window.DASH = {"defects":[["216055047",1,"2026-01-06","2026-W02","A350","",0,0,0
         '<div class="sel">' + S('cxSel', { c: '<b>' + esc(eur(stepTot[j])) + '</b>', p: esc(shr(stepTot[j])) }) + '</div></li>';
     }).join('');
     var cw = inSlate('cout') && !calcSlate('cout');   // the cost explanation still computing in Slate
-    var dqn = CXP.rules.DQN, eh = dqn ? dqn[CX_RF.eng] : 0, other = cw ? 0 : sum(SEL_NC, cxAdjOf), stepsAll = sumA(stepTot);
+    var dqn = CXP.rules.DQN, eh = dqn ? dqn[CX_RF.eng] : 0, stepsAll = sumA(stepTot);
+    var isPart = function (n) { var f = cxRule(n); return !!(f && f[6]) && n[23] !== 'client'; };   // a decision that counts the part's price
+    var partTot = cw ? 0 : sum(SEL_NC, function (n) { return isPart(n) ? cxAdjOf(n) : 0; }), other = cw ? 0 : sum(SEL_NC, function (n) { return isPart(n) ? 0 : cxAdjOf(n); });
     var part = function (cls, name, v, how) { return '<div class="cxp' + cls + '"><span class="cn">' + esc(name) + '</span><span class="cv">' + esc(eur(v)) + '</span><span class="cs">' + esc(how) + '</span></div>'; }, op = function (o) { return '<span class="cxop" aria-hidden="true">' + o + '</span>'; };
     document.getElementById('cxPlus').innerHTML = '<h4>' + esc(S('cxSumH', { n: num(SEL_NC.length) })) + '</h4><div class="cxeq">' +
       part('', S('cxSteps6'), stepsAll, S('cxShare', { p: shr(stepsAll) }) + ' · ' + S('cxSteps6V')) + op('+') +
       part(' eng', S('cxEng'), engTot, S('cxShare', { p: shr(engTot) }) + ' · ' + S('cxEngV', { h: dec(eh), r: dec(P.rateEng), c: eur2(eh * P.rateEng) }) + ' ' + S('cxPerDqn')) + op('+') +
       part(' mat', S('cxMat'), matTot, S('cxShare', { p: shr(matTot) }) + ' · ' + S('cxMatV')) +
+      (partTot >= 0.5 ? op('+') + part(' adj', S('r_part'), partTot, S('cxShare', { p: shr(partTot) }) + ' · ' + S('r_part_list')) : '') +
       (Math.abs(other) >= 0.5 ? op(other < 0 ? '−' : '+') + part(' adj', S('r_adj'), Math.abs(other), S('cxShare', { p: shr(Math.abs(other)) })) : '') + op('=') +
       part(' tot', S('cxTot'), tot, S('cxTotV', { n: num(SEL_NC.length) })) + '</div>' + (cw ? '<p class="sub">' + esc(S('slWait')) + '</p>' : '');
     document.getElementById('cxFormula').textContent = S('cxFormula', { p: dec(cxRate('hands')), q: dec(cxRate('writing')), m: dec(cxRate('support')), f: num(P.floor) });
@@ -2861,8 +2864,8 @@ window.DASH = {"defects":[["216055047",1,"2026-01-06","2026-W02","A350","",0,0,0
     });
     if (st[6]) tb += '<tr><td>' + esc(S('r_eng')) + '</td><td>' + esc(S('r_eng_how', { h: dec(st[6]), r: dec(P.rateEng) })) + '</td><td class="r">–</td><td class="r">' + esc(eur2(n[18])) + '</td></tr>';
     if (f[3]) tb += '<tr><td>' + esc(S('r_mat')) + '</td><td>' + esc(S('r_mat_how')) + '</td><td class="r">–</td><td class="r">' + esc(eur2(n[17])) + '</td></tr>';
-    if (f[6]) tb += '<tr><td>' + esc(S('r_part')) + '</td><td>' + esc(S('r_part_how')) + '</td><td class="r">–</td><td class="r">' + esc(eur2(0)) + '</td></tr>';
-    var adj = C.adj;
+    var adj = C.adj, pv = f[6] && n[23] !== 'client' ? adj : 0; if (pv) adj = 0;   // what the cost holds beyond the steps: the part's price (1_prix_pieces.csv), or a customer return's extra
+    if (f[6]) tb += '<tr><td>' + esc(S('r_part')) + '</td><td>' + esc(S(pv ? 'r_part_list' : 'r_part_how')) + '</td><td class="r">–</td><td class="r">' + esc(eur2(pv)) + '</td></tr>';
     if (adj) tb += '<tr><td>' + esc(S('r_adj')) + '</td><td></td><td class="r">–</td><td class="r">' + esc(eur2(adj)) + '</td></tr>';
     if (!costed(n) && totMin) tb += '<tr><td>' + esc(S('r_notaec')) + '</td><td>' + esc(S('r_notaec_how')) + '</td><td class="r">–</td><td class="r">' + esc(eur2(-totEur)) + '</td></tr>';
     tb += '<tr class="total"><td>' + esc(S('r_tot')) + '</td><td></td><td class="r">' + esc(mn(totMin)) + '</td><td class="r">' + esc(eur2(n[12])) + '</td></tr></tbody></table></div>';

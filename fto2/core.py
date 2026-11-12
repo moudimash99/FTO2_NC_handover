@@ -38,6 +38,7 @@ HOME_PLANTS = tuple(config.parameter_list("usines_maison"))   # our plant's code
 from .parser import nc_defect_parser as PARSER
 from .cost.model import compute_cnq
 from .cost.orders import nc_order_times
+from .cost.parts import part_values
 from .cost.disruptions import nc_alea_times
 from .cost import params as CNQP
 
@@ -369,6 +370,9 @@ def prepare(x, lab, ops=None, dis=None, say=None):
     nc_in = nc[["notification_number", "statut", "decision_status", "liability", "date_creation", "type_nc", "produit",
                 "responsabilite", "customer_return", "programme", "plant", "linked_document", "work_order",
                 "rework_orders", "order_state", "order_minutes_setup", "order_minutes_work", "aleas", "alea_minutes"]].copy()
+    # the value of the rejected, scrapped or exchanged part, from the price list config/1_prix_pieces.csv (fto2/cost/parts.py)
+    nc_in["part_value"] = part_values(nc["notification_number"], nc["description_short"], nc["notification_number"].map(lt))
+    report["parts_priced"] = int(pd.notna(nc_in["part_value"]).sum())
     runs = {}
     for key, sub, cab in (("parser", "sous_groupe", "defaut_cable"), ("llm", "llm_sous_categorie", "llm_defaut_cable")):
         dd = d[["notification_number", "seq", "qty", sub, cab]].rename(columns={sub: "sous_groupe", cab: "cable"})

@@ -177,14 +177,15 @@ query...) says which steps are charged.
    inspection), support, hands-on work (the sum of its lines, times a factor for internal NCs), preparation (never letting the
    work fall under the minimum), re-check, engineering hours. When the NC has a closed rework order with a planned time, that
    planned time replaces the model's preparation and hands-on minutes.
-3. **Euros:** each step's minutes at its rate, plus engineering, material and part value.
+3. **Euros:** each step's minutes at its rate, plus engineering, material and part value (the price of the part, from
+   `1_prix_pieces.csv`, for the decisions that count it).
 4. **Customer returns:** a flat extra, or the real amount when it is known.
 5. **Two comparison levels:** "global" (average times for every NC) and "Airbus standard" (the official cost per decision).
 6. **Back to the lines:** each line gets its share of the NC's cost (its own work and material, plus an equal part of the rest).
 
 The other files: `params.py` turns the cost tables of `data/config/` into the model's settings; `orders.py` reads the rework
 orders' operations and their planned time; `disruptions.py` links the aléas to NCs and builds the block of aléas with no NC;
-`explain.py` writes each NC's cost explanation as a table (only for an optional Slate set-up, not used).
+`parts.py` gives the rejected, scrapped or exchanged part its price, from `1_prix_pieces.csv` (a reference found in the NC's text, or a part tied to the NC by hand); `explain.py` writes each NC's cost explanation as a table (only for an optional Slate set-up, not used).
 
 The model runs twice: once on the AI labels (the dashboard's figures) and once on the defect reader's own labels (kept for
 comparison).
