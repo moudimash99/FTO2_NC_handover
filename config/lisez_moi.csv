@@ -6,7 +6,7 @@ fichier;niveau;ce_que_ca_change;qui_modifie;lu_par
 1_livraisons_2025.csv;1 courant;Produits livrés par mois en 2025 : la base des objectifs et des comparaisons 2025;Toute l'équipe;notebook_kit/fto2/reference.py
 1_livraisons_2025_lignes.csv;1 courant;MSN entiers livrés en 2025 par ligne;Toute l'équipe;notebook_kit/fto2/reference.py
 1_plan_msn.csv;1 courant;Plan de production par avion et produit : dates prévues et réelles des 8 jalons. Une ligne tapée ou corrigée à la main : source = manuel;Toute l'équipe;notebook_kit/fto2/reference.py
-1_prix_pieces.csv;1 courant;Prix des pièces rejetées, rebutées ou échangées : une ligne par référence avec son prix unitaire (trouvée dans le texte des NC), ou une ligne par NC pour lier une pièce à la main;Toute l'équipe;notebook_kit/fto2/cost/parts.py
+1_prix_pieces.csv;1 courant;Prix des pièces rejetées, rebutées ou échangées : une ligne par matériel (le numéro de matériel de la NC) avec son prix unitaire. Les matériels encore sans prix sont listés à chaque lancement dans fto2_parts_to_price.csv;Toute l'équipe;notebook_kit/fto2/cost/parts.py
 2_actions_mft_problemes.csv;2 règles;Lien entre une action des suivis MFT et le problème qu'elle vise (cause, catégorie...);Responsable du tableau de bord;aucun code du notebook : sert seulement à remplir 1_actions_mft.csv depuis les suivis MFT
 2_cables_origines.csv;2 règles;Imputation du suivi câbles -> origine affichée;Responsable du tableau de bord;aucun code du notebook : sert seulement à remplir 1_demandes_cables.csv depuis le suivi câbles
 2_categories.csv;2 règles;Catégories : ordre d'affichage, couleur (1 à 9), montrées à part;Responsable du tableau de bord;notebook_kit/fto2/reference.py -> les pages

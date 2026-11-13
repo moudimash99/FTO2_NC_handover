@@ -1254,8 +1254,9 @@ function fto2FromTables(ncIn, defIn, ref, disIn, cxIn) {
       str(r.msn).replace(/\.0$/, ''), str(r.product) || 'Other', str(r.station), r.hour == null || r.hour === '' ? -1 : int(r.hour), numOrNull(r.lead_days), int(r.is_open),
       numOrNull(r.age_days), day(r.closed), str(r.type_nc), str(r.liability), str(r.sap_defect), str(r.sap_cause_group), str(r.sap_cause), str(r.status), str(r.source) || 'sky',
       [num(r.min_alert), num(r.min_writing), num(r.min_support), num(r.min_setup), num(r.min_hands_on), num(r.min_recheck), num(r.hours_engineering), int(r.final_inspection),
-        str(r.work_source), str(r.order_state), str(r.rework_orders), str(r.alert_source), str(r.aleas)], str(r.origin) || 'normal', str(r.plant), k ? 0 : num(r.cost_total)];
-    if (!k) a._w = [num(r.cost_airbus), num(r.cost_global), num(r.cost_total), num(r.cost_admin), num(r.cost_work), num(r.cost_material), num(r.cost_engineering)];   // REC cost switch (3 Nov)
+        str(r.work_source), str(r.order_state), str(r.rework_orders), str(r.alert_source), str(r.aleas), num(r.min_logistics)], str(r.origin) || 'normal', str(r.plant), k ? 0 : num(r.cost_total),
+      str(r.material), str(r.material_label), k * num(r.cost_part)];   // [44] the part the NC is about (SAP material), [45] its label, [46] its value
+    if (!k) a._w = [num(r.cost_airbus), num(r.cost_global), num(r.cost_total), num(r.cost_admin), num(r.cost_work), num(r.cost_material), num(r.cost_engineering), num(r.cost_part)];   // REC cost switch (3 Nov)
     ncs.push(a); byNc[id] = { a: a, plant: str(r.plant), lt: str(r.long_text) };
   });
   // products the production plan does not name, put back on their plan product (04_reference/produits_alias.csv, the same rules as
@@ -1518,14 +1519,14 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
       bk_LOCAL: 'Processus décrit par AEC', bk_RULE: 'Règle AEC', bk_ASSUMED: 'Hypothèse', bk_OFFICIAL: 'Officiel Airbus', bk_TEAM: 'Table de l’équipe', bk_BORROWED: 'Emprunté', bk_DERIVED: 'Règle de l’équipe',
       cxNcT: 'Le calcul sur une NC réelle', cxNum: 'Numéro de NC', cxShow: 'Afficher', cxNone: 'Aucune NC ne porte ce numéro dans les données. Choisir un numéro dans la liste.',
       ex_one: 'Retouche à un défaut', ex_many: 'Retouche à plusieurs défauts', ex_final: 'Retouche au contrôle final', ex_noline: 'Retouche sans ligne de défaut',
-      ex_rej: 'Rejet', ex_rejrw: 'Rejet avec ordre de retouche', r_notaec: 'Hors responsabilité FTO2', r_notaec_how: 'FTO2 n’est pas responsable de cette NC : elle compte comme NC, son coût pour FTO2 est 0', ex_order: 'Temps de l’ordre de retouche', fx_org: 'Origine', fx_order: 'Ordre de retouche', os_used: 'temps prévu utilisé', os_open: 'pas encore clos : temps du modèle', os_no_time: 'clos sans temps prévu : temps du modèle', os_not_found: 'hors des opérations disponibles : temps du modèle', os_none: 'opérations non chargées : temps du modèle', n_ordSetup: 'Temps prévu des opérations de préparation, contrôle et clôture de l’ordre de retouche', n_ordWork: 'Temps prévu des opérations de travail et de test de l’ordre de retouche, à la place du modèle', dl_ord: 'Temps du modèle, pour information (l’intervention comptée est celle de l’ordre) ; la matière est reprise ci-dessus', ex_exc: 'Échange', ex_dqn: 'Demande de DQN', ex_cli: 'Retour client',
+      ex_rej: 'Rejet', ex_rejrw: 'Rejet avec ordre de retouche', r_notaec: 'Hors responsabilité FTO2', r_notaec_how: 'FTO2 n’est pas responsable de cette NC : elle compte comme NC, son coût pour FTO2 est 0', ex_order: 'Temps de l’ordre de retouche', fx_org: 'Origine', fx_order: 'Ordre de retouche', fx_mat: 'Matériel', n_logi: ' + {x} min de logistique (approvisionnement de la pièce)', os_used: 'temps prévu utilisé', os_open: 'pas encore clos : temps du modèle', os_no_time: 'clos sans temps prévu : temps du modèle', os_not_found: 'hors des opérations disponibles : temps du modèle', os_none: 'opérations non chargées : temps du modèle', n_ordSetup: 'Temps prévu des opérations de préparation, contrôle et clôture de l’ordre de retouche', n_ordWork: 'Temps prévu des opérations de travail et de test de l’ordre de retouche, à la place du modèle', dl_ord: 'Temps du modèle, pour information (l’intervention comptée est celle de l’ordre) ; la matière est reprise ci-dessus', ex_exc: 'Échange', ex_dqn: 'Demande de DQN', ex_cli: 'Retour client',
       fx_nc: 'NC', fx_date: 'Créée le', fx_line: 'Ligne', fx_dec: 'Décision', fx_where: 'Détection', fx_lines: 'Lignes de défaut',
       cxH: ['Étape', 'Calcul', 'Minutes', 'Coût (taux de l’étape)'],
       n_once: '{x} min, une fois par NC', n_alea: 'temps perdu déclaré sur l’aléa qualité {a}, qui a mené à la NC', ex_alea: 'Temps de l’aléa déclaré', n_noalert: 'pas d’alerte : NC trouvée au test ou au contrôle final', n_x2: '{s} · × {f} (NC interne)', n_plain: '{x} min', n_final: '{x} min car détectée au contrôle final',
       n_floor: 'relevée de {a} à {b} min pour que préparation et intervention atteignent {f} min', n_noline: 'aucune ligne de défaut : forfait de {x} min',
       n_lines: '{n} ligne(s) de défaut, détaillées ci-dessous', n_off: 'non compté pour cette décision',
       r_eng: 'Étude d’ingénierie', r_eng_how: '{h} h à {r} €/h', r_mat: 'Matière', r_mat_how: 'somme de la matière des lignes de défaut',
-      r_part: 'Valeur de la pièce', r_part_how: 'pas dans la liste des prix des pièces : comptée 0 €', r_part_list: 'prix de la liste des pièces', r_adj: 'Retour client : forfait ou montant réel', r_tot: 'Total niveau 3',
+      r_part: 'Valeur de la pièce', r_part_how: 'matériel sans prix dans la liste des prix : compté 0 €', r_part_none: 'aucun matériel sur la NC : compté 0 €', r_part_list: 'prix du matériel (liste des prix) × quantité', r_adj: 'Retour client : forfait ou montant réel', r_tot: 'Total niveau 3',
       x2_line: 'Niveau 2, moyenne globale : {m} min aux temps moyens, soit {c}.', x1_line: 'Niveau 1, standard Airbus : {c} pour une décision « {l} », quel que soit le nombre de défauts.',
       d_lines: 'Voir les {n} lignes de défaut de cette NC', dlH: ['#', 'Texte saisi', 'Classe (cause racine)', 'Minutes', 'Matière'],
       dl_on: 'Somme, reprise ci-dessus en intervention et matière', dl_off: 'Somme, non comptée : cette décision ne comporte pas de travail',
@@ -1722,14 +1723,14 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
       bk_LOCAL: 'Process described by AEC', bk_RULE: 'AEC rule', bk_ASSUMED: 'Assumed', bk_OFFICIAL: 'Official Airbus', bk_TEAM: 'Team table', bk_BORROWED: 'Borrowed', bk_DERIVED: 'Team rule',
       cxNcT: 'The calculation on a real NC', cxNum: 'NC number', cxShow: 'Show', cxNone: 'No NC with that number in the data. Pick one from the list.',
       ex_one: 'Rework, one defect', ex_many: 'Rework, several defects', ex_final: 'Rework at final inspection', ex_noline: 'Rework, no defect line',
-      ex_rej: 'Rejection', ex_rejrw: 'Rejection with a rework order', r_notaec: 'Not FTO2’s liability', r_notaec_how: 'FTO2 is not liable for this NC: it counts as an NC, its cost for FTO2 is 0', ex_order: 'Rework order time', fx_org: 'Origin', fx_order: 'Rework order', os_used: 'planned time used', os_open: 'not closed yet: model time', os_no_time: 'closed with no planned time: model time', os_not_found: 'not in the operations available: model time', os_none: 'operations not loaded: model time', n_ordSetup: 'Planned time of the rework order’s preparation, inspection and closing operations', n_ordWork: 'Planned time of the rework order’s work and test operations, instead of the model', dl_ord: 'Model times, for information (the hands-on work charged is the rework order’s); the material is used above', ex_exc: 'Exchange', ex_dqn: 'Design query', ex_cli: 'Customer return',
+      ex_rej: 'Rejection', ex_rejrw: 'Rejection with a rework order', r_notaec: 'Not FTO2’s liability', r_notaec_how: 'FTO2 is not liable for this NC: it counts as an NC, its cost for FTO2 is 0', ex_order: 'Rework order time', fx_org: 'Origin', fx_order: 'Rework order', fx_mat: 'Material', n_logi: ' + {x} min of logistics (supplying the part)', os_used: 'planned time used', os_open: 'not closed yet: model time', os_no_time: 'closed with no planned time: model time', os_not_found: 'not in the operations available: model time', os_none: 'operations not loaded: model time', n_ordSetup: 'Planned time of the rework order’s preparation, inspection and closing operations', n_ordWork: 'Planned time of the rework order’s work and test operations, instead of the model', dl_ord: 'Model times, for information (the hands-on work charged is the rework order’s); the material is used above', ex_exc: 'Exchange', ex_dqn: 'Design query', ex_cli: 'Customer return',
       fx_nc: 'NC', fx_date: 'Created', fx_line: 'Line', fx_dec: 'Decision', fx_where: 'Found at', fx_lines: 'Defect lines',
       cxH: ['Step', 'How', 'Minutes', 'Cost (the step’s rate)'],
       n_once: '{x} min, once per NC', n_alea: 'time lost declared on quality aléa {a}, which led to the NC', ex_alea: 'Declared aléa time', n_noalert: 'no alert: NC found at test or final inspection', n_x2: '{s} · × {f} (internal NC)', n_plain: '{x} min', n_final: '{x} min because it was found at final inspection',
       n_floor: 'raised from {a} to {b} min so setup and hands-on work reach {f} min', n_noline: 'no defect line: flat {x} min',
       n_lines: '{n} defect line(s), listed below', n_off: 'not charged for this decision',
       r_eng: 'Engineering study', r_eng_how: '{h} h at {r} EUR/h', r_mat: 'Material', r_mat_how: 'sum of the material of the defect lines',
-      r_part: 'Value of the part', r_part_how: 'not in the parts price list: counted as 0 EUR', r_part_list: 'price from the parts list', r_adj: 'Customer return: flat amount or real amount', r_tot: 'Total, level 3',
+      r_part: 'Value of the part', r_part_how: 'material with no price in the price list: counted as 0 EUR', r_part_none: 'no material on the NC: counted as 0 EUR', r_part_list: 'price of the material (price list) × quantity', r_adj: 'Customer return: flat amount or real amount', r_tot: 'Total, level 3',
       x2_line: 'Level 2, global average: {m} min at average times, which is {c}.', x1_line: 'Level 1, Airbus standard: {c} for a “{l}” decision, whatever the number of defects.',
       d_lines: 'Show the {n} defect lines of this NC', dlH: ['#', 'What was written', 'Class (root cause)', 'Minutes', 'Material'],
       dl_on: 'Sum, used above as hands-on work and material', dl_off: 'Sum, not charged: this decision has no work',
@@ -2442,8 +2443,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
     }).join('');
     var cw = inSlate('cout') && !calcSlate('cout');   // the cost explanation still computing in Slate
     var dqn = CXP.rules.DQN, eh = dqn ? dqn[CX_RF.eng] : 0, stepsAll = sumA(stepTot);
-    var isPart = function (n) { var f = cxRule(n); return !!(f && f[6]) && n[23] !== 'client'; };   // a decision that counts the part's price
-    var partTot = cw ? 0 : sum(SEL_NC, function (n) { return isPart(n) ? cxAdjOf(n) : 0; }), other = cw ? 0 : sum(SEL_NC, function (n) { return isPart(n) ? 0 : cxAdjOf(n); });
+    var partTot = sum(SEL_NC, function (n) { return n[46] || 0; }), other = cw ? 0 : sum(SEL_NC, cxAdjOf);   // the parts' value (price list), then what is left: customer returns
     var part = function (cls, name, v, how) { return '<div class="cxp' + cls + '"><span class="cn">' + esc(name) + '</span><span class="cv">' + esc(eur(v)) + '</span><span class="cs">' + esc(how) + '</span></div>'; }, op = function (o) { return '<span class="cxop" aria-hidden="true">' + o + '</span>'; };
     document.getElementById('cxPlus').innerHTML = '<h4>' + esc(S('cxSumH', { n: num(SEL_NC.length) })) + '</h4><div class="cxeq">' +
       part('', S('cxSteps6'), stepsAll, S('cxShare', { p: shr(stepsAll) }) + ' · ' + S('cxSteps6V')) + op('+') +
@@ -2486,10 +2486,11 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
     var h = '<div class="cx-facts">' + fact('fx_nc', n[0]) + fact('fx_date', shortDay(n[1])) + fact('fx_line', n[3] || '—') + fact('fx_dec', ruleName(n[7])) + fact('fx_where', whereName(n[8])) + fact('fx_lines', num(lines.length)) + '</div>';
     var ord = st[8] === 'order', fx = ord ? 1 : C.factor, x2 = function (t) { return fx !== 1 ? S('n_x2', { s: t, f: dec(fx) }) : t; }, base = st[3] / fx;
     if (st[10]) h = h.replace('</div>', fact('fx_order', st[10] + ' · ' + S('os_' + (st[9] || 'none'))) + '</div>');
+    if (n[44]) h = h.replace('</div>', fact('fx_mat', n[44] + (n[45] ? ' · ' + n[45] : '')) + '</div>');
     if (n[41] === 'missing_ids') h = h.replace('</div>', fact('fx_org', S('org_missing_ids')) + '</div>');
     var notes = {
       alert: st[11] === 'alea' ? S('n_alea', { a: st[12] }) : f[0] && !st[0] ? S('n_noalert') : S('n_once', { x: P.alert }), writing: fin ? S('n_final', { x: P.writeFinal }) : S('n_plain', { x: P.write }), support: S('n_once', { x: P.support }),
-      setup: ord ? S('n_ordSetup') : x2(base > P.setup + 1e-6 ? S('n_floor', { a: P.setup, b: dec(base), f: P.floor }) : S('n_once', { x: P.setup })),
+      setup: ord ? S('n_ordSetup') + (st[13] ? S('n_logi', { x: num(st[13]) }) : '') : x2(base > P.setup + 1e-6 ? S('n_floor', { a: P.setup, b: dec(base), f: P.floor }) : S('n_once', { x: P.setup })),
       hands: ord ? S('n_ordWork') : x2(!lines.length ? S('n_noline', { x: P.noDefect }) : S('n_lines', { n: num(lines.length) })), recheck: S('n_once', { x: P.recheck })
     };
     var H = S('cxH'), totMin = 0, totEur = 0;
@@ -2500,8 +2501,8 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
     });
     if (st[6]) tb += '<tr><td>' + esc(S('r_eng')) + '</td><td>' + esc(S('r_eng_how', { h: dec(st[6]), r: dec(P.rateEng) })) + '</td><td class="r">–</td><td class="r">' + esc(eur2(n[18])) + '</td></tr>';
     if (f[3]) tb += '<tr><td>' + esc(S('r_mat')) + '</td><td>' + esc(S('r_mat_how')) + '</td><td class="r">–</td><td class="r">' + esc(eur2(n[17])) + '</td></tr>';
-    var adj = C.adj, pv = f[6] && n[23] !== 'client' ? adj : 0; if (pv) adj = 0;   // what the cost holds beyond the steps: the part's price (1_prix_pieces.csv), or a customer return's extra
-    if (f[6]) tb += '<tr><td>' + esc(S('r_part')) + '</td><td>' + esc(S(pv ? 'r_part_list' : 'r_part_how')) + '</td><td class="r">–</td><td class="r">' + esc(eur2(pv)) + '</td></tr>';
+    var adj = C.adj, pv = n[46] || 0;   // the part's value: the price of the NC's material (price list) x its quantity
+    if (f[6]) tb += '<tr><td>' + esc(S('r_part')) + '</td><td>' + esc(pv ? S('r_part_list') : S(n[44] ? 'r_part_how' : 'r_part_none')) + '</td><td class="r">–</td><td class="r">' + esc(eur2(pv)) + '</td></tr>';
     if (adj) tb += '<tr><td>' + esc(S('r_adj')) + '</td><td></td><td class="r">–</td><td class="r">' + esc(eur2(adj)) + '</td></tr>';
     if (!costed(n) && totMin) tb += '<tr><td>' + esc(S('r_notaec')) + '</td><td>' + esc(S('r_notaec_how')) + '</td><td class="r">–</td><td class="r">' + esc(eur2(-totEur)) + '</td></tr>';
     tb += '<tr class="total"><td>' + esc(S('r_tot')) + '</td><td></td><td class="r">' + esc(mn(totMin)) + '</td><td class="r">' + esc(eur2(n[12])) + '</td></tr></tbody></table></div>';
@@ -3794,7 +3795,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
       perMonth: '{v} par mois', median: 'Médiane', ncCount: '{n} NC', rollMean: 'Moyenne glissante sur 9 avions', rankAx: 'Rang de l’avion dans sa ligne', perAc: 'Défauts par avion',
       b0: 'Aucun défaut', b1: '1 à 5 défauts', b2: '6 à 15', b3: 'Plus de 15', acTip: 'MSN {m} · {n} défauts', fpyTip: '{n} NC pour {u} unités passées', punchTip: '{n} NC',
       done: 'Terminée', open: 'En cours', late: 'En retard', planned: 'Planifiée', targetRca: 'Cause visée : {r}', finCount: '{n} avions', finTip: 'FIN {f} · MSN {m}',
-      comp_g: 'Gestion de la NC', comp_r: 'Reprise', comp_m: 'Matière', comp_e: 'Ingénierie', boxTip: 'médiane {m} j · moitié centrale entre {a} et {b} j', boxN: 'n = {n}', dShort: '{v} j',
+      comp_g: 'Gestion de la NC', comp_r: 'Reprise', comp_m: 'Matière', comp_e: 'Ingénierie', comp_p: 'Pièces', boxTip: 'médiane {m} j · moitié centrale entre {a} et {b} j', boxN: 'n = {n}', dShort: '{v} j',
       heatTip: '{n} défauts', one: '1 défaut sur cet avion', twoPlus: '2 défauts ou plus', all: 'Tous', fOk: 'Faisables', fPart: 'En partie', fNeed: 'À collecter', f_ok: 'Faisable avec les données actuelles', f_part: 'En partie',
       f_need: 'Données à collecter', keep: '☆ Garder', kept: '★ Gardé', keptList: 'Gardés :', keepHint: 'Cliquez sur « Garder » sous les graphiques à construire : la liste s’affiche ici.',
       share: 'Part', costTip: '{c} · {n} défauts', perCent: '1 case = 1 % des défauts', weekTip: 'Semaine {w}' },
@@ -3813,7 +3814,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
       perMonth: '{v} a month', median: 'Median', ncCount: '{n} NCs', rollMean: 'Rolling mean over 9 aircraft', rankAx: 'Aircraft build rank in its line', perAc: 'Defects per aircraft',
       b0: 'No defect', b1: '1 to 5 defects', b2: '6 to 15', b3: 'More than 15', acTip: 'MSN {m} · {n} defects', fpyTip: '{n} NCs for {u} units through', punchTip: '{n} NCs',
       done: 'Done', open: 'In progress', late: 'Late', planned: 'Planned', targetRca: 'Targeted cause: {r}', finCount: '{n} aircraft', finTip: 'FIN {f} · MSN {m}',
-      comp_g: 'NC handling', comp_r: 'Rework', comp_m: 'Material', comp_e: 'Engineering', boxTip: 'median {m} d · middle half between {a} and {b} d', boxN: 'n = {n}', dShort: '{v} d',
+      comp_g: 'NC handling', comp_r: 'Rework', comp_m: 'Material', comp_e: 'Engineering', comp_p: 'Parts', boxTip: 'median {m} d · middle half between {a} and {b} d', boxN: 'n = {n}', dShort: '{v} d',
       heatTip: '{n} defects', one: '1 defect on this aircraft', twoPlus: '2 defects or more', all: 'All', fOk: 'Feasible', fPart: 'Partly', fNeed: 'Data to collect', f_ok: 'Feasible with current data', f_part: 'Partly feasible',
       f_need: 'Data to collect', keep: '☆ Keep', kept: '★ Kept', keptList: 'Kept:', keepHint: 'Click “Keep” on the charts worth building: the list shows here.',
       share: 'Share', costTip: '{c} · {n} defects', perCent: '1 square = 1% of defects', weekTip: 'Week {w}' }
@@ -6859,6 +6860,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
 
   function v2Comp(k) {
     var ms = v2Months().act, comps = [['comp_g', 13, 'var(--s1)'], ['comp_r', 15, tint('--s1', 62)], ['comp_m', 17, tint('--s1', 34)], ['comp_e', 18, 'var(--s2)']];   // not blue / green: those are the categories' (20 Oct)
+    if (SEL_NC.some(function (n) { return n[46] > 0; })) comps.push(['comp_p', 46, 'var(--ink-2)']);   // the parts' value, once the price list holds prices
     var v = ms.map(function () { return comps.map(function () { return 0; }); });
     SEL_NC.forEach(function (n) { var i = ms.indexOf(n[1].slice(0, 7)); if (i >= 0) comps.forEach(function (c, j) { v[i][j] += n[c[1]] || 0; }); });
     var tots = v.map(sumA), mx = Math.max.apply(null, tots.concat([1])); if (!ms.length) { pEmpty(k); return; }

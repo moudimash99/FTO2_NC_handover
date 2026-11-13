@@ -64,7 +64,7 @@
   function costMode() {
     var all = GF.cost === 'all' && GF.phase === 'REC'; if (all === COSTALL) return; COSTALL = all;
     D.ncs.forEach(function (n) { var w = n._w; if (n[5] === 1 || !w) return;
-      [9, 10, 12, 13, 15, 17, 18].forEach(function (k, j) { n[k] = all ? w[j] : 0; }); n[43] = all ? 0 : w[2]; });
+      [9, 10, 12, 13, 15, 17, 18, 46].forEach(function (k, j) { n[k] = all ? w[j] : 0; }); n[43] = all ? 0 : w[2]; });
     D.defects.forEach(function (r) { if (r._w != null) r[17] = all ? r._w : 0; });
   }
   function gNc(n, anyLine) {
@@ -274,9 +274,9 @@
   function cxRate(k) { var P = CXP.p, R = P.rates || {}; return R[k] != null ? R[k] : P.rate; }
   function cxEur(st) { return CX_STEPS.reduce(function (a, s2, j) { return a + (st[j] || 0) / 60 * cxRate(s2[0]); }, 0); }
   function cxRule(n) { return CXP.rules[n[6]] || null; }
-  function cxAdj(n) {   // customer return: the flat extra or the real amount, i.e. what the level-3 cost holds beyond the steps (0 today)
+  function cxAdj(n) {   // customer return: the flat extra or the real amount, i.e. what the level-3 cost holds beyond the steps, the material and the part (0 today)
     var f = cxRule(n), st = cxSteps(n); if (!f || !costed(n)) return 0;   // not FTO2's liability: cost 0, shown as its own line
-    var on = [f[0], f[1], f[2], f[3], f[3], f[4]], e = CX_STEPS.reduce(function (a, s2, j) { return a + (on[j] ? st[j] / 60 * cxRate(s2[0]) : 0); }, 0), d = n[12] - (e + n[18] + n[17]);
+    var on = [f[0], f[1], f[2], f[3], f[3], f[4]], e = CX_STEPS.reduce(function (a, s2, j) { return a + (on[j] ? st[j] / 60 * cxRate(s2[0]) : 0); }, 0), d = n[12] - (e + n[18] + n[17] + (n[46] || 0));
     return Math.abs(d) >= 0.05 ? d : 0;
   }
   function cxLines(nc) { return D.defects.filter(function (r) { return r[0] === nc; }).sort(function (a, b2) { return a[1] - b2[1]; }); }

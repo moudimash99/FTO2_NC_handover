@@ -196,8 +196,9 @@ def working_day_volume(asof, recs, weekly=False):
     weekly=True: the same per ISO week of 2026, by line and by product, for the alarms: {"line": {line: 53 weeks}, "prod": {product:
     53 weeks}}, week 1 first."""
     import datetime as dt
-    cal = config.frame("1_calendrier_production.csv")
-    cal = [(dt.date.fromisoformat(a), dt.date.fromisoformat(b), float(w)) for a, b, w in zip(cal.debut, cal.fin, cal.poids)]
+    F = "1_calendrier_production.csv"
+    cal = [(dt.date.fromisoformat(config.day(r["debut"], "%s line %d, debut" % (F, i + 2))), dt.date.fromisoformat(config.day(r["fin"], "%s line %d, fin" % (F, i + 2))),
+            float(config.number(r["poids"], "%s line %d, poids" % (F, i + 2)))) for i, r in config.table(F, ["debut", "fin", "poids"]).iterrows()]
     hol = set().union(*(_french_holidays(y) for y in range(asof.year - 2, asof.year + 3)))
 
     def weight(d):
@@ -271,6 +272,7 @@ def cnq_explain(d):
     return {"p": {"rate": P.RATE_STANDARD, "rateEng": P.RATE_ENGINEERING, "rateProd": getattr(P, "RATE_PROD", P.RATE_STANDARD),
                   "rates": {"alert": R.get("alert"), "writing": R.get("writing"), "support": R.get("support"), "setup": R.get("setup"),
                             "hands": R.get("hands_on"), "recheck": R.get("recheck")} if R else None, "alert": P.MIN_ALERT, "write": P.MIN_WRITE_NC, "writeFinal": P.MIN_WRITE_NC_FINAL,
+                  "logistics": getattr(P, "MIN_LOGISTICS", 0),
                   "support": P.MIN_SUPPORT, "setup": P.MIN_SETUP, "floor": P.MIN_WORK_FLOOR, "recheck": P.MIN_RECHECK_CLOSE,
                   "noDefect": P.MIN_HANDS_ON_NO_DEFECT, "writeGlobal": P.MIN_WRITE_NC_GLOBAL, "workGlobal": P.MIN_WORK_GLOBAL,
                   "defDefault": P.MIN_DEFAULT_DEFECT, "crExtra": P.CUSTOMER_RETURN_EXTRA, "version": P.MODEL_VERSION,
@@ -382,7 +384,7 @@ def dashboard_block(d, nc, code_desc, y25):
     from the tables by the page)."""
     cq = {k: v for k, v in cnq_explain(d).items() if k != "qty"}
     eq = eqmsn(nc)
-    return {"from": config.parameter("date_debut"), "codes": code_desc, "actions": mft_actions(), "cnqp": cq,
+    return {"from": config.parameter_day("date_debut"), "codes": code_desc, "actions": mft_actions(), "cnqp": cq,
             "eqmsn": {k: v for k, v in eq.items() if k != "line"} if eq else None,
             "rca": [dict(o, ex=[]) for o in rca_reference(d, code_desc)], "y25": y25, "cables": cable_requests(),
             "settings": page_settings()}

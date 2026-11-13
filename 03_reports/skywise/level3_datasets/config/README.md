@@ -189,11 +189,11 @@ queries), material, and the price of a rejected, scrapped or exchanged part are 
 
 | Table | Level | What it holds | How to fill it |
 |---|---|---|---|
-| `2_cout_parametres.csv` | 2 | Name / value: the **hourly rates** (production 123, quality 107, ME 76, engineering 78.16) and the **minutes of each step** (alert 41, writing 30, at final inspection 60, support 60, preparation 50, minimum work 60, re-check 30...), the factor for internal NCs, the flat amount for a customer return | Change the value only. |
+| `2_cout_parametres.csv` | 2 | Name / value: the **hourly rates** (production 123, quality 107, ME 76, engineering 78.16) and the **minutes of each step** (alert 41, writing 30, at final inspection 60, support 60, preparation 50, minimum work 60, re-check 30...), the **logistics minutes** added when the work comes from the rework order (15), the factor for internal NCs, the flat amount for a customer return | Change the value only. |
 | `2_cout_decisions.csv` | 2 | One decision (RWK rework, REJ reject, SCR scrap, EXC exchange, DQN design query...): `1` or `0` for each step it charges (alerte, redaction, support, travail, recontrole), its engineering hours, `valeur_piece` (1 = the part's value counts), its label, and `base` (where the rule comes from) | A new decision code: add a row. |
 | `2_cout_qui_fait_quoi.csv` | 2 | Each step → who does it (`production`, `qualite`, `me`), so which rate it is paid at | |
 | `3_cout_temps_defauts.csv` | 3 | One **type of defect**: minutes of work, material in euros, English name, reference sub-code, and `base` (where the time comes from). A type can instead be **computed from another** (`calcule_depuis`) × a factor (`facteur`): "wrong reference" = 2 × "missing" | Expert: these minutes drive most of the cost. |
-| `1_prix_pieces.csv` | 1 | **The value of the part** on a rejection, scrap or exchange. Two kinds of row: **a reference and its unit price** (no NC): every NC whose title or text contains that reference gets that price; **an NC number and a reference** (quantity in `quantite`, 1 when empty): that NC used that part, priced by its own `prix_unitaire_eur` or else by the reference's row | Paste your price list as rows `reference;prix` (prices with a dot or a comma). For an NC whose text doesn't name the part, add a row with its NC number. References shorter than 5 characters are not searched. An NC tied by hand is not searched in the text. Only the decisions with `valeur_piece` = 1 in `2_cout_decisions.csv` count it. |
+| `1_prix_pieces.csv` | 1 | **The price of each part**: one row per material (the material number the NC names), its description and its unit price. The value of a rejected, scrapped or exchanged part = price × quantity | Add a row per material, or paste an export (the material and price columns are recognised by their names). Empty price = not priced yet. The materials still without a price are listed at each run in `fto2_parts_to_price.csv`. Guide: `part_prices.md`. |
 | `3_cout_airbus.csv` | 3 | Airbus standard cost per decision (level 1 of the cost) | Only if the official standard changes. |
 | `3_cout_avance.csv` | 3 | Name / value: model version, which NC types are "final inspection" or "internal", the prefixes of a rework order, the connection-error classes, whether the planned time of rework orders and the declared time of aléas replace the model's times (`oui`/`non`), the time window that links an aléa to an NC | Expert. |
 | `3_cout_ordres_operations.csv` | 3 | How to read a rework order's operations: a pattern in the operation text → which step it counts as (preparation or work) | Expert. |
@@ -247,7 +247,7 @@ The defects are sorted in three layers: **category** (e.g. Erreur Branchement) �
 | I want to... | Table | What to do |
 |---|---|---|
 | Count a new kind of REC | `2_regle_phase.csv` | Add the workflow text to the `valeur` of a REC row (`-CRE\|-PNC\|-RCX`), or add a row before the `99` rule. |
-| Price the rejected parts | `1_prix_pieces.csv` | One row per part: `reference;prix_unitaire_eur`. Or tie a part to an NC: add its NC number. Full guide: `part_prices.md`. |
+| Price the rejected parts | `1_prix_pieces.csv` | One row per material: `materiel;designation;prix_unitaire_eur`. What is left to price: `fto2_parts_to_price.csv`, written at each run. |
 | Change an hourly rate | `2_cout_parametres.csv` | Change `valeur` of `taux_production`, `taux_qualite` or `taux_me`. |
 | Change the target | `2_reglages_pages.csv` | `objectif_baisse`: 0.30 for −30 %. |
 | Add a product | `2_regle_produit.csv`, then `2_produits_plan.csv` | A rule that recognises it, then its name in the plan. |
@@ -272,7 +272,7 @@ needs only a new run.
 | `2_regle_*.csv` (the rules) | `selection.py`, `core.py`, `parser/fto2_logic.py`, through `rules.py` | Applied to every NC to give it a label (phase, line, product, type, scope...) |
 | `2_cout_*.csv`, `3_cout_*.csv` (the cost) | `cost/params.py` | Turned into the cost model's settings, used by `cost/model.py` |
 | `2_parametres.csv`, `2_sources.csv` | `skywise.py`, `config.py`, `manual_lists.py` | Which plant, from which date, which datasets and files to read |
-| `1_prix_pieces.csv` (part prices) | `cost/parts.py` | Each NC's part found (by its reference in the NC's text, or tied by hand) and priced; the cost model adds it for the decisions that count the part |
+| `1_prix_pieces.csv` (part prices) | `cost/parts.py` | Each NC's material (read from the NC data) gets its unit price; the cost model adds price × quantity for the decisions that count the part |
 | the other `1_*.csv` (production plan, actions, cables...) and the page settings (`2_reglages_pages.csv`, `2_categories.csv`, `2_lignes.csv`, `3_alarmes.csv`) | `reference.py` | Packed into the table `fto2_dash_ref`, which the pages read |
 | categories, causes, sub-codes | `reference.py`, `core.py`, `parser/fto2_logic.py` | Names and definitions shown on the pages, official sub-codes of the defect lines |
 
@@ -299,7 +299,7 @@ same function serves every rule table, so all of them behave the same way.
 **Settings with several values** (`FTO2|FT02`, `7=0.6|8=0.6`) are split on `|` by `config.parameter_list`; the cost tables
 and `1_prix_pieces.csv` accept a comma or a dot for decimals (`cost/params.py`, `cost/parts.py`).
 
-**The part prices** (`cost/parts.py`) are checked too: a price or a quantity that isn't a number stops the run with
-"1_prix_pieces.csv: '…' is not a number (line N)". Without the table, no part is priced, as before. The full guide to that
-table: `part_prices.md`.
+**The part prices** (`cost/parts.py`) are checked too: a price that isn't a number stops the run with "1_prix_pieces.csv:
+'…' is not a price (line N)", and a list without a recognisable material or price column says which columns it found.
+Without the table, no part is priced. The full guide to that table: `part_prices.md`.
 

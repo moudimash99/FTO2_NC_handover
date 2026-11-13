@@ -41,8 +41,9 @@ function fto2FromTables(ncIn, defIn, ref, disIn, cxIn) {
       str(r.msn).replace(/\.0$/, ''), str(r.product) || 'Other', str(r.station), r.hour == null || r.hour === '' ? -1 : int(r.hour), numOrNull(r.lead_days), int(r.is_open),
       numOrNull(r.age_days), day(r.closed), str(r.type_nc), str(r.liability), str(r.sap_defect), str(r.sap_cause_group), str(r.sap_cause), str(r.status), str(r.source) || 'sky',
       [num(r.min_alert), num(r.min_writing), num(r.min_support), num(r.min_setup), num(r.min_hands_on), num(r.min_recheck), num(r.hours_engineering), int(r.final_inspection),
-        str(r.work_source), str(r.order_state), str(r.rework_orders), str(r.alert_source), str(r.aleas)], str(r.origin) || 'normal', str(r.plant), k ? 0 : num(r.cost_total)];
-    if (!k) a._w = [num(r.cost_airbus), num(r.cost_global), num(r.cost_total), num(r.cost_admin), num(r.cost_work), num(r.cost_material), num(r.cost_engineering)];   // REC cost switch (3 Nov)
+        str(r.work_source), str(r.order_state), str(r.rework_orders), str(r.alert_source), str(r.aleas), num(r.min_logistics)], str(r.origin) || 'normal', str(r.plant), k ? 0 : num(r.cost_total),
+      str(r.material), str(r.material_label), k * num(r.cost_part)];   // [44] the part the NC is about (SAP material), [45] its label, [46] its value
+    if (!k) a._w = [num(r.cost_airbus), num(r.cost_global), num(r.cost_total), num(r.cost_admin), num(r.cost_work), num(r.cost_material), num(r.cost_engineering), num(r.cost_part)];   // REC cost switch (3 Nov)
     ncs.push(a); byNc[id] = { a: a, plant: str(r.plant), lt: str(r.long_text) };
   });
   // products the production plan does not name, put back on their plan product (04_reference/produits_alias.csv, the same rules as

@@ -54,7 +54,8 @@ _p = _values(_F)
 _need(_p, _F, ["taux_production", "taux_qualite", "taux_me", "taux_ingenierie", "minutes_alerte", "minutes_redaction",
                "minutes_redaction_controle_final", "minutes_support", "minutes_preparation", "minutes_travail_minimum",
                "minutes_recontrole", "minutes_travail_sans_defaut", "minutes_defaut_inconnu", "minutes_branchement_suivant",
-               "facteur_travail_nc_interne", "minutes_redaction_niveau2", "minutes_travail_niveau2", "forfait_retour_client"])
+               "facteur_travail_nc_interne", "minutes_redaction_niveau2", "minutes_travail_niveau2", "forfait_retour_client",
+               "minutes_logistique"])
 _n = {k: _number(v, "%s, %s" % (_F, k)) for k, v in _p.items()}
 
 RATES = {"prod": float(_n["taux_production"]), "quality": float(_n["taux_qualite"]), "me": float(_n["taux_me"])}
@@ -73,6 +74,7 @@ INTERNAL_WORK_FACTOR = float(_n["facteur_travail_nc_interne"])
 MIN_WRITE_NC_GLOBAL = _n["minutes_redaction_niveau2"]
 MIN_WORK_GLOBAL = _n["minutes_travail_niveau2"]
 CUSTOMER_RETURN_EXTRA = float(_n["forfait_retour_client"])
+MIN_LOGISTICS = _n["minutes_logistique"]   # supplying the part, preparing the kit: not in the rework orders' planned time
 
 # ---------------------------------------------------------------- 2_cout_qui_fait_quoi.csv
 _F = "2_cout_qui_fait_quoi.csv"
@@ -141,7 +143,8 @@ _F = "3_cout_avance.csv"
 _a = _values(_F)
 _need(_a, _F, ["version_modele", "usine_responsable", "types_controle_final", "types_sans_alerte", "prefixes_ordre_retouche",
                "classes_branchement", "types_internes", "utiliser_temps_ordres", "types_ordres", "unites_minutes",
-               "utiliser_temps_aleas", "types_aleas", "fenetre_alea_heures", "aleas_erma_regex", "colonne_cout_retour_client"])
+               "utiliser_temps_aleas", "types_aleas", "fenetre_alea_heures", "aleas_erma_regex", "colonne_cout_retour_client",
+               "logistique_seulement_avec_materiel"])
 MODEL_VERSION = _a["version_modele"]
 AEC_PLANT_CODE = _a["usine_responsable"]
 FINAL_INSPECTION_TYPES = _list(_a["types_controle_final"])
@@ -157,3 +160,4 @@ ALEA_TYPES = _list(_a["types_aleas"])
 ALEA_LINK_HOURS = tuple(_number(x, _F + ", fenetre_alea_heures") for x in _list(_a["fenetre_alea_heures"]))
 ALEA_ERMA_DESIGNATION = _a["aleas_erma_regex"]
 CUSTOMER_RETURN_COST_COLUMN = _a["colonne_cout_retour_client"]
+LOGISTICS_ONLY_WITH_MATERIAL = _yes(_a["logistique_seulement_avec_materiel"], _F + ", logistique_seulement_avec_materiel")

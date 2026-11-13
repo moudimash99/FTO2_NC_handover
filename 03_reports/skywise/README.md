@@ -82,6 +82,17 @@ as Slate functions instead of in the page, so that the page only draws. Two ways
 6. In Slate: add the query `q_fto2_ref` (`level3_datasets/q_fto2_ref.sql`); paste the new `.js` and the new `state.json` into the
    dashboard's, the MFT's and the Elizabeth's sandboxes (the CSS and HTML files changed too: paste all three to be sure).
 
+## Already set up? What to change (13 November: part values from the material, logistics time)
+
+1. Upload `level3_datasets/notebook_kit` again (the whole folder).
+2. In `data/config/`: add the line `minutes_logistique` to `2_cout_parametres.csv` and the line
+   `logistique_seulement_avec_materiel` to `3_cout_avance.csv` (copy them from `level3_datasets/config/`), and add the table
+   `1_prix_pieces.csv` (the price of each material; see `notebook_kit/part_prices.md`).
+3. Restart the kernel and run the notebook. Its last lines say how many NCs have a material and how many prices are missing;
+   the materials to price are listed in `fto2_parts_to_price.csv`.
+4. In Slate: replace the text of the query `q_fto2_nc` by the new `level3_datasets/q_fto2_nc.sql` (four new columns at the
+   end), once the sync has run; then paste the new `fto2_level23.js` into the dashboard's sandbox.
+
 ## Keep it up to date
 
 - **New NCs:** run the notebook. The pages follow once the sync has run.

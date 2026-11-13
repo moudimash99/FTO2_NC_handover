@@ -1,101 +1,90 @@
-# Part prices: the value of rejected, scrapped and exchanged parts
+# Part prices and logistics time
 
-When an NC is a rejection, a scrap or an exchange, the part itself is part of the cost of non-quality. Its price comes from
-one settings table, `data/config/1_prix_pieces.csv`. Without a price, the part counts 0 €.
+Two things complete the cost of an NC: the **value of the part** when it is rejected, scrapped or exchanged, and the
+**logistics time** needed to supply it.
 
-## 1. Set it up in the Code Workspace (once)
+## 1. How the part is known: the NC's material
 
-**a. Add the new code file** `notebook_kit/fto2/cost/parts.py`.
+Each NC in Skywise names the part it is about in its column **`material`** (the SAP material number, with its description).
+It is not the *article* of the NC, which is the whole assembly being built.
 
-**b. In `notebook_kit/fto2/core.py`, add two things.**
+| | Example |
+|---|---|
+| Article (the assembly) | `F9251623400000` · ELEC ASSY 295VU |
+| Material (the part concerned) | `E0062D1S4BA0A` · SWITCH-OVERS, SUBMINIATURE |
 
-Near the top, under `from .cost.orders import nc_order_times`:
+The notebook reads the material of every NC. It is filled on rejections and most exchanges, and almost never on plain
+reworks, which replace no part.
 
-```python
-from .cost.parts import part_values
-```
+## 2. The price list: `1_prix_pieces.csv`
 
-In the function `prepare`, right after the line that ends with `"aleas", "alea_minutes"]].copy()`:
-
-```python
-    nc_in["part_value"] = part_values(nc["notification_number"], nc["description_short"], nc["notification_number"].map(lt))
-    report["parts_priced"] = int(pd.notna(nc_in["part_value"]).sum())
-```
-
-**c. Add the table** `data/config/1_prix_pieces.csv`. It comes already listing the parts and NCs found so far, with the prices
-empty.
-
-**d. Restart the notebook's kernel and run all cells.**
-
-**e. Optional, for the dashboard:** paste the new dashboard JS into its Slate sandbox, so that "Expliquer le calcul" shows the
-price on its own line, "Valeur de la pièce". Without it the totals are right, but the NC's page shows the price on the
-customer-return line.
-
-## 2. The table `1_prix_pieces.csv`
+One row per material, in the settings folder:
 
 ```
-reference;prix_unitaire_eur;nc;quantite;note
+materiel;designation;prix_unitaire_eur
+E0062D1S4BA0A;SWITCH-OVERS,SUBMINIATURE;38,40
+6325018500;334VZ01Y00#SLV FIRE P/B SW;212,00
 ```
 
 | Column | What to write |
 |---|---|
-| `reference` | the part number (or the name used for it) |
-| `prix_unitaire_eur` | the price of one part, in euros; a dot or a comma |
-| `nc` | empty, or an NC number to tie this part to that NC |
-| `quantite` | how many parts that NC used; empty = 1 |
-| `note` | anything, for people |
+| `materiel` | the material number, as in the NC (leading zeros, spaces and upper/lower case don't matter) |
+| `designation` | its name, for people; not read |
+| `prix_unitaire_eur` | the price of one part, in euros, with a dot or a comma; empty = no price yet |
 
-There are two kinds of rows.
+An export from another tool can be used as it is: the columns are recognised by their names (for the material: `materiel`,
+`material`, `article`, `reference`, `part_number`...; for the price: `prix_unitaire_eur`, `prix`, `price`, `unit_price`,
+`cout`...), in any order; other columns are ignored; the separator may be `;`, `,` or a tab.
 
-**A price row: a reference and its price, no NC.**
+**Which materials still need a price?** Each run writes `fto2_parts_to_price.csv` next to the notebook: one row per
+material with no price yet, with its description, the number of NCs and the date of the last one. Copy its rows into the
+price list and fill in the prices.
 
-```
-NSA932844CN;12.50;;;socle de raccordement
-```
+## 3. What is counted
 
-Every NC whose title or long text contains `NSA932844CN` gets 12.50 € (spaces and upper/lower case don't matter). This is where
-your price list goes: one row per part.
+- **Value of the part** = unit price × quantity (the NC's defect quantity, 1 when empty).
+- It counts only for the decisions that charge the part: `valeur_piece` = 1 in `2_cout_decisions.csv` (rejection, rejection
+  with a rework order, scrap, exchange).
+- As for the rest of the cost, it is FTO2's cost only where FTO2 is liable.
+- A material with no price counts 0 €; the NC is then marked "Part value unknown" in the cost model's output.
+- The comparison year gets the same prices, so both years stay comparable.
 
-**An NC row: an NC number and a reference.**
+## 4. Logistics time
 
-```
-NSA932844CN;;216060124;2;
-```
+The planned time of a rework order (S03) holds the work and its checks, but nothing for supplying the part. So when an NC's
+work is costed from its rework order, a logistics time is added to its preparation step, at the production rate.
 
-NC 216060124 used 2 of that part. Its price is the row's own `prix_unitaire_eur`, or, when empty, the price row of the same
-reference. Use it when the NC's text doesn't name the part (only a FIN, or a description), or to give the quantity.
+| Setting | Table | Value |
+|---|---|---|
+| `minutes_logistique` | `2_cout_parametres.csv` | 15 minutes |
+| `logistique_seulement_avec_materiel` | `3_cout_avance.csv` | `oui`: only when the NC names a material (a part has to be supplied). `non`: for every NC costed from its rework order |
 
-**The rules:**
+NCs costed by the model (no usable rework order) are not concerned: their preparation time already includes fetching what
+the job needs.
 
-- an NC tied by hand (an NC row) is not searched in the text: its NC rows decide;
-- the value of an NC = the sum of price × quantity of its parts;
-- references shorter than 5 characters are not searched in the text, to avoid false matches;
-- only the decisions that count the part get the value: `valeur_piece` = 1 in `2_cout_decisions.csv` (rejection, rejection
-  with a rework order, scrap, exchange);
-- the cost is FTO2's only where FTO2 is liable, as for the rest of the cost;
-- the 2025 comparison year gets the same prices, so 2025 and 2026 stay comparable.
+## 5. Where it shows
 
-## 3. What it changes
+- **The cost of each NC** (levels 2 and 3) includes the part's value; the preparation step includes the logistics minutes.
+- **Dashboard, cost tab, "Expliquer le calcul":** the NC's material and its description, a line "Valeur de la pièce" with the
+  price used (or why it is 0 €), and the logistics minutes in the note of the preparation step. The summary of the selection
+  shows the total value of the parts.
+- **Dashboard, cost by component:** a "Pièces" component appears once some parts are priced.
+- **The notebook's last lines:** how many NCs have a material, how many are priced, and how many materials still need a price.
 
-- **The cost of each NC** (level 3, and level 2) includes the part's value.
-- **The NC's completeness** (`cnq_complete`) no longer says "Part value unknown" once its part is priced.
-- **The notebook's report** gives `parts_priced`: how many NCs got a part value.
-- **The dashboard:** every cost figure follows. In "Expliquer le calcul", the part has its own line (with the new dashboard JS).
+## 6. In the code
 
-## 4. Where it is in the code
-
-| Part | File |
+| What | Where |
 |---|---|
-| Reading the table and finding each NC's parts | `notebook_kit/fto2/cost/parts.py`, function `part_values` |
-| Giving the value to the cost model | `notebook_kit/fto2/core.py`, function `prepare` (column `part_value`) |
-| Adding it to the cost, only for the decisions that count it | `notebook_kit/fto2/cost/model.py` (`cnq_cost_part`) |
-| Which decisions count it | `data/config/2_cout_decisions.csv`, column `valeur_piece` |
+| Reading the price list, valuing each NC, listing what is left to price | `notebook_kit/fto2/cost/parts.py` |
+| Reading the material of each NC, passing its value to the cost model | `notebook_kit/fto2/skywise.py` (the columns read), `notebook_kit/fto2/core.py` (`prepare`) |
+| Adding the part and the logistics minutes to the cost | `notebook_kit/fto2/cost/model.py` (`cnq_cost_part`, `cnq_min_logistics`) |
+| The NC table's columns | `material`, `material_label`, `cost_part`, `min_logistics` (`core.py`, `NC_COLUMNS`) |
 
-## 5. If a price doesn't show
+## 7. If a price doesn't show
 
 | You see | Why |
 |---|---|
-| The run stops: "1_prix_pieces.csv: '…' is not a number" | A price or quantity has text in it: fix that line |
-| An NC still at 0 € for its part | Its text doesn't contain the reference (add an NC row), or its decision doesn't count the part, or FTO2 isn't liable |
-| An NC priced that shouldn't be | Its text mentions a reference by chance: add an NC row for it with the right part (it then stops being searched) |
-| Nothing priced at all | The table isn't in `data/config/`, or the code of section 1 isn't in place: restart the kernel after adding it |
+| The run stops: "1_prix_pieces.csv: '…' is not a price (line N)" | A price holds text: fix that line |
+| The run stops: "it needs a column for the material number…" | The price list's column names are not recognised: name them `materiel` and `prix_unitaire_eur` |
+| An NC still at 0 € for its part | It has no material, its material has no price, its decision doesn't charge the part, or FTO2 isn't liable |
+| Nothing priced at all | The price list isn't in the settings folder, or every price is empty |

@@ -24,7 +24,7 @@ COLUMNS = [
     ("eur_hands_on", "num", "NC: hands-on work (EUR)"),
     ("eur_recheck", "num", "NC: re-check and closing (EUR)"),
     ("work_factor", "num", "NC: factor on the work time (internal NCs)"),
-    ("adjust", "num", "NC: what its cost holds beyond the steps, engineering and material (customer-return extra), EUR"),
+    ("adjust", "num", "NC: what its cost holds beyond the steps, engineering, material and the part (customer-return extra), EUR"),
     ("minutes", "num", "defect line: minutes of work from its class (connection errors: only the first one takes the class time)"),
     ("material", "num", "defect line: material (EUR)"),
     ("defect_class", "text", "defect line: its class (sub-category)"),
@@ -66,7 +66,7 @@ def table(nc_t, def_t, cnqp):
             on, e = [f[0], f[1], f[2], f[3], f[3], f[4]], 0.0
             for j, (k, _) in enumerate(STEPS):
                 e = e + (st[j] / 60 * rate(k) if on[j] else 0)
-            d = _num(n.cost_total) - (e + _num(n.cost_engineering) + _num(n.cost_material))
+            d = _num(n.cost_total) - (e + _num(n.cost_engineering) + _num(n.cost_material) + _num(getattr(n, "cost_part", 0)))
             adj = d if abs(d) >= 0.05 else 0.0
         factor = (p.get("intFactor") or 1) if _text(n.type_nc).upper() in internal else 1
         rows.append([nid, 0] + [st[j] / 60 * rate(k) for j, (k, _) in enumerate(STEPS)] + [factor, adj, None, None, "", ""])

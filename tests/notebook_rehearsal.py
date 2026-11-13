@@ -112,6 +112,13 @@ def main():
     nc = pd.concat(exports, ignore_index=True).drop_duplicates("notification_number")
     nc["liability"] = nc["liability"].map(_as_list)
     nc["notification_number"] = nc["notification_number"].astype(str).str.replace(r"\.0$", "", regex=True)
+    # the material of each NC (the Skywise dataset holds it; the exports were made before it was read): from the raw extracts
+    for f in sorted(glob.glob(os.path.join(ROOT, "06_input_data", "nc_2026_skywise_*.csv*"))):
+        raw = pd.read_csv(f, dtype=str, low_memory=False)
+        raw["notification_number"] = raw["notification_number"].astype(str).str.replace(r"\.0$", "", regex=True).str.lstrip("0")
+        for c in ("material", "material_description_fr", "material_description_en"):
+            known = nc["notification_number"].map(raw.dropna(subset=[c]).set_index("notification_number")[c])
+            nc[c] = nc[c].where(nc[c].notna(), known) if c in nc.columns else known
     y25 = pd.read_csv(os.path.join(ROOT, "06_input_data", "nc_2025_skywise_fto2.csv.gz"), dtype=str, keep_default_na=False, na_values=[""])
     nc = pd.concat([nc, y25[~y25.notification_number.isin(nc.notification_number)]], ignore_index=True)   # the 2025 NCs, for the comparison year
     Dataset.tables = {

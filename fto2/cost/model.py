@@ -26,10 +26,13 @@ How one NC is costed
                   class time, each following one MIN_CONNECTION_NEXT; internal NCs x INTERNAL_WORK_FACTOR.
                   When the NC dataset carries the planned time of the NC's rework orders (orders.nc_order_times)
                   and they are all closed and planned (order_state "used"): setup = the orders' preparation,
-                  inspection and closing operations, hands-on = their work and test operations (USE_ORDER_TIME)
+                  inspection and closing operations, hands-on = their work and test operations (USE_ORDER_TIME);
+                  plus MIN_LOGISTICS on the preparation (the orders plan no time for supplying the part), when the
+                  NC names a material (LOGISTICS_ONLY_WITH_MATERIAL) or for every such NC
   engineering   = hours from the rule (design queries)
   material      = sum of material of its defect lines, if the rule includes work
-  part value    = `part_value` column if present and the rule counts the part (else 0)
+  part value    = `part_value` column (price of the NC's material x quantity, fto2/cost/parts.py) if the rule counts the
+                  part (else 0)
   total         = each step's minutes / 60 * the rate of who does it (STEP_RATES: production, quality, ME)
                   + engineering hours * engineering rate (Airbus) + material + part
   customer return: + a flat extra (CUSTOMER_RETURN_EXTRA), or replaced by the real amount when the NC dataset
@@ -179,8 +182,13 @@ def compute_cnq(nc, defects, params=P):
     nc["cnq_work_source"] = np.where(work == 0, "", np.where(use_order, "order", "model"))
     # the defect lines' own minutes follow the order's hands-on time, for sharing the cost among lines
     nc["_k"] = np.where(use_order, np.where(nc["_min"] > 0, o_work / nc["_min"].where(nc["_min"] > 0, 1.0), 0.0), 1.0)
+    # logistics (supplying the part, preparing the kit): the orders plan no time for it, so it is added to their preparation;
+    # the model's own preparation already holds it. Only when the NC names a material, unless the setting says every order
+    material = _first_present(nc, ["material"]).astype("string").fillna("").str.strip()
+    needs = (material != "") if getattr(params, "LOGISTICS_ONLY_WITH_MATERIAL", True) else pd.Series(True, index=nc.index)
+    nc["cnq_min_logistics"] = np.where(use_order & needs, float(getattr(params, "MIN_LOGISTICS", 0)), 0.0)
     nc["cnq_min_hands_on"] = np.where(use_order, o_work, nc["cnq_min_hands_on"])
-    nc["cnq_min_setup"] = np.where(use_order, o_setup, nc["cnq_min_setup"])
+    nc["cnq_min_setup"] = np.where(use_order, o_setup + nc["cnq_min_logistics"], nc["cnq_min_setup"])
     nc["cnq_min_recheck"] = flag("recheck") * params.MIN_RECHECK_CLOSE
     nc["cnq_hours_engineering"] = flag("eng_hours")
 

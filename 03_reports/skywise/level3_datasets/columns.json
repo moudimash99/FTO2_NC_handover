@@ -249,6 +249,26 @@
    "name": "origin",
    "type": "text",
    "meaning": "pipeline output the NC comes from: normal (fto2_dashboard_data) or missing_ids (fto2_dashboard_data_missing_ids)"
+  },
+  {
+   "name": "material",
+   "type": "text",
+   "meaning": "material number of the part the NC is about (SAP material, leading zeros removed); empty when the NC names none"
+  },
+  {
+   "name": "material_label",
+   "type": "text",
+   "meaning": "description of that material"
+  },
+  {
+   "name": "cost_part",
+   "type": "num",
+   "meaning": "level 3: value of the rejected, scrapped or exchanged part, from the price list (EUR)"
+  },
+  {
+   "name": "min_logistics",
+   "type": "num",
+   "meaning": "CNQ minutes of logistics inside min_setup (supplying the part), when the work comes from the rework order"
   }
  ],
  "defects": [

@@ -3793,7 +3793,7 @@
 218193868,1,,,,,,,,,60.0,0.0,Câble à refaire (ligne),Cable to remake (line)
 218070027,0,84.05,53.5,76.0,0.0,61.5,53.5,2.0,0.0,,,,
 218070027,1,,,,,,,,,30.0,0.0,Dommage – composant cassé,Damage: broken component
-218185629,0,84.05,53.5,76.0,0.0,535.05,53.5,2.0,0.0,,,,
+218185629,0,84.05,53.5,76.0,30.75,535.05,53.5,2.0,0.0,,,,
 218185629,1,,,,,,,,,20.0,0.85,Dommage – structure,Damage: structure
 218103313,0,0.0,107.0,76.0,0.0,172.2,53.5,1.0,0.0,,,,
 218103313,1,,,,,,,,,2.0,0.0,Dommage – habillage,Damage: sleeving or dressing
@@ -3993,7 +3993,7 @@
 218322420,3,,,,,,,,,15.0,0.0,Erreur de branchement,Wrong connection
 218322420,4,,,,,,,,,15.0,0.0,Erreur de branchement,Wrong connection
 218322420,5,,,,,,,,,30.0,0.0,Composant HS,Component out of order
-218166898,0,84.05,53.5,76.0,1.23,123.0,53.5,2.0,0.0,,,,
+218166898,0,84.05,53.5,76.0,31.98,123.0,53.5,2.0,0.0,,,,
 218166898,1,,,,,,,,,30.0,0.0,Dommage – composant cassé,Damage: broken component
 218296295,0,0.0,107.0,76.0,1.23,172.2,53.5,1.0,0.0,,,,
 218296295,1,,,,,,,,,2.0,0.0,Dommage – habillage,Damage: sleeving or dressing
@@ -4218,11 +4218,11 @@
 218381745,1,,,,,,,,,30.0,0.0,Dommage – composant cassé,Damage: broken component
 218069153,0,84.05,53.5,0.0,0.0,0.0,0.0,1.0,0.0,,,,
 218069153,1,,,,,,,,,2.0,0.0,Manquant – mécanique / freinage,Missing: mechanical part or locking
-218227645,0,14.35,53.5,76.0,246.0,61.5,53.5,2.0,0.0,,,,
+218227645,0,14.35,53.5,76.0,276.75,61.5,53.5,2.0,0.0,,,,
 218227645,1,,,,,,,,,10.0,0.0,Déverrouillage,Contact not locked
 218366950,0,0.0,107.0,76.0,0.0,246.0,53.5,1.0,0.0,,,,
 218366950,1,,,,,,,,,5.0,0.0,Point de masse / mesure,Ground point or measurement
-218367147,0,0.0,53.5,76.0,0.0,184.5,53.5,1.0,0.0,,,,
+218367147,0,0.0,53.5,76.0,30.75,184.5,53.5,1.0,0.0,,,,
 218367147,1,,,,,,,,,30.0,0.0,Composant HS,Component out of order
 218221555,0,84.05,53.5,76.0,102.5,61.5,53.5,1.0,0.0,,,,
 218221555,1,,,,,,,,,30.0,0.18,Mauvaise réf. – électrique / détrompage,Wrong reference: electrical or keying

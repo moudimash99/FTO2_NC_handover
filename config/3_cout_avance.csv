@@ -14,3 +14,4 @@ types_aleas;QLS;Début du type des aléas qualité (QLS)
 fenetre_alea_heures;-2|72;Une NC suit un aléa si elle est créée entre ces heures autour de l'aléa (avant|après)
 aleas_erma_regex;1101VB|MIP;Aléas ERMA possibles (laissés hors du bloc aléas)
 colonne_cout_retour_client;customer_return_cost;Colonne du montant réel d'un retour client, quand il est connu
+logistique_seulement_avec_materiel;oui;oui : la logistique compte seulement quand la NC porte un matériel (une pièce à approvisionner). non : pour toute NC chiffrée depuis son ordre de retouche

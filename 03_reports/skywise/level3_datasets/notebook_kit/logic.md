@@ -94,8 +94,8 @@ number, then go through the same rules.
 4. **Labels:** each defect line takes its AI label from `fto2_ai_labels`, **only if the line's text is still the same as when
    it was labelled**. Otherwise it keeps the defect reader's label and is listed "to label". Then the category, cause,
    "minor" flag and official sub-code follow from the label.
-5. **Part prices:** each NC gets the price of its rejected, scrapped or exchanged part, from `1_prix_pieces.csv`
-   (`cost/parts.py`: a reference found in the NC's title or long text, or a part tied to the NC by hand).
+5. **Part prices:** the NC data names the part each NC is about (column `material`); its price comes from
+   `1_prix_pieces.csv` (`cost/parts.py`). The materials still without a price are written to `fto2_parts_to_price.csv`.
 6. **Cost:** the cost model runs on every NC (`cost/model.py`, section 4).
 7. **Scope:** where each NC was raised: `serie`, `client` (customer return), `autre` (`2_regle_perimetre.csv`).
 8. **Tables:** `core.tables` puts it all into the two tables, column by column, and `core.dis_table` makes the aléa table.
@@ -181,7 +181,8 @@ counts.
 2. **Each NC, its minutes per step:** alert (or the declared time of the aléa behind the NC), writing (longer at final
    inspection), support, hands-on work (the sum of its lines, times a factor for internal NCs), preparation (never letting the
    work fall under the minimum), re-check, engineering hours. When the NC has a closed rework order with a planned time, that
-   planned time replaces the model's preparation and hands-on minutes.
+   planned time replaces the model's preparation and hands-on minutes, and the logistics minutes (`minutes_logistique`) are
+   added to the preparation when a part has to be supplied (the NC names a material).
 3. **Euros:** each step's minutes at its rate, plus engineering, material and part value (the price of the part, from
    `1_prix_pieces.csv`, for the decisions that count it).
 4. **Customer returns:** a flat extra, or the real amount when it is known.
@@ -195,7 +196,7 @@ The other files:
 | `params.py` | Turns the cost tables of `data/config/` into the model's settings |
 | `orders.py` | Reads the rework orders' operations and their planned time; gives each NC's orders a state (used, open, no_time, not_found) |
 | `disruptions.py` | Links the aléas to NCs (same work order, from 2 h before to 72 h after) and builds the block of aléas with no NC |
-| `parts.py` | The part's price: `part_values` reads `1_prix_pieces.csv`; a reference with a price is searched in each NC's title and long text (spaces and case ignored, at least 5 characters); an NC row ties a part to an NC by hand (and stops the text search for it); the value is the sum of price × quantity, or none when no part is found. Guide: `part_prices.md` |
+| `parts.py` | The part's value: `part_values` gives each NC the unit price of its material (`1_prix_pieces.csv`, matched on the material number without leading zeros) × its quantity; `to_price` lists the materials that still need a price. Guide: `part_prices.md` |
 | `explain.py` | Writes each NC's cost explanation as a table (only for an optional Slate set-up, not used) |
 
 The model runs twice: once on the AI labels (the dashboard's figures) and once on the defect reader's own labels (kept for
@@ -264,6 +265,6 @@ see `config.md`.
 | Names a file of `data/config/` and a line | A settings table is badly filled | Fix that line (`config.md`, section 1) |
 | "settings table … not found" | A table was renamed, moved or deleted | Put it back in `data/config/` |
 | A dataset name that isn't found | The dataset isn't in the notebook's Data panel, or was renamed | Add it, or change its name in `2_sources.csv` |
-| "1_prix_pieces.csv: '…' is not a number" | A price or quantity in the parts price list has text in it | Fix that line |
+| "1_prix_pieces.csv: '…' is not a price" | A price in the parts price list has text in it | Fix that line |
 | "fto2_dash_cout not written" | Normal: that table is only for an optional set-up | Nothing |
 | Any other error | The last step printed says where it was | The file of that step (section 3) |

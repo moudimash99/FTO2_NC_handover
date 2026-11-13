@@ -49,6 +49,10 @@ SELECT
     rework_orders,
     alert_source,
     aleas,
-    origin
+    origin,
+    material,
+    material_label,
+    cost_part,
+    min_logistics
 FROM "foundry_sync"."fto2_dash_nc"
 ORDER BY created, nc

@@ -17,3 +17,4 @@ facteur_travail_nc_interne;2;x;Le travail des NC internes est multiplié par ce 
 minutes_redaction_niveau2;30;min;Niveau 2 (global) : temps moyen de rédaction d'une NC
 minutes_travail_niveau2;60;min;Niveau 2 (global) : travail moyen d'une NC retouchée
 forfait_retour_client;0;EUR;Montant fixe ajouté à chaque retour client (0 tant que l'équipe n'a pas fixé de chiffre)
+minutes_logistique;15;min;Logistique (approvisionner la pièce, préparer le kit) : ajoutée à la préparation quand le travail est chiffré depuis l'ordre de retouche

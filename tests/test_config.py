@@ -71,3 +71,32 @@ class NoValuesInCode(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class ExcelHabits(unittest.TestCase):
+    """A table saved again from Excel still reads: Windows encoding, dates as JJ/MM/AAAA, decimal commas, empty cells at the end."""
+
+    def test_table_saved_by_excel(self):
+        import tempfile
+        with tempfile.TemporaryDirectory() as d:
+            with open(os.path.join(d, "x.csv"), "wb") as f:
+                f.write("nom;valeur;description\r\nété;0,25;\"un texte; avec un point-virgule\"\r\n;;\r\nfin;2;;;\r\n".encode("cp1252"))
+            old, os.environ["FTO2_CONFIG"] = os.environ.get("FTO2_CONFIG"), d
+            try:
+                t = config.table("x.csv", ["nom", "valeur"])
+            finally:
+                if old is None:
+                    del os.environ["FTO2_CONFIG"]
+                else:
+                    os.environ["FTO2_CONFIG"] = old
+        self.assertEqual(list(t.nom), ["été", "fin"])
+        self.assertEqual(t.description[0], "un texte; avec un point-virgule")
+        self.assertEqual(config.number(t.valeur[0], "x"), 0.25)
+
+    def test_dates_and_numbers(self):
+        self.assertEqual(config.day("31/01/2026", "x"), "2026-01-31")
+        self.assertEqual(config.day("2026-01-31", "x"), "2026-01-31")
+        self.assertEqual(config.number("1 234,5", "x"), 1234.5)
+        with self.assertRaises(config.ConfigError) as e:
+            config.day("janvier", "2_parametres.csv, date_debut")
+        self.assertIn("2_parametres.csv, date_debut: 'janvier' is not a date", str(e.exception))

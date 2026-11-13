@@ -54,16 +54,22 @@
     "block": 89,
     "block_hours": 66.9
   },
+  "parts": {
+    "ncs_with_material": 127,
+    "ncs_priced": 0,
+    "materials_to_price": 23,
+    "value_aec": 0.0
+  },
   "cnq": {
     "classification": "root cause (long text)",
     "nc_on_aec": 945,
     "level1": 444081.44,
     "level2": 320514.95,
-    "level3": 417793.0,
+    "level3": 417916.0,
     "cable_allocated": 127891.22,
-    "cable_share": 0.3061,
-    "level3_parser": 420541.28,
-    "cable_share_parser": 0.3044
+    "cable_share": 0.306,
+    "level3_parser": 420664.28,
+    "cable_share_parser": 0.3043
   },
   "scope": {
     "serie": 1142,
@@ -75,7 +81,7 @@
       "ncs": 1142,
       "ncs_without_defect_line": 20,
       "defects": 3436,
-      "cnq": 487054.74
+      "cnq": 487177.74
     },
     "client": {
       "ncs": 69,
@@ -98,7 +104,7 @@
   "cnq_package_checks": {
     "build_dashboard.py": "OK",
     "test_queries.py": "OK",
-    "test_dashboard.js": "OK"
+    "test_dashboard.js": "FAILED: level1_airbus_aec         444081.44 pipeline    444081.44 OK\nlevel2_global_aec         320514.95 pipeline    320514.95 OK\nlevel3_detailed_aec       417793.00 pipeline       417916 DIFFERENT\nper-NC check: 1281 NCs, 4 different\nFAILED\n"
   },
   "cnq_package_totals": {
     "nc_rows": 1281,
@@ -106,7 +112,7 @@
     "nc_no_master_data": 0,
     "level1_airbus_aec": 444081.44,
     "level2_global_aec": 320514.95,
-    "level3_detailed_aec": 417793.0
+    "level3_detailed_aec": 417916.0
   },
   "customer_returns": {
     "ncs": 69,
@@ -129,12 +135,12 @@
       "ncs": 713,
       "defects": 1463,
       "aleas": 99,
-      "js_kb": 1596
+      "js_kb": 1608
     },
-    "level23_js_kb": 723,
+    "level23_js_kb": 724,
     "slate_functions": {
       "f_fto2_objectifs.js": 52,
-      "f_fto2_alarmes.js": 69,
+      "f_fto2_alarmes.js": 70,
       "f_fto2_cout.js": 52
     },
     "pipeline_notebook": true,

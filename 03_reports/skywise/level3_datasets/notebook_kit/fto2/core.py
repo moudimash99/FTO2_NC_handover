@@ -38,7 +38,7 @@ HOME_PLANTS = tuple(config.parameter_list("usines_maison"))   # our plant's code
 from .parser import nc_defect_parser as PARSER
 from .cost.model import compute_cnq
 from .cost.orders import nc_order_times
-from .cost.parts import part_values
+from .cost import parts
 from .cost.disruptions import nc_alea_times
 from .cost import params as CNQP
 
@@ -98,6 +98,10 @@ NC_COLUMNS = [
     ("alert_source", "text", "alert step: alea (declared time of the quality aléas that led to the NC), flat (the model's time), empty (not charged)"),
     ("aleas", "text", "quality aléas (MES disruptions) that led to the NC, space-separated"),
     ("origin", "text", "pipeline output the NC comes from: normal (fto2_dashboard_data) or missing_ids (fto2_dashboard_data_missing_ids)"),
+    ("material", "text", "material number of the part the NC is about (SAP material, leading zeros removed); empty when the NC names none"),
+    ("material_label", "text", "description of that material"),
+    ("cost_part", "num", "level 3: value of the rejected, scrapped or exchanged part, from the price list (EUR)"),
+    ("min_logistics", "num", "CNQ minutes of logistics inside min_setup (supplying the part), when the work comes from the rework order"),
 ]
 DEF_COLUMNS = [
     ("nc", "text", "NC number"),
@@ -173,7 +177,11 @@ def merge_exports(frames):
     normal = set(x.loc[~x["_source"].astype(str).str.contains("missing", case=False), "notification_number"])
     x["_origin"] = np.where(x["notification_number"].isin(normal), "normal", "missing_ids")
     x["_changed"] = pd.to_datetime(x["changed_time"], errors="coerce", utc=True)
-    x = x.sort_values("_changed").drop_duplicates("notification_number", keep="last").reset_index(drop=True)
+    x = x.sort_values("_changed")
+    for c in ("material", "material_description_fr", "material_description_en"):   # columns only some exports carry: taken from
+        if c in x.columns:                                                          # any row of the NC before one row is kept
+            x[c] = x.groupby("notification_number")[c].transform(lambda v: v.ffill().bfill())
+    x = x.drop_duplicates("notification_number", keep="last").reset_index(drop=True)
     created = pd.to_datetime(x["creation_time"], errors="coerce", utc=True)
     info = {"nc_rows": int(len(x)), "created_from": str(created.min().date()), "created_to": str(created.max().date())}
     return x, info
@@ -301,13 +309,19 @@ def prepare(x, lab, ops=None, dis=None, say=None):
             "Origin_auto": "origin_auto", "Ext_Source": "ext_source", "defect_code_description_en": "sap_defect_code",
             "cause_group_description_en": "sap_cause_group", "cause_code_description_en": "sap_cause_code", "creation_time": "creation_ts", "_source": "source_file",
             "linked_document": "linked_document", "work_order": "work_order",   # the CNQ model's rejection-with-rework-order rule reads these two
-            "_origin": "origin"}
+            "_origin": "origin",
+            "material": "material", "material_description_fr": "material_label_fr", "material_description_en": "material_label_en",
+            "defect_quantity": "defect_quantity"}
     for c in keep:   # a column the export lacks stays empty rather than failing
         if c not in x.columns:
             x[c] = None
     ex = x[["notification_number"] + list(keep)].rename(columns=keep)
     ex["type_nc"] = ex["gps_type_nc"].where(ex["gps_type_nc"].notna(), ex["type_nc_auto"])
     nc = nc.merge(ex, on="notification_number", how="left")
+    nc["material"] = nc["material"].map(parts.material_id)   # the part the NC is about (not the article, which is the assembly)
+    label = nc["material_label_fr"].where(nc["material_label_fr"].notna() & (nc["material_label_fr"].astype(str).str.strip() != ""), nc["material_label_en"])
+    nc["material_label"] = label.fillna("").astype(str).str.strip().where(nc["material"] != "", "")
+    nc = nc.drop(columns=["material_label_fr", "material_label_en"])
     lt = dict(zip(x.notification_number, x.description_long_text.map(clean_long_text)))
     say("   rework orders...")
     # rework orders: the links, and with the operations their state and planned minutes (cnq/cnq_orders.py)
@@ -370,9 +384,10 @@ def prepare(x, lab, ops=None, dis=None, say=None):
     nc_in = nc[["notification_number", "statut", "decision_status", "liability", "date_creation", "type_nc", "produit",
                 "responsabilite", "customer_return", "programme", "plant", "linked_document", "work_order",
                 "rework_orders", "order_state", "order_minutes_setup", "order_minutes_work", "aleas", "alea_minutes"]].copy()
-    # the value of the rejected, scrapped or exchanged part, from the price list config/1_prix_pieces.csv (fto2/cost/parts.py)
-    nc_in["part_value"] = part_values(nc["notification_number"], nc["description_short"], nc["notification_number"].map(lt))
-    report["parts_priced"] = int(pd.notna(nc_in["part_value"]).sum())
+    # the value of the rejected, scrapped or exchanged part: the price of the NC's material (config/1_prix_pieces.csv) x its
+    # quantity (fto2/cost/parts.py); the material also tells the model that a part has to be supplied (logistics time)
+    nc_in["material"] = nc["material"]
+    nc_in["part_value"] = parts.part_values(nc["material"], nc["defect_quantity"])
     runs = {}
     for key, sub, cab in (("parser", "sous_groupe", "defaut_cable"), ("llm", "llm_sous_categorie", "llm_defaut_cable")):
         dd = d[["notification_number", "seq", "qty", sub, cab]].rename(columns={sub: "sous_groupe", cab: "cable"})
@@ -408,7 +423,12 @@ def prepare(x, lab, ops=None, dis=None, say=None):
     nc_ref = nc_ref[[c for c in nc_ref.columns if c != "scope"] + ["scope"]]   # the scope column last, as in earlier outputs
     d["scope"] = d.notification_number.map(nc_ref.set_index("notification_number")["scope"]).fillna("")
     d["phase"] = d.notification_number.map(nc_ref.set_index("notification_number")["phase"]).fillna("")
-    return {"d": d, "nc": nc_ref, "lt": lt, "nc_in": nc_in, "nc_parser": np_, "nc_llm": nl_, "def_llm": dl_, "dis": block, "codes": codes, "report": report}
+    nc_ref["part_value"] = nc_ref.notification_number.map(nc_in.set_index("notification_number")["part_value"])
+    to_price = parts.to_price(nc_ref)
+    report["parts"] = {"ncs_with_material": int((nc_ref.material != "").sum()), "ncs_priced": int((nc_ref.cnq_cost_part > 0).sum()),
+                       "materials_to_price": int(len(to_price)), "value_aec": round(float((nc_ref.cnq_cost_part * nc_ref.cnq_on_aec).sum()), 2)}
+    return {"d": d, "nc": nc_ref, "lt": lt, "nc_in": nc_in, "nc_parser": np_, "nc_llm": nl_, "def_llm": dl_, "dis": block, "codes": codes, "report": report,
+            "parts_to_price": to_price}
 
 
 # ============================================================ 4. the page's NC fields and customer-return fields
@@ -417,7 +437,8 @@ def nc_extras(r, created_to):
     days to close (None while open), open, age in days if open, closure date, NC type, liability, SAP defect code, SAP cause group,
     SAP cause, status, data source, CNQ steps]. CNQ steps = the model's minutes [alert, writing, support, setup, hands-on, re-check],
     engineering hours, the final-inspection flag, then where the work minutes come from (order / model), the rework orders' state and
-    numbers, where the alert time comes from (alea / flat) and the aléas, for the "explain the calculation" part; then the pipeline
+    numbers, where the alert time comes from (alea / flat), the aléas and the logistics minutes inside the setup, for the "explain
+    the calculation" part; then the pipeline
     output the NC comes from (normal / missing_ids). SAP labels lose their brackets. Data source: every NC comes from Skywise; Ext_Source says whether it
     is also in a manual list (gps = GPS register, test = Test list) or only in Skywise (sky)."""
     msn = S_(r.msn)
@@ -435,7 +456,8 @@ def nc_extras(r, created_to):
             sap(r.sap_cause_group), sap(r.sap_cause_code), S_(r.statut), {"GPS": "gps", "Test": "test"}.get(S_(r.ext_source).strip(), "sky"),
             [round(float(x or 0), 1) for x in (r.cnq_min_alert, r.cnq_min_writing, r.cnq_min_support, r.cnq_min_setup, r.cnq_min_hands_on,
                                                 r.cnq_min_recheck, r.cnq_hours_engineering)] + [int(r.cnq_final_inspection or 0)]
-            + [S_(r.cnq_work_source), S_(r.order_state), S_(r.rework_orders), S_(r.cnq_alert_source), S_(r.aleas)], S_(r.origin) or "normal"]
+            + [S_(r.cnq_work_source), S_(r.order_state), S_(r.rework_orders), S_(r.cnq_alert_source), S_(r.aleas),
+               round(float(getattr(r, "cnq_min_logistics", 0) or 0), 1)], S_(r.origin) or "normal"]
 
 
 def customer_return_extras(d, nc, lt):
@@ -479,7 +501,8 @@ def tables(d, nc, lt, created_to):
                      r.cnq_decision_label, r.cnq_where_found, round(r.cnq_cost_airbus, 2), round(r.cnq_cost_global, 2), round(r.cnq_cost_total, 2),
                      round(r.cnq_cost_admin, 2), round(r.cnq_cost_work, 2), round(r.cnq_cost_material, 2), round(r.cnq_cost_engineering, 2),
                      int(r.nc_cable_llm), int(r.cnq_defect_lines), S_(r.description_short)[:80], r.scope, S_(r.phase)]
-                    + e[:15] + e[15][:8] + [(lt.get(r.notification_number, "") or "")[:2500] if r.scope == "client" else ""] + e[15][8:] + [e[16]])
+                    + e[:15] + e[15][:8] + [(lt.get(r.notification_number, "") or "")[:2500] if r.scope == "client" else ""] + e[15][8:13] + [e[16]]
+                    + [S_(r.material), S_(r.material_label), round(float(r.cnq_cost_part or 0), 2), e[15][13]])
     nc_t = pd.DataFrame(rows, columns=[c[0] for c in NC_COLUMNS])
     rows = []
     for r in d.itertuples():

@@ -30,18 +30,41 @@ def folder():
     return LAPTOP_DIR if os.path.isdir(LAPTOP_DIR) else SKYWISE_DIR
 
 
-def _check_columns(path, name):
-    """Every line must have as many ';' columns as the header: a ';' typed inside a text shifts the columns."""
+def _text(path):
+    """The text of a settings table. Excel saves a CSV in the Windows encoding unless 'CSV UTF-8' is chosen: both are read."""
+    with open(path, "rb") as f:
+        raw = f.read()
+    try:
+        return raw.decode("utf-8-sig")
+    except UnicodeDecodeError:
+        return raw.decode("cp1252")
+
+
+def _rows(path, name):
+    """The lines of a ';' table as lists of cells. Every line must have as many cells as the header: a ';' typed inside a text
+    shifts the columns. Blank lines and empty cells after the last column (Excel adds some) are left out."""
     import csv
-    with open(path, encoding="utf-8-sig", newline="") as f:
-        rows = list(csv.reader(f, delimiter=";"))
-    if not rows:
+    import io
+    try:
+        rows = list(csv.reader(io.StringIO(_text(path), newline=""), delimiter=";"))
+    except Exception as e:   # a broken file: say which one
+        raise ConfigError("%s cannot be read as a ';' table: %s" % (name, e))
+    if not rows or not any(c.strip() for c in rows[0]):
         raise ConfigError("%s is empty: it needs at least its header line" % name)
-    n = len(rows[0])
+    header = [c.strip() for c in rows[0]]
+    while header and header[-1] == "":
+        header.pop()
+    n, out = len(header), []
     for i, r in enumerate(rows[1:], start=2):
-        if r and len(r) > n:
+        while len(r) > n and r[-1].strip() == "":
+            r = r[:-1]
+        if not any(c.strip() for c in r):
+            continue
+        if len(r) > n:
             raise ConfigError("%s line %d has %d columns, the header has %d: a ';' inside a text? Put that text in quotes "
                               "or replace the ';'" % (name, i, len(r), n))
+        out.append(r + [""] * (n - len(r)))
+    return header, out
 
 
 def table(name, columns=None):
@@ -49,18 +72,35 @@ def table(name, columns=None):
     path = os.path.join(folder(), name)
     if not os.path.exists(path):
         raise ConfigError("settings table %s not found in %s" % (name, folder()))
-    _check_columns(path, name)
-    try:
-        t = pd.read_csv(path, sep=";", dtype=str, keep_default_na=False, encoding="utf-8-sig")
-    except Exception as e:   # a broken file: say which one
-        raise ConfigError("%s cannot be read as a ';' table: %s" % (name, e))
-    t.columns = [c.strip() for c in t.columns]
-    t = t[~(t.apply(lambda r: "".join(r).strip(), axis=1) == "")].reset_index(drop=True)   # blank lines from Excel
+    header, rows = _rows(path, name)
+    t = pd.DataFrame(rows, columns=header, dtype=str)
     if columns:
         missing = [c for c in columns if c not in t.columns]
         if missing:
             raise ConfigError("%s: the column(s) %s are missing (expected: %s)" % (name, ", ".join(missing), " ; ".join(columns)))
     return t
+
+
+def number(text, where):
+    """A number typed in a settings table, with a dot or a comma ('0.25', '0,25'). where: the table and line, for the message."""
+    t = str(text).strip().replace("\u00a0", "").replace(" ", "").replace(",", ".")
+    try:
+        return int(t) if t.lstrip("-").isdigit() else float(t)
+    except ValueError:
+        raise ConfigError("%s: '%s' is not a number" % (where, text))
+
+
+def day(text, where):
+    """A date typed in a settings table, as 'AAAA-MM-JJ'. Excel turns such a date into 'JJ/MM/AAAA' when it saves the file:
+    both are read."""
+    import datetime as dt
+    t = str(text).strip()
+    for fmt in ("%Y-%m-%d", "%d/%m/%Y", "%d/%m/%y", "%d-%m-%Y", "%Y/%m/%d"):
+        try:
+            return dt.datetime.strptime(t, fmt).date().isoformat()
+        except ValueError:
+            pass
+    raise ConfigError("%s: '%s' is not a date (write it as 2026-01-31 or 31/01/2026)" % (where, text))
 
 
 def path(name):
@@ -73,7 +113,8 @@ def frame(name, **read_csv_options):
     p = path(name)
     if not os.path.exists(p):
         raise ConfigError("settings table %s not found in %s" % (name, folder()))
-    return pd.read_csv(p, sep=";", encoding="utf-8-sig", **read_csv_options)
+    import io
+    return pd.read_csv(io.StringIO(_text(p)), sep=";", **read_csv_options)
 
 
 def rule_table(name, data_columns=None):
@@ -105,6 +146,11 @@ def parameter(name, table_name="2_parametres.csv", keep_spaces=False):
     if name not in values:
         raise ConfigError("%s: the line '%s' is missing" % (table_name, name))
     return values[name] if keep_spaces else values[name].strip()
+
+
+def parameter_day(name, table_name="2_parametres.csv"):
+    """A date setting, as 'AAAA-MM-JJ' (see day())."""
+    return day(parameter(name, table_name), "%s, %s" % (table_name, name))
 
 
 def parameter_list(name, table_name="2_parametres.csv"):

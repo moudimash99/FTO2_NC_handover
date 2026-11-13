@@ -40,6 +40,7 @@ NC_COLUMNS = [
     "liability", "liability_description", "responsible_defect_level1",
     "responsible_defect_level1_name", "user_department", "is_orgunit",
     "defect_quantity", "priority", "returned_flag", "article_version",
+    "material", "material_description_fr", "material_description_en",   # the part the NC is about (for its price)
     "article_version_description",
     "creation_time", "changed_time", "closure_time", "completion_time",
 ]
@@ -50,14 +51,25 @@ ALEA_COLUMNS = ["disruption_id", "plant", "physical_station", "work_order", "wo_
 
 
 def _liable(element, plant):
-    """True when the plant is in an NC's liability (a list in Skywise, or a text)."""
+    """True when the plant is in an NC's liability (a list in Skywise, or a text, possibly written as a list: '[A, B]')."""
     if isinstance(element, list):
         return plant in element
     if isinstance(element, str):
-        return element == plant
+        return element == plant or plant in [x.strip() for x in element.strip("[]").split(",")]
     if hasattr(element, "__iter__"):
         return plant in list(element)
     return False
+
+
+def _work_list(Dataset, name, table, sep):
+    """Write a work list (lines to label, materials to price): to the dataset of that name when the run has one (the scheduled
+    pipeline), else to a CSV file beside the notebook. Returns where it went."""
+    try:
+        Dataset.get(name).write_table(table)
+        return "dataset " + name
+    except Exception:
+        table.to_csv(name + ".csv", index=False, sep=sep, encoding="utf-8-sig")
+        return name + ".csv"
 
 
 def station_descriptions(path):
@@ -76,13 +88,15 @@ def select_ncs(Dataset, Column, mode, missing_ids=()):
     """The NCs to process. mode STANDARD: the plant's NCs since the start date plus the other plants' NCs where the plant is
     liable, then the exclusion rules; mode MISSING_IDS: the NCs whose numbers are given (no exclusion)."""
     plant = config.parameter("usine")
-    since = config.parameter("date_debut") + " 00:00:00"
+    since = config.parameter_day("date_debut") + " 00:00:00"
     nc = config.parameter("dataset_nc", manual_lists.SOURCES)
     if mode == "STANDARD":
         home = (Dataset.get(nc).where((Column.get("plant") == plant) & (Column.get("creation_time") >= since))
                 .select(*NC_COLUMNS).read_table(format="pandas"))
-        other = (Dataset.get(nc).where((Column.get("plant") != plant) & (Column.get("creation_time") >= since))
-                 .select(*NC_COLUMNS).read_table(format="pandas"))
+        other = Dataset.get(nc).where((Column.get("plant") != plant) & (Column.get("creation_time") >= since))
+        if hasattr(Column, "array_contains"):   # the scheduled pipeline (fto2/transform_io.py): the liability is tested before reading
+            other = other.where(Column.array_contains("liability", plant))
+        other = other.select(*NC_COLUMNS).read_table(format="pandas")
         other = other[other["liability"].apply(lambda e: _liable(e, plant))]
         df = pd.concat([home, other], ignore_index=True)
     elif mode == "MISSING_IDS":
@@ -104,7 +118,7 @@ def run(Dataset, Column, say=None):
     t0 = time.time()
     say = say or (lambda msg: print(f"[{time.time() - t0:6.1f} s] {msg}", flush=True))
     keep_old = config.parameter_yes("garder_anciennes_sorties")
-    since = config.parameter("debut_ordres_et_aleas") + " 00:00:00"
+    since = config.parameter_day("debut_ordres_et_aleas") + " 00:00:00"
     plant = config.parameter("usine")
 
     say("Reading the GPS register and the Test list...")
@@ -173,8 +187,11 @@ def run(Dataset, Column, say=None):
     print("NCs created", info["created_from"], "to", info["created_to"], "| origin:", info["origin"],
           "| defect lines without an AI label (parser label used):", info["to_label"])
     print("rework orders:", info["rework_orders"], "| aléas:", info.get("aleas", "not read"))
-    to_label.to_csv("fto2_lines_to_label.csv", index=False)
-    say(f"{len(to_label)} defect lines to label -> fto2_lines_to_label.csv")
+    where = _work_list(Dataset, "fto2_lines_to_label", to_label, sep=",")
+    say(f"{len(to_label)} defect lines to label -> {where}")
+    to_price = prepared["parts_to_price"]
+    where = _work_list(Dataset, "fto2_parts_to_price", to_price, sep=";")
+    print("parts:", info.get("parts"), "|", len(to_price), "materials with no price yet ->", where)
 
     year = int(config.parameter("annee_comparaison"))
     say(f"Reading the NCs of {year} (comparison year)...")

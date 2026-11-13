@@ -86,9 +86,13 @@ def load_exports():
     key = lambda s: s.astype(str).str.strip().str.replace(r"\.0$", "", regex=True).str.lstrip("0")
     have = set().union(*[set(key(x["notification_number"])) for x in frames]) if frames else set()
     raws = sorted(glob.glob(os.path.join(ROOT, "06_input_data", "nc_2026_skywise_*.csv*")))
+    materials = {}
     for f in raws:
         raw = pd.read_csv(f, dtype=str, keep_default_na=False, na_values=[""], low_memory=False)
         raw["notification_number"] = key(raw["notification_number"])
+        for c in MATERIAL_COLUMNS:   # the exports made before the material was read do not carry it: taken from the raw extract
+            if c in raw.columns:
+                materials.setdefault(c, {}).update(raw.dropna(subset=[c]).set_index("notification_number")[c].to_dict())
         raw = raw[~raw["notification_number"].isin(have)].copy()
         raw = _raw_times_as_export(raw)
         r = core.pipeline_rules(raw, core.station_pairs(frames))
@@ -97,6 +101,9 @@ def load_exports():
         frames.append(r)
         files.append(f)
     x, info = core.merge_exports(frames)
+    for c, values in materials.items():
+        known = x["notification_number"].map(values)
+        x[c] = x[c].where(x[c].notna(), known) if c in x.columns else known
     REPORT["inputs"] = {os.path.basename(f): int((x["_source"] == os.path.basename(f)).sum()) for f in files}
     REPORT.update(info)
     return x
@@ -151,7 +158,8 @@ def main():
     d, nc_ref, lt, nc_in = p["d"], p["nc"], p["lt"], p["nc_in"]
     nl_, dl_ = p["nc_llm"], p["def_llm"]
     CODE_DESC.update(p["codes"])
-    REPORT.update({k: p["report"][k] for k in ("labels", "subcodes", "unknown_cnq_classes", "rework_orders", "aleas") if k in p["report"]})
+    REPORT.update({k: p["report"][k] for k in ("labels", "subcodes", "unknown_cnq_classes", "rework_orders", "aleas", "parts") if k in p["report"]})
+    p["parts_to_price"].to_csv(os.path.join(OUT, "fto2_parts_to_price.csv"), index=False, sep=";", encoding="utf-8-sig")   # materials with no price yet
     say("parser v4.8:", p["report"]["parser"]["defect_lines"], "defect lines in", p["report"]["parser"]["ncs"], "NCs")
     say("labels:", REPORT["labels"])
     d.to_csv(os.path.join(OUT, "fto2_defects.csv"), index=False, encoding="utf-8-sig")
@@ -232,6 +240,7 @@ def _page(template, data, name, page="main", title=None):
 
 
 S_ = lambda v: "" if v is None or (isinstance(v, float) and np.isnan(v)) else str(v)
+MATERIAL_COLUMNS = ("material", "material_description_fr", "material_description_en")   # the part an NC is about (Skywise NC data)
 
 
 def _scope_css(css, scope=".fto2"):
@@ -338,7 +347,8 @@ def build_dashboard(d, nc, lt, y25=None, dis_t=None):
                     r.cnq_cost_total, r.cnq_cost_admin, r.cnq_cost_work_parser, r.cnq_cost_work, r.cnq_cost_material_parser, r.cnq_cost_material,
                     r.cnq_cost_engineering)] + [
                     int(r.nc_cable), int(r.nc_cable_llm), int(r.cnq_defect_lines), S_(r.description_short)[:80], r.scope, S_(r.phase)]
-                   + nc_extras(r) + [S_(r.plant), 0 if k else round(float(r.cnq_cost_total), 2)])   # [42] plant (the plant switch), [43] cost FTO2 does not bear
+                   + nc_extras(r) + [S_(r.plant), 0 if k else round(float(r.cnq_cost_total), 2),   # [42] plant (the plant switch), [43] cost FTO2 does not bear
+                                     S_(r.material), S_(r.material_label), round(k * float(r.cnq_cost_part or 0), 2)])   # [44] material, [45] its label, [46] value of the part
     direct = {"%s|%d" % (r.notification_number, r.seq): [round(float(r.cnq_cost_direct), 2), round(float(r.cnq_cost_direct_llm), 2)]
               for r in d.itertuples() if r.cnq_cost_allocated or r.cnq_cost_allocated_llm}
     aec, nl = nc[nc.cnq_on_aec == 1], nc[(nc.cnq_on_aec != 1) & (nc.date_creation != "")]
@@ -348,7 +358,7 @@ def build_dashboard(d, nc, lt, y25=None, dis_t=None):
     actions = mft_actions()
     data = {"defects": defs, "ncs": ncs, "direct": direct, "rca": rca_reference(d, CODE_DESC), "client": client, "lt": lt_client, "codes": CODE_DESC, "actions": actions,
             "cnqp": cnq_explain(d), "cables": cable_requests(),
-            "meta": {"from": config.parameter("date_debut"), "to": REPORT["created_to"], "aside": aside, "noLine": no_line,
+            "meta": {"from": config.parameter_day("date_debut"), "to": REPORT["created_to"], "aside": aside, "noLine": no_line,
                      "modelTotal": round(float(aec.cnq_cost_total.sum()), 2)}}
     # every page carries the production file (rates per MSN); only the review pages carry the made-up gallery data (never in the Slate files)
     sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))   # -I leaves the script folder off the path

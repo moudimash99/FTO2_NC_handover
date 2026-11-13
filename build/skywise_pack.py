@@ -281,6 +281,8 @@ def _typed(df, columns):
     """CSV text -> the types the datasets (and Slate) give: int, num, text."""
     df = df.copy()
     for name, typ, _ in columns:
+        if name not in df.columns:   # a table written before this column existed
+            df[name] = ""
         if typ == "int":
             df[name] = pd.to_numeric(df[name], errors="coerce").fillna(0).astype(int)
         elif typ == "num":

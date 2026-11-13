@@ -1,19 +1,22 @@
-"""The value of the part on a rejection, a scrap or an exchange, from the price list config/1_prix_pieces.csv.
+"""The value of the part on a rejection, a scrap or an exchange.
 
-The NC data does not hold the number of the part that was rejected (its SAP article is the whole assembly). So a part is tied
-to an NC in two ways:
+The NC data names the part concerned in its column `material` (the SAP material number). It is not the article of the NC,
+which is the whole assembly. The price of each material comes from the price list config/1_prix_pieces.csv:
 
-  - by its reference written in the NC: a row with a reference and a unit price, and no NC number, prices every NC whose
-    title or long text contains that reference (spaces and case ignored; references shorter than 5 characters are not
-    searched, to avoid false matches);
-  - by hand: a row with an NC number says that NC used that part (quantity `quantite`, 1 when empty). Its price is the row's
-    own, or else the price of the row with the same reference and no NC. An NC listed by hand is not searched in the text.
+    materiel ; designation ; prix_unitaire_eur
 
-The value is the sum of price x quantity of the parts found. An NC with no part found keeps no value (the cost model then
-counts 0 and marks it "Part value unknown"). The cost model adds the value only for the decisions that count the part
-(config/2_cout_decisions.csv, column valeur_piece).
+One row per material. The value of an NC = unit price x quantity (the NC's defect quantity, 1 when empty). An NC with no
+material, or whose material has no price, gets no value: the cost model then counts 0 and marks it "Part value unknown".
+The cost model adds the value only for the decisions that count the part (config/2_cout_decisions.csv, valeur_piece).
+
+The price list may be an export pasted as it is: the two columns are found by their names (MATERIAL_NAMES, PRICE_NAMES), in
+any order, other columns are ignored; the separator is ';', ',' or a tab; prices take a dot or a comma. Material numbers are
+compared without spaces, in upper case and without leading zeros (000000006325018500 = 6325018500).
 """
+import csv
+import os
 import re
+import unicodedata
 
 import numpy as np
 import pandas as pd
@@ -21,69 +24,98 @@ import pandas as pd
 from .. import config
 
 TABLE = "1_prix_pieces.csv"
-COLUMNS = ["reference", "prix_unitaire_eur", "nc", "quantite", "note"]
-MIN_LENGTH = 5
+MATERIAL_NAMES = ("materiel", "material", "numero_materiel", "material_number", "article", "reference", "ref", "part_number", "pn")
+PRICE_NAMES = ("prix_unitaire_eur", "prix_unitaire", "prix", "pu", "unit_price", "price", "cout", "cost", "valeur", "montant")
 
 
-def _norm(s):
-    return re.sub(r"\s+", "", str(s or "")).upper()
+def material_id(v):
+    """A material number as compared: no spaces, upper case, no leading zeros; '' when empty."""
+    if v is None or (isinstance(v, float) and np.isnan(v)):
+        return ""
+    t = re.sub(r"\s+", "", str(v)).upper()
+    t = re.sub(r"\.0$", "", t)
+    return "" if t in ("NAN", "NONE", "<NA>") else t.lstrip("0")
 
 
-def _num(v, where):
-    t = str(v or "").strip().replace(",", ".").replace("€", "").replace(" ", "")
+def _header(name):
+    t = unicodedata.normalize("NFD", str(name)).encode("ascii", "ignore").decode().strip().lower()
+    return re.sub(r"[^a-z0-9]+", "_", t).strip("_")
+
+
+def _price(v, where):
+    t = re.sub(r"[\s  €]|EUR", "", str(v or ""), flags=re.I)
     if not t:
         return None
+    if "," in t and "." in t:   # 1.234,56 or 1,234.56: the last sign is the decimal one
+        t = t.replace(".", "").replace(",", ".") if t.rfind(",") > t.rfind(".") else t.replace(",", "")
     try:
-        return float(t)
+        return float(t.replace(",", "."))
     except ValueError:
-        raise config.ConfigError("%s: '%s' is not a number (%s)" % (TABLE, v, where))
+        raise config.ConfigError("%s: '%s' is not a price (%s)" % (TABLE, v, where))
 
 
-def _id(v):
-    return re.sub(r"\.0$", "", str(v or "").strip()).lstrip("0")
+def _read(path):
+    """The rows of the price list as lists of text, whatever its separator and encoding (UTF-8 or the Excel default)."""
+    with open(path, "rb") as f:
+        raw = f.read()
+    try:
+        text = raw.decode("utf-8-sig")
+    except UnicodeDecodeError:
+        text = raw.decode("cp1252")
+    lines = [l for l in text.splitlines() if l.strip()]
+    if not lines:
+        return []
+    sep = max(";,\t", key=lines[0].count)
+    return [r for r in csv.reader(lines, delimiter=sep)]
 
 
 def price_list():
-    """(prices by reference, rows tied to an NC): {REFERENCE: unit price}, {nc: [(reference, price or None, quantity)]}."""
-    try:
-        t = config.table(TABLE, COLUMNS)
-    except config.ConfigError as e:
-        if "not found" in str(e):   # no price list: no part value, as before
-            return {}, {}
-        raise
-    prices, by_nc = {}, {}
-    for i, r in t.iterrows():
-        where = "line %d" % (i + 2)
-        ref, price, nc = _norm(r["reference"]), _num(r["prix_unitaire_eur"], where), _id(r["nc"])
-        if nc:
-            q = _num(r["quantite"], where)
-            by_nc.setdefault(nc, []).append((ref, price, q if q is not None else 1.0))
-        elif ref and price is not None:
-            prices[ref] = price
-    return prices, by_nc
-
-
-def part_values(numbers, titles, texts):
-    """The part value of each NC (NaN when no priced part is found), in the order of `numbers`."""
-    prices, by_nc = price_list()
-    ids = pd.Series([_id(n) for n in numbers])
-    out = pd.Series(np.nan, index=ids.index)
-    if not prices and not by_nc:
-        return out.to_numpy()
-    text = (pd.Series(list(titles)).fillna("").astype(str) + " " + pd.Series(list(texts)).fillna("").astype(str)).map(_norm)
-    found = pd.Series(0.0, index=ids.index)
-    hit = pd.Series(False, index=ids.index)
-    for ref, price in prices.items():   # a reference written in the NC
-        if len(ref) < MIN_LENGTH:
+    """{material: unit price} from config/1_prix_pieces.csv; {} when the table is not there."""
+    path = os.path.join(config.folder(), TABLE)
+    if not os.path.exists(path):
+        return {}
+    rows = _read(path)
+    if not rows:
+        return {}
+    names = [_header(c) for c in rows[0]]
+    mat = next((names.index(n) for n in MATERIAL_NAMES if n in names), None)
+    price = next((names.index(n) for n in PRICE_NAMES if n in names), None)
+    if mat is None or price is None:
+        raise config.ConfigError("%s: it needs a column for the material number (e.g. 'materiel') and one for the unit price "
+                                 "(e.g. 'prix_unitaire_eur'); found: %s" % (TABLE, " ; ".join(rows[0])))
+    prices = {}
+    for i, r in enumerate(rows[1:], start=2):
+        if len(r) <= max(mat, price):
             continue
-        m = text.str.contains(ref, regex=False)
-        found += np.where(m, price, 0.0)
-        hit |= m
-    manual = ids.isin(by_nc.keys())
-    for i in ids.index[manual]:   # parts tied by hand replace the text search for that NC
-        v = [(p if p is not None else prices.get(ref)) for ref, p, _ in by_nc[ids[i]]]
-        q = [qty for _, _, qty in by_nc[ids[i]]]
-        known = [(p, n) for p, n in zip(v, q) if p is not None]
-        found[i], hit[i] = sum(p * n for p, n in known), bool(known)
-    out[hit] = found[hit]
-    return out.to_numpy()
+        m, p = material_id(r[mat]), _price(r[price], "line %d" % i)
+        if m and p is not None:
+            prices[m] = p
+    return prices
+
+
+def part_values(materials, quantities=None):
+    """The part value of each NC: the unit price of its material x its quantity. NaN when the NC has no material or the
+    material has no price."""
+    prices = price_list()
+    mats = pd.Series([material_id(m) for m in materials])
+    unit = mats.map(prices) if prices else pd.Series(np.nan, index=mats.index)
+    if quantities is None:
+        qty = pd.Series(1.0, index=mats.index)
+    else:
+        qty = pd.to_numeric(pd.Series(list(quantities)), errors="coerce")
+        qty = qty.where(qty > 0, 1.0).fillna(1.0)
+    return (unit * qty).to_numpy(dtype=float)
+
+
+def to_price(nc):
+    """The materials that still need a price: one row per material of the NCs whose decision counts the part and that FTO2
+    is liable for, with no price yet. nc: the NCs after the cost model, with material, material_label, cnq_rule, cnq_on_aec."""
+    from . import params
+    counts = {k for k, v in params.RULES.items() if v[params.RULE_FIELDS.index("part")]}
+    t = nc[nc["cnq_rule"].isin(counts) & (nc["cnq_on_aec"] == 1) & (nc["material"].fillna("") != "") & nc["part_value"].isna()]
+    if not len(t):
+        return pd.DataFrame(columns=["materiel", "designation", "prix_unitaire_eur", "nc", "derniere_nc"])
+    g = t.groupby("material").agg(designation=("material_label", "first"), nc=("notification_number", "size"),
+                                  derniere_nc=("date_creation", "max")).reset_index().rename(columns={"material": "materiel"})
+    g["prix_unitaire_eur"] = ""
+    return g.sort_values(["nc", "materiel"], ascending=[False, True])[["materiel", "designation", "prix_unitaire_eur", "nc", "derniere_nc"]].reset_index(drop=True)
