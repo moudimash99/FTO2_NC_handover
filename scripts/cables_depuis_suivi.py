@@ -22,7 +22,6 @@ from fto2 import config, everyday_tables, rules  # noqa: E402
 TABLE = "1_demandes_cables.csv"
 CABLE_NUMBER = r"\b\d{4}\s?[-–]\s?\d{4}\b"                                              # e.g. 4411-0298
 CABLE_TYPE = r"\b(ADB|AD|DRB|DRC|DR|MLB|KL|VNA|VNB|VNC|WX|MMG|DK)\s?(\d\d)\b"           # e.g. WX26
-YEAR = 2026   # a creation date outside this year is a typing mistake
 
 
 def convert(path):
@@ -32,7 +31,7 @@ def convert(path):
     t = t[t.NC.str.strip() != ""].copy()
     d = pd.to_datetime(t["Date de création de la NC"], dayfirst=True, errors="coerce")
     of = pd.to_datetime(t["Date de réalisation OF"], dayfirst=True, errors="coerce")
-    bad = d.isna() | (d.dt.year != YEAR)
+    bad = d.isna() | (d.dt.year != config.year())   # a creation date outside the year followed is a typing mistake
     d = d.where(~bad, of)
     print("dates replaced by the work-order date:", int(bad.sum()))
     origins, other = config.mapping("2_cables_origines.csv", "imputation", "origine")

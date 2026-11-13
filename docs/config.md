@@ -47,7 +47,7 @@ The number at the start of each file name says who should edit it.
 
 | Level | Who | What these tables hold | Risk if wrong |
 |---|---|---|---|
-| **1** | Anyone in the team | Facts that change over time: the production plan, the MFT actions, the cable requests, the 2025 deliveries, shutdown days. | Low: a wrong date shows a wrong date. |
+| **1** | Anyone in the team | Facts that change over time: the production plan, the MFT actions, the cable requests, the deliveries of the comparison year, shutdown days. | Low: a wrong date shows a wrong date. |
 | **2** | Someone careful | Rules and settings that decide **how things are counted**: what counts as REC, which product an NC belongs to, the hourly rates, the target, the colours. | Medium: the figures change. Check the dashboard before and after. |
 | **3** | Someone technical | Expert tables: minutes per type of defect in the cost model, the alarm statistics, the official sub-code list. | High: change only if you understand the model behind it. |
 
@@ -173,9 +173,9 @@ Two rules of thumb: put special cases **before** general ones (a smaller `ordre`
 | Table | Level | What a row is | How to fill it |
 |---|---|---|---|
 | `1_plan_msn.csv` | 1 | One aircraft (MSN) and product: line, product, MSN, rank, then the **planned** (`prevu_`) and **real** (`reel_`) date of the 8 milestones (impression, enclenchement, SE, méca, inté, test, qualité, départ OTA), the export date | Add a row per new aircraft and product; correct the dates as the aircraft moves on. Set `source` = `manuel` on rows you type or correct. |
-| `1_eqmsn_mois.csv` | 1 | One product and version (`std` = Standard sheet, `adj` = Adjusted sheet): its EqMSN for each month, the export date, the first forecast month | Copy the new month values from the EqMSN Excel file (both versions), update the export date and the first forecast month. |
+| `1_eqmsn_mois.csv` | 1 | One product and version (`std` = Standard sheet, `adj` = Adjusted sheet): its EqMSN for each month of 2026, the export date, the first forecast month | Optional. The pages count the volume from `1_plan_msn.csv` (each aircraft spread over the days the plant works); this table only adds the EqMSN sheet's two versions while its months are those of the year followed. For another year it is ignored. |
 | `1_calendrier_production.csv` | 1 | A period of shutdown or slow production: start, end, **weight** (0 = closed, 0.5 = half a normal week), reason | Add a row for each new shutdown or bridge day. It changes the MSN volume of the months and weeks concerned. |
-| `1_livraisons_2025.csv` | 1 | One 2025 delivered product: its name, its name in the plan, its line, the count per month of 2025, the total | The basis of the targets. Change only if the 2025 figures were wrong. |
+| `1_livraisons_2025.csv` | 1 | One product delivered in 2025: its name, its name in the plan, its line, the count per month of 2025, the total | The basis of the 2026 targets. Change only if the 2025 figures were wrong. For a later comparison year no such table is needed: the deliveries are counted in `1_plan_msn.csv` (see "The year" below). A table `1_livraisons_<year>.csv` of the same shape is used instead when it exists. |
 | `1_livraisons_2025_lignes.csv` | 1 | One line: whole MSN delivered in 2025 | Same. |
 | `2_produits_plan.csv` | 2 | Product name on the NCs → product name in the plan (`produit_eqmsn`); `a_confirmer` = oui if not yet confirmed | A new product: add its row. |
 | `2_produits_noms_plan.csv` | 2 | Name in the plan → name shown (`MIP` → `MIP A350`) | |
@@ -219,7 +219,7 @@ The defects are sorted in three layers: **category** (e.g. Erreur Branchement) �
 
 | Table | Level | What it holds |
 |---|---|---|
-| `2_reglages_pages.csv` | 2 | Name / value. The **target** (`objectif_baisse` 0.25 = 2025 minus 25 %), the weight of July and August in the monthly target, what counts as a shutdown week, the minimum MSN volume for a rate, the **filters at opening** (production type, Responsabilité boxes, period), the MFT page's thresholds ("what goes up / down", recurring FIN), the MFT action targets. |
+| `2_reglages_pages.csv` | 2 | Name / value. The **target** (`objectif_baisse` 0.25 = the comparison year's rate minus 25 %; the pages' texts show the percentage written here), the weight of July and August in the monthly target, what counts as a shutdown week, the minimum MSN volume for a rate, the **filters at opening** (production type, Responsabilité boxes, period), the MFT page's thresholds ("what goes up / down", recurring FIN), the MFT action targets. |
 | `2_lignes.csv` | 2 | Each line's colour (1 to 4). |
 | `3_alarmes.csv` | 3 | Name / value: the bell's statistics. How many recent weeks are compared (4) with how many weeks before (12), the thresholds for a minor or major alarm, slow rises, odd aircraft, how many alarms are shown (5). |
 
@@ -237,8 +237,43 @@ The defects are sorted in three layers: **category** (e.g. Erreur Branchement) �
 
 | Table | Level | What it holds |
 |---|---|---|
-| `2_parametres.csv` | 2 | Name / value: the plant followed (`FTO2`) and its codes (`FTO2\|FT02`), the **first date counted**, the year of the GPS / Test lists, from when rework orders and aléas are read, whether the old Slate outputs are still written (`oui` while the old app is used), a limit on the number of NCs (empty = all), the comparison year (2025). |
-| `2_sources.csv` | 2 | Name / value: the names of the Skywise datasets (as in the notebook's Data panel) and of the files in `data/` (stations, GPS register, Test list), with the lines to skip and the column names in those files. Change it when a dataset or a file is renamed. |
+| `2_parametres.csv` | 2 | Name / value: the plant followed (`FTO2`) and its codes (`FTO2\|FT02`), **the year followed** (`annee`), the comparison year (`annee_comparaison`, empty = the year before), whether the old Slate outputs are still written (`oui` while the old app is used), a limit on the number of NCs (empty = all). |
+| `2_sources.csv` | 2 | Name / value: the names of the Skywise datasets (as in the notebook's Data panel) and of the files in `data/` (stations, GPS register, Test list), with the lines to skip and the column names in those files. Change it when a dataset or a file is renamed. In the name of a list, `{annee}` stands for the year followed. |
+
+### The year
+
+The pages follow **one calendar year**: the NCs created that year, its production plan, its targets. The year is one line
+of `2_parametres.csv`:
+
+```
+annee;2026
+```
+
+Everything tied to the year follows from that line, with nothing else to change:
+
+| What | How it follows the year |
+|---|---|
+| The NCs shown | Created from 1 January to 31 December of the year (plus the NCs of the GPS register and the Test list dated that year) |
+| The production volume | The aircraft of `1_plan_msn.csv`, counted in the months and the weeks of the year |
+| The comparison year | The year before (or the one written in `annee_comparaison`): its NCs are read in Skywise at each run |
+| The comparison year's deliveries | `1_livraisons_<year>.csv` when that table exists (2025), else counted in `1_plan_msn.csv`: a product is delivered in the month of its Départ OTA |
+| The targets | The comparison year's rate, minus the percentage of `objectif_baisse`, times the year's production |
+| The bell | Its weeks are the weeks of the year; it needs 16 weeks of the year before it can compare |
+| Every text of the pages | The two years and the target's percentage are written in from the settings |
+
+**To start a new year** (each January):
+
+1. In `2_parametres.csv`, write the new year on the line `annee`.
+2. Bring the production plan up to date (`1_plan_msn.csv`): the aircraft of the new year, **keeping the rows of the year
+   before**, which give last year's deliveries.
+3. Add the new year's shutdowns to `1_calendrier_production.csv`.
+4. Save the new year's GPS register in `data/`. Its name is written in `2_sources.csv` with `{annee}` in place of the year
+   (`GPS NC INT_SERIE ELEC {annee} - NC REGISTRE.csv`), so the 2027 file is found by itself if it is named as the 2026 one.
+   The Test list keeps its name.
+5. Run the notebook. If a list is missing, its last lines say which file it looked for.
+
+Until the line is changed, the pages keep showing the year written there, complete, and the notebook says so at the end of
+each run once that year is over.
 
 ---
 
@@ -250,6 +285,7 @@ The defects are sorted in three layers: **category** (e.g. Erreur Branchement) �
 | Price the rejected parts | `1_prix_pieces.csv` | One row per material: `materiel;designation;prix_unitaire_eur`. What is left to price: `fto2_parts_to_price.csv`, written at each run. |
 | Change an hourly rate | `2_cout_parametres.csv` | Change `valeur` of `taux_production`, `taux_qualite` or `taux_me`. |
 | Change the target | `2_reglages_pages.csv` | `objectif_baisse`: 0.30 for −30 %. |
+| Start a new year | `2_parametres.csv` | `annee`: the new year; then the production plan, the shutdowns and the two lists (see "The year"). |
 | Add a product | `2_regle_produit.csv`, then `2_produits_plan.csv` | A rule that recognises it, then its name in the plan. |
 | Update the production plan | `1_plan_msn.csv` | Add the new aircraft, correct the dates that moved; `source` = `manuel` on those rows. |
 | Add a shutdown | `1_calendrier_production.csv` | Start, end, weight 0 (closed) or 0.5 (half), reason. |
@@ -271,7 +307,7 @@ needs only a new run.
 |---|---|---|
 | `2_regle_*.csv` (the rules) | `selection.py`, `core.py`, `parser/fto2_logic.py`, through `rules.py` | Applied to every NC to give it a label (phase, line, product, type, scope...) |
 | `2_cout_*.csv`, `3_cout_*.csv` (the cost) | `cost/params.py` | Turned into the cost model's settings, used by `cost/model.py` |
-| `2_parametres.csv`, `2_sources.csv` | `skywise.py`, `config.py`, `manual_lists.py` | Which plant, from which date, which datasets and files to read |
+| `2_parametres.csv`, `2_sources.csv` | `skywise.py`, `config.py`, `manual_lists.py` | Which plant, which year (`config.year`, `config.comparison_year`), which datasets and files to read |
 | `1_prix_pieces.csv` (part prices) | `cost/parts.py` | Each NC's material (read from the NC data) gets its unit price; the cost model adds price × quantity for the decisions that count the part |
 | the other `1_*.csv` (production plan, actions, cables...) and the page settings (`2_reglages_pages.csv`, `2_categories.csv`, `2_lignes.csv`, `3_alarmes.csv`) | `reference.py` | Packed into the table `fto2_dash_ref`, which the pages read |
 | categories, causes, sub-codes | `reference.py`, `core.py`, `parser/fto2_logic.py` | Names and definitions shown on the pages, official sub-codes of the defect lines |

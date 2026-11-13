@@ -6,7 +6,7 @@ Writes 03_reports/FTO2_MFT.html (and build/artifacts/FTO2_MFT.html) from 07_scri
 version in 03_reports/skywise/mft/ (build_mft_slate.py), and the tracker actions as 05_outputs/mft_actions_seed.json: the page keeps its actions in its own store (seeded once from that
 file); the page itself carries no action.
 
-Scope as the dashboard's default: NCs raised at FTO2 (plant FTO2 or FT02), created in 2026; the phase is a filter in
+Scope as the dashboard's default: NCs raised at FTO2 (plant FTO2 or FT02), created in the year followed; the phase is a filter in
 the page (Série by default).
 
     python3 -I 07_scripts/mft/build_mft.py
@@ -41,7 +41,7 @@ def tidy(s, n=320):
 def data():
     n = pd.read_csv(os.path.join(ROOT, "05_outputs", "fto2_dash_nc.csv"), dtype=str, keep_default_na=False, encoding="utf-8-sig")
     d = pd.read_csv(os.path.join(ROOT, "05_outputs", "fto2_dash_defects.csv"), dtype=str, keep_default_na=False, encoding="utf-8-sig")
-    home, since = config.parameter_list("usines_maison"), config.parameter_day("date_debut")   # config/2_parametres.csv
+    home, since = config.parameter_list("usines_maison"), config.first_day()   # config/2_parametres.csv: the plant, the year followed
     n = n[n.plant.str.strip().str.upper().isin(home) & (n.created >= since)].sort_values("created")
     dic = {k: [] for k in ("line", "phase", "msn", "station", "where", "cat", "rca", "sub", "code", "fin", "prod")}
     plan_prod = plan_products()
@@ -106,7 +106,7 @@ def msn_end():
 
 
 def weekly_volume():
-    """MSN built per line and ISO week of 2026 (working days, as the dashboard: 05_outputs/fto2_msn_semaine.csv from
+    """MSN built per line and ISO week of the year followed (working days, as the dashboard: 05_outputs/fto2_msn_semaine.csv from
     build/build_all.py), the alarms' denominator: {line: 53 weeks, week 1 first}. None without the file."""
     path = os.path.join(ROOT, "05_outputs", "fto2_msn_semaine.csv")
     if not os.path.exists(path):

@@ -136,16 +136,26 @@ def mapping(name, key, value, default_key="(autre)"):
 _PARAMS = {}
 
 
-def parameter(name, table_name="2_parametres.csv", keep_spaces=False):
-    """One value of a 'nom ; valeur' settings table (2_parametres.csv by default), as text.
-    keep_spaces: keep spaces at the start and end (column names copied from a file, e.g. ' Date SAP')."""
+def _values(table_name):
+    """A 'nom ; valeur' settings table as {name: value}, read once."""
     if table_name not in _PARAMS:
         t = table(table_name, ["nom", "valeur"])
         _PARAMS[table_name] = dict(zip(t["nom"].str.strip(), t["valeur"]))
-    values = _PARAMS[table_name]
+    return _PARAMS[table_name]
+
+
+def parameter(name, table_name="2_parametres.csv", keep_spaces=False):
+    """One value of a 'nom ; valeur' settings table (2_parametres.csv by default), as text.
+    keep_spaces: keep spaces at the start and end (column names copied from a file, e.g. ' Date SAP')."""
+    values = _values(table_name)
     if name not in values:
         raise ConfigError("%s: the line '%s' is missing" % (table_name, name))
     return values[name] if keep_spaces else values[name].strip()
+
+
+def optional(name, table_name="2_parametres.csv"):
+    """A setting that may be left empty (or left out): '' then."""
+    return _values(table_name).get(name, "").strip()
 
 
 def parameter_day(name, table_name="2_parametres.csv"):
@@ -164,3 +174,49 @@ def parameter_yes(name, table_name="2_parametres.csv"):
     if v not in ("oui", "non"):
         raise ConfigError("%s, %s: write 'oui' or 'non', found '%s'" % (table_name, name, v))
     return v == "oui"
+
+
+# ---------------------------------------------------------------- the year
+# The pages follow one calendar year: the NCs created in that year, its production plan, its targets. The year is one line
+# of 2_parametres.csv ('annee'); the dates tied to it are worked out here, so that a new year is a one-line change.
+def _year(text, where):
+    t = str(text).strip()
+    if not (t.isdigit() and len(t) == 4):
+        raise ConfigError("%s: '%s' is not a year (write it with four digits, e.g. 2026)" % (where, text))
+    return int(t)
+
+
+def year():
+    """The year the pages follow ('annee'). An empty line means the current year. Settings written before the line
+    existed gave a start date instead ('date_debut'): its year is used then."""
+    import datetime as dt
+    v = optional("annee")
+    if v:
+        return _year(v, "2_parametres.csv, annee")
+    d = optional("date_debut")
+    return int(day(d, "2_parametres.csv, date_debut")[:4]) if d else dt.date.today().year
+
+
+def comparison_year():
+    """The year the targets and the year comparisons start from: 'annee_comparaison', else the year before the one followed."""
+    v = optional("annee_comparaison")
+    y = _year(v, "2_parametres.csv, annee_comparaison") if v else year() - 1
+    if y >= year():
+        raise ConfigError("2_parametres.csv: annee_comparaison (%d) must be before the year followed (%d); "
+                          "leave it empty for the year before" % (y, year()))
+    return y
+
+
+def first_day():
+    """The first creation date counted: 1 January of the year followed, as 'AAAA-MM-JJ'."""
+    return "%d-01-01" % year()
+
+
+def year_end():
+    """The day after the year followed, as 'AAAA-MM-JJ': an NC created from that day on belongs to the next year."""
+    return "%d-01-01" % (year() + 1)
+
+
+def aleas_since():
+    """The aléas are read from 1 December of the year before: an NC of early January can follow an aléa of late December."""
+    return "%d-12-01" % (year() - 1)

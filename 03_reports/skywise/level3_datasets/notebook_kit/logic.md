@@ -32,7 +32,7 @@ notebook's code) and `front_end.md` (the pages' code); these two are also in `no
    fto2_dash_nc           one row per NC
    fto2_dash_defects      one row per defect line
    fto2_dash_disruptions  the quality aléas that led to no NC
-   fto2_dash_ref          everything else the pages need (production plan, 2025, settings...)
+   fto2_dash_ref          everything else the pages need (production plan, comparison year, settings...)
                                    |
                          synced to Postgres -> read by the Slate pages
 ```
@@ -64,7 +64,7 @@ The files of `notebook_kit/fto2/`:
 | `parser/` | The defect reader: turns an NC's long text into defect lines. |
 | `core.py` | From the NCs to the dashboard's tables: defects, labels, rework orders, aléas, cost, scope. |
 | `cost/` | The cost model, with the rework orders, the aléas and the part prices. |
-| `reference.py` | Everything the pages need besides the NC tables (production plan, 2025, cables, actions, settings). |
+| `reference.py` | Everything the pages need besides the NC tables (production plan, comparison year, cables, actions, settings). |
 | `everyday_tables.py` | Writes a level-1 table from a raw file while keeping the rows a person corrected. |
 
 ## 3. The run, step by step
@@ -73,8 +73,10 @@ The files of `notebook_kit/fto2/`:
 
 **A. The standard selection** (`select_ncs`, then `selection.apply_rules`)
 
-1. Reads the NCs of the plant created since the start date (`2_parametres.csv`: `usine`, `date_debut`), plus the NCs of
-   other plants where the plant is liable.
+1. Reads the NCs of the plant created in the year followed (`2_parametres.csv`: `usine`, `annee`), plus the NCs of
+   other plants where the plant is liable. Skywise is asked for the NCs created from 1 January (`config.first_day`); the
+   NCs created after 31 December are cut in Python (`skywise._until`), because Skywise's filter fails on three conditions
+   joined with `&`.
 2. Leaves out the excluded ones (`2_regle_exclusion.csv`: ERMA, NCs deleted at another plant).
 3. Adds the labels from the rule tables, in this order: phase (`2_regle_phase.csv`), decision label (`2_decisions.csv`),
    origin (`2_regle_origine.csv`), type (`2_regle_type_nc.csv`, which uses the origin), product (`2_regle_produit.csv`).
@@ -102,11 +104,17 @@ number, then go through the same rules.
 9. **Lines to label:** `core.lines_to_label` writes `fto2_lines_to_label.csv` next to the notebook: the lines without a
    usable AI label, with their full text, ready for the next labelling pass.
 
-**E. The reference data** (`reference.py`): the production plan, the comparison year (2025: its NCs are read from Skywise
-with two conditions, plant and from 1 January, then cut at the year's end in Python, because Skywise's filter fails on three
-conditions joined with `&`; they go through the same rules, defect reader, part prices and cost model, then are summed per
-month), the cable requests, the MFT actions, the cost settings, the
-cause tree and the page settings. They are packed into `fto2_dash_ref` (section 5).
+**E. The reference data** (`reference.py`): the production plan, the comparison year (the year before the one followed,
+unless `annee_comparaison` names another: its NCs are read from Skywise, from 1 January and cut at the year's end as in
+step A; they go through the same rules, defect reader, part prices and cost model, then are summed per month), the cable
+requests, the MFT actions, the cost settings, the cause tree and the page settings. They are packed into `fto2_dash_ref`
+(section 5).
+
+**The year.** Every date of the run comes from one line, `annee` in `2_parametres.csv`, through four functions of
+`config.py`: `year()`, `comparison_year()`, `first_day()` (1 January), `year_end()` (1 January of the next year) and
+`aleas_since()` (1 December of the year before: an NC of early January can follow an aléa of late December). No year is
+written in the code: `tests/test_config.py` fails if one is. When the year followed is over, the last lines of the run say
+so and name the line to change.
 
 ## 4. Each file explained
 
@@ -140,7 +148,7 @@ One function applies every rule table, so they all behave the same way (the way 
 ### `manual_lists.py`: the GPS register and the Test list
 
 Reads both files (`2_sources.csv` says where they are, how many lines to skip and which columns hold the NC number and the
-date), keeps the NCs dated from `annee_listes_manuelles` on, and marks each NC with the list it is on (`Ext_Source`: `GPS`,
+date; `{annee}` in a file name stands for the year followed), keeps the NCs dated in the year followed, and marks each NC with the list it is on (`Ext_Source`: `GPS`,
 `Test`, or none).
 
 ### `parser/`: the defect reader
@@ -206,9 +214,10 @@ comparison).
 
 | Function | Gives the pages |
 |---|---|
-| `eqmsn`, `working_day_volume`, `production_msn` | The production plan: MSN built per product and month (counted on working days, `1_calendrier_production.csv`), and each aircraft's build dates |
-| `weekly_volume` | MSN built per line and week: the alarms' denominator |
-| `year_2025` | The comparison year, summed per month, line, product |
+| `eqmsn`, `working_day_volume`, `production_msn` | The production plan: MSN built per product and month of the year followed (counted on working days, `1_calendrier_production.csv`), and each aircraft's build dates |
+| `weekly_volume` | MSN built per line and week of the year: the alarms' denominator |
+| `comparison_year` | The comparison year, summed per month, line, product. The pages know this block as `y25`, its name since the first year followed (2026, compared with 2025) |
+| `deliveries` | The products delivered in the comparison year, month by month: `1_livraisons_<year>.csv` when it exists, else counted in the production plan (a product is delivered in the month of its Départ OTA) |
 | `cable_requests` | The cable team's requests (`1_demandes_cables.csv`) |
 | `mft_actions`, `mft_actions_page` | The MFT actions (`1_actions_mft.csv`), each tied to its problem |
 | `cnq_explain` | The cost settings, for "Expliquer le calcul" |

@@ -114,7 +114,7 @@ function fto2FromTables(ncIn, defIn, ref, disIn, cxIn) {
   var dis = disIn ? rows(disIn).map(function (r) { return [str(r.id), day(r.opened), str(r.line), str(r.station), str(r.work_order), num(r.minutes), int(r.in_block), str(r.reason), str(r.status), str(r.comment)]; })
     .filter(function (a) { return a[0] && a[1]; }) : null;
   return { defects: defects, ncs: ncs, rca: rca, client: client, lt: lt, codes: ref.codes || {}, actions: ref.actions || [], cnqp: cnqp, eqmsn: eq, y25: ref.y25 || null, dis: dis, cx: cx, cables: ref.cables || null, settings: ref.settings,
-    meta: { from: ref.from || '2026-01-01', to: to, aside: { other: [notLiable.length, nlSum] },
+    meta: { from: ref.from || (ref.settings && ref.settings.annee ? ref.settings.annee : to.slice(0, 4)) + '-01-01', to: to, aside: { other: [notLiable.length, nlSum] },
       noLine: ncs.filter(function (a) { var p = String(a[42] || '').trim().toUpperCase(); return (p === 'FTO2' || p === 'FT02') && a[21] === 0; }).length, modelTotal: sum(aec) } };
 }
 /* ===== ADAPTER END ===== */
@@ -434,9 +434,10 @@ function alWk(i) { return S('alWk', { n: i + 1 }); }
   // Tried and left out: a FIN coming back on several aircraft (as frequent in 2026 as in shuffled data: chance), a new sub-code on
   // 2 aircraft (mostly one-week bursts). Then one line per problem: a sub-code with the same weeks as its cause shows with it
   // ("Inversion (T04)"), a parent gives way to the child carrying 60 % of its rise, stations / places / products / cables join the
-  // problem sharing more than half of their NCs; a problem an action covers says so. Weeks: 0 = ISO week 1 of 2026.
+  // problem sharing more than half of their NCs; a problem an action covers says so. Weeks: 0 = ISO week 1 of the year followed.
   var ALARM = (function () {
     var P = window.FTO2_ALARM_P;   // the alarm settings (config/3_alarmes.csv), set by the page before this block
+    var YEAR = +window.FTO2_YEAR;   // the year followed (config/2_parametres.csv, annee), set by the page before this block
     var LF = [0];
     function lf(n) { for (var i = LF.length; i <= n; i++) LF[i] = LF[i - 1] + Math.log(i); return LF[n]; }
     function tail(x, n, p) {   // P(K >= x) for K binomial (n, p)
@@ -460,12 +461,12 @@ function alWk(i) { return S('alWk', { n: i + 1 }); }
       if (x < P.minX || er <= 0 || eb <= 0) return 0;
       return invN(1 - Math.min(Math.max(tail(x, x + b, er / (er + eb)), 1e-12), 1 - 1e-12));
     }
-    function week(iso) {   // '2026-05-14' -> its ISO week, 0 for week 1 of 2026; -1 outside 2026
+    function week(iso) {   // '2026-05-14' -> its ISO week in the year followed, 0 for week 1; -1 outside that year
       var d = new Date(String(iso).slice(0, 10) + 'T00:00:00Z'), dow = (d.getUTCDay() + 6) % 7;
       if (isNaN(d)) return -1;
       d.setUTCDate(d.getUTCDate() - dow + 3);   // the Thursday of the week decides the year
-      if (d.getUTCFullYear() !== 2026) return -1;
-      return Math.floor((d - Date.UTC(2026, 0, 1)) / 6048e5);   // 1 January 2026 is a Thursday
+      if (d.getUTCFullYear() !== YEAR) return -1;
+      return Math.floor((d - Date.UTC(YEAR, 0, 1)) / 6048e5);   // week 1 holds the year's first Thursday
     }
     function lastDone(iso) {   // the last finished week up to that day: its own week if it is a Sunday, else the week before
       var d = new Date(String(iso).slice(0, 10) + 'T00:00:00Z');

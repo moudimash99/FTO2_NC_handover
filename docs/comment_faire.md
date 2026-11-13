@@ -34,13 +34,28 @@ la valeur de la ligne 3 (`-CRE|-PNC|A30-REJ-PVU2|-RCX`), ou ajouter une ligne `4
 
 **Un taux horaire** : `config/2_cout_parametres.csv`, colonne `valeur` de `taux_production`, `taux_qualite` ou `taux_me`.
 
-**L'objectif** (−25 % par rapport à 2025) : `config/2_reglages_pages.csv`, ligne `objectif_baisse` (0.25 = −25 %).
+**L'objectif** (−25 % par rapport à l'année de comparaison) : `config/2_reglages_pages.csv`, ligne `objectif_baisse`
+(0.25 = −25 %). Les textes des pages affichent le pourcentage écrit ici.
+
+**Commencer une nouvelle année** (chaque mois de janvier) : dans `config/2_parametres.csv`, écrire la nouvelle année sur la
+ligne `annee`. Puis :
+- mettre à jour le plan de production (ci-dessous) : les avions livrés l'an dernier restent dans la table, ils donnent les
+  livraisons de l'année d'avant, donc les objectifs ;
+- ajouter les fermetures de la nouvelle année dans `config/1_calendrier_production.csv` ;
+- déposer le registre GPS de la nouvelle année dans `data/`, nommé comme celui de 2026 avec la nouvelle année
+  (`GPS NC INT_SERIE ELEC 2027 - NC REGISTRE.csv`) : dans `config/2_sources.csv`, son nom est écrit avec `{annee}` à la
+  place de l'année. La liste Test garde son nom.
+
+Rien d'autre à changer : les NC affichées, l'année de comparaison, les objectifs, la cloche et tous les textes des pages
+suivent. La cloche reste muette tant que l'année n'a pas 16 semaines terminées (fin avril). Tant que la ligne `annee` n'est pas
+changée, les pages gardent l'année écrite, complète, et le notebook le rappelle à la fin de chaque lancement.
 
 **Un nouveau produit** : la règle qui le reconnaît dans `config/2_regle_produit.csv` ; son nom dans le plan de production
 dans `config/2_produits_plan.csv`.
 
 **Mettre à jour le plan de production** :
 - automatiquement : `python3 -I scripts/plan_depuis_avances_retards.py "06_input_data/Avances_Retards_AAAA-MM-JJ.csv"` ;
+  un avion livré, que le nouvel export ne liste plus, garde sa ligne avec ses dernières dates ;
 - à la main : corriger les dates d'un avion dans `config/1_plan_msn.csv` et mettre sa colonne `source` à `manuel`
   (le script ne la remplacera plus).
 

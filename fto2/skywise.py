@@ -8,8 +8,8 @@ Dataset and Column are passed in (rather than imported here) so that the same ru
 stand-in for Skywise that serves local files (tests/notebook_rehearsal.py).
 
 Steps:
-  A. the standard selection: NCs of the plant created since the start date, plus the NCs of other plants where the plant is
-     liable; the exclusions and the *_auto columns from the rule tables (fto2/selection.py)
+  A. the standard selection: NCs of the plant created in the year followed (config/2_parametres.csv, annee), plus the NCs of
+     other plants where the plant is liable; the exclusions and the *_auto columns from the rule tables (fto2/selection.py)
   B. the NCs of the GPS register and the Test list that the selection does not catch, fetched by number
   C. both, with the lists' columns; while 'garder_anciennes_sorties' is oui, the former four outputs are written as before
   D. the dashboard's three tables: parser, root-cause labels, rework orders, aléas, cost model -> fto2_dash_nc,
@@ -61,6 +61,17 @@ def _liable(element, plant):
     return False
 
 
+def _until(df, column, day):
+    """The rows dated before a day ('AAAA-MM-JJ'); a row whose date cannot be read is kept. Skywise's filter fails when three
+    conditions are joined with & (TypeError in OpAndWrapper): the reads give two, and the end of the year is cut here. The
+    column is a date (Skywise) or text in mixed formats."""
+    try:
+        when = pd.to_datetime(df[column], errors="coerce", utc=True, format="mixed")
+    except (TypeError, ValueError):   # older pandas: no format="mixed"
+        when = pd.to_datetime(df[column], errors="coerce", utc=True)
+    return df[~(when >= pd.Timestamp(day, tz="UTC"))].reset_index(drop=True)
+
+
 def _work_list(Dataset, name, table, sep):
     """Write a work list (lines to label, materials to price): to the dataset of that name when the run has one (the scheduled
     pipeline), else to a CSV file beside the notebook. Returns where it went."""
@@ -85,10 +96,10 @@ def station_descriptions(path):
 
 
 def select_ncs(Dataset, Column, mode, missing_ids=()):
-    """The NCs to process. mode STANDARD: the plant's NCs since the start date plus the other plants' NCs where the plant is
-    liable, then the exclusion rules; mode MISSING_IDS: the NCs whose numbers are given (no exclusion)."""
+    """The NCs to process. mode STANDARD: the plant's NCs created in the year followed plus the other plants' NCs where the
+    plant is liable, then the exclusion rules; mode MISSING_IDS: the NCs whose numbers are given (no exclusion)."""
     plant = config.parameter("usine")
-    since = config.parameter_day("date_debut") + " 00:00:00"
+    since = config.first_day() + " 00:00:00"
     nc = config.parameter("dataset_nc", manual_lists.SOURCES)
     if mode == "STANDARD":
         home = (Dataset.get(nc).where((Column.get("plant") == plant) & (Column.get("creation_time") >= since))
@@ -98,7 +109,7 @@ def select_ncs(Dataset, Column, mode, missing_ids=()):
             other = other.where(Column.array_contains("liability", plant))
         other = other.select(*NC_COLUMNS).read_table(format="pandas")
         other = other[other["liability"].apply(lambda e: _liable(e, plant))]
-        df = pd.concat([home, other], ignore_index=True)
+        df = _until(pd.concat([home, other], ignore_index=True), "creation_time", config.year_end())
     elif mode == "MISSING_IDS":
         df = (Dataset.get(nc).where(Column.get("notification_no_leading_zeros").isin(list(missing_ids)))
               .select(*NC_COLUMNS).read_table(format="pandas"))
@@ -118,13 +129,14 @@ def run(Dataset, Column, say=None):
     t0 = time.time()
     say = say or (lambda msg: print(f"[{time.time() - t0:6.1f} s] {msg}", flush=True))
     keep_old = config.parameter_yes("garder_anciennes_sorties")
-    since = config.parameter_day("debut_ordres_et_aleas") + " 00:00:00"
+    since = config.aleas_since() + " 00:00:00"
     plant = config.parameter("usine")
+    say(f"Year followed: {config.year()} (compared with {config.comparison_year()})")
 
     say("Reading the GPS register and the Test list...")
     external = manual_lists.external_table()
     ids = manual_lists.list_ids()
-    say(f"   {len(ids)} NC numbers on the lists from {config.parameter('annee_listes_manuelles')}")
+    say(f"   {len(ids)} NC numbers on the lists dated {config.year()}")
 
     say("Standard selection: fetching the plant's NCs and the NCs it is liable for...")
     standard = manual_lists.add_external(select_ncs(Dataset, Column, "STANDARD"), external)
@@ -174,6 +186,7 @@ def run(Dataset, Column, say=None):
         say(f"Reading {al} (aléas at {plant} since {since[:10]})...")
         dis = (Dataset.get(al).where((Column.get("plant") == plant) & (Column.get("open_date_time") >= since))
                .select(*ALEA_COLUMNS).read_table(format="pandas"))
+        dis = _until(dis, "open_date_time", config.year_end())
         say(f"   {len(dis)} aléas")
     say("Dashboard tables: parser, root-cause labels, rework orders, aléas, cost model...")
     nc_t, def_t, dis_t, info, to_label, prepared = core.build(frames, labels, ops=ops, dis=dis, say=say)
@@ -193,21 +206,15 @@ def run(Dataset, Column, say=None):
     where = _work_list(Dataset, "fto2_parts_to_price", to_price, sep=";")
     print("parts:", info.get("parts"), "|", len(to_price), "materials with no price yet ->", where)
 
-    year = int(config.parameter("annee_comparaison"))
+    year = config.comparison_year()
     say(f"Reading the NCs of {year} (comparison year)...")
     nc = config.parameter("dataset_nc", manual_lists.SOURCES)
-    # two conditions only: Skywise's filter fails when three are joined with & (TypeError in OpAndWrapper); the end of the
-    # year is cut here instead
     raw_year = (Dataset.get(nc).where((Column.get("plant") == plant) & (Column.get("creation_time") >= f"{year}-01-01 00:00:00"))
                 .select(*NC_COLUMNS).read_table(format="pandas"))
-    try:   # a date column (Skywise) or text in mixed formats
-        created = pd.to_datetime(raw_year["creation_time"], errors="coerce", utc=True, format="mixed")
-    except (TypeError, ValueError):   # older pandas: no format="mixed"
-        created = pd.to_datetime(raw_year["creation_time"], errors="coerce", utc=True)
-    raw_year = raw_year[created < pd.Timestamp(f"{year + 1}-01-01", tz="UTC")].reset_index(drop=True)
+    raw_year = _until(raw_year, "creation_time", f"{year + 1}-01-01")
     say(f"   {len(raw_year)} NCs")
     stations = station_descriptions(config.parameter("postes", manual_lists.SOURCES))
-    y25 = reference.year_2025(raw_year, stations) if len(raw_year) else None
+    y25 = reference.comparison_year(raw_year, stations) if len(raw_year) else None   # 'y25': the block's name for it, whatever the year
     eq = reference.eqmsn(prepared["nc"])
     blocks = {"dashboard": reference.dashboard_block(prepared["d"], prepared["nc"], prepared["codes"], y25),
               "mft": reference.mft_block(eq),
@@ -224,4 +231,11 @@ def run(Dataset, Column, say=None):
     except Exception as e:
         print("fto2_dash_cout not written (%s). Only the Slate set-up with two functions reads it: add the dataset to the Data panel to use it." % e)
     say("Done.")
+    for path in manual_lists.NOT_READ:
+        print(f"⚠️ The list '{path}' could not be read (see the error above): its NCs carry no GPS / Test information in this run.\n"
+              f"   Its name is in data/config/2_sources.csv ({{annee}} stands for the year followed).")
+    import datetime as dt
+    if dt.date.today().year > config.year():
+        print(f"⚠️ The year followed is {config.year()} and we are in {dt.date.today().year}: the pages show the NCs of {config.year()} only.\n"
+              f"   To start the new year, write it on the line 'annee' of data/config/2_parametres.csv and run the notebook again.")
     return nc_t, def_t, dis_t

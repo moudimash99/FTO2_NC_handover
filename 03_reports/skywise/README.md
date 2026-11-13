@@ -93,9 +93,26 @@ as Slate functions instead of in the page, so that the page only draws. Two ways
 4. In Slate: replace the text of the query `q_fto2_nc` by the new `level3_datasets/q_fto2_nc.sql` (four new columns at the
    end), once the sync has run; then paste the new `fto2_level23.js` into the dashboard's sandbox.
 
+## Already set up? What to change (13 November: the year is a setting)
+
+Can be done together with the change above.
+
+1. Upload `level3_datasets/notebook_kit` again (the whole folder).
+2. In `data/config/2_parametres.csv`, add the line `annee;2026` (copy it from `level3_datasets/config/2_parametres.csv`).
+   The lines `date_debut`, `annee_listes_manuelles` and `debut_ordres_et_aleas` are no longer read: delete them.
+   `annee_comparaison` can stay, or be emptied (empty = the year before).
+3. Restart the kernel and run the notebook. Its first line says the year followed and the comparison year.
+4. In Slate, once the sync has run: paste the new `fto2_level23.js` into the dashboard's sandbox, `mft/fto2_mft.js` into the
+   MFT's and `elizabeth/fto2_elizabeth.js` into the Elizabeth's. No query changes.
+
+Nothing changes on the pages for 2026: this only prepares the next years.
+
 ## Keep it up to date
 
 - **New NCs:** run the notebook. The pages follow once the sync has run.
+- **A new year** (each January): write the year on the line `annee` of `data/config/2_parametres.csv`, bring the production
+  plan and the shutdown calendar up to date, save the new year's GPS register and Test list, and run the notebook. Nothing
+  to paste in Slate. The steps are in `docs/comment_faire.md` ("Commencer une nouvelle année").
 - **A setting** (a rule, a rate, the production plan, an MFT action...): change its table in `data/config/` and run the
   notebook. Nothing to paste in Slate.
 - **A change of the code** (a page's look, a new chart): run `python3 -I build/build_all.py`,

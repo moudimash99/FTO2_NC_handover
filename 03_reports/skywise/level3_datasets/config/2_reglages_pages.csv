@@ -1,5 +1,5 @@
 nom;valeur;description
-objectif_baisse;0.25;Objectif = taux 2025 moins ce pourcentage (0.25 = −25 %)
+objectif_baisse;0.25;Objectif = taux de l'année de comparaison moins ce pourcentage (0.25 = −25 %)
 poids_mois;7=0.6|8=0.6;Poids d'un mois dans l'objectif mensuel (mois=poids) : juillet et août comptent pour 60 % d'un mois
 semaine_fermeture_moins_de;10;Une semaine avec moins de défauts que ce nombre (toute l'usine) est une semaine de fermeture : hors moyennes
 msn_minimum;0.5;Un produit ou un mois compte dans les taux par MSN à partir de ce volume de MSN

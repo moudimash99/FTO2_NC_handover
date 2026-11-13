@@ -38,6 +38,7 @@ from fto2.parser import fto2_logic as L                 # noqa: E402   the defec
 from fto2.parser import nc_defect_parser as PARSER      # noqa: E402
 from fto2.cost.model import compute_cnq, parameters_as_tables  # noqa: E402   the cost model, settings in config/
 from fto2.cost import explain                                   # noqa: E402   the cost explanation of each NC (fto2_dash_cout)
+from fto2.cost import params as COST                            # noqa: E402   the cost settings (the model's version)
 sys.path.insert(0, os.path.join(ROOT, "build"))
 from fto2 import core                                   # noqa: E402   the data steps, shared with the Skywise notebook
 import page_template                                    # noqa: E402   the page template with its calculations (build/templates/model.js)
@@ -73,10 +74,10 @@ def _raw_times_as_export(raw):
 
 
 def load_exports():
-    """The pipeline notebook's NC exports (06_input_data/fto2_dashboard_data*.csv), plus the NCs of raw Skywise extracts
-    (06_input_data/nc_2026_skywise_*.csv, e.g. the extract of 3 Nov: FTO2 NCs created 1 Sep - 26 Oct) that the exports do not
-    hold, through the notebook's own rules (fto2_core.pipeline_rules, as for 2025). An NC in an export keeps its export row: the
-    exports carry the GPS register and Test list columns that a raw extract does not."""
+    """The pipeline notebook's NC exports (06_input_data/fto2_dashboard_data*.csv), plus the NCs of raw Skywise extracts of the
+    year followed (06_input_data/nc_<year>_skywise_*.csv, e.g. the extract of 3 Nov 2026: FTO2 NCs created 1 Sep - 26 Oct) that
+    the exports do not hold, through the notebook's own rules (fto2_core.pipeline_rules, as for the comparison year). An NC in
+    an export keeps its export row: the exports carry the GPS register and Test list columns that a raw extract does not."""
     files = sorted(glob.glob(os.path.join(ROOT, "06_input_data", "fto2_dashboard_data*.csv")))
     frames = []
     for f in files:
@@ -85,7 +86,7 @@ def load_exports():
         frames.append(x)
     key = lambda s: s.astype(str).str.strip().str.replace(r"\.0$", "", regex=True).str.lstrip("0")
     have = set().union(*[set(key(x["notification_number"])) for x in frames]) if frames else set()
-    raws = sorted(glob.glob(os.path.join(ROOT, "06_input_data", "nc_2026_skywise_*.csv*")))
+    raws = sorted(glob.glob(os.path.join(ROOT, "06_input_data", "nc_%d_skywise_*.csv*" % config.year())))
     materials = {}
     for f in raws:
         raw = pd.read_csv(f, dtype=str, keep_default_na=False, na_values=[""], low_memory=False)
@@ -134,15 +135,15 @@ def load_disruptions():
     return pd.concat(frames, ignore_index=True).drop_duplicates("disruption_id")
 
 
-def year_2025(x):
-    """2025 for the year comparisons, from the raw Skywise NC extract of 2025 (06_input_data/nc_2025_skywise_fto2.csv.gz): see
-    fto2/reference.py. None when the extract is missing."""
-    path = os.path.join(ROOT, "06_input_data", "nc_2025_skywise_fto2.csv.gz")
+def comparison_year(x):
+    """The comparison year for the targets and the year comparisons (fto2/reference.py), from the raw Skywise NC extract of
+    that year (06_input_data/nc_<year>_skywise_fto2.csv.gz). None when the extract is missing."""
+    path = os.path.join(ROOT, "06_input_data", "nc_%d_skywise_fto2.csv.gz" % config.comparison_year())
     if not os.path.exists(path):
         return None
     raw = pd.read_csv(path, dtype=str, keep_default_na=False, na_values=[""])
-    out = REF.year_2025(raw, core.station_pairs([x]))
-    REPORT["y2025"] = REF.REPORT["y2025"]
+    out = REF.comparison_year(raw, core.station_pairs([x]))
+    REPORT["comparison_year"] = REF.REPORT["comparison_year"]
     return out
 
 
@@ -152,8 +153,8 @@ def main():
     say("exports:", REPORT["inputs"], "->", len(x), "NCs")
     ops, dis = load_orders(), load_disruptions()
     lab = pd.read_csv(os.path.join(ROOT, "04_reference", "llm_labels_longtext.csv"), dtype={"notification_number": str}, encoding="utf-8-sig")
-    y25 = year_2025(x.copy())
-    say("2025:", REPORT.get("y2025"))
+    y25 = comparison_year(x.copy())   # 'y25': the pages' name for the comparison year's block, whatever the year
+    say("comparison year:", REPORT.get("comparison_year"))
     p = core.prepare(x, lab, ops, dis)   # parser, labels, CNQ, rework orders, aléas, scope: build/fto2_core.py
     d, nc_ref, lt, nc_in = p["d"], p["nc"], p["lt"], p["nc_in"]
     nl_, dl_ = p["nc_llm"], p["def_llm"]
@@ -358,7 +359,7 @@ def build_dashboard(d, nc, lt, y25=None, dis_t=None):
     actions = mft_actions()
     data = {"defects": defs, "ncs": ncs, "direct": direct, "rca": rca_reference(d, CODE_DESC), "client": client, "lt": lt_client, "codes": CODE_DESC, "actions": actions,
             "cnqp": cnq_explain(d), "cables": cable_requests(),
-            "meta": {"from": config.parameter_day("date_debut"), "to": REPORT["created_to"], "aside": aside, "noLine": no_line,
+            "meta": {"from": config.first_day(), "to": REPORT["created_to"], "aside": aside, "noLine": no_line,
                      "modelTotal": round(float(aec.cnq_cost_total.sum()), 2)}}
     # every page carries the production file (rates per MSN); only the review pages carry the made-up gallery data (never in the Slate files)
     sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))   # -I leaves the script folder off the path
@@ -499,8 +500,8 @@ def build_detail(d, nc, x):
     readme = pd.DataFrame({"Read me": [
         "Une ligne par défaut, NC créées du %s au %s, exports Skywise de 06_input_data (sélection standard complète, complétée par numéro avec les listes GPS et Test)." % (REPORT["created_from"], REPORT["created_to"]),
         "Où émise (comme le tableau de bord) : Usine FTO2 = plant FTO2 ou FT02 ; Retour client = Type_NC_auto du pipeline « NC Retour client » avec FTO2 dans la responsabilité ; Autre usine = le reste. Toutes les NC du pipeline sont là, supprimées et fournisseur comprises.",
-        "Deux classements : parser v4.8 (règles, comme dans Skywise) et cause racine (modèle de langage avec le texte complet, 12 oct. 2026, non vérifié à la main).",
-        "CNQ réparti : coût de la NC (modèle cnq-2026.10, niveau 3) partagé entre ses défauts. Seules les NC dont FTO2 est responsable ont un coût.",
+        "Deux classements : parser v%s (règles, comme dans Skywise) et cause racine (étiquettes par ligne de défaut, avec le texte complet, non vérifiées à la main)." % L.PARSER_VERSION,
+        "CNQ réparti : coût de la NC (modèle %s, niveau 3) partagé entre ses défauts. Seules les NC dont FTO2 est responsable ont un coût." % COST.MODEL_VERSION,
         "Régénéré par build/build_all.py."]})
     path = os.path.join(OUT, "FTO2_defects_detail.xlsx")
     with pd.ExcelWriter(path) as w:

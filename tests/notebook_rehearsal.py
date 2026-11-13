@@ -1,6 +1,6 @@
 """Rehearse the Skywise notebook on the laptop.
 
-    python3 -I tests/notebook_rehearsal.py
+    python3 -I tests/notebook_rehearsal.py [folder]
 
 Runs fto2/skywise.py (exactly what the notebook runs) against a stand-in for Skywise that serves the local files:
   non_conformity        the NCs of the pipeline exports in 06_input_data (their Skywise columns, liability as a list)
@@ -10,6 +10,9 @@ Runs fto2/skywise.py (exactly what the notebook runs) against a stand-in for Sky
   data/                 a station mapping made from the exports, and a GPS register listing the NCs of the missing-IDs export
 Then compares the tables it writes with the laptop build's (05_outputs/fto2_dash_*.csv) on the same NCs.
 Prints the differences and exits 1 if there are any.
+
+With a folder: also writes there the three Skywise pages fed with the tables of the run (FTO2_NC_Dashboard.html,
+FTO2_MFT.html, FTO2_Elizabeth.html), as Slate would hand them over (a stand-in for Slate is written into each page).
 """
 import glob
 import os
@@ -23,7 +26,8 @@ import pandas as pd
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 os.environ.setdefault("FTO2_CONFIG", os.path.join(ROOT, "config"))
-from fto2 import skywise  # noqa: E402
+from fto2 import config, manual_lists, skywise  # noqa: E402
+from tests.shift import shift_dates  # noqa: E402
 
 
 # ---------------------------------------------------------------- the stand-in for foundry.transforms
@@ -107,62 +111,116 @@ def _as_list(v):
     return [x.strip().strip("'\"") for x in v.strip("[]").split(",") if x.strip()]
 
 
-def main():
-    exports = [pd.read_csv(f, low_memory=False, dtype=str) for f in sorted(glob.glob(os.path.join(ROOT, "06_input_data", "fto2_dashboard_data*.csv")))]
+def stand_in(days=0, days_before=0, data_year=None, until=None):
+    """The four datasets the stand-in serves, and the exports they come from. To rehearse another year than the one of the
+    files in 06_input_data (data_year): days moves every date of that year's data, days_before those of the NCs of the year
+    before it. until ('AAAA-MM-JJ'): only the NCs created before that day, to rehearse the first weeks of a year."""
+    year = data_year or config.year()
+    exports = [shift_dates(pd.read_csv(f, low_memory=False, dtype=str), days)
+               for f in sorted(glob.glob(os.path.join(ROOT, "06_input_data", "fto2_dashboard_data*.csv")))]
+    if until:
+        exports = [x[x["creation_time"].astype(str).str[:10] < until] for x in exports]
     nc = pd.concat(exports, ignore_index=True).drop_duplicates("notification_number")
     nc["liability"] = nc["liability"].map(_as_list)
     nc["notification_number"] = nc["notification_number"].astype(str).str.replace(r"\.0$", "", regex=True)
     # the material of each NC (the Skywise dataset holds it; the exports were made before it was read): from the raw extracts
-    for f in sorted(glob.glob(os.path.join(ROOT, "06_input_data", "nc_2026_skywise_*.csv*"))):
+    for f in sorted(glob.glob(os.path.join(ROOT, "06_input_data", "nc_%d_skywise_*.csv*" % year))):
         raw = pd.read_csv(f, dtype=str, low_memory=False)
         raw["notification_number"] = raw["notification_number"].astype(str).str.replace(r"\.0$", "", regex=True).str.lstrip("0")
         for c in ("material", "material_description_fr", "material_description_en"):
             known = nc["notification_number"].map(raw.dropna(subset=[c]).set_index("notification_number")[c])
             nc[c] = nc[c].where(nc[c].notna(), known) if c in nc.columns else known
-    y25 = pd.read_csv(os.path.join(ROOT, "06_input_data", "nc_2025_skywise_fto2.csv.gz"), dtype=str, keep_default_na=False, na_values=[""])
-    nc = pd.concat([nc, y25[~y25.notification_number.isin(nc.notification_number)]], ignore_index=True)   # the 2025 NCs, for the comparison year
-    Dataset.tables = {
+    before = pd.read_csv(os.path.join(ROOT, "06_input_data", "nc_%d_skywise_fto2.csv.gz" % (year - 1)), dtype=str, keep_default_na=False, na_values=[""])
+    before = shift_dates(before, days_before)
+    nc = pd.concat([nc, before[~before.notification_number.isin(nc.notification_number)]], ignore_index=True)   # the NCs of the comparison year
+    tables = {
         "non_conformity": nc,
         "fto2_ai_labels": pd.read_csv(os.path.join(ROOT, "04_reference", "llm_labels_longtext.csv"), dtype={"notification_number": str}, encoding="utf-8-sig"),
         "work_order_operation": pd.concat([pd.read_csv(f, dtype=str, keep_default_na=False, na_values=[""])
                                            for f in sorted(glob.glob(os.path.join(ROOT, "06_input_data", "wo_s03_operations_fto2_*.csv.gz")))]),
-        "mes_disruptions": pd.concat([pd.read_csv(f, dtype=str, keep_default_na=False, na_values=[""])
-                                      for f in sorted(glob.glob(os.path.join(ROOT, "06_input_data", "mes_disruptions_fto2_*.csv.gz")))]),
+        "mes_disruptions": shift_dates(pd.concat([pd.read_csv(f, dtype=str, keep_default_na=False, na_values=[""])
+                                                  for f in sorted(glob.glob(os.path.join(ROOT, "06_input_data", "mes_disruptions_fto2_*.csv.gz")))]), days),
     }
+    return tables, exports
+
+
+def data_files(work, nc, exports):
+    """data/ beside the notebook: the station mapping, and the GPS register and the Test list, dated in the year followed."""
+    os.makedirs(os.path.join(work, "data"))
+    # station mapping in the notebook's wide form, from the exports' station / description pairs
+    pairs = nc[["station", "station_description", "programme"]].dropna(subset=["station"]).drop_duplicates("station")
+    wide = {}
+    for line, pat in (("A320", "32"), ("A330", "330"), ("A350", "350"), ("A400M", "400|MT")):
+        p = pairs[pairs.programme.fillna("").str.contains(pat)]
+        wide["STATION " + line] = list(p.station)
+        wide["Désignations " + line] = list(p.station_description)
+    n = max(len(v) for v in wide.values())
+    pd.DataFrame({k: v + [None] * (n - len(v)) for k, v in wide.items()}).to_csv(os.path.join(work, "data", "fto2_station_mapping.csv"), index=False)
+    # the GPS register and the Test list rebuilt from the exports' list columns (the real files stay in Skywise), with the
+    # header lines the real files have; every listed NC dated in the year followed so that the run fetches the ones the
+    # selection misses
+    listed = "15/03/%d" % config.year()
+    allx = pd.concat(exports, ignore_index=True).drop_duplicates("notification_number")
+    allx["num"] = allx["notification_number"].astype(str).str.replace(r"\.0$", "", regex=True)
+    g = allx[allx.Ext_Source == "GPS"]
+    with open(os.path.join(work, manual_lists._src("liste_gps")), "w", encoding="utf-8") as f:
+        f.write("x\nx\nx\n")
+        pd.DataFrame({"N°  NC / AM / AF": g.num, " Date SAP": listed, "Produit": g.Ext_Produit,
+                      "Nombre total retouches": g.Ext_Nb_Defauts, "Non conformité constatée": g.Ext_Defaut_Constate,
+                      "Type NC": g.GPS_Type_NC, "Statut décision": g.GPS_Statut_decision, "IMPUTATION \n(après analyse)": g.GPS_Imputation,
+                      "Nombre de retouches majeures": g.GPS_Retouches_majeures, "Nombre de retouches mineures": g.GPS_Retouches_mineures}).to_csv(f, index=False)
+    t = allx[allx.Ext_Source == "Test"]
+    with open(os.path.join(work, manual_lists._src("liste_test")), "w", encoding="utf-8") as f:
+        f.write("x\nx\n")
+        pd.DataFrame({"N° NC": t.num, "Dates": listed, "Produit": t.Ext_Produit, "VU\nuniquement PTVU": "",
+                      "Nb défaut": t.Ext_Nb_Defauts, "Défaut majeur": t.Ext_Defaut_Constate}).to_csv(f, index=False)
+
+
+def run(days=0, days_before=0, data_year=None, until=None):
+    """The notebook's run against the stand-in; returns the three dashboard tables (the others are in Dataset.written)."""
+    Dataset.tables, exports = stand_in(days, days_before, data_year, until)
+    Dataset.written = {}
     work = tempfile.mkdtemp(prefix="fto2_rehearsal_")
     here = os.getcwd()
     try:
-        os.makedirs(os.path.join(work, "data"))
-        # station mapping in the notebook's wide form, from the exports' station / description pairs
-        pairs = nc[["station", "station_description", "programme"]].dropna(subset=["station"]).drop_duplicates("station")
-        wide = {}
-        for line, pat in (("A320", "32"), ("A330", "330"), ("A350", "350"), ("A400M", "400|MT")):
-            p = pairs[pairs.programme.fillna("").str.contains(pat)]
-            wide["STATION " + line] = list(p.station)
-            wide["Désignations " + line] = list(p.station_description)
-        n = max(len(v) for v in wide.values())
-        pd.DataFrame({k: v + [None] * (n - len(v)) for k, v in wide.items()}).to_csv(os.path.join(work, "data", "fto2_station_mapping.csv"), index=False)
-        # the GPS register and the Test list rebuilt from the exports' list columns (the real files stay in Skywise), with the
-        # header lines the real files have; every listed NC dated in 2026 so that the run fetches the ones the selection misses
-        allx = pd.concat(exports, ignore_index=True).drop_duplicates("notification_number")
-        allx["num"] = allx["notification_number"].astype(str).str.replace(r"\.0$", "", regex=True)
-        g = allx[allx.Ext_Source == "GPS"]
-        with open(os.path.join(work, "data", "GPS NC INT_SERIE ELEC 2026 - NC REGISTRE.csv"), "w", encoding="utf-8") as f:
-            f.write("x\nx\nx\n")
-            pd.DataFrame({"N°  NC / AM / AF": g.num, " Date SAP": "15/03/2026", "Produit": g.Ext_Produit,
-                          "Nombre total retouches": g.Ext_Nb_Defauts, "Non conformité constatée": g.Ext_Defaut_Constate,
-                          "Type NC": g.GPS_Type_NC, "Statut décision": g.GPS_Statut_decision, "IMPUTATION \n(après analyse)": g.GPS_Imputation,
-                          "Nombre de retouches majeures": g.GPS_Retouches_majeures, "Nombre de retouches mineures": g.GPS_Retouches_mineures}).to_csv(f, index=False)
-        t = allx[allx.Ext_Source == "Test"]
-        with open(os.path.join(work, "data", "NC TEST - NC.csv"), "w", encoding="utf-8") as f:
-            f.write("x\nx\n")
-            pd.DataFrame({"N° NC": t.num, "Dates": "15/03/2026", "Produit": t.Ext_Produit, "VU\nuniquement PTVU": "",
-                          "Nb défaut": t.Ext_Nb_Defauts, "Défaut majeur": t.Ext_Defaut_Constate}).to_csv(f, index=False)
+        data_files(work, Dataset.tables["non_conformity"], exports)
         os.chdir(work)
-        nc_t, def_t, dis_t = skywise.run(Dataset, Column)
+        return skywise.run(Dataset, Column)
     finally:
         os.chdir(here)
         shutil.rmtree(work, ignore_errors=True)
+
+
+def write_page(out, nc_t, def_t, dis_t):
+    """The Skywise page with the tables of the run, as Slate would hand them over (tests/slate/make_pages.py)."""
+    sys.path.insert(0, os.path.join(ROOT, "build"))
+    sys.path.insert(0, os.path.join(ROOT, "tests", "slate"))
+    import make_pages as M
+    import skywise_pack as SP
+    q = lambda t, columns: SP._colmajor(SP._typed(t.astype(str).replace({"nan": "", "None": "", "<NA>": ""}), columns))
+    Q = {"q_fto2_nc": q(nc_t, M.NC_COLUMNS), "q_fto2_def": q(def_t, M.DEF_COLUMNS), "q_fto2_dis": q(dis_t, M.DIS_COLUMNS),
+         "q_fto2_cout": q(Dataset.written["fto2_dash_cout"], M.COUT_COLUMNS), "q_fto2_ref": SP._colmajor(Dataset.written["fto2_dash_ref"])}
+    os.makedirs(out, exist_ok=True)
+    path = os.path.join(out, "FTO2_NC_Dashboard.html")
+    with open(path, "w", encoding="utf-8") as f:
+        f.write(M.page("sans_fonction", Q))
+    print("page:", path)
+    # the MFT page and the Tableau Elizabeth, from the same three queries
+    pre = SP.fake_slate(SP._blob(Q["q_fto2_nc"]), "null", SP._blob(Q["q_fto2_def"]), SP._blob(Q["q_fto2_ref"]))
+    mark = "<!-- ===== HTML START ===== -->"
+    for name, one in (("FTO2_MFT.html", os.path.join("mft", "FTO2_MFT_Slate.html")), ("FTO2_Elizabeth.html", os.path.join("elizabeth", "FTO2_Elizabeth_Slate.html"))):
+        with open(os.path.join(ROOT, "03_reports", "skywise", one), encoding="utf-8") as f:
+            text = f.read()
+        assert text.count(mark) == 1
+        with open(os.path.join(out, name), "w", encoding="utf-8") as f:
+            f.write(text.replace(mark, pre + mark, 1))
+        print("page:", os.path.join(out, name))
+
+
+def main():
+    nc_t, def_t, dis_t = run()
+    if len(sys.argv) > 1:
+        write_page(sys.argv[1], nc_t, def_t, dis_t)
 
     # compare with the laptop build on the NCs both hold
     lap_nc = pd.read_csv(os.path.join(ROOT, "05_outputs", "fto2_dash_nc.csv"), dtype=str, keep_default_na=False)

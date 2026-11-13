@@ -3,7 +3,8 @@
 // end of build of each MSN, the MFT actions) comes from the query q_fto2_ref, part "mft" (dataset fto2_dash_ref).
 @@REF_READER@@
 // ---------------------------------------------------------------- the two Slate tables -> the page's data
-// As 07_scripts/mft/build_mft.py data() does from the CSV files: NCs raised at FTO2 (plant FTO2 or FT02) created in 2026, their
+// As 07_scripts/mft/build_mft.py data() does from the CSV files: NCs raised at FTO2 (plant FTO2 or FT02) created in the year
+// followed (config/2_parametres.csv, annee: it comes with the settings), their
 // defect lines, values numbered in dictionaries. Tables as Slate gives them (one array per column) or as rows.
 function mftFromTables(ncIn, defIn, R) {
   function rows(t) {
@@ -29,8 +30,9 @@ function mftFromTables(ncIn, defIn, R) {
   var keys = ['line', 'phase', 'msn', 'station', 'where', 'cat', 'rca', 'sub', 'code', 'fin', 'prod'], dic = {}, idx = {};
   keys.forEach(function (k) { dic[k] = []; idx[k] = {}; });
   function code(k, v) { v = tidy(v, 120); if (!(v in idx[k])) { idx[k][v] = dic[k].length; dic[k].push(v); } return idx[k][v]; }
+  var year = R.settings && R.settings.annee, since = year ? year + '-01-01' : '';
   var n = rows(ncIn).map(function (r) { return { r: r, created: str(r.created), plant: str(r.plant).trim().toUpperCase() }; })
-    .filter(function (x) { return (x.plant === 'FTO2' || x.plant === 'FT02') && x.created >= '2026-01-01'; });
+    .filter(function (x) { return (x.plant === 'FTO2' || x.plant === 'FT02') && x.created >= since; });
   n.sort(function (a, b) { return a.created < b.created ? -1 : a.created > b.created ? 1 : 0; });
   var ncs = [], pos = {}, to = '';
   n.forEach(function (x) { var r = x.r, c = x.created.slice(0, 10), k = id(r.nc); pos[k] = ncs.length; if (c > to) to = c;
@@ -120,9 +122,9 @@ function mftMain() {
     started = true;
     try {
       var D = window.FTO2_MFT_D = mftFromTables(nc, def, window.FTO2_MFT_REF = R.mft);
-      if (!D.ncs.length) {   // rows arrived but none is a 2026 FTO2 NC: say what came, to fix the query or the state
+      if (!D.ncs.length) {   // rows arrived but none is an FTO2 NC of the year followed: say what came, to fix the query or the state
         var c = Array.isArray(nc) ? Object.keys(nc[0] || {}) : Object.keys(nc);
-        showError('aucune NC FTO2 de 2026 lisible dans q_fto2_nc (colonnes reçues : ' + c.join(', ') + ') / no readable 2026 FTO2 NC in q_fto2_nc (columns received: ' + c.join(', ') + ')');
+        showError('aucune NC FTO2 de l’année suivie lisible dans q_fto2_nc (colonnes reçues : ' + c.join(', ') + ') / no readable FTO2 NC of the year followed in q_fto2_nc (columns received: ' + c.join(', ') + ')');
         return;
       }
       status(''); mftMain();

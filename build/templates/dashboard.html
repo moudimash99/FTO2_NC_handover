@@ -1204,7 +1204,7 @@ html.vu-lock { overflow: hidden; }
     <div class="vu-panel" id="vuPanel" role="dialog" aria-modal="true" aria-label=""><div class="vu-top"><button type="button" class="vu-close" id="vuClose" data-t="vuClose"></button></div><div id="vuHold"></div></div></div>
 
   <div id="tip" role="tooltip" hidden></div>
-  <footer><p id="foot1"></p><p data-t="foot2"></p><p id="foot3"></p><p data-t="foot4"></p><p data-t="foot5"></p></footer>
+  <footer><p id="foot1"></p><p data-t="foot2"></p><p id="foot3"></p><p id="foot4"></p><p data-t="foot5"></p></footer>
 </div>
 
 <script type="application/json" id="fto2-data">__DATA__</script>
@@ -1327,7 +1327,7 @@ function fto2FromTables(ncIn, defIn, ref, disIn, cxIn) {
   var dis = disIn ? rows(disIn).map(function (r) { return [str(r.id), day(r.opened), str(r.line), str(r.station), str(r.work_order), num(r.minutes), int(r.in_block), str(r.reason), str(r.status), str(r.comment)]; })
     .filter(function (a) { return a[0] && a[1]; }) : null;
   return { defects: defects, ncs: ncs, rca: rca, client: client, lt: lt, codes: ref.codes || {}, actions: ref.actions || [], cnqp: cnqp, eqmsn: eq, y25: ref.y25 || null, dis: dis, cx: cx, cables: ref.cables || null, settings: ref.settings,
-    meta: { from: ref.from || '2026-01-01', to: to, aside: { other: [notLiable.length, nlSum] },
+    meta: { from: ref.from || (ref.settings && ref.settings.annee ? ref.settings.annee : to.slice(0, 4)) + '-01-01', to: to, aside: { other: [notLiable.length, nlSum] },
       noLine: ncs.filter(function (a) { var p = String(a[42] || '').trim().toUpperCase(); return (p === 'FTO2' || p === 'FT02') && a[21] === 0; }).length, modelTotal: sum(aec) } };
 }
 if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.tables.nc, window.DASH.tables.def, window.DASH.ref, window.DASH.tables.dis, window.DASH.tables.cout);
@@ -1341,13 +1341,26 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
   // weeks, MSN minimum, filters at opening, categories, line colours, alarm settings
   var SET = D.settings, EQMIN = SET.msn_minimum;
   window.FTO2_ALARM_P = SET.alarmes; window.FTO2_PLACEHOLDER = SET.placeholder;
+  // the year followed and the year it is compared with (config/2_parametres.csv: annee, annee_comparaison), as text. The page
+  // was first written for 2026 against 2025: in its names, "26" stands for the year followed and "25" for the comparison year
+  // (D.y25, v2Y25b, r25...). The texts name them {YEAR} and {PREV}; withYears writes the years in, once, when a table of texts
+  // is declared (and the target's cut, {CUT}).
+  var YEAR = String(SET.annee || String(D.meta.from).slice(0, 4)), PREV = String(SET.annee_ref || +YEAR - 1);
+  window.FTO2_YEAR = +YEAR;   // read by the alarm block: its weeks are those of the year followed
+  var CUT = String(Math.round(SET.objectif_baisse * 1000) / 10);   // the target's cut in percent (config/2_reglages_pages.csv, objectif_baisse): {CUT} in the texts
+  function withYears(o) {
+    if (typeof o === 'string') return o.split('{YEAR}').join(YEAR).split('{PREV}').join(PREV).split('{CUT}').join(CUT);
+    if (Array.isArray(o)) return o.map(withYears);
+    if (o && typeof o === 'object') Object.keys(o).forEach(function (k) { o[k] = withYears(o[k]); });
+    return o;
+  }
   // defect row: [nc, seq, date, week, line, perimetre, catP, rcaP, subP, minorP, cableP, cat, rca, sub, minor, cable, allocP, alloc, snippet, (empty), scope, phase, officialSubCode]
   // NC row:     [nc, date, week, line, perimetre, onAEC, rule, ruleLabel, whereFound, c1, c2, c3P, c3, admin, workP, work, matP, mat, eng, cableP, cable, lines, title, scope, phase,
   //              msn, product, station, hour, lead, open, age, closure date, type, liability, SAP defect, SAP cause group, SAP cause, status, data source]
   // D.client:   { 'nc|seq': [damageType, detection, symptom, rootCauseText, plant, liability] }, D.lt: { nc: long text } (customer returns only)
   var MONTHS_FR = ['janv.', 'févr.', 'mars', 'avr.', 'mai', 'juin', 'juil.', 'août', 'sept.', 'oct.', 'nov.', 'déc.'];
   var MONTHS_EN = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-  var STR = {
+  var STR = withYears({
     fr: {
       kmNc: 'Compté en NC', kmDef: 'Compté en défauts', kmEur: 'En euros',
       tabProd: 'Taux de NC', prodTitle: 'Les NC rapportées au volume', prodData: 'Données', prodVer: 'Calcul des MSN',
@@ -1375,7 +1388,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
       k_msn: 'Avions', t_msn: 'Coût par avion (MSN)', s_msn: 'Une barre par MSN, dans l’ordre du début de production.',
       msnCount: '{n} MSN', msnTip: 'FTO2 {s} · retours {c}', msnLiab: '{n} NC (dont {k} imputables à FTO2)', msnZeroLeg: 'Trait gris : aucun coût pour FTO2', msnFirst: 'première NC le {d}', msnRecent: 'récent',
       msnRecentLeg: 'Première NC il y a moins de 30 jours', msnInProd: 'en production', msnInProdLeg: 'En production à la date des données (tableau Avances / Retards)',
-      msnBefore: 'Commencé avant 2026 : {n} NC en 2025, hors de cette vue', msnBeforeLeg: 'Gris pâle : commencé avant 2026 (NC en 2025, hors de cette vue)', hNcType: 'Type', hNcTitle: 'Titre', avgShort: 'moy. {v}', avgLeg: 'Moyenne du programme', msnClick: 'Cliquez sur une barre pour afficher les NC de cet avion.', msnHead: '{n} NC (dont {k} imputables à FTO2) · {c}',
+      msnBefore: 'Commencé avant {YEAR} : {n} NC en {PREV}, hors de cette vue', msnBeforeLeg: 'Gris pâle : commencé avant {YEAR} (NC en {PREV}, hors de cette vue)', hNcType: 'Type', hNcTitle: 'Titre', avgShort: 'moy. {v}', avgLeg: 'Moyenne du programme', msnClick: 'Cliquez sur une barre pour afficher les NC de cet avion.', msnHead: '{n} NC (dont {k} imputables à FTO2) · {c}',
       k_prod: 'Produits', t_prod: 'Coût par famille de produit', s_prod: 'NC FTO2 et retours clients ; nombre de NC, d’avions (MSN) et coût moyen par avion. Les 10 familles les plus coûteuses, les autres regroupées.',
       prodTip: 'FTO2 {s} · retours {c} · {n} NC · {k} MSN', prodUnknown: 'Non identifié', prodRest: '{n} autres familles',
       k_lead: 'Délais', t_lead: 'Combien de temps une NC reste ouverte', s_lead: 'Part des NC encore ouvertes N jours après leur création, par décision. Les NC encore ouvertes comptent jusqu’à aujourd’hui (méthode de Kaplan-Meier). Point : la moitié des NC sont closes. Cliquez à un nombre de jours pour garder les NC encore ouvertes à ce moment-là.',
@@ -1430,19 +1443,19 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
       cbMotif: 'Motif', cbProd: 'Prod. ligne', cbMach: 'Impr. machine', cbOper: 'Impr. opérateur', cbOther: 'Autre', cbCable: 'Câble', cbMotifs: 'Motifs', cbImp: 'Imputation', cbWk: 'Sem.', cbProg: 'Prog.', cbCause: 'Cause (proposée)', cbCables: 'Câbles', cbCom: 'Commentaire',
       cbI0: 'Production ligne', cbI1: 'Impression – machine', cbI2: 'Impression – opérateur', cbI3: 'Définition', cbI4: 'Non renseigné', cbN: '{n} demandes', cbN1: '1 demande', cbSearch: 'Rechercher', cbNone: 'Aucune demande pour ce choix.', cbClear: 'Tout effacer', cbCableChip: 'Câble {c}', cbQ: 'T',
       ppTitle: 'Production : les volumes derrière les taux', ppSub: 'Combien de MSN sont produits, prévus et livrés, ligne par ligne et produit par produit ; puis comment ces chiffres servent aux taux, aux prévisions et aux objectifs.',
-      ppF1: 'MSN produits sur la période', ppF2: 'MSN prévus en 2026 (année)', ppF3: 'produits livrés en 2025', ppF4: 'NC rattachées au plan / toutes les NC',
-      ppLines: 'Par ligne', ppLinesS: 'Taux = NC ÷ MSN produits sur la période. Objectif = taux 2025 − 25 % ; * : pas de 2025, taux 2026 − 25 %.', ppProds: 'Par produit', ppProdsS: 'Les produits du plan de production, ligne par ligne.',
-      ppMonth: 'MSN prévus, mois par mois', ppMonthS: 'Plan de production 2026 par ligne.', ppLight: 'Plus clair : mois à venir (prévision).', ppTipV: '{v} MSN', ppPlanned: 'prévu', connOnly: 'Erreurs de branchement par MSN : A330 et A350 seulement. Choisissez une de ces lignes, ou toutes.', vqOnly: 'Causes 2025 contre 2026 : A330 et A350 seulement. Choisissez une de ces lignes, ou toutes.', v2InclOut: 'dont {n} hors plan (produits sans volume au plan)', ciMsn: '{e} MSN', ciDot: 'taux (NC par MSN)', ciLine: 'fourchette à 95 %',
+      ppF1: 'MSN produits sur la période', ppF2: 'MSN prévus en {YEAR} (année)', ppF3: 'produits livrés en {PREV}', ppF4: 'NC rattachées au plan / toutes les NC',
+      ppLines: 'Par ligne', ppLinesS: 'Taux = NC ÷ MSN produits sur la période. Objectif = taux {PREV} − {CUT} % ; * : pas de {PREV}, taux {YEAR} − {CUT} %.', ppProds: 'Par produit', ppProdsS: 'Les produits du plan de production, ligne par ligne.',
+      ppMonth: 'MSN prévus, mois par mois', ppMonthS: 'Plan de production {YEAR} par ligne.', ppLight: 'Plus clair : mois à venir (prévision).', ppTipV: '{v} MSN', ppPlanned: 'prévu', connOnly: 'Erreurs de branchement par MSN : A330 et A350 seulement. Choisissez une de ces lignes, ou toutes.', vqOnly: 'Causes {PREV} contre {YEAR} : A330 et A350 seulement. Choisissez une de ces lignes, ou toutes.', v2InclOut: 'dont {n} hors plan (produits sans volume au plan)', ciMsn: '{e} MSN', ciDot: 'taux (NC par MSN)', ciLine: 'fourchette à 95 %',
       pinStatL: 'inversions avec leurs deux broches écrites', pinAdjL: 'entre deux broches qui se suivent', pinRepL: 'paires de broches sur plusieurs avions', pinNone: 'Aucune inversion avec ses deux broches écrites dans la sélection.',
       pinAc1: '1 avion', pinAcN: '{n} avions', pinAc3: '3 avions ou plus', pinTip: 'Broches {a} ↔ {b}', pinNextY: 'deux broches qui se suivent', pinNextN: 'broches éloignées',
-      pinNo25: 'Pas de comparaison 2025 : les textes des défauts 2025 ne sont pas dans les données.', pinCols: ['FIN', 'Broches', 'Voisines', 'Avions'], pinY: 'oui', pinN: 'non', ppCurTip: '{p} compté comme produit au {d}, le reste prévu', ppCurL: 'Mois en cours ({m}) : la part des jours passés au {d}, le reste plus clair.',
+      pinNo25: 'Pas de comparaison {PREV} : les textes des défauts {PREV} ne sont pas dans les données.', pinCols: ['FIN', 'Broches', 'Voisines', 'Avions'], pinY: 'oui', pinN: 'non', ppCurTip: '{p} compté comme produit au {d}, le reste prévu', ppCurL: 'Mois en cours ({m}) : la part des jours passés au {d}, le reste plus clair.',
       ppCur: 'Les NC vont au-delà de ce que le plan donne comme produit : {m} compte pour la part de ses jours passés au {d} ({p} de son volume prévu), le reste du mois va dans la prévision. Ainsi les NC de ce mois comptent partout, comme dans la Vue d’ensemble.',
-      ppL: 'Ligne', ppP: 'Produit', ppEq: 'MSN produits 2026', ppYr: 'MSN prévus 2026', ppD25: 'Livrés 2025', ppNc25: 'NC 2025', ppNc: 'NC 2026', ppRate: 'NC par MSN 2026', ppR25: 'Taux 2025', ppTgt: 'Objectif 2026 (NC par MSN)', ppTgtY: 'Objectif 2026 (NC)', pp25m: '2025 − 25 %',
+      ppL: 'Ligne', ppP: 'Produit', ppEq: 'MSN produits {YEAR}', ppYr: 'MSN prévus {YEAR}', ppD25: 'Livrés {PREV}', ppNc25: 'NC {PREV}', ppNc: 'NC {YEAR}', ppRate: 'NC par MSN {YEAR}', ppR25: 'Taux {PREV}', ppTgt: 'Objectif {YEAR} (NC par MSN)', ppTgtY: 'Objectif {YEAR} (NC)', pp25m: '{PREV} − {CUT} %',
       ppNone: 'Le plan de production réel n’est pas chargé.', slWait: 'Calcul dans Slate…', ppHowT: 'Comment ces chiffres sont faits et utilisés',
-      ppH1t: 'D’où viennent les volumes', ppH1: '2026 : le tableau Avances / Retards (export du {d}). Un MSN compte pour 1, réparti sur les jours travaillés entre son impression et son OTA : du lundi au vendredi, hors jours fériés et fermetures ; les semaines de congés autour de la fermeture d’été comptent pour moitié. Juillet et août font ainsi environ 60 % d’un mois normal. 2025 : la feuille Livraisons 2025, produits livrés par mois.',
+      ppH1t: 'D’où viennent les volumes', ppH1: '{YEAR} : le tableau Avances / Retards (export du {d}). Un MSN compte pour 1, réparti sur les jours travaillés entre son impression et son OTA : du lundi au vendredi, hors jours fériés et fermetures ; les semaines de congés autour de la fermeture d’été comptent pour moitié. Juillet et août font ainsi environ 60 % d’un mois normal.', ppH1s: '{PREV} : la feuille Livraisons {PREV}, produits livrés par mois.', ppH1p: '{PREV} : le même tableau, un produit compte le mois de son départ OTA.',
       ppH2t: 'Comment une NC est rattachée à un produit', ppH2: 'Le produit de la NC (Produit_auto du pipeline) est relié à un produit du plan. {n} NC n’ont pas de produit du plan ({p}) : elles comptent dans tous les totaux, mais pas dans les taux par MSN, les prévisions par produit ni les objectifs par ligne.',
-      ppH3t: 'Ce qu’on en fait', ppH3: 'NC par MSN = NC d’un mois ÷ MSN produits ce mois-là. Prévision à décembre = taux de la période × MSN prévus. Objectif d’une ligne = son taux 2025 (NC par produit livré) − 25 %, × sa production 2026 ; objectif toutes lignes = somme des lignes, plus les NC hors plan de 2025 − 25 %. Objectif de coût : le même calcul avec le coût. Un produit sans livraison en 2025 (MDCD) garde son rythme 2026 comme objectif.',
-      ppH4t: 'À savoir', ppH4: 'A320 : les produits sont de petites pièces comptées à l’unité (183 livrées en 2025), d’où un taux par unité très bas ; c’est pourquoi l’objectif se fait ligne par ligne et pas sur un taux commun. A400M : les textes des NC sont masqués, aucun défaut n’y est lu.',
+      ppH3t: 'Ce qu’on en fait', ppH3: 'NC par MSN = NC d’un mois ÷ MSN produits ce mois-là. Prévision à décembre = taux de la période × MSN prévus. Objectif d’une ligne = son taux {PREV} (NC par produit livré) − {CUT} %, × sa production {YEAR} ; objectif toutes lignes = somme des lignes, plus les NC hors plan de {PREV} − {CUT} %. Objectif de coût : le même calcul avec le coût. Un produit sans livraison en {PREV}{x} garde son rythme {YEAR} comme objectif.',
+      ppH4t: 'À savoir', ppH4: 'A320 : les produits sont de petites pièces comptées à l’unité ({a} livrées en {PREV}), d’où un taux par unité très bas ; c’est pourquoi l’objectif se fait ligne par ligne et pas sur un taux commun. A400M : les textes des NC sont masqués, aucun défaut n’y est lu.',
       fbTitle: 'Filtres', fSrc: 'Source des données', fOrg: 'Origine (pipeline)', org_all: 'Les deux sorties', org_normal: 'Sortie normale', org_missing_ids: 'IDs manquants', src_all: 'Toutes les données', src_sky: 'Skywise uniquement', src_man: 'Listes manuelles (GPS ou Test)', src_gps: 'Registre GPS', src_test: 'Liste Test',
       fPlant: 'Usine FTO2 uniquement', fLiab: 'Responsabilité', fCost: 'Coût', liab_f: 'FTO2', liab_s: 'Fournisseurs', liab_o: 'Autres', liab_all: 'Toutes', cost_fto2: 'FTO2 responsable', cost_all: 'Toutes les NC', fYes: 'Oui', fNo: 'Non', fPlantOff: 'Sans effet ici : l’onglet sépare déjà FTO2 et retours clients.',
       fPhase: 'Type de production', ph_all: 'Tous', ph_SERIE: 'Série', ph_REC: 'REC', ph_FTI: 'FTI', fLine: 'Avion', line_all: 'Tous les avions',
@@ -1477,9 +1490,9 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
       cnqSub: 'Estimation à partir des temps du processus AEC : alerte, rédaction, support technique, reprise et contrôle, chiffrés défaut par défaut.',
       nKR: 'NC par MSN', nKRs: 'NC ÷ MSN produits', ovMore: 'Autres listes et graphiques', cnqMore: 'Autres graphiques du coût', parMore: 'Autres graphiques', whereMore: 'Autres graphiques',
       allLines: 'Toutes lignes', v2Tgt: 'Objectif', v2VsTgt: 'vs objectif', v2Above: 'Au-dessus de l’objectif', v2Below: 'Sous l’objectif', v2TgtPh: 'Objectif (fictif)', v2Ph: 'fictif',
-      v2Ph25: '2025 fictif (= 2026)', v2Y25b: '2025, même filtre', v2Y25c: '2025 à la même date', v2Y25at: '2025 à la même date : {v}', v2TgtCumR: 'Objectif cumulé (2025 − 25 %)', v2StTgtR: 'objectif de l’année (2025 − 25 %)', v2StBudR: 'objectif de coût de l’année (2025 − 25 %)', v2StTgtL: 'objectif de l’année, somme des lignes', v2StBudL: 'objectif de coût de l’année, somme des lignes', v2TgtCumL: 'Objectif cumulé, ligne par ligne', v2BudL: 'Objectif de coût cumulé, ligne par ligne', v2TgtBar: 'Objectif', v2BudBar: 'Objectif', v2TgtN: '{a} NC pour un objectif de {t} NC (somme des lignes)', v2Mix: 'taux 2025 au mix 2026 : {v}', v2BudR: 'Objectif de coût au prorata (coût 2025 − 25 %)', v2TgtR: 'Objectif : taux 2025 − 25 %', v2NoCli25: '2025 sans retours client (absents de l’extraction 2025)', v2Rate25: '2025 : {v} NC par produit livré', v2Rate25s: 'Taux 2025', v2BudR2: 'objectif', v2MTgt: 'objectif mensuel {v} (fictif)', v2BudPh: 'Objectif de coût au prorata (fictif)', v2Y25: '2025', v2Y26: '2026 prévu', v2Flat: 'Stable', 
+      v2Ph25: '{PREV} fictif (= {YEAR})', v2Y25b: '{PREV}, même filtre', v2Y25c: '{PREV} à la même date', v2Y25at: '{PREV} à la même date : {v}', v2TgtCumR: 'Objectif cumulé ({PREV} − {CUT} %)', v2StTgtR: 'objectif de l’année ({PREV} − {CUT} %)', v2StBudR: 'objectif de coût de l’année ({PREV} − {CUT} %)', v2StTgtL: 'objectif de l’année, somme des lignes', v2StBudL: 'objectif de coût de l’année, somme des lignes', v2TgtCumL: 'Objectif cumulé, ligne par ligne', v2BudL: 'Objectif de coût cumulé, ligne par ligne', v2TgtBar: 'Objectif', v2BudBar: 'Objectif', v2TgtN: '{a} NC pour un objectif de {t} NC (somme des lignes)', v2Mix: 'taux {PREV} au mix {YEAR} : {v}', v2BudR: 'Objectif de coût au prorata (coût {PREV} − {CUT} %)', v2TgtR: 'Objectif : taux {PREV} − {CUT} %', v2NoCli25: '{PREV} sans retours client (absents de l’extraction {PREV})', v2Rate25: '{PREV} : {v} NC par produit livré', v2Rate25s: 'Taux {PREV}', v2BudR2: 'objectif', v2MTgt: 'objectif mensuel {v} (fictif)', v2BudPh: 'Objectif de coût au prorata (fictif)', v2Y25: '{PREV}', v2Y26: '{YEAR} prévu', v2Flat: 'Stable', 
       vpFc: 'Fait et prévision', vpMsn: 'Par MSN', vpFcK: 'Volumes', vpFcT: 'NC, défauts et coût attendus d’ici décembre, produit par produit', vpFcS: 'Réalisé, puis prévision : volume de la période par MSN × MSN prévus jusqu’à décembre.', vpFcH: 'fait → fin décembre', vpDec: 'Prévu à fin décembre', xPartial: 'Semaine en cours non tracée (incomplète) : {n} NC', vpOutRow: 'Produit hors plan', vpOutL: 'Produits hors plan {l}', vpNoFc: 'pas de prévision', vpOwnPace: 'à son rythme', vpOut: '{n} NC sans produit du plan de production, comptées dans les totaux', dType: 'Répartition du coût par type de NC', typeSub: 'Type de la NC, là où elle a été trouvée ; « NC câbles » = NC du type Câbles ; 100 % = coût de la sélection.', ty_cab: 'NC câbles', ty_fin: 'Contrôle final', ty_test: 'Test', ty_int: 'Interne', ty_sup: 'Fournisseurs', ty_oth: 'Autres', wlCh_prod: 'Produits', wlCh_ac: 'Avions', wlCh_st: 'Postes', wlChs_prod: 'Taux, carte mensuelle, précision, projection et coût, produit par produit.', wlChs_ac: 'Coût par avion et FIN qui reviennent.', wlChs_st: 'Défauts par poste de rédaction de la NC.',
-      v2MonTgt: 'objectif du mois {v}', v2CurTip: 'mois en cours, {d} jours sur {n} · objectif à date {v}', v2CurLeg: 'Mois en cours : objectif au prorata des jours', v2CurPt: 'mois en cours : données au {d} seulement', v2CurPtL: 'Mois en cours (données au {d})', v2Cum: '{v} NC cumulées', v2Fc: 'prévues', v2TgtShort: 'objectif', v2Under: 'Mois sous son objectif', v2Over: 'Mois au-dessus de son objectif', v2CumLeg: 'NC cumulées', v2TgtCum: 'Objectif cumulé (fictif)', v2Summer: 'Juillet et août comptent pour 60 % d’un mois.', v2ObjH: 'Objectif par ligne · NC par MSN', v2ObjC: 'Objectifs fictifs en attendant les chiffres 2025 : taux 2026 moins 25 %.', v2PerMsnV: '{v} par MSN', v2StNow: 'NC depuis le début de la période', v2StFc: 'prévus à fin décembre', v2StTgt: 'objectif de l’année (fictif)', v2StCost: 'cumulés sur la période', v2StBud: 'objectif de coût de l’année (fictif)', v2QPer: 'Par MSN produit : la fermeture d’août ne pèse pas.', v2Q25: '2025 : défauts par produit livré (causes lues par le parseur) ; 2026 : par MSN produit.', v2Avg25: 'Moyenne 2025 (par produit livré)', v2QMonth: 'Moyenne par mois.', v2PerMsn: 'par MSN', v2Ac: '{n} avions',
+      v2MonTgt: 'objectif du mois {v}', v2CurTip: 'mois en cours, {d} jours sur {n} · objectif à date {v}', v2CurLeg: 'Mois en cours : objectif au prorata des jours', v2CurPt: 'mois en cours : données au {d} seulement', v2CurPtL: 'Mois en cours (données au {d})', v2Cum: '{v} NC cumulées', v2Fc: 'prévues', v2TgtShort: 'objectif', v2Under: 'Mois sous son objectif', v2Over: 'Mois au-dessus de son objectif', v2CumLeg: 'NC cumulées', v2TgtCum: 'Objectif cumulé (fictif)', v2Summer: '{m} comptent pour {p} d’un mois.', v2Summer1: '{m} compte pour {p} d’un mois.', v2And: ' et ', v2ObjH: 'Objectif par ligne · NC par MSN', v2ObjC: 'Objectifs fictifs en attendant les chiffres {PREV} : taux {YEAR} moins {CUT} %.', v2PerMsnV: '{v} par MSN', v2StNow: 'NC depuis le début de la période', v2StFc: 'prévus à fin décembre', v2StTgt: 'objectif de l’année (fictif)', v2StCost: 'cumulés sur la période', v2StBud: 'objectif de coût de l’année (fictif)', v2QPer: 'Par MSN produit : la fermeture d’août ne pèse pas.', v2Q25: '{PREV} : défauts par produit livré (causes lues par le parseur) ; {YEAR} : par MSN produit.', v2Avg25: 'Moyenne {PREV} (par produit livré)', v2QMonth: 'Moyenne par mois.', v2PerMsn: 'par MSN', v2Ac: '{n} avions',
       scVol: 'Volume par mois', scTot: 'Total', scRate: 'Par MSN, par mois', scRateP: 'Par MSN', scLast3: '3 derniers mois', scNc: 'NC', scDef: 'Défauts', scCost: 'Coût',
       scNote: 'Par MSN : NC, défauts et coût des produits rattachés au fichier de production. Petit chiffre : écart des 3 derniers mois à la période.',
       tabWhere: 'Localisation', whereTitle: 'Localisation des NC', whereSub: 'Produits, lignes, avions et postes, rapportés au volume produit quand c’est possible.', titleMock: 'Tableau de bord FTO2 : maquette à noter',
@@ -1487,8 +1500,8 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
       mkBarAll: 'Notés {k} sur {n}', mkPreview: 'Aperçu final', mkCopy: 'Copier les notes', mkCopied: 'Notes copiées.', mkSaveDb: 'Enregistré sur la page', mkSaveLocal: 'Enregistré dans ce navigateur', mkSaving: 'Enregistrement…', mkSaveErr: 'Non enregistré',
       mkReal: 'Vraies données', mkFict: 'Fictif', mkTrioK: 'Trois mesures, côte à côte', mkTrioOv: 'NC, défauts et coût par avion produit, mois par mois', mkTrioOvS: 'Les trois mesures restent visibles sans interrupteur ; chacune se note à part.',
       mkTrioWh: 'Taux par produit : NC, défauts, coût', mkTrioWhS: 'Même ordre de produits dans les trois ; chacune se note à part.', mkOldOv: 'Listes actuelles de la vue d’ensemble', mkOldOvS: 'À répartir entre Où et Pareto, ou à retirer.',
-      mkTgtK: 'Objectif', mkTgtT: 'À quelle distance de l’objectif ?', mkTgtS: 'NC par avion produit (MSN), comparées à 2025 moins 25 %.',
-      mkNow: '2026 à date', mkLast3: '3 derniers mois', mkTarget: 'Objectif', mkGap: 'Écart à l’objectif', mkBase: 'Taux 2025 (NC par MSN)', mkBaseHint: 'Le taux 2025 n’est pas dans les données : le saisir pour afficher l’objectif.', mkTgtCalc: '{b} × 0,75', mkPerEq: 'NC par MSN', mkMatched: 'sur les NC rattachées à un produit',
+      mkTgtK: 'Objectif', mkTgtT: 'À quelle distance de l’objectif ?', mkTgtS: 'NC par avion produit (MSN), comparées à {PREV} moins {CUT} %.',
+      mkNow: '{YEAR} à date', mkLast3: '3 derniers mois', mkTarget: 'Objectif', mkGap: 'Écart à l’objectif', mkBase: 'Taux {PREV} (NC par MSN)', mkBaseHint: 'Le taux {PREV} n’est pas dans les données : le saisir pour afficher l’objectif.', mkTgtCalc: '{b} × 0,75', mkPerEq: 'NC par MSN', mkMatched: 'sur les NC rattachées à un produit',
       mkD1k: 'Taux', mkD1t: 'Défauts par MSN, mois par mois', mkD1s: 'Trait : moyenne de la période ; pointillé : moyenne glissante sur 3 mois.', mkD1d: 'production MSN · défauts',
       tabRev: 'Proposition', titleRev: 'Tableau de bord FTO2 : proposition à valider',
       revTitle: 'La proposition, graphique par graphique',
@@ -1550,7 +1563,8 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
       foot1: 'Source : extraction SAP Skywise, NC créées du {from} au {to}.',
       foot2: 'NC FTO2 : plant FTO2 ou FT02 (une NC du registre GPS ou de la liste Test aussi, seulement si elle est à ce plant) ; toutes comptent, supprimées comprises. Retours clients : type « NC Retour client » du pipeline avec FTO2 dans la responsabilité. Coût : seulement là où FTO2 est responsable. Les défauts sont classés par cause à partir du texte complet de chaque NC.',
       foot3: 'Les {n} NC sans ligne de défaut lisible (A400M sans texte, NC supprimées…) sont comptées en NC et en coût mais pas en défauts. Les {o} NC dont FTO2 n’est pas responsable comptent comme NC avec un coût de 0 pour FTO2 (leur traitement selon le modèle : {oe}).',
-      foot4: 'Semaines de fermeture (moins de 10 défauts) exclues des moyennes hebdomadaires. Défauts mineurs : tyrap, frette, ficelle, capuchon, cerise ou bouchon manquant. Coût : chaque étape au taux de qui la fait (production 123 €/h, qualité 107 €/h, ME 76 €/h ; ingénierie 78,16 €/h), temps du processus estimés par l’équipe ; la valeur des pièces rebutées n’est pas incluse. Coût des défauts câble : coût des NC concernées ; quand une NC contient aussi d’autres défauts, son coût est partagé entre ses défauts.'
+      footPart0: 'la valeur des pièces rebutées n’est pas incluse', footPart1: 'la valeur des pièces rebutées ou échangées est comptée quand leur prix est connu',
+      foot4: 'Semaines de fermeture (moins de {sh} défauts) exclues des moyennes hebdomadaires. Défauts mineurs : tyrap, frette, ficelle, capuchon, cerise ou bouchon manquant. Coût : chaque étape au taux de qui la fait (production {rp} €/h, qualité {rq} €/h, ME {rm} €/h ; ingénierie {re} €/h), temps du processus estimés par l’équipe ; {pv}. Coût des défauts câble : coût des NC concernées ; quand une NC contient aussi d’autres défauts, son coût est partagé entre ses défauts.'
     },
     en: {
       kmNc: 'Counted in NCs', kmDef: 'Counted in defects', kmEur: 'In euros',
@@ -1579,7 +1593,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
       k_msn: 'Aircraft', t_msn: 'Cost per aircraft (MSN)', s_msn: 'One bar per MSN, in order of the start of production.',
       msnCount: '{n} MSNs', msnTip: 'FTO2 {s} · returns {c}', msnLiab: '{n} NCs (of which {k} FTO2 liable)', msnZeroLeg: 'Grey mark: no cost for FTO2', msnFirst: 'first NC {d}', msnRecent: 'recent',
       msnRecentLeg: 'First NC less than 30 days ago', msnInProd: 'in production', msnInProdLeg: 'In production at the data date (Avances / Retards table)',
-      msnBefore: 'Started before 2026: {n} NCs in 2025, outside this view', msnBeforeLeg: 'Pale grey: started before 2026 (NCs in 2025, outside this view)', hNcType: 'Type', hNcTitle: 'Title', avgShort: 'avg {v}', avgLeg: 'Programme average', msnClick: 'Click a bar to list that aircraft’s NCs.', msnHead: '{n} NCs (of which {k} FTO2 liable) · {c}',
+      msnBefore: 'Started before {YEAR}: {n} NCs in {PREV}, outside this view', msnBeforeLeg: 'Pale grey: started before {YEAR} (NCs in {PREV}, outside this view)', hNcType: 'Type', hNcTitle: 'Title', avgShort: 'avg {v}', avgLeg: 'Programme average', msnClick: 'Click a bar to list that aircraft’s NCs.', msnHead: '{n} NCs (of which {k} FTO2 liable) · {c}',
       k_prod: 'Products', t_prod: 'Cost by product family', s_prod: 'FTO2 NCs and customer returns; number of NCs, aircraft (MSNs) and average cost per aircraft. The 10 costliest families, the rest grouped.',
       prodTip: 'FTO2 {s} · returns {c} · {n} NCs · {k} MSNs', prodUnknown: 'Not identified', prodRest: '{n} other families',
       k_lead: 'Lead time', t_lead: 'How long an NC stays open', s_lead: 'Share of NCs still open N days after creation, by decision. NCs still open count until today (Kaplan-Meier). Dot: half of the NCs are closed. Click at a number of days to keep the NCs still open by then.',
@@ -1634,19 +1648,19 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
       cbMotif: 'Reason', cbProd: 'Prod. line', cbMach: 'Print. machine', cbOper: 'Print. operator', cbOther: 'Other', cbCable: 'Cable', cbMotifs: 'Reasons', cbImp: 'Imputation', cbWk: 'Wk', cbProg: 'Prog.', cbCause: 'Cause (proposed)', cbCables: 'Cables', cbCom: 'Comment',
       cbI0: 'Production line', cbI1: 'Printing – machine', cbI2: 'Printing – operator', cbI3: 'Definition', cbI4: 'Blank', cbN: '{n} requests', cbN1: '1 request', cbSearch: 'Search', cbNone: 'No request for this choice.', cbClear: 'Clear all', cbCableChip: 'Cable {c}', cbQ: 'Q',
       ppTitle: 'Production: the volumes behind the rates', ppSub: 'How many MSN are built, planned and delivered, line by line and product by product; then how these figures feed the rates, the forecasts and the targets.',
-      ppF1: 'MSN built in the period', ppF2: 'MSN planned in 2026 (year)', ppF3: 'products delivered in 2025', ppF4: 'NCs matched to the plan / all NCs',
-      ppLines: 'By line', ppLinesS: 'Rate = NCs ÷ MSN built in the period. Target = 2025 rate − 25%; *: no 2025, 2026 rate − 25%.', ppProds: 'By product', ppProdsS: 'The production plan’s products, line by line.',
-      ppMonth: 'MSN planned, month by month', ppMonthS: '2026 production plan by line.', ppLight: 'Lighter: months to come (forecast).', ppTipV: '{v} MSN', ppPlanned: 'planned', connOnly: 'Connection errors per MSN: A330 and A350 only. Pick one of these lines, or all.', vqOnly: 'Root causes 2025 against 2026: A330 and A350 only. Pick one of these lines, or all.', v2InclOut: 'of which {n} out of the plan (products with no planned volume)', ciMsn: '{e} MSN', ciDot: 'rate (NCs per MSN)', ciLine: '95% range',
+      ppF1: 'MSN built in the period', ppF2: 'MSN planned in {YEAR} (year)', ppF3: 'products delivered in {PREV}', ppF4: 'NCs matched to the plan / all NCs',
+      ppLines: 'By line', ppLinesS: 'Rate = NCs ÷ MSN built in the period. Target = {PREV} rate − {CUT}%; *: no {PREV}, {YEAR} rate − {CUT}%.', ppProds: 'By product', ppProdsS: 'The production plan’s products, line by line.',
+      ppMonth: 'MSN planned, month by month', ppMonthS: '{YEAR} production plan by line.', ppLight: 'Lighter: months to come (forecast).', ppTipV: '{v} MSN', ppPlanned: 'planned', connOnly: 'Connection errors per MSN: A330 and A350 only. Pick one of these lines, or all.', vqOnly: 'Root causes {PREV} against {YEAR}: A330 and A350 only. Pick one of these lines, or all.', v2InclOut: 'of which {n} out of the plan (products with no planned volume)', ciMsn: '{e} MSN', ciDot: 'rate (NCs per MSN)', ciLine: '95% range',
       pinStatL: 'swaps with both pins written', pinAdjL: 'between two pins next to each other', pinRepL: 'pin pairs on more than one aircraft', pinNone: 'No swapped wires with both pins written in the selection.',
       pinAc1: '1 aircraft', pinAcN: '{n} aircraft', pinAc3: '3 aircraft or more', pinTip: 'Pins {a} ↔ {b}', pinNextY: 'two pins next to each other', pinNextN: 'pins apart',
-      pinNo25: 'No 2025 comparison: the 2025 defect texts are not in the data.', pinCols: ['FIN', 'Pins', 'Next to each other', 'Aircraft'], pinY: 'yes', pinN: 'no', ppCurTip: '{p} counted as built at {d}, the rest planned', ppCurL: 'Running month ({m}): the share of its days gone at {d}, the rest lighter.',
+      pinNo25: 'No {PREV} comparison: the {PREV} defect texts are not in the data.', pinCols: ['FIN', 'Pins', 'Next to each other', 'Aircraft'], pinY: 'yes', pinN: 'no', ppCurTip: '{p} counted as built at {d}, the rest planned', ppCurL: 'Running month ({m}): the share of its days gone at {d}, the rest lighter.',
       ppCur: 'The NCs run past what the plan gives as built: {m} counts for the share of its days gone at {d} ({p} of its planned volume), the rest of the month goes to the forecast. So that month’s NCs count everywhere, as on the Overview.',
-      ppL: 'Line', ppP: 'Product', ppEq: 'MSN built 2026', ppYr: 'MSN planned 2026', ppD25: 'Delivered 2025', ppNc25: 'NCs 2025', ppNc: 'NCs 2026', ppRate: 'NCs per MSN 2026', ppR25: '2025 rate', ppTgt: 'Target 2026 (NCs per MSN)', ppTgtY: 'Target 2026 (NCs)', pp25m: '2025 − 25%',
+      ppL: 'Line', ppP: 'Product', ppEq: 'MSN built {YEAR}', ppYr: 'MSN planned {YEAR}', ppD25: 'Delivered {PREV}', ppNc25: 'NCs {PREV}', ppNc: 'NCs {YEAR}', ppRate: 'NCs per MSN {YEAR}', ppR25: '{PREV} rate', ppTgt: 'Target {YEAR} (NCs per MSN)', ppTgtY: 'Target {YEAR} (NCs)', pp25m: '{PREV} − {CUT}%',
       ppNone: 'The real production plan is not loaded.', slWait: 'Computing in Slate…', ppHowT: 'How these figures are made and used',
-      ppH1t: 'Where the volumes come from', ppH1: '2026: the Tableau Avances / Retards (export of {d}). One MSN counts as 1, spread over the working days from its printing to its OTA: Monday to Friday, without public holidays and shutdowns; the holiday weeks around the summer shutdown count as half. July and August thus come to about 60% of a normal month. 2025: the Livraisons 2025 sheet, products delivered per month.',
+      ppH1t: 'Where the volumes come from', ppH1: '{YEAR}: the Tableau Avances / Retards (export of {d}). One MSN counts as 1, spread over the working days from its printing to its OTA: Monday to Friday, without public holidays and shutdowns; the holiday weeks around the summer shutdown count as half. July and August thus come to about 60% of a normal month.', ppH1s: '{PREV}: the Livraisons {PREV} sheet, products delivered per month.', ppH1p: '{PREV}: the same table, a product counts in the month of its OTA departure.',
       ppH2t: 'How an NC is matched to a product', ppH2: 'The NC’s product (the pipeline’s Produit_auto) is linked to a product of the plan. {n} NCs have no product of the plan ({p}): they count in every total, but not in the per-MSN rates, the per-product forecasts or the line targets.',
-      ppH3t: 'What they are used for', ppH3: 'NCs per MSN = a month’s NCs ÷ the MSN built that month. December forecast = the period rate × the MSN planned. A line’s target = its 2025 rate (NCs per product delivered) − 25%, × its 2026 output; all lines = the sum of the lines, plus 2025’s out-of-plan NCs − 25%. Cost target: the same with the cost. A product with no 2025 delivery (MDCD) keeps its 2026 pace as its target.',
-      ppH4t: 'Good to know', ppH4: 'A320: the products are small parts counted one by one (183 delivered in 2025), so its rate per unit is very low; this is why the target is built line by line and not on a pooled rate. A400M: NC texts are redacted, so no defect is read there.',
+      ppH3t: 'What they are used for', ppH3: 'NCs per MSN = a month’s NCs ÷ the MSN built that month. December forecast = the period rate × the MSN planned. A line’s target = its {PREV} rate (NCs per product delivered) − {CUT}%, × its {YEAR} output; all lines = the sum of the lines, plus {PREV}’s out-of-plan NCs − {CUT}%. Cost target: the same with the cost. A product with no {PREV} delivery{x} keeps its {YEAR} pace as its target.',
+      ppH4t: 'Good to know', ppH4: 'A320: the products are small parts counted one by one ({a} delivered in {PREV}), so its rate per unit is very low; this is why the target is built line by line and not on a pooled rate. A400M: NC texts are redacted, so no defect is read there.',
       fbTitle: 'Filters', fSrc: 'Data source', fOrg: 'Origin (pipeline)', org_all: 'Both outputs', org_normal: 'Normal output', org_missing_ids: 'Missing IDs', src_all: 'All data', src_sky: 'Skywise only', src_man: 'Manual lists (GPS or Test)', src_gps: 'GPS register', src_test: 'Test list',
       fPlant: 'FTO2 plant only', fLiab: 'Liability', fCost: 'Cost', liab_f: 'FTO2', liab_s: 'Suppliers', liab_o: 'Others', liab_all: 'All', cost_fto2: 'FTO2 liable', cost_all: 'All NCs', fYes: 'Yes', fNo: 'No', fPlantOff: 'No effect here: this tab already shows FTO2 and customer returns apart.',
       fPhase: 'Production type', ph_all: 'All', ph_SERIE: 'Series', ph_REC: 'REC', ph_FTI: 'FTI', fLine: 'Aircraft', line_all: 'All aircraft',
@@ -1681,9 +1695,9 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
       cnqSub: 'Estimate from AEC process times: alert, writing, technical support, rework and check, costed defect by defect.',
       nKR: 'NCs per MSN', nKRs: 'NCs ÷ MSN built', ovMore: 'Other lists and charts', cnqMore: 'Other cost charts', parMore: 'Other charts', whereMore: 'Other charts',
       allLines: 'All lines', v2Tgt: 'Target', v2VsTgt: 'vs target', v2Above: 'Above target', v2Below: 'Below target', v2TgtPh: 'Target (placeholder)', v2Ph: 'placeholder',
-      v2Ph25: '2025 placeholder (= 2026)', v2Y25b: '2025, same filter', v2Y25c: '2025 at the same date', v2Y25at: '2025 at the same date: {v}', v2TgtCumR: 'Cumulative target (2025 − 25%)', v2StTgtR: 'target for the year (2025 − 25%)', v2StBudR: 'cost target for the year (2025 − 25%)', v2StTgtL: 'target for the year, sum of the lines', v2StBudL: 'cost target for the year, sum of the lines', v2TgtCumL: 'Cumulative target, line by line', v2BudL: 'Cumulative cost target, line by line', v2TgtBar: 'Target', v2BudBar: 'Target', v2TgtN: '{a} NCs against a target of {t} NCs (sum of the lines)', v2Mix: '2025 rate at the 2026 mix: {v}', v2BudR: 'Pro-rata cost target (2025 cost − 25%)', v2TgtR: 'Target: 2025 rate − 25%', v2NoCli25: '2025 without customer returns (not in the 2025 extract)', v2Rate25: '2025: {v} NCs per product delivered', v2Rate25s: '2025 rate', v2BudR2: 'target', v2MTgt: 'monthly target {v} (placeholder)', v2BudPh: 'Pro-rata cost target (placeholder)', v2Y25: '2025', v2Y26: '2026 forecast', v2Flat: 'Flat', 
+      v2Ph25: '{PREV} placeholder (= {YEAR})', v2Y25b: '{PREV}, same filter', v2Y25c: '{PREV} at the same date', v2Y25at: '{PREV} at the same date: {v}', v2TgtCumR: 'Cumulative target ({PREV} − {CUT}%)', v2StTgtR: 'target for the year ({PREV} − {CUT}%)', v2StBudR: 'cost target for the year ({PREV} − {CUT}%)', v2StTgtL: 'target for the year, sum of the lines', v2StBudL: 'cost target for the year, sum of the lines', v2TgtCumL: 'Cumulative target, line by line', v2BudL: 'Cumulative cost target, line by line', v2TgtBar: 'Target', v2BudBar: 'Target', v2TgtN: '{a} NCs against a target of {t} NCs (sum of the lines)', v2Mix: '{PREV} rate at the {YEAR} mix: {v}', v2BudR: 'Pro-rata cost target ({PREV} cost − {CUT}%)', v2TgtR: 'Target: {PREV} rate − {CUT}%', v2NoCli25: '{PREV} without customer returns (not in the {PREV} extract)', v2Rate25: '{PREV}: {v} NCs per product delivered', v2Rate25s: '{PREV} rate', v2BudR2: 'target', v2MTgt: 'monthly target {v} (placeholder)', v2BudPh: 'Pro-rata cost target (placeholder)', v2Y25: '{PREV}', v2Y26: '{YEAR} forecast', v2Flat: 'Flat', 
       vpFc: 'Done and forecast', vpMsn: 'Per MSN', vpFcK: 'Volumes', vpFcT: 'NCs, defects and cost expected by December, product by product', vpFcS: 'Actual, then the forecast: the period’s volume per MSN × the MSN planned to December.', vpFcH: 'done → end of December', vpDec: 'Expected by end of December', xPartial: 'Running week not drawn (incomplete): {n} NCs', vpOutRow: 'Product not in the plan', vpOutL: 'Products not in the plan, {l}', vpNoFc: 'no forecast', vpOwnPace: 'at its own pace', vpOut: '{n} NCs with no production plan product, counted in the totals', dType: 'Cost split by NC type', typeSub: 'NC type, where it was found; “Cable NCs” = NCs of the Cables type; 100% = the cost of the selection.', ty_cab: 'Cable NCs', ty_fin: 'Final inspection', ty_test: 'Test', ty_int: 'Internal', ty_sup: 'Suppliers', ty_oth: 'Other', wlCh_prod: 'Products', wlCh_ac: 'Aircraft', wlCh_st: 'Stations', wlChs_prod: 'Rates, monthly map, precision, forecast and cost, product by product.', wlChs_ac: 'Cost per aircraft and FINs that come back.', wlChs_st: 'Defects by the station where the NC was written.',
-      v2MonTgt: 'month target {v}', v2CurTip: 'running month, {d} of {n} days · target to date {v}', v2CurLeg: 'Running month: target pro-rated to the days gone', v2CurPt: 'running month: data to {d} only', v2CurPtL: 'Running month (data to {d})', v2Cum: '{v} NCs to date', v2Fc: 'expected', v2TgtShort: 'target', v2Under: 'Month under its target', v2Over: 'Month above its target', v2CumLeg: 'Cumulative NCs', v2TgtCum: 'Cumulative target (placeholder)', v2Summer: 'July and August count as 60% of a month.', v2ObjH: 'Target per line · NCs per MSN', v2ObjC: 'Placeholder targets until the 2025 figures come: 2026 rate minus 25%.', v2PerMsnV: '{v} per MSN', v2StNow: 'NCs since the start of the period', v2StFc: 'expected by end of December', v2StTgt: 'target for the year (placeholder)', v2StCost: 'so far in the period', v2StBud: 'cost target for the year (placeholder)', v2QPer: 'Per MSN built: the August shutdown does not weigh.', v2Q25: '2025: defects per product delivered (causes read by the parser); 2026: per MSN built.', v2Avg25: '2025 average (per product delivered)', v2QMonth: 'Monthly average.', v2PerMsn: 'per MSN', v2Ac: '{n} aircraft',
+      v2MonTgt: 'month target {v}', v2CurTip: 'running month, {d} of {n} days · target to date {v}', v2CurLeg: 'Running month: target pro-rated to the days gone', v2CurPt: 'running month: data to {d} only', v2CurPtL: 'Running month (data to {d})', v2Cum: '{v} NCs to date', v2Fc: 'expected', v2TgtShort: 'target', v2Under: 'Month under its target', v2Over: 'Month above its target', v2CumLeg: 'Cumulative NCs', v2TgtCum: 'Cumulative target (placeholder)', v2Summer: '{m} count as {p} of a month.', v2Summer1: '{m} counts as {p} of a month.', v2And: ' and ', v2ObjH: 'Target per line · NCs per MSN', v2ObjC: 'Placeholder targets until the {PREV} figures come: {YEAR} rate minus {CUT}%.', v2PerMsnV: '{v} per MSN', v2StNow: 'NCs since the start of the period', v2StFc: 'expected by end of December', v2StTgt: 'target for the year (placeholder)', v2StCost: 'so far in the period', v2StBud: 'cost target for the year (placeholder)', v2QPer: 'Per MSN built: the August shutdown does not weigh.', v2Q25: '{PREV}: defects per product delivered (causes read by the parser); {YEAR}: per MSN built.', v2Avg25: '{PREV} average (per product delivered)', v2QMonth: 'Monthly average.', v2PerMsn: 'per MSN', v2Ac: '{n} aircraft',
       scVol: 'Volume per month', scTot: 'Total', scRate: 'Per MSN, per month', scRateP: 'Per MSN', scLast3: 'Last 3 months', scNc: 'NCs', scDef: 'Defects', scCost: 'Cost',
       scNote: 'Per MSN: NCs, defects and cost of the products matched to the production file. Small figure: last 3 months against the period.',
       tabWhere: 'Location', whereTitle: 'NC location', whereSub: 'Products, lines, aircraft and stations, against the volume built where possible.', titleMock: 'FTO2 dashboard: mock-up to score',
@@ -1691,8 +1705,8 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
       mkBarAll: 'Scored {k} of {n}', mkPreview: 'Final preview', mkCopy: 'Copy the scores', mkCopied: 'Scores copied.', mkSaveDb: 'Saved on the page', mkSaveLocal: 'Saved in this browser', mkSaving: 'Saving…', mkSaveErr: 'Not saved',
       mkReal: 'Real data', mkFict: 'Dummy', mkTrioK: 'Three measures, side by side', mkTrioOv: 'NCs, defects and cost per aircraft built, month by month', mkTrioOvS: 'All three stay visible with no switch; each is scored on its own.',
       mkTrioWh: 'Rate by product: NCs, defects, cost', mkTrioWhS: 'Same product order in all three; each is scored on its own.', mkOldOv: 'Today’s overview lists', mkOldOvS: 'To spread between Where and Pareto, or to remove.',
-      mkTgtK: 'Target', mkTgtT: 'How close are we to the target?', mkTgtS: 'NCs per aircraft built (MSN), against 2025 minus 25%.',
-      mkNow: '2026 to date', mkLast3: 'Last 3 months', mkTarget: 'Target', mkGap: 'Gap to target', mkBase: '2025 rate (NCs per MSN)', mkBaseHint: 'The 2025 rate is not in the data: enter it to show the target.', mkTgtCalc: '{b} × 0.75', mkPerEq: 'NCs per MSN', mkMatched: 'on the NCs matched to a product',
+      mkTgtK: 'Target', mkTgtT: 'How close are we to the target?', mkTgtS: 'NCs per aircraft built (MSN), against {PREV} minus {CUT}%.',
+      mkNow: '{YEAR} to date', mkLast3: 'Last 3 months', mkTarget: 'Target', mkGap: 'Gap to target', mkBase: '{PREV} rate (NCs per MSN)', mkBaseHint: 'The {PREV} rate is not in the data: enter it to show the target.', mkTgtCalc: '{b} × 0.75', mkPerEq: 'NCs per MSN', mkMatched: 'on the NCs matched to a product',
       mkD1k: 'Rate', mkD1t: 'Defects per MSN, month by month', mkD1s: 'Line: period average; dashed: 3-month moving average.', mkD1d: 'MSN output · defects',
       tabRev: 'Proposal', titleRev: 'FTO2 dashboard: proposal to validate',
       revTitle: 'The proposal, chart by chart',
@@ -1754,9 +1768,10 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
       foot1: 'Source: Skywise SAP extract, NCs created {from} to {to}.',
       foot2: 'FTO2 NCs: plant FTO2 or FT02 (an NC of the GPS register or the Test list too, only if at that plant); all count, deleted ones included. Customer returns: the pipeline’s “NC Retour client” type with FTO2 in the liability. Cost: only where FTO2 is liable. Defects are classified by root cause from the full text of each NC. NC texts and sub-categories stay in French.',
       foot3: 'The {n} NCs with no readable defect line (A400M with no text, deleted NCs…) are counted as NCs and in the cost but not as defects. The {o} NCs FTO2 is not liable for count as NCs with a cost of 0 for FTO2 (their handling in the model: {oe}).',
-      foot4: 'Shutdown weeks (fewer than 10 defects) are left out of weekly averages. Minor defects: a missing tyrap, frette, ficelle, cap, cerise or plug. Cost: each step at the rate of who does it (production 123 €/h, quality 107 €/h, ME 76 €/h; engineering 78.16 €/h), process times estimated by the team; the value of scrapped parts is not included. Cost of cable defects: cost of the NCs concerned; when an NC also has other defects, its cost is shared among its defects.'
+      footPart0: 'the value of scrapped parts is not included', footPart1: 'the value of scrapped or exchanged parts is counted when their price is known',
+      foot4: 'Shutdown weeks (fewer than {sh} defects) are left out of weekly averages. Minor defects: a missing tyrap, frette, ficelle, cap, cerise or plug. Cost: each step at the rate of who does it (production {rp} €/h, quality {rq} €/h, ME {rm} €/h; engineering {re} €/h), process times estimated by the team; {pv}. Cost of cable defects: cost of the NCs concerned; when an NC also has other defects, its cost is shared among its defects.'
     }
-  };
+  });
   var EN = {
     'MEO Facteur humain': 'Workmanship (human factor)', 'Erreur Branchement': 'Connection error', 'Élément Manquant': 'Missing item',
     'Élément Endommagé': 'Damaged item', 'Déverrouillage': 'Unlocked contact', 'Grounding/Bonding': 'Grounding/Bonding',
@@ -2626,9 +2641,10 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
   // Tried and left out: a FIN coming back on several aircraft (as frequent in 2026 as in shuffled data: chance), a new sub-code on
   // 2 aircraft (mostly one-week bursts). Then one line per problem: a sub-code with the same weeks as its cause shows with it
   // ("Inversion (T04)"), a parent gives way to the child carrying 60 % of its rise, stations / places / products / cables join the
-  // problem sharing more than half of their NCs; a problem an action covers says so. Weeks: 0 = ISO week 1 of 2026.
+  // problem sharing more than half of their NCs; a problem an action covers says so. Weeks: 0 = ISO week 1 of the year followed.
   var ALARM = (function () {
     var P = window.FTO2_ALARM_P;   // the alarm settings (config/3_alarmes.csv), set by the page before this block
+    var YEAR = +window.FTO2_YEAR;   // the year followed (config/2_parametres.csv, annee), set by the page before this block
     var LF = [0];
     function lf(n) { for (var i = LF.length; i <= n; i++) LF[i] = LF[i - 1] + Math.log(i); return LF[n]; }
     function tail(x, n, p) {   // P(K >= x) for K binomial (n, p)
@@ -2652,12 +2668,12 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
       if (x < P.minX || er <= 0 || eb <= 0) return 0;
       return invN(1 - Math.min(Math.max(tail(x, x + b, er / (er + eb)), 1e-12), 1 - 1e-12));
     }
-    function week(iso) {   // '2026-05-14' -> its ISO week, 0 for week 1 of 2026; -1 outside 2026
+    function week(iso) {   // '2026-05-14' -> its ISO week in the year followed, 0 for week 1; -1 outside that year
       var d = new Date(String(iso).slice(0, 10) + 'T00:00:00Z'), dow = (d.getUTCDay() + 6) % 7;
       if (isNaN(d)) return -1;
       d.setUTCDate(d.getUTCDate() - dow + 3);   // the Thursday of the week decides the year
-      if (d.getUTCFullYear() !== 2026) return -1;
-      return Math.floor((d - Date.UTC(2026, 0, 1)) / 6048e5);   // 1 January 2026 is a Thursday
+      if (d.getUTCFullYear() !== YEAR) return -1;
+      return Math.floor((d - Date.UTC(YEAR, 0, 1)) / 6048e5);   // week 1 holds the year's first Thursday
     }
     function lastDone(iso) {   // the last finished week up to that day: its own week if it is a Sunday, else the week before
       var d = new Date(String(iso).slice(0, 10) + 'T00:00:00Z');
@@ -3027,10 +3043,10 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
   // bar wins), split by line. Every filter applies except the period: January 2025 to the last NC. MSN 2025: products delivered in the
   // month (Livraisons 2025, as the 2025 targets); MSN 2026: products built, spread over the working days (the plan, as the other charts).
   // The two years count MSN differently: the rate's line breaks between them, each year has its own average.
-  Object.assign(STR.fr, { yyT: '2025 et 2026, mois par mois', yyS: 'MSN 2025 : produits livrés dans le mois. MSN 2026 : produits fabriqués, répartis sur les jours ouvrés.',
-    yyNc: 'NC', yyMsn: 'MSN', yyRate: 'NC par MSN', yyAvg: 'moy. {y} : {v}', yyNo25: 'Pas de 2025 avec ce filtre.', yyPart: 'Clair : mois en cours, jusqu’au {d}', yyTo: 'jusqu’au {d}' });
-  Object.assign(STR.en, { yyT: '2025 and 2026, month by month', yyS: 'MSN 2025: products delivered in the month. MSN 2026: products built, spread over the working days.',
-    yyNc: 'NCs', yyMsn: 'MSN', yyRate: 'NCs per MSN', yyAvg: '{y} avg: {v}', yyNo25: 'No 2025 with this filter.', yyPart: 'Light: current month, to {d}', yyTo: 'to {d}' });
+  Object.assign(STR.fr, withYears({ yyT: '{PREV} et {YEAR}, mois par mois', yyS: 'MSN {PREV} : produits livrés dans le mois. MSN {YEAR} : produits fabriqués, répartis sur les jours ouvrés.',
+    yyNc: 'NC', yyMsn: 'MSN', yyRate: 'NC par MSN', yyAvg: 'moy. {y} : {v}', yyNo25: 'Pas de {PREV} avec ce filtre.', yyPart: 'Clair : mois en cours, jusqu’au {d}', yyTo: 'jusqu’au {d}' }));
+  Object.assign(STR.en, withYears({ yyT: '{PREV} and {YEAR}, month by month', yyS: 'MSN {PREV}: products delivered in the month. MSN {YEAR}: products built, spread over the working days.',
+    yyNc: 'NCs', yyMsn: 'MSN', yyRate: 'NCs per MSN', yyAvg: '{y} avg: {v}', yyNo25: 'No {PREV} with this filter.', yyPart: 'Light: current month, to {d}', yyTo: 'to {d}' }));
   function renderYY() {
     var box = document.getElementById('yyC'); if (!box) return;
     var E = pSrc(); if (!E || E !== D.eqmsn || !PD) { box.innerHTML = ''; document.getElementById('yyL').innerHTML = ''; return; }
@@ -3044,18 +3060,18 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
     Object.keys(L25).forEach(function (p) { var l = E.line[p]; if (!inL(l)) return; m25.forEach(function (m, i) { var j = at[m]; if (j != null) cols[j].msn[l] += L25[p][i] || 0; }); });
     PD.all.forEach(function (p) { var l = E.line[p]; if (!inL(l)) return; PD.months.forEach(function (m, i) { var j = at[m]; if (j != null) cols[j].msn[l] += (PD.prod[p][i] || 0) * (PD.part[i] == null ? 1 : PD.part[i]); }); });
     (R5 || []).forEach(function (x) { if (!inL(x.line)) return; var j = at[x.m]; if (j != null) cols[j].nc[x.line] += x.nc; });
-    var k0 = [GF.preset, GF.from, GF.to]; GF.preset = 'custom'; GF.from = D.meta.from || '2026-01-01'; GF.to = D.meta.to;   // 2026: every NC to the last, whatever the period
+    var k0 = [GF.preset, GF.from, GF.to]; GF.preset = 'custom'; GF.from = D.meta.from || YEAR + '-01-01'; GF.to = D.meta.to;   // the year followed: every NC to the last, whatever the period
     try { REP.forEach(function (n) { if (!gNc(n) || !gScope(n) || !inL(n[3])) return; var j = at[n[1].slice(0, 7)]; if (j != null) cols[j].nc[n[3]]++; }); }
     finally { GF.preset = k0[0]; GF.from = k0[1]; GF.to = k0[2]; }
     cols.forEach(function (o) { o.n = sumA(LN.map(function (l) { return o.nc[l]; })); o.e = sumA(LN.map(function (l) { return o.msn[l]; })); o.r = o.e >= EQMIN ? o.n / o.e : null; o.y = o.m.slice(0, 4); });
     var partial = +D.meta.to.slice(8, 10) < new Date(Date.UTC(+D.meta.to.slice(0, 4), +D.meta.to.slice(5, 7), 0)).getUTCDate();   // the last month is not over
-    var avg = {}; ['2025', '2026'].forEach(function (y) { var c = cols.filter(function (o) { return o.y === y && o.e >= EQMIN; }), e = sumA(c.map(function (o) { return o.e; })); avg[y] = e ? sumA(c.map(function (o) { return o.n; })) / e : null; });
+    var avg = {}; [PREV, YEAR].forEach(function (y) { var c = cols.filter(function (o) { return o.y === y && o.e >= EQMIN; }), e = sumA(c.map(function (o) { return o.e; })); avg[y] = e ? sumA(c.map(function (o) { return o.n; })) / e : null; });
     var W = Math.max(320, box.clientWidth || 900), ml = 40, mr = W < 560 ? 12 : 96, pw = W - ml - mr, n = cols.length, bw = pw / n, X = function (j) { return ml + j * bw; };
     var P = [{ k: 'nc', t: S('yyNc'), h: 110 }, { k: 'msn', t: S('yyMsn'), h: 80 }, { k: 'r', t: S('yyRate'), h: 110 }], gap = 30, y0 = 18, g = '';
     P.forEach(function (p) { p.top = y0; y0 += p.h + gap; });
     var H = y0 - gap + 40;
     P.forEach(function (p) {
-      var vals = cols.map(function (o) { return p.k === 'nc' ? o.n : p.k === 'msn' ? o.e : o.r || 0; }), nt = pNice(Math.max.apply(null, vals.concat(p.k === 'r' ? [avg['2025'] || 0, avg['2026'] || 0] : [])) * 1.1, 3);
+      var vals = cols.map(function (o) { return p.k === 'nc' ? o.n : p.k === 'msn' ? o.e : o.r || 0; }), nt = pNice(Math.max.apply(null, vals.concat(p.k === 'r' ? [avg[PREV] || 0, avg[YEAR] || 0] : [])) * 1.1, 3);
       var Yv = function (v) { return p.top + p.h - v / nt.top * p.h; };
       g += tx(ml, p.top - 6, p.t, 'ink b');
       for (var t0 = 0; t0 <= nt.top + 1e-9; t0 += nt.step) g += '<line x1="' + ml + '" x2="' + (W - mr) + '" y1="' + r1(Yv(t0)) + '" y2="' + r1(Yv(t0)) + '" stroke="var(--grid)"/>' + tx(ml - 6, Yv(t0) + 4, p.k === 'r' ? f1(t0) : num(t0), 'mu', 'end');
@@ -3063,22 +3079,22 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
         cols.forEach(function (o, j) { var acc = 0, lt = partial && j === n - 1; LN.forEach(function (l) { var v = p.k === 'nc' ? o.nc[l] : o.msn[l]; if (v <= 0) return;
           g += '<rect x="' + r1(X(j) + bw * 0.16) + '" y="' + r1(Yv(acc + v)) + '" width="' + r1(bw * 0.68) + '" height="' + r1(Math.max(0.5, Yv(acc) - Yv(acc + v) - (LN.length > 1 ? 1 : 0))) + '" rx="2" fill="' + lineCol(l) + '"' + (lt ? ' fill-opacity=".45"' : '') + '/>'; acc += v; }); });
       } else {
-        ['2025', '2026'].forEach(function (y) {   // one line per year: the two years count MSN differently
+        [PREV, YEAR].forEach(function (y) {   // one line per year: the two years count MSN differently
           var pts = []; cols.forEach(function (o, j) { if (o.y === y && o.r != null) pts.push([X(j) + bw / 2, Yv(o.r)]); });
           if (pts.length > 1) g += '<path d="M' + pts.map(function (q) { return r1(q[0]) + ',' + r1(q[1]); }).join('L') + '" fill="none" stroke="var(--ink)" stroke-width="2"/>';
           pts.forEach(function (q) { g += '<circle cx="' + r1(q[0]) + '" cy="' + r1(q[1]) + '" r="3.2" fill="var(--ink)" stroke="var(--surface)" stroke-width="1.5"/>'; });
           var js = cols.map(function (o, j) { return o.y === y ? j : -1; }).filter(function (j) { return j >= 0; });
           if (avg[y] != null && js.length) { var ya = Yv(avg[y]);
             g += '<line x1="' + r1(X(js[0]) + 2) + '" x2="' + r1(X(js[js.length - 1]) + bw - 2) + '" y1="' + r1(ya) + '" y2="' + r1(ya) + '" stroke="var(--ink-2)" stroke-width="1.5" stroke-dasharray="5 4"/>';
-            if (mr > 40) { var other = avg[y === '2025' ? '2026' : '2025'], yo = other != null ? Yv(other) : null, d = yo == null ? 99 : ya - yo;   // the two labels kept 14 px apart
-              g += tx(W - mr + 6, ya + 4 + (Math.abs(d) < 14 ? (d >= 0 ? 1 : -1) * (14 - Math.abs(d)) / 2 + (d === 0 && y === '2025' ? 7 : 0) : 0), S('yyAvg', { y: y, v: f2(avg[y]) }), 'mu'); } }
+            if (mr > 40) { var other = avg[y === PREV ? YEAR : PREV], yo = other != null ? Yv(other) : null, d = yo == null ? 99 : ya - yo;   // the two labels kept 14 px apart
+              g += tx(W - mr + 6, ya + 4 + (Math.abs(d) < 14 ? (d >= 0 ? 1 : -1) * (14 - Math.abs(d)) / 2 + (d === 0 && y === PREV ? 7 : 0) : 0), S('yyAvg', { y: y, v: f2(avg[y]) }), 'mu'); } }
         });
       }
     });
     var by = P[2].top + P[2].h;   // month initials, the year under its months, a rule between the years
     cols.forEach(function (o, j) { g += tx(X(j) + bw / 2, by + 14, v2Mo(o.m, bw, j), 'mu', 'middle'); });
-    ['2025', '2026'].forEach(function (y) { var js = cols.map(function (o, j) { return o.y === y ? j : -1; }).filter(function (j) { return j >= 0; }); if (js.length) g += tx((X(js[0]) + X(js[js.length - 1]) + bw) / 2, by + 32, y, 'ink b', 'middle'); });
-    var jb = cols.findIndex(function (o) { return o.y === '2026'; }); if (jb > 0) g += '<line x1="' + r1(X(jb)) + '" x2="' + r1(X(jb)) + '" y1="' + (P[0].top - 4) + '" y2="' + r1(by + 20) + '" stroke="var(--ink-2)" stroke-dasharray="2 3"/>';
+    [PREV, YEAR].forEach(function (y) { var js = cols.map(function (o, j) { return o.y === y ? j : -1; }).filter(function (j) { return j >= 0; }); if (js.length) g += tx((X(js[0]) + X(js[js.length - 1]) + bw) / 2, by + 32, y, 'ink b', 'middle'); });
+    var jb = cols.findIndex(function (o) { return o.y === YEAR; }); if (jb > 0) g += '<line x1="' + r1(X(jb)) + '" x2="' + r1(X(jb)) + '" y1="' + (P[0].top - 4) + '" y2="' + r1(by + 20) + '" stroke="var(--ink-2)" stroke-dasharray="2 3"/>';
     cols.forEach(function (o, j) {   // one hover target per month, over the three panels
       var lines = [S('yyNc') + ' : ' + num(o.n) + (LN.length > 1 ? ' (' + LN.map(function (l) { return l + ' ' + num(o.nc[l]); }).join(' · ') + ')' : ''), S('yyMsn') + ' : ' + f1(o.e), S('yyRate') + ' : ' + (o.r != null ? f2(o.r) : '—')];
       if (G.lang === 'en') lines = lines.map(function (t) { return t.replace(' : ', ': '); });
@@ -3130,10 +3146,16 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
     mc.innerHTML = svg(W, H, g, S('ppMonth'));
     document.getElementById('ppMonthL').innerHTML = LN.map(function (l) { return sw(lineCol(l), l); }).join('') + '<span class="mu">' + esc(S('ppLight')) + (PD.cur != null ? ' ' + esc(S('ppCurL', { m: day(D.meta.to, { month: 'long' }), d: day(D.meta.to) })) : '') + '</span>';
     // how the numbers are made and used
-    var asof = D.eqmsn.asof ? day(D.eqmsn.asof) : '';
+    var exp = PR.ver === 'wd' && D.eqmsn.msnAsof ? D.eqmsn.msnAsof : D.eqmsn.asof, asof = exp ? day(exp) : '';   // the volume on working days comes from the production plan: its export date
     var cur = PD.cur != null ? ' ' + S('ppCur', { m: day(D.meta.to, { month: 'long' }), d: day(D.meta.to), p: pct0(PD.part[PD.cur] * 100) }) : '';
     renderYY();
-    document.getElementById('ppHow').innerHTML = ['ppH1', 'ppH2', 'ppH3', 'ppH4'].map(function (k) { return '<h4>' + esc(S(k + 't')) + '</h4><p>' + esc(S(k, { d: asof, n: num(u.n), p: u.top.join(', ') }) + (k === 'ppH1' ? cur : '')) + '</p>'; }).join('');
+    // the comparison year's deliveries: from the Livraisons sheet, or counted in the production plan (D.y25.delivered); the A320
+    // products delivered that year; the products with NCs and no delivery that year
+    var del = ' ' + S(D.y25 && D.y25.delivered === 'plan' ? 'ppH1p' : 'ppH1s'), a320 = sumA(PD.all.filter(function (p) { return PD.line[p] === 'A320'; }).map(d25));
+    var withNc = {}; REP.forEach(function (n) { var p = E.map[String(n[26] || '').toUpperCase()]; if (p) withNc[p] = 1; });
+    var none = PD.all.filter(function (p) { return withNc[p] && !d25(p); });
+    document.getElementById('ppHow').innerHTML = ['ppH1', 'ppH2', 'ppH3', 'ppH4'].map(function (k) { return '<h4>' + esc(S(k + 't')) + '</h4><p>' +
+      esc(S(k, { d: asof, n: num(u.n), p: u.top.join(', '), a: num(Math.round(a320)), x: none.length ? ' (' + none.join(', ') + ')' : '' }) + (k === 'ppH1' ? del + cur : '')) + '</p>'; }).join('');
   }
 
   // ---------------------------------------------------------------- 4. Customer returns
@@ -3779,19 +3801,19 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
   // dummy NC row: [id, date, line, msn, station, product, hour, decision, days to close (null if open), found at,
   //                alert, writing, support, rework, check, material, engineering]   dummy defect row: [NC index, category, root cause, sub-category, FIN, cost]
   var DM = D.dummy || null, GN = DM ? DM.ncs : [], GD = DM ? DM.defects : [];
-  var GX = {
+  var GX = withYears({
     fr: { mean: 'Moyenne', ucl: 'Limite haute (3σ)', outLim: 'Hors limite', uLeg: 'NC par avion', uTip: '{u} NC par avion ({c} NC, {n} avions)', uclTip: 'limite haute {v}',
       st_poste: 'Au poste', st_cf: 'Contrôle final', st_test: 'Test', st_client: 'Client', reachTip: '{n} défauts arrivent à cette étape', caughtTip: '{n} arrêtés ici ({p})',
       caught: '{n} arrêtés ici', caughtP: '{p} de ce qui arrive', passOn: '{p} continuent', defN: '{n} défauts', defects: 'défauts', coTip: '{n} NC contiennent les deux',
       coNode: '{n} associations', single: 'NC à une seule catégorie, non tracées : {n}', target: 'Cible {v}', rateTip: '{e} erreurs · {i} insertions · {u} unités',
       above: 'Au-dessus de la cible', below: 'Sous la cible', kNc: 'NC par avion', kCost: 'Coût par avion', kDays: 'Délai médian de clôture (jours)', objShort: 'obj. {v}',
       objBand: 'Zone sous l’objectif', objective: 'Objectif', worse: 'Au-dessus de l’objectif', cum: 'Coût cumulé', budget: 'Budget au prorata', proj: 'Projection au rythme actuel',
-      budgetEnd: 'Budget {v}', projEnd: 'Projection {v}', dataEnd: 'Fin des données', increase: 'Hausse', decrease: 'Baisse', mioOnly: 'MIP A350 seulement pour l’instant : choisissez l’A350, ou toutes les lignes.', mio25: '2025 (par MIP livré)', mioTgt: 'objectif (2025 − 25 %)', mioTip: '{v} par million d’opérations', mioNow: 'par million d’opérations sur la période', mioSig: 'niveau sigma', vq25: '2025 : {v} par produit livré', vq26: '2026 : {v} par MSN', vqUp: 'hausse de plus de 10 %', vqDown: 'baisse de plus de 10 %', vqFlat: 'à 10 % près', relAcN: '{n} MSN', relHist: '{n} MSN avec {v} NC',
+      budgetEnd: 'Budget {v}', projEnd: 'Projection {v}', dataEnd: 'Fin des données', increase: 'Hausse', decrease: 'Baisse', mioOnly: 'MIP A350 seulement pour l’instant : choisissez l’A350, ou toutes les lignes.', mio25: '{PREV} (par MIP livré)', mioTgt: 'objectif ({PREV} − {CUT} %)', mioTip: '{v} par million d’opérations', mioNow: 'par million d’opérations sur la période', mioSig: 'niveau sigma', vq25: '{PREV} : {v} par produit livré', vq26: '{YEAR} : {v} par MSN', vqUp: 'hausse de plus de 10 %', vqDown: 'baisse de plus de 10 %', vqFlat: 'à 10 % près', relAcN: '{n} MSN', relHist: '{n} MSN avec {v} NC',
       relSubA: 'Clair : où tombent 95 % des MSN. Foncé : intervalle de confiance à 95 % du taux. Points : NC de chaque MSN construit dans la période.',
       relSubB: 'Limites par MSN comme le suivi hebdomadaire : 2 σ attention, 3 σ alarme. Points : NC de chaque MSN construit dans la période.',
       relSubC: 'Boîte : la moitié des MSN ; moustaches : 5 % à 95 % ; trait : médiane. Points : NC de chaque MSN construit dans la période.',
       relSubD: 'Points : NC de chaque MSN construit dans la période. Bande : intervalle de confiance à 95 % du taux.',
-      relSubE: 'Barres : nombre de MSN par nombre de NC. Trait : intervalle de confiance à 95 % du taux.', relSubP: 'Point : NC par MSN. Trait : intervalle de confiance à 95 % du taux moyen.', relSubW: 'NC par MSN et intervalle de confiance à 95 %.', relYtd: 'Depuis janvier', rel6: '6 derniers mois', rel3: '3 derniers mois', relSub2: 'Barre : intervalle de confiance à 95 %. Points : NC de chaque MSN.', relAc: 'NC d’un MSN', relPrev: 'Lignes précédentes', relNext: 'Lignes suivantes', relRate: 'NC par MSN sur la période', relSub: 'Barre : intervalle de confiance à 95 %. Points gris : chaque mois. A330 et A350.', relCi: 'intervalle de confiance à 95 %', relMonth: 'chaque mois', vqCat: 'couleur de la catégorie', vqChg: 'Écart 2026 − 2025 (par MSN)', vqCause: 'Cause', totalM: 'Total du mois', q1: '1er trimestre', q2: '2e trimestre',
+      relSubE: 'Barres : nombre de MSN par nombre de NC. Trait : intervalle de confiance à 95 % du taux.', relSubP: 'Point : NC par MSN. Trait : intervalle de confiance à 95 % du taux moyen.', relSubW: 'NC par MSN et intervalle de confiance à 95 %.', relYtd: 'Depuis janvier', rel6: '6 derniers mois', rel3: '3 derniers mois', relSub2: 'Barre : intervalle de confiance à 95 %. Points : NC de chaque MSN.', relAc: 'NC d’un MSN', relPrev: 'Lignes précédentes', relNext: 'Lignes suivantes', relRate: 'NC par MSN sur la période', relSub: 'Barre : intervalle de confiance à 95 %. Points gris : chaque mois. A330 et A350.', relCi: 'intervalle de confiance à 95 %', relMonth: 'chaque mois', vqCat: 'couleur de la catégorie', vqChg: 'Écart {YEAR} − {PREV} (par MSN)', vqCause: 'Cause', totalM: 'Total du mois', q1: '1er trimestre', q2: '2e trimestre',
       perMonth: '{v} par mois', median: 'Médiane', ncCount: '{n} NC', rollMean: 'Moyenne glissante sur 9 avions', rankAx: 'Rang de l’avion dans sa ligne', perAc: 'Défauts par avion',
       b0: 'Aucun défaut', b1: '1 à 5 défauts', b2: '6 à 15', b3: 'Plus de 15', acTip: 'MSN {m} · {n} défauts', fpyTip: '{n} NC pour {u} unités passées', punchTip: '{n} NC',
       done: 'Terminée', open: 'En cours', late: 'En retard', planned: 'Planifiée', targetRca: 'Cause visée : {r}', finCount: '{n} avions', finTip: 'FIN {f} · MSN {m}',
@@ -3805,12 +3827,12 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
       coNode: '{n} pairings', single: 'NCs with a single category, not drawn: {n}', target: 'Target {v}', rateTip: '{e} errors · {i} insertions · {u} units',
       above: 'Above target', below: 'At or below target', kNc: 'NCs per aircraft', kCost: 'Cost per aircraft', kDays: 'Median days to close', objShort: 'target {v}',
       objBand: 'Zone within target', objective: 'Target', worse: 'Above target', cum: 'Cumulative cost', budget: 'Pro-rata budget', proj: 'Projection at the current pace',
-      budgetEnd: 'Budget {v}', projEnd: 'Projection {v}', dataEnd: 'End of data', increase: 'Increase', decrease: 'Decrease', mioOnly: 'MIP A350 only for now: pick the A350, or all lines.', mio25: '2025 (per MIP delivered)', mioTgt: 'target (2025 − 25%)', mioTip: '{v} per million operations', mioNow: 'per million operations over the period', mioSig: 'sigma level', vq25: '2025: {v} per product delivered', vq26: '2026: {v} per MSN', vqUp: 'up more than 10%', vqDown: 'down more than 10%', vqFlat: 'within 10%', relAcN: '{n} MSN', relHist: '{n} MSN with {v} NCs',
+      budgetEnd: 'Budget {v}', projEnd: 'Projection {v}', dataEnd: 'End of data', increase: 'Increase', decrease: 'Decrease', mioOnly: 'MIP A350 only for now: pick the A350, or all lines.', mio25: '{PREV} (per MIP delivered)', mioTgt: 'target ({PREV} − {CUT}%)', mioTip: '{v} per million operations', mioNow: 'per million operations over the period', mioSig: 'sigma level', vq25: '{PREV}: {v} per product delivered', vq26: '{YEAR}: {v} per MSN', vqUp: 'up more than 10%', vqDown: 'down more than 10%', vqFlat: 'within 10%', relAcN: '{n} MSN', relHist: '{n} MSN with {v} NCs',
       relSubA: 'Light: where 95% of the MSN fall. Dark: 95% confidence interval of the rate. Dots: NCs of each MSN built in the period.',
       relSubB: 'Per-MSN limits as on the weekly chart: 2 σ attention, 3 σ alarm. Dots: NCs of each MSN built in the period.',
       relSubC: 'Box: half of the MSN; whiskers: 5% to 95%; line: median. Dots: NCs of each MSN built in the period.',
       relSubD: 'Dots: NCs of each MSN built in the period. Band: 95% confidence interval of the rate.',
-      relSubE: 'Bars: number of MSN per number of NCs. Line: 95% confidence interval of the rate.', relSubP: 'Dot: NCs per MSN. Line: 95% confidence interval of the average rate.', relSubW: 'NCs per MSN and 95% confidence interval.', relYtd: 'Year to date', rel6: 'Last 6 months', rel3: 'Last 3 months', relSub2: 'Bar: 95% confidence interval. Dots: NCs of each MSN.', relAc: 'NCs of one MSN', relPrev: 'Previous lines', relNext: 'Next lines', relRate: 'NCs per MSN over the period', relSub: 'Bar: 95% confidence interval. Grey dots: each month. A330 and A350.', relCi: '95% confidence interval', relMonth: 'each month', vqCat: 'category colour', vqChg: 'Change 2026 − 2025 (per MSN)', vqCause: 'Root cause', totalM: 'Month total', q1: 'Q1', q2: 'Q2',
+      relSubE: 'Bars: number of MSN per number of NCs. Line: 95% confidence interval of the rate.', relSubP: 'Dot: NCs per MSN. Line: 95% confidence interval of the average rate.', relSubW: 'NCs per MSN and 95% confidence interval.', relYtd: 'Year to date', rel6: 'Last 6 months', rel3: 'Last 3 months', relSub2: 'Bar: 95% confidence interval. Dots: NCs of each MSN.', relAc: 'NCs of one MSN', relPrev: 'Previous lines', relNext: 'Next lines', relRate: 'NCs per MSN over the period', relSub: 'Bar: 95% confidence interval. Grey dots: each month. A330 and A350.', relCi: '95% confidence interval', relMonth: 'each month', vqCat: 'category colour', vqChg: 'Change {YEAR} − {PREV} (per MSN)', vqCause: 'Root cause', totalM: 'Month total', q1: 'Q1', q2: 'Q2',
       perMonth: '{v} a month', median: 'Median', ncCount: '{n} NCs', rollMean: 'Rolling mean over 9 aircraft', rankAx: 'Aircraft build rank in its line', perAc: 'Defects per aircraft',
       b0: 'No defect', b1: '1 to 5 defects', b2: '6 to 15', b3: 'More than 15', acTip: 'MSN {m} · {n} defects', fpyTip: '{n} NCs for {u} units through', punchTip: '{n} NCs',
       done: 'Done', open: 'In progress', late: 'Late', planned: 'Planned', targetRca: 'Targeted cause: {r}', finCount: '{n} aircraft', finTip: 'FIN {f} · MSN {m}',
@@ -3818,7 +3840,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
       heatTip: '{n} defects', one: '1 defect on this aircraft', twoPlus: '2 defects or more', all: 'All', fOk: 'Feasible', fPart: 'Partly', fNeed: 'Data to collect', f_ok: 'Feasible with current data', f_part: 'Partly feasible',
       f_need: 'Data to collect', keep: '☆ Keep', kept: '★ Kept', keptList: 'Kept:', keepHint: 'Click “Keep” on the charts worth building: the list shows here.',
       share: 'Share', costTip: '{c} · {n} defects', perCent: '1 square = 1% of defects', weekTip: 'Week {w}' }
-  };
+  });
   function gx(k, v) { var s = GX[G.lang][k]; if (s == null) return k; Object.keys(v || {}).forEach(function (x) { s = s.split('{' + x + '}').join(v[x]); }); return s; }
   // per chart: kicker, title, one line on how to read it, the data it needs (fields if feasible now, what is missing otherwise)
   var GSTR = {
@@ -5016,7 +5038,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
   // ---------------------------------------------------------------- 7. NC rates (local page): NCs, defects and cost per unit of volume built (MSN, only a denominator)
   // real: 06_input_data/MSN_2026.xlsx (Standard and Adjusted sheets) with the NCs of the filter bar, matched on the product
   // family (04_reference/eqmsn_produits.csv); fictitious: the same layout from build/dummy_data.py
-  Object.assign(GX.fr, { eqU: 'MSN', fcLeg: 'Prévision (oct. à déc.)', actLeg: 'Réalisé', totalEq: 'Total {v} MSN', eqTip: '{v} MSN', ncEq: '{n} NC · {e} MSN',
+  Object.assign(GX.fr, { eqU: 'MSN', fcLeg: 'Prévision', fcSpan: '{a} à {b}', actLeg: 'Réalisé', totalEq: 'Total {v} MSN', eqTip: '{v} MSN', ncEq: '{n} NC · {e} MSN',
     perEq: '{v} par MSN', per10eq: '{v} pour 10 MSN', per100eq: '{v} pour 100 MSN', overall: 'Ensemble {v}', shareProd: 'Part de la production', shareNc: 'Part des NC',
     idxProd: 'Production', idxNc: 'NC', obs: 'NC observées', expd: 'NC attendues', volEff: 'Effet volume', rateEff: 'Effet taux', deltaTot: 'Variation totale',
     cumEq: 'MSN cumulés', cumNc: 'NC cumulées', cumRate: 'NC par MSN, cumulé', ciTip: 'IC 95 % : {a} à {b}', lim2: 'Limites à 2σ', lim3: 'Limites à 3σ', inside: 'Dans l’entonnoir',
@@ -5024,7 +5046,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
     pReal: 'Données réelles', pDummy: 'Données fictives', pWd: 'MSN jours travaillés', pStd: 'MSN standard', pAdj: 'MSN ajusté', badgeReal: 'Données réelles · production MSN (export du {d}) et NC de l’extraction',
     cover: '{n} NC sur {t} rattachées à un produit de la table de production ({p}). Non rattachées : {l}.', coverAll: 'Toutes les NC sont rattachées à un produit.', confirm: 'Correspondance à confirmer : {l}.',
     fcShort: 'prév.', projTot: '{a} → {b}', ucl3: 'Limite 3σ', q1s: '1er trim.', q3s: '3e trim.', rollTip: 'moyenne sur 3 mois : {v}', monthLeg: 'Mois', roll3: 'Moyenne glissante sur 3 mois', lateShare: '{p} des NC du produit', andMore: 'et {n} autres', rateLeg: 'NC par MSN', constRate: 'Taux constant', moreNc: 'Plus de NC que de production', lessNc: 'Moins de NC que de production' });
-  Object.assign(GX.en, { eqU: 'MSN', fcLeg: 'Forecast (Oct to Dec)', actLeg: 'Actual', totalEq: 'Total {v} MSN', eqTip: '{v} MSN', ncEq: '{n} NCs · {e} MSN',
+  Object.assign(GX.en, { eqU: 'MSN', fcLeg: 'Forecast', fcSpan: '{a} to {b}', actLeg: 'Actual', totalEq: 'Total {v} MSN', eqTip: '{v} MSN', ncEq: '{n} NCs · {e} MSN',
     perEq: '{v} per MSN', per10eq: '{v} per 10 MSN', per100eq: '{v} per 100 MSN', overall: 'All {v}', shareProd: 'Share of output', shareNc: 'Share of NCs',
     idxProd: 'Output', idxNc: 'NCs', obs: 'NCs observed', expd: 'NCs expected', volEff: 'Volume effect', rateEff: 'Rate effect', deltaTot: 'Total change',
     cumEq: 'Cumulative MSN', cumNc: 'Cumulative NCs', cumRate: 'NCs per MSN, cumulative', ciTip: '95% CI: {a} to {b}', lim2: '2σ limits', lim3: '3σ limits', inside: 'Inside the funnel',
@@ -5130,7 +5152,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
     if (refs.length > 1) { var yl = spread([Y(mean) + 4].concat(refs.map(function (q) { return Y(q.v) + 4; })), 14, mt, mt + h);
       refs.forEach(function (q, j) { g += '<line x1="' + ml + '" x2="' + (ml + pw) + '" y1="' + r1(Y(q.v)) + '" y2="' + r1(Y(q.v)) + '" stroke="' + (q.col || 'var(--up)') + '" stroke-width="1.5" stroke-dasharray="6 4"/>' + tx(ml + pw + 8, yl[j + 1], q.short + ' ' + fmt(q.v), 'mu'); });
       ref = null; }
-    if (ref) { var yr = spread([Y(mean) + 4, Y(ref.v) + 4], 14, mt, mt + h)[1]; g += '<line x1="' + ml + '" x2="' + (ml + pw) + '" y1="' + r1(Y(ref.v)) + '" y2="' + r1(Y(ref.v)) + '" stroke="var(--up)" stroke-width="1.5" stroke-dasharray="6 4"/>' + tx(ml + pw + 8, yr, '2025 ' + fmt(ref.v), 'b', null, ' style="fill:var(--up)"'); }
+    if (ref) { var yr = spread([Y(mean) + 4, Y(ref.v) + 4], 14, mt, mt + h)[1]; g += '<line x1="' + ml + '" x2="' + (ml + pw) + '" y1="' + r1(Y(ref.v)) + '" y2="' + r1(Y(ref.v)) + '" stroke="var(--up)" stroke-width="1.5" stroke-dasharray="6 4"/>' + tx(ml + pw + 8, yr, PREV + ' ' + fmt(ref.v), 'b', null, ' style="fill:var(--up)"'); }
     gSet(k, svg(W0, H, g, gT(k)), swl(col, gx('monthLeg')) + (cj > 0 ? '<span><i class="sw" style="background:var(--surface);border:2px solid ' + col + ';border-radius:50%"></i>' + esc(S('v2CurPtL', { d: day(D.meta.to) })) + '</span>' : '') + swl('var(--ink-2)', gx('mean')) + swl('var(--ink-2)', gx('roll3'), true) + (ref ? swl('var(--up)', ref.lab, true) : '') + (refs.length > 1 ? refs.map(function (q) { return swl(q.col || 'var(--up)', q.lab, true); }).join('') : ''));
   }
 
@@ -5421,7 +5443,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
     RELK = k;
     var hb = V2BAND[k] && V2BAND[k].querySelector('.sub'); if (hb) hb.textContent = gx('relSubW');
     var Y5 = y25Sel(), L5 = (D.y25 && D.y25.prod) || {}, E5 = pSrc(), w6 = relWin(6), w3 = relWin(3);
-    var PER = [['y25', '2025', 'var(--dim)'], ['ytd', gx('relYtd'), tint('--seq', 45)], ['m6', gx('rel6'), tint('--seq', 72)], ['m3', gx('rel3'), 'var(--seq)']];
+    var PER = [['y25', PREV, 'var(--dim)'], ['ytd', gx('relYtd'), tint('--seq', 45)], ['m6', gx('rel6'), tint('--seq', 72)], ['m3', gx('rel3'), 'var(--seq)']];
     var pages = [['A350 · A330', function (o) { return (o.line === 'A350' || o.line === 'A330') && o.p !== 'MDCD'; }], ['A400M', function (o) { return o.line === 'A400M'; }],
       ['A320', function (o) { return o.line === 'A320'; }], ['MDCD', function (o) { return o.p === 'MDCD'; }]].map(function (pg) {
       var os = pOk().filter(function (o) { return o.NC > 0 && pg[1](o); }).map(function (o) {
@@ -5547,6 +5569,15 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
   }
 
   // 71. NCs expected by December, by product
+  // the forecast's name with the months it covers, "Prévision (oct. à déc.)": from the running month, when days of it are still
+  // to come, to the last forecast month. fc: the chart's forecast months ('YYYY-MM'), act: the months done before them
+  function fcLeg(fc, act) {
+    if (!fc || !fc.length) return gx('fcLeg');
+    var run = PD && PD.cur != null && PD.part[PD.cur] < 1 && act && act.length && act[act.length - 1] === PD.months[PD.cur];
+    var a = monthName(run ? act[act.length - 1] : fc[0]), b = monthName(fc[fc.length - 1]);
+    return gx('fcLeg') + ' (' + (a === b ? a : gx('fcSpan', { a: a, b: b })) + ')';
+  }
+  function fcLegPlan() { return fcLeg(PD.months.slice(PD.fc), PD.months.slice(0, PD.fc)); }   // the charts drawn on the plan's own months
   function g71(k) {
     var rows = pOk().filter(function (o) { return o.NC || o.FC; }).map(function (o) { return { o: o, a: o.NC, f: o.r * o.FC }; }).sort(function (x, y) { return (y.a + y.f) - (x.a + x.f); });
     if (!rows.length) { pEmpty(k); return; }
@@ -5554,9 +5585,9 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
     function X(v) { return lab + v / mx * pw; }
     rows.forEach(function (r, i) { var y = i * rh + 4, c = PCOL[r.o.p];
       g += tx(lab - 10, y + 14, r.o.p, 'ink', 'end') + '<rect x="' + lab + '" y="' + (y + 4) + '" width="' + r1(Math.max(1, X(r.a) - lab)) + '" height="15" rx="2" fill="' + c + '"' + tip(r.o.p, [gx('actLeg') + ' : ' + num(r.a) + ' NC']) + '/>';
-      g += '<rect x="' + r1(X(r.a)) + '" y="' + (y + 4) + '" width="' + r1(Math.max(0, X(r.a + r.f) - X(r.a))) + '" height="15" rx="2" fill="' + c + '" fill-opacity=".3" stroke="' + c + '" stroke-dasharray="3 2"' + tip(r.o.p, [gx('fcLeg') + ' : ' + f1(r.f) + ' NC', gx('eqTip', { v: f1(r.o.FC) })]) + '/>';
+      g += '<rect x="' + r1(X(r.a)) + '" y="' + (y + 4) + '" width="' + r1(Math.max(0, X(r.a + r.f) - X(r.a))) + '" height="15" rx="2" fill="' + c + '" fill-opacity=".3" stroke="' + c + '" stroke-dasharray="3 2"' + tip(r.o.p, [fcLegPlan() + ' : ' + f1(r.f) + ' NC', gx('eqTip', { v: f1(r.o.FC) })]) + '/>';
       g += tx(X(r.a + r.f) + 6, y + 16, gx('projTot', { a: num(r.a), b: num(Math.round(r.a + r.f)) }), 'ink'); });
-    gSet(k, svg(W0, H, g, gT(k)), sw('var(--ink-2)', gx('actLeg')) + '<span><i class="sw" style="background:none;border:1.2px dashed var(--ink-2)"></i>' + esc(gx('fcLeg')) + '</span>');
+    gSet(k, svg(W0, H, g, gT(k)), sw('var(--ink-2)', gx('actLeg')) + '<span><i class="sw" style="background:none;border:1.2px dashed var(--ink-2)"></i>' + esc(fcLegPlan()) + '</span>');
   }
 
   // 72. cost of non-quality expected by December
@@ -5572,7 +5603,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
     g += '<path d="' + cum.slice(last).map(function (v, j) { return (j ? 'L' : 'M') + r1(X(last + j)) + ',' + r1(Y(v)); }).join('') + '" fill="none" stroke="var(--s1)" stroke-width="2.2" stroke-dasharray="2 4" stroke-linecap="round"/>';
     cum.forEach(function (v, i) { g += '<circle cx="' + r1(X(i)) + '" cy="' + r1(Y(v)) + '" r="3" fill="' + (i < PD.fc ? 'var(--s1)' : 'var(--surface)') + '" stroke="var(--s1)" stroke-width="1.5"' + tip(monthName(ms[i]), [eur(v) + (i >= PD.fc ? ' · ' + gx('fcShort') : '')]) + '/>' + tx(X(i), H - 6, monthName(ms[i]), 'mu', 'middle'); });
     g += tx(X(11) + 8, Y(cum[11]) + 4, kE(cum[11]), 'ink b') + tx(X(last) + 8, Y(cum[last]) + 16, kE(cum[last]), 'ink');
-    gSet(k, svg(W0, H, g, gT(k)), swl('var(--s1)', gx('actLeg')) + swl('var(--s1)', gx('fcLeg'), true) + '<span class="mu">' + esc(gx('perEq', { v: eur(cpe) })) + '</span>');
+    gSet(k, svg(W0, H, g, gT(k)), swl('var(--s1)', gx('actLeg')) + swl('var(--s1)', fcLegPlan(), true) + '<span class="mu">' + esc(gx('perEq', { v: eur(cpe) })) + '</span>');
   }
 
   // 73. NCs found late in the plant (final inspection, test) per 10 MSN
@@ -5633,7 +5664,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
     var P = 'MIP A350', ops = OPS_MSN[P], keep = function (o) { return o.p === P; }, f0 = function (v) { return num(Math.round(v)); };
     var rows = pMonthly(function (o, i) { return o.connm[i]; }, keep).map(function (x) { return { i: x.i, e: x.e * ops / 1e6, v: x.v }; });
     var R = y25Rca(), q = R ? y25Rate(R.filter(function (x) { return x.cat === 'Erreur Branchement'; }), function (x) { return x.d; }, function (p) { return p === P; }) : null;
-    var r25 = q ? q.r / ops * 1e6 : null, refs = r25 ? [{ v: r25, lab: gx('mio25'), short: '2025', col: 'var(--ink-2)' }, { v: r25 * V2CUT, lab: gx('mioTgt'), short: S('v2TgtShort'), col: 'var(--up)' }] : null;
+    var r25 = q ? q.r / ops * 1e6 : null, refs = r25 ? [{ v: r25, lab: gx('mio25'), short: PREV, col: 'var(--ink-2)' }, { v: r25 * V2CUT, lab: gx('mioTgt'), short: S('v2TgtShort'), col: 'var(--up)' }] : null;
     pTrend(k, rows, f0, function (v) { return gx('mioTip', { v: f0(v) }); }, tint('--c2', 100), refs);
     var tv = sumA(rows.map(function (x) { return x.v; })), te = sumA(rows.map(function (x) { return x.e; })), rate = te ? tv / te : 0;
     v2Stats(k, [[f0(rate), gx('mioNow')], [rate ? f1(invNorm(1 - rate / 1e6) + 1.5) + ' σ' : '—', gx('mioSig')]].concat(r25 ? [[f0(r25 * V2CUT), gx('mioTgt')]] : []));
@@ -6137,7 +6168,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
     if (isFinite(rate)) g += '<rect x="8" y="22" width="' + r1(Math.max(2, X(rate) - 8)) + '" height="18" rx="3" fill="var(--s1)"' + tip(S('mkNow'), [fmt(rate) + ' ' + S('mkPerEq')]) + '/>';
     if (isFinite(r3)) g += '<circle cx="' + r1(X(r3)) + '" cy="31" r="5" fill="var(--surface)" stroke="var(--ink)" stroke-width="2"' + tip(S('mkLast3'), [fmt(r3)]) + '/>' + tx(X(r3), 58, S('mkLast3'), 'mu', 'middle');
     if (isFinite(tgt)) g += '<line x1="' + r1(X(tgt)) + '" x2="' + r1(X(tgt)) + '" y1="14" y2="48" stroke="var(--ink)" stroke-width="2.5"/>' + tx(X(tgt), 11, S('mkTarget') + ' ' + fmt(tgt), 'ink b', 'middle');
-    if (base) g += '<line x1="' + r1(X(base)) + '" x2="' + r1(X(base)) + '" y1="18" y2="44" stroke="var(--muted)" stroke-dasharray="3 2"/>' + tx(X(base), 74, '2025 ' + fmt(base), 'mu', 'middle');
+    if (base) g += '<line x1="' + r1(X(base)) + '" x2="' + r1(X(base)) + '" y1="18" y2="44" stroke="var(--muted)" stroke-dasharray="3 2"/>' + tx(X(base), 74, PREV + ' ' + fmt(base), 'mu', 'middle');
     h += svg(W0, 80, g, S('mkTgtT'));
     h += '<div class="mk-base"><label for="mkBaseIn">' + esc(S('mkBase')) + '</label><input type="text" inputmode="decimal" id="mkBaseIn" value="' + esc(MK.base) + '"><span class="sub">' + esc(base ? S('mkMatched') : S('mkBaseHint')) + '</span></div>';
     var foc = document.activeElement && document.activeElement.id === 'mkBaseIn';
@@ -6248,22 +6279,22 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
     cnq: { more: ['VC'], fold: ['VE'] }
   };
   var V2F = { VM: v2Mio, VT: v2Target, VN: v2Trend, VB: v2Budget, VS: v2Score, VX: v2Xmr, VW: v2Waffle, VQ: v2Quarters, VP: v2Prod, VF: v2Fins, VI: v2Icons, VC: v2Comp, VE: v2Each, VK: v2Pins };
-  Object.assign(GSTR, {
-    VT: { fr: ['Objectif', 'Chaque ligne face à son objectif', 'NC par MSN produit ; trait : objectif, le taux 2025 de la ligne (NC par produit livré) moins 25 %. Toutes lignes : la somme des objectifs des lignes.', 'production MSN · NC · livraisons 2025'],
-          en: ['Target', 'Each line against its target', 'NCs per MSN built; tick: target, the line’s 2025 rate (NCs per product delivered) minus 25%. All lines: the sum of the lines’ targets.', 'MSN output · NCs · 2025 deliveries'] },
-    VN: { fr: ['Tendance', 'NC cumulées sur l’année', 'Pointillé : prévision au taux de la période × production prévue ; tirets : objectif cumulé, ligne par ligne (taux 2025 − 25 % × production 2026). À gauche : 2025 et l’objectif de l’année, par ligne.', 'NC · production MSN prévue · NC 2025'],
-          en: ['Trend', 'Cumulative NCs over the year', 'Dotted: forecast at the period rate × planned output; dashed: cumulative target, line by line (2025 rate − 25% × 2026 output). Left: 2025 and the year’s target, by line.', 'NCs · planned MSN output · 2025 NCs'] },
-    VB: { fr: ['Coût', 'Coût de non-qualité cumulé', 'Pointillé : prévision ; tirets : objectif de coût cumulé, ligne par ligne (coût 2025 par produit livré − 25 % × production 2026). À gauche : 2025 et l’objectif de l’année, par ligne.', 'coût CNQ · production MSN prévue · coût 2025'],
-          en: ['Cost', 'Cumulative cost of non-quality', 'Dotted: forecast; dashed: cumulative cost target, line by line (2025 cost per product delivered − 25% × 2026 output). Left: 2025 and the year’s target, by line.', 'CNQ cost · planned MSN output · 2025 cost'] },
+  Object.assign(GSTR, withYears({
+    VT: { fr: ['Objectif', 'Chaque ligne face à son objectif', 'NC par MSN produit ; trait : objectif, le taux {PREV} de la ligne (NC par produit livré) moins {CUT} %. Toutes lignes : la somme des objectifs des lignes.', 'production MSN · NC · livraisons {PREV}'],
+          en: ['Target', 'Each line against its target', 'NCs per MSN built; tick: target, the line’s {PREV} rate (NCs per product delivered) minus {CUT}%. All lines: the sum of the lines’ targets.', 'MSN output · NCs · {PREV} deliveries'] },
+    VN: { fr: ['Tendance', 'NC cumulées sur l’année', 'Pointillé : prévision au taux de la période × production prévue ; tirets : objectif cumulé, ligne par ligne (taux {PREV} − {CUT} % × production {YEAR}). À gauche : {PREV} et l’objectif de l’année, par ligne.', 'NC · production MSN prévue · NC {PREV}'],
+          en: ['Trend', 'Cumulative NCs over the year', 'Dotted: forecast at the period rate × planned output; dashed: cumulative target, line by line ({PREV} rate − {CUT}% × {YEAR} output). Left: {PREV} and the year’s target, by line.', 'NCs · planned MSN output · {PREV} NCs'] },
+    VB: { fr: ['Coût', 'Coût de non-qualité cumulé', 'Pointillé : prévision ; tirets : objectif de coût cumulé, ligne par ligne (coût {PREV} par produit livré − {CUT} % × production {YEAR}). À gauche : {PREV} et l’objectif de l’année, par ligne.', 'coût CNQ · production MSN prévue · coût {PREV}'],
+          en: ['Cost', 'Cumulative cost of non-quality', 'Dotted: forecast; dashed: cumulative cost target, line by line ({PREV} cost per product delivered − {CUT}% × {YEAR} output). Left: {PREV} and the year’s target, by line.', 'CNQ cost · planned MSN output · {PREV} cost'] },
     VS: { fr: ['Volumes et taux', 'NC, défauts et coût : le volume, puis par MSN', 'Chaque ligne : le volume mois par mois, puis le même rapporté au nombre de MSN produits.', 'NC · défauts · coût · production MSN'],
           en: ['Volumes and rates', 'NCs, defects and cost: the volume, then per MSN', 'Each row: the volume month by month, then the same against the number of MSN built.', 'NCs · defects · cost · MSN output'] },
     VX: { fr: ['Maîtrise statistique', 'NC par semaine, avec leurs limites', 'σ = écart-type des NC par semaine. 2 σ : niveau d’attention. 3 σ : niveau d’alarme.', 'NC par semaine'],
           en: ['Process control', 'NCs per week, with their limits', 'σ = standard deviation of the NCs per week. 2 σ: attention level. 3 σ: alarm level.', 'NCs per week'] },
-    VM: { fr: ['Branchement', 'Erreurs de branchement par million d’opérations, MIP A350', '5 572 opérations de branchement par MIP.', 'défauts · production MSN · livraisons 2025'],
-          en: ['Connections', 'Connection errors per million operations, MIP A350', '5,572 connection operations per MIP.', 'defects · MSN output · 2025 deliveries'] },
+    VM: { fr: ['Branchement', 'Erreurs de branchement par million d’opérations, MIP A350', '5 572 opérations de branchement par MIP.', 'défauts · production MSN · livraisons {PREV}'],
+          en: ['Connections', 'Connection errors per million operations, MIP A350', '5,572 connection operations per MIP.', 'defects · MSN output · {PREV} deliveries'] },
     VW: { fr: ['Répartition', 'Cent défauts', 'Chaque case : 1 % des défauts, par catégorie.', 'catégorie des défauts'], en: ['Breakdown', 'A hundred defects', 'Each square: 1% of defects, by category.', 'defect category'] },
-    VQ: { fr: ['2025 / 2026', 'Causes : 2025 contre 2026, A330 et A350', 'Défauts par MSN, les 10 premières causes de 2025 et de 2026. A330 et A350.', 'causes · production MSN · livraisons 2025'],
-          en: ['2025 / 2026', 'Root causes: 2025 against 2026, A330 and A350', 'Defects per MSN, the top 10 root causes of 2025 and of 2026. A330 and A350.', 'root causes · MSN output · 2025 deliveries'] },
+    VQ: { fr: ['{PREV} / {YEAR}', 'Causes : {PREV} contre {YEAR}, A330 et A350', 'Défauts par MSN, les 10 premières causes de {PREV} et de {YEAR}. A330 et A350.', 'causes · production MSN · livraisons {PREV}'],
+          en: ['{PREV} / {YEAR}', 'Root causes: {PREV} against {YEAR}, A330 and A350', 'Defects per MSN, the top 10 root causes of {PREV} and of {YEAR}. A330 and A350.', 'root causes · MSN output · {PREV} deliveries'] },
     VP: { fr: ['Taux', 'NC, défauts et coût par MSN, produit par produit', 'Un même ordre de produits dans les trois colonnes ; tiret : ensemble des produits.', 'production MSN · NC · défauts · coût'],
           en: ['Rates', 'NCs, defects and cost per MSN, product by product', 'The same product order in all three columns; tick: all products together.', 'MSN output · NCs · defects · cost'] },
     VF: { fr: ['Récurrence', 'Les FIN qui reviennent d’un avion à l’autre', 'Une colonne par avion (MSN), une ligne par FIN ; carré : défaut sur ce FIN. Ligne du filtre, sinon A350.', 'FIN lu par le parseur · MSN'],
@@ -6274,7 +6305,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
     VC: { fr: ['Composantes', 'De quoi est fait le coût, mois par mois', 'Gestion de la NC (alerte, rédaction, support, recontrôle), reprise, matière, ingénierie.', 'modèle CNQ'],
           en: ['Components', 'What the cost is made of, month by month', 'NC handling (alert, writing, support, re-check), rework, material, engineering.', 'CNQ model'] },
     VE: { fr: ['Coûts', 'Chaque NC dans le temps, à sa taille', 'Une bulle par NC ; surface : coût ; les cinq plus chères sont nommées.', 'coût CNQ par NC'], en: ['Costs', 'Every NC over time, at its size', 'One bubble per NC; area: cost; the five dearest are named.', 'CNQ cost per NC'] }
-  });
+  }));
   function v2El(k) {
     if (k.indexOf('a:') === 0) return document.getElementById('v-' + k.slice(2));
     var el = document.getElementById('g-' + k);
@@ -6453,7 +6484,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
 
   // left of a cumulative chart: 2025 and the year's target as two stacked bars, one colour per line, the part out of the plan grey
   function v2TgtBars(T, Y, x0, bw, fmt, H, key) {
-    var g = '', bars = [['2025', T.lines.map(function (a) { return [a.l, a.v25 + a.n25o + a.x25, a.x25]; })], [S(key), T.lines.map(function (a) { return [a.l, a.year + a.xT, a.xT]; })]];   // by plane type, its NCs out of the plan included (21 Oct)
+    var g = '', bars = [[PREV, T.lines.map(function (a) { return [a.l, a.v25 + a.n25o + a.x25, a.x25]; })], [S(key), T.lines.map(function (a) { return [a.l, a.year + a.xT, a.xT]; })]];   // by plane type, its NCs out of the plan included (21 Oct)
     bars.forEach(function (b, j) { var x = x0 + j * (bw + 8), acc = 0, tot = sumA(b[1].map(function (s2) { return s2[1]; }));
       b[1].forEach(function (s2) { if (s2[1] <= 0) return; var y1 = Y(acc + s2[1]), y0 = Y(acc), o = s2[0] === 'out';
         g += '<rect x="' + r1(x + (o ? 0.75 : 0)) + '" y="' + r1(y1 + (o ? 0.75 : 0)) + '" width="' + r1(bw - (o ? 1.5 : 0)) + '" height="' + r1(Math.max(0.5, y0 - y1 - 1 - (o ? 1.5 : 0))) + '" fill="' + (o ? 'var(--surface)' : lineCol(s2[0])) + '"' + (o ? ' stroke="var(--muted)" stroke-width="1.5" stroke-dasharray="3 2"' : pk('line', s2[0])) +
@@ -6461,10 +6492,21 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
       g += tx(x + bw / 2, Y(tot) - 6, fmt(tot), 'ink b', 'middle') + tx(x + bw / 2, H - 6, b[0], 'ink', 'middle'); });
     return g;
   }
+  // the months that weigh less in the monthly target (config/2_reglages_pages.csv, poids_mois), in words: "Juillet et août
+  // comptent pour 60 % d'un mois."
+  function v2Light() {
+    var by = {}; Object.keys(V2W).forEach(function (m) { var w = V2W[m]; if (w != null && w !== 1) (by[w] || (by[w] = [])).push(+m); });
+    return Object.keys(by).map(function (w) {
+      var ms = by[w].sort(function (a, b) { return a - b; }).map(function (m) { return new Date(Date.UTC(2001, m - 1, 1)).toLocaleDateString(loc(), { month: 'long', timeZone: 'UTC' }); });
+      var t = ms.length > 1 ? ms.slice(0, -1).join(', ') + S('v2And') + ms[ms.length - 1] : ms[0];
+      return S(ms.length > 1 ? 'v2Summer' : 'v2Summer1', { m: t.charAt(0).toUpperCase() + t.slice(1), p: pct0(w * 100) });
+    }).join(' ');
+  }
   function v2LineKeys(T) { return T.lines.map(function (a) { return sw(lineCol(a.l), a.l + (a.ph ? ' (' + S('v2Ph') + ')' : '')); }).join(''); }
   function v2Trend(k) {
     var O = objectif('nc'); if (!O) { pWait(k); return; }
     var S2 = O.S2, all = S2.act.concat(S2.fc); if (!S2.act.length) { pEmpty(k); return; }
+    var fcl = fcLeg(S2.fc.map(function (x) { return x.m; }), S2.act.map(function (x) { return x.m; }));
     var R5 = y25Sel(), n25 = R5 ? sumA(R5.map(function (x) { return x.nc; })) : 0, real = n25 > 0;   // without 2025 for the filter: placeholder 2025 = this year
     var T = real ? O.T : null;   // the target line by line (needs the production plan)
     var year = S2.tot + S2.ftot, y25 = real ? n25 : year, tgt = T ? T.year : y25 * V2CUT, c25 = real ? y25Cum(R5, function (x) { return x.nc; }, all.map(function (x) { return x.m; })) : null;
@@ -6481,8 +6523,8 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
     if (T) g += v2TgtBars(T, Y, ml + (cp ? 6 : 10), cp ? 26 : 42, function (v) { return num(Math.round(v)); }, H, 'v2TgtBar');
     else {
     var bx = ml + (cp ? 8 : 14), bwd = lb - (cp ? 16 : 28);
-    g += '<rect x="' + bx + '" y="' + r1(Y(y25)) + '" width="' + bwd + '" height="' + r1(mt + ph - Y(y25)) + '" rx="2" fill="' + tint('--ink-2', real ? 30 : 18) + '"' + (real ? '' : ' stroke="var(--ink-2)" stroke-opacity=".5" stroke-dasharray="3 3"') + tip('2025', [gx('ncCount', { n: num(Math.round(y25)) }), S(real ? 'v2Y25b' : 'v2Ph')]) + '/>' +
-      tx(bx + bwd / 2, Y(y25) - 6, num(Math.round(y25)), 'ink b', 'middle') + tx(bx + bwd / 2, H - 6, '2025', 'ink', 'middle');
+    g += '<rect x="' + bx + '" y="' + r1(Y(y25)) + '" width="' + bwd + '" height="' + r1(mt + ph - Y(y25)) + '" rx="2" fill="' + tint('--ink-2', real ? 30 : 18) + '"' + (real ? '' : ' stroke="var(--ink-2)" stroke-opacity=".5" stroke-dasharray="3 3"') + tip(PREV, [gx('ncCount', { n: num(Math.round(y25)) }), S(real ? 'v2Y25b' : 'v2Ph')]) + '/>' +
+      tx(bx + bwd / 2, Y(y25) - 6, num(Math.round(y25)), 'ink b', 'middle') + tx(bx + bwd / 2, H - 6, PREV, 'ink', 'middle');
     }
     all.forEach(function (x, i) { g += tx(X(i + 0.5), H - 6, v2Mo(x.m, pw / n, i), 'mu', 'middle'); });
     // actual, then the forecast
@@ -6499,20 +6541,21 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
     S2.act.forEach(function (x, i) { var sh = monthShare(x.m), mt2 = mTgt(x.m) * sh.p, over = x.v > mt2, col = over ? 'var(--up)' : 'var(--down)'; if (sh.p < 1) hasCur = true;
       g += '<circle cx="' + r1(X(i + 1)) + '" cy="' + r1(Y(cum[i + 1])) + '" r="4.5" fill="' + (sh.p < 1 ? 'var(--surface)' : col) + '" stroke="' + (sh.p < 1 ? col : 'var(--surface)') + '" stroke-width="' + (sh.p < 1 ? 2.2 : 1.8) + '"' +
         pk('month', x.m) + tip(monthName(x.m) + ' ' + x.m.slice(0, 4), [gx('ncCount', { n: num(x.v) }) + ' · ' + (sh.p < 1 ? S('v2CurTip', { d: sh.d, n: sh.n, v: num(Math.round(mt2)) }) : S('v2MonTgt', { v: num(Math.round(mt2)) })), S('v2Cum', { v: num(cum[i + 1]) })].concat(c25 ? [S('v2Y25at', { v: num(c25[i + 1]) })] : [])) + '/>'; });
-    if (n > na) g += '<circle cx="' + r1(X(n)) + '" cy="' + r1(Y(year)) + '" r="4" fill="var(--surface)" stroke="var(--s1)" stroke-width="2"' + tip(gx('fcLeg'), [num(Math.round(year))]) + '/>';
+    if (n > na) g += '<circle cx="' + r1(X(n)) + '" cy="' + r1(Y(year)) + '" r="4" fill="var(--surface)" stroke="var(--s1)" stroke-width="2"' + tip(fcl, [num(Math.round(year))]) + '/>';
     var ly = spread([Y(year) + 4, Y(tgt) + 4], 16, mt + 6, mt + ph);
     g += tx(X(n) + 8, ly[0], num(Math.round(year)) + (cp ? '' : ' ' + S('v2Fc')), 'ink b') + tx(X(n) + 8, ly[1], num(Math.round(tgt)) + (cp ? '' : ' ' + S('v2TgtShort')), 'ink');
     gSet(k, svg(W0, H, g, gT(k)), '<span><i class="sw" style="background:var(--down);border-radius:50%"></i>' + esc(S('v2Under')) + '</span><span><i class="sw" style="background:var(--up);border-radius:50%"></i>' + esc(S('v2Over')) + '</span>' +
       (hasCur ? '<span><i class="sw" style="background:var(--surface);border:2px solid var(--ink-2);border-radius:50%"></i>' + esc(S('v2CurLeg')) + '</span>' : '') +
-      swl('var(--s1)', S('v2CumLeg')) + '<span><i class="dash" style="border-top:2px dotted var(--s1)"></i>' + esc(gx('fcLeg')) + '</span>' + swl('var(--ink)', S(T ? 'v2TgtCumL' : real ? 'v2TgtCumR' : 'v2TgtCum'), true) + (T ? v2LineKeys(T) : '') +
+      swl('var(--s1)', S('v2CumLeg')) + '<span><i class="dash" style="border-top:2px dotted var(--s1)"></i>' + esc(fcl) + '</span>' + swl('var(--ink)', S(T ? 'v2TgtCumL' : real ? 'v2TgtCumR' : 'v2TgtCum'), true) + (T ? v2LineKeys(T) : '') +
       (real ? (T ? '' : '<span><i class="sw" style="background:' + tint('--ink-2', 30) + '"></i>' + esc(S('v2Y25b')) + '</span>') + swl(tint('--ink-2', 55), S('v2Y25c'))
         : '<span><i class="sw" style="background:' + tint('--ink-2', 18) + ';border:1px dashed var(--ink-2)"></i>' + esc(S('v2Ph25')) + '</span>') +
-      (real && !GF.fto2 ? '<span class="mu">' + esc(S('v2NoCli25')) + '</span>' : '') + '<span class="mu">' + esc(S('v2Summer')) + '</span>');
+      (real && !GF.fto2 ? '<span class="mu">' + esc(S('v2NoCli25')) + '</span>' : '') + '<span class="mu">' + esc(v2Light()) + '</span>');
   }
 
   function v2Budget(k) {
     var O = objectif('cost'); if (!O) { pWait(k); return; }
     var S2 = O.S2; if (!S2.act.length) { pEmpty(k); return; }
+    var fcl = fcLeg(S2.fc.map(function (x) { return x.m; }), S2.act.map(function (x) { return x.m; }));
     var R5 = y25Sel(), b25 = R5 ? sumA(R5.map(function (x) { return x.cost; })) : 0, real = b25 > 0;   // without 2025 for the filter: placeholder budget = forecast - 25 %
     var T = real ? O.T : null;   // the budget line by line (needs the production plan)
     var all = S2.act.concat(S2.fc), year = S2.tot + S2.ftot, bud = T ? T.year : (real ? b25 : year) * V2CUT, cum = [0], c = 0;
@@ -6529,7 +6572,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
     if (T) { var cb = [0], ab = 0; all.forEach(function (x) { ab += T.tm(x.m); cb.push(ab); });   // month by month, as the production plan goes
       g += '<path d="M' + cb.map(function (v, i) { return r1(X(i)) + ',' + r1(Y(v)); }).join('L') + '" fill="none" stroke="var(--ink-2)" stroke-width="1.4" stroke-dasharray="5 4"/>'; }
     else g += '<line x1="' + r1(X(0)) + '" y1="' + r1(Y(0)) + '" x2="' + r1(X(n)) + '" y2="' + r1(Y(bud)) + '" stroke="var(--ink-2)" stroke-width="1.4" stroke-dasharray="5 4"/>';
-    if (c25) g += '<path d="M' + c25.map(function (v, i) { return r1(X(i)) + ',' + r1(Y(v)); }).join('L') + '" fill="none" stroke="' + tint('--ink-2', 55) + '" stroke-width="1.5"' + tip('2025', [kE(c25[c25.length - 1])]) + '/>';
+    if (c25) g += '<path d="M' + c25.map(function (v, i) { return r1(X(i)) + ',' + r1(Y(v)); }).join('L') + '" fill="none" stroke="' + tint('--ink-2', 55) + '" stroke-width="1.5"' + tip(PREV, [kE(c25[c25.length - 1])]) + '/>';
     g += '<path d="M' + act.join('L') + '" fill="none" stroke="var(--s1)" stroke-width="1.8"/>';
     if (n > na) g += '<path d="M' + cum.slice(na).map(function (v, i) { return r1(X(na + i)) + ',' + r1(Y(v)); }).join('L') + '" fill="none" stroke="var(--s1)" stroke-width="2.2" stroke-dasharray="1 5" stroke-linecap="round"/>';
     S2.act.forEach(function (x, i) { g += '<rect x="' + r1(X(i)) + '" y="' + mt + '" width="' + r1(pw / n) + '" height="' + ph + '" fill="transparent"' + pk('month', x.m) + tip(monthName(x.m) + ' ' + x.m.slice(0, 4), [eur(x.v), gx('cum') + ' : ' + eur(cum[i + 1])]) + '/>'; });
@@ -6537,7 +6580,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
     g += '<circle cx="' + r1(X(n)) + '" cy="' + r1(Y(year)) + '" r="3.5" fill="var(--surface)" stroke="var(--s1)" stroke-width="2"' + tip(gx('proj'), [eur(year)]) + '/>';
     var ly = spread([Y(year) + 4, Y(bud) + 4], 16, mt + 6, mt + ph);
     g += tx(X(n) + 8, ly[0], kE(year), 'ink b') + tx(X(n) + 8, ly[1], kE(bud) + (cp ? '' : ' ' + S(real ? 'v2BudR2' : 'v2Ph')), 'mu') + tx(X(na) - 8, Y(cum[na]) - 10, kE(cum[na]), 'ink b', 'end');
-    gSet(k, svg(W0, H, g, gT(k)), swl('var(--s1)', gx('cum')) + '<span><i class="dash" style="border-top:2px dotted var(--s1)"></i>' + esc(gx('fcLeg')) + '</span>' + swl('var(--ink-2)', S(T ? 'v2BudL' : real ? 'v2BudR' : 'v2BudPh'), true) + (T ? v2LineKeys(T) : '') +
+    gSet(k, svg(W0, H, g, gT(k)), swl('var(--s1)', gx('cum')) + '<span><i class="dash" style="border-top:2px dotted var(--s1)"></i>' + esc(fcl) + '</span>' + swl('var(--ink-2)', S(T ? 'v2BudL' : real ? 'v2BudR' : 'v2BudPh'), true) + (T ? v2LineKeys(T) : '') +
       (c25 ? swl(tint('--ink-2', 55), S('v2Y25c')) : '') + (real && !GF.fto2 ? '<span class="mu">' + esc(S('v2NoCli25')) + '</span>' : ''));
   }
 
@@ -6647,8 +6690,8 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
       g += '</g>';
     });
     var cin = {}; top.forEach(function (r) { cin[RCA_CAT[r] || 'aside'] = 1; });
-    gSet(k, svg(W0, H, g, gT(k)), '<span><i class="sw" style="background:var(--surface);border:1.6px solid var(--ink-2);border-radius:50%"></i>2025</span>' +
-      MAIN_CATS.filter(function (c) { return cin[c]; }).map(function (c) { return sw(c === 'aside' ? 'var(--ink-2)' : catFill(c), '2026 · ' + catLabel(c), true); }).join('') +
+    gSet(k, svg(W0, H, g, gT(k)), '<span><i class="sw" style="background:var(--surface);border:1.6px solid var(--ink-2);border-radius:50%"></i>' + PREV + '</span>' +
+      MAIN_CATS.filter(function (c) { return cin[c]; }).map(function (c) { return sw(c === 'aside' ? 'var(--ink-2)' : catFill(c), YEAR + ' · ' + catLabel(c), true); }).join('') +
       '<span><b style="color:var(--up)">▲</b> ' + esc(gx('vqUp')) + '</span><span><b style="color:var(--down)">▼</b> ' + esc(gx('vqDown')) + '</span><span>= ' + esc(gx('vqFlat')) + '</span><span class="mu">' + esc(S('v2Q25')) + '</span>');
   }
 
@@ -6663,7 +6706,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
     a: function (k, top, a, b, mx) {   // the slope chart, taller, labels pushed apart, arrows on both sides of a drop
       var W0 = gWd(k), H = Math.max(360, top.length * 30 + 50), mt = 30, ph = H - mt - 14, xa = Math.min(250, W0 * 0.46), xb = W0 - 96, g = '';
       function Y(v) { return mt + ph - v / mx * ph; }
-      g += tx(xa, 14, '2025', 'ink b', 'middle') + tx(xb, 14, '2026', 'ink b', 'middle') + '<line x1="' + xa + '" x2="' + xa + '" y1="' + mt + '" y2="' + (mt + ph) + '" stroke="var(--grid)"/><line x1="' + xb + '" x2="' + xb + '" y1="' + mt + '" y2="' + (mt + ph) + '" stroke="var(--grid)"/>';
+      g += tx(xa, 14, PREV, 'ink b', 'middle') + tx(xb, 14, YEAR, 'ink b', 'middle') + '<line x1="' + xa + '" x2="' + xa + '" y1="' + mt + '" y2="' + (mt + ph) + '" stroke="var(--grid)"/><line x1="' + xb + '" x2="' + xb + '" y1="' + mt + '" y2="' + (mt + ph) + '" stroke="var(--grid)"/>';
       var la = spread(top.map(function (r) { return Y(a[r]) + 4; }), 17, mt, mt + ph + 4), lb = spread(top.map(function (r) { return Y(b[r]) + 4; }), 17, mt, mt + ph + 4);
       top.forEach(function (r, i) { var va = a[r], vb = b[r], dir = vqDir(va, vb), col = vqCol(r), nm = L(r), mc = Math.floor((xa - 52) / 6.4); if (nm.length > mc) nm = nm.slice(0, mc - 1) + '…';
         g += '<line x1="' + xa + '" y1="' + r1(Y(va)) + '" x2="' + xb + '" y2="' + r1(Y(vb)) + '" stroke="' + col + '" stroke-width="2.2"' + pk('rca', r) + vqTip(r, va, vb) + '/>' + '<circle cx="' + xa + '" cy="' + r1(Y(va)) + '" r="3.5" fill="' + col + '"/><circle cx="' + xb + '" cy="' + r1(Y(vb)) + '" r="3.5" fill="' + col + '"/>';
@@ -6677,7 +6720,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
         g += '<g' + pk('rca', r) + vqTip(r, va, vb) + '><rect x="0" y="' + y + '" width="' + W0 + '" height="' + rh + '" fill="transparent"/>' + tx(lab - 10, y + 17, nm, 'ink', 'end') +
           '<rect x="' + lab + '" y="' + (y + 4) + '" width="' + r1(Math.max(1, va / mx * pw)) + '" height="10" rx="2" fill="var(--dim)"/><rect x="' + lab + '" y="' + (y + 16) + '" width="' + r1(Math.max(1, vb / mx * pw)) + '" height="10" rx="2" fill="' + vqCol(r) + '"/>' +
           tx(lab + va / mx * pw + 6, y + 13, f2(va), 'mu', null, ' style="font-size:11px"') + tx(lab + vb / mx * pw + 6, y + 25, f2(vb), 'ink', null, ' style="font-size:11px"') + vqArrow(vqDir(va, vb), W0 - 2, y + 21, 'end') + '</g>'; });
-      gSet(k, svg(W0, H, g, gT(k)), sw('var(--dim)', '2025') + '<span>' + esc('2026 : ' + gx('vqCat')) + '</span>' + vqKey());
+      gSet(k, svg(W0, H, g, gT(k)), sw('var(--dim)', PREV) + '<span>' + esc(YEAR + ' : ' + gx('vqCat')) + '</span>' + vqKey());
     },
     c: function (k, top, a, b) {   // the change only, sorted: up to the right in red, down to the left in green
       var rows = top.map(function (r) { return { r: r, d: b[r] - a[r] }; }).sort(function (x, y) { return y.d - x.d; }), mx = Math.max.apply(null, rows.map(function (x) { return Math.abs(x.d); }).concat([1e-9]));
@@ -6691,7 +6734,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
     },
     e: function (k, top, a, b) {   // a table: 2025, 2026, change
       var rows = top.map(function (r) { return { r: r, a: a[r], b: b[r], d: b[r] - a[r] }; });
-      var h = '<div class="table-wrap"><table class="mini vqt"><thead><tr><th scope="col">' + esc(gx('vqCause')) + '</th><th scope="col" class="r">2025</th><th scope="col" class="r">2026</th><th scope="col" class="r">' + esc(gx('vqChg')) + '</th><th scope="col"></th></tr></thead><tbody>' +
+      var h = '<div class="table-wrap"><table class="mini vqt"><thead><tr><th scope="col">' + esc(gx('vqCause')) + '</th><th scope="col" class="r">' + PREV + '</th><th scope="col" class="r">' + YEAR + '</th><th scope="col" class="r">' + esc(gx('vqChg')) + '</th><th scope="col"></th></tr></thead><tbody>' +
         rows.map(function (x) { var dir = vqDir(x.a, x.b), pc = x.a > 0 ? Math.round(x.d / x.a * 100) : null;
           return '<tr' + pk('rca', x.r) + '><td><i class="sw" style="display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:6px;background:' + vqCol(x.r) + '"></i>' + esc(L(x.r)) + '</td><td class="num r">' + f2(x.a) + '</td><td class="num r"><b>' + f2(x.b) + '</b></td><td class="num r">' + (x.d >= 0 ? '+' : '') + f2(x.d) + (pc != null ? ' (' + (pc >= 0 ? '+' : '') + pc + ' %)' : '') + '</td><td style="color:var(--' + (dir > 0 ? 'up' : dir < 0 ? 'down' : 'muted') + ')">' + (dir > 0 ? '▲' : dir < 0 ? '▼' : '=') + '</td></tr>'; }).join('') + '</tbody></table></div>';
       gSet(k, h, vqKey());
@@ -6909,6 +6952,12 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
     document.getElementById('foot1').textContent = S('foot1', dates);
     document.querySelectorAll('[data-t="serieSub"]').forEach(function (el) { el.textContent = S((GF.fto2 ? 'serieSub' : 'serieSubAll') + (GF.liab === 'f' ? 'Aec' : '')); });
     document.getElementById('foot3').textContent = S('foot3', { n: num(D.meta.noLine), o: num(((A || {}).other || [0])[0]), oe: eur(((A || {}).other || [0, 0])[1]) });
+    // the method's footnote quotes the settings as they are today: the shutdown threshold, the hourly rates by who works
+    // (config/2_cout_parametres.csv), and whether a part's value is counted (config/1_prix_pieces.csv holds prices)
+    var cp = (CXP && CXP.p) || {}, who = cp.who || {}, rs = cp.rates || {}, rate = function (a, b) { var v = a != null ? a : b; return v != null ? num(v) : '—'; };
+    var priced = D.ncs.some(function (n) { return (n[46] || 0) > 0 || (n._w && n._w[7] > 0); });
+    document.getElementById('foot4').textContent = S('foot4', { sh: num(SET.semaine_fermeture), rp: rate(who.production, cp.rateProd), rq: rate(who.qualite, rs.writing),
+      rm: rate(who.me, rs.support), re: rate(cp.rateEng), pv: S(priced ? 'footPart1' : 'footPart0') });
     ['nq', 'pq', 'kq', 'wq', 'cq', 'rq', 'whQ'].forEach(function (id) { var q = document.getElementById(id); q.placeholder = S('search'); q.setAttribute('aria-label', S('search')); });
     document.getElementById('lFr').setAttribute('aria-pressed', String(G.lang === 'fr'));
     document.getElementById('lEn').setAttribute('aria-pressed', String(G.lang === 'en'));

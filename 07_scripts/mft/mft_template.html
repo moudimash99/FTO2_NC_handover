@@ -260,6 +260,8 @@ var D = JSON.parse(document.getElementById('mft-data').textContent);   // the da
   // the pages' settings, from config/ through the backend (fto2/reference.py page_settings)
   var SET = D.settings;
   window.FTO2_ALARM_P = SET.alarmes;   // the alarm settings, read by the alarm block below (config/3_alarmes.csv)
+  // the year followed (config/2_parametres.csv, annee): the weeks of the production volume and of the alarms are its weeks
+  var YEAR = String(SET.annee || String(D.to).slice(0, 4)); window.FTO2_YEAR = +YEAR;
   // the dashboard's categories and colours (config/2_categories.csv) and line colours (config/2_lignes.csv)
   var CATS = SET.categories.filter(function (c) { return c.couleur; }).map(function (c) { return c.nom; });
   var CATC = {}; SET.categories.forEach(function (c) { if (c.couleur) CATC[c.nom] = 'var(--c' + c.couleur + ')'; });
@@ -318,7 +320,7 @@ var D = JSON.parse(document.getElementById('mft-data').textContent);   // the da
     'Pas de référence': 'No reference', 'Date de début à saisir': 'Start date to enter', ' depuis {n} sem.': ' for {n} wk',
     ' · fermeture, non comptée': ' · shutdown, not counted', ' · en cours, non comptée': ' · in progress, not counted', 'moyenne 4 sem. : {v}': '4-wk average: {v}', 'objectif {v}': 'target {v}',
     'Action': 'Action', 'Le problème suivi, semaine par semaine': 'The problem followed, week by week', 'défauts par semaine': 'defects per week', 'moyenne glissante 4 sem.': '4-wk rolling average',
-    'référence (8 sem. avant)': 'reference (8 wk before)', 'objectif −30 %': 'target −30%', 'Réf.': 'Ref.', '(début de l’analyse)': '(analysis start)', 'Objectif': 'Target',
+    'référence (8 sem. avant)': 'reference (8 wk before)', 'objectif −{p} %': 'target −{p}%', 'Réf.': 'Ref.', '(début de l’analyse)': '(analysis start)', 'Objectif': 'Target',
     '{n} sem. sur 4': '{n} wk of 4', 'Actuel': 'Current', 'tenu {n} sem.': 'held {n} wk', 'quelqu’un': 'someone',
     '{n} actions': '{n} actions', '{n} action': '{n} action', '{n} à l’objectif': '{n} on target', '{n} en hausse': '{n} rising',
     'Les actions apparaissent ici quand la page est ouverte dans Claude par une personne connectée.': 'Actions show here when the page is opened in Claude by a signed-in person.',
@@ -435,7 +437,7 @@ var D = JSON.parse(document.getElementById('mft-data').textContent);   // the da
   // weeks of low production are left out too (holidays: the line's MSN that week, from the production plan, under 60 % of its usual
   // week), so that a period after the summer is not compared with August
   var TYP = {};
-  function volOf(i) { var V = D.vol, w = WEEKS[i]; if (!V || !w || w.slice(0, 4) !== '2026') return null;
+  function volOf(i) { var V = D.vol, w = WEEKS[i]; if (!V || !w || w.slice(0, 4) !== YEAR) return null;
     var ls = S.line === 'all' ? Object.keys(V) : V[S.line] ? [S.line] : []; if (!ls.length) return null;
     return ls.reduce(function (t, l) { return t + (V[l][+w.slice(6) - 1] || 0); }, 0); }
   function lowWeek(i) {
@@ -445,7 +447,7 @@ var D = JSON.parse(document.getElementById('mft-data').textContent);   // the da
   }
   // how far back the reference goes (Mohammad, 2 Nov): a week against the 4 weeks before, 1 month (4 weeks) against the 3 months before
   // (13 weeks), 3 months (13 weeks) against the 12 months before (52 weeks); a custom period against as many weeks as it has (4 at least).
-  // The data start in January 2026: early in the year the reference holds the weeks there are, and says which.
+  // The data start in January of the year followed: early in the year the reference holds the weeks there are, and says which.
   var REFN = SET.mft_fenetres;   // config/2_reglages_pages.csv
   function refWeeks() { var out = [], n = REFN[S.pm] || Math.max(4, S.per); for (var k = per()[0] - 1; k >= 0 && out.length < n; k--) if (valid(k) && !lowWeek(k)) out.unshift(k); return out; }
   function refLab(ws) {   // the weeks in runs, a gap showing the closure weeks left out: 'S29–S31, S35'
@@ -680,7 +682,7 @@ var D = JSON.parse(document.getElementById('mft-data').textContent);   // the da
     [['analysisStart', 'Analyse'], ['actionStart', 'Action']].forEach(function (m) { if (!a[m[0]]) return; var i = WIDX[isoWeek(a[m[0]])], j = ws.indexOf(i); if (j < 0) return;
       g += '<line x1="' + (ml + j * bw).toFixed(1) + '" x2="' + (ml + j * bw).toFixed(1) + '" y1="' + (mt - 6) + '" y2="' + (H - mb) + '" stroke="var(--ink)" stroke-width="1.2"/><text x="' + (ml + j * bw + 4).toFixed(1) + '" y="' + (mt - 6 + 9) + '" class="ink b">' + esc(T(m[1])) + '</text>'; });
     return '<svg width="' + W + '" height="' + H + '" viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="' + esc(T('Le problème suivi, semaine par semaine')) + '">' + g + '</svg>' +
-      '<div class="key"><span><i style="background:' + col + ';opacity:.5"></i>' + esc(T('défauts par semaine')) + '</span><span><i class="ln" style="background:var(--ink)"></i>' + esc(T('moyenne glissante 4 sem.')) + '</span><span><i class="dash"></i>' + esc(T('référence (8 sem. avant)')) + '</span><span><i class="dot"></i>' + esc(T('objectif −30 %')) + '</span></div>';
+      '<div class="key"><span><i style="background:' + col + ';opacity:.5"></i>' + esc(T('défauts par semaine')) + '</span><span><i class="ln" style="background:var(--ink)"></i>' + esc(T('moyenne glissante 4 sem.')) + '</span><span><i class="dash"></i>' + esc(T('référence (8 sem. avant)')) + '</span><span><i class="dot"></i>' + esc(T('objectif −{p} %', { p: Math.round(SET.action_baisse * 1000) / 10 })) + '</span></div>';
   }
   function kpiText(o) {
     if (o.st === 'none' || o.st === 'nostart' || o.st === 'noref') return '';
@@ -849,7 +851,7 @@ var D = JSON.parse(document.getElementById('mft-data').textContent);   // the da
   function alCompute() {
     var V = D.vol; if (!V) return null;
     var wi = S.week; if (PARTIAL && wi === NW - 1) wi--;
-    var wk = WEEKS[wi] || '', last = wk.slice(0, 4) === '2026' ? +wk.slice(6) - 1 : -1, key = [S.ph, last, ACTIONS.length, ACTIONS.map(function (a) { return a.id + a.status + a.actionStart; }).join()].join('|');
+    var wk = WEEKS[wi] || '', last = wk.slice(0, 4) === YEAR ? +wk.slice(6) - 1 : -1, key = [S.ph, last, ACTIONS.length, ACTIONS.map(function (a) { return a.id + a.status + a.actionStart; }).join()].join('|');
     if (key === AL.sigK) return AL.res;
     var items = {}, planes = {}, cnt = { rca: {}, code: {} }, w0 = 53, z = function () { var a = []; for (var i = 0; i < 53; i++) a.push(0); return a; }, ME = D.msnEnd || {};
     function it(line, lv, v, hist) { var k = line + '|' + lv + '|' + v; return items[k] || (items[k] = { key: k, line: line, lv: lv, v: v, w: z(), e: V[line], n: [], d: [], hist: !!hist }); }

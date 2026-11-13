@@ -132,7 +132,7 @@ try {
       var dis = disIn ? rows(disIn).map(function (r) { return [str(r.id), day(r.opened), str(r.line), str(r.station), str(r.work_order), num(r.minutes), int(r.in_block), str(r.reason), str(r.status), str(r.comment)]; })
         .filter(function (a) { return a[0] && a[1]; }) : null;
       return { defects: defects, ncs: ncs, rca: rca, client: client, lt: lt, codes: ref.codes || {}, actions: ref.actions || [], cnqp: cnqp, eqmsn: eq, y25: ref.y25 || null, dis: dis, cx: cx, cables: ref.cables || null, settings: ref.settings,
-        meta: { from: ref.from || '2026-01-01', to: to, aside: { other: [notLiable.length, nlSum] },
+        meta: { from: ref.from || (ref.settings && ref.settings.annee ? ref.settings.annee : to.slice(0, 4)) + '-01-01', to: to, aside: { other: [notLiable.length, nlSum] },
           noLine: ncs.filter(function (a) { var p = String(a[42] || '').trim().toUpperCase(); return (p === 'FTO2' || p === 'FT02') && a[21] === 0; }).length, modelTotal: sum(aec) } };
     }
     /* ===== ADAPTER END ===== */
@@ -142,6 +142,7 @@ try {
     var D = fto2FromTables(nc, def, R.dashboard, null);
     var SET = D.settings, EQMIN = SET.msn_minimum;
     window.FTO2_ALARM_P = SET.alarmes; window.FTO2_PLACEHOLDER = SET.placeholder;
+    window.FTO2_YEAR = +(SET.annee || String(D.meta.from).slice(0, 4));   // the year followed: the alarm engine's weeks
     var PAGE = 'main', G = { lang: 'fr', minor: true };
     var DM = null, GN = [], GD = [], GALLOC = [];   // the made-up data of the review pages: never in Skywise
     function gCost() { return 0; }

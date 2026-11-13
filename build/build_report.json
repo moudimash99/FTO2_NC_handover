@@ -13,7 +13,7 @@
   "disruption_inputs": {
     "mes_disruptions_fto2_2026.csv.gz": 2500
   },
-  "y2025": {
+  "comparison_year": {
     "ncs": 1119,
     "serie": 1119,
     "client": 0,
@@ -21,12 +21,14 @@
     "level3_aec": 376561.55,
     "created_from": "2025-01-03",
     "created_to": "2025-12-23",
+    "year": 2025,
     "serie_SERIE": {
       "ncs": 1000,
       "defects": 3234,
       "level3": 366915.1
     },
-    "deliveries": 343.0
+    "deliveries": 343.0,
+    "deliveries_from": "sheet"
   },
   "labels": {
     "ok": 3489,
@@ -135,9 +137,9 @@
       "ncs": 713,
       "defects": 1463,
       "aleas": 99,
-      "js_kb": 1608
+      "js_kb": 1614
     },
-    "level23_js_kb": 724,
+    "level23_js_kb": 730,
     "slate_functions": {
       "f_fto2_objectifs.js": 52,
       "f_fto2_alarmes.js": 70,

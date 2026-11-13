@@ -9,6 +9,10 @@ The backend works out the MSN built per product and month (on working days) from
 An MSN that reads "#N/A" in the export (an Excel error) takes its MSN, and its planned dates that read "#N/A", from the older
 exports given after the first one (the newest older export wins), matched on line, product and rank.
 
+An aircraft that the export no longer lists because it was delivered (its Départ OTA, real or else planned, is before the new
+export) keeps its row, with its last known dates: the table holds more than the export does, and so gives the deliveries of
+the year before, which the targets start from. A row that left the export before its Départ OTA has left the plan: it goes.
+
 Rows marked 'manuel' in the table are kept (see fto2/everyday_tables.py): to correct an aircraft by hand, change its dates and
 set its source to manuel.
 """
@@ -88,7 +92,9 @@ def main():
     if len(sys.argv) < 2:
         sys.exit(__doc__)
     rows = convert(sys.argv[1], sys.argv[2:])
-    everyday_tables.write(TABLE, rows, key=["ligne", "produit", "msn", "rang"])
+    asof = export_date(sys.argv[1])
+    delivered = lambda r: "" < (r["reel_depart_ota"] or r["prevu_depart_ota"]) < asof   # its build ended before this export
+    everyday_tables.write(TABLE, rows, key=["ligne", "produit", "msn", "rang"], keep=["ligne", "produit", "msn"], keep_if=delivered)
 
 
 if __name__ == "__main__":

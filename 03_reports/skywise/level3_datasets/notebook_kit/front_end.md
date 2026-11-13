@@ -105,11 +105,28 @@ The part of the page that computes without drawing, in eight numbered sections:
 1. **helpers**: read a defect line or an NC, group the NC types, the categories (`CAT_ORDER`, from the settings);
 2. **selection**: the filters (`GF`) and `select()`, which makes the lists of NCs on screen;
 3. **production**: the production plan matched to the selected NCs: MSN built per product and month (`pData`, `pAgg`);
-4. **targets and forecast**: 2025 under the same filters (`y25Sel`), the target line by line (`v2Tgt`), the forecast to
-   December (`v2Series`, `v2Fc`);
+4. **targets and forecast**: the comparison year under the same filters (`y25Sel`), the target line by line (`v2Tgt`), the
+   forecast to December (`v2Series`, `v2Fc`);
 5. **cost explanation**: the minutes and euros of each step of an NC, for "Expliquer le calcul";
 6. **alarms**: what the bell follows (`alCompute`);
 7. and 8. the same results packed as plain data (used only by an optional Slate set-up).
+
+### The year
+
+The page holds no year of its own. The two years come with the settings (`SET.annee`, the year followed, and
+`SET.annee_ref`, the year it is compared with), and are kept at the top of `main()` as two texts, `YEAR` and `PREV`.
+
+- **In the code**, a chart that names a year uses `YEAR` or `PREV`.
+- **In the texts** (`STR`, `GX`, `GSTR`), the years are written `{YEAR}` and `{PREV}`, and the target's percentage `{CUT}`
+  (from `objectif_baisse`). `withYears(...)`, wrapped around each table of texts, writes the real values in once. A new
+  text that names a year: write `{YEAR}` or `{PREV}`, inside a table that `withYears` wraps.
+- **The names** `y25`, `r25`, `v26`... date from the first year followed (2026, compared with 2025): read "25" as the
+  comparison year and "26" as the year followed. `D.y25` is the comparison year's block, whatever the year.
+- **The alarm engine** reads the year from `window.FTO2_YEAR`, set by the page just before it: its week 0 is ISO week 1 of
+  the year followed, and a date outside that year has no week (-1).
+- **The forecast's name** ("Prévision (oct. à déc.)") is made by `fcLeg` from the months the forecast really covers.
+
+So a new year needs no change in the pages: the notebook sends the new year, and everything above follows.
 
 ### What happens when someone clicks
 
@@ -213,6 +230,9 @@ with far more NCs than usual. The settings (weeks, thresholds, how many shown) c
 
 **The MFT page has its own copy of the alarm engine.** If you change one, change the other the same way, or the two pages will
 ring differently.
+
+**Early in the year the bell is quiet.** It compares 4 weeks with the 12 before, inside the year followed: until the year
+has 16 finished weeks (late April) it says "Pas encore assez de semaines pour comparer". This is by design, not a fault.
 
 ## 6. The MFT page's code
 

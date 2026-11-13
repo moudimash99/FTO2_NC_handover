@@ -4,7 +4,7 @@ dataset_labels;fto2_ai_labels;Dataset des étiquettes de cause par ligne de déf
 dataset_ordres;work_order_operation;Opérations des ordres de travail (vide = pas lu)
 dataset_aleas;mes_disruptions;Aléas MES (vide = pas lu)
 postes;data/fto2_station_mapping.csv;Fichier des postes : STATION A320 / Désignations A320, etc.
-liste_gps;data/GPS NC INT_SERIE ELEC 2026 - NC REGISTRE.csv;Registre GPS
+liste_gps;data/GPS NC INT_SERIE ELEC {annee} - NC REGISTRE.csv;Registre GPS de l'année suivie : {annee} est remplacé par l'année (2_parametres.csv)
 liste_gps_lignes_avant_entete;3;Lignes à sauter avant l'en-tête du registre GPS
 liste_gps_colonne_numero;N°  NC / AM / AF;Colonne du numéro de NC, exactement comme dans le fichier (espaces compris)
 liste_gps_colonne_date; Date SAP;Colonne de la date (jj/mm/aaaa), exactement comme dans le fichier (espaces compris)

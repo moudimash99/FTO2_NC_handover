@@ -58,7 +58,8 @@ td.mk { text-align: center; font-size: 13px; }
 <script>
 /*@@HEAD@@*/
 // ---------------------------------------------------------------- the two tables (Slate's queries, or the page's copy) -> the page's data
-// NCs raised at FTO2 (plant FTO2 or FT02) created in 2026, as the MFT page, with their defect lines; the families are set in elzMain.
+// NCs raised at FTO2 (plant FTO2 or FT02) created in the year followed (config/2_parametres.csv, annee: it comes with the settings),
+// as the MFT page, with their defect lines; the families are set in elzMain.
 // Tables: one array per column, or rows.
 function elzFromTables(ncIn, defIn) {
   function rows(t) {
@@ -72,8 +73,9 @@ function elzFromTables(ncIn, defIn) {
   function str(v) { return v == null ? '' : String(v); }
   function tidy(v, n) { return str(v).replace(/\s+/g, ' ').trim().slice(0, n); }
   function id(v) { return str(v).trim().replace(/\.0$/, ''); }
+  var year = ((window.ELZ_REF || {}).settings || {}).annee, since = year ? year + '-01-01' : '';
   var n = rows(ncIn).map(function (r) { return { r: r, c: str(r.created), p: str(r.plant).trim().toUpperCase() }; })
-    .filter(function (x) { return (x.p === 'FTO2' || x.p === 'FT02') && x.c >= '2026-01-01'; });
+    .filter(function (x) { return (x.p === 'FTO2' || x.p === 'FT02') && x.c >= since; });
   n.sort(function (a, b) { return a.c < b.c ? -1 : a.c > b.c ? 1 : 0; });
   var ncs = [], pos = {}, to = '';
   n.forEach(function (x) { var r = x.r, d = x.c.slice(0, 10), k = id(r.nc); pos[k] = ncs.length; if (d > to) to = d;
@@ -165,7 +167,7 @@ function elzMain(D, REF) {
   // the reference: as many working weeks before the period as it has (4 at least), without closure or low-production weeks (the line
   // under 60 % of its usual MSN per week, from the production plan: the summer), compared per week (as the MFT page)
   var TYP = {};
-  function volOf(i) { var V = REF.vol, w = WEEKS[i]; if (!V || !w || w.slice(0, 4) !== '2026') return null;
+  function volOf(i) { var V = REF.vol, w = WEEKS[i]; if (!V || !w || w.slice(0, 4) !== String(SET.annee || w.slice(0, 4))) return null;   // the volume is the year followed's
     var ls = S.line === 'all' ? Object.keys(V) : V[S.line] ? [S.line] : []; if (!ls.length) return null;
     return ls.reduce(function (t, l) { return t + (V[l][+w.slice(6) - 1] || 0); }, 0); }
   function lowWeek(i) {
@@ -327,7 +329,7 @@ function elzMain(D, REF) {
     started = true;
     try {
       var D = elzFromTables(nc, def);
-      if (!D.ncs.length) { var c = Array.isArray(nc) ? Object.keys(nc[0] || {}) : Object.keys(nc || {}); showError('aucune NC FTO2 de 2026 lisible dans q_fto2_nc (colonnes reçues : ' + c.join(', ') + ')'); return; }
+      if (!D.ncs.length) { var c = Array.isArray(nc) ? Object.keys(nc[0] || {}) : Object.keys(nc || {}); showError('aucune NC FTO2 de l’année suivie lisible dans q_fto2_nc (colonnes reçues : ' + c.join(', ') + ')'); return; }
       status(''); elzMain(D, window.ELZ_REF || {});
     } catch (e) { showError((e && e.message) || String(e)); }
   }

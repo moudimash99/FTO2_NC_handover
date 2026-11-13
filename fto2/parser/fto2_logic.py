@@ -25,7 +25,7 @@ SAP_COLUMNS = {
     "liabilite": "liability",                         # plant(s) liable, e.g. [FTO2] (array in Skywise)
 }
 OUR_PLANT = config.parameter("usine")
-PERIOD_START = config.parameter_day("date_debut")    # first creation date counted on the dashboard
+PERIOD_START = config.first_day()    # first creation date counted on the dashboard: 1 January of the year followed
 
 # RCA names shown on the charts: parser code -> name shown (config/2_causes_noms.csv).
 RCA_NAMES, _ = config.mapping("2_causes_noms.csv", "code_parseur", "nom")

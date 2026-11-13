@@ -2,7 +2,8 @@
 
   - every table of config/ is listed in config/lisez_moi.csv, and every table listed there exists;
   - every table of config/ is read by the code (a table nobody reads would mislead whoever edits it);
-  - the backend code holds no business value that belongs in config/ (rates, plant codes, start date, target cut...).
+  - the backend code holds no business value that belongs in config/ (rates, plant codes, the year, target cut...);
+  - the year followed is one line of config/2_parametres.csv, and the dates tied to it follow.
 
     python3 -m unittest discover -s tests -t .
 """
@@ -18,8 +19,12 @@ CODE = [p for p in glob.glob(os.path.join(ROOT, "fto2", "**", "*.py"), recursive
        [os.path.join(ROOT, "build", "build_all.py"), os.path.join(ROOT, "07_scripts", "mft", "build_mft.py"),
         os.path.join(ROOT, "07_scripts", "mft", "build_mft_slate.py")] + glob.glob(os.path.join(ROOT, "scripts", "*.py"))
 # values that live in config/ and must not be typed again in the backend code (the parser's text rules excepted)
-BUSINESS_VALUES = [r'"FTO2"', r"'FTO2'", r'"FT02"', r"'FT02'", r'"2026-01-01"', r"'2026-01-01'", r"\b123\.0?\b", r"\b78\.16\b",
-                   r"\b107\.0?\b", r"\b76\.0\b", r"\b0\.75\b"]
+BUSINESS_VALUES = [r'"FTO2"', r"'FTO2'", r'"FT02"', r"'FT02'", r"\b123\.0?\b", r"\b78\.16\b",
+                   r"\b107\.0?\b", r"\b76\.0\b", r"\b0\.75\b",
+                   r"\b20[2-9]\d\b"]   # a year: the code takes it from config.year() / config.comparison_year()
+# lines that may name a year: an example in a message, the fixed date of the files inside the installation zip
+YEAR_ALLOWED = ["is not a date (write it as", "is not a year (write it with four digits", "the file name must end with its date",
+                '"createdAt"']
 ALLOWED = {os.path.join(ROOT, "fto2", "parser", "nc_defect_parser.py")}   # expert text-reading rules, listed in the index
 
 
@@ -52,7 +57,8 @@ class Index(unittest.TestCase):
         for p in glob.glob(os.path.join(config.folder(), "*.csv")):
             name = os.path.basename(p)
             if name != "lisez_moi.csv":
-                self.assertIn(name, code, "%s is not read by the code" % name)
+                by_year = re.sub(r"_(19|20)\d\d(?=[_.])", "_%d", name)   # a year's table is read by a name made from the year
+                self.assertTrue(name in code or by_year in code, "%s is not read by the code" % name)
 
 
 class NoValuesInCode(unittest.TestCase):
@@ -62,11 +68,59 @@ class NoValuesInCode(unittest.TestCase):
             if path in ALLOWED:
                 continue
             text = _code(path)
+            lines = text.splitlines()
             for pat in BUSINESS_VALUES:
                 for m in re.finditer(pat, text):
                     line = text[:m.start()].count("\n") + 1
+                    if any(a in lines[line - 1] for a in YEAR_ALLOWED):
+                        continue
                     found.append("%s:%d %s" % (os.path.relpath(path, ROOT), line, m.group(0)))
         self.assertEqual(found, [], "values that belong in config/ (move them there):\n" + "\n".join(found))
+
+
+class Year(unittest.TestCase):
+    """The year followed: config/2_parametres.csv, annee."""
+
+    def setUp(self):
+        config.parameter("usine")   # reads the table once
+        self.values = config._PARAMS["2_parametres.csv"]
+        self.kept = dict(self.values)
+
+    def tearDown(self):
+        self.values.clear()
+        self.values.update(self.kept)
+
+    def test_dates_follow_the_year(self):
+        self.values.update(annee="2027", annee_comparaison="")
+        self.assertEqual((config.year(), config.comparison_year()), (2027, 2026))
+        self.assertEqual((config.first_day(), config.year_end(), config.aleas_since()), ("2027-01-01", "2028-01-01", "2026-12-01"))
+
+    def test_comparison_year_can_be_named(self):
+        self.values.update(annee="2027", annee_comparaison="2025")
+        self.assertEqual(config.comparison_year(), 2025)
+        self.values.update(annee_comparaison="2027")
+        with self.assertRaises(config.ConfigError) as e:
+            config.comparison_year()
+        self.assertIn("must be before the year followed", str(e.exception))
+
+    def test_a_wrong_year_says_so(self):
+        self.values.update(annee="26")
+        with self.assertRaises(config.ConfigError) as e:
+            config.year()
+        self.assertIn("2_parametres.csv, annee: '26' is not a year", str(e.exception))
+
+    def test_settings_written_before_the_line_existed(self):
+        del self.values["annee"]
+        self.values["date_debut"] = "2026-01-01"   # the former start date gives the year
+        self.assertEqual((config.year(), config.first_day()), (2026, "2026-01-01"))
+        self.values["date_debut"] = "01/01/2026"   # as Excel saves it
+        self.assertEqual(config.year(), 2026)
+
+    def test_an_empty_year_is_the_current_year(self):
+        import datetime as dt
+        self.values.update(annee="")
+        self.values.pop("date_debut", None)
+        self.assertEqual(config.year(), dt.date.today().year)
 
 
 if __name__ == "__main__":

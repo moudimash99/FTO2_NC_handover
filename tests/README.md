@@ -6,6 +6,7 @@ Run them after any change, from the repository folder.
 |---|---|---|
 | Rules, settings, cost settings | `python3 -m unittest discover -s tests -t .` | seconds |
 | The Skywise notebook, rehearsed on the laptop | `python3 -I tests/notebook_rehearsal.py` | 1 min |
+| The same run and the pages in another year | see "Another year" below | 3 min |
 | Every number of the pages against the reference | see below | 30 min |
 | The Slate functions, run as Slate runs them | part of the first line (`tests/test_slate_functions.py`) | seconds |
 | The Skywise page with the Slate functions, every number | see the end | 25 min |
@@ -30,6 +31,26 @@ python3 -I tests/snapshot/compare.py tests/golden /tmp/new
 
 A change that is meant to change a number: check the differences are the expected ones, then make the new snapshot
 the reference (copy `/tmp/new/*` into `tests/golden/`) in the same commit, and say why in the commit message.
+
+## Another year
+
+The year followed is one line of `config/2_parametres.csv` (`annee`). Two checks keep it so:
+
+- `tests/test_config.py` fails if a year is typed in the backend code;
+- the rehearsal below runs the notebook and opens the pages in a year the data was never in.
+
+```
+python3 -I tests/notebook_rehearsal.py  /tmp/this_year
+python3 -I tests/next_year_rehearsal.py /tmp/next_year
+node tests/next_year_page.js /tmp/this_year /tmp/next_year
+```
+
+`next_year_rehearsal.py` moves the laptop's data 53 weeks later (same weekdays, same week numbers), into 2027, with one
+line of the settings changed, and checks that every NC comes out as in 2026, one year later, with the production volume and
+the comparison year following. `next_year_page.js` opens the dashboard and the MFT page of both folders and checks that the
+second names the right years everywhere, counts the same NCs, and rings the same alarms.
+
+Run them after any change that touches dates, weeks, the production plan or the pages' texts.
 
 ## The Skywise page with the Slate functions
 

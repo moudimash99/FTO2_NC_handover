@@ -1,9 +1,7 @@
 nom;valeur;description
 usine;FTO2;Usine suivie : ses NC, et celles des autres usines où elle est responsable
 usines_maison;FTO2|FT02;Codes de l'usine dans les données (les deux orthographes) : une NC émise ici est « Série »
-date_debut;2026-01-01;Première date de création comptée (AAAA-MM-JJ)
-annee_listes_manuelles;2026;Les NC des listes GPS / Test datées de cette année ou après sont recherchées si la sélection ne les a pas
-debut_ordres_et_aleas;2025-12-01;Les ordres de retouche et les aléas sont lus à partir de cette date (AAAA-MM-JJ)
+annee;2026;Année suivie par les pages : les NC créées cette année-là, son plan de production, ses objectifs. Chaque mois de janvier : écrire la nouvelle année
+annee_comparaison;;Année à laquelle l'année suivie est comparée (objectifs, « à la même date »). Vide = l'année d'avant
 garder_anciennes_sorties;oui;oui tant que l'ancienne app Slate est utilisée : le notebook écrit aussi ses 4 anciennes tables
 limite_nc;;Vide = toutes les NC. Un nombre = seulement les N plus récentes (l'ancienne limite était 1000)
-annee_comparaison;2025;Année de comparaison (objectifs, « 2025 à la même date ») : ses NC sont lues dans Skywise

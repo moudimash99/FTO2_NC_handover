@@ -15,7 +15,8 @@ function fto2RefBlocks(v) {
 }
 
 // ---------------------------------------------------------------- the two Slate tables -> the page's data
-// As 07_scripts/mft/build_mft.py data() does from the CSV files: NCs raised at FTO2 (plant FTO2 or FT02) created in 2026, their
+// As 07_scripts/mft/build_mft.py data() does from the CSV files: NCs raised at FTO2 (plant FTO2 or FT02) created in the year
+// followed (config/2_parametres.csv, annee: it comes with the settings), their
 // defect lines, values numbered in dictionaries. Tables as Slate gives them (one array per column) or as rows.
 function mftFromTables(ncIn, defIn, R) {
   function rows(t) {
@@ -41,8 +42,9 @@ function mftFromTables(ncIn, defIn, R) {
   var keys = ['line', 'phase', 'msn', 'station', 'where', 'cat', 'rca', 'sub', 'code', 'fin', 'prod'], dic = {}, idx = {};
   keys.forEach(function (k) { dic[k] = []; idx[k] = {}; });
   function code(k, v) { v = tidy(v, 120); if (!(v in idx[k])) { idx[k][v] = dic[k].length; dic[k].push(v); } return idx[k][v]; }
+  var year = R.settings && R.settings.annee, since = year ? year + '-01-01' : '';
   var n = rows(ncIn).map(function (r) { return { r: r, created: str(r.created), plant: str(r.plant).trim().toUpperCase() }; })
-    .filter(function (x) { return (x.plant === 'FTO2' || x.plant === 'FT02') && x.created >= '2026-01-01'; });
+    .filter(function (x) { return (x.plant === 'FTO2' || x.plant === 'FT02') && x.created >= since; });
   n.sort(function (a, b) { return a.created < b.created ? -1 : a.created > b.created ? 1 : 0; });
   var ncs = [], pos = {}, to = '';
   n.forEach(function (x) { var r = x.r, c = x.created.slice(0, 10), k = id(r.nc); pos[k] = ncs.length; if (c > to) to = c;
@@ -110,6 +112,8 @@ var D = window.FTO2_MFT_D;
   // the pages' settings, from config/ through the backend (fto2/reference.py page_settings)
   var SET = D.settings;
   window.FTO2_ALARM_P = SET.alarmes;   // the alarm settings, read by the alarm block below (config/3_alarmes.csv)
+  // the year followed (config/2_parametres.csv, annee): the weeks of the production volume and of the alarms are its weeks
+  var YEAR = String(SET.annee || String(D.to).slice(0, 4)); window.FTO2_YEAR = +YEAR;
   // the dashboard's categories and colours (config/2_categories.csv) and line colours (config/2_lignes.csv)
   var CATS = SET.categories.filter(function (c) { return c.couleur; }).map(function (c) { return c.nom; });
   var CATC = {}; SET.categories.forEach(function (c) { if (c.couleur) CATC[c.nom] = 'var(--c' + c.couleur + ')'; });
@@ -168,7 +172,7 @@ var D = window.FTO2_MFT_D;
     'Pas de référence': 'No reference', 'Date de début à saisir': 'Start date to enter', ' depuis {n} sem.': ' for {n} wk',
     ' · fermeture, non comptée': ' · shutdown, not counted', ' · en cours, non comptée': ' · in progress, not counted', 'moyenne 4 sem. : {v}': '4-wk average: {v}', 'objectif {v}': 'target {v}',
     'Action': 'Action', 'Le problème suivi, semaine par semaine': 'The problem followed, week by week', 'défauts par semaine': 'defects per week', 'moyenne glissante 4 sem.': '4-wk rolling average',
-    'référence (8 sem. avant)': 'reference (8 wk before)', 'objectif −30 %': 'target −30%', 'Réf.': 'Ref.', '(début de l’analyse)': '(analysis start)', 'Objectif': 'Target',
+    'référence (8 sem. avant)': 'reference (8 wk before)', 'objectif −{p} %': 'target −{p}%', 'Réf.': 'Ref.', '(début de l’analyse)': '(analysis start)', 'Objectif': 'Target',
     '{n} sem. sur 4': '{n} wk of 4', 'Actuel': 'Current', 'tenu {n} sem.': 'held {n} wk', 'quelqu’un': 'someone',
     '{n} actions': '{n} actions', '{n} action': '{n} action', '{n} à l’objectif': '{n} on target', '{n} en hausse': '{n} rising',
     'Les actions apparaissent ici quand la page est ouverte dans Claude par une personne connectée.': 'Actions show here when the page is opened in Claude by a signed-in person.',
@@ -285,7 +289,7 @@ var D = window.FTO2_MFT_D;
   // weeks of low production are left out too (holidays: the line's MSN that week, from the production plan, under 60 % of its usual
   // week), so that a period after the summer is not compared with August
   var TYP = {};
-  function volOf(i) { var V = D.vol, w = WEEKS[i]; if (!V || !w || w.slice(0, 4) !== '2026') return null;
+  function volOf(i) { var V = D.vol, w = WEEKS[i]; if (!V || !w || w.slice(0, 4) !== YEAR) return null;
     var ls = S.line === 'all' ? Object.keys(V) : V[S.line] ? [S.line] : []; if (!ls.length) return null;
     return ls.reduce(function (t, l) { return t + (V[l][+w.slice(6) - 1] || 0); }, 0); }
   function lowWeek(i) {
@@ -295,7 +299,7 @@ var D = window.FTO2_MFT_D;
   }
   // how far back the reference goes (Mohammad, 2 Nov): a week against the 4 weeks before, 1 month (4 weeks) against the 3 months before
   // (13 weeks), 3 months (13 weeks) against the 12 months before (52 weeks); a custom period against as many weeks as it has (4 at least).
-  // The data start in January 2026: early in the year the reference holds the weeks there are, and says which.
+  // The data start in January of the year followed: early in the year the reference holds the weeks there are, and says which.
   var REFN = SET.mft_fenetres;   // config/2_reglages_pages.csv
   function refWeeks() { var out = [], n = REFN[S.pm] || Math.max(4, S.per); for (var k = per()[0] - 1; k >= 0 && out.length < n; k--) if (valid(k) && !lowWeek(k)) out.unshift(k); return out; }
   function refLab(ws) {   // the weeks in runs, a gap showing the closure weeks left out: 'S29–S31, S35'
@@ -530,7 +534,7 @@ var D = window.FTO2_MFT_D;
     [['analysisStart', 'Analyse'], ['actionStart', 'Action']].forEach(function (m) { if (!a[m[0]]) return; var i = WIDX[isoWeek(a[m[0]])], j = ws.indexOf(i); if (j < 0) return;
       g += '<line x1="' + (ml + j * bw).toFixed(1) + '" x2="' + (ml + j * bw).toFixed(1) + '" y1="' + (mt - 6) + '" y2="' + (H - mb) + '" stroke="var(--ink)" stroke-width="1.2"/><text x="' + (ml + j * bw + 4).toFixed(1) + '" y="' + (mt - 6 + 9) + '" class="ink b">' + esc(T(m[1])) + '</text>'; });
     return '<svg width="' + W + '" height="' + H + '" viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="' + esc(T('Le problème suivi, semaine par semaine')) + '">' + g + '</svg>' +
-      '<div class="key"><span><i style="background:' + col + ';opacity:.5"></i>' + esc(T('défauts par semaine')) + '</span><span><i class="ln" style="background:var(--ink)"></i>' + esc(T('moyenne glissante 4 sem.')) + '</span><span><i class="dash"></i>' + esc(T('référence (8 sem. avant)')) + '</span><span><i class="dot"></i>' + esc(T('objectif −30 %')) + '</span></div>';
+      '<div class="key"><span><i style="background:' + col + ';opacity:.5"></i>' + esc(T('défauts par semaine')) + '</span><span><i class="ln" style="background:var(--ink)"></i>' + esc(T('moyenne glissante 4 sem.')) + '</span><span><i class="dash"></i>' + esc(T('référence (8 sem. avant)')) + '</span><span><i class="dot"></i>' + esc(T('objectif −{p} %', { p: Math.round(SET.action_baisse * 1000) / 10 })) + '</span></div>';
   }
   function kpiText(o) {
     if (o.st === 'none' || o.st === 'nostart' || o.st === 'noref') return '';
@@ -710,9 +714,10 @@ var D = window.FTO2_MFT_D;
   // Tried and left out: a FIN coming back on several aircraft (as frequent in 2026 as in shuffled data: chance), a new sub-code on
   // 2 aircraft (mostly one-week bursts). Then one line per problem: a sub-code with the same weeks as its cause shows with it
   // ("Inversion (T04)"), a parent gives way to the child carrying 60 % of its rise, stations / places / products / cables join the
-  // problem sharing more than half of their NCs; a problem an action covers says so. Weeks: 0 = ISO week 1 of 2026.
+  // problem sharing more than half of their NCs; a problem an action covers says so. Weeks: 0 = ISO week 1 of the year followed.
   var ALARM = (function () {
     var P = window.FTO2_ALARM_P;   // the alarm settings (config/3_alarmes.csv), set by the page before this block
+    var YEAR = +window.FTO2_YEAR;   // the year followed (config/2_parametres.csv, annee), set by the page before this block
     var LF = [0];
     function lf(n) { for (var i = LF.length; i <= n; i++) LF[i] = LF[i - 1] + Math.log(i); return LF[n]; }
     function tail(x, n, p) {   // P(K >= x) for K binomial (n, p)
@@ -736,12 +741,12 @@ var D = window.FTO2_MFT_D;
       if (x < P.minX || er <= 0 || eb <= 0) return 0;
       return invN(1 - Math.min(Math.max(tail(x, x + b, er / (er + eb)), 1e-12), 1 - 1e-12));
     }
-    function week(iso) {   // '2026-05-14' -> its ISO week, 0 for week 1 of 2026; -1 outside 2026
+    function week(iso) {   // '2026-05-14' -> its ISO week in the year followed, 0 for week 1; -1 outside that year
       var d = new Date(String(iso).slice(0, 10) + 'T00:00:00Z'), dow = (d.getUTCDay() + 6) % 7;
       if (isNaN(d)) return -1;
       d.setUTCDate(d.getUTCDate() - dow + 3);   // the Thursday of the week decides the year
-      if (d.getUTCFullYear() !== 2026) return -1;
-      return Math.floor((d - Date.UTC(2026, 0, 1)) / 6048e5);   // 1 January 2026 is a Thursday
+      if (d.getUTCFullYear() !== YEAR) return -1;
+      return Math.floor((d - Date.UTC(YEAR, 0, 1)) / 6048e5);   // week 1 holds the year's first Thursday
     }
     function lastDone(iso) {   // the last finished week up to that day: its own week if it is a Sunday, else the week before
       var d = new Date(String(iso).slice(0, 10) + 'T00:00:00Z');
@@ -916,7 +921,7 @@ var D = window.FTO2_MFT_D;
   function alCompute() {
     var V = D.vol; if (!V) return null;
     var wi = S.week; if (PARTIAL && wi === NW - 1) wi--;
-    var wk = WEEKS[wi] || '', last = wk.slice(0, 4) === '2026' ? +wk.slice(6) - 1 : -1, key = [S.ph, last, ACTIONS.length, ACTIONS.map(function (a) { return a.id + a.status + a.actionStart; }).join()].join('|');
+    var wk = WEEKS[wi] || '', last = wk.slice(0, 4) === YEAR ? +wk.slice(6) - 1 : -1, key = [S.ph, last, ACTIONS.length, ACTIONS.map(function (a) { return a.id + a.status + a.actionStart; }).join()].join('|');
     if (key === AL.sigK) return AL.res;
     var items = {}, planes = {}, cnt = { rca: {}, code: {} }, w0 = 53, z = function () { var a = []; for (var i = 0; i < 53; i++) a.push(0); return a; }, ME = D.msnEnd || {};
     function it(line, lv, v, hist) { var k = line + '|' + lv + '|' + v; return items[k] || (items[k] = { key: k, line: line, lv: lv, v: v, w: z(), e: V[line], n: [], d: [], hist: !!hist }); }
@@ -1155,9 +1160,9 @@ var D = window.FTO2_MFT_D;
     started = true;
     try {
       var D = window.FTO2_MFT_D = mftFromTables(nc, def, window.FTO2_MFT_REF = R.mft);
-      if (!D.ncs.length) {   // rows arrived but none is a 2026 FTO2 NC: say what came, to fix the query or the state
+      if (!D.ncs.length) {   // rows arrived but none is an FTO2 NC of the year followed: say what came, to fix the query or the state
         var c = Array.isArray(nc) ? Object.keys(nc[0] || {}) : Object.keys(nc);
-        showError('aucune NC FTO2 de 2026 lisible dans q_fto2_nc (colonnes reçues : ' + c.join(', ') + ') / no readable 2026 FTO2 NC in q_fto2_nc (columns received: ' + c.join(', ') + ')');
+        showError('aucune NC FTO2 de l’année suivie lisible dans q_fto2_nc (colonnes reçues : ' + c.join(', ') + ') / no readable FTO2 NC of the year followed in q_fto2_nc (columns received: ' + c.join(', ') + ')');
         return;
       }
       status(''); mftMain();

@@ -45,6 +45,7 @@ try {
     var D = fto2FromTables(nc, def, R.dashboard, null);
     var SET = D.settings, EQMIN = SET.msn_minimum;
     window.FTO2_ALARM_P = SET.alarmes; window.FTO2_PLACEHOLDER = SET.placeholder;
+    window.FTO2_YEAR = +(SET.annee || String(D.meta.from).slice(0, 4));   // the year followed: the alarm engine's weeks
     var PAGE = 'main', G = { lang: 'fr', minor: true };
     var DM = null, GN = [], GD = [], GALLOC = [];   // the made-up data of the review pages: never in Skywise
     function gCost() { return 0; }

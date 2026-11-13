@@ -2,7 +2,7 @@
 
 Families, each counted in NCs (an NC counts once in a family when one of its defect lines belongs to it): Branchement (category
 "Erreur Branchement"), Déverrouillage (category "Déverrouillage"), Câbles (a cable defect: the cable itself to remake or resupply,
-the `cable` column). Scope as the MFT page: NCs raised at FTO2 (plant FTO2 or FT02) created in 2026; line, production type and
+the `cable` column). Scope as the MFT page: NCs raised at FTO2 (plant FTO2 or FT02) created in the year followed; line, production type and
 period are filters in the page.
 
 One template (07_scripts/elizabeth/elizabeth_template.html, the MFT page's look: its styles are copied in at the build), two outputs:
