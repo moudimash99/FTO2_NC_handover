@@ -1,0 +1,10 @@
+{
+  "submission": {
+    "timestamp": "2026-11-16 08:00:01",
+    "msn": "TEST",
+    "produit": "MIP A350",
+    "detection": "Poste",
+    "total_defauts": 2,
+    "texte_sap": "TEST 1 - ligne de test, a supprimer"
+  }
+}
