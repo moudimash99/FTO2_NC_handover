@@ -298,8 +298,8 @@ html, body { margin: 0; background: #f3f5f9; }
 (function (root) {
 "use strict";
 
-// What Slate sees on "Soumettre": the widget state gets {submission: row}, then the event fires.
-// The Slate event handler reads <widget>.state.submission.<column> and writes the row (README).
+// What Slate sees on "Soumettre": the widget state gets submission = row, then the event "submit" fires with the row as
+// its value. In Slate, that event sets a variable with the row, and the action reads the variable (README, section 3).
 // Never type two opening curly braces in this file: Slate would read them as a Handlebars template.
 var CONFIG = { stateKey: "submission", eventName: "submit" };
 
@@ -621,10 +621,11 @@ function sendToSlate(row) {
   if (!sf) return "standalone";
   if (typeof sf.setState !== "function" || typeof sf.triggerEvent !== "function")
     throw new Error("SlateFunctions.setState / triggerEvent introuvables dans ce widget.");
-  var state = {};
-  state[CONFIG.stateKey] = row;
-  sf.setState(state);
-  sf.triggerEvent(CONFIG.eventName);
+  // setState(key, value) in current Slate; one object in older versions
+  if (sf.setState.length >= 2) sf.setState(CONFIG.stateKey, row);
+  else { var state = {}; state[CONFIG.stateKey] = row; sf.setState(state); }
+  // the row travels with the event: the widget's state is not seen by the other widgets
+  sf.triggerEvent(CONFIG.eventName, row);
   return "slate";
 }
 

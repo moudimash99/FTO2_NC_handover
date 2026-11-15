@@ -7,13 +7,15 @@ codes, same FIN suggestions, same SAP text, character for character (`tests/chec
 ```
 operator fills the NC in the widget
       |
-"Soumettre la NC"  ->  widget state = { submission: row }  +  event "submit"
+"Soumettre la NC"  ->  event "submit", with the NC as its value
       |
-your Slate JS function, run on that event  ->  appends the row to nc_writer_dataset
+Slate event: the variable v_submission takes the NC
+      |
+the action of the object "a30 Nc Writer Dataset" reads v_submission  ->  one object per NC
 ```
 
-The widget does not write anything itself: it hands the row over and fires the event. How the
-row reaches the dataset is decided in Slate.
+The widget does not write anything itself: it hands the NC over with the event. The NC reaches Skywise through the
+action, set up in Slate (section 3).
 
 ## 1. Files
 
@@ -47,44 +49,56 @@ open the browser console (F12): the JavaScript did not run.
 
 ## 3. Save the NC
 
-On "Soumettre la NC" the widget calls, in this order:
+On "Soumettre la NC" the widget puts the NC in its state (`submission`) and fires the event `submit` with the NC as its
+value. The state of a Code Sandbox is not seen by the other widgets: the NC leaves the widget with the event.
 
-```js
-SlateFunctions.setState({ submission: row });
-SlateFunctions.triggerEvent("submit");
-```
+In Slate:
 
-In Slate, add a handler on the event `w_nc_writer.submit` that runs your JS function. The row is in
-the widget state, `w_nc_writer.state.submission` (with the usual double curly braces in a Slate
-binding). It has the six columns of `nc_writer_dataset`, same names and same content as the
-Streamlit app, plus two:
+1. **Variable.** In the Variables panel, add `v_submission`, value `{}`.
+2. **Event.** In the Events panel, add an event. Trigger: `w_nc_writer.submit`. Action: `v_submission.set`. Code:
+   `return ` followed by the binding of `slEventValue` (double curly braces) and `;`.
+3. **Action.** Add an Action widget with the action of the object "a30 Nc Writer Dataset". In its default parameters,
+   give each field the binding of `v_submission.<field>` (double curly braces), text fields between quotes:
 
-| Column | Type | Content |
+   | Field of the action | Binding (inside double curly braces) |
+   |---|---|
+   | Detection | `v_submission.detection` |
+   | Produit | `v_submission.produit` |
+   | Msn | `v_submission.msn` |
+   | Texte Sap | `v_submission.texte_sap` |
+   | Total Defauts | `v_submission.total_defauts` (no quotes: a number) |
+
+   The object's key (Timestamp) is filled by the action itself.
+
+The NC handed over has these fields; the action uses the five above:
+
+| Field | Type | Content |
 |---|---|---|
-| `submission_id` | string | **New.** Unique id, e.g. `NCW-20261020072124-STMEQV`. Lets you spot a row written twice. Drop it if the dataset should keep exactly its six columns. |
-| `timestamp` | string | `YYYY-MM-DD HH:MM:SS`, the operator's clock, as in the Streamlit app |
+| `submission_id` | string | Unique id, e.g. `NCW-20261020072124-STMEQV` |
+| `timestamp` | string | `YYYY-MM-DD HH:MM:SS`, the operator's clock. Not stored today: the object's Timestamp is the action's id |
 | `msn` | string | as typed |
 | `produit` | string | from the list, or the typed value for "Autre" |
 | `detection` | string | idem |
 | `total_defauts` | integer | sum of the quantities |
 | `texte_sap` | string | the full text shown on the review screen, with its line breaks |
-| `defauts_json` | string | **New.** The defects as structured data (code, sub-code, CDVE, FIN, quantity, severity, line), as JSON text. Lets the pipeline read the defects without parsing the text. Drop it if not wanted. |
+| `defauts_json` | string | The defects as structured data (code, sub-code, CDVE, FIN, quantity, severity, line), as JSON text |
 
-The names of the state key and the event are in `CONFIG` at the top of `nc_writer.js`.
+The names of the state key and the event are in `CONFIG` at the top of `nc_writer.js`. The widget calls
+`SlateFunctions.setState("submission", nc)` (one object in older Slate versions), then
+`SlateFunctions.triggerEvent("submit", nc)`.
 
 ## 4. Check it works
 
 1. In Slate preview, fill an NC with two defects and press **Soumettre la NC**.
-2. The widget shows "NC transmise à Slate (NCW-…)" and the text.
-3. The row appears in `nc_writer_dataset`.
+2. The widget shows "NC transmise à Slate (NCW-…)" and the text; the action's form shows the NC.
+3. Press the action's Submit. A new object exists, with the MSN typed.
+
+The steps were first checked with the test box of `test_action/` (values written by code, the same event and variable).
 
 If the widget shows **"Envoi impossible : SlateFunctions.setState / triggerEvent introuvables"**,
 your Slate version names these two functions differently. They are used in one place only,
 `sendToSlate()` in `nc_writer.js`. The NC is not lost when this happens: the text stays on screen with a "Copier"
 button.
-
-Note from Palantir's community forum: `SlateFunctions.setState` only changes the widget's own
-state; Slate reacts to the **event**. That is why the widget does both, state first, then event.
 
 ## 5. Differences from the Streamlit app
 

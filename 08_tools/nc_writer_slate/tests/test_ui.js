@@ -11,10 +11,17 @@ const { chromium } = require(process.env.PW_CORE || "playwright-core");
 const PAGE = "file://" + path.join(__dirname, "..", "nc_writer_standalone.html");
 const SHOTS = process.env.SHOTS;  // optional folder for screenshots
 
+// as the Slate in use: setState(key, value), triggerEvent(name, value)
 const FAKE_SLATE = `window.__calls = [];
   window.SlateFunctions = {
+    setState: function (k, v) { window.__calls.push(["setState", k, JSON.parse(JSON.stringify(v))]); },
+    triggerEvent: function (e, v) { window.__calls.push(["triggerEvent", e, JSON.parse(JSON.stringify(v))]); }
+  };`;
+// an older Slate: setState takes one object
+const OLD_SLATE = `window.__calls = [];
+  window.SlateFunctions = {
     setState: function (s) { window.__calls.push(["setState", JSON.parse(JSON.stringify(s))]); },
-    triggerEvent: function (e) { window.__calls.push(["triggerEvent", e]); }
+    triggerEvent: function (e, v) { window.__calls.push(["triggerEvent", e]); }
   };`;
 const BROKEN_SLATE = `window.SlateFunctions = { setState: function () {} };`;
 
@@ -144,9 +151,10 @@ async function fullFlow(browser) {
 
   const calls = await page.evaluate(() => window.__calls);
   assert.strictEqual(calls.length, 2);
-  assert.strictEqual(calls[0][0], "setState");
-  assert.deepStrictEqual(calls[1], ["triggerEvent", "submit"]);
-  const row = calls[0][1].submission;
+  assert.deepStrictEqual(calls[0].slice(0, 2), ["setState", "submission"]);
+  assert.deepStrictEqual(calls[1].slice(0, 2), ["triggerEvent", "submit"]);
+  const row = calls[0][2];
+  assert.deepStrictEqual(calls[1][2], row, "the event carries the row");
   assert.deepStrictEqual(Object.keys(row), ["submission_id", "timestamp", "msn", "produit", "detection", "total_defauts", "texte_sap", "defauts_json"]);
   assert.strictEqual(row.msn, "2160");
   assert.strictEqual(row.total_defauts, 4);
@@ -183,6 +191,24 @@ async function standalone(browser) {
   await page.close();
 }
 
+async function oldSlate(browser) {
+  const { page, errors } = await open(browser, OLD_SLATE);
+  await header(page, "1", "Poste");
+  await act(page, "add-defect");
+  await page.click('[data-act="pick-nature"][data-code="Q16"]');
+  await page.click('[data-act="pick-object"][data-sub="Q16-001"]');
+  await act(page, "save-defect");
+  await act(page, "finish");
+  await act(page, "submit");
+  const calls = await page.evaluate(() => window.__calls);
+  assert.strictEqual(calls[0][0], "setState");
+  assert.strictEqual(calls[0][1].submission.msn, "1");
+  assert.deepStrictEqual(calls[1], ["triggerEvent", "submit"]);
+  assert.match(await text(page, ".ok"), /NC transmise à Slate/);
+  assert.deepStrictEqual(errors, []);
+  await page.close();
+}
+
 async function brokenSlate(browser) {
   const { page } = await open(browser, BROKEN_SLATE);
   await header(page, "1", "Poste");
@@ -203,6 +229,8 @@ async function brokenSlate(browser) {
   try {
     const row = await fullFlow(browser);
     console.log("ok   full flow in a fake Slate; Slate receives:\n" + JSON.stringify(row, null, 2));
+    await oldSlate(browser);
+    console.log("ok   older Slate (setState with one object)");
     await standalone(browser);
     console.log("ok   outside Slate: warning + CSV download");
     await brokenSlate(browser);

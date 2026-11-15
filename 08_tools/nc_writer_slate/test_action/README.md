@@ -93,6 +93,7 @@ Checks that nobody has to press the action's button.
 ## Then: the real NC writer
 
 Replace the HTML, CSS and JavaScript of the widget by `nc_writer.html`, `nc_writer.css` and `nc_writer.js` (the folder
-above). Same widget name, same event, same six fields: nothing else changes.
+above). Keep the widget's name, its event `submit`, the variable `v_submission`, the event that fills it and the action:
+nothing else changes. Fill an NC, press **Soumettre la NC**: the action's form shows the NC; press its Submit.
 
-Afterwards, delete the test objects (Msn `TEST`).
+Afterwards, delete the test objects (Msn `TEST`, `TEsssST`, `CODE-...`).
