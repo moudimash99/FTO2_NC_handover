@@ -3,7 +3,7 @@
 The NC writer hands each NC over as six values. The action stores them as one object (Timestamp, Msn, Produit, Detection,
 Total Defauts, Texte Sap). These files check that path with test values, before the real NC writer is plugged in.
 
-The value to give to each field of the action (the widget is named `w_nc_writer`):
+The value to give to each field of the action in step 1 (the widget is named `w_nc_writer`):
 
 | Field of the action | Value |
 |---|---|
@@ -38,13 +38,57 @@ so they cannot be mistaken for those typed in the State box.
 
 The State box of the editor only holds the starting values: it never shows what the code writes while the page runs.
 
-## Step 3: the event sends the action
+## Step 3: the event fills a variable, the action reads the variable
+
+What the code writes with `setState` stays inside the box: the other widgets only see the values typed in the State box.
+The row leaves the box with the event. Button 2 sends the event `submit` with the row as its value; the event sets a Slate
+variable; the action reads that variable.
+
+**A. The box sends an event named `submit`**
+
+1. Click the widget `w_nc_writer`, then its tab **Interaction**.
+2. In **Events**, replace `["event1"]` by `["submit"]`.
+
+**B. A variable to hold the row**
+
+1. Open the **Variables** panel of the editor.
+2. Add a variable. Name: `v_submission`. Value: `{}`.
+
+**C. An event that fills the variable**
+
+1. Open the **Events** panel of the editor.
+2. Add an event.
+3. Trigger (the event to listen to): `w_nc_writer.submit`. It is in the list once A is done.
+4. Action: `v_submission.set`.
+5. Code: `return {{slEventValue}};`
+
+**D. The action reads the variable**
+
+Click the action widget. In its default parameters, give each field its value:
+
+| Field | Value |
+|---|---|
+| Detection | `"{{v_submission.detection}}"` |
+| Produit | `"{{v_submission.produit}}"` |
+| Msn | `"{{v_submission.msn}}"` |
+| Texte Sap | `"{{v_submission.texte_sap}}"` |
+| Total Defauts | `{{v_submission.total_defauts}}` |
+
+**E. Test**
+
+1. Press **1. Remplir avec les valeurs du code**, then **2. Envoyer l'evenement submit**.
+2. The action's form shows `CODE-...`. Press its submit button.
+3. The new object has Msn `CODE-...`.
+
+If the form stays empty after button 2, replace the code of C by `return {{w_nc_writer.state.submission}};` and try again.
+
+## Step 4: the same event sends the action
 
 Checks that nobody has to press the action's button.
 
-1. In the widget's Interaction tab, put `["submit"]` in Events.
-2. In the Events panel: when `w_nc_writer.submit` happens, submit the action.
-3. Press 1, then **2. Envoyer l'evenement submit**. One more object, with no other click.
+1. In the **Events** panel, add a second event. Trigger: `v_submission.changed` (or `w_nc_writer.submit`). Action: the
+   submit of the action widget.
+2. Press 1, then 2. One more object, with no other click.
 
 ## Then: the real NC writer
 
