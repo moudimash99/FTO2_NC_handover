@@ -4,8 +4,8 @@
 
 A guide is one HTML file here (user_guide.html, settings_guide.html...): a first comment with its title lines, then its
 text as sections (h2, h3, tables, figures). This script adds the cover (a page of its own, not numbered), the contents with
-their page numbers and the print layout (guides.css), and prints the guide to docs/guides/pdf/ with Chromium (render.js). The figures are screenshots of the
-pages built on the laptop, made by screens.js into img/.
+their page numbers and the print layout (guides.css, with the Inter fonts of fonts/), and prints the guide to docs/guides/pdf/
+with Chromium (render.js). The figures are screenshots of the pages built on the laptop, made by screens.js into img/.
 
 The first comment of a source:
 
@@ -21,7 +21,14 @@ The first comment of a source:
     lang: en
     -->
 
-Needs Node with Playwright (as the page checks) and the Python package pypdf.
+A guide can take in a Markdown document of the repository as one chapter, so that the document is written once:
+
+    <!-- md: ../config.md | The settings -->         the file (from this folder), then the chapter's title
+
+The document's own title, its pointer to the other guides and its list of contents are left out; its sections become the
+chapter's sections (the numbers typed in their titles are dropped: the guide numbers them itself).
+
+Needs Node with Playwright (as the page checks), the Python package pypdf, and pandoc when a guide takes in Markdown.
 """
 import html
 import os
@@ -53,6 +60,41 @@ def front(text, name):
         if k not in meta:
             sys.exit("%s: the first comment has no line '%s'" % (name, k))
     return meta, text[m.end():]
+
+
+def markdown(path, title, chapter):
+    """A Markdown document as chapter number `chapter` of a guide (HTML): see the top of this file."""
+    text = read(path)
+    text = re.sub(r"\A\s*# .*\n", "", text)                                                    # its own title
+    text = re.sub(r"(?m)^(The three guides|Les trois guides)\b.*\n(?:.+\n)*\n", "", text)       # the pointer to the other guides
+    text = re.sub(r"(?m)^\*\*(Contents|Sommaire)\*\*\n\n(?:\d+\. .*\n)+\n(?:---\n\n?)?", "", text)   # its list of contents
+    r = subprocess.run(["pandoc", "-f", "gfm", "-t", "html", "--shift-heading-level-by=1", "--wrap=none"], input=text, capture_output=True, text=True)
+    if r.returncode:
+        sys.exit("pandoc failed on %s:\n%s" % (path, r.stderr[-800:]))
+    out = re.sub(r"<(h[1-6])\b[^>]*>", r"<\1>", r.stdout)                        # no ids: the guide makes its own
+    out = re.sub(r"<(h[3-6])>\s*\d+(?:\.\d+)*\.?\s+", r"<\1>", out)            # "3. The run" -> "The run"
+    out = re.sub(r"<h2>", "<h4>", out).replace("</h2>", "</h4>")                  # a second title inside the document
+    out = re.sub(r'<a href="(?!https?:)[^"]*">(.*?)</a>', r"\1", out, flags=re.S)   # links between documents mean nothing in print
+    out = re.sub(r"<(/?)h6>", r"<\1h5>", out)
+    out = re.sub(r"<pre[^>]*><code[^>]*>", "<pre><code>", out)
+    out = out.replace("<table>", '<table class="md">')
+    # "section 3" of the document is section <chapter>.3 of the guide
+    out = re.sub(r"\b([Ss]ections?|parties?) (\d+)\b(?![.\d])", lambda m: "%s %d.%s" % (m.group(1), chapter, m.group(2)), out)
+    return "<h2>%s</h2>\n%s" % (html.escape(title), out)
+
+
+def includes(body, name):
+    """The body with each <!-- md: file | title --> replaced by that document."""
+    out, at, chapter = [], 0, 0
+    for m in re.finditer(r"<!--\s*md:\s*([^|>]+?)\s*\|\s*(.*?)\s*-->", body):
+        before = body[at:m.start()]
+        chapter += len(re.findall(r"<h2(?![^>]*class=\"plain\")", before)) + 1
+        path = os.path.normpath(os.path.join(HERE, m.group(1).strip()))
+        if not os.path.exists(path):
+            sys.exit("%s: document not found: %s" % (name, m.group(1).strip()))
+        out += [before, markdown(path, m.group(2).strip(), chapter)]
+        at = m.end()
+    return "".join(out) + body[at:]
 
 
 def headings(body, depth):
@@ -93,6 +135,8 @@ def cover_html(meta):
 
 def page_html(meta, body, toc, pages=None, with_toc=True):
     css = read(os.path.join(HERE, "guides.css"))
+    foot = ("%s · %s" % (meta["title"], meta["subtitle"])).replace("\\", "\\\\").replace('"', '\\"')
+    css += '\n@page { @bottom-left { content: "%s"; } @bottom-right { content: counter(page) " / " counter(pages); } }\n' % foot
     contents = ""
     if with_toc:
         items = "".join('<li class="l%d"><span class="n">%s</span><a href="#%s">%s</a><span class="dots"></span><span class="pg">%s</span></li>'
@@ -103,13 +147,13 @@ def page_html(meta, body, toc, pages=None, with_toc=True):
             % (meta.get("lang", "en"), html.escape(meta["title"]), html.escape(meta["subtitle"]), css, contents, body))
 
 
-def render(text, pdf, footer):
-    """Print an HTML text to a PDF. The page is written beside the sources so that img/ is found."""
+def render(text, pdf, cover=False):
+    """Print an HTML text to a PDF. The page is written beside the sources so that img/ and fonts/ are found."""
     fd, tmp = tempfile.mkstemp(suffix=".html", dir=HERE, prefix=".guide_")
     try:
         with os.fdopen(fd, "w", encoding="utf-8") as f:
             f.write(text)
-        r = subprocess.run(["node", os.path.join(HERE, "render.js"), tmp, pdf, footer], capture_output=True, text=True)
+        r = subprocess.run(["node", os.path.join(HERE, "render.js"), tmp, pdf] + (["--cover"] if cover else []), capture_output=True, text=True)
         if r.returncode:
             sys.exit("render.js failed:\n" + r.stderr[-1500:])
     finally:
@@ -130,17 +174,17 @@ def page_texts(pdf):
 def build(name):
     src = os.path.join(HERE, name + ".html")
     meta, body = front(read(src), name)
+    body = includes(body, name)
     missing = [m for m in re.findall(r'<img[^>]+src="([^"]+)"', body) if not os.path.exists(os.path.join(HERE, m))]
     if missing:
         sys.exit("%s: figure(s) not found: %s (run: node docs/guides/screens.js)" % (name, ", ".join(sorted(set(missing)))))
     body, toc = headings(body, int(meta.get("depth", "2")))
-    footer = "%s · %s" % (meta["title"], meta["subtitle"])
     os.makedirs(OUT, exist_ok=True)
     pdf = os.path.join(OUT, meta["file"] + ".pdf")
     with tempfile.TemporaryDirectory() as tmp:
         # 1. without the contents: on which page each chapter and section starts
         a = os.path.join(tmp, "a.pdf")
-        render(page_html(meta, body, toc, with_toc=False), a, footer)
+        render(page_html(meta, body, toc, with_toc=False), a)
         texts, at, start = page_texts(a), {}, 0
         for lv, hid, num, text in toc:
             want = plain(num + html.unescape(text))
@@ -150,12 +194,12 @@ def build(name):
             at[hid], start = found, found
         # 2. with the contents: how many pages they take
         b = os.path.join(tmp, "b.pdf")
-        render(page_html(meta, body, toc), b, footer)
+        render(page_html(meta, body, toc), b)
         shift = len(page_texts(b)) - len(texts)
         # 3. the guide, with the page numbers in its contents, behind its cover (a page of its own, not numbered)
         c, g = os.path.join(tmp, "cover.pdf"), os.path.join(tmp, "guide.pdf")
-        render(page_html(meta, body, toc, {hid: str(p + 1 + shift) for hid, p in at.items()}), g, footer)
-        render(cover_html(meta), c, "--cover")
+        render(page_html(meta, body, toc, {hid: str(p + 1 + shift) for hid, p in at.items()}), g)
+        render(cover_html(meta), c, cover=True)
         from pypdf import PdfWriter
         out = PdfWriter()
         out.append(c)
