@@ -1,0 +1,238 @@
+<!--
+title: FTO2 NC dashboard
+subtitle: Access guide: who needs which rights in Skywise, and handing the dashboard over
+kicker: FTO2 · Quality
+file: FTO2_NC_Dashboard_Access_Guide
+for: The owner of the dashboard in Skywise
+version: November 2026
+contents: Contents
+depth: 1
+lang: en
+-->
+
+<h2>What needs access</h2>
+<p class="lead">The dashboard is not one object in Skywise but a chain of five. A person who lacks access to one link of the
+chain sees an empty page or an error. This guide lists the links, says who needs which, and gives the checks to make before
+the dashboard changes hands.</p>
+
+<figure class="keep">
+  <svg viewBox="0 0 860 214" xmlns="http://www.w3.org/2000/svg" style="width:100%;font-family:Inter,Arial,sans-serif">
+    <defs><marker id="ar" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#4a5666"/></marker></defs>
+    <rect x="4" y="30" width="150" height="120" rx="6" fill="#f3f6f9" stroke="#9aa5b3"/>
+    <text x="16" y="52" font-size="12.5" font-weight="700" fill="#1b2430">1 · Source data</text>
+    <text x="16" y="72" font-size="10.5" fill="#4a5666">Non Conformity</text>
+    <text x="16" y="88" font-size="10.5" fill="#4a5666">Work_Order_Operation</text>
+    <text x="16" y="104" font-size="10.5" fill="#4a5666">MES Disruptions</text>
+    <text x="16" y="120" font-size="10.5" fill="#4a5666">fto2_ai_labels</text>
+    <text x="16" y="140" font-size="9.5" fill="#7a8696">owned by others (but the last)</text>
+    <rect x="180" y="30" width="150" height="120" rx="6" fill="#e6f1ed" stroke="#1d6b52"/>
+    <text x="192" y="52" font-size="12.5" font-weight="700" fill="#1b2430">2 · Code Workspace</text>
+    <text x="192" y="72" font-size="10.5" fill="#4a5666">the notebook</text>
+    <text x="192" y="88" font-size="10.5" fill="#4a5666">notebook_kit (the program)</text>
+    <text x="192" y="104" font-size="10.5" fill="#4a5666">data/config (the settings)</text>
+    <text x="192" y="120" font-size="10.5" fill="#4a5666">data (downloaded files)</text>
+    <rect x="356" y="30" width="150" height="120" rx="6" fill="#e6f1ed" stroke="#1d6b52"/>
+    <text x="368" y="52" font-size="12.5" font-weight="700" fill="#1b2430">3 · Four datasets</text>
+    <text x="368" y="72" font-size="10.5" fill="#4a5666">fto2_dash_nc</text>
+    <text x="368" y="88" font-size="10.5" fill="#4a5666">fto2_dash_defects</text>
+    <text x="368" y="104" font-size="10.5" fill="#4a5666">fto2_dash_disruptions</text>
+    <text x="368" y="120" font-size="10.5" fill="#4a5666">fto2_dash_ref</text>
+    <text x="368" y="140" font-size="9.5" fill="#7a8696">written by the notebook</text>
+    <rect x="532" y="30" width="150" height="120" rx="6" fill="#e6f1ed" stroke="#1d6b52"/>
+    <text x="544" y="52" font-size="12.5" font-weight="700" fill="#1b2430">4 · Sync to Postgres</text>
+    <text x="544" y="72" font-size="10.5" fill="#4a5666">the four datasets,</text>
+    <text x="544" y="88" font-size="10.5" fill="#4a5666">schema foundry_sync,</text>
+    <text x="544" y="104" font-size="10.5" fill="#4a5666">same names</text>
+    <rect x="708" y="30" width="148" height="120" rx="6" fill="#1b2430"/>
+    <text x="720" y="52" font-size="12.5" font-weight="700" fill="#fff">5 · Slate application</text>
+    <text x="720" y="72" font-size="10.5" fill="#d9dfe7">the dashboard page</text>
+    <text x="720" y="88" font-size="10.5" fill="#d9dfe7">the MFT page</text>
+    <text x="720" y="104" font-size="10.5" fill="#d9dfe7">queries q_fto2_nc, _def,</text>
+    <text x="720" y="120" font-size="10.5" fill="#d9dfe7">_dis, _ref</text>
+    <line x1="154" y1="90" x2="178" y2="90" stroke="#4a5666" stroke-width="1.4" marker-end="url(#ar)"/>
+    <line x1="330" y1="90" x2="354" y2="90" stroke="#4a5666" stroke-width="1.4" marker-end="url(#ar)"/>
+    <line x1="506" y1="90" x2="530" y2="90" stroke="#4a5666" stroke-width="1.4" marker-end="url(#ar)"/>
+    <line x1="682" y1="90" x2="706" y2="90" stroke="#4a5666" stroke-width="1.4" marker-end="url(#ar)"/>
+    <text x="255" y="176" font-size="10.5" fill="#1d6b52" text-anchor="middle">the person in charge works here</text>
+    <text x="782" y="176" font-size="10.5" fill="#1b2430" text-anchor="middle">the team reads here</text>
+    <text x="430" y="202" font-size="10" fill="#7a8696" text-anchor="middle">In green: what belongs to the dashboard and must have an owner in the team.</text>
+  </svg>
+  <figcaption>The five links of the chain.</figcaption>
+</figure>
+
+<h3>The inventory</h3>
+<p>Fill in this table once, and keep it with this guide: it is what a successor needs first.</p>
+<table>
+  <thead><tr><th style="width:52mm">What</th><th style="width:58mm">Its name in Skywise</th><th>Where it is (project, folder, link)</th></tr></thead>
+  <tbody>
+    <tr><td><b>The Code Workspace</b></td><td>holds <code>fto2_pipeline_notebook.ipynb</code></td><td style="height:9mm"></td></tr>
+    <tr><td><b>The four datasets</b></td><td><code>fto2_dash_nc</code>, <code>fto2_dash_defects</code>, <code>fto2_dash_disruptions</code>, <code>fto2_dash_ref</code></td><td style="height:9mm"></td></tr>
+    <tr><td><b>The labels dataset</b></td><td><code>fto2_ai_labels</code></td><td style="height:9mm"></td></tr>
+    <tr><td><b>The sync to Postgres</b></td><td>schema <code>foundry_sync</code>, source <code>postgate-airbus-2</code></td><td style="height:9mm"></td></tr>
+    <tr><td><b>The Slate application</b></td><td>dashboard page and MFT page</td><td style="height:9mm"></td></tr>
+    <tr><td><b>The guides</b></td><td>user guide, settings guide, technical manual</td><td style="height:9mm"></td></tr>
+  </tbody>
+</table>
+
+<h2>Who needs what</h2>
+<p class="lead">Four roles. Most people are readers; one person is in charge; one person can maintain the code. Give each role to
+a group of people rather than to one name whenever Skywise lets you.</p>
+
+<table>
+  <thead><tr><th style="width:36mm">Role</th><th>Who</th><th>What they do</th></tr></thead>
+  <tbody>
+    <tr><td class="k"><b>Reader</b></td><td>The team, the managers.</td><td>Open the dashboard and the MFT page.</td></tr>
+    <tr><td class="k"><b>Person in charge</b></td><td>One person of the team, and a deputy.</td><td>Run the notebook, save the downloaded files, change the settings
+      (the <i>Settings guide</i>).</td></tr>
+    <tr><td class="k"><b>Maintainer</b></td><td>The person who takes over the code.</td><td>Change the program or the pages (the <i>Technical manual</i>).</td></tr>
+    <tr><td class="k"><b>Owner</b></td><td>At least two people, one of them a manager.</td><td>Give and remove access. Nothing else is asked of them.</td></tr>
+  </tbody>
+</table>
+
+<h3>The rights of each role</h3>
+<table>
+  <thead><tr><th>What</th><th style="width:27mm">Reader</th><th style="width:31mm">Person in charge</th><th style="width:27mm">Maintainer</th></tr></thead>
+  <tbody>
+    <tr><td><b>5 · The Slate application</b></td><td>view</td><td>view</td><td>edit</td></tr>
+    <tr><td><b>3 · The four datasets</b> <code>fto2_dash_…</code></td><td>view</td><td>edit</td><td>edit</td></tr>
+    <tr><td><b>2 · The Code Workspace</b></td><td>none</td><td>edit</td><td>edit</td></tr>
+    <tr><td><b>1 · The labels dataset</b> <code>fto2_ai_labels</code></td><td>none</td><td>view</td><td>edit</td></tr>
+    <tr><td><b>1 · The source data</b>: Non Conformity, Work_Order_Operation, MES Disruptions</td><td>none</td><td>view</td><td>view</td></tr>
+  </tbody>
+</table>
+<div class="note"><span class="t">Two rules that explain most access problems</span>
+<ul>
+  <li><b>A reader needs the application and the four datasets.</b> The page reads the datasets with the rights of the person
+    who opens it. Someone who can open the application but cannot see the datasets gets a page that stays empty.</li>
+  <li><b>The notebook runs with the rights of the person who runs it.</b> That person must be able to read every source and
+    to write the four datasets. The source data is owned by others: access to it is requested from its owners, person by
+    person, and can take days.</li>
+</ul></div>
+
+<h2>Giving access</h2>
+<p class="lead">Access is given on the folder or on the object itself, with the sharing function of Skywise: open the folder that
+holds the object, select it, choose <b>Share</b>, add the person or the group, and choose the role (viewer, editor or
+owner). The simplest set-up is one folder for everything that belongs to the dashboard: sharing the folder shares what it
+holds.</p>
+<p>When someone leaves the team, remove the person from the same places, or from the group that holds these rights. Nothing
+in the dashboard depends on a person's name.</p>
+
+<h3>A new reader</h3>
+<ol class="steps">
+  <li>Give <b>viewer</b> rights on the Slate application.</li>
+  <li>Give <b>viewer</b> rights on the four datasets <code>fto2_dash_…</code> (or on the folder that holds them).</li>
+  <li>Send the link of the dashboard, and the <i>User guide</i>.</li>
+  <li><b>Check:</b> ask the person to open the link. The page must show the date <b>Données au…</b> and figures. An empty
+    page, or a box that names a query, means step 2 is missing.</li>
+</ol>
+
+<h3>A new person in charge</h3>
+<ol class="steps">
+  <li>Give <b>editor</b> rights on the Code Workspace and on the four datasets, and <b>viewer</b> rights on
+    <code>fto2_ai_labels</code> and on the application.</li>
+  <li>Have the person request access to the three sources: <b>Non Conformity</b>, <b>Work_Order_Operation</b>, <b>MES
+    Disruptions</b>. Each dataset's page in Skywise shows who owns it and how to ask. Start early.</li>
+  <li><b>Check, together:</b> the person opens the Code Workspace with their own account, sees the notebook, the folder
+    <code>notebook_kit</code> and the folder <code>data</code> with <code>data/config</code>, and runs the notebook from
+    the first cell to the last. The last lines must list the four tables written.</li>
+  <li><b>Check the end of the chain:</b> a few minutes later, the date <b>Données au…</b> at the top of the dashboard is the
+    day of the latest NC. If the notebook ran but the page did not move, the sync to Postgres did not follow: see the
+    <i>Technical manual</i>.</li>
+  <li>Give the <i>Settings guide</i>.</li>
+</ol>
+<div class="warn"><span class="t">Files changed by one person, seen by the other</span>
+The settings and the downloaded files live inside the Code Workspace. When two people use the workspace, check once that a
+file saved by one is seen by the other: one person changes the description of a line in a settings table and saves; the
+other reopens the workspace and looks. If the change is not there, the workspace keeps a copy per person until the changes
+are saved to the workspace itself (in the workspace: its command to save or synchronise the changes). Agree on who edits,
+and always save that way before leaving the workspace.</div>
+
+<h3>A new maintainer</h3>
+<ol class="steps">
+  <li>Everything of the person in charge, plus <b>editor</b> rights on the Slate application and on
+    <code>fto2_ai_labels</code>.</li>
+  <li><b>Check:</b> the person opens the application in edit mode and sees the four queries and the code of each page.</li>
+  <li>Give the <i>Technical manual</i> and the folder <code>for_developers</code>.</li>
+</ol>
+
+<h2>Before the owner leaves</h2>
+<p class="lead">A dashboard stops the day its only owner's account is closed. Go through this list with the successor at the
+keyboard, not from memory. Allow half a day, and do it at least a week before the departure: the requests for source
+data take time.</p>
+
+<h3>Where things are</h3>
+<ul class="check">
+  <li><b>Nothing is in a personal folder.</b> The workspace, the four datasets, <code>fto2_ai_labels</code> and the
+    application are in a folder of the team's project. What is in a personal folder is moved there (select, <b>Move</b>),
+    and the dashboard is opened once after the move to check that it still shows data.</li>
+  <li><b>The inventory</b> of chapter 1 is filled in.</li>
+  <li><b>The guides and the folder of the handover</b> are stored where the team will find them, and the successor knows
+    where.</li>
+</ul>
+
+<h3>Who owns it</h3>
+<ul class="check">
+  <li><b>Two owners at least</b>, the leaving owner not counted, on the folder, the workspace, the datasets and the
+    application.</li>
+  <li><b>The sync to Postgres</b> of the four datasets does not depend on the leaving account. Look at who created it and
+    whether it runs by itself after each update of the datasets; if it is tied to the leaving account, have the successor
+    create it again under theirs.</li>
+  <li><b>No schedule</b> runs under the leaving account. If the notebook or a dataset is refreshed by a schedule, its owner
+    is changed.</li>
+</ul>
+
+<h3>The successor can do everything</h3>
+<ul class="check">
+  <li>The person in charge has <b>run the notebook</b> with their own account, from the first cell to the last, and the
+    dashboard's date has moved.</li>
+  <li>The person in charge has <b>changed a setting</b> (for example the description of a line), run the notebook, and seen
+    that it was read. The deputy sees the same file.</li>
+  <li>The maintainer has <b>opened the application in edit mode</b>.</li>
+  <li>A reader who never used the dashboard has <b>opened it from the link</b>.</li>
+</ul>
+
+<h3>What stays behind</h3>
+<ul class="check">
+  <li><b>The former application and the former outputs.</b> While the former Slate application is still used, the notebook
+    also writes its four former tables. Once it is retired, set <code>garder_anciennes_sorties</code> to <code>non</code>
+    in <code>data/config/2_parametres.csv</code> and remove the former application.</li>
+  <li><b>What only the leaving owner knows</b> is written down: where the downloaded files come from and who sends them,
+    who to ask for the price of a part, who owns each source.</li>
+</ul>
+
+<h2>When access goes wrong</h2>
+<p class="lead">The symptom tells which link of the chain is missing.</p>
+<table>
+  <thead><tr><th style="width:58mm">What the person sees</th><th style="width:46mm">What is missing</th><th>What to do</th></tr></thead>
+  <tbody>
+    <tr><td>Skywise refuses the link of the dashboard.</td><td>The application (link 5).</td><td>Give viewer rights on the application.</td></tr>
+    <tr><td>The page opens but stays on the loading box, or a box names a query that returned nothing.</td><td>The four datasets (link 3), or
+      the sync (link 4).</td><td>Open the same link yourself. If it works for you: give the person viewer rights on the four datasets. If it fails for
+      you too: the sync or the notebook; see the <i>Technical manual</i>.</td></tr>
+    <tr><td>The page works but its date <b>Données au…</b> is old.</td><td>Nothing: the update was not run.</td><td>The person in charge runs the notebook.</td></tr>
+    <tr><td>The notebook stops at its first step with an error that names a dataset.</td><td>A source (link 1).</td><td>The person who runs it requests access
+      to that dataset from its owner. Until then, another person in charge runs the notebook.</td></tr>
+    <tr><td>The notebook runs to the end, then fails when it writes.</td><td>The four datasets (link 3).</td><td>Give the person editor rights on the four datasets.</td></tr>
+    <tr><td>The notebook stops with a message that names a file and a line.</td><td>Nothing: a typing mistake in a setting.</td><td>Not an access problem. The message
+      says what to correct (the <i>Settings guide</i>).</td></tr>
+    <tr><td>A setting changed by one person is not seen by another.</td><td>Nothing: the change was not saved to the workspace.</td><td>See the box in chapter 3.</td></tr>
+  </tbody>
+</table>
+
+<h2>The list on one page</h2>
+<p class="lead">To print and tick on the day of the handover.</p>
+<ul class="check">
+  <li>Everything is in the team's project, nothing in a personal folder.</li>
+  <li>The inventory of chapter 1 is filled in: workspace, datasets, sync, application, guides.</li>
+  <li>Two owners besides the one who leaves.</li>
+  <li>The readers are a group, or a list that someone else can change.</li>
+  <li>The person in charge and a deputy have editor rights on the workspace and the four datasets.</li>
+  <li>The person in charge has access to Non Conformity, Work_Order_Operation, MES Disruptions and <code>fto2_ai_labels</code>.</li>
+  <li>The person in charge has run the notebook alone, and the dashboard's date has moved.</li>
+  <li>The person in charge has changed a setting and seen it read; the deputy sees the same file.</li>
+  <li>The sync to Postgres and any schedule do not depend on the leaving account.</li>
+  <li>The maintainer can open the application in edit mode and has the folder <code>for_developers</code>.</li>
+  <li>A new reader has opened the dashboard from the link.</li>
+  <li>The former application and the former outputs are retired, or a date is set to do it.</li>
+  <li>The names of the people who send the downloaded files and who own the sources are written down.</li>
+</ul>
