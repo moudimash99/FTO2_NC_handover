@@ -28,9 +28,9 @@ keep up to date. This guide lists them all, and shows how to change each one. No
 </table>
 
 <p>After any change, <b>run the notebook</b> (chapter 6). It reads everything again and rebuilds the dashboard's data.
-If something is wrong in a file or a table, the notebook stops and says, in plain words, <b>which file, which line and what
-to write</b>. Nothing on the dashboard is changed until the notebook has run to the end, so a mistake cannot damage what
-the team sees.</p>
+It starts by checking your files and your tables. If something is wrong in one of them, it stops within seconds and says,
+in plain words, <b>which file, which line and what to write</b>, before it has changed anything: a mistake cannot damage
+what the team sees.</p>
 
 <div class="note"><span class="t">How often</span>
 <ul>
@@ -109,7 +109,7 @@ the team sees.</p>
 exactly as they are: do not open them to tidy them up, the notebook knows their layout.</p>
 
 <table>
-  <thead><tr><th style="width:33mm">File</th><th style="width:50mm">Name to give it</th><th>Keep the old ones?</th><th style="width:42mm">What it feeds</th></tr></thead>
+  <thead><tr><th style="width:31mm">File</th><th style="width:60mm">Name to give it</th><th style="width:33mm">Keep the old ones?</th><th>What it feeds</th></tr></thead>
   <tbody>
     <tr><td><b>Production plan</b><br>the <i>Tableau Avances / Retards</i>, saved as CSV</td><td><code>Avances_Retards_2026-11-03.csv</code><br>The name starts with
       <code>Avances_Retards</code> and ends with the day of the download.</td><td><b>Yes, always.</b> Every export in the folder is read.</td><td>The MSN built per month and per week, so every
@@ -184,8 +184,9 @@ separated by a semicolon.</p>
   </tbody>
 </table>
 <div class="note"><span class="t">Nothing can be broken for good</span>
-<p>The notebook checks every table before it computes anything. If a value is not of the right kind, it stops with a
-message (chapter 8) and the dashboard keeps showing what it showed before. Correct the table and run again.</p></div>
+<p>The first thing the notebook does is read your tables and your files. If a value is not of the right kind, it stops
+within seconds with a message (chapter 8), and the dashboard keeps showing what it showed before. Correct the table and
+run again.</p></div>
 
 <h2>Your six tables</h2>
 <p class="lead">Each section shows the table as it is today, says what each line does, and what changes on the dashboard.</p>
@@ -264,19 +265,19 @@ with these very values (<span class="ui">Expliquer le calcul</span>).</p>
   </tbody>
 </table>
 <table>
-  <thead><tr><th style="width:62mm">Lines</th><th>What they are</th></tr></thead>
+  <thead><tr><th style="width:66mm">Lines</th><th>What they are</th></tr></thead>
   <tbody>
-    <tr><td class="k"><code>taux_production</code>, <code>taux_qualite</code>, <code>taux_me</code>, <code>taux_ingenierie</code></td><td>The four <b>hourly rates</b>, in euros per hour. Change them when the rates are revised.</td></tr>
-    <tr><td class="k"><code>minutes_alerte</code>, <code>minutes_redaction</code>, <code>minutes_redaction_controle_final</code>, <code>minutes_support</code>,
+    <tr><td><code>taux_production</code>, <code>taux_qualite</code>, <code>taux_me</code>, <code>taux_ingenierie</code></td><td>The four <b>hourly rates</b>, in euros per hour. Change them when the rates are revised.</td></tr>
+    <tr><td><code>minutes_alerte</code>, <code>minutes_redaction</code>, <code>minutes_redaction_controle_final</code>, <code>minutes_support</code>,
       <code>minutes_preparation</code>, <code>minutes_recontrole</code></td><td>The <b>time of each step</b> of an NC, in minutes: the operator's alert, writing the NC (longer at final inspection),
       technical support, preparation around the work, re-check and closing.</td></tr>
-    <tr><td class="k"><code>minutes_travail_minimum</code>, <code>minutes_travail_sans_defaut</code>, <code>minutes_defaut_inconnu</code>, <code>minutes_branchement_suivant</code></td>
+    <tr><td><code>minutes_travail_minimum</code>, <code>minutes_travail_sans_defaut</code>, <code>minutes_defaut_inconnu</code>, <code>minutes_branchement_suivant</code></td>
       <td>The <b>work itself</b>: the least it can take, what it takes when no defect line could be read, the time of a defect type the model does not know, and the time of each
       connection error after the first one in the same NC.</td></tr>
     <tr><td class="k"><code>minutes_logistique</code></td><td>Added to the preparation when a part has to be supplied (the NC names a material and its work comes from its rework order).</td></tr>
     <tr><td class="k"><code>facteur_travail_nc_interne</code></td><td>The work of internal NCs is multiplied by this factor.</td></tr>
     <tr><td class="k"><code>forfait_retour_client</code></td><td>A flat amount added to each customer return. 0 until the team sets a figure.</td></tr>
-    <tr><td class="k"><code>minutes_redaction_niveau2</code>, <code>minutes_travail_niveau2</code></td><td>Two averages used by the simpler "level 2" cost shown for comparison.</td></tr>
+    <tr><td><code>minutes_redaction_niveau2</code>, <code>minutes_travail_niveau2</code></td><td>Two averages used by the simpler "level 2" cost shown for comparison.</td></tr>
   </tbody>
 </table>
 <div class="warn"><span class="t">A rate changes the whole year</span>
@@ -383,9 +384,10 @@ everyone, add it to this table.</p></div>
   <li>Read the last lines (below). Then open the dashboard: the date at the top right, <span class="ui">Données au …</span>, is the day of the last NC read.</li>
 </ol>
 <h3>What the last lines say</h3>
-<pre>Year followed: 2026 (compared with 2025)
+<pre>Checking the settings and the downloaded files...
+Year followed: 2026 (compared with 2025)
 …
-✅ FTO2 dashboard tables: 1281 NCs, 3436 defect lines, 107 aléas; level-3 CNQ: 388 000 EUR
+✅ FTO2 dashboard tables: 1281 NCs, 3436 defect lines, 107 aléas; level-3 CNQ: 388215.4 EUR
 NCs created 2026-01-03 to 2026-11-13 | …
 parts: … | 12 materials with no price yet -> fto2_parts_to_price.csv
 ✅ fto2_dash_ref: 13 rows (the pages' reference data)

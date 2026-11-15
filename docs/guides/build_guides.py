@@ -3,8 +3,8 @@
     python3 -I docs/guides/build_guides.py [name ...]        (no name: every guide)
 
 A guide is one HTML file here (user_guide.html, settings_guide.html...): a first comment with its title lines, then its
-text as sections (h2, h3, tables, figures). This script adds the cover, the contents with their page numbers and the print
-layout (guides.css), and prints the guide to docs/guides/pdf/ with Chromium (render.js). The figures are screenshots of the
+text as sections (h2, h3, tables, figures). This script adds the cover (a page of its own, not numbered), the contents with
+their page numbers and the print layout (guides.css), and prints the guide to docs/guides/pdf/ with Chromium (render.js). The figures are screenshots of the
 pages built on the laptop, made by screens.js into img/.
 
 The first comment of a source:
@@ -79,20 +79,26 @@ def headings(body, depth):
     return body, out
 
 
-def page_html(meta, body, toc, pages=None, with_toc=True):
+def cover_html(meta):
+    """The cover, a page of its own with no margin."""
     css = read(os.path.join(HERE, "guides.css"))
     rows = ['<dt>%s</dt><dd>%s</dd>' % (html.escape(k), html.escape(meta[v])) for k, v in
             ((meta.get("label_for", "For"), "for"), (meta.get("label_version", "Version"), "version")) if meta.get(v)]
-    cover = ('<section class="cover"><div class="band"></div><div class="kicker">%s</div><h1>%s</h1><div class="sub">%s</div>'
-             '<dl class="meta">%s</dl></section>' % (html.escape(meta.get("kicker", "")), html.escape(meta["title"]),
-                                                    html.escape(meta["subtitle"]), "".join(rows)))
+    return ('<!doctype html><html lang="%s"><head><meta charset="utf-8"><style>%s @page { margin: 0; } body { margin: 0; }</style></head><body>'
+            '<section class="cover"><div class="band"></div><div class="kicker">%s</div><h1>%s</h1><div class="sub">%s</div>'
+            '<dl class="meta">%s</dl></section></body></html>'
+            % (meta.get("lang", "en"), css, html.escape(meta.get("kicker", "")), html.escape(meta["title"]), html.escape(meta["subtitle"]), "".join(rows)))
+
+
+def page_html(meta, body, toc, pages=None, with_toc=True):
+    css = read(os.path.join(HERE, "guides.css"))
     contents = ""
     if with_toc:
         items = "".join('<li class="l%d"><span class="n">%s</span><a href="#%s">%s</a><span class="dots"></span><span class="pg">%s</span></li>'
                         % (lv, num, hid, html.escape(text), (pages or {}).get(hid, "0")) for lv, hid, num, text in toc)
         contents = '<section class="toc"><h2 class="plain">%s</h2><ol>%s</ol></section>' % (html.escape(meta.get("contents", "Contents")), items)
-    return ('<!doctype html><html lang="%s"><head><meta charset="utf-8"><title>%s · %s</title><style>%s</style></head><body>%s%s<main>%s</main></body></html>'
-            % (meta.get("lang", "en"), html.escape(meta["title"]), html.escape(meta["subtitle"]), css, cover, contents, body))
+    return ('<!doctype html><html lang="%s"><head><meta charset="utf-8"><title>%s · %s</title><style>%s</style></head><body>%s<main>%s</main></body></html>'
+            % (meta.get("lang", "en"), html.escape(meta["title"]), html.escape(meta["subtitle"]), css, contents, body))
 
 
 def render(text, pdf, footer):
@@ -127,7 +133,7 @@ def build(name):
         # 1. without the contents: on which page each chapter and section starts
         a = os.path.join(tmp, "a.pdf")
         render(page_html(meta, body, toc, with_toc=False), a, footer)
-        texts, at, start = page_texts(a), {}, 1
+        texts, at, start = page_texts(a), {}, 0
         for lv, hid, num, text in toc:
             want = re.sub(r"\s+", "", num + html.unescape(text))
             found = next((i for i in range(start, len(texts)) if want in texts[i]), None)
@@ -138,8 +144,17 @@ def build(name):
         b = os.path.join(tmp, "b.pdf")
         render(page_html(meta, body, toc), b, footer)
         shift = len(page_texts(b)) - len(texts)
-        # 3. the guide, with the page numbers in its contents
-        render(page_html(meta, body, toc, {hid: str(p + 1 + shift) for hid, p in at.items()}), pdf, footer)
+        # 3. the guide, with the page numbers in its contents, behind its cover (a page of its own, not numbered)
+        c, g = os.path.join(tmp, "cover.pdf"), os.path.join(tmp, "guide.pdf")
+        render(page_html(meta, body, toc, {hid: str(p + 1 + shift) for hid, p in at.items()}), g, footer)
+        render(cover_html(meta), c, "--cover")
+        from pypdf import PdfWriter
+        out = PdfWriter()
+        out.append(c)
+        out.append(g)
+        out.add_metadata({"/Title": "%s - %s" % (meta["title"], meta["subtitle"]), "/Author": meta.get("kicker", ""), "/Creator": "", "/Producer": ""})
+        with open(pdf, "wb") as f:
+            out.write(f)
     from pypdf import PdfReader
     print("%-24s -> %s (%d pages, %d KB)" % (name, os.path.relpath(pdf, os.path.dirname(os.path.dirname(HERE))), len(PdfReader(pdf).pages), os.path.getsize(pdf) // 1024))
 
