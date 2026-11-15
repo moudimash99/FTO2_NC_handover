@@ -18,10 +18,11 @@ Skywise data (NCs, work orders, aléas)          config/  (the settings, one tab
 ```
 
 - **`config/`**: everything someone may want to change. One `;` table per subject, opens in Excel. The first character of
-  the name is the level: `1_` everyday (anyone), `2_` rules (someone careful), `3_` expert (technical).
+  the name is the group: `0_` data (filled from the downloaded files, or history: not edited), `1_` the manager's settings
+  (year, target, rates, shutdowns, part prices, MFT actions), `2_` rules and names, `3_` expert.
   `config/lisez_moi.csv` lists every table, what it changes and who should edit it.
-- **`scripts/`**: turn a raw file into its everyday table (Avances / Retards, EqMSN, cable tracker, MFT trackers).
-  A row corrected by hand (source = manuel) is kept when the script runs again.
+- **Downloads**: the production plan (exports of the Tableau Avances / Retards) and the cable requests (the cable team's
+  tracker) are read from the files saved beside the notebook as they were downloaded (`fto2/downloads.py`).
 - **`fto2/`**: the backend. One file per subject; the same code runs on the laptop and in the Skywise notebook.
 - **`build/templates/`**: the dashboard page (`dashboard.html`) and its calculations (`model.js`, shared with the optional
   Slate functions).

@@ -1,7 +1,7 @@
 """MFT page for the weekly QLS review: one line at a time, the week's Pareto, a short analysis and the action follow-up.
 
 Reads the dashboard's two tables (05_outputs/fto2_dash_nc.csv, fto2_dash_defects.csv) and the A330 / A350 MFT trackers
-(config/1_actions_mft.csv, written from the trackers by scripts/actions_mft_depuis_suivis.py).
+(config/1_actions_mft.csv).
 Writes 03_reports/FTO2_MFT.html (and build/artifacts/FTO2_MFT.html) from 07_scripts/mft/mft_template.html, its Slate
 version in 03_reports/skywise/mft/ (build_mft_slate.py), and the tracker actions as 05_outputs/mft_actions_seed.json: the page keeps its actions in its own store (seeded once from that
 file); the page itself carries no action.

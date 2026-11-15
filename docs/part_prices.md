@@ -56,7 +56,7 @@ work is costed from its rework order, a logistics time is added to its preparati
 
 | Setting | Table | Value |
 |---|---|---|
-| `minutes_logistique` | `2_cout_parametres.csv` | 15 minutes |
+| `minutes_logistique` | `1_cout_parametres.csv` | 15 minutes |
 | `logistique_seulement_avec_materiel` | `3_cout_avance.csv` | `oui`: only when the NC names a material (a part has to be supplied). `non`: for every NC costed from its rework order |
 
 NCs costed by the model (no usable rework order) are not concerned: their preparation time already includes fetching what

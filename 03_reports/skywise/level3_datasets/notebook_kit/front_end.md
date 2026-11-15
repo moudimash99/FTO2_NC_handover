@@ -255,8 +255,8 @@ One line at a time: the week's Pareto, the analysis, and the follow-up of the MF
 **Where the actions come from:** `1_actions_mft.csv` in the settings, through `ref`. They replace the browser's copy at every
 load. An action typed on the page stays in that browser until someone adds it to the table.
 
-**Its thresholds** ("what goes up", "what goes down", recurring FINs, action targets) come from `2_reglages_pages.csv`
-(the `mft_` and `action_` rows).
+**Its thresholds** ("what goes up", "what goes down", recurring FINs: the `mft_` rows) come from `2_reglages_pages.csv`,
+the action targets (the `action_` rows) from `1_reglages_pages.csv`.
 
 ## 7. The Tableau Elizabeth's code
 

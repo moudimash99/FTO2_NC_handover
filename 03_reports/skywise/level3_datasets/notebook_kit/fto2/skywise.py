@@ -8,6 +8,7 @@ Dataset and Column are passed in (rather than imported here) so that the same ru
 stand-in for Skywise that serves local files (tests/notebook_rehearsal.py).
 
 Steps:
+  0. the settings a person edits and the downloaded files are read once: a mistake stops the run before anything is written
   A. the standard selection: NCs of the plant created in the year followed (config/2_parametres.csv, annee), plus the NCs of
      other plants where the plant is liable; the exclusions and the *_auto columns from the rule tables (fto2/selection.py)
   B. the NCs of the GPS register and the Test list that the selection does not catch, fetched by number
@@ -15,14 +16,15 @@ Steps:
   D. the dashboard's three tables: parser, root-cause labels, rework orders, aléas, cost model -> fto2_dash_nc,
      fto2_dash_defects, fto2_dash_disruptions; plus fto2_lines_to_label.csv for the next labelling pass
   E. the reference data of the three pages (production plan, comparison year, cables, MFT actions, cost settings, cause tree)
-     -> fto2_dash_ref
-All the settings come from data/config/ (2_parametres.csv, 2_sources.csv and the rule tables).
+     -> fto2_dash_ref. The production plan and the cable requests come from the files saved in data/ as they were
+     downloaded (fto2/downloads.py).
+All the settings come from data/config/ (1_parametres.csv, 2_sources.csv and the other tables).
 """
 import time
 
 import pandas as pd
 
-from . import config, manual_lists, reference, selection
+from . import config, downloads, manual_lists, reference, selection
 from .cost import explain
 
 # the columns of the non_conformity dataset the run reads
@@ -123,11 +125,29 @@ def select_ncs(Dataset, Column, mode, missing_ids=()):
     return df.head(int(cap)) if cap else df
 
 
+def check_settings():
+    """Read the settings a person edits and the downloaded files once, before anything is fetched from Skywise or written:
+    a mistake in one of them stops the run here, in a few seconds, with its message and with nothing changed. (The rule
+    tables are checked when the first NCs go through them, also before anything is written.)"""
+    from .cost import params, parts   # noqa: F401   the cost settings are read when the module loads
+    config.year()
+    config.comparison_year()
+    reference.page_settings()        # the target, the opening view, the technical page settings, colours, alarm settings
+    reference.mft_actions_page()     # the MFT actions: ids, kind of problem, dates
+    parts.price_list()               # the part prices
+    asof, recs = reference._production_export()   # the exports of the production plan
+    if asof:
+        reference.working_day_volume(asof, recs)  # ... and the shutdown calendar
+    reference.cable_requests()       # the cable team's tracker
+
+
 def run(Dataset, Column, say=None):
     """The whole run. Returns the three dashboard tables (also written to Skywise)."""
     from . import core   # the data steps (parser, labels, cost model, tables)
     t0 = time.time()
     say = say or (lambda msg: print(f"[{time.time() - t0:6.1f} s] {msg}", flush=True))
+    say("Checking the settings and the downloaded files...")
+    check_settings()
     keep_old = config.parameter_yes("garder_anciennes_sorties")
     since = config.aleas_since() + " 00:00:00"
     plant = config.parameter("usine")
@@ -215,6 +235,7 @@ def run(Dataset, Column, say=None):
     say(f"   {len(raw_year)} NCs")
     stations = station_descriptions(config.parameter("postes", manual_lists.SOURCES))
     y25 = reference.comparison_year(raw_year, stations) if len(raw_year) else None   # 'y25': the block's name for it, whatever the year
+    say("Reference data: production plan, cable requests, MFT actions, settings...")
     eq = reference.eqmsn(prepared["nc"])
     blocks = {"dashboard": reference.dashboard_block(prepared["d"], prepared["nc"], prepared["codes"], y25),
               "mft": reference.mft_block(eq),
@@ -222,6 +243,8 @@ def run(Dataset, Column, say=None):
     ref_t = reference.ref_table(blocks)
     Dataset.get("fto2_dash_ref").write_table(ref_t)
     print("✅ fto2_dash_ref:", len(ref_t), "rows (the pages' reference data)")
+    for line in downloads.report():
+        print("  ", line)
     # the cost explanation of each NC, for the Slate set-up with two functions (03_reports/skywise/level3_datasets/fonctions/):
     # optional, so a missing dataset only prints a note
     try:
@@ -237,5 +260,5 @@ def run(Dataset, Column, say=None):
     import datetime as dt
     if dt.date.today().year > config.year():
         print(f"⚠️ The year followed is {config.year()} and we are in {dt.date.today().year}: the pages show the NCs of {config.year()} only.\n"
-              f"   To start the new year, write it on the line 'annee' of data/config/2_parametres.csv and run the notebook again.")
+              f"   To start the new year, write it on the line 'annee' of data/config/1_parametres.csv and run the notebook again.")
     return nc_t, def_t, dis_t

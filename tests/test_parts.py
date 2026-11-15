@@ -53,6 +53,13 @@ class PriceList(unittest.TestCase):
             parts.part_values(["ABC-1"])
         self.assertIn("it needs a column for the material number", str(e.exception))
 
+    def test_a_number_rounded_by_excel_says_so(self):
+        """Excel shows a long material number as 9,25136E+13 and saves it so: the price would never be found."""
+        self.with_list("materiel;designation;prix_unitaire_eur\n9,25136E+13;platine;10\n")
+        with self.assertRaises(config.ConfigError) as e:
+            parts.part_values(["92513600000200"])
+        self.assertIn("line 2: '9,25136E+13' is a material number that Excel turned into a rounded figure", str(e.exception))
+
 
 class CostModel(unittest.TestCase):
     """The part value and the logistics minutes in the cost of an NC."""

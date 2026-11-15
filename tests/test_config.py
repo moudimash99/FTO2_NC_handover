@@ -3,7 +3,8 @@
   - every table of config/ is listed in config/lisez_moi.csv, and every table listed there exists;
   - every table of config/ is read by the code (a table nobody reads would mislead whoever edits it);
   - the backend code holds no business value that belongs in config/ (rates, plant codes, the year, target cut...);
-  - the year followed is one line of config/2_parametres.csv, and the dates tied to it follow.
+  - the year followed is one line of config/1_parametres.csv, and the dates tied to it follow;
+  - a settings folder made before the tables were regrouped (former names, no 1_ part) is still read.
 
     python3 -m unittest discover -s tests -t .
 """
@@ -17,7 +18,7 @@ from fto2 import config
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 CODE = [p for p in glob.glob(os.path.join(ROOT, "fto2", "**", "*.py"), recursive=True)] + \
        [os.path.join(ROOT, "build", "build_all.py"), os.path.join(ROOT, "07_scripts", "mft", "build_mft.py"),
-        os.path.join(ROOT, "07_scripts", "mft", "build_mft_slate.py")] + glob.glob(os.path.join(ROOT, "scripts", "*.py"))
+        os.path.join(ROOT, "07_scripts", "mft", "build_mft_slate.py")]
 # values that live in config/ and must not be typed again in the backend code (the parser's text rules excepted)
 BUSINESS_VALUES = [r'"FTO2"', r"'FTO2'", r'"FT02"', r"'FT02'", r"\b123\.0?\b", r"\b78\.16\b",
                    r"\b107\.0?\b", r"\b76\.0\b", r"\b0\.75\b",
@@ -47,7 +48,7 @@ class Index(unittest.TestCase):
         for p in glob.glob(os.path.join(config.folder(), "*.csv")):
             name = os.path.basename(p)
             if name != "lisez_moi.csv":
-                self.assertRegex(name, r"^[123]_", "%s: the name must start with its level 1_, 2_ or 3_" % name)
+                self.assertRegex(name, r"^[0123]_", "%s: the name must start with its group 0_, 1_, 2_ or 3_" % name)
 
     def test_every_table_is_read(self):
         code = ""
@@ -79,7 +80,7 @@ class NoValuesInCode(unittest.TestCase):
 
 
 class Year(unittest.TestCase):
-    """The year followed: config/2_parametres.csv, annee."""
+    """The year followed: config/1_parametres.csv, annee."""
 
     def setUp(self):
         config.parameter("usine")   # reads the table once
@@ -107,7 +108,7 @@ class Year(unittest.TestCase):
         self.values.update(annee="26")
         with self.assertRaises(config.ConfigError) as e:
             config.year()
-        self.assertIn("2_parametres.csv, annee: '26' is not a year", str(e.exception))
+        self.assertIn("1_parametres.csv, annee: '26' is not a year", str(e.exception))   # the table that holds the line
 
     def test_settings_written_before_the_line_existed(self):
         del self.values["annee"]
@@ -121,6 +122,58 @@ class Year(unittest.TestCase):
         self.values.update(annee="")
         self.values.pop("date_debut", None)
         self.assertEqual(config.year(), dt.date.today().year)
+
+
+class FormerNames(unittest.TestCase):
+    """A settings folder as it was before the tables were put in groups (November 2026) still works: the tables that moved are
+    found under their former names, and the name / value tables hold all their lines in one part."""
+
+    def setUp(self):
+        import shutil
+        import tempfile
+        self.folder, self.year, self.target = tempfile.mkdtemp(prefix="fto2_former_"), config.year(), config.parameter("objectif_baisse", "2_reglages_pages.csv")
+        for name in os.listdir(config.folder()):
+            shutil.copy(os.path.join(config.folder(), name), self.folder)
+        for new, old in (("0_plan_msn.csv", "1_plan_msn.csv"), ("0_livraisons_2025.csv", "1_livraisons_2025.csv"), ("1_cout_parametres.csv", "2_cout_parametres.csv")):
+            os.rename(os.path.join(self.folder, new), os.path.join(self.folder, old))
+        for whole, part in config.SPLIT.items():   # the manager's lines back in the one table
+            with open(os.path.join(self.folder, part), encoding="utf-8-sig") as f:
+                lines = f.read().splitlines()[1:]
+            with open(os.path.join(self.folder, whole), "a", encoding="utf-8") as f:
+                f.write("\n".join(lines) + "\n")
+            os.remove(os.path.join(self.folder, part))
+        self.before, self.cache = os.environ.get("FTO2_CONFIG"), dict(config._PARAMS)
+        os.environ["FTO2_CONFIG"] = self.folder
+        config._PARAMS.clear()
+
+    def tearDown(self):
+        import shutil
+        if self.before is None:
+            del os.environ["FTO2_CONFIG"]
+        else:
+            os.environ["FTO2_CONFIG"] = self.before
+        config._PARAMS.clear()
+        config._PARAMS.update(self.cache)
+        shutil.rmtree(self.folder, ignore_errors=True)
+
+    def test_moved_tables_are_found(self):
+        self.assertTrue(config.path("0_plan_msn.csv").endswith("1_plan_msn.csv"))
+        self.assertEqual(len(config.table("0_plan_msn.csv")), len(config.table("1_plan_msn.csv")))
+        self.assertIn("taux_production", set(config.table("1_cout_parametres.csv").nom))
+        self.assertTrue(os.path.exists(config.path("0_livraisons_2025.csv")))
+
+    def test_lines_in_one_part(self):
+        self.assertEqual(config.year(), self.year)
+        self.assertEqual(config.parameter("objectif_baisse", "2_reglages_pages.csv"), self.target)
+        self.assertEqual(config.held_by("annee"), "2_parametres.csv")
+
+    def test_a_line_in_both_parts_says_so(self):
+        with open(os.path.join(self.folder, "1_parametres.csv"), "w", encoding="utf-8") as f:
+            f.write("nom;valeur;description\nannee;2026;\n")
+        config._PARAMS.clear()
+        with self.assertRaises(config.ConfigError) as e:
+            config.year()
+        self.assertIn("the line 'annee' is in both 2_parametres.csv and 1_parametres.csv", str(e.exception))
 
 
 if __name__ == "__main__":
@@ -146,6 +199,23 @@ class ExcelHabits(unittest.TestCase):
         self.assertEqual(list(t.nom), ["été", "fin"])
         self.assertEqual(t.description[0], "un texte; avec un point-virgule")
         self.assertEqual(config.number(t.valeur[0], "x"), 0.25)
+
+    def test_table_saved_with_commas(self):
+        """An Excel set to English separates the columns with commas and quotes the cells that hold one."""
+        import tempfile
+        with tempfile.TemporaryDirectory() as d:
+            with open(os.path.join(d, "x.csv"), "w", encoding="utf-8-sig") as f:
+                f.write('nom,valeur,description\nobjectif,"0,25","un texte, avec une virgule"\nannee,2026,\n')
+            old, os.environ["FTO2_CONFIG"] = os.environ.get("FTO2_CONFIG"), d
+            try:
+                t = config.table("x.csv", ["nom", "valeur"])
+            finally:
+                if old is None:
+                    del os.environ["FTO2_CONFIG"]
+                else:
+                    os.environ["FTO2_CONFIG"] = old
+        self.assertEqual(list(t.nom), ["objectif", "annee"])
+        self.assertEqual((t.valeur[0], t.description[0]), ("0,25", "un texte, avec une virgule"))
 
     def test_dates_and_numbers(self):
         self.assertEqual(config.day("31/01/2026", "x"), "2026-01-31")

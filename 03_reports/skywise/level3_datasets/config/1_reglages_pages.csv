@@ -1,0 +1,8 @@
+nom;valeur;description
+objectif_baisse;0.25;Objectif = taux de l'année de comparaison moins ce pourcentage (0.25 = −25 %)
+poids_mois;7=0.6|8=0.6;Poids d'un mois dans l'objectif mensuel (mois=poids) : juillet et août comptent pour 60 % d'un mois
+defaut_phase;SERIE;Type de production affiché à l'ouverture : SERIE, REC, FTI ou vide (tous)
+defaut_responsabilite;f;Cases Responsabilité cochées à l'ouverture : f (FTO2), s (fournisseurs), o (autres), ex. fs
+defaut_periode;ytd;Période à l'ouverture : ytd (depuis le 1er janvier), m1, m3, m6, m12, all
+action_objectif_baisse;0.3;Action MFT : objectif = moyenne des 8 semaines avant moins ce pourcentage (0.3 = −30 %)
+action_semaines_tenues;4;Action MFT : l'objectif est atteint quand il tient ce nombre de semaines

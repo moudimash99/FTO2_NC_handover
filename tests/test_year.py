@@ -91,7 +91,7 @@ class Deliveries(unittest.TestCase):
         self.assertIsNone(reference.deliveries(2028))   # nothing was delivered that year
 
     def test_the_deliveries_table_wins(self):
-        """2025 has its table (config/1_livraisons_2025.csv): the plan is not asked."""
+        """2025 has its table (config/0_livraisons_2025.csv): the plan is not asked."""
         reference._production_export = lambda: self.fail("the production plan was read")
         got = reference.deliveries(2025)
         self.assertEqual(got["delivered"], "sheet")

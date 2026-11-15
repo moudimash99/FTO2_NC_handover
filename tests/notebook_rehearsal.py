@@ -7,7 +7,9 @@ Runs fto2/skywise.py (exactly what the notebook runs) against a stand-in for Sky
   fto2_ai_labels        04_reference/llm_labels_longtext.csv
   work_order_operation  06_input_data/wo_s03_operations_fto2_*.csv.gz
   mes_disruptions       06_input_data/mes_disruptions_fto2_*.csv.gz
-  data/                 a station mapping made from the exports, and a GPS register listing the NCs of the missing-IDs export
+  data/                 a station mapping made from the exports, a GPS register listing the NCs of the missing-IDs export,
+                        and the downloads of 06_input_data as they are: the exports of the Tableau Avances / Retards and
+                        the cable team's tracker (the run reads the production plan and the cable requests from them)
 Then compares the tables it writes with the laptop build's (05_outputs/fto2_dash_*.csv) on the same NCs.
 Prints the differences and exits 1 if there are any.
 
@@ -144,9 +146,13 @@ def stand_in(days=0, days_before=0, data_year=None, until=None):
     return tables, exports
 
 
-def data_files(work, nc, exports):
-    """data/ beside the notebook: the station mapping, and the GPS register and the Test list, dated in the year followed."""
+def data_files(work, nc, exports, downloads=True):
+    """data/ beside the notebook: the station mapping, the GPS register and the Test list, dated in the year followed, and
+    (downloads) the exports of the Tableau Avances / Retards and the cable team's tracker, as they were downloaded."""
     os.makedirs(os.path.join(work, "data"))
+    if downloads:
+        for f in glob.glob(os.path.join(ROOT, "06_input_data", "Avances_Retards_*.csv")) + glob.glob(os.path.join(ROOT, "06_input_data", "*NC_cables*.csv")):
+            shutil.copy(f, os.path.join(work, "data"))
     # station mapping in the notebook's wide form, from the exports' station / description pairs
     pairs = nc[["station", "station_description", "programme"]].dropna(subset=["station"]).drop_duplicates("station")
     wide = {}
@@ -176,14 +182,15 @@ def data_files(work, nc, exports):
                       "Nb défaut": t.Ext_Nb_Defauts, "Défaut majeur": t.Ext_Defaut_Constate}).to_csv(f, index=False)
 
 
-def run(days=0, days_before=0, data_year=None, until=None):
-    """The notebook's run against the stand-in; returns the three dashboard tables (the others are in Dataset.written)."""
+def run(days=0, days_before=0, data_year=None, until=None, downloads=True):
+    """The notebook's run against the stand-in; returns the three dashboard tables (the others are in Dataset.written).
+    downloads=False: nothing is saved in data/ but the lists (the plan and the cable requests then come from config/ alone)."""
     Dataset.tables, exports = stand_in(days, days_before, data_year, until)
     Dataset.written = {}
     work = tempfile.mkdtemp(prefix="fto2_rehearsal_")
     here = os.getcwd()
     try:
-        data_files(work, Dataset.tables["non_conformity"], exports)
+        data_files(work, Dataset.tables["non_conformity"], exports, downloads)
         os.chdir(work)
         return skywise.run(Dataset, Column)
     finally:

@@ -1,6 +1,6 @@
 """Cost of non-quality (CNQ): the settings, read from the tables in config/.
 
-  2_cout_parametres.csv        hourly rates and minutes per step (everyday adjustments by a team lead)
+  1_cout_parametres.csv        hourly rates and minutes per step (the manager's settings)
   2_cout_qui_fait_quoi.csv     which function (production, quality, ME) does each step, so which rate it is charged at
   2_cout_decisions.csv         which steps each decision (Rework, Scrap, DQN...) charges
   2_libelles_lieu_detection.csv English label of each "where found" value
@@ -48,8 +48,8 @@ def _yes(text, where):
     return t == "oui"
 
 
-# ---------------------------------------------------------------- 2_cout_parametres.csv
-_F = "2_cout_parametres.csv"
+# ---------------------------------------------------------------- 1_cout_parametres.csv
+_F = "1_cout_parametres.csv"
 _p = _values(_F)
 _need(_p, _F, ["taux_production", "taux_qualite", "taux_me", "taux_ingenierie", "minutes_alerte", "minutes_redaction",
                "minutes_redaction_controle_final", "minutes_support", "minutes_preparation", "minutes_travail_minimum",
@@ -57,6 +57,9 @@ _need(_p, _F, ["taux_production", "taux_qualite", "taux_me", "taux_ingenierie", 
                "facteur_travail_nc_interne", "minutes_redaction_niveau2", "minutes_travail_niveau2", "forfait_retour_client",
                "minutes_logistique"])
 _n = {k: _number(v, "%s, %s" % (_F, k)) for k, v in _p.items()}
+for _k, _v in _n.items():
+    if _v < 0:
+        raise config.ConfigError("%s, %s: %s is below zero: a rate, a time or an amount cannot be negative" % (_F, _k, _p[_k]))
 
 RATES = {"prod": float(_n["taux_production"]), "quality": float(_n["taux_qualite"]), "me": float(_n["taux_me"])}
 RATE_ENGINEERING = float(_n["taux_ingenierie"])

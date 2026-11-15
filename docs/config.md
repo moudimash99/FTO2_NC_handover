@@ -1,8 +1,8 @@
 # Settings (config): how they work and how to fill them
 
 Everything about the dashboard that someone may want to change without touching the code is a small table in the folder
-`data/config/`, next to the notebook in the Code Workspace. There are 44 tables. This guide explains what is in them, how
-they are built, how to fill them in, and how the code reads them.
+`data/config/`, next to the notebook in the Code Workspace. There are 45 tables, in four groups. This guide explains what is
+in them, how they are built, how to fill them in, and how the code reads them.
 
 The three guides: `config.md` (the settings tables; in the Code Workspace also as `data/config/README.md`), `logic.md` (the
 notebook's code) and `front_end.md` (the pages' code); these two are also in `notebook_kit/`.
@@ -10,7 +10,7 @@ notebook's code) and `front_end.md` (the pages' code); these two are also in `no
 **Contents**
 
 1. [The basics: what a table looks like](#1-the-basics-what-a-table-looks-like)
-2. [The three levels: who should edit what](#2-the-three-levels-who-should-edit-what)
+2. [The four groups: who should edit what](#2-the-four-groups-who-should-edit-what)
 3. [After a change](#3-after-a-change)
 4. [The five kinds of tables](#4-the-five-kinds-of-tables)
 5. [Every table, one by one](#5-every-table-one-by-one)
@@ -38,18 +38,39 @@ each row below is one entry. Inside the file, the columns are separated by a sem
 - A column named `commentaire`, `description`, `note` or `exemple` is for people. The code ignores it: write anything there
   that helps the next person.
 
-The file `lisez_moi.csv` (in French) lists every table, its level, what it changes, who should edit it and which part of the
+The file `lisez_moi.csv` (in French) lists every table, its group, what it changes, who should edit it and which part of the
 code reads it.
 
-## 2. The three levels: who should edit what
+## 2. The four groups: who should edit what
 
-The number at the start of each file name says who should edit it.
+The number at the start of each file name says which group the table is in.
 
-| Level | Who | What these tables hold | Risk if wrong |
-|---|---|---|---|
-| **1** | Anyone in the team | Facts that change over time: the production plan, the MFT actions, the cable requests, the deliveries of the comparison year, shutdown days. | Low: a wrong date shows a wrong date. |
-| **2** | Someone careful | Rules and settings that decide **how things are counted**: what counts as REC, which product an NC belongs to, the hourly rates, the target, the colours. | Medium: the figures change. Check the dashboard before and after. |
-| **3** | Someone technical | Expert tables: minutes per type of defect in the cost model, the alarm statistics, the official sub-code list. | High: change only if you understand the model behind it. |
+| Group | Who edits | What these tables hold |
+|---|---|---|
+| **0** data | Nobody by hand | What comes from the files the team downloads (the production plan, the cable requests) and history (the 2025 deliveries, the 2026 EqMSN sheet). To update them, save a new download in `data/` (see "Files saved as they are downloaded" below). |
+| **1** the manager's settings | The person in charge of the dashboard | The few things that are decided, not computed: the year followed, the target, what the pages show at opening, the hourly rates and the minutes of the cost, the shutdown days, the part prices, the MFT actions. Six short tables. |
+| **2** rules and names | The developer (or someone careful with this guide) | How things are counted and named: what counts as REC, which product an NC belongs to, the categories, the colours, where the data comes from. The figures change: check the dashboard before and after. |
+| **3** expert | The developer | Minutes per type of defect in the cost model, the alarm statistics, the official sub-code list. Change only with the model behind it in mind. |
+
+**Two name / value tables are in two parts.** `1_parametres.csv` and `1_reglages_pages.csv` hold the lines the manager
+changes; `2_parametres.csv` and `2_reglages_pages.csv` hold the technical lines of the same kind. The code asks for a line
+by its name and finds it in either part; a line written in both stops the run with a message.
+
+### Files saved as they are downloaded
+
+Two things are not typed into a table at all. The team downloads a file and saves it in `data/`, beside the station mapping,
+the GPS register and the Test list; the next run reads it (`notebook_kit/fto2/downloads.py`).
+
+| What | The file to save in `data/` | How it is read |
+|---|---|---|
+| The production plan | Each export of the **Tableau Avances / Retards**, as CSV, named `Avances_Retards...csv` | **Every** export in the folder is read, oldest first: keep the earlier ones. An aircraft takes its row from the newest export that lists it; an aircraft delivered before a new export, and no longer listed in it, keeps its last row (this is how the plan remembers the year before, whose deliveries the targets start from); a row that left the export before its delivery has left the plan. |
+| The cable requests | The export of the **cable team's tracker**, as CSV, with `cables` in its name | The newest export replaces the list. |
+
+The day of a download is the date at the end of its name when it has one (`Avances_Retards_2026-11-03.csv`), else the day
+the file was saved. The names the run looks for are two lines of `2_sources.csv` (`exports_plan`, `suivi_cables`), with
+`*` for any text. The tables `0_plan_msn.csv` and `0_demandes_cables.csv` hold the plan and the requests as they stood when
+the downloads started to be saved in `data/`: the plan table is read as one more export, at its own date; the cable table
+is used only when no tracker export is there. The last lines of each run say which files were read.
 
 ## 3. After a change
 
@@ -68,12 +89,12 @@ Almost every table is one of these five kinds. Once you know them, every table r
 
 ### 4.1 Lists: one row per thing
 
-Example: `1_plan_msn.csv`, one row per aircraft and product, with its dates. Add a row to add a thing, delete a row to
-remove it. Each column holds one piece of information about that thing.
+Example: `1_calendrier_production.csv`, one row per shutdown, with its dates and its weight. Add a row to add a thing,
+delete a row to remove it. Each column holds one piece of information about that thing.
 
 ### 4.2 Name and value: one setting per row
 
-Example: `2_cout_parametres.csv`.
+Example: `1_cout_parametres.csv`.
 
 | nom | valeur | unite | description |
 |---|---|---|---|
@@ -134,16 +155,12 @@ rule table needs one.
 Example: `2_produits_plan.csv`, which maps the product name on an NC to its name in the production plan
 (`MIP A350` → `MIP`). The left column is what is found, the right column what it becomes. One row per value.
 
-### 4.5 Tables first filled from a raw file
+### 4.5 Data tables (group 0)
 
-Some level-1 tables were first filled from a raw file: the production plan (from the Avances / Retards file), the EqMSN
-volumes (from the EqMSN Excel file), the cable requests (from the cables team's tracker) and the MFT actions (from the MFT
-trackers). Keep them up to date by adding or correcting rows directly. They have a last column **`source`**:
-
-- `auto`: the row came from the raw file;
-- `manuel`: the row was typed or corrected by a person.
-
-When you add or correct a row, set its `source` to `manuel`: it marks the rows a person is responsible for.
+The tables whose name starts with `0_` are not settings: they hold data. Two are the starting point of what the run now
+reads from the downloads saved in `data/` (the production plan, the cable requests: section 2); the others are history (the
+2025 deliveries, the 2026 EqMSN sheet). Nobody edits them. A mistake in the plan or in the cable requests is corrected
+where it was made, in the Tableau Avances / Retards or in the cable tracker, and a new download is saved.
 
 ---
 
@@ -151,7 +168,7 @@ When you add or correct a row, set its `source` to `manuel`: it marks the rows a
 
 The tables are grouped by subject. For each: what it does, what a row is, and how to fill it.
 
-### Which NCs count, and how each one is labelled (rule tables, level 2)
+### Which NCs count, and how each one is labelled (rule tables, group 2)
 
 All of these are **rule tables** (section 4.3). They look at the columns of the Skywise NC data.
 
@@ -170,13 +187,13 @@ Two rules of thumb: put special cases **before** general ones (a smaller `ordre`
 
 ### Products and the production plan
 
-| Table | Level | What a row is | How to fill it |
+| Table | Group | What a row is | How to fill it |
 |---|---|---|---|
-| `1_plan_msn.csv` | 1 | One aircraft (MSN) and product: line, product, MSN, rank, then the **planned** (`prevu_`) and **real** (`reel_`) date of the 8 milestones (impression, enclenchement, SE, méca, inté, test, qualité, départ OTA), the export date | Add a row per new aircraft and product; correct the dates as the aircraft moves on. Set `source` = `manuel` on rows you type or correct. |
-| `1_eqmsn_mois.csv` | 1 | One product and version (`std` = Standard sheet, `adj` = Adjusted sheet): its EqMSN for each month of 2026, the export date, the first forecast month | Optional. The pages count the volume from `1_plan_msn.csv` (each aircraft spread over the days the plant works); this table only adds the EqMSN sheet's two versions while its months are those of the year followed. For another year it is ignored. |
-| `1_calendrier_production.csv` | 1 | A period of shutdown or slow production: start, end, **weight** (0 = closed, 0.5 = half a normal week), reason | Add a row for each new shutdown or bridge day. It changes the MSN volume of the months and weeks concerned. |
-| `1_livraisons_2025.csv` | 1 | One product delivered in 2025: its name, its name in the plan, its line, the count per month of 2025, the total | The basis of the 2026 targets. Change only if the 2025 figures were wrong. For a later comparison year no such table is needed: the deliveries are counted in `1_plan_msn.csv` (see "The year" below). A table `1_livraisons_<year>.csv` of the same shape is used instead when it exists. |
-| `1_livraisons_2025_lignes.csv` | 1 | One line: whole MSN delivered in 2025 | Same. |
+| `0_plan_msn.csv` | 0 | One aircraft (MSN) and product: line, product, MSN, rank, then the **planned** (`prevu_`) and **real** (`reel_`) date of the 8 milestones (impression, enclenchement, SE, méca, inté, test, qualité, départ OTA), the date of the export it comes from | Not edited. The plan as it stood on 3 November 2026; the run adds every export of the Tableau Avances / Retards saved in `data/` (section 2). |
+| `0_eqmsn_mois.csv` | 0 | One product and version (`std` = Standard sheet, `adj` = Adjusted sheet): its EqMSN for each month of 2026, the export date, the first forecast month | Not edited. The pages count the volume from the production plan (each aircraft spread over the days the plant works); this table only adds the EqMSN sheet's two versions while its months are those of the year followed. For another year it is ignored. |
+| `1_calendrier_production.csv` | 1 | A period of shutdown or slow production: start, end, **weight** (0 = closed, 0.5 = half a normal week), reason | Add a row for each new shutdown or bridge day, each year. It changes the MSN volume of the months and weeks concerned. Dates as `2026-12-24` or `24/12/2026`. |
+| `0_livraisons_2025.csv` | 0 | One product delivered in 2025: its name, its name in the plan, its line, the count per month of 2025, the total | Not edited. The basis of the 2026 targets. For a later comparison year no such table is needed: the deliveries are counted in the production plan (see "The year" below). A table `0_livraisons_<year>.csv` of the same shape is used instead when it exists. |
+| `0_livraisons_2025_lignes.csv` | 0 | One line: whole MSN delivered in 2025 | Not edited. |
 | `2_produits_plan.csv` | 2 | Product name on the NCs → product name in the plan (`produit_eqmsn`); `a_confirmer` = oui if not yet confirmed | A new product: add its row. |
 | `2_produits_noms_plan.csv` | 2 | Name in the plan → name shown (`MIP` → `MIP A350`) | |
 | `2_produits_alias.csv` | 2 | NCs whose product is not in the plan, sent to the plan product they belong to: line, product pattern, optional station pattern, target product | Patterns are regular expressions (expert): `^\d{3}VU$` = three digits then VU. |
@@ -187,9 +204,9 @@ How the cost works, simply: each NC goes through up to six **steps** (alert, wri
 work, re-check). Each step takes some **minutes**, paid at the **hourly rate** of whoever does it. Engineering hours (design
 queries), material, and the price of a rejected, scrapped or exchanged part are added.
 
-| Table | Level | What it holds | How to fill it |
+| Table | Group | What it holds | How to fill it |
 |---|---|---|---|
-| `2_cout_parametres.csv` | 2 | Name / value: the **hourly rates** (production 123, quality 107, ME 76, engineering 78.16) and the **minutes of each step** (alert 41, writing 30, at final inspection 60, support 60, preparation 50, minimum work 60, re-check 30...), the **logistics minutes** added when the work comes from the rework order (15), the factor for internal NCs, the flat amount for a customer return | Change the value only. |
+| `1_cout_parametres.csv` | 1 | Name / value: the **hourly rates** (production 123, quality 107, ME 76, engineering 78.16) and the **minutes of each step** (alert 41, writing 30, at final inspection 60, support 60, preparation 50, minimum work 60, re-check 30...), the **logistics minutes** added when the work comes from the rework order (15), the factor for internal NCs, the flat amount for a customer return | Change the value only, with a dot or a comma. A value below zero stops the run. |
 | `2_cout_decisions.csv` | 2 | One decision (RWK rework, REJ reject, SCR scrap, EXC exchange, DQN design query...): `1` or `0` for each step it charges (alerte, redaction, support, travail, recontrole), its engineering hours, `valeur_piece` (1 = the part's value counts), its label, and `base` (where the rule comes from) | A new decision code: add a row. |
 | `2_cout_qui_fait_quoi.csv` | 2 | Each step → who does it (`production`, `qualite`, `me`), so which rate it is paid at | |
 | `3_cout_temps_defauts.csv` | 3 | One **type of defect**: minutes of work, material in euros, English name, reference sub-code, and `base` (where the time comes from). A type can instead be **computed from another** (`calcule_depuis`) × a factor (`facteur`): "wrong reference" = 2 × "missing" | Expert: these minutes drive most of the cost. |
@@ -203,7 +220,7 @@ queries), material, and the price of a rejected, scrapped or exchanged part are 
 The defects are sorted in three layers: **category** (e.g. Erreur Branchement) → **cause** (e.g. Inversion) → **sub-code**
 (the official code, e.g. T04).
 
-| Table | Level | What a row is | How to fill it |
+| Table | Group | What a row is | How to fill it |
 |---|---|---|---|
 | `2_categories.csv` | 2 | One category: its order on the charts, its colour (1 to 9), `a_part` = oui to show it aside, with no colour | Change the order or the colour. |
 | `2_causes_noms.csv` | 2 | A cause code (from the text reader) → the name shown | **Don't change the code** (left column); the name can change. |
@@ -217,33 +234,34 @@ The defects are sorted in three layers: **category** (e.g. Erreur Branchement) �
 
 ### The pages
 
-| Table | Level | What it holds |
+| Table | Group | What it holds |
 |---|---|---|
-| `2_reglages_pages.csv` | 2 | Name / value. The **target** (`objectif_baisse` 0.25 = the comparison year's rate minus 25 %; the pages' texts show the percentage written here), the weight of July and August in the monthly target, what counts as a shutdown week, the minimum MSN volume for a rate, the **filters at opening** (production type, Responsabilité boxes, period), the MFT page's thresholds ("what goes up / down", recurring FIN), the MFT action targets. |
+| `1_reglages_pages.csv` | 1 | Name / value, the manager's part. The **target** (`objectif_baisse`: 0.25, 0,25 or 25 % all mean the comparison year's rate minus 25 %; the pages' texts show the percentage written here), the weight of July and August in the monthly target (`poids_mois`: month number = weight), the **filters at opening** (`defaut_phase`: SERIE, REC, FTI or empty; `defaut_responsabilite`: letters among f, s, o; `defaut_periode`: ytd, m1, m3, m6, m12 or all), the **MFT action target** (minus 30 %, held 4 weeks). Each value is checked: a mistake stops the run and says what to write. |
+| `2_reglages_pages.csv` | 2 | Name / value, the technical part: what counts as a shutdown week, the minimum MSN volume for a rate, the sub-codes that mean "not specified", the MFT page's thresholds ("what goes up / down", recurring FIN, reference windows). |
 | `2_lignes.csv` | 2 | Each line's colour (1 to 4). |
 | `3_alarmes.csv` | 3 | Name / value: the bell's statistics. How many recent weeks are compared (4) with how many weeks before (12), the thresholds for a minor or major alarm, slow rises, odd aircraft, how many alarms are shown (5). |
 
 ### MFT actions and cables
 
-| Table | Level | What a row is | How to fill it |
+| Table | Group | What a row is | How to fill it |
 |---|---|---|---|
-| `1_actions_mft.csv` | 1 | One MFT action: id, line, title (French and English), **the problem it targets** (`niveau` + `valeurs`), analysis and action owners, dates, status, expected benefit, the tracker it comes from, `source` | To add an action: one row with `source` = `manuel`. `niveau` says what kind of problem: `cat` a category, `rca` a cause, `sub` a sub-category, `code` a sub-code, `where` a place of detection. `valeurs`: the names exactly as on the dashboard, several separated by `\|`. |
-| `2_actions_mft_problemes.csv` | 2 | Links a row of the MFT trackers (programme, category, start of the defect text) to the problem it targets (`niveau`, `valeur`); `a_verifier` = to be checked | Only used when the actions are refilled from the trackers; the notebook doesn't read it. |
-| `1_demandes_cables.csv` | 1 | One cable request of the cables team: week, date, NC, programme, MSN, reason, imputation, origin, proposed cause, cables, comment, `source` | Add a row per new request; set `source` = `manuel` on rows you type or correct. |
-| `2_cables_origines.csv` | 2 | An imputation of the cable tracker → the origin shown (`(autre)` = anything else) | Only used when the requests are refilled from the tracker. |
-| `2_regle_cause_cable.csv` | 2 | Rule table (section 4.3): the proposed cause of a cable request, from keywords in its analysis comment | Only used when the requests are refilled from the tracker. |
+| `1_actions_mft.csv` | 1 | One MFT action: `id` (its own, never reused), line, title (French and English), **the problem it targets** (`niveau` + `valeurs`), analysis and action owners, dates, status, expected benefit, where it comes from | To add an action: one row. `niveau` says what kind of problem: `cat` a category, `rca` a cause, `sub` a sub-category, `code` a sub-code, `where` a place of detection (the French words are read too: `catégorie`, `cause`, `sous-catégorie`, `sous-code`, `lieu`). `valeurs`: the names exactly as on the dashboard, several separated by `\|`. Dates as `2026-07-01` or `01/07/2026`. An action without `niveau` shows on the MFT page with no result followed. The run checks the ids, the `niveau` and the dates. |
+| `0_demandes_cables.csv` | 0 | One cable request of the cables team: week, date, NC, programme, MSN, reason, imputation, origin, proposed cause, cables, comment | Not edited. The requests as they stood in November 2026; the run reads the newest export of the cable tracker saved in `data/` instead (section 2). |
+| `2_cables_origines.csv` | 2 | An imputation of the cable tracker → the origin shown (`(autre)` = anything else) | Read each time the tracker's export is read. A new imputation in the tracker: add its row. |
+| `2_regle_cause_cable.csv` | 2 | Rule table (section 4.3): the proposed cause of a cable request, from keywords in its analysis comment | Read each time the tracker's export is read. |
 
 ### General settings and data sources
 
-| Table | Level | What it holds |
+| Table | Group | What it holds |
 |---|---|---|
-| `2_parametres.csv` | 2 | Name / value: the plant followed (`FTO2`) and its codes (`FTO2\|FT02`), **the year followed** (`annee`), the comparison year (`annee_comparaison`, empty = the year before), whether the old Slate outputs are still written (`oui` while the old app is used), a limit on the number of NCs (empty = all). |
-| `2_sources.csv` | 2 | Name / value: the names of the Skywise datasets (as in the notebook's Data panel) and of the files in `data/` (stations, GPS register, Test list), with the lines to skip and the column names in those files. Change it when a dataset or a file is renamed. In the name of a list, `{annee}` stands for the year followed. |
+| `1_parametres.csv` | 1 | Name / value, the manager's part: **the year followed** (`annee`) and the comparison year (`annee_comparaison`, empty = the year before). See "The year" below. |
+| `2_parametres.csv` | 2 | Name / value, the technical part: the plant followed (`FTO2`) and its codes (`FTO2\|FT02`), whether the old Slate outputs are still written (`oui` while the old app is used), a limit on the number of NCs (empty = all). |
+| `2_sources.csv` | 2 | Name / value: the names of the Skywise datasets (as in the notebook's Data panel) and of the files in `data/` (stations, GPS register, Test list, exports of the production plan, cable tracker), with the lines to skip and the column names in those files. Change it when a dataset or a file is renamed. In the name of a list, `{annee}` stands for the year followed; in the name of a download, `*` stands for any text. |
 
 ### The year
 
 The pages follow **one calendar year**: the NCs created that year, its production plan, its targets. The year is one line
-of `2_parametres.csv`:
+of `1_parametres.csv`:
 
 ```
 annee;2026
@@ -254,18 +272,18 @@ Everything tied to the year follows from that line, with nothing else to change:
 | What | How it follows the year |
 |---|---|
 | The NCs shown | Created from 1 January to 31 December of the year (plus the NCs of the GPS register and the Test list dated that year) |
-| The production volume | The aircraft of `1_plan_msn.csv`, counted in the months and the weeks of the year |
+| The production volume | The aircraft of the production plan (the exports saved in `data/`), counted in the months and the weeks of the year |
 | The comparison year | The year before (or the one written in `annee_comparaison`): its NCs are read in Skywise at each run |
-| The comparison year's deliveries | `1_livraisons_<year>.csv` when that table exists (2025), else counted in `1_plan_msn.csv`: a product is delivered in the month of its Départ OTA |
+| The comparison year's deliveries | `0_livraisons_<year>.csv` when that table exists (2025), else counted in the production plan: a product is delivered in the month of its Départ OTA |
 | The targets | The comparison year's rate, minus the percentage of `objectif_baisse`, times the year's production |
 | The bell | Its weeks are the weeks of the year; it needs 16 weeks of the year before it can compare |
 | Every text of the pages | The two years and the target's percentage are written in from the settings |
 
 **To start a new year** (each January):
 
-1. In `2_parametres.csv`, write the new year on the line `annee`.
-2. Bring the production plan up to date (`1_plan_msn.csv`): the aircraft of the new year, **keeping the rows of the year
-   before**, which give last year's deliveries.
+1. In `1_parametres.csv`, write the new year on the line `annee`.
+2. Save a fresh export of the Tableau Avances / Retards in `data/`, **beside the earlier ones** (they give last year's
+   deliveries: never delete them).
 3. Add the new year's shutdowns to `1_calendrier_production.csv`.
 4. Save the new year's GPS register in `data/`. Its name is written in `2_sources.csv` with `{annee}` in place of the year
    (`GPS NC INT_SERIE ELEC {annee} - NC REGISTRE.csv`), so the 2027 file is found by itself if it is named as the 2026 one.
@@ -283,14 +301,15 @@ each run once that year is over.
 |---|---|---|
 | Count a new kind of REC | `2_regle_phase.csv` | Add the workflow text to the `valeur` of a REC row (`-CRE\|-PNC\|-RCX`), or add a row before the `99` rule. |
 | Price the rejected parts | `1_prix_pieces.csv` | One row per material: `materiel;designation;prix_unitaire_eur`. What is left to price: `fto2_parts_to_price.csv`, written at each run. |
-| Change an hourly rate | `2_cout_parametres.csv` | Change `valeur` of `taux_production`, `taux_qualite` or `taux_me`. |
-| Change the target | `2_reglages_pages.csv` | `objectif_baisse`: 0.30 for −30 %. |
-| Start a new year | `2_parametres.csv` | `annee`: the new year; then the production plan, the shutdowns and the two lists (see "The year"). |
+| Change an hourly rate | `1_cout_parametres.csv` | Change `valeur` of `taux_production`, `taux_qualite` or `taux_me`. |
+| Change the target | `1_reglages_pages.csv` | `objectif_baisse`: 0.30 for −30 %. |
+| Start a new year | `1_parametres.csv` | `annee`: the new year; then the production plan, the shutdowns and the GPS register (see "The year"). |
 | Add a product | `2_regle_produit.csv`, then `2_produits_plan.csv` | A rule that recognises it, then its name in the plan. |
-| Update the production plan | `1_plan_msn.csv` | Add the new aircraft, correct the dates that moved; `source` = `manuel` on those rows. |
+| Update the production plan | a file in `data/` | Download the Tableau Avances / Retards as CSV and save it in `data/` beside the earlier exports. |
+| Update the cable requests | a file in `data/` | Download the cable team's tracker as CSV and save it in `data/`. |
 | Add a shutdown | `1_calendrier_production.csv` | Start, end, weight 0 (closed) or 0.5 (half), reason. |
-| Add an MFT action | `1_actions_mft.csv` | One row, `source` = `manuel` (see above). It appears on the MFT page for everyone at the next notebook run. |
-| Change what the dashboard shows at opening | `2_reglages_pages.csv` | `defaut_phase`, `defaut_responsabilite`, `defaut_periode`. |
+| Add an MFT action | `1_actions_mft.csv` | One row with its own `id` (see above). It appears on the MFT page for everyone at the next notebook run. |
+| Change what the dashboard shows at opening | `1_reglages_pages.csv` | `defaut_phase`, `defaut_responsabilite`, `defaut_periode`. |
 | Change a category's colour or order | `2_categories.csv` | `couleur` (1 to 9), `ordre`. |
 | Rename a dataset Skywise gives us | `2_sources.csv` | The new name in `valeur`. |
 
@@ -306,10 +325,11 @@ needs only a new run.
 | Tables | Read by (in `notebook_kit/fto2/`) | What happens to them |
 |---|---|---|
 | `2_regle_*.csv` (the rules) | `selection.py`, `core.py`, `parser/fto2_logic.py`, through `rules.py` | Applied to every NC to give it a label (phase, line, product, type, scope...) |
-| `2_cout_*.csv`, `3_cout_*.csv` (the cost) | `cost/params.py` | Turned into the cost model's settings, used by `cost/model.py` |
-| `2_parametres.csv`, `2_sources.csv` | `skywise.py`, `config.py`, `manual_lists.py` | Which plant, which year (`config.year`, `config.comparison_year`), which datasets and files to read |
+| `1_cout_parametres.csv`, `2_cout_*.csv`, `3_cout_*.csv` (the cost) | `cost/params.py` | Turned into the cost model's settings, used by `cost/model.py` |
+| `1_parametres.csv`, `2_parametres.csv`, `2_sources.csv` | `skywise.py`, `config.py`, `manual_lists.py`, `downloads.py` | Which plant, which year (`config.year`, `config.comparison_year`), which datasets and files to read |
 | `1_prix_pieces.csv` (part prices) | `cost/parts.py` | Each NC's material (read from the NC data) gets its unit price; the cost model adds price × quantity for the decisions that count the part |
-| the other `1_*.csv` (production plan, actions, cables...) and the page settings (`2_reglages_pages.csv`, `2_categories.csv`, `2_lignes.csv`, `3_alarmes.csv`) | `reference.py` | Packed into the table `fto2_dash_ref`, which the pages read |
+| the downloads saved in `data/` (exports of the production plan, cable tracker) with `0_plan_msn.csv`, `0_demandes_cables.csv`, `2_cables_origines.csv`, `2_regle_cause_cable.csv` | `downloads.py` | Turned into the production plan and the cable requests |
+| the other `0_` and `1_` tables (deliveries, shutdowns, MFT actions) and the page settings (`1_reglages_pages.csv`, `2_reglages_pages.csv`, `2_categories.csv`, `2_lignes.csv`, `3_alarmes.csv`) | `reference.py` | Packed with the plan and the requests into the table `fto2_dash_ref`, which the pages read |
 | categories, causes, sub-codes | `reference.py`, `core.py`, `parser/fto2_logic.py` | Names and definitions shown on the pages, official sub-codes of the defect lines |
 
 So the pages never read `data/config/` themselves: they get the settings they need through `fto2_dash_ref`, rewritten at
@@ -320,8 +340,15 @@ each run.
 - the table exists and is not empty;
 - every line has as many `;` columns as the first row ("line N has X columns, the header has Y");
 - the columns a table must have are all there ("the column(s) X are missing");
-- a name-and-value setting that the code asks for exists ("the line 'X' is missing");
-- `oui` / `non` settings hold `oui` or `non`.
+- a name-and-value setting that the code asks for exists ("the line 'X' is missing"), and is in one part only;
+- `oui` / `non` settings hold `oui` or `non`;
+- the manager's values are of the right kind: a year has four digits, a share is between 0 and 1 (or a percentage), a
+  filter at opening is one of its choices, a rate is not negative, an MFT action has its own id, a known `niveau` and
+  readable dates. Each message names the table, the line and what to write.
+
+**A settings folder made before November 2026** holds some tables under their former names (`1_plan_msn.csv`,
+`2_cout_parametres.csv`...) and the manager's lines inside `2_parametres.csv` and `2_reglages_pages.csv`. It still works:
+a table that is not found under its name is taken under its former one (`config.path`).
 
 **The checks of a rule table** (`notebook_kit/fto2/rules.py`, function `check`): `ordre` is a number, the test is one of the
 list and has a value when it needs one, the column exists in the NC data, a regular expression is valid, `resultat` is not

@@ -17,7 +17,10 @@ Details (what each level proves, what was tested): `DETAILS.md`.
 1. Upload the whole folder `level3_datasets/notebook_kit` next to the notebook (the code).
 2. Upload the folder `level3_datasets/config` into `data/`, so that it becomes `data/config/` (the settings). Do this once:
    from then on the settings are changed there, and uploading the folder again would overwrite those changes.
-   The `data/` folder keeps the station mapping, the GPS register and the Test list.
+   The `data/` folder keeps the station mapping, the GPS register and the Test list, and the files the team downloads:
+   the exports of the Tableau Avances / Retards (named `Avances_Retards...csv`; keep the earlier ones) and the export of
+   the cable team's tracker (with `cables` in its name). The run reads the production plan and the cable requests from
+   them; without any, it uses the tables `0_plan_msn.csv` and `0_demandes_cables.csv` of `data/config/`.
 3. Upload `level3_datasets/notebook_kit/fto2_ai_labels.csv` once, as a dataset named `fto2_ai_labels`.
 4. Replace the notebook by `level3_datasets/fto2_pipeline_notebook.ipynb` (a few lines: the steps are in `notebook_kit/fto2/`).
 5. In the Data panel, add these datasets with these names:
@@ -98,23 +101,40 @@ as Slate functions instead of in the page, so that the page only draws. Two ways
 Can be done together with the change above.
 
 1. Upload `level3_datasets/notebook_kit` again (the whole folder).
-2. In `data/config/2_parametres.csv`, add the line `annee;2026` (copy it from `level3_datasets/config/2_parametres.csv`).
-   The lines `date_debut`, `annee_listes_manuelles` and `debut_ordres_et_aleas` are no longer read: delete them.
-   `annee_comparaison` can stay, or be emptied (empty = the year before).
+2. The year is the line `annee` of `data/config/1_parametres.csv` (the change of 15 November below brings that table).
+   With the former settings folder left as it is, the run takes the year of the line `date_debut` of `2_parametres.csv`.
 3. Restart the kernel and run the notebook. Its first line says the year followed and the comparison year.
 4. In Slate, once the sync has run: paste the new `fto2_level23.js` into the dashboard's sandbox, `mft/fto2_mft.js` into the
    MFT's and `elizabeth/fto2_elizabeth.js` into the Elizabeth's. No query changes.
 
 Nothing changes on the pages for 2026: this only prepares the next years.
 
+## Already set up? What to change (15 November: the settings in groups, the downloads read as they are)
+
+Can be done together with the two changes above: it replaces their step 2.
+
+1. Upload `level3_datasets/notebook_kit` again (the whole folder).
+2. Replace the settings folder. **First download from `data/config/` any table changed there** (the price list
+   `1_prix_pieces.csv` if prices were typed in). Then delete `data/config/` and upload `level3_datasets/config` in its
+   place, and put the downloaded tables back. The tables now start with their group: `0_` data, `1_` the manager's
+   settings, `2_` rules, `3_` expert (`docs/comment_faire.md`).
+   The run also works with the former folder as it is (tables under their former names), so this step can wait.
+3. From now on, the production plan and the cable requests are updated by saving a download in `data/`: an export of the
+   Tableau Avances / Retards (name starting with `Avances_Retards`; keep the earlier ones) or of the cable team's tracker
+   (with `cables` in its name). Nothing has to be saved today: the tables hold the plan of 3 November.
+4. Restart the kernel and run the notebook. Its last lines say which year is followed and which downloads were read.
+5. In Slate: nothing more than the JS files of the change above.
+
 ## Keep it up to date
 
 - **New NCs:** run the notebook. The pages follow once the sync has run.
-- **A new year** (each January): write the year on the line `annee` of `data/config/2_parametres.csv`, bring the production
-  plan and the shutdown calendar up to date, save the new year's GPS register and Test list, and run the notebook. Nothing
-  to paste in Slate. The steps are in `docs/comment_faire.md` ("Commencer une nouvelle année").
-- **A setting** (a rule, a rate, the production plan, an MFT action...): change its table in `data/config/` and run the
+- **A new year** (each January): write the year on the line `annee` of `data/config/1_parametres.csv`, save a fresh export
+  of the Tableau Avances / Retards and the new year's GPS register in `data/`, add the year's shutdowns to
+  `1_calendrier_production.csv`, and run the notebook. Nothing to paste in Slate. The steps are in
+  `docs/comment_faire.md` ("Commencer une nouvelle année").
+- **A setting** (a rule, a rate, the target, an MFT action...): change its table in `data/config/` and run the
   notebook. Nothing to paste in Slate.
+- **The production plan, the cable requests:** save the new download in `data/` and run the notebook.
 - **A change of the code** (a page's look, a new chart): run `python3 -I build/build_all.py`,
   `python3 -I 07_scripts/mft/build_mft.py` and `python3 -I 07_scripts/elizabeth/build_elizabeth.py` on the laptop, then paste
   the new files into the sandboxes. If `notebook_kit` changed, upload it again and run the notebook.

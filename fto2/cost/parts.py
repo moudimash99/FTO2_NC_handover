@@ -87,6 +87,9 @@ def price_list():
     for i, r in enumerate(rows[1:], start=2):
         if len(r) <= max(mat, price):
             continue
+        if re.fullmatch(r"\d([.,]\d+)?E\+?\d+", r[mat].strip().upper()):   # 9,25136E+13: Excel read a long number
+            raise config.ConfigError("%s line %d: '%s' is a material number that Excel turned into a rounded figure. In Excel, set the "
+                                     "column to Text before typing or pasting the numbers, then save again" % (TABLE, i, r[mat]))
         m, p = material_id(r[mat]), _price(r[price], "line %d" % i)
         if m and p is not None:
             prices[m] = p

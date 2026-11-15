@@ -12,3 +12,5 @@ liste_test;data/NC TEST - NC.csv;Liste Test
 liste_test_lignes_avant_entete;2;Lignes à sauter avant l'en-tête de la liste Test
 liste_test_colonne_numero;N° NC;Colonne du numéro de NC
 liste_test_colonne_date;Dates;Colonne de la date (jj/mm/aaaa)
+exports_plan;data/Avances_Retards*.csv;Plan de production : les exports du Tableau Avances / Retards (CSV), tels que téléchargés. Tous sont lus, le plus récent l'emporte : garder les anciens. Vide = aucun export lu
+suivi_cables;data/*cables*.csv;Demandes de câbles : l'export du suivi de l'équipe câbles (CSV), tel que téléchargé. Le plus récent est lu. Vide = aucun export lu

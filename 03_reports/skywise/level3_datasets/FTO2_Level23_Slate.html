@@ -7463,7 +7463,7 @@ function fto2FromTables(ncIn, defIn, ref, disIn, cxIn) {
     document.querySelectorAll('[data-t="serieSub"]').forEach(function (el) { el.textContent = S((GF.fto2 ? 'serieSub' : 'serieSubAll') + (GF.liab === 'f' ? 'Aec' : '')); });
     document.getElementById('foot3').textContent = S('foot3', { n: num(D.meta.noLine), o: num(((A || {}).other || [0])[0]), oe: eur(((A || {}).other || [0, 0])[1]) });
     // the method's footnote quotes the settings as they are today: the shutdown threshold, the hourly rates by who works
-    // (config/2_cout_parametres.csv), and whether a part's value is counted (config/1_prix_pieces.csv holds prices)
+    // (config/1_cout_parametres.csv), and whether a part's value is counted (config/1_prix_pieces.csv holds prices)
     var cp = (CXP && CXP.p) || {}, who = cp.who || {}, rs = cp.rates || {}, rate = function (a, b) { var v = a != null ? a : b; return v != null ? num(v) : '—'; };
     var priced = D.ncs.some(function (n) { return (n[46] || 0) > 0 || (n._w && n._w[7] > 0); });
     document.getElementById('foot4').textContent = S('foot4', { sh: num(SET.semaine_fermeture), rp: rate(who.production, cp.rateProd), rq: rate(who.qualite, rs.writing),

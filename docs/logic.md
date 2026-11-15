@@ -65,7 +65,7 @@ The files of `notebook_kit/fto2/`:
 | `core.py` | From the NCs to the dashboard's tables: defects, labels, rework orders, aléas, cost, scope. |
 | `cost/` | The cost model, with the rework orders, the aléas and the part prices. |
 | `reference.py` | Everything the pages need besides the NC tables (production plan, comparison year, cables, actions, settings). |
-| `everyday_tables.py` | Writes a level-1 table from a raw file while keeping the rows a person corrected. |
+| `downloads.py` | Reads the files saved in `data/` as they were downloaded: the exports of the production plan, the cable team's tracker. |
 
 ## 3. The run, step by step
 
@@ -73,7 +73,7 @@ The files of `notebook_kit/fto2/`:
 
 **A. The standard selection** (`select_ncs`, then `selection.apply_rules`)
 
-1. Reads the NCs of the plant created in the year followed (`2_parametres.csv`: `usine`, `annee`), plus the NCs of
+1. Reads the NCs of the plant created in the year followed (`2_parametres.csv`: `usine`; `1_parametres.csv`: `annee`), plus the NCs of
    other plants where the plant is liable. Skywise is asked for the NCs created from 1 January (`config.first_day`); the
    NCs created after 31 December are cut in Python (`skywise._until`), because Skywise's filter fails on three conditions
    joined with `&`.
@@ -110,7 +110,7 @@ step A; they go through the same rules, defect reader, part prices and cost mode
 requests, the MFT actions, the cost settings, the cause tree and the page settings. They are packed into `fto2_dash_ref`
 (section 5).
 
-**The year.** Every date of the run comes from one line, `annee` in `2_parametres.csv`, through four functions of
+**The year.** Every date of the run comes from one line, `annee` in `1_parametres.csv`, through five functions of
 `config.py`: `year()`, `comparison_year()`, `first_day()` (1 January), `year_end()` (1 January of the next year) and
 `aleas_since()` (1 December of the year before: an NC of early January can follow an aléa of late December). No year is
 written in the code: `tests/test_config.py` fails if one is. When the year followed is over, the last lines of the run say
@@ -123,7 +123,14 @@ so and name the line to change.
 - `table(name, columns)`: a settings table as text, after checking that it exists, that every line has the right number of
   columns, and that the expected columns are there.
 - `parameter(name, table)`: one value of a name-and-value table (`2_parametres.csv` by default). `parameter_list` splits it on
-  `|`; `parameter_yes` reads `oui` / `non`.
+  `|`; `parameter_yes` reads `oui` / `non`; `optional` gives `''` for a line that is empty or left out.
+- Two of these tables are in two parts (`SPLIT`): the manager's lines are in `1_parametres.csv` and `1_reglages_pages.csv`,
+  the technical ones in the `2_` table of the same name. `parameter` looks in both; `held_by` says which part holds a line,
+  so that an error names the right file.
+- `path(name)`: where a table is. A settings folder made before the tables were regrouped holds some under their former
+  names: a table not found under its name is taken under its former one (`FORMER`).
+- `year`, `comparison_year`, `first_day`, `year_end`, `aleas_since`: the year followed and the dates tied to it.
+- `number`, `day`: a number or a date as a person types it in Excel (`0,25`; `31/01/2026`).
 - `rule_table(name, columns)`: a rule table, checked by `rules.check`.
 - `mapping(name, key, value)`: a two-column table as a lookup, with its `(autre)` row as the default.
 - `folder()`: where the settings are (`data/config/` in the Code Workspace).
@@ -217,19 +224,29 @@ comparison).
 | `eqmsn`, `working_day_volume`, `production_msn` | The production plan: MSN built per product and month of the year followed (counted on working days, `1_calendrier_production.csv`), and each aircraft's build dates |
 | `weekly_volume` | MSN built per line and week of the year: the alarms' denominator |
 | `comparison_year` | The comparison year, summed per month, line, product. The pages know this block as `y25`, its name since the first year followed (2026, compared with 2025) |
-| `deliveries` | The products delivered in the comparison year, month by month: `1_livraisons_<year>.csv` when it exists, else counted in the production plan (a product is delivered in the month of its Départ OTA) |
-| `cable_requests` | The cable team's requests (`1_demandes_cables.csv`) |
-| `mft_actions`, `mft_actions_page` | The MFT actions (`1_actions_mft.csv`), each tied to its problem |
+| `deliveries` | The products delivered in the comparison year, month by month: `0_livraisons_<year>.csv` when it exists, else counted in the production plan (a product is delivered in the month of its Départ OTA) |
+| `cable_requests` | The cable team's requests (`downloads.cables`: the tracker's export saved in `data/`, else `0_demandes_cables.csv`) |
+| `mft_actions`, `mft_actions_page` | The MFT actions (`1_actions_mft.csv`), each tied to its problem; `_actions` checks the table first (ids, kind of problem, dates) |
 | `cnq_explain` | The cost settings, for "Expliquer le calcul" |
 | `rca_reference` | The cause tree for the Définitions tab, with real examples |
 | `page_settings` | The pages' settings: target, filters at opening, categories, colours, alarm settings |
 | `dashboard_block`, `mft_block` | All of the above, packed per page |
 | `ref_table` | The packs, cut into rows of text for `fto2_dash_ref` |
 
-### `everyday_tables.py`: tables filled from a raw file
+### `downloads.py`: the files saved as they were downloaded
 
-`write(name, rows, key)` writes a level-1 table from new rows marked `auto`, and keeps every row marked `manuel` (a person's
-row wins over a new row with the same key). `read(name)` reads one back.
+Two things reach the run as files the team downloads and saves in `data/`, with no table to fill (`2_sources.csv` names
+them: `exports_plan`, `suivi_cables`).
+
+| Function | What it does |
+|---|---|
+| `files`, `file_day` | The files a line of `2_sources.csv` names, oldest first. A download's day is the date at the end of its name, else the day it was saved |
+| `plan_of_export` | One export of the Tableau Avances / Retards as plan rows: one per aircraft and product, with the planned and the real date of its 8 milestones; an MSN shown as `#N/A` is taken from the older exports |
+| `merge_plan`, `plan` | The plan from every export, oldest first: the newest row of each aircraft wins; an aircraft delivered before a new export keeps its last row; a row that left the export before its delivery is dropped. `0_plan_msn.csv` is read as one more export |
+| `cables_of_export`, `cables` | The newest export of the cable team's tracker as request rows (origin from `2_cables_origines.csv`, proposed cause from `2_regle_cause_cable.csv`); without an export, `0_demandes_cables.csv` |
+| `report` | Two lines for the run's log: which files were read |
+
+A file that is not the expected export stops the run with a message that says which file and what was looked for.
 
 ## 5. The tables it writes
 

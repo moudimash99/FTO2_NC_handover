@@ -29,7 +29,7 @@ sys.path.insert(0, ROOT)
 from tests.shift import shift_dates  # noqa: E402
 
 DATA_YEAR, YEAR, DAYS = 2026, 2027, 371
-PLAN, CALENDAR, CABLES, ACTIONS = "1_plan_msn.csv", "1_calendrier_production.csv", "1_demandes_cables.csv", "1_actions_mft.csv"
+YEAR_TABLE, PLAN, CALENDAR, CABLES, ACTIONS = "1_parametres.csv", "0_plan_msn.csv", "1_calendrier_production.csv", "0_demandes_cables.csv", "1_actions_mft.csv"
 
 
 def read(path):
@@ -43,10 +43,10 @@ def write(table, path):
 def settings(folder):
     """A copy of config/ for the year 2027: the year's line, and the year's tables with their dates moved."""
     shutil.copytree(os.path.join(ROOT, "config"), folder)
-    p = read(os.path.join(folder, "2_parametres.csv"))
-    assert (p.nom == "annee").sum() == 1, "config/2_parametres.csv has no line 'annee'"
+    p = read(os.path.join(folder, YEAR_TABLE))
+    assert (p.nom == "annee").sum() == 1, "config/%s has no line 'annee'" % YEAR_TABLE
     p.loc[p.nom == "annee", "valeur"] = str(YEAR)
-    write(p, os.path.join(folder, "2_parametres.csv"))
+    write(p, os.path.join(folder, YEAR_TABLE))
     for name in (CALENDAR, ACTIONS):
         t = read(os.path.join(folder, name))
         write(shift_dates(t, DAYS, [c for c in t.columns if c in ("debut", "fin", "benefices_attendus") or c.startswith("debut_")]), os.path.join(folder, name))
@@ -72,7 +72,8 @@ def main():
         from tests import notebook_rehearsal as R
         from fto2 import config
         assert config.year() == YEAR and config.comparison_year() == YEAR - 1
-        nc_t, def_t, dis_t = R.run(days=DAYS, days_before=365, data_year=DATA_YEAR)
+        # the downloads of 06_input_data are 2026's: this year's plan and cable requests are the moved tables of the settings
+        nc_t, def_t, dis_t = R.run(days=DAYS, days_before=365, data_year=DATA_YEAR, downloads=False)
         written = R.Dataset.written
         bad = check(nc_t, def_t, dis_t, written)
         if out:
