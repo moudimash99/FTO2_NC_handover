@@ -1,0 +1,218 @@
+<!--
+title: FTO2 NC dashboard
+subtitle: Technical manual: how it works, how to keep it working, how to change it
+kicker: FTO2 · Quality
+file: FTO2_NC_Dashboard_Technical_Manual_EN
+for: The person who maintains the code
+version: November 2026
+contents: Contents
+depth: 2
+lang: en
+-->
+
+<h2>Read this first</h2>
+<p class="lead">You have taken over the code of the FTO2 NC dashboard. You do not need to read this manual from end to end.
+Read this chapter: it takes ten minutes. Keep chapter 2 for the day something breaks. The rest is a reference, to open at the
+page you need.</p>
+
+<h3>What it is</h3>
+<p>The whole system is two things: <b>a notebook that writes four tables</b>, and <b>a Slate application that reads them</b>.
+There is no server and no database of its own. Nothing runs by itself except the copy of the four tables to the database
+Slate reads.</p>
+<figure class="keep">
+  <svg viewBox="0 0 860 236" xmlns="http://www.w3.org/2000/svg" style="width:100%;font-family:'Inter Guide',Inter,Arial,sans-serif">
+    <defs><marker id="ar" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#4a5666"/></marker></defs>
+    <rect x="4" y="22" width="158" height="150" rx="6" fill="#f3f6f9" stroke="#9aa5b3"/>
+    <text x="16" y="44" font-size="12.5" font-weight="700" fill="#1b2430">Skywise data</text>
+    <text x="16" y="64" font-size="10.5" fill="#4a5666">non_conformity</text>
+    <text x="16" y="80" font-size="10.5" fill="#4a5666">work_order_operation</text>
+    <text x="16" y="96" font-size="10.5" fill="#4a5666">mes_disruptions</text>
+    <text x="16" y="112" font-size="10.5" fill="#4a5666">fto2_ai_labels</text>
+    <text x="16" y="136" font-size="9.5" fill="#7a8696">read by their names in</text>
+    <text x="16" y="149" font-size="9.5" fill="#7a8696">the workspace's Data panel</text>
+    <rect x="190" y="22" width="190" height="150" rx="6" fill="#e6f1ed" stroke="#1d6b52"/>
+    <text x="202" y="44" font-size="12.5" font-weight="700" fill="#1b2430">Code Workspace</text>
+    <text x="202" y="64" font-size="10.5" fill="#4a5666">fto2_pipeline_notebook.ipynb</text>
+    <text x="202" y="80" font-size="10.5" fill="#4a5666">notebook_kit/fto2/  the program</text>
+    <text x="202" y="96" font-size="10.5" fill="#4a5666">data/config/  45 settings tables</text>
+    <text x="202" y="112" font-size="10.5" fill="#4a5666">data/  files the team downloads</text>
+    <text x="202" y="136" font-size="9.5" fill="#7a8696">run by hand by the person</text>
+    <text x="202" y="149" font-size="9.5" fill="#7a8696">in charge: a few minutes</text>
+    <rect x="408" y="22" width="150" height="150" rx="6" fill="#e6f1ed" stroke="#1d6b52"/>
+    <text x="420" y="44" font-size="12.5" font-weight="700" fill="#1b2430">Four datasets</text>
+    <text x="420" y="64" font-size="10.5" fill="#4a5666">fto2_dash_nc</text>
+    <text x="420" y="80" font-size="10.5" fill="#4a5666">fto2_dash_defects</text>
+    <text x="420" y="96" font-size="10.5" fill="#4a5666">fto2_dash_disruptions</text>
+    <text x="420" y="112" font-size="10.5" fill="#4a5666">fto2_dash_ref</text>
+    <text x="420" y="136" font-size="9.5" fill="#7a8696">synced to Postgres,</text>
+    <text x="420" y="149" font-size="9.5" fill="#7a8696">schema foundry_sync</text>
+    <rect x="586" y="22" width="270" height="150" rx="6" fill="#1b2430"/>
+    <text x="598" y="44" font-size="12.5" font-weight="700" fill="#fff">Slate application</text>
+    <text x="598" y="64" font-size="10.5" fill="#d9dfe7">queries q_fto2_nc, q_fto2_def, q_fto2_dis, q_fto2_ref</text>
+    <text x="598" y="80" font-size="10.5" fill="#d9dfe7">one code sandbox per page: CSS, HTML, JS</text>
+    <text x="598" y="96" font-size="10.5" fill="#d9dfe7">the dashboard page · the MFT page</text>
+    <text x="598" y="136" font-size="9.5" fill="#aab4c2">the JS filters, adds up and draws</text>
+    <text x="598" y="149" font-size="9.5" fill="#aab4c2">in the reader's browser</text>
+    <line x1="162" y1="97" x2="188" y2="97" stroke="#4a5666" stroke-width="1.4" marker-end="url(#ar)"/>
+    <line x1="380" y1="97" x2="406" y2="97" stroke="#4a5666" stroke-width="1.4" marker-end="url(#ar)"/>
+    <line x1="558" y1="97" x2="584" y2="97" stroke="#4a5666" stroke-width="1.4" marker-end="url(#ar)"/>
+    <text x="285" y="196" font-size="10.5" fill="#1d6b52" text-anchor="middle">Python: chapters 3 and 4</text>
+    <text x="721" y="196" font-size="10.5" fill="#1b2430" text-anchor="middle">JavaScript: chapter 5</text>
+    <text x="430" y="224" font-size="10" fill="#7a8696" text-anchor="middle">Everything is found by its name: datasets, queries, columns, settings files. Renaming one breaks the chain.</text>
+  </svg>
+  <figcaption>The chain, with the names used in Skywise.</figcaption>
+</figure>
+
+<h3>Three kinds of things, and where each one lives</h3>
+<table class="keep">
+  <thead><tr><th style="width:34mm">What</th><th>Where it runs in Skywise</th><th style="width:60mm">Where its original is</th></tr></thead>
+  <tbody>
+    <tr><td><b>The settings</b><br>45 small tables</td><td><code>data/config/</code> in the Code Workspace. The team changes them there.</td><td><b>In Skywise.</b> The folder
+      <code>config</code> of the source is only the starting copy.</td></tr>
+    <tr><td><b>The program</b><br>Python</td><td><code>notebook_kit/fto2/</code> in the Code Workspace, run by the notebook.</td><td>The source folder, <code>fto2/</code>.</td></tr>
+    <tr><td><b>The pages</b><br>HTML, CSS, JS</td><td>Pasted into the code sandboxes of the Slate application.</td><td>The source folder: templates, built into the
+      files to paste.</td></tr>
+  </tbody>
+</table>
+<div class="warn"><span class="t">The rule to remember</span>
+For the program and the pages, <b>Skywise holds copies and the source folder holds the original</b>. A change typed
+directly into <code>notebook_kit</code> or into a Slate sandbox works, and is lost at the next installation. Make the change
+in the source, run the checks, build, then install (chapter 7). For the settings it is the opposite: the original is
+<code>data/config/</code> in Skywise. Never upload the folder <code>config</code> of the source over it.</div>
+
+<h3>What you will be asked, and where the answer is</h3>
+<table class="keep">
+  <thead><tr><th style="width:74mm">The request</th><th>Where it is dealt with</th></tr></thead>
+  <tbody>
+    <tr><td>Change the target, an hourly rate, a shutdown, a part price, an MFT action; start a new year.</td><td>Not yours: the person in charge does it
+      with the <i>Settings guide</i>. You are called only if the notebook stops (chapter 2).</td></tr>
+    <tr><td>"The notebook stopped." "The page shows a box." "The figures are old."</td><td>Chapter 2.</td></tr>
+    <tr><td>"This NC is in the wrong line, product, type or phase."</td><td>A rule table of the settings: chapter 3, the kinds of tables and
+      "Every table, one by one". No code.</td></tr>
+    <tr><td>A new product, a new aircraft programme, a new official code.</td><td>Settings: chapter 3, "Common tasks".</td></tr>
+    <tr><td>"This defect has the wrong cause."</td><td>The labels: section 1.5, and chapter 4.</td></tr>
+    <tr><td>Change how something is counted or costed.</td><td>First check that it is not a setting. Otherwise chapter 4, "Changing the logic".</td></tr>
+    <tr><td>Change a text, a colour, a chart; add a chart.</td><td>Chapter 5, then build and install (chapter 7).</td></tr>
+    <tr><td>Set the dashboard up again in Skywise, or install a new version.</td><td>Chapter 7.</td></tr>
+  </tbody>
+</table>
+
+<h3>Two ways of working</h3>
+<p><b>In Skywise only.</b> Enough for everything that is a setting, and to repair: read the notebook's message, correct a
+table, put a page's previous code back. You need a browser and the rights of the <i>Access guide</i>.</p>
+<p><b>With the source folder on a computer.</b> Needed to change the program or the pages. The folder holds the code, the
+data of a reference day, and checks that compare every figure of the pages with that reference: a change that moves a number
+it should not move is caught before it reaches Skywise. You need Python 3 and Node.js; chapter 8 says how to build and
+check.</p>
+
+<h3>What is not finished, and what to know</h3>
+<table>
+  <thead><tr><th style="width:46mm">Subject</th><th>The state of things</th></tr></thead>
+  <tbody>
+    <tr><td><b>The cause of new defects</b></td><td>The cause of each defect line is stored in the dataset <code>fto2_ai_labels</code>. These labels were made in two
+      passes (12 October and 4 November 2026) by a language model reading the full text of each NC with the definitions of the tab
+      Définitions, followed by two review passes. A line written or changed since then is classified by the defect reader of the
+      program, a set of rules: on the lines that have both, it gives the same category as the stored label for 94 % of them and the
+      same cause for 88 %. <b>Nothing has to be done for the dashboard to stay complete.</b> Each run writes the lines waiting for a
+      label in <code>fto2_lines_to_label.csv</code>; labelling them again needs a tool approved by IT for the NC texts (chapter 4).</td></tr>
+    <tr><td><b>The beginning of each year</b></td><td>The alarms compare the last weeks with the weeks before, inside the year followed. Until the year has
+      sixteen finished weeks (late April) the bell says that it has not enough weeks, and an MFT action started in the first weeks
+      of the year has no reference. It is by design; looking back into the previous year would remove it and is not done.</td></tr>
+    <tr><td><b>The MFT actions</b></td><td>The shared list is the table <code>1_actions_mft.csv</code>. Slate gives a code sandbox no shared storage, so an
+      action typed on the page stays in that browser until someone adds it to the table.</td></tr>
+    <tr><td><b>The run is manual</b></td><td>Someone runs the notebook. The program can also run as a scheduled transform of a Code Repository
+      (<code>fto2/transform_io.py</code> prepares it); this was not put in place.</td></tr>
+    <tr><td><b>The A400M</b></td><td>The text of its NCs is not available in Skywise: they count as NCs and in the cost, and no defect is read.</td></tr>
+    <tr><td><b>The aléas</b></td><td>The extract of MES Disruptions used to build the program stopped at exactly 2,500 rows. If the number of aléas of a
+      year stays at a round number, look for a limit on that dataset.</td></tr>
+    <tr><td><b>The part prices</b></td><td>Only the parts whose price is typed in <code>1_prix_pieces.csv</code> are valued. Each run lists the parts still
+      to price in <code>fto2_parts_to_price.csv</code>.</td></tr>
+    <tr><td><b>The former application</b></td><td>While <code>garder_anciennes_sorties</code> is <code>oui</code> in <code>2_parametres.csv</code>, the notebook also writes
+      the four tables of the former Slate application. Set it to <code>non</code> once that application is retired.</td></tr>
+  </tbody>
+</table>
+
+<h2>When something breaks</h2>
+<p class="lead">Start from what you see. Each row sends you to the place where the cause usually is. Nothing here needs the
+source folder: everything is done in Skywise.</p>
+
+<h3>The notebook stops</h3>
+<p>The notebook checks the settings first, in less than a second, before it reads or writes anything. A run that stops
+there has changed nothing: the dashboard still shows the previous run.</p>
+<table>
+  <thead><tr><th style="width:62mm">The last message</th><th style="width:50mm">What it means</th><th>What to do</th></tr></thead>
+  <tbody>
+    <tr><td>Names a file of <code>data/config/</code> and a line.</td><td>A settings table is badly filled: a <code>;</code> typed in a cell, a date, a word that is
+      not one of the allowed ones.</td><td>Correct that line. The message says what is expected. Chapter 3, "The basics".</td></tr>
+    <tr><td>"settings table … not found"</td><td>A table was renamed, moved or deleted.</td><td>Put it back in <code>data/config/</code>, from the folder <code>config</code> of the installation.</td></tr>
+    <tr><td>A dataset name that is not found.</td><td>The dataset is not in the Data panel of the workspace under that name.</td><td>Add it in the Data panel with the name of
+      chapter 7, or change the name in <code>2_sources.csv</code>.</td></tr>
+    <tr><td>A permission error on a dataset.</td><td>The person who runs the notebook lacks access.</td><td>The <i>Access guide</i>, chapter 5.</td></tr>
+    <tr><td>"… is not a price"</td><td>Text in the price column of <code>1_prix_pieces.csv</code>.</td><td>Correct that line.</td></tr>
+    <tr><td>"fto2_dash_cout not written"</td><td>Normal: that table only serves an optional set-up.</td><td>Nothing.</td></tr>
+    <tr><td>A warning ⚠️ at the end, about the year.</td><td>The clock is in a new year and the settings still follow the previous one.</td><td>The new-year list of the
+      <i>Settings guide</i>, chapter 7.</td></tr>
+    <tr><td>Any other error.</td><td>The last step printed says how far the run went.</td><td>Chapter 4, "The run, step by step", gives the file of each step.</td></tr>
+  </tbody>
+</table>
+<p>If the same error comes back after a correction, restart the kernel of the notebook and run every cell again: Python keeps
+in memory what it has already loaded.</p>
+
+<h3>A page shows a box instead of the dashboard</h3>
+<table>
+  <thead><tr><th style="width:62mm">The box says</th><th style="width:50mm">What it means</th><th>Where to look</th></tr></thead>
+  <tbody>
+    <tr><td>Green, <b>Chargement des données…</b>, for more than twenty seconds; then orange, naming a query.</td><td>That query does not exist under that name,
+      or fails.</td><td>In Slate, the query: its exact name, its SQL, and whether it runs for you.</td></tr>
+    <tr><td><b>La requête … n’a renvoyé aucune ligne</b></td><td>The query works; the table is empty.</td><td>The sync to Postgres, then the last run of the notebook.</td></tr>
+    <tr><td><b>aucune NC lisible … colonnes reçues : …</b></td><td>The query returns columns the page does not expect.</td><td>Compare with the SQL of the installation
+      (chapter 7): someone changed the query, or the table.</td></tr>
+    <tr><td><b>exactement N lignes reçues</b></td><td>Slate probably cut the result.</td><td>A row limit on the query.</td></tr>
+    <tr><td>Red, with an error and a line of code.</td><td>The JS has a mistake, or was pasted only in part.</td><td>Paste the JS of the installation again, whole.</td></tr>
+    <tr><td>The HTML part is missing.</td><td>The HTML tab of the sandbox is empty.</td><td>Paste the HTML part.</td></tr>
+    <tr><td>The page works for you and is empty for someone else.</td><td>That person cannot see the four datasets.</td><td>The <i>Access guide</i>.</td></tr>
+  </tbody>
+</table>
+
+<h3>The figures are old</h3>
+<p>The date <b>Données au…</b> at the top of the page is the day of the latest NC the page received. Follow the chain from
+left to right and stop at the first link that is late.</p>
+<ol class="steps">
+  <li><b>The notebook.</b> When was it last run, and did it reach its last lines, the list of the tables written? If not:
+    run it, or see section 2.1.</li>
+  <li><b>The four datasets.</b> Open <code>fto2_dash_nc</code> in Skywise: its last update must be the time of the run.</li>
+  <li><b>The sync to Postgres.</b> In Slate, run the query <code>q_fto2_nc</code> and look at the most recent
+    <code>created</code>. If the dataset is up to date and the query is not, the sync has not run: start it, and find out why
+    it did not follow the update.</li>
+  <li><b>The browser.</b> Reload the page.</li>
+</ol>
+<p>If the notebook ran and the latest NCs are still missing, look at the source: the dataset Non Conformity itself may be
+late.</p>
+
+<h3>A figure looks wrong</h3>
+<p>Before opening any code, use what the page gives.</p>
+<ol class="steps">
+  <li><b>Is it the selection?</b> Click <b>ⓘ Comment la sélection est faite</b>: the page shows what each filter removed.
+    Most "wrong totals" end here.</li>
+  <li><b>Is it one NC?</b> Find it in the list at the bottom of the tab. Its line, product, type and decision are the
+    result of the rule tables. For its cost, <b>Coût de non-qualité › Expliquer le calcul</b> shows every step.</li>
+  <li><b>Which rule decided?</b> Each label of an NC comes from one rule table of group 2 (<code>2_regle_…csv</code>): the
+    first rule that matches wins. Chapter 3 lists the tables and what each decides.</li>
+  <li><b>Which code reads a table?</b> The file <code>lisez_moi.csv</code> of the settings has a column <code>lu_par</code>:
+    the file of the program that reads each table. From a table to the code that uses it, start there.</li>
+  <li><b>Is it the calculation?</b> Chapter 4 for what the notebook computes; chapter 5 for what the page computes: rates,
+    targets, forecasts and alarms are computed in the page.</li>
+</ol>
+
+<h3>After a repair</h3>
+<ul>
+  <li><b>A setting was corrected:</b> run the notebook, reload the page, compare the key figures with what you expected.</li>
+  <li><b>Code was put back or changed in Skywise:</b> note it, and bring the same change into the source folder; otherwise
+    the next installation removes it.</li>
+  <li><b>The program or a page was changed in the source:</b> run the checks of chapter 8 before installing.</li>
+</ul>
+
+<!-- md: ../config.md | The settings -->
+<!-- md: ../logic.md | The calculations -->
+<!-- md: ../front_end.md | The pages -->
+<!-- md: ../part_prices.md | The part prices -->
