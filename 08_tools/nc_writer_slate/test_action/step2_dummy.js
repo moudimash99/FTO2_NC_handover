@@ -1,8 +1,10 @@
-// Test box for the NC writer's action. It fills the widget's state with a test row, as the real NC writer does, and
-// writes on the screen what Slate answers. Two ways of filling are tried, because Slate versions differ:
-//   A. SlateFunctions.setState("submission", row)        key, then value
-//   B. SlateFunctions.setState(an object with submission) one object
+// Test box for the NC writer's action. Button 1 fills the widget's state with a test row, as the real NC writer does:
+// SlateFunctions.setState("submission", row). The values are easy to tell from those typed in the State field: they all
+// say CODE, and they change at every click. Button 2 fires the event "submit", with the row as its value.
 // The action's fields read the row from this widget's state: <widget name>.state.submission.<field>.
+
+var clicks = 0;
+var lastRow = null;
 
 function pad(n) { return (n < 10 ? "0" : "") + n; }
 
@@ -24,15 +26,17 @@ function short(v) {
   return s.length > 300 ? s.slice(0, 300) + "..." : s;
 }
 
-function testRow(tag) {
+function testRow() {
   var stamp = now();
+  var hms = stamp.slice(11).replace(/:/g, "");
+  clicks = clicks + 1;
   var row = {};
   row.timestamp = stamp;
-  row.msn = "TEST";
-  row.produit = "MIP A350";
-  row.detection = "Poste";
-  row.total_defauts = 2;
-  row.texte_sap = "TEST " + tag + " " + stamp + " - ligne de test, a supprimer";
+  row.msn = "CODE-" + hms;
+  row.produit = "PRODUIT-CODE";
+  row.detection = "DETECTION-CODE";
+  row.total_defauts = clicks;
+  row.texte_sap = "ECRIT PAR LE CODE, clic " + clicks + ", " + stamp;
   return row;
 }
 
@@ -41,52 +45,35 @@ function api() { return typeof SlateFunctions === "undefined" ? null : SlateFunc
 function readBack() {
   var sf = api();
   if (!sf || typeof sf.getState !== "function") { line("   getState : absent"); return; }
-  try { line("   getState() -> " + short(sf.getState())); } catch (e) { line("   getState() erreur : " + e.message); }
+  try { line("   l'etat contient maintenant : " + short(sf.getState())); } catch (e) { line("   getState() erreur : " + e.message); }
 }
 
-function fill(way) {
+function fill() {
   var sf = api();
-  var row = testRow(way);
+  var row = testRow();
   if (!sf || typeof sf.setState !== "function") { line("setState introuvable : pas dans un Code Sandbox Slate."); return; }
   try {
-    if (way === "A") {
-      sf.setState("submission", row);
-      line("A. setState(\"submission\", row) appele, timestamp " + row.timestamp);
-    } else {
-      var state = {};
-      state.submission = row;
-      sf.setState(state);
-      line("B. setState(objet) appele, timestamp " + row.timestamp);
-    }
-  } catch (e) { line(way + ". erreur : " + e.message); }
+    sf.setState("submission", row);
+    lastRow = row;
+    document.getElementById("now").textContent = "Valeurs envoyees : Msn = " + row.msn + ", Total Defauts = " + row.total_defauts;
+    line("1. etat rempli : Msn " + row.msn + ", Total Defauts " + row.total_defauts);
+  } catch (e) { line("1. erreur : " + e.message); }
   setTimeout(readBack, 400);
 }
 
 function sendEvent() {
   var sf = api();
   if (!sf || typeof sf.triggerEvent !== "function") { line("triggerEvent introuvable."); return; }
-  try { sf.triggerEvent("submit"); line("C. evenement submit envoye"); } catch (e) { line("C. erreur : " + e.message); }
+  try { sf.triggerEvent("submit", lastRow); line("2. evenement submit envoye" + (lastRow ? " (Msn " + lastRow.msn + ")" : " (aucune valeur : appuyer d'abord sur 1)")); }
+  catch (e) { line("2. erreur : " + e.message); }
 }
 
 function start() {
   var sf = api();
   if (!sf) { line("SlateFunctions : absent (cette page n'est pas dans un Code Sandbox Slate)"); return; }
-  var names = ["watch", "setState", "getState", "triggerEvent"];
-  var found = [];
-  for (var i = 0; i < names.length; i++) {
-    var f = sf[names[i]];
-    found.push(names[i] + (typeof f === "function" ? "(" + f.length + ")" : " absent"));
-  }
-  var others = [];
-  try { others = Object.keys(sf); } catch (e) { others = []; }
-  line("SlateFunctions : " + found.join(", ") + " | cles : " + others.join(", "));
-  if (typeof sf.watch === "function") {
-    try { sf.watch("submission", function (v) { line("   Slate dit : submission = " + short(v)); }); } catch (e) { line("watch erreur : " + e.message); }
-  }
   readBack();
 }
 
-document.getElementById("btnA").addEventListener("click", function () { fill("A"); });
-document.getElementById("btnB").addEventListener("click", function () { fill("B"); });
-document.getElementById("btnC").addEventListener("click", sendEvent);
+document.getElementById("btnFill").addEventListener("click", fill);
+document.getElementById("btnEvent").addEventListener("click", sendEvent);
 start();
