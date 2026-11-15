@@ -1,0 +1,962 @@
+<!--
+title: FTO2 NC dashboard
+subtitle: User guide: reading the dashboard and the MFT page
+kicker: FTO2 · Quality
+file: FTO2_NC_Dashboard_User_Guide
+for: Everyone who reads the dashboard
+version: November 2026
+contents: Contents
+depth: 2
+lang: en
+-->
+
+<h2>The dashboard in one page</h2>
+<p class="lead">The dashboard shows the non-conformities (NCs) of FTO2: how many there are, on which aircraft and products, from
+which causes, at what cost, and whether each line is on its target. It only shows: nothing you click changes an NC or any
+data.</p>
+
+<p>It is made of two pages:</p>
+<table class="keep">
+  <thead><tr><th style="width:38mm">Page</th><th>What it is for</th><th style="width:44mm">Rhythm</th></tr></thead>
+  <tbody>
+    <tr><td class="k"><b>The NC dashboard</b></td><td>The year so far: totals, targets, causes, products, aircraft, cost, customer returns, cable
+      requests. Two modes: <b>Essentiel</b> (two tabs, for the monthly reviews) and <b>Deep dive</b> (eight tabs, to analyse).</td><td>Month by month</td></tr>
+    <tr><td class="k"><b>The MFT page</b></td><td>One line at a time: the Pareto of the week, what rises and what falls, and the follow-up of the
+      MFT actions.</td><td>Week by week</td></tr>
+  </tbody>
+</table>
+
+<h3>Which question, which place</h3>
+<table>
+  <thead><tr><th>Your question</th><th style="width:74mm">Where to look</th></tr></thead>
+  <tbody>
+    <tr><td>Are we under our target this year? Which line is not?</td><td>Essentiel › <b>Synthèse</b> (chapter 4)</td></tr>
+    <tr><td>Which causes weigh the most? Are they getting better or worse?</td><td>Essentiel › <b>Détail</b> (chapter 5), Deep dive › <b>Pareto</b> (6.2)</td></tr>
+    <tr><td>Which products, aircraft or stations are concerned?</td><td>Deep dive › <b>Localisation</b> (6.3)</td></tr>
+    <tr><td>What does non-quality cost, and how is that cost calculated?</td><td>Deep dive › <b>Coût de non-qualité</b> (6.4)</td></tr>
+    <tr><td>What comes back from the assembly lines and the customers?</td><td>Deep dive › <b>Retours clients</b> (6.5)</td></tr>
+    <tr><td>Which cables are asked for again, and why?</td><td>Deep dive › <b>Câbles</b> (6.6)</td></tr>
+    <tr><td>What exactly does a cause name mean?</td><td>Deep dive › <b>Définitions</b> (6.7)</td></tr>
+    <tr><td>How many aircraft were built? Where do the rates come from?</td><td>Deep dive › <b>Production</b> (6.8)</td></tr>
+    <tr><td>What deserves a look this week?</td><td>The <b>bell</b> (chapter 7), the <b>MFT page</b> (chapter 9)</td></tr>
+    <tr><td>Is the action we started working?</td><td>MFT page › <b>Suivi des actions</b> (9.4)</td></tr>
+  </tbody>
+</table>
+
+<h3>Where the figures come from</h3>
+<p>The NCs come from SAP, as Skywise holds them. The number of aircraft built comes from the production plan (the Tableau
+Avances / Retards). A few lists kept by the team complete them: the cable team's tracker, the GPS register, the Test list. A
+program in Skywise reads all of this and rebuilds the dashboard's data each time the person in charge of the dashboard runs
+it. <b>The date at the top right of the page says up to which day the data goes.</b></p>
+
+<div class="note"><span class="t">Three things to remember</span>
+<ul>
+  <li><b>What you see first</b> is the series-production NCs raised at FTO2, for which FTO2 is liable, created since 1 January.
+    The filters at the top change this (chapter 3).</li>
+  <li><b>Every chart follows the filters.</b> One line under the filters always says how many NCs and defects are on screen.</li>
+  <li><b>A click on a chart filters</b>, and the button <b>Comment la sélection est faite</b> shows what each filter removed.</li>
+</ul></div>
+
+<div class="ex"><span class="t">Language</span>
+The pages are in French, with an <b>EN</b> button at the top right. This guide names buttons and titles as they appear in
+French, with the English in brackets the first time. The texts of the NCs themselves always stay in French. The pictures of
+this guide show the data of 26 October 2026: your figures will be different.</div>
+
+<h2>Opening the dashboard and finding your way</h2>
+<p class="lead">The dashboard is a Skywise application. It opens in your browser like any Skywise page.</p>
+
+<div class="keep"><h3>Opening it</h3>
+<ol class="steps">
+  <li>Open the link of the dashboard (the person in charge of the dashboard gives it), signed in to Skywise as usual. Keep the
+    link in your browser's favourites.</li>
+  <li>Wait a few seconds: a green box says that the data is loading. The page then appears in the mode <b>Essentiel</b>, on
+    the tab <b>Synthèse</b>.</li>
+  <li>The MFT page is a second link, opened the same way.</li>
+</ol></div>
+<p>If the page does not open, or a red box appears, see chapter 11.</p>
+
+<h3>The page from top to bottom</h3>
+<div class="keep"><figure>
+  <img src="img/d_top.png" alt="The top of the dashboard">
+  <figcaption>The top of the dashboard, in the mode Essentiel.</figcaption>
+</figure>
+<ol class="marks">
+  <li><i>1</i> <b>Données au…</b> (data as of): the day of the most recent NC in the data. If it is old, the update has not
+    been run.</li>
+  <li><i>2</i> <b>The bell:</b> what deserves a look this week. The number is the number of alarms (chapter 7).</li>
+  <li><i>3</i> <b>FR / EN:</b> the language of the page.</li>
+  <li><i>4</i> <b>Essentiel / Deep dive:</b> the two modes. Essentiel has two tabs, Deep dive has eight.</li>
+  <li><i>5</i> <b>The filters:</b> what you look at (chapter 3).</li>
+  <li><i>6</i> <b>The selection:</b> how many NCs and defects the filters keep, and the button that explains it.</li>
+  <li><i>7</i> <b>The tabs</b> of the mode you are in.</li>
+  <li><i>8</i> <b>The key figures</b> of the tab.</li>
+</ol></div>
+
+<h3>Essentiel or Deep dive</h3>
+<table class="keep">
+  <thead><tr><th style="width:26mm">Mode</th><th style="width:52mm">Tabs</th><th>Use it to</th></tr></thead>
+  <tbody>
+    <tr><td class="k"><b>Essentiel</b></td><td><b>Synthèse</b> (summary), <b>Détail</b> (detail)</td><td>Follow the year and prepare the monthly reviews:
+      the few charts that matter, large enough to be shown on a screen. Synthèse was designed for the QCM, Détail for the QLS
+      of each line.</td></tr>
+    <tr><td class="k"><b>Deep dive</b></td><td><b>Vue d’ensemble, Pareto, Localisation, Coût de non-qualité, Retours clients, Câbles,
+      Définitions, Production</b></td><td>Analyse: every chart, every list, the explanation of each calculation.</td></tr>
+  </tbody>
+</table>
+<p>The charts of Essentiel are the same as in Deep dive: they are borrowed from its tabs. The filters stay as they are when
+you change tab or mode. The browser usually remembers the mode and the language you used last.</p>
+
+<h3>What every chart can do</h3>
+<table class="keep">
+  <thead><tr><th style="width:44mm">You do</th><th>You get</th></tr></thead>
+  <tbody>
+    <tr><td><b>Read the line under the title</b></td><td>Each chart says in one or two lines how to read it: what a bar, a dot or a colour means.</td></tr>
+    <tr><td><b>Point at a bar, a dot, a cell</b></td><td>A small box with its exact figures.</td></tr>
+    <tr><td><b>Click a bar, a line, a month</b></td><td>The page keeps only that part of the data (section 3.3). Click again, or the ✕, to go back.</td></tr>
+    <tr><td><b>Click ⤢</b> (<b>Agrandir</b>, enlarge)</td><td>In Essentiel: the chart alone on the screen, with its full reading hint. <b>Fermer</b> closes it.</td></tr>
+    <tr><td><b>Open ▸ Voir les données</b> (show the data)</td><td>The figures of the chart as a table.</td></tr>
+    <tr><td><b>Open a line that starts with ▸</b></td><td>More charts (<b>Autres graphiques</b>) or the list of the NCs behind the tab (<b>Détail des NC</b>).</td></tr>
+  </tbody>
+</table>
+
+<h2>Choosing what you look at</h2>
+<p class="lead">The bar of filters at the top decides which NCs are on screen. Every figure and every chart of every tab follows
+it.</p>
+
+<h3>The filters, one by one</h3>
+<figure>
+  <img src="img/d_filters.png" alt="The filters">
+  <figcaption>The filters, as the page opens.</figcaption>
+</figure>
+<table class="keep">
+  <thead><tr><th style="width:7mm"></th><th style="width:40mm">Filter</th><th>What it does</th><th style="width:36mm">As the page opens</th></tr></thead>
+  <tbody>
+    <tr><td><span class="mk">1</span></td><td><b>Source des données</b><br>(data source)</td><td>Every NC comes from Skywise. Some are also on a list kept by the
+      team: the GPS register or the Test list. This filter keeps all NCs, only those that are on no list, or only those of a list.</td><td>Toutes les données (all)</td></tr>
+    <tr><td><span class="mk">2</span></td><td><b>Origine (pipeline)</b><br>(origin)</td><td>How the NC was found. <b>Sortie normale:</b> by the standard
+      selection of FTO2's NCs. <b>IDs manquants:</b> NCs of the GPS register or the Test list that the standard selection does not
+      catch, added by their number.</td><td>Les deux sorties (both)</td></tr>
+    <tr><td><span class="mk">3</span></td><td><b>Usine FTO2 uniquement</b><br>(FTO2 plant only)</td><td><b>Oui:</b> only the NCs raised at FTO2.
+      <b>Non:</b> also the NCs raised elsewhere, such as the customer returns. No effect on the tabs Retours clients and Définitions.</td><td>Oui</td></tr>
+    <tr><td><span class="mk">4</span></td><td><b>Responsabilité</b><br>(liability)</td><td>Who is liable for the NC in SAP: FTO2, the suppliers, others. Tick one
+      or several; the number beside each name is its number of NCs.</td><td>FTO2</td></tr>
+    <tr><td><span class="mk">5</span></td><td><b>Type de production</b><br>(production type)</td><td>The phase of the NC: <b>Série</b>, <b>REC</b> or <b>FTI</b>.
+      With REC, a switch <b>Coût</b> appears: cost of the NCs FTO2 is liable for, or of all of them.</td><td>Série</td></tr>
+    <tr><td><span class="mk">6</span></td><td><b>Avion</b><br>(aircraft)</td><td>One line: A350, A330, A320, A400M.</td><td>Tous les avions (all)</td></tr>
+    <tr><td><span class="mk">7</span></td><td><b>Période</b><br>(period)</td><td>The NCs created between two dates: since 1 January, the last month, the last 3,
+      6 or 12 months, all dates, or two dates you choose.</td><td>Depuis le 1er janvier</td></tr>
+    <tr><td><span class="mk">8</span></td><td><b>Défauts mineurs</b><br>(minor defects)</td><td>Counts or leaves out the minor defects: a missing tie, lacing,
+      cap or plug. It changes the number of defects, never the number of NCs. Not shown on the tabs Vue d’ensemble and Coût de non-qualité.</td><td>Inclus (included)</td></tr>
+    <tr><td><span class="mk">9</span></td><td><b>The selection</b></td><td>What all the filters keep: the NCs and their defects. Read it before reading a chart.</td><td></td></tr>
+  </tbody>
+</table>
+
+<h3>The selection explained</h3>
+<p>Click <b>ⓘ Comment la sélection est faite</b> (how the selection is made). The page replays the filters one by one, in
+order, and shows what each one removes and what is left. Use it whenever a total surprises you, or differs from another
+report.</p>
+<figure class="half">
+  <img src="img/d_info.png" alt="How the selection is made">
+  <figcaption>Each filter with what it removes. Here: 1 281 NCs received, 868 left.</figcaption>
+</figure>
+
+<h3>Filtering by clicking a chart</h3>
+<p>Most charts can be clicked. There are two cases.</p>
+<p><b>The click filters the whole page.</b> A line of aircraft, a product, a month, a week, an aircraft (MSN), a station: the
+click works as one more filter. A label appears in the filter bar <span class="mk">1</span>; its ✕ removes it.
+<b>Réinitialiser</b> (reset) <span class="mk">2</span> puts every filter back as the page opens. The selection line
+<span class="mk">3</span> follows.</p>
+<figure>
+  <img src="img/d_pick.png" alt="A click on a product">
+  <figcaption>After a click on the product MIP A350 in the tab Localisation.</figcaption>
+</figure>
+<p><b>The click filters the tab.</b> In the tabs Pareto, Coût de non-qualité and Retours clients, the bars of a card filter
+the other cards and the list of that tab. The bar clicked stays coloured <span class="mk">2</span> and a label appears under
+the title; ✕ removes it, <b>Tout effacer</b> (clear all) <span class="mk">1</span> removes them all. You can click in several
+cards: a category, then a line, then a FIN.</p>
+<figure>
+  <img src="img/d_pick_tab.png" alt="A click on a category in the Pareto">
+  <figcaption>The Pareto after a click on the category Erreur Branchement.</figcaption>
+</figure>
+
+<div class="note"><span class="t">Good habits</span>
+<ul>
+  <li>Before you read a figure, read the selection line: is it the line, the period and the production type you think?</li>
+  <li>When you have finished, click <b>Réinitialiser</b>. The button only shows when a filter is not as the page opens.</li>
+  <li>The tab <b>Câbles</b> follows only the aircraft and the period. The bell follows the aircraft and the production type, not
+    the period: it always looks at the latest weeks.</li>
+</ul></div>
+
+<h2>Essentiel: the tab Synthèse</h2>
+<p class="lead">One screen to answer: where are we against the target, which line is off, which causes move. It is the tab the
+page opens on.</p>
+
+<h3>The four key figures</h3>
+<div class="keep"><figure>
+  <img src="img/d_syn_kpi.png" alt="The key figures of Synthèse">
+  <figcaption>The key figures of the selection.</figcaption>
+</figure>
+<ol class="marks">
+  <li><i>1</i> <b>NC depuis janvier</b> (NCs since January): the NCs of the selection. Under it: the number expected at the end
+    of December if the rate stays the same, and the target of the year.</li>
+  <li><i>2</i> <b>NC par MSN:</b> NCs divided by the aircraft and products built over the same period. Under it: how far this
+    is from the target, in red when above.</li>
+  <li><i>3</i> <b>Coût de non-qualité</b> (cost of non-quality): the estimated cost of these NCs (section 8.4), with its
+    December forecast and its target.</li>
+  <li><i>4</i> <b>Retours clients</b> (customer returns): the NCs raised outside FTO2 for which FTO2 is liable, and their cost.
+    They are counted apart from the other figures.</li>
+</ol></div>
+
+<h3>NC cumulées sur l’année</h3>
+<p>(Cumulative NCs over the year.) The curve adds the NCs month after month and compares them with the target.</p>
+<div class="keep"><figure class="keep">
+  <img src="img/d_syn_cumul.png" alt="Cumulative NCs over the year">
+  <figcaption>The year so far against its target.</figcaption>
+</figure>
+<ol class="marks">
+  <li><i>1</i> <b>2025:</b> the NCs of last year, one colour per line.</li>
+  <li><i>2</i> <b>Objectif:</b> the target of this year, line by line (section 8.3).</li>
+  <li><i>3</i> <b>The curve:</b> one dot per month. Green: the month is under its target. Red: above. The hollow dot is the month
+    in progress, judged on the days gone by.</li>
+  <li><i>4</i> <b>Dotted line:</b> the forecast for the months to come, at the rate of the period and the production planned.</li>
+  <li><i>5</i> <b>Dashed line:</b> the target, month after month. The grey line is last year at the same date.</li>
+</ol></div>
+<p><b>How to read it:</b> the curve above the dashed line means more NCs than the target allows at this date. July and August
+count for about 60 % of a month, because of the shutdown. Click a month to keep the NCs created that month.</p>
+
+<h3>Chaque ligne face à son objectif</h3>
+<p>(Each line against its target.) One row per line, and one for all lines together.</p>
+<div class="keep"><figure class="small keep">
+  <img src="img/d_syn_target.png" alt="Each line against its target">
+  <figcaption>The rate of each line and its target.</figcaption>
+</figure>
+<ol class="marks">
+  <li><i>1</i> <b>The bar:</b> the NCs per MSN built this year.</li>
+  <li><i>2</i> <b>The black tick:</b> the target of the line, its rate of last year minus 25 %.</li>
+  <li><i>3</i> <b>The circle:</b> the rate of last year.</li>
+  <li><i>4</i> <b>The percentage:</b> how far the line is from its target. Red: above the target.</li>
+</ol></div>
+<p><b>How to read it:</b> a bar that goes past its tick is above the target. Click a row to keep that line on the whole page.
+The line <b>NC sans produit du plan de production</b> under the chart lists the few NCs that could not be matched to a
+product of the production plan: they count in the totals, not in the rates (chapter 11).</p>
+
+<h3>Classement mensuel des causes</h3>
+<p>(Monthly ranking of root causes.) The rank of each of the eight main causes, month after month: 1 is the cause with the
+most defects that month.</p>
+<figure class="half keep">
+  <img src="img/d_syn_rank.png" alt="Monthly ranking of root causes">
+  <figcaption>The first cause is highlighted; click another line to follow it.</figcaption>
+</figure>
+<p><b>How to read it:</b> a line that climbs towards rank 1 is a cause that takes more room. A grey band marks a month with
+few defects (<b>volume faible</b>), where ranks mean little.</p>
+
+<h3>Causes : 2025 contre 2026</h3>
+<p>(Root causes: last year against this year, A330 and A350.) Defects per MSN for the ten main causes of each year.</p>
+<figure class="half keep">
+  <img src="img/d_syn_slope.png" alt="Root causes, last year against this year">
+  <figcaption>Left: last year. Right: this year.</figcaption>
+</figure>
+<p><b>How to read it:</b> a line that goes up is a cause that produces more defects per aircraft than last year. ▲ marks a
+rise of more than 10 %, ▼ a fall of more than 10 %, = a change of less than 10 %. The A320 is left out: its products are small
+parts counted one by one, which would pull the rates down.</p>
+
+<h3>Volume ou coût unitaire</h3>
+<p>(Volume or unit cost.) One bubble per cause: is it frequent, expensive, or both?</p>
+<figure class="keep">
+  <img src="img/d_syn_bubble.png" alt="Volume or unit cost">
+  <figcaption>Each cause by its number of defects and its average cost per defect.</figcaption>
+</figure>
+<p><b>How to read it:</b> to the right, the cause is frequent; towards the top, each defect is expensive; the size of the
+bubble is the total cost. The dotted curves join points of equal total cost (1 k€, 5 k€, 20 k€, 50 k€): a cause beyond the
+50 k€ curve costs more than 50 k€ in total. A cause to the right and low is a matter of volume; a cause high and to the left
+is a matter of unit cost.</p>
+
+<h3>Détail des NC</h3>
+<p>(NC detail.) At the bottom of the tab, the line <b>▸ Détail des NC</b> opens the list of the NCs of the selection, the most
+recent first.</p>
+<figure>
+  <img src="img/d_table.png" alt="The list of NCs">
+  <figcaption>The list of the NCs behind the tab.</figcaption>
+</figure>
+<p>Type in the search box <span class="mk">1</span> to find an NC by its number, a word of its text or a FIN. The list shows
+200 NCs at a time; <b>Afficher 200 de plus</b> at its end shows more.</p>
+
+<h2>Essentiel: the tab Détail</h2>
+<p class="lead">The working view of a line: the Pareto of the categories, the causes month by month, the connection errors and
+the first causes of each product. Its charts always run from January to the end of the period chosen.</p>
+
+<h3>The key figures and the two switches</h3>
+<div class="keep"><figure>
+  <img src="img/d_det_top.png" alt="The top of the tab Détail">
+  <figcaption>Key figures, switches and the Pareto of the categories.</figcaption>
+</figure>
+<ol class="marks">
+  <li><i>1</i> <b>Mesure</b> (measure): count the <b>defects</b>, or their <b>cost</b>. The whole Pareto follows.</li>
+  <li><i>2</i> <b>Défauts câble dans les barres:</b> <b>Affichés</b> shows, inside each bar, the share that is a cable defect.</li>
+  <li><i>3</i> <b>The columns:</b> defects, NCs, and <b>Cumul</b>, the running share: here the first two categories make 65 % of
+    the defects.</li>
+</ol></div>
+<p>An NC often holds several defects. To count NCs by category, each NC is shared among its defects: one defect of an NC that
+has four counts for a quarter of an NC. This is why the NC column shows decimals.</p>
+
+<h3>Catégorie</h3>
+<p>The nine categories of defects, from the most frequent to the least. The tab Définitions says what each one covers
+(section 6.7). Click a bar to keep that category in the list at the bottom of the tab.</p>
+
+<h3>Erreurs de branchement par MSN</h3>
+<p>(Connection errors per MSN, month by month, A330 and A350.) Swapped wires, wrong terminals and wires not connected,
+divided by the aircraft built in the month.</p>
+<figure class="half keep">
+  <img src="img/d_det_conn.png" alt="Connection errors per MSN">
+  <figcaption>Connection errors per aircraft built, month by month.</figcaption>
+</figure>
+<p><b>How to read it:</b> the green line is the month; the black line is the average of the period; the dotted line smooths
+three months; the red dashed line is the average of last year. The hollow dot is the month in progress.</p>
+
+<h3>Les trois premières causes de chaque produit</h3>
+<p>(The top three root causes of each product.) Products are sorted from the most affected to the least, in defects per MSN.
+Read it to know what to work on, product by product.</p>
+<figure class="keep">
+  <img src="img/d_det_top3.png" alt="The top three causes of each product">
+  <figcaption>For each product: its rate, and its three first causes.</figcaption>
+</figure>
+
+<h3>Détail des défauts</h3>
+<p>(Defect detail.) The line <b>▸ Détail des défauts</b> at the bottom opens the list of the defects, one row per defect line
+of each NC, with its category, its cause, its official sub-code, its share of the NC's cost and its text. It has the same
+search box as the list of NCs.</p>
+
+<h2>Deep dive, tab by tab</h2>
+<p class="lead">Eight tabs to analyse. Each one opens with its key figures, then its charts; the list of the NCs or defects
+behind the tab is always at the bottom.</p>
+
+<h3>Vue d’ensemble</h3>
+<p>(Overview.) The whole selection, counted in NCs: each NC counts once, whatever its number of defects.</p>
+<figure>
+  <img src="img/d_ov.png" alt="The top of the tab Vue d’ensemble">
+  <figcaption>The eight tabs of Deep dive and the key figures of the overview.</figcaption>
+</figure>
+<p>The key figure <b>NC par MSN</b> has a switch: <b>A330 + A350</b>, or <b>A320</b>, whose small parts are counted one by
+one and cannot be mixed with the others.</p>
+<table class="keep">
+  <thead><tr><th style="width:62mm">Card</th><th>What it answers</th></tr></thead>
+  <tbody>
+    <tr><td><b>NC cumulées sur l’année</b></td><td>Are we under the target? Same chart as in Synthèse (section 4.2).</td></tr>
+    <tr><td><b>Chaque ligne face à son objectif</b></td><td>Which line is above its target? (section 4.3)</td></tr>
+    <tr><td><b>NC par programme</b></td><td>The share of each line in the NCs. Click a line to keep it.</td></tr>
+    <tr><td><b>Combien de temps une NC reste ouverte</b></td><td>How fast NCs are closed, by decision (below).</td></tr>
+    <tr><td><b>Coût de non-qualité cumulé</b></td><td>The same curve as the NCs, in euros, with its forecast and its target.</td></tr>
+    <tr><td><b>NC par semaine, avec leurs limites</b></td><td>Is a week out of the ordinary? (below)</td></tr>
+    <tr><td><b>▸ Autres listes et graphiques</b></td><td>NCs by product, by decision and status, opened and closed per month, by liability, by SAP defect
+      code and SAP cause, and the calendar of the defects day by day.</td></tr>
+  </tbody>
+</table>
+<figure class="half keep">
+  <img src="img/d_ov_open.png" alt="How long an NC stays open">
+  <figcaption>The share of NCs still open, day after day.</figcaption>
+</figure>
+<p><b>Combien de temps une NC reste ouverte</b> (how long an NC stays open). Each curve starts at 100 % on the day the NCs
+are created and goes down as they are closed. The dot on a curve is the day when half of its NCs are closed: here 7 days for
+a rework, 20 days for a scrap or rejection. NCs still open are counted up to today. Click at a number of days to keep the NCs
+that were still open then.</p>
+<figure class="keep">
+  <img src="img/d_ov_control.png" alt="NCs per week with their limits">
+  <figcaption>NCs per week, with the average and the limits.</figcaption>
+</figure>
+<p><b>NC par semaine, avec leurs limites</b> (NCs per week, with their limits). The line in the middle is the average week.
+The dotted lines are the attention level and the red dashed lines the alarm level: a week beyond the red line is not an
+ordinary week, and is worth a question. Shutdown weeks are left out of the calculation, and the week in progress is not
+drawn.</p>
+
+<h3>Pareto</h3>
+<p>The defects of the selection, sorted: by category, by cause, by line, by official sub-code, by FIN.</p>
+<figure>
+  <img src="img/d_pareto.png" alt="The Pareto of the defects">
+  <figcaption>The Pareto, counted in defects.</figcaption>
+</figure>
+<p>The two switches are those of the tab Détail: <span class="mk">1</span> <b>Mesure</b> counts defects or their cost,
+<span class="mk">2</span> shows the cable defects inside the bars. The tab opens on the cost. Click any bar to filter the
+other cards and the list (section 3.3).</p>
+<figure class="keep">
+  <img src="img/d_pareto_cards.png" alt="Causes, lines and FIN">
+  <figcaption>The same defects by cause, by line and by FIN. In each bar, the colours are the categories.</figcaption>
+</figure>
+<table class="keep">
+  <thead><tr><th style="width:62mm">Card</th><th>What it answers</th></tr></thead>
+  <tbody>
+    <tr><td><b>Catégorie, Cause (RCA), Ligne, Sous-code officiel, FIN (repère)</b></td><td>Where the defects are, from five angles. The FIN card shows the 20
+      references named most often; defects with no FIN written are left out.</td></tr>
+    <tr><td><b>Cent défauts</b></td><td>A hundred squares: each one is 1 % of the defects, coloured by category.</td></tr>
+    <tr><td><b>Volume ou coût unitaire</b>, <b>Classement mensuel des causes</b></td><td>As in Synthèse (sections 4.6 and 4.4).</td></tr>
+    <tr><td><b>Du lieu de détection à la décision</b></td><td>The flow of the defects (below).</td></tr>
+    <tr><td><b>Erreurs de branchement</b> (three cards)</td><td>Connection errors per MSN month by month, per product and cause, and per million connection
+      operations on the MIP A350, with its target.</td></tr>
+    <tr><td><b>Causes : 2025 contre 2026</b>, <b>Les causes rapportées au volume</b></td><td>Each cause in defects per MSN: against last year, and ranked.</td></tr>
+    <tr><td><b>▸ Autres graphiques</b></td><td>Cable defects per MSN month by month; which pins get swapped on the connectors where it happens most.</td></tr>
+  </tbody>
+</table>
+<figure class="keep">
+  <img src="img/d_pareto_flow.png" alt="From where a defect is found to the decision">
+  <figcaption>Where the defects are found, what they are, and the decision taken.</figcaption>
+</figure>
+<p><b>Du lieu de détection à la décision</b> (from where it is found to the decision). Left: where the NC was found (final
+inspection, test, cables, internal). Middle: the category of the defect. Right: the decision taken on the NC. The thicker a
+band, the more defects. Point at a block to see only its bands.</p>
+
+<h3>Localisation</h3>
+<p>(Location.) The same NCs by product, by aircraft and by station, set against the volume built wherever possible. The tab
+has three parts: <b>Produits</b>, <b>Avions</b>, <b>Postes</b>.</p>
+<figure>
+  <img src="img/d_where_products.png" alt="Products: forecast and monthly rate">
+  <figcaption>Product by product: what is done and what is expected by December; then the rate of each month.</figcaption>
+</figure>
+<table class="keep">
+  <thead><tr><th style="width:62mm">Card</th><th>What it answers</th></tr></thead>
+  <tbody>
+    <tr><td><b>NC, défauts et coût attendus d’ici décembre</b></td><td>For each product: done so far, then expected at the end of December (the rate of
+      the period × the aircraft still planned). The switch <b>Par MSN</b> shows the same per aircraft built.</td></tr>
+    <tr><td><b>Taux mensuel, produit par produit</b></td><td>NCs per MSN, month by month: the darker the cell, the higher the rate. A dash: less than half
+      an aircraft built that month, so no rate.</td></tr>
+    <tr><td><b>Coût par famille de produit</b></td><td>The ten costliest product families, with their number of NCs and aircraft, and the average cost per
+      aircraft.</td></tr>
+    <tr><td><b>Les trois premières causes de chaque produit</b></td><td>As in Détail (section 5.4).</td></tr>
+    <tr><td><b>Coût par avion (MSN)</b></td><td>One bar per aircraft (below).</td></tr>
+    <tr><td><b>Les FIN qui reviennent d’un avion à l’autre</b></td><td>The references that come back (below).</td></tr>
+    <tr><td><b>Défauts par poste et catégorie</b></td><td>The twelve stations whose NCs carry the most defects, by category. The station is the one where the
+      NC was written.</td></tr>
+    <tr><td><b>▸ Autres graphiques</b></td><td>How far each product's rate can be trusted: the rate with its margin of uncertainty, wide when few aircraft
+      were built.</td></tr>
+  </tbody>
+</table>
+<figure class="keep">
+  <img src="img/d_where_msn.png" alt="Cost per aircraft">
+  <figcaption>The cost of the NCs of each aircraft, in the order of production.</figcaption>
+</figure>
+<p><b>Coût par avion (MSN).</b> One bar per aircraft, line by line; the dotted line is the average of the line. Hatched bars
+are aircraft still in production at the date of the data: their cost can still grow. Pale grey bars are aircraft started
+before this year. The aircraft far above the others are named. Click a bar to see the NCs of that aircraft.</p>
+<figure class="keep">
+  <img src="img/d_where_fin.png" alt="FINs that come back">
+  <figcaption>One column per aircraft, one row per FIN.</figcaption>
+</figure>
+<p><b>Les FIN qui reviennent d’un avion à l’autre</b> (FINs that come back aircraft after aircraft). A square means a defect
+on that FIN on that aircraft; a dark square, two or more. A row full of squares is a defect that repeats on almost every
+aircraft: a candidate for an action. The chart shows the line chosen in the filter, or the A350 when all aircraft are shown.</p>
+<p>At the bottom, <b>▸ Détail des NC : produit, avion, poste</b> lists every NC. In this list, a click on a line, a product,
+an MSN or a station filters the whole page.</p>
+
+<h3>Coût de non-qualité</h3>
+<p>(Cost of non-quality.) What the NCs cost FTO2, and how that cost is made. It is an estimate built from the times of the AEC
+process, not an accounting figure (section 8.4).</p>
+<figure>
+  <img src="img/d_cnq_top.png" alt="The top of the cost tab">
+  <figcaption>The cost of the selection and its split by type of NC.</figcaption>
+</figure>
+<p>The line under the title gives the whole picture: the total for FTO2, the part raised at FTO2, the customer returns, and,
+beside them, the quality aléas that led to no NC.</p>
+<table class="keep">
+  <thead><tr><th style="width:62mm">Card</th><th>What it answers</th></tr></thead>
+  <tbody>
+    <tr><td><b>Répartition du coût par type de NC</b></td><td>The share of the cost by type of NC: cable NCs, test, final inspection, internal, suppliers.</td></tr>
+    <tr><td><b>Ligne, Produit, Décision, Mois de création</b></td><td>The cost from four angles. Click a bar to filter the other cards and the list.</td></tr>
+    <tr><td><b>De quoi est fait le coût, mois par mois</b></td><td>The handling of the NC, the rework, the material and the engineering, month by month.</td></tr>
+    <tr><td><b>Aléas qualité sans NC</b></td><td>The time lost on quality aléas that led to no NC (below).</td></tr>
+    <tr><td><b>▸ Autres graphiques du coût</b></td><td>Every NC over time, as a bubble at the size of its cost; and how the rework was costed: from the
+      planned time of the rework order, or from the model.</td></tr>
+    <tr><td><b>▸ Expliquer le calcul</b></td><td>The calculation, step by step, and on any real NC (below).</td></tr>
+  </tbody>
+</table>
+<figure class="half keep">
+  <img src="img/d_cnq_parts.png" alt="What the cost is made of">
+  <figcaption>The four parts of the cost, month by month.</figcaption>
+</figure>
+
+<h4>Expliquer le calcul (explain the calculation)</h4>
+<p>Open <b>▸ Expliquer le calcul</b>. Everything the cost is made of is on the screen, with the figures of your
+selection.</p>
+<div class="keep"><figure>
+  <img src="img/d_cnq_explain.png" alt="The six steps of the cost">
+  <figcaption>The six steps of an NC, and what they add up to.</figcaption>
+</figure>
+<ol class="marks">
+  <li><i>1</i> <b>The six steps of an NC</b>, each with its time, the hourly rate of who does it, and its total over the
+    selection.</li>
+  <li><i>2</i> <b>The sum:</b> the six steps, plus the engineering studies, plus the material, equal the cost of the
+    selection.</li>
+  <li><i>3</i> <b>The special rules</b> of the model, and under them what is counted for each decision.</li>
+</ol></div>
+<div class="keep"><figure>
+  <img src="img/d_cnq_nc.png" alt="The calculation on a real NC">
+  <figcaption>The calculation, line by line, on one NC.</figcaption>
+</figure>
+<ol class="marks">
+  <li><i>1</i> Type an <b>NC number</b> and click <b>Afficher</b> (show) to see its calculation.</li>
+  <li><i>2</i> Or click an example: a rework with one defect, a rejection, an NC costed from its rework order…</li>
+  <li><i>3</i> For comparison: the same NC at average times, and at the Airbus standard for its decision.</li>
+</ol></div>
+<p>Under the table, <b>▸ Voir les lignes de défaut de cette NC</b> lists each defect of the NC with the minutes and the
+material it adds.</p>
+
+<h4>Aléas qualité sans NC (quality aléas with no NC)</h4>
+<figure class="keep">
+  <img src="img/d_cnq_aleas.png" alt="Quality aléas with no NC">
+  <figcaption>Time lost on quality aléas that led to no NC.</figcaption>
+</figure>
+<p>An operator who stops for a quality problem declares an aléa in MES. When an NC follows on the same work order, the time
+of the aléa is part of the cost of that NC. This card shows the others: the aléas that led to no NC, with the hours lost per
+month and per line. They are shown <b>beside</b> the cost of non-quality and are not added to it. <b>▸ Les aléas, un par
+ligne</b> lists them.</p>
+
+<h3>Retours clients</h3>
+<p>(Customer returns.) The NCs raised outside FTO2, by the assembly lines or the customers, for which FTO2 is liable. They
+are counted in defects.</p>
+<figure>
+  <img src="img/d_client.png" alt="The customer returns">
+  <figcaption>The customer returns by category and by cause.</figcaption>
+</figure>
+<p>The cards show the returns by category, by cause, by type of damage, by line and by month. Click a bar to filter the
+others. At the bottom, <b>▸ Détail des retours clients</b> lists them; <b>click a row to read the full text of the NC</b>,
+with the site that raised it.</p>
+
+<h3>Câbles</h3>
+<p>(Cables.) The requests for new cables recorded by the cable team in its tracker: a cable too short, damaged, missing, cut
+or not conforming. This tab does not come from SAP but from the tracker; it follows the aircraft and the period of the
+filters.</p>
+<figure>
+  <img src="img/d_cbl.png" alt="The cable requests">
+  <figcaption>The cable requests per month, by who they are imputed to.</figcaption>
+</figure>
+<table class="keep">
+  <thead><tr><th style="width:62mm">Card</th><th>What it answers</th></tr></thead>
+  <tbody>
+    <tr><td><b>Demandes par mois et imputation</b></td><td>How many requests each month, and who they are imputed to: the production line, the printing
+      (machine or operator), the definition.</td></tr>
+    <tr><td><b>Motif × imputation</b></td><td>Each reason against each imputation: where the short cables come from, for example.</td></tr>
+    <tr><td><b>Types de câble</b>, <b>Câbles récurrents</b></td><td>The cable types asked for most, and the cables asked for again on several aircraft.</td></tr>
+    <tr><td><b>Causes (proposées)</b></td><td>The cause proposed for each request. <b>Inconnu – à analyser</b> counts the requests with no cause yet.</td></tr>
+    <tr><td><b>Demandes</b></td><td>The list of the requests, with a search box.</td></tr>
+  </tbody>
+</table>
+<figure class="keep">
+  <img src="img/d_cbl_tables.png" alt="Reasons, imputations and cable types">
+  <figcaption>Reasons against imputations, and the cable types.</figcaption>
+</figure>
+<p>Click a reason, an imputation, a cause or a cable: the list of requests keeps only those, and a label at the top shows the
+choice.</p>
+
+<h3>Définitions</h3>
+<p>(Definitions.) The dictionary of the dashboard: what each category and each cause means, with figures and real examples.</p>
+<figure>
+  <img src="img/d_rca.png" alt="How a defect gets its cause">
+  <figcaption>From the official sub-code to the Pareto category.</figcaption>
+</figure>
+<p>Each defect gets a <b>sub-category</b>, which gives exactly one <b>cause</b> (RCA), which gives exactly one <b>category</b>
+of the Pareto. An official code written in the NC decides; when there is none, the text of the NC decides. When the text
+describes a cause and its consequence, the defect is classified on the cause. The table under the diagram lists the causes
+with their figures; click a row to go to its definition.</p>
+<figure class="keep">
+  <img src="img/d_rca_cause.png" alt="The definition of a cause">
+  <figcaption>The definition of one cause.</figcaption>
+</figure>
+<p>For each cause: its definition in one or two sentences, its number of defects and NCs, its cost, its sub-categories with
+their official codes, and three real examples with their NC numbers.</p>
+
+<h3>Production</h3>
+<p>The volumes behind the rates: how many aircraft and products are built, planned and delivered, line by line and product
+by product. Come here when a rate surprises you.</p>
+<figure>
+  <img src="img/d_pplan.png" alt="Production by line">
+  <figcaption>For each line: the volume built and planned, the NCs, the rate and the target.</figcaption>
+</figure>
+<table class="keep">
+  <thead><tr><th style="width:62mm">Card</th><th>What it answers</th></tr></thead>
+  <tbody>
+    <tr><td><b>2025 et 2026, mois par mois</b></td><td>NCs, aircraft and NCs per aircraft, two years side by side (below).</td></tr>
+    <tr><td><b>Par ligne</b></td><td>The table behind the targets: MSN built and planned, delivered last year, NCs of both years, rate, and target in
+      NCs per MSN and in NCs.</td></tr>
+    <tr><td><b>MSN prévus, mois par mois</b></td><td>The production plan of the year by line. Lighter colours: the months to come.</td></tr>
+    <tr><td><b>Par produit</b></td><td>The same table for each product of the production plan.</td></tr>
+    <tr><td><b>Comment ces chiffres sont faits et utilisés</b></td><td>In words: where the volumes come from, how an NC is matched to a product, how rates,
+      forecasts and targets use them.</td></tr>
+  </tbody>
+</table>
+<figure class="keep">
+  <img src="img/d_pplan_months.png" alt="Two years month by month">
+  <figcaption>NCs, aircraft built and NCs per aircraft, last year and this year.</figcaption>
+</figure>
+
+<h2>The bell: what deserves a look</h2>
+<p class="lead">The bell does the weekly watch for you. Each time the data is updated, it looks at every line and lists what
+is rising more than chance can explain.</p>
+<figure class="half">
+  <img src="img/d_bell.png" alt="The bell, opened">
+  <figcaption>The bell opened: four things to look at in week 43.</figcaption>
+</figure>
+
+<h3>What it watches</h3>
+<p>Line by line, it compares the defects of the <b>last four finished weeks</b> with the <b>twelve weeks before</b>, taking
+into account the number of aircraft built: more defects because more aircraft were built is not an alarm. It does this for
+the defects as a whole, and for each category, cause, official sub-code, station, product and place where NCs are found. It
+also catches two things a weekly comparison misses: a <b>slow rise</b> over several months, and <b>an aircraft with far more
+NCs</b> than its product usually has.</p>
+
+<h3>Reading an alarm</h3>
+<table class="keep">
+  <thead><tr><th style="width:52mm">On the line</th><th>Meaning</th></tr></thead>
+  <tbody>
+    <tr><td><b>A330 · … en hausse depuis S41</b></td><td>The line, what is rising, and since which week.</td></tr>
+    <tr><td><b>MSN 2169 : 13 NC, un PTVU en a 5 d’habitude</b></td><td>An aircraft with many more NCs than usual for this product.</td></tr>
+    <tr><td><b>action en cours : …</b></td><td>An MFT action already follows this problem (section 9.4).</td></tr>
+    <tr><td><b>→ Pareto</b>, <b>→ Localisation</b></td><td>Click the alarm: the page opens the right tab, filtered on the problem.</td></tr>
+    <tr><td>The small curve</td><td>The last weeks of this problem, at a glance.</td></tr>
+    <tr><td>A full red dot, a red bell</td><td>A major alarm: a strong rise. A hollow dot is a minor alarm.</td></tr>
+  </tbody>
+</table>
+
+<div class="note"><span class="t">Good to know</span>
+<ul>
+  <li>An alarm is a question to ask, not a verdict: look at the NCs behind it before concluding.</li>
+  <li>The bell follows the filters <b>Avion</b> and <b>Type de production</b>: with one aircraft chosen, it lists that line
+    only. It does not follow the period.</li>
+  <li>At the beginning of the year the bell is quiet: it needs sixteen finished weeks of the year to compare, so it says
+    <b>Pas encore assez de semaines pour comparer</b> (not enough weeks yet) until late April. This is expected.</li>
+  <li>The MFT page has its own bell, for the line you are looking at (section 9.5).</li>
+</ul></div>
+
+<h2>How the figures are made</h2>
+<p class="lead">You do not need this chapter to read the dashboard. It is here for the day someone asks "where does this number
+come from?". The page itself says the same in two places: the tab <b>Production</b>, card <b>Comment ces chiffres sont faits et
+utilisés</b>, and the tab <b>Coût de non-qualité</b>, <b>Expliquer le calcul</b>.</p>
+
+<h3>What is counted</h3>
+<table class="keep">
+  <thead><tr><th style="width:42mm">Word</th><th>What it means on the dashboard</th></tr></thead>
+  <tbody>
+    <tr><td><b>An NC</b></td><td>One non-conformity of SAP. It counts once, whatever it holds. Deleted NCs are counted too: the work was done.</td></tr>
+    <tr><td><b>A defect</b></td><td>One line of defect inside an NC. An NC with 16 defect lines is 1 NC and 16 defects.</td></tr>
+    <tr><td><b>An FTO2 NC</b></td><td>An NC raised at the plant FTO2. This is what the page shows as it opens, with FTO2 liable.</td></tr>
+    <tr><td><b>A customer return</b></td><td>An NC raised elsewhere (an assembly line, a customer) for which FTO2 is liable. Counted apart, in its own tab.</td></tr>
+    <tr><td><b>A minor defect</b></td><td>A missing tie, lacing, cap or plug. The filter <b>Défauts mineurs</b> counts them or not.</td></tr>
+  </tbody>
+</table>
+<p>A few NCs have no defect line that can be read: the A400M NCs, whose text is not available, and some deleted NCs. They
+count as NCs and in the cost, not as defects. The notes at the bottom of each page give their number.</p>
+
+<h3>The rate: NCs per MSN</h3>
+<p>Counting NCs is not enough: a month with more aircraft has more NCs. So the dashboard divides by the volume built.</p>
+<ul>
+  <li><b>The volume of this year</b> comes from the production plan (the Tableau Avances / Retards). Each aircraft or product
+    counts for 1, spread over the working days between the start and the end of its build. A month's volume is therefore the
+    work really done that month, not the deliveries.</li>
+  <li><b>Working days</b> are Monday to Friday, without public holidays and shutdowns. This is why July and August count for
+    about 60 % of a month. The month in progress counts for the days gone by.</li>
+  <li><b>The volume of last year</b> is the number of products delivered each month.</li>
+  <li><b>The rate</b> is the NCs of a period divided by the MSN built in that period.</li>
+</ul>
+<p>To be divided by a volume, an NC must be matched to a product of the production plan. A few cannot be: they count in every
+total, but not in the rates, the forecasts per product or the targets.</p>
+<div class="ex"><span class="t">The A320</span>
+The A320 products are small parts counted one by one: many units, few NCs, so a very low rate per unit. This is why the
+A320 is shown apart, and why the target is built line by line and not on one rate for all lines.</div>
+
+<h3>The target and the forecast</h3>
+<ul>
+  <li><b>The target of a line</b> is its rate of last year, lowered by the reduction decided for the year (25 % today),
+    multiplied by its production of this year. The target for all lines is the sum of the lines.</li>
+  <li><b>The forecast for December</b> is the rate of the period multiplied by the aircraft still planned.</li>
+  <li><b>The cost</b> has its target and its forecast, made the same way.</li>
+</ul>
+<p>The reduction (25 %) and the year followed are settings kept by the person in charge of the dashboard. The page always
+writes the value in use next to the charts.</p>
+
+<h3>The cost of non-quality</h3>
+<p>The cost is an <b>estimate</b>: the time each NC takes, at the hourly rate of who does the work. It is not an invoice and
+not an accounting figure. It is made to compare: between causes, between months, between lines.</p>
+<table class="keep">
+  <thead><tr><th style="width:8mm"></th><th style="width:44mm">Step of an NC</th><th>What is counted</th></tr></thead>
+  <tbody>
+    <tr><td>1</td><td><b>Aléa</b> (alert)</td><td>The operator reports the defect. Not counted for an NC found at test or at final inspection.</td></tr>
+    <tr><td>2</td><td><b>Rédaction de la NC</b></td><td>Writing the NC. Longer at final inspection.</td></tr>
+    <tr><td>3</td><td><b>Support technique</b></td><td>Checking, estimating, preparing the work order.</td></tr>
+    <tr><td>4</td><td><b>Préparation</b></td><td>Badging, fetching the parts, setting up.</td></tr>
+    <tr><td>5</td><td><b>Intervention</b></td><td>The rework itself: minutes for each defect, according to its kind.</td></tr>
+    <tr><td>6</td><td><b>Recontrôle et clôture</b></td><td>Checking the rework, then closing the NC.</td></tr>
+  </tbody>
+</table>
+<p>To these six steps are added the <b>engineering study</b> when a design query is raised, and the <b>material</b>. What is
+counted depends on the decision taken on the NC: a rework has all six steps, a deleted NC only the first two. When a rework
+order exists and is closed, its planned time replaces the model's times for steps 4 and 5. When the operator declared an
+aléa for the NC, the time lost declared replaces the time of step 1.</p>
+<ul>
+  <li>The times and the hourly rates are those agreed with the team. They are settings: when one changes, the costs of the
+    whole year follow.</li>
+  <li>The cost counts only where FTO2 is liable. The other NCs count as NCs, with a cost of 0 for FTO2.</li>
+  <li>The value of a scrapped or exchanged part is counted when its price is in the price list kept by the person in charge.
+    The note at the bottom of the page says whether it is.</li>
+</ul>
+<p>The exact minutes, the rates and the special rules are on the page, with the figures of the day: tab <b>Coût de
+non-qualité</b>, <b>▸ Expliquer le calcul</b> (section 6.4).</p>
+
+<h3>Categories and causes</h3>
+<p>Each defect line is classified from the text of the NC, following the definitions of the tab <b>Définitions</b>: it gets
+a sub-category, which gives one cause, which gives one of the nine categories. An official code written in the NC decides
+first; otherwise the text decides. A line written or changed since the last classification is read by simpler rules until
+the next one: its cause can be less precise for a while.</p>
+
+<h2>The MFT page</h2>
+<p class="lead">The page of the weekly review of a line: what happened this week, what is rising, and whether the actions
+work. It reads the same data as the dashboard, week by week.</p>
+
+<h3>Choosing the line and the week</h3>
+<div class="keep"><figure>
+  <img src="img/m_top.png" alt="The top of the MFT page">
+  <figcaption>The top of the MFT page.</figcaption>
+</figure>
+<ol class="marks">
+  <li><i>1</i> <b>Ligne:</b> the line you review, or all of them.</li>
+  <li><i>2</i> <b>Production:</b> series, REC, FTI, or everything.</li>
+  <li><i>3</i> <b>Période:</b> one week, one month, three months, or dates you choose.</li>
+  <li><i>4</i> <b>The week:</b> the list of the weeks, the most recent first. A week in progress or a shutdown week is marked.</li>
+  <li><i>5</i> <b>The bell</b> of this page (section 9.5).</li>
+  <li><i>6</i> <b>The three tabs.</b> The number beside <b>Suivi des actions</b> is the number of open actions.</li>
+</ol></div>
+<p>The title under the tabs always says what you are looking at: the line, the week and its dates.</p>
+
+<h3>Pareto de la semaine</h3>
+<p>(The week's Pareto.) The four figures at the top compare the week with the average of the four weeks before: in green
+when lower, in red when higher. The switch <b>Compter</b> counts defects or NCs.</p>
+<figure>
+  <img src="img/m_pareto.png" alt="The week's Pareto">
+  <figcaption>The week by category, by cause, by official sub-code and by FIN.</figcaption>
+</figure>
+<p>In every card, the bar is the week and <b>the black tick</b> <span class="mk">1</span> is the average of the four weeks
+before. A bar that goes past its tick is above its usual level. Under the cards, <b>Les défauts</b> lists the defects of the
+week with their text. Click a bar to keep only its defects, in the other cards and in the list: a label appears above the
+cards, its ✕ removes it.</p>
+
+<h3>Analyse</h3>
+<p>(Analysis.) The last 26 weeks of the line, and what moves.</p>
+<figure>
+  <img src="img/m_analyse.png" alt="The tab Analyse">
+  <figcaption>Defects per week by category, then what rises and what falls.</figcaption>
+</figure>
+<table class="keep">
+  <thead><tr><th style="width:50mm">Card</th><th>What it shows</th></tr></thead>
+  <tbody>
+    <tr><td><b>Défauts par semaine, par catégorie</b></td><td>One bar per week, coloured by category. <b>Débuts d’action</b> <span class="mk">1</span> marks on the
+      chart the weeks when actions started.</td></tr>
+    <tr><td><b>Ce qui monte</b>, <b>Ce qui baisse</b></td><td>What rises and what falls: the last 4 weeks against the 8 before, in defects per week.</td></tr>
+    <tr><td><b>Nouveau cette semaine</b></td><td>The causes and sub-codes seen this week and not in the 8 weeks before.</td></tr>
+    <tr><td><b>FIN récurrents</b></td><td>The references with a defect on three aircraft or more in 8 weeks.</td></tr>
+  </tbody>
+</table>
+<figure class="keep">
+  <img src="img/m_analyse2.png" alt="New this week and recurring FINs">
+  <figcaption>What is new this week, and the FINs that come back.</figcaption>
+</figure>
+<p>Every row has a button <b>+ Action</b> <span class="mk">2</span>: it opens the form of a new action, already filled with
+that problem.</p>
+
+<h3>Suivi des actions</h3>
+<p>(Action follow-up.) One card per action, with the curve of the problem it follows. It answers one question: since the
+action started, has the problem gone down?</p>
+<div class="keep"><figure>
+  <img src="img/m_actions.png" alt="The follow-up of an action">
+  <figcaption>The follow-up of an action.</figcaption>
+</figure>
+<ol class="marks">
+  <li><i>1</i> <b>Ouvertes / Toutes / Closes:</b> which actions are shown.</li>
+  <li><i>2</i> <b>+ Nouvelle action:</b> the form of a new action.</li>
+  <li><i>3</i> <b>The action:</b> the problem followed, who carries the action and the analysis, when they started.</li>
+  <li><i>4</i> <b>The result:</b> the reference, the target, the current level, and the change.</li>
+  <li><i>5</i> <b>The verdict</b> of the page (table below).</li>
+</ol></div>
+<p><b>How the curve is read.</b> The bars are the defects of the problem each week; the black line smooths four weeks. The
+<b>reference</b> is the average of the eight working weeks before the action started (before the analysis started, when the
+action has no start date yet). The <b>target</b> is the reference minus 30 %. The action has reached its target when the smoothed line stays under the target four weeks in a row. The
+vertical lines mark the start of the analysis and of the action.</p>
+<table class="keep">
+  <thead><tr><th style="width:52mm">Verdict</th><th>Meaning</th></tr></thead>
+  <tbody>
+    <tr><td><b>Objectif atteint</b></td><td>Under the target for four weeks: the action works.</td></tr>
+    <tr><td><b>Sous l’objectif depuis N sem.</b></td><td>Under the target, but not yet for four weeks.</td></tr>
+    <tr><td><b>En baisse</b>, <b>Stable</b>, <b>En hausse</b></td><td>Against the reference: falling, steady or rising, and not under the target.</td></tr>
+    <tr><td><b>Trop tôt pour juger</b></td><td>The action is too recent.</td></tr>
+    <tr><td><b>Pas de référence</b></td><td>No data for the eight weeks before the start, for example an action started at the very beginning of the year.</td></tr>
+    <tr><td><b>Date de début à saisir</b>, <b>Problème à préciser</b></td><td>The action lacks its start date, or the problem it follows.</td></tr>
+  </tbody>
+</table>
+<p>In a card, <b>▸ Défauts, analyse, action et suivi</b> opens the defects of the problem and the notes of the action.
+<b>Modifier</b> changes it, <b>Clore</b> closes it, <b>Supprimer</b> deletes it.</p>
+
+<h4>Creating an action</h4>
+<figure class="half keep">
+  <img src="img/m_form.png" alt="The form of a new action">
+  <figcaption>The form of a new action, opened from a row of the tab Analyse.</figcaption>
+</figure>
+<ol class="steps">
+  <li>Click <b>+ Action</b> on a row of the tab Analyse, or <b>+ Nouvelle action</b> in the tab Suivi des actions.</li>
+  <li>Choose the <b>line</b>, write your name and a <b>title</b>.</li>
+  <li>Say which <b>problem</b> is followed. In the mode <b>Simple</b>, type an official code (Q11 for all its sub-codes) or a
+    sub-code (Q11-003) and click <b>Ajouter</b>. The mode <b>Expert</b> lets you choose a category, a cause, a FIN or a place
+    of detection. The page shows at once how many defects this problem has had, with three examples: check that it is the
+    problem you mean.</li>
+  <li>Write the <b>action</b>, who carries it, and its start date. <b>Plus de détails</b> holds the analysis and the expected
+    benefit.</li>
+  <li>Click <b>Créer l’action</b>.</li>
+</ol>
+<div class="warn"><span class="t">Where the actions are kept</span>
+The shared list of the actions is a table kept by the person in charge of the dashboard: it is the one everybody sees. An
+action that you create or change on the page is saved <b>in your browser, on your computer only</b>; the grey line at the top
+of the tab says so. To make it visible to everybody, give it to the person in charge, who adds it to the shared list. At
+the next update of the data, the shared list replaces the actions of the same name in your browser.</div>
+
+<h3>The bell of the MFT page</h3>
+<figure class="small keep">
+  <img src="img/m_bell.png" alt="The bell of the MFT page">
+  <figcaption>The bell of the MFT page.</figcaption>
+</figure>
+<p>It works as on the dashboard (chapter 7), for the line you are looking at; alarms of the other lines are counted at the
+bottom. <b>→ Pareto de la semaine</b> opens the week concerned. <b>Vu</b> (seen) puts an alarm aside once you have dealt
+with it, in your browser only; <b>Remettre</b> (put back) brings it back.</p>
+
+<h2>How to…</h2>
+<p class="lead">The most common uses, step by step.</p>
+
+<div class="keep"><h3>Prepare the monthly review</h3>
+<ol class="steps">
+  <li>Open the dashboard. Check the date at the top right: is the data recent enough?</li>
+  <li>Stay in <b>Essentiel › Synthèse</b>, with the filters as they are. Read the four key figures, then <b>NC cumulées sur
+    l’année</b>: are we above or under the dashed line?</li>
+  <li>In <b>Chaque ligne face à son objectif</b>, find the lines whose bar goes past the tick.</li>
+  <li>In <b>Classement mensuel des causes</b> and <b>Causes : 2025 contre 2026</b>, note the causes that rise.</li>
+  <li>To show a chart on a large screen, click ⤢. To put it in a presentation, capture the enlarged chart with the screen
+    capture of your computer (on Windows: the keys Windows + Shift + S).</li>
+</ol></div>
+
+<div class="keep"><h3>Look at one line only</h3>
+<ol class="steps">
+  <li>In the filter <b>Avion</b>, choose the line; or click its row in <b>Chaque ligne face à son objectif</b>.</li>
+  <li>Check the selection line: it now counts the NCs of that line only. Every tab follows.</li>
+  <li>When you have finished, click <b>Réinitialiser</b>.</li>
+</ol></div>
+
+<div class="keep"><h3>Find what is behind a cause</h3>
+<ol class="steps">
+  <li>Go to <b>Deep dive › Pareto</b>. Choose <b>Volume (défauts)</b> or <b>Coût de non-qualité</b>.</li>
+  <li>Click the cause in the card <b>Cause (RCA)</b>. The other cards now show only its defects: on which lines, which FINs,
+    which official sub-codes.</li>
+  <li>Open <b>▸ Détail des défauts et de leur coût</b> at the bottom to read the defects one by one.</li>
+  <li>To know exactly what the cause covers, open the tab <b>Définitions</b>.</li>
+</ol></div>
+
+<div class="keep"><h3>Find an NC and see its cost</h3>
+<ol class="steps">
+  <li>In any tab, open the list at the bottom (<b>▸ Détail des NC</b>) and type the NC number in the search box. If it does
+    not appear, a filter is hiding it: click <b>Réinitialiser</b>, then set <b>Type de production</b> to <b>Tous</b>.</li>
+  <li>For its cost: <b>Deep dive › Coût de non-qualité › ▸ Expliquer le calcul</b>, type the number in <b>Numéro de NC</b>
+    and click <b>Afficher</b>.</li>
+</ol></div>
+
+<div class="keep"><h3>Compare two periods</h3>
+<ol class="steps">
+  <li>In <b>Période</b>, choose <b>Dates choisies</b> and set the two dates of the first period. Note the figures.</li>
+  <li>Change the dates for the second period. For a fair comparison, compare the rates (<b>NC par MSN</b>), not the counts.</li>
+</ol></div>
+
+<div class="keep"><h3>Run the weekly review of a line</h3>
+<ol class="steps">
+  <li>Open the MFT page. Choose the <b>line</b>; the page opens on the last finished week.</li>
+  <li><b>Pareto de la semaine:</b> read the four figures, then the bars that go past their tick.</li>
+  <li><b>Analyse:</b> read <b>Ce qui monte</b> and <b>FIN récurrents</b>. For a problem that deserves it, click <b>+ Action</b>.</li>
+  <li><b>Suivi des actions:</b> go through the open actions and their verdict.</li>
+  <li>Open the <b>bell</b>: is there something the review has not covered?</li>
+</ol></div>
+
+<h2>Questions and answers</h2>
+<p class="lead">What can surprise, and what to do.</p>
+
+<h3>The page</h3>
+<table class="keep">
+  <thead><tr><th style="width:64mm">What you see</th><th>What it means, what to do</th></tr></thead>
+  <tbody>
+    <tr><td>The page stays on the green box <b>Chargement des données…</b></td><td>The data is slow to arrive. Wait a minute, then reload the page. If the box
+      turns orange and names a query, tell the person in charge of the dashboard and give the text of the box.</td></tr>
+    <tr><td>A red box: <b>Le tableau de bord n’a pas pu s’afficher…</b></td><td>The page met an error. Reload it. If the box comes back, send its text to the
+      person in charge.</td></tr>
+    <tr><td>Skywise says you have no access</td><td>Your account has not been given the application. Ask the person in charge.</td></tr>
+    <tr><td>The date <b>Données au…</b> is old</td><td>The update has not been run. The figures are right, but stop at that date. Ask the person in charge.</td></tr>
+    <tr><td>The page is not as usual: another mode, another language</td><td>Use the buttons <b>Essentiel / Deep dive</b> and <b>FR / EN</b> at the top right.</td></tr>
+  </tbody>
+</table>
+
+<h3>The figures</h3>
+<table>
+  <thead><tr><th style="width:64mm">Question</th><th>Answer</th></tr></thead>
+  <tbody>
+    <tr><td>My total is not the one of SAP, or of another report.</td><td>Click <b>ⓘ Comment la sélection est faite</b>: it shows what each filter removed.
+      The usual reasons: the production type (series only as the page opens), the plant (FTO2 only), the liability (FTO2 only), the
+      dates, and deleted NCs, which the dashboard counts.</td></tr>
+    <tr><td>What are the <b>NC sans produit du plan de production</b>?</td><td>NCs whose product could not be matched to the production plan. They count in the
+      totals, not in the rates and targets. The line opens to list them.</td></tr>
+    <tr><td>Why is the rate of the A320 so low, and its percentage so high?</td><td>Its products are small parts counted one by one: many units, few NCs. A
+      few NCs more change its percentage a lot. Read the A320 in numbers of NCs.</td></tr>
+    <tr><td>The A400M has NCs but almost no defects.</td><td>The text of its NCs is not available, so no defect can be read. They count as NCs and in the cost.</td></tr>
+    <tr><td>Why do July and August look good in counts and not in rates?</td><td>Fewer working days, so fewer aircraft built: the rate divides by that smaller
+      volume.</td></tr>
+    <tr><td>The last dot of a curve is hollow or the last bar is pale.</td><td>The month is in progress: it is judged on the days gone by, and will still move.</td></tr>
+    <tr><td>The cost does not match a figure from finance.</td><td>It is an estimate from process times and hourly rates (section 8.4), made to compare, not
+      an accounting figure.</td></tr>
+    <tr><td>A cause looks wrong for a defect.</td><td>Check its definition in the tab <b>Définitions</b>. If the defect really is in the wrong cause, give
+      the NC number to the person in charge.</td></tr>
+    <tr><td>The bell shows nothing.</td><td>Nothing is rising beyond chance; or it is the beginning of the year (chapter 7); or a filter limits it to one line.</td></tr>
+    <tr><td>In English, the NC texts stay in French.</td><td>They are the texts of SAP, shown as written.</td></tr>
+  </tbody>
+</table>
+
+<h3>The MFT actions</h3>
+<table class="keep">
+  <thead><tr><th style="width:64mm">Question</th><th>Answer</th></tr></thead>
+  <tbody>
+    <tr><td>My colleagues do not see the action I created.</td><td>It is saved in your browser only. Give it to the person in charge, who adds it to the shared
+      list (section 9.4).</td></tr>
+    <tr><td>My action has disappeared.</td><td>Actions typed on the page live in the browser: another computer, another browser or a cleaned browser does
+      not have them. The actions of the shared list always come back.</td></tr>
+    <tr><td>An action says <b>Pas de référence</b>.</td><td>There is no data for the eight weeks before its start: an action started in the first weeks of the
+      year, or with a wrong start date.</td></tr>
+  </tbody>
+</table>
+
+<h3>Who to ask</h3>
+<p>The <b>person in charge of the dashboard</b> runs the update, keeps the settings (the target, the hourly rates, the
+shutdown days, the shared list of actions) and gives access. The companion guide <i>Settings guide</i> is written for that
+person. A question about the code goes to the person who maintains it, with the <i>Technical manual</i>.</p>
+
+<h2>Words used</h2>
+<p class="lead">The words of the dashboard, in the order of the alphabet.</p>
+<dl class="gloss">
+  <dt>Aléa</dt><dd>A stop declared by an operator in MES. A <i>quality aléa</i> is a stop for a quality problem.</dd>
+  <dt>Catégorie</dt><dd>One of the nine families of defects of the Pareto (Erreur Branchement, Élément Manquant…).</dd>
+  <dt>Cause (RCA)</dt><dd>The root cause of a defect: one of 25, each inside one category.</dd>
+  <dt>Coût de non-qualité</dt><dd>The estimated cost of the NCs: time at hourly rates, plus engineering and material.</dd>
+  <dt>Décision</dt><dd>What was decided for the NC in SAP: rework, rejection, exchange, design query…</dd>
+  <dt>Défaut</dt><dd>One line of defect inside an NC.</dd>
+  <dt>Défaut mineur</dt><dd>A missing tie, lacing, cap or plug.</dd>
+  <dt>FIN (repère)</dt><dd>The functional item number of the part concerned, as written in the NC.</dd>
+  <dt>Imputation</dt><dd>In the tab Câbles: who a cable request is attributed to.</dd>
+  <dt>Ligne, Avion</dt><dd>The programme: A350, A330, A320, A400M.</dd>
+  <dt>MSN</dt><dd>The serial number of an aircraft. "MSN built" is the volume produced, counted in aircraft or products.</dd>
+  <dt>NC</dt><dd>A non-conformity recorded in SAP.</dd>
+  <dt>NC par MSN</dt><dd>The rate: NCs divided by the volume built in the same period.</dd>
+  <dt>Objectif</dt><dd>The target of the year: last year's rate, lowered by the reduction decided.</dd>
+  <dt>Pareto</dt><dd>A chart sorted from the largest to the smallest, with the running share (<i>Cumul</i>).</dd>
+  <dt>Poste</dt><dd>The station where the NC was written.</dd>
+  <dt>Prévision</dt><dd>What is expected at the end of December if the rate stays the same.</dd>
+  <dt>Produit</dt><dd>What FTO2 builds for a line: MIP A350, 740VU, PTVU… as named in the production plan.</dd>
+  <dt>Responsabilité</dt><dd>Who is liable for the NC in SAP.</dd>
+  <dt>Retour client</dt><dd>An NC raised outside FTO2 for which FTO2 is liable.</dd>
+  <dt>Série, REC, FTI</dt><dd>The production type (phase) of the NC.</dd>
+  <dt>Sous-catégorie</dt><dd>The finest level of the classification; each belongs to one cause.</dd>
+  <dt>Sous-code officiel</dt><dd>The code of the official rework code sheet (Q11-003, T04…).</dd>
+  <dt>Semaine (S43)</dt><dd>A week of the year, Monday to Sunday.</dd>
+</dl>

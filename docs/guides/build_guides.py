@@ -29,6 +29,7 @@ import re
 import subprocess
 import sys
 import tempfile
+import unicodedata
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 OUT = os.path.join(HERE, "pdf")
@@ -96,7 +97,8 @@ def page_html(meta, body, toc, pages=None, with_toc=True):
     if with_toc:
         items = "".join('<li class="l%d"><span class="n">%s</span><a href="#%s">%s</a><span class="dots"></span><span class="pg">%s</span></li>'
                         % (lv, num, hid, html.escape(text), (pages or {}).get(hid, "0")) for lv, hid, num, text in toc)
-        contents = '<section class="toc"><h2 class="plain">%s</h2><ol>%s</ol></section>' % (html.escape(meta.get("contents", "Contents")), items)
+        contents = '<section class="toc%s"><h2 class="plain">%s</h2><ol>%s</ol></section>' % (
+            " long" if len(toc) > 40 else "", html.escape(meta.get("contents", "Contents")), items)   # long: two columns
     return ('<!doctype html><html lang="%s"><head><meta charset="utf-8"><title>%s · %s</title><style>%s</style></head><body>%s<main>%s</main></body></html>'
             % (meta.get("lang", "en"), html.escape(meta["title"]), html.escape(meta["subtitle"]), css, contents, body))
 
@@ -114,9 +116,15 @@ def render(text, pdf, footer):
         os.remove(tmp)
 
 
+def plain(text):
+    """Letters and digits only, without accents: a heading is looked for in the printed pages whatever the PDF made of its
+    apostrophes, accents and ligatures."""
+    return re.sub(r"[^0-9a-z]", "", unicodedata.normalize("NFKD", text).casefold())
+
+
 def page_texts(pdf):
     from pypdf import PdfReader
-    return [re.sub(r"\s+", "", p.extract_text() or "") for p in PdfReader(pdf).pages]
+    return [plain(p.extract_text() or "") for p in PdfReader(pdf).pages]
 
 
 def build(name):
@@ -135,7 +143,7 @@ def build(name):
         render(page_html(meta, body, toc, with_toc=False), a, footer)
         texts, at, start = page_texts(a), {}, 0
         for lv, hid, num, text in toc:
-            want = re.sub(r"\s+", "", num + html.unescape(text))
+            want = plain(num + html.unescape(text))
             found = next((i for i in range(start, len(texts)) if want in texts[i]), None)
             if found is None:
                 sys.exit("%s: the heading '%s %s' was not found in the printed pages" % (name, num, text))
