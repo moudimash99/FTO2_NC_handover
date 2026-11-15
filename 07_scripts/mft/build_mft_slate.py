@@ -39,6 +39,14 @@ def refs():
             "actions": M.seed_actions()}
 
 
+def dashboard_tables():
+    """The dashboard page's tables, from its data block (03_reports/FTO2_NC_Dashboard.html, written by build_all.py)."""
+    src = open(os.path.join(ROOT, "03_reports", "FTO2_NC_Dashboard.html"), encoding="utf-8").read()
+    mark = '<script type="application/json" id="fto2-data">'
+    a = src.index(mark) + len(mark)
+    return json.loads(src[a:src.index("</script>", a)].replace("<\\/", "</"))["tables"]
+
+
 def parts():
     t = open(os.path.join(HERE, "mft_template.html"), encoding="utf-8").read()
     js_al, css_al = M.alarm_parts()
@@ -69,9 +77,7 @@ def build(say=print):
     for q in ("q_fto2_nc", "q_fto2_def", "q_fto2_ref"):   # the dashboard's level-3 queries, unchanged
         shutil.copyfile(os.path.join(L3, q + ".sql"), os.path.join(OUT, q + ".sql"))
     # local preview: the dashboard's real tables handed over as Slate would (never paste this file into Slate)
-    sys.path.insert(0, os.path.join(ROOT, "build"))
-    import views_pack   # noqa: E402   reads the tables from the dashboard page's data block
-    t = views_pack.dash_data()["tables"]
+    t = dashboard_tables()
     pre = SP.fake_slate(SP._blob(t["nc"]), "null", SP._blob(t["def"]), SP._blob(SP.ref_columns(ROOT)))
     open(os.path.join(OUT, "preview_local_only.html"), "w", encoding="utf-8").write(
         one.replace("<!-- ===== HTML START ===== -->", pre + "<!-- ===== HTML START ===== -->", 1))

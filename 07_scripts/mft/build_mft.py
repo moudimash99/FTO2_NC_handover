@@ -2,7 +2,7 @@
 
 Reads the dashboard's two tables (05_outputs/fto2_dash_nc.csv, fto2_dash_defects.csv) and the A330 / A350 MFT trackers
 (config/1_actions_mft.csv).
-Writes 03_reports/FTO2_MFT.html (and build/artifacts/FTO2_MFT.html) from 07_scripts/mft/mft_template.html, its Slate
+Writes 03_reports/FTO2_MFT.html from 07_scripts/mft/mft_template.html, its Slate
 version in 03_reports/skywise/mft/ (build_mft_slate.py), and the tracker actions as 05_outputs/mft_actions_seed.json: the page keeps its actions in its own store (seeded once from that
 file); the page itself carries no action.
 
@@ -149,10 +149,8 @@ def main():
     js, css = alarm_parts()
     page = tpl.replace("/*@@DATA@@*/null", blob, 1).replace("/*@@ALARMS@@*/", js, 1).replace("/*@@ALARMCSS@@*/", css, 1)
     assert "@@ALARMS@@" not in page and "@@ALARMCSS@@" not in page
-    for out in (os.path.join(ROOT, "03_reports", "FTO2_MFT.html"), os.path.join(ROOT, "build", "artifacts", "FTO2_MFT.html")):
-        os.makedirs(os.path.dirname(out), exist_ok=True)   # build/artifacts is not in git
-        with open(out, "w", encoding="utf-8") as f:
-            f.write(page)
+    with open(os.path.join(ROOT, "03_reports", "FTO2_MFT.html"), "w", encoding="utf-8") as f:
+        f.write(page)
     print("NCs", len(D["ncs"]), "| defect lines", len(D["defs"]), "| data to", D["to"], D["toWeek"], "| tracker actions", len(seeds),
           "| page", round(len(page) / 1024), "KB")
     import sys
