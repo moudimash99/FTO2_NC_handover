@@ -91,6 +91,7 @@ what the team sees.</p>
     <tr><td class="k"><code>fto2_lines_to_label.csv</code></td><td>Written by each run: the defect lines waiting for their cause label. For the person who maintains the code.</td><td>No.</td></tr>
   </tbody>
 </table>
+<figure class="half" data-shot="s_workspace" data-h="70"><figcaption>The Code Workspace: the notebook, the folders <code>data</code>, <code>data/config</code> and <code>notebook_kit</code>.</figcaption></figure>
 
 <h3>The first character of a table's name</h3>
 <p>In <code>data/config/</code>, the first character of each name says whose table it is:</p>
@@ -121,6 +122,7 @@ exactly as they are: do not open them to tidy them up, the notebook knows their 
     <tr><td><b>Test list</b><br>the Test team's NC list, saved as CSV</td><td><code>NC TEST - NC.csv</code><br>Exactly this.</td><td>No: replace the file.</td><td>Which NCs are "Test".</td></tr>
   </tbody>
 </table>
+<figure class="half" data-shot="s_data_folder" data-h="55"><figcaption>The folder <code>data</code> with the files saved as they are downloaded.</figcaption></figure>
 
 <h3>The production plan, in detail</h3>
 <p>This is the one that matters most, because every rate of the dashboard is "NCs per aircraft built".</p>
@@ -169,6 +171,9 @@ row holds the column names, each row below is one entry.</p>
 </ol>
 <p>A table can also be changed directly in the workspace, by opening it as text: each line is a row, and the columns are
 separated by a semicolon.</p>
+<figure class="half" data-shot="s_download" data-h="50"><figcaption>Downloading a table of <code>data/config</code> (right-click on its name).</figcaption></figure>
+<figure data-shot="s_excel" data-h="50"><figcaption>A table open in Excel: the first row holds the column names.</figcaption></figure>
+<figure class="half" data-shot="s_upload" data-h="50"><figcaption>Uploading the table back into <code>data/config</code>, replacing the old one.</figcaption></figure>
 
 <h3>The rules that keep a table readable</h3>
 <table>
@@ -383,7 +388,9 @@ everyone, add it to this table.</p></div>
   <li>Wait for the line <code>Done.</code> The notebook prints each step while it works, so the last line printed says where it is.</li>
   <li>Read the last lines (below). Then open the dashboard: the date at the top right, <span class="ui">Données au …</span>, is the day of the last NC read.</li>
 </ol>
+<figure class="half" data-shot="s_run_all" data-h="50"><figcaption>The menu <span class="ui">Run ▸ Run All Cells</span> of the notebook.</figcaption></figure>
 <h3>What the last lines say</h3>
+<figure data-shot="s_last_lines" data-h="55"><figcaption>The last lines of a run that went well, ending with <code>Done.</code></figcaption></figure>
 <pre>Checking the settings and the downloaded files...
 Year followed: 2026 (compared with 2025)
 …
@@ -431,6 +438,7 @@ convenient for the year's review.</p>
 <h2>When the notebook stops</h2>
 <p class="lead">A message in red means the notebook found something it cannot read. It always names the file. Correct
 it and run again; the dashboard was not touched.</p>
+<figure data-shot="s_error" data-h="40"><figcaption>A run stopped by a typing mistake: the message names the file, the line and what to write.</figcaption></figure>
 <table>
   <thead><tr><th style="width:74mm">The message says…</th><th>What happened</th><th style="width:50mm">What to do</th></tr></thead>
   <tbody>

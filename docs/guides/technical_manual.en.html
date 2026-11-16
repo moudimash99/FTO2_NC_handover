@@ -77,7 +77,7 @@ Slate reads.</p>
 <div class="warn"><span class="t">The rule to remember</span>
 For the program and the pages, <b>Skywise holds copies and the source folder holds the original</b>. A change typed
 directly into <code>notebook_kit</code> or into a Slate sandbox works, and is lost at the next installation. Make the change
-in the source, run the checks, build, then install (chapter 7). For the settings it is the opposite: the original is
+in the source, run the checks, build, then install (chapters 7 and 8). For the settings it is the opposite: the original is
 <code>data/config/</code> in Skywise. Never upload the folder <code>config</code> of the source over it.</div>
 
 <h3>What you will be asked, and where the answer is</h3>
@@ -127,6 +127,10 @@ check.</p>
       year stays at a round number, look for a limit on that dataset.</td></tr>
     <tr><td><b>The part prices</b></td><td>Only the parts whose price is typed in <code>1_prix_pieces.csv</code> are valued. Each run lists the parts still
       to price in <code>fto2_parts_to_price.csv</code>.</td></tr>
+    <tr><td><b>The NC writer</b></td><td>An NC is saved in two clicks: <b>Soumettre la NC</b> in the writer, then <b>Submit</b> in
+      the action's form. The object's key (Timestamp) is an id made by the action: the time the NC was written is not stored.
+      The writer also hands over <code>submission_id</code>, <code>timestamp</code> and <code>defauts_json</code>, which the
+      action does not use today.</td></tr>
     <tr><td><b>The former application</b></td><td>While <code>garder_anciennes_sorties</code> is <code>oui</code> in <code>2_parametres.csv</code>, the notebook also writes
       the four tables of the former Slate application. Set it to <code>non</code> once that application is retired.</td></tr>
   </tbody>
@@ -145,8 +149,11 @@ there has changed nothing: the dashboard still shows the previous run.</p>
     <tr><td>Names a file of <code>data/config/</code> and a line.</td><td>A settings table is badly filled: a <code>;</code> typed in a cell, a date, a word that is
       not one of the allowed ones.</td><td>Correct that line. The message says what is expected. Chapter 3, "The basics".</td></tr>
     <tr><td>"settings table … not found"</td><td>A table was renamed, moved or deleted.</td><td>Put it back in <code>data/config/</code>, from the folder <code>config</code> of the installation.</td></tr>
-    <tr><td>A dataset name that is not found.</td><td>The dataset is not in the Data panel of the workspace under that name.</td><td>Add it in the Data panel with the name of
-      chapter 7, or change the name in <code>2_sources.csv</code>.</td></tr>
+    <tr><td>A dataset name that is not found; or, at the end of the run, an error <code>AliasNotDefined</code> with
+      <code>'alias': 'fto2_dash_…'</code>.</td><td>The dataset is not in the Data panel of the workspace under that name. The
+      error lists the names the panel holds (<code>definedAliases</code>).</td><td>Add it in the Data panel with the name of
+      section 7.2 (a new, empty dataset is fine: the notebook fills it), or change the name in <code>2_sources.csv</code>.
+      Then run the notebook again.</td></tr>
     <tr><td>A permission error on a dataset.</td><td>The person who runs the notebook lacks access.</td><td>The <i>Access guide</i>, chapter 5.</td></tr>
     <tr><td>"… is not a price"</td><td>Text in the price column of <code>1_prix_pieces.csv</code>.</td><td>Correct that line.</td></tr>
     <tr><td>"fto2_dash_cout not written"</td><td>Normal: that table only serves an optional set-up.</td><td>Nothing.</td></tr>
@@ -216,3 +223,215 @@ late.</p>
 <!-- md: ../logic.md | The calculations -->
 <!-- md: ../front_end.md | The pages -->
 <!-- md: ../part_prices.md | The part prices -->
+
+<h2>Installing in Skywise</h2>
+<p class="lead">The whole set-up, from nothing, in the order to follow. Allow an hour. The same steps install a new version:
+section 7.7 says which ones to repeat.</p>
+
+<h3>What you need</h3>
+<p><b>The installation files.</b> They are built from the source folder (chapter 8) into
+<code>03_reports/skywise/</code>, and gathered in one file, <code>FTO2_Skywise_installation.zip</code>:</p>
+<table>
+  <thead><tr><th style="width:74mm">In the installation folder</th><th>What it is</th></tr></thead>
+  <tbody>
+    <tr><td><code>level3_datasets/fto2_pipeline_notebook.ipynb</code></td><td>The notebook.</td></tr>
+    <tr><td><code>level3_datasets/notebook_kit/</code></td><td>The program the notebook runs (the folder <code>fto2/</code> of the source), and the labels
+      file <code>fto2_ai_labels.csv</code>.</td></tr>
+    <tr><td><code>level3_datasets/config/</code></td><td>The settings as they stand in the source: the starting copy of <code>data/config</code>.</td></tr>
+    <tr><td><code>level3_datasets/q_fto2_nc.sql</code>, <code>q_fto2_def.sql</code>, <code>q_fto2_dis.sql</code>, <code>q_fto2_ref.sql</code></td><td>The text of
+      the four Slate queries.</td></tr>
+    <tr><td><code>level3_datasets/fto2_level23.css</code>, <code>.html</code>, <code>.js</code>, <code>state.json</code></td><td>The dashboard page: the three parts of its code
+      sandbox and its state.</td></tr>
+    <tr><td><code>mft/fto2_mft.css</code>, <code>.html</code>, <code>.js</code>, <code>state.json</code></td><td>The MFT page.</td></tr>
+  </tbody>
+</table>
+<p>The NC writer is not in the zip: its three files are in <code>08_tools/nc_writer_slate/</code> of the source.</p>
+<p><b>Three files of the team</b>, which are not in the source: the station list <code>fto2_station_mapping.csv</code> (the
+notebook stops without it), the GPS register and the Test list (without them the notebook runs and says so). Their names
+are in <code>2_sources.csv</code>. Optionally, the latest exports of the Tableau Avances / Retards and of the cable tracker.</p>
+<p><b>The rights</b> of a maintainer (the <i>Access guide</i>), and access to the three sources Non Conformity,
+Work_Order_Operation and MES Disruptions.</p>
+
+<h3>The Code Workspace</h3>
+<ol class="steps">
+  <li>Upload the folder <code>notebook_kit</code> at the top of the workspace.</li>
+  <li>Create a folder <code>data</code>. Upload the folder <code>config</code> into it, so that it becomes
+    <code>data/config</code>. Do this once: from then on, the settings are changed there.</li>
+  <li>Put the three files of the team in <code>data</code>, under the names of <code>2_sources.csv</code>, with the downloads
+    if you have them (an export of the plan: a name starting with <code>Avances_Retards</code>; of the cable tracker: a name
+    containing <code>cables</code>).</li>
+  <li>In <code>data/config/2_parametres.csv</code>, line <code>garder_anciennes_sorties</code>: <code>non</code> if no former
+    application has to be fed; <code>oui</code> writes, in addition, the four tables of the former application (they must
+    then be in the Data panel too).</li>
+  <li>Upload the notebook <code>fto2_pipeline_notebook.ipynb</code> at the top.</li>
+  <li>In the <b>Data</b> panel of the workspace, add the datasets under exactly these names:
+    <table class="keep">
+      <thead><tr><th style="width:54mm">Dataset</th><th style="width:52mm">Name in the Data panel</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td>Non Conformity</td><td><code>non_conformity</code></td><td>read</td></tr>
+        <tr><td>The cause labels</td><td><code>fto2_ai_labels</code></td><td>read</td></tr>
+        <tr><td>Work_Order_Operation</td><td><code>work_order_operation</code></td><td>read</td></tr>
+        <tr><td>MES Disruptions</td><td><code>mes_disruptions</code></td><td>read</td></tr>
+        <tr><td>Four new, empty datasets</td><td><code>fto2_dash_nc</code>, <code>fto2_dash_defects</code>, <code>fto2_dash_disruptions</code>, <code>fto2_dash_ref</code></td><td>write</td></tr>
+      </tbody>
+    </table></li>
+  <li><code>fto2_ai_labels</code> holds 3,489 rows. If it is new or holds fewer, give it the content of
+    <code>notebook_kit/fto2_ai_labels.csv</code>.</li>
+  <li>Run all the cells. The first lines say the year followed; the last lines list the four tables written, then
+    <code>Done.</code> If the run stops, chapter 2.</li>
+</ol>
+<figure data-shot="t_data_panel" data-h="55"><figcaption>The Data panel of the workspace, with the eight names.</figcaption></figure>
+
+<h3>The sync to Postgres</h3>
+<p>Slate reads the four tables from Postgres. Sync <code>fto2_dash_nc</code>, <code>fto2_dash_defects</code>,
+<code>fto2_dash_disruptions</code> and <code>fto2_dash_ref</code>, under the same names, schema
+<code>foundry_sync</code>. Create each sync after a first run of the notebook, so that the table has its columns. The
+sync must follow each run: check in the query (section 7.6) that the most recent NC is the one of the run.</p>
+
+<h3>The Slate application</h3>
+<ol class="steps">
+  <li>Create a Slate application.</li>
+  <li>Add four queries on the source <code>postgate-airbus-2</code>, named exactly <code>q_fto2_nc</code>,
+    <code>q_fto2_def</code>, <code>q_fto2_dis</code> and <code>q_fto2_ref</code>, each with the text of its
+    <code>.sql</code> file.</li>
+  <li><b>The dashboard page.</b> Add a Code Sandbox, full width, about 1,400 px high. Paste
+    <code>fto2_level23.css</code>, <code>.html</code> and <code>.js</code> into its CSS, HTML and JavaScript tabs, and
+    <code>state.json</code> into its state box: it binds the four queries to the page.</li>
+  <li><b>The MFT page.</b> On a second page of the application, a second Code Sandbox, same size, with the files of
+    <code>mft/</code> and its <code>state.json</code>. It uses <code>q_fto2_nc</code>, <code>q_fto2_def</code> and
+    <code>q_fto2_ref</code>.</li>
+  <li>Share the application and the four datasets with the readers (the <i>Access guide</i>).</li>
+</ol>
+<figure data-shot="t_sandbox" data-h="55"><figcaption>The Code Sandbox of the dashboard page, with its tabs and its state box.</figcaption></figure>
+<div class="note"><span class="t">Three rules for code pasted in Slate</span>
+<ul>
+  <li>Never two opening curly braces in a row in the JavaScript: Slate reads them as a link to a query.</li>
+  <li>Every CSS rule starts with <code>.fto2</code>, so that the styles do not reach the rest of the Slate page.</li>
+  <li>No data in the code: data and settings come from the queries.</li>
+</ul></div>
+
+<h3>The NC writer</h3>
+<p>The NC writer is a page where an operator writes an NC with the official codes; it builds the SAP text. Each NC is saved as
+an object of the object type <b>a30 Nc Writer Dataset</b>, through its action. The code sandbox cannot write anything itself:
+it hands the NC over with an event; the event fills a Slate variable; the action reads the variable.</p>
+<ol class="steps">
+  <li><b>The sandbox.</b> On a third page, add a Code Sandbox named <code>w_nc_writer</code>, about 1,316 px wide and 900 px
+    high. Paste <code>nc_writer.html</code>, <code>nc_writer.css</code> and <code>nc_writer.js</code> into its tabs. State:
+    <code>{}</code>. In its <b>Interaction</b> tab, Events: <code>["submit"]</code>. The screen <b>Nouvelle NC</b> appears.</li>
+  <li><b>The variable.</b> In the Variables panel, add <code>v_submission</code>, value <code>{}</code>.</li>
+  <li><b>The event.</b> In the Events panel, add an event. Trigger: <code>w_nc_writer.submit</code>. Action:
+    <code>v_submission.set</code>. Code: <code>return {{slEventValue}};</code></li>
+  <li><b>The action.</b> Add an Action widget with the action of the object type. In its default parameters:
+    <table class="keep">
+      <thead><tr><th style="width:40mm">Field</th><th>Value</th></tr></thead>
+      <tbody>
+        <tr><td>Detection</td><td><code>"{{v_submission.detection}}"</code></td></tr>
+        <tr><td>Produit</td><td><code>"{{v_submission.produit}}"</code></td></tr>
+        <tr><td>Msn</td><td><code>"{{v_submission.msn}}"</code></td></tr>
+        <tr><td>Texte Sap</td><td><code>"{{v_submission.texte_sap}}"</code></td></tr>
+        <tr><td>Total Defauts</td><td><code>{{v_submission.total_defauts}}</code> (a number: no quotes)</td></tr>
+      </tbody>
+    </table>
+    The key, Timestamp, is filled by the action itself.</li>
+  <li><b>Check.</b> Write a short NC, press <b>Soumettre la NC</b>: the action's form shows it. Press <b>Submit</b>: a new
+    object exists, with the MSN typed. Delete the test object afterwards.</li>
+</ol>
+<figure data-shot="t_nc_writer_events" data-h="50"><figcaption>The event that fills <code>v_submission</code>, and the default parameters of the action.</figcaption></figure>
+<p>To check each link of this chain apart, the folder <code>08_tools/nc_writer_slate/test_action/</code> holds a small test
+box and the steps, from a state typed by hand to the event. Users of the NC writer need the right to run the action (the
+<i>Access guide</i>).</p>
+
+<h3>Checking the installation</h3>
+<ul>
+  <li><b>The dashboard</b> opens in Essentiel. The date <b>Données au…</b> at the top right is the day of the latest NC. With
+    the filters as the page opens (Série, Responsabilité FTO2), Deep dive › Vue d’ensemble shows a little more than
+    868 NC, 3 160 défauts and 388 k€: these are the figures of 26 October 2026, and the source holds more days.</li>
+  <li><b>The MFT page</b> opens on the line with the most NCs, on the last finished week, and <b>Suivi des actions</b>
+    shows the actions of <code>1_actions_mft.csv</code>.</li>
+  <li><b>The queries:</b> in Slate, <code>q_fto2_nc</code> returns as many rows as the notebook wrote in
+    <code>fto2_dash_nc</code>. A count that stops at a round number means a row limit on the query.</li>
+</ul>
+
+<h3>Installing a new version</h3>
+<table>
+  <thead><tr><th style="width:52mm">What changed</th><th>What to do in Skywise</th></tr></thead>
+  <tbody>
+    <tr><td><b>The program</b> (<code>fto2/</code>)</td><td>Replace the folder <code>notebook_kit</code> by the new one, whole. Restart the kernel of the
+      notebook and run it.</td></tr>
+    <tr><td><b>A page</b></td><td>Keep a copy of the code in place (it is the way back). Paste the new CSS, HTML and JavaScript into the sandbox, and the
+      new <code>state.json</code> if it changed.</td></tr>
+    <tr><td><b>The columns of a table</b></td><td>Run the notebook, let the sync follow, then replace the text of the query concerned. Then paste the
+      page.</td></tr>
+    <tr><td><b>A new settings table, or a new line</b></td><td>Add that table, or that line, to <code>data/config</code>. <b>Never</b> upload the folder
+      <code>config</code> over <code>data/config</code>: it holds the team's changes.</td></tr>
+  </tbody>
+</table>
+<p>The notebook rereads <code>data/config</code> at each run: a change of the settings needs no restart.</p>
+
+<h2>Changing the code and checking it</h2>
+<p class="lead">Every change of the program or of the pages is made in the source folder, checked against a reference, built,
+then installed. The checks compare every figure the pages show with the figures of a reference day: a change that moves a
+number it should not move is seen before it reaches the team.</p>
+
+<h3>What is needed</h3>
+<ul>
+  <li><b>Python 3</b> with the packages of <code>requirements.txt</code> (pandas, numpy, openpyxl).</li>
+  <li><b>Node.js</b> with <b>Playwright</b> and its Chromium: the checks open the pages in a browser.</li>
+  <li>The source folder, with its reference data: <code>06_input_data/</code> (the extracts of a reference day),
+    <code>04_reference/</code>, <code>05_outputs/</code> (what the build writes) and <code>tests/golden/</code> (what the
+    pages showed).</li>
+</ul>
+<p>Run the commands from the source folder. Python is called with <code>-I</code>, which keeps it from loading anything from
+the current folder.</p>
+
+<h3>The source folder, in short</h3>
+<table>
+  <thead><tr><th style="width:52mm">Folder</th><th>What it holds</th></tr></thead>
+  <tbody>
+    <tr><td><code>fto2/</code></td><td>The program: the same code runs in the notebook (as <code>notebook_kit</code>) and here. Chapter 4.</td></tr>
+    <tr><td><code>config/</code></td><td>The settings as installed the first time. Chapter 3.</td></tr>
+    <tr><td><code>build/</code></td><td>The dashboard page (<code>templates/dashboard.html</code>, <code>templates/model.js</code>) and the scripts that build the pages
+      and the installation files. Chapter 5.</td></tr>
+    <tr><td><code>07_scripts/mft/</code></td><td>The MFT page and its build.</td></tr>
+    <tr><td><code>08_tools/nc_writer_slate/</code></td><td>The NC writer, with its own checks.</td></tr>
+    <tr><td><code>tests/</code></td><td>The checks, and the reference snapshot of every figure (<code>tests/golden/</code>).</td></tr>
+    <tr><td><code>03_reports/skywise/</code></td><td>The installation files, written by the build.</td></tr>
+    <tr><td><code>docs/</code></td><td>The documents of chapters 3 to 6, and the guides (<code>docs/guides/</code>, built into PDF by
+      <code>build_guides.py</code>).</td></tr>
+  </tbody>
+</table>
+
+<h3>Build</h3>
+<pre>python3 -I build/build_all.py
+python3 -I 07_scripts/mft/build_mft.py</pre>
+<p>The first command runs the program on the reference data, writes the tables of <code>05_outputs/</code>, the dashboard page
+<code>03_reports/FTO2_NC_Dashboard.html</code> (it opens in a browser, with the reference data), and the installation files
+of the dashboard. The second does the same for the MFT page. Both rewrite <code>FTO2_Skywise_installation.zip</code>.</p>
+
+<h3>The checks</h3>
+<table>
+  <thead><tr><th style="width:46mm">Check</th><th>What it proves</th><th style="width:16mm">Time</th></tr></thead>
+  <tbody>
+    <tr><td><b>Rules and settings</b><br><code>python3 -m unittest discover -s tests -t .</code></td><td>The settings are read and checked as the notebook reads
+      them; no business value or year is typed in the code; the cost settings, the part prices, the downloads.</td><td class="num">seconds</td></tr>
+    <tr><td><b>The notebook, rehearsed</b><br><code>tests/notebook_rehearsal.py</code></td><td>The notebook's run, on a stand-in for Skywise fed with the reference data, gives the
+      same tables as the build.</td><td class="num">1 min</td></tr>
+    <tr><td><b>Every figure of the pages</b><br><code>tests/snapshot/</code></td><td>The pages, opened in a browser on 36 views of the dashboard and 67 of the MFT
+      page, show the same figures as the reference snapshot.</td><td class="num">30 min</td></tr>
+    <tr><td><b>Another year</b><br><code>tests/next_year_rehearsal.py</code></td><td>With the data moved one year later and the year changed in the settings, everything
+      follows: the year is one line of the settings.</td><td class="num">3 min</td></tr>
+  </tbody>
+</table>
+<p>The exact commands are in <code>tests/README.md</code>. Run the first two after any change; the snapshot after a change of
+a page or of a calculation; the year check after a change that touches dates, weeks or the production plan.</p>
+
+<h3>The rule of a change</h3>
+<ol class="steps">
+  <li>Note what should move, and what should not.</li>
+  <li>Make the change in the source folder.</li>
+  <li>Build, then run the checks. Read every difference the snapshot reports.</li>
+  <li>If only what you meant has moved, and a figure was meant to change: make the new snapshot the reference
+    (<code>tests/README.md</code>), in the same change.</li>
+  <li>Install the new version (section 7.7), and check the pages in Skywise.</li>
+</ol>
+
