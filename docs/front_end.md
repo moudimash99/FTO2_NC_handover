@@ -88,15 +88,15 @@ Search for these markers to find your way, from top to bottom:
 | `var STR = {` | every text of the page, in French (`fr`) and English (`en`) |
 | `MODEL START` … `MODEL END` | the calculations, with no drawing (see below) |
 | `the calculations: here, or in Slate` | small functions the charts call for the targets, the alarms and the cost explanation; the page computes them itself |
-| `// ---- 1. Overview`, `2. Pareto`, `3. Weekly Pareto`, `4. Cost`... | one section per tab, with that tab's charts |
+| `// ---- 1. Overview`, `2. Pareto`, `4. Cost`... | one section per tab, with that tab's charts |
+| `5. Insights`, `6. Chart texts`, `7. NC rates` | the charts several tabs share: the `a:` charts, the chart texts and drawing helpers, the numbered charts |
+| `Drawing a chart by its key` | `rvDraw`: draws an `a:` chart or a numbered chart from its key |
 | `ALARM ENGINE START` … `END` | the alarm statistics (section 5) |
 | `Dashboard v2 (main page)` | which charts appear on which tab, and their drawing functions (section 4) |
 | `filter bar` | the filters and what happens when they change |
 | `language, tabs, minor switch` | the language switch, the tabs, `renderAll` |
 | `Simple mode` | the Essentiel mode (Synthèse and Détail) |
 | the end of the file | the loader (section 2) and the error box |
-
-Sections marked "local page only", the Gallery, the Review and the Mock-up are not shown in Skywise: leave them.
 
 ### The calculations (`MODEL START` … `MODEL END`)
 
@@ -184,6 +184,9 @@ There are three kinds of keys:
 | a number (`53`, `78`...) | the function given for that number in `PSPEC` | `GSTR['53']` |
 | `a:name` (`a:lead`, `a:bump`...) | `RV_ANA.name` | `STR`: `k_name`, `t_name`, `s_name` |
 
+The cards of the numbered charts and of the `a:` charts are first made in two boxes of the HTML that are never shown
+(`#pg2` and `#ag`); `v2Build` then places each one in its tab.
+
 **To find a chart's code from the page:** take a few words of its title, search them in the JS: they lead to its `GSTR` or
 `STR` entry, whose key leads to its function.
 
@@ -200,7 +203,7 @@ A chart function counts from `SEL_NC` (or `D.defects` filtered the same way), th
 | `gSet(key, html, legend)` | puts the chart and its legend in its card |
 | `pEmpty(key)` | "no data" in a card |
 | `num`, `eur`, `pct`, `f1`, `f2` | number formats, in the page's language |
-| `lineCol(line)`, `catTok(category)` | the colour of a line, of a category (from the settings) |
+| `lineCol(line)`, `catFill(category)` | the colour of a line, of a category (from the settings) |
 
 **Changing a chart:** change what it counts or how it draws in its function; keep reading from `SEL_NC` so the filters
 apply; put any new text in `STR` (both languages).

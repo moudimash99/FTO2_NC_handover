@@ -45,7 +45,6 @@
     <button type="button" role="tab" id="tab-ov" aria-controls="p-ov" data-tab="ov" data-t="tabOv"></button>
     <button type="button" role="tab" id="tab-pareto" aria-controls="p-pareto" data-tab="pareto" data-t="tabPareto"></button>
     <button type="button" role="tab" id="tab-where" aria-controls="p-where" data-tab="where" data-t="tabWhere"></button>
-    <button type="button" role="tab" id="tab-ana" aria-controls="p-ana" data-tab="ana" data-t="tabAna"></button>
     <button type="button" role="tab" id="tab-cnq" aria-controls="p-cnq" data-tab="cnq" data-t="tabCnq"></button>
     <span class="gap" aria-hidden="true"></span>
     <button type="button" role="tab" id="tab-client" aria-controls="p-client" data-tab="client" data-t="tabClient"></button>
@@ -53,12 +52,6 @@
     <span class="gap" aria-hidden="true"></span>
     <button type="button" role="tab" id="tab-rca" aria-controls="p-rca" data-tab="rca" data-t="tabRca"></button>
     <button type="button" role="tab" id="tab-pplan" aria-controls="p-pplan" data-tab="pplan" data-t="tabPplan"></button>
-    <span class="gap" aria-hidden="true" data-gal="1"></span>
-    <button type="button" role="tab" id="tab-gal" aria-controls="p-gal" data-tab="gal" data-t="tabGal"></button>
-    <button type="button" role="tab" id="tab-prod" aria-controls="p-prod" data-tab="prod" data-t="tabProd"></button>
-    <button type="button" role="tab" id="tab-hebdo" aria-controls="p-hebdo" data-tab="hebdo" data-t="tabWeek"></button>
-    <button type="button" role="tab" id="tab-mft" aria-controls="p-mft" data-tab="mft" data-t="tabMft"></button>
-    <button type="button" role="tab" id="tab-rev" aria-controls="p-rev" data-tab="rev" data-t="tabRev"></button>
     <button type="button" role="tab" id="tab-syn" aria-controls="p-syn" data-tab="syn" data-t="tabSyn"></button>
     <button type="button" role="tab" id="tab-det" aria-controls="p-det" data-tab="det" data-t="tabDet"></button>
   </div>
@@ -127,46 +120,6 @@
     </section>
   </div>
 
-  <!-- 2. Weekly Pareto (series) -->
-  <div class="panel" role="tabpanel" id="p-hebdo" aria-labelledby="tab-hebdo" hidden>
-    <div class="lead"><h2 data-t="weekTitle"></h2><p class="sub" data-t="serieSub"></p></div>
-    <div class="controls">
-      <div class="weekbar">
-        <button type="button" id="wPrev" data-ta="prevWeek">←</button>
-        <select id="wSel" data-ta="weekLabel"></select>
-        <button type="button" id="wNext" data-ta="nextWeek">→</button>
-      </div>
-      <div class="ctl"><span class="label" id="wwLab" data-t="winLabel"></span>
-        <div class="seg" role="group" aria-labelledby="wwLab" id="wWin"></div></div>
-    </div>
-    <p class="sub" id="wRange"></p>
-    <div class="figs">
-      <div class="fig"><b id="wf1"></b><span data-t="wDefects"></span></div>
-      <div class="fig"><b id="wf2"></b><span data-t="wNcs"></span></div>
-      <div class="fig"><b id="wf3"></b><span id="wf3l"></span></div>
-      <div class="fig"><b id="wf4" class="word"></b><span data-t="wTopRca"></span><small id="wf4s"></small></div>
-    </div>
-    <div class="card wide">
-      <div class="card-head"><h3 data-t="wMatrix"></h3>
-        <div class="seg" role="group" data-ta="wLevel" id="wLvl"></div></div>
-      <p class="sub" data-t="wMatrixSub"></p>
-      <div class="table-wrap"><table class="matrix" id="wMatrix"></table></div>
-    </div>
-    <div class="card wide">
-      <div class="card-head"><h3 id="wTrendTitle"></h3><button type="button" class="clear-one" id="wProbClear" hidden></button></div>
-      <p class="sub" data-t="wTrendSub"></p>
-      <div class="cols-wrap"><div class="cols" id="wTrendCols"></div></div>
-    </div>
-    <div class="chips" id="wc"></div>
-    <div class="grid" id="wg"></div>
-    <details class="detail"><summary><span data-t="tblWeek"></span><span class="count" id="wn"></span></summary>
-      <div class="inner">
-        <input type="search" id="wq" autocomplete="off">
-        <div class="table-wrap"><table><thead><tr id="wth"></tr></thead><tbody id="wtb"></tbody></table></div>
-        <button type="button" class="more" id="wm" hidden></button>
-      </div></details>
-  </div>
-
   <!-- 3. Cost of non-quality (series) -->
   <div class="panel" role="tabpanel" id="p-cnq" aria-labelledby="tab-cnq" hidden>
     <div class="lead"><h2 data-t="cnqTitle"></h2><p class="sub" data-t="cnqSub"></p></div>
@@ -227,7 +180,7 @@
       </div></details>
   </div>
 
-  <!-- Mock-up page only: products, lines, aircraft, stations -->
+  <!-- products, lines, aircraft, stations -->
   <div class="panel" role="tabpanel" id="p-where" aria-labelledby="tab-where" hidden>
     <div class="lead"><h2 data-t="whereTitle"></h2><p class="sub" data-t="whereSub"></p></div>
     <details class="detail" id="whBox"><summary><span data-t="tblWhere"></span><span class="count" id="whN"></span></summary>
@@ -239,16 +192,9 @@
       </div></details>
   </div>
 
-  <!-- 3b. Insights (series) -->
-  <div class="panel" role="tabpanel" id="p-ana" aria-labelledby="tab-ana" hidden>
-    <section class="hero"><h2 data-t="anaTitle"></h2><p class="sub" data-t="anaSub"></p></section>
+  <!-- Never shown: the cards of the Analyses charts are made here, then placed in the tabs (v2Build) -->
+  <div class="panel" id="p-ana" hidden>
     <div class="vgrid" id="ag"></div>
-  </div>
-
-  <!-- Follow-up page: MFT actions -->
-  <div class="panel" role="tabpanel" id="p-mft" aria-labelledby="tab-mft" hidden>
-    <div class="lead"><h2 data-t="mftTitle"></h2><p class="sub" data-t="mftSub"></p></div>
-    <div id="mftg"></div>
   </div>
 
   <!-- 4. Customer returns -->
@@ -314,33 +260,12 @@
     </div>
   </div>
 
-  <!-- 6. Gallery: chart ideas on fictitious data (local page only) -->
-  <div class="panel" role="tabpanel" id="p-gal" aria-labelledby="tab-gal" hidden>
-    <section class="hero"><span class="fict" data-t="galBadge"></span><h2 data-t="galTitle"></h2><p class="sub" data-t="galSub"></p></section>
-    <div class="gal-bar"><div class="seg" role="group" data-ta="galFilter" id="gFeas"></div><p class="gal-keep" id="gKeep"></p></div>
-    <div class="ggrid" id="gg"></div>
-  </div>
-
-  <!-- 7. NC rates: NCs, defects and cost per unit of volume built (local page only) -->
-  <div class="panel" role="tabpanel" id="p-prod" aria-labelledby="tab-prod" hidden>
-    <section class="hero"><span class="fict" id="pBadge"></span><h2 data-t="prodTitle"></h2><p class="sub" data-t="prodSub"></p><p class="sub" id="pCover"></p></section>
-    <div class="gal-bar"><div class="controls"><div class="seg" role="group" data-ta="prodData" id="pSrcSeg"></div><div class="seg" role="group" data-ta="prodVer" id="pVerSeg"></div></div><p class="gal-keep" id="pKeep"></p></div>
+  <!-- Never shown: the cards of the numbered charts are made here, then placed in the tabs (v2Build) -->
+  <div class="panel" id="p-prod" hidden>
     <div class="ggrid" id="pg2"></div>
   </div>
 
-  <!-- Review page: the proposed final layout, each chart with the choices to make (local review page only) -->
-  <div class="panel" role="tabpanel" id="p-rev" aria-labelledby="tab-rev" hidden>
-    <section class="hero"><h2 data-t="revTitle"></h2><p class="sub" data-t="revSub"></p><p class="sub" data-t="revHow"></p></section>
-    <div class="gal-bar rv-bar">
-      <div class="controls"><div class="seg" role="group" data-ta="rvShowLab" id="rvShow"></div><button type="button" class="cxb" id="rvCopy" data-t="rvCopy"></button></div>
-      <p class="gal-keep" id="rvSum" aria-live="polite"></p>
-      <p class="rv-save" id="rvSave" aria-live="polite"></p>
-    </div>
-    <textarea class="rv-copybox" id="rvCopyBox" readonly hidden></textarea>
-    <div id="rvBody"></div>
-  </div>
-
-  <!-- Views page (PAGE 'vues'): Synthèse, the whole plant over the year; Détail, one line over one month. The charts are this dashboard's -->
+  <!-- Synthèse, the whole plant over the year; Détail, one line over one month. The charts are this dashboard's -->
   <div class="panel vu" role="tabpanel" id="p-syn" aria-labelledby="tab-syn" hidden>
     <div class="figs" id="vuSF"></div>
     <div class="vu-grid" id="vuSynGrid"></div>

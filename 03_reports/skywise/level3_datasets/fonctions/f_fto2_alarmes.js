@@ -138,14 +138,12 @@ try {
     /* ===== ADAPTER END ===== */
     var R = fto2RefBlocks(ref); if (!R || !R.dashboard) return null;
     // what the page sets before its calculations
-    var window = { FTO2_PAGE: 'main' };
+    var window = {};
     var D = fto2FromTables(nc, def, R.dashboard, null);
     var SET = D.settings, EQMIN = SET.msn_minimum;
     window.FTO2_ALARM_P = SET.alarmes; window.FTO2_PLACEHOLDER = SET.placeholder;
     window.FTO2_YEAR = +(SET.annee || String(D.meta.from).slice(0, 4));   // the year followed: the alarm engine's weeks
-    var PAGE = 'main', G = { lang: 'fr', minor: true };
-    var DM = null, GN = [], GD = [], GALLOC = [];   // the made-up data of the review pages: never in Skywise
-    function gCost() { return 0; }
+    var G = { lang: 'fr', minor: true };
   /* ===== ALARM ENGINE START ===== */
   // Alarms (Mohammad, 30 Oct): the bell lists what to look at, few lines, nothing raised by a single bad week. One rule for the
   // dashboard and the MFT page (build_mft.py copies this block into the MFT page). Four ways something goes wrong, each tested on
@@ -409,7 +407,7 @@ try {
     var REP = D.ncs;
     var DMAX = D.meta.to, DMIN = REP.reduce(function (m, n) { return n[1] < m ? n[1] : m; }, DMAX);
     var LINES = lineOrder(REP.map(function (n) { return n[3]; }));
-    var GF0 = { pick: null, src: 'all', org: '', fto2: true, liab: SET.defauts.liab, cost: 'fto2', phase: SET.defauts.phase, line: '', preset: PAGE === 'suivi' ? 'all' : SET.defauts.preset, from: '', to: '' }, GF = Object.assign({}, GF0);
+    var GF0 = { pick: null, src: 'all', org: '', fto2: true, liab: SET.defauts.liab, cost: 'fto2', phase: SET.defauts.phase, line: '', preset: SET.defauts.preset, from: '', to: '' }, GF = Object.assign({}, GF0);
     var PRESETS = ['ytd', 'm1', 'm3', 'm6', 'm12', 'all', 'custom'];
     function plusDays(iso, k) { var d = new Date(iso + 'T12:00:00Z'); d.setUTCDate(d.getUTCDate() + k); return isoDay(d); }
     function minusMonths(iso, k) { var d = new Date(iso + 'T12:00:00Z'), dd = d.getUTCDate(); d.setUTCDate(1); d.setUTCMonth(d.getUTCMonth() - k); d.setUTCDate(Math.min(dd, new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth() + 1, 0)).getUTCDate())); return isoDay(d); }
@@ -479,8 +477,7 @@ try {
   
     // ---------------------------------------------------------------- 3. production
     var PR = { src: D.eqmsn ? 'real' : 'dummy', ver: D.eqmsn && D.eqmsn.wd ? 'wd' : 'std' }, PD = null, PA = null, PCOL = {};
-    function pSrc() { return PR.src === 'real' && D.eqmsn ? D.eqmsn : DM && DM.eqmsn ? DM.eqmsn : null; }
-    var CABLE_RCA = { 'Câble Endommagé': 1, 'Câble ou Élément Manquant': 1 };   // fictitious data only: no cable flag there
+    function pSrc() { return PR.src === 'real' && D.eqmsn ? D.eqmsn : null; }
     // the NCs of the selection matched to a product of the output table, months of the period that are not forecast. When the NCs
     // reach into the plan's forecast months (export of 7 Oct, NCs to mid-October), those months count as built up to the last NC
     // day: the month of the last NC with its planned volume × the share of its days gone (P.part), the rest of it goes to the
@@ -492,7 +489,7 @@ try {
       var L = real ? P.months.indexOf(D.meta.to.slice(0, 7)) : -1;
       if (L >= P.fc) { var dm = new Date(Date.UTC(+D.meta.to.slice(0, 4), +D.meta.to.slice(5, 7), 0)).getUTCDate(); P.part[L] = Math.min(1, +D.meta.to.slice(8, 10) / dm); P.fc = L + 1; P.cur = L; }
       P.all = Object.keys(P.prod).sort(function (a, b) { return sumA(P.prod[b]) - sumA(P.prod[a]); });
-      var cnt = {}; (real ? REP.map(function (n) { return E.map[String(n[26] || '').toUpperCase()]; }) : GN.map(function (n) { return n[5]; })).forEach(function (p) { if (p) cnt[p] = (cnt[p] || 0) + 1; });
+      var cnt = {}; REP.map(function (n) { return E.map[String(n[26] || '').toUpperCase()]; }).forEach(function (p) { if (p) cnt[p] = (cnt[p] || 0) + 1; });
       PCOL = {}; P.all.slice().sort(function (a, b) { return (cnt[b] || 0) - (cnt[a] || 0) || sumA(P.prod[b]) - sumA(P.prod[a]); }).forEach(function (p, i) { PCOL[p] = i < 6 ? 'var(--c' + (i + 1) + ')' : 'var(--dim)'; });
       P.prods = P.all.filter(function (p) { return !real || !GF.line || P.line[p] === GF.line; });
       P.mask = P.months.map(function (m, i) { return i < P.fc && (!real || (m + '-31' >= GF.from && m + '-01' <= GF.to)); });
@@ -505,9 +502,6 @@ try {
         });
         D.defects.forEach(function (r) { var i = P.idx[r[0]]; if (i != null && keepMinor(r)) P.defs.push({ n: i, cat: dCat(r), rca: dRca(r), cost: dAlloc(r), cable: !!dCable(r) }); });
         CLI_NC.forEach(function (n) { var p = E.map[String(n[26] || '').toUpperCase()], m = month(n[1]); if (p && P.prods.indexOf(p) >= 0 && m >= 0) P.cli.push({ p: p, m: m }); });
-      } else {
-        GN.forEach(function (n, i) { P.total++; var m = month(n[1]); if (m < 0) return; P.idx[i] = P.ncs.length; P.ncs.push({ id: n[0], m: m, p: n[5], cost: gCost(n), days: n[8], late: n[9] === 'cf' || n[9] === 'test' }); if (n[9] === 'client') P.cli.push({ p: n[5], m: m }); });
-        GD.forEach(function (d, j) { var i = P.idx[d[0]]; if (i != null) P.defs.push({ n: i, cat: d[1], rca: d[2], cost: GALLOC[j], cable: !!CABLE_RCA[d[2]] }); });
       }
       return P;
     }
