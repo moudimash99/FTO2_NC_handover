@@ -102,3 +102,16 @@ ol.marks > li > i { position: absolute; left: 0; top: 0.6pt; width: 14.5pt; heig
 dl.gloss { display: grid; grid-template-columns: 38mm 1fr; row-gap: 4pt; column-gap: 8pt; margin: 4pt 0 10pt; } dl.gloss dt { font-weight: 650; } dl.gloss dd { margin: 0; }
 .check { list-style: none; padding: 0; } .check > li { position: relative; padding-left: 19pt; margin-bottom: 5pt; break-inside: avoid; }
 .check > li::before { content: ""; position: absolute; left: 0; top: 1.5pt; width: 10.5pt; height: 10.5pt; border: 1pt solid #7a8696; border-radius: 2pt; background: #fff; }
+
+/* ---- short documents (short: yes): the title on the first page, sections not numbered, no page break between them */
+.dochead { border-bottom: 1.4pt solid var(--accent); padding-bottom: 9pt; margin-bottom: 14pt; }
+.dochead .kicker { font-size: 8.4pt; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); font-weight: 600; }
+.dochead h1 { font-size: 22pt; line-height: 1.15; margin: 5pt 0 4pt; font-weight: 700; letter-spacing: -0.01em; }
+.dochead .sub { font-size: 11.2pt; color: var(--ink-2); margin: 0 0 5pt; }
+.dochead .for { font-size: 8.8pt; color: var(--muted); margin: 0; }
+.short h2 { break-before: auto; font-size: 13.5pt; margin: 16pt 0 5pt; }
+.short h2::before, .short h3::before { content: none; }
+.short h3 { font-size: 11pt; margin: 12pt 0 4pt; }
+.short main > h2:first-child { margin-top: 0; }
+.next { border-top: 0.8pt solid var(--line); margin-top: 14pt; padding-top: 8pt; }
+.next h2 { margin-top: 0; }

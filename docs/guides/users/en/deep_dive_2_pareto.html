@@ -1,0 +1,78 @@
+<!--
+title: Deep dive – Pareto
+subtitle: The defects sorted: by category, cause, line, sub-code and FIN
+kicker: FTO2 NC dashboard · Users · Deep dive mode
+file: users/en/Deep dive 2 - Pareto
+for: Everyone who analyses the causes of the NCs
+foot: FTO2 NC dashboard · Deep dive – Pareto
+short: yes
+lang: en
+-->
+
+<h2>What the tab is for</h2>
+<p>The Pareto tab answers: <b>what goes wrong, and how much?</b> It sorts the defects of the selection from the largest group
+to the smallest, from five angles, and lets you follow one cause down to the defects themselves. It counts
+<b>defects</b>, not NCs: an NC with four defects counts four times.</p>
+
+<h2>The two switches at the top</h2>
+<ul>
+  <li><b>Measure:</b> <b>Volume (defects)</b> counts the defects; <b>Cost of non-quality</b> counts their cost. The tab opens
+    on the cost. Every card follows the switch.</li>
+  <li><b>Cable defects in the bars:</b> <b>Shown</b> marks, inside each bar, the part that is a cable defect.</li>
+</ul>
+
+<h2>The five Pareto cards</h2>
+<table class="keep">
+  <thead><tr><th style="width:44mm">Card</th><th>What it shows</th></tr></thead>
+  <tbody>
+    <tr><td><b>Category</b></td><td>The nine families of defects, from the largest to the smallest. The columns give the defects, the NCs
+      and <b>Cumul</b>, the running share: "65 %" on the second row means the first two categories make 65 % of the defects.</td></tr>
+    <tr><td><b>Root cause (RCA)</b></td><td>The same defects by cause (25 causes). In each bar, the colours are the categories.</td></tr>
+    <tr><td><b>Line</b></td><td>The same defects by aircraft line.</td></tr>
+    <tr><td><b>Official sub-code</b></td><td>By sub-code of the official code sheet (Q11-003, T04…).</td></tr>
+    <tr><td><b>FIN (reference)</b></td><td>The 20 references named most often in the defects. Defects with no FIN written are left out.</td></tr>
+  </tbody>
+</table>
+<p><b>In the NC column, an NC is shared among its defects:</b> one defect of an NC that has four counts for a quarter of an
+NC. This is why that column shows decimals.</p>
+
+<h2>Following one cause</h2>
+<ol class="steps">
+  <li>Click a bar, for example the cause <i>Swapped wires</i> in <b>Root cause (RCA)</b>. It keeps its colour, the others turn
+    grey, and a label appears above the cards.</li>
+  <li>The other cards now count that cause only: on which lines, which sub-codes, which FINs.</li>
+  <li>Click in a second card to narrow further, for example a line, then a FIN.</li>
+  <li>Open <b>▸ Defect and cost detail</b> at the bottom: one row per defect, with its NC, date, line, category, cause,
+    sub-code, its share of the NC's cost, and its text. Search it by NC number, word or FIN.</li>
+  <li><b>Clear all</b>, beside the labels, removes these choices. They only filter this tab: the filters at the top stay as
+    they are.</li>
+</ol>
+
+<h2>The other charts of the tab</h2>
+<table class="keep">
+  <thead><tr><th style="width:62mm">Chart</th><th>What it answers</th></tr></thead>
+  <tbody>
+    <tr><td><b>A hundred defects</b></td><td>A hundred squares, each 1 % of the defects, coloured by category: the shares at a glance.</td></tr>
+    <tr><td><b>Volume or unit cost</b></td><td>One bubble per cause. To the right, frequent; towards the top, expensive per defect; the size is the
+      total cost. A cause to the right and low is a volume problem; high and to the left, a unit-cost problem.</td></tr>
+    <tr><td><b>Monthly ranking of root causes</b></td><td>The rank of the eight main causes, month after month. A line climbing towards rank 1 is a
+      cause taking more room. Click a line to follow it.</td></tr>
+    <tr><td><b>From where it is found to the decision</b></td><td>The flow of the defects: where the NC was found (final inspection, test, cables,
+      internal), the category, then the decision taken. The thicker the band, the more defects.</td></tr>
+    <tr><td><b>Connection errors</b> (three charts)</td><td>Swapped wires, wrong terminals and wires not connected: per MSN month by month, per product,
+      and per million connection operations on the MIP A350. A330 and A350 only.</td></tr>
+    <tr><td><b>Root causes: 2025 against 2026</b></td><td>Defects per MSN for the main causes of each year: a line going up is a cause that grew.
+      A330 and A350.</td></tr>
+    <tr><td><b>Root causes against volume</b></td><td>The causes ranked in defects per MSN, so lines of different volume compare fairly.</td></tr>
+    <tr><td><b>▸ Other charts</b></td><td>Cable defects per MSN month by month, and which pins get swapped on the connectors where it happens
+      most.</td></tr>
+  </tbody>
+</table>
+
+<h2>Good to know</h2>
+<ul>
+  <li>The Pareto counts NCs raised at FTO2 that FTO2 is liable for, deleted ones included, under the filters at the top.</li>
+  <li>The A320 is left out of the "per MSN" charts: its products are small parts counted one by one and would pull the rates
+    down.</li>
+  <li>A cause name you are unsure of: the Definitions tab gives its definition and real examples.</li>
+</ul>

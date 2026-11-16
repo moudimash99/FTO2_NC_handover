@@ -21,6 +21,10 @@ The first comment of a source:
     lang: en
     -->
 
+A short document (a few pages, one subject) has the line "short: yes" in its first comment: no cover and no contents,
+its title at the top of the first page, its sections not numbered. "file" may name a sub-folder (users/en/1 Introduction),
+and "foot" the text at the foot of its pages. Every source of the folders users/ and developers/ is built with the others.
+
 A screenshot is a figure with the name of its picture and the height to keep for it, in mm:
 
     <figure data-shot="d_top" data-h="70"><figcaption>The top of the dashboard.</figcaption></figure>
@@ -172,9 +176,16 @@ def cover_html(meta):
             % (meta.get("lang", "en"), css, html.escape(meta.get("kicker", "")), html.escape(meta["title"]), html.escape(meta["subtitle"]), "".join(rows)))
 
 
-def page_html(meta, body, toc, pages=None, with_toc=True):
+def head_html(meta):
+    """The title block of a short document, at the top of its first page."""
+    who = '<p class="for">%s: %s</p>' % (html.escape(meta.get("label_for", "For")), html.escape(meta["for"])) if meta.get("for") else ""
+    return ('<header class="dochead"><div class="kicker">%s</div><h1>%s</h1><p class="sub">%s</p>%s</header>'
+            % (html.escape(meta.get("kicker", "")), html.escape(meta["title"]), html.escape(meta["subtitle"]), who))
+
+
+def page_html(meta, body, toc, pages=None, with_toc=True, short=False):
     css = read(os.path.join(HERE, "guides.css"))
-    foot = ("%s · %s" % (meta["title"], meta["subtitle"])).replace("\\", "\\\\").replace('"', '\\"')
+    foot = (meta.get("foot") or "%s · %s" % (meta["title"], meta["subtitle"])).replace("\\", "\\\\").replace('"', '\\"')
     css += '\n@page { @bottom-left { content: "%s"; } @bottom-right { content: counter(page) " / " counter(pages); } }\n' % foot
     contents = ""
     if with_toc:
@@ -182,8 +193,9 @@ def page_html(meta, body, toc, pages=None, with_toc=True):
                         % (lv, num, hid, html.escape(text), (pages or {}).get(hid, "0")) for lv, hid, num, text in toc)
         contents = '<section class="toc%s"><h2 class="plain">%s</h2><ol>%s</ol></section>' % (
             " long" if len(toc) > 40 else "", html.escape(meta.get("contents", "Contents")), items)   # long: two columns
-    return ('<!doctype html><html lang="%s"><head><meta charset="utf-8"><title>%s · %s</title><style>%s</style></head><body>%s<main>%s</main></body></html>'
-            % (meta.get("lang", "en"), html.escape(meta["title"]), html.escape(meta["subtitle"]), css, contents, body))
+    return ('<!doctype html><html lang="%s"><head><meta charset="utf-8"><title>%s · %s</title><style>%s</style></head><body%s>%s<main>%s</main></body></html>'
+            % (meta.get("lang", "en"), html.escape(meta["title"]), html.escape(meta["subtitle"]), css, ' class="short"' if short else "",
+               contents, (head_html(meta) if short else "") + body))
 
 
 def render(text, pdf, cover=False):
@@ -219,8 +231,21 @@ def build(name):
     if missing:
         sys.exit("%s: figure(s) not found: %s (run: node docs/guides/screens.js)" % (name, ", ".join(sorted(set(missing)))))
     body, toc = headings(body, int(meta.get("depth", "2")))
-    os.makedirs(OUT, exist_ok=True)
     pdf = os.path.join(OUT, meta["file"] + ".pdf")
+    os.makedirs(os.path.dirname(pdf), exist_ok=True)
+    info = {"/Title": "%s - %s" % (meta["title"], meta["subtitle"]), "/Author": meta.get("kicker", ""), "/Creator": "", "/Producer": ""}
+    if meta.get("short") == "yes":
+        with tempfile.TemporaryDirectory() as tmp:
+            g = os.path.join(tmp, "doc.pdf")
+            render(page_html(meta, body, toc, with_toc=False, short=True), g)
+            from pypdf import PdfWriter
+            out = PdfWriter()
+            out.append(g)
+            out.add_metadata(info)
+            with open(pdf, "wb") as f:
+                out.write(f)
+        report(name, pdf, shots)
+        return
     with tempfile.TemporaryDirectory() as tmp:
         # 1. without the contents: on which page each chapter and section starts
         a = os.path.join(tmp, "a.pdf")
@@ -244,18 +269,32 @@ def build(name):
         out = PdfWriter()
         out.append(c)
         out.append(g)
-        out.add_metadata({"/Title": "%s - %s" % (meta["title"], meta["subtitle"]), "/Author": meta.get("kicker", ""), "/Creator": "", "/Producer": ""})
+        out.add_metadata(info)
         with open(pdf, "wb") as f:
             out.write(f)
+    report(name, pdf, shots)
+
+
+def report(name, pdf, shots):
     from pypdf import PdfReader
-    print("%-24s -> %s (%d pages, %d KB)" % (name, os.path.relpath(pdf, os.path.dirname(os.path.dirname(HERE))), len(PdfReader(pdf).pages), os.path.getsize(pdf) // 1024))
+    print("%-30s -> %s (%d pages, %d KB)" % (name, os.path.relpath(pdf, os.path.dirname(os.path.dirname(HERE))), len(PdfReader(pdf).pages), os.path.getsize(pdf) // 1024))
     todo = [n for n, shown in shots if not shown]
     if todo:
-        print("%24s    %d screenshot(s) to insert: %s" % ("", len(todo), ", ".join(todo)))
+        print("%30s    %d screenshot(s) to insert: %s" % ("", len(todo), ", ".join(todo)))
+
+
+def sources():
+    """Every guide: those of GUIDES, then the short documents of users/ and developers/, in the order of their names."""
+    out = [g for g in GUIDES if os.path.exists(os.path.join(HERE, g + ".html"))]
+    for top in ("users", "developers"):
+        for d, dirs, files in os.walk(os.path.join(HERE, top)):
+            dirs.sort()
+            out += [os.path.relpath(os.path.join(d, f), HERE)[:-5].replace(os.sep, "/") for f in sorted(files) if f.endswith(".html")]
+    return out
 
 
 def main():
-    names = sys.argv[1:] or [g for g in GUIDES if os.path.exists(os.path.join(HERE, g + ".html"))]
+    names = [n[:-5] if n.endswith(".html") else n for n in sys.argv[1:]] or sources()
     for n in names:
         build(n)
 
