@@ -92,7 +92,9 @@ Cherchez ces repères pour vous y retrouver, de haut en bas :
 | `var STR = {` | tous les textes de la page, en français (`fr`) et en anglais (`en`) |
 | `MODEL START` … `MODEL END` | les calculs, sans dessin (voir plus bas) |
 | `the calculations: here, or in Slate` | de petites fonctions que les graphiques appellent pour les objectifs, les alarmes et l'explication du coût ; la page les calcule elle-même |
-| `// ---- 1. Overview`, `2. Pareto`, `3. Weekly Pareto`, `4. Cost`... | une section par onglet, avec les graphiques de cet onglet |
+| `// ---- 1. Overview`, `2. Pareto`, `4. Cost`... | une section par onglet, avec les graphiques de cet onglet |
+| `5. Insights`, `6. Chart texts`, `7. NC rates` | les graphiques que plusieurs onglets partagent : les graphiques `a:`, les textes des graphiques et les fonctions de dessin, les graphiques numérotés |
+| `Drawing a chart by its key` | `rvDraw` : dessine un graphique `a:` ou un graphique numéroté à partir de sa clé |
 | `ALARM ENGINE START` … `END` | les statistiques des alarmes (section 5) |
 | `Dashboard v2 (main page)` | quels graphiques apparaissent sur quel onglet, et leurs fonctions de dessin (section 4) |
 | `filter bar` | les filtres et ce qui se passe quand ils changent |
@@ -100,8 +102,8 @@ Cherchez ces repères pour vous y retrouver, de haut en bas :
 | `Simple mode` | le mode Essentiel (Synthèse et Détail) |
 | la fin du fichier | le chargeur (section 2) et l'encadré d'erreur |
 
-Les sections marquées « local page only », ainsi que Gallery, Review et Mock-up, ne sont pas affichées dans Skywise :
-laissez-les.
+Les cartes des graphiques numérotés et des graphiques `a:` sont d'abord créées dans deux zones du HTML qui ne sont jamais
+affichées (`#pg2` et `#ag`) ; `v2Build` place ensuite chacune dans son onglet.
 
 ### Les calculs (`MODEL START` … `MODEL END`)
 
@@ -215,7 +217,7 @@ Une fonction de graphique compte à partir de `SEL_NC` (ou de `D.defects` filtr�
 | `gSet(key, html, legend)` | place le graphique et sa légende dans sa carte |
 | `pEmpty(key)` | « pas de données » dans une carte |
 | `num`, `eur`, `pct`, `f1`, `f2` | formats de nombres, dans la langue de la page |
-| `lineCol(line)`, `catTok(category)` | la couleur d'une ligne, d'une catégorie (tirée des paramètres) |
+| `lineCol(line)`, `catFill(category)` | la couleur d'une ligne, d'une catégorie (tirée des paramètres) |
 
 **Modifier un graphique :** changez ce qu'il compte ou comment il dessine dans sa fonction ; continuez à lire `SEL_NC` pour
 que les filtres s'appliquent ; mettez tout nouveau texte dans `STR` (dans les deux langues).
