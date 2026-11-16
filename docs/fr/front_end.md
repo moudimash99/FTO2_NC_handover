@@ -1,8 +1,8 @@
 # Front end : comment fonctionne le code des pages
 
-Le front end, ce sont les trois pages de l'application Slate : le **tableau de bord**, la **page MFT** et le **Tableau
-Elizabeth**. Elles lisent les tables que le notebook écrit, puis filtrent, additionnent et dessinent. Ce guide explique leur
-code.
+Le front end, ce sont les trois pages de l'application Slate : le **tableau de bord**, la **page MFT** et le
+**Tableau Elizabeth**. Elles lisent les tables que le notebook écrit, puis filtrent, additionnent et dessinent. Ce guide
+explique leur code.
 
 Les trois guides : `config.md` (les tables de paramètres ; dans le Code Workspace, aussi sous le nom `data/config/README.md`),
 `logic.md` (le code du notebook) et `front_end.md` (le code des pages) ; ces deux derniers sont aussi dans `notebook_kit/`.
@@ -110,7 +110,7 @@ La partie de la page qui calcule sans dessiner, en huit sections numérotées :
 1. **helpers** : lire une ligne de défaut ou une NC, regrouper les types de NC, les catégories (`CAT_ORDER`, tiré des
    paramètres) ;
 2. **selection** : les filtres (`GF`) et `select()`, qui fait les listes de NC à l'écran ;
-3. **production** : le plan de production rapproché des NC sélectionnées : les MSN produits par produit et par mois (`pData`,
+3. **production** : le plan de production associé aux NC sélectionnées : les MSN produits par produit et par mois (`pData`,
    `pAgg`) ;
 4. **targets and forecast** : l'année de comparaison avec les mêmes filtres (`y25Sel`), l'objectif ligne par ligne
    (`v2Tgt`), la prévision jusqu'à décembre (`v2Series`, `v2Fc`) ;
@@ -152,8 +152,8 @@ précède suit.
    filtres.
 
 **Un clic sur un graphique** passe par `data-pick="kind|value"` sur l'élément dessiné (`pk()` l'écrit). La page attrape le
-clic (`pickSet`), renseigne `GF.pick`, et tous les onglets suivent. Une pastille dans la barre de filtres l'affiche ; ✕
-l'enlève.
+clic (`pickSet`), renseigne `GF.pick`, et tous les onglets suivent. Une pastille dans la barre de filtres l'affiche ;
+✕ l'enlève.
 
 **Une infobulle** passe par `data-tip="title|line|line"` sur l'élément dessiné (`tip()` l'écrit).
 

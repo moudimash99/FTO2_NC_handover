@@ -218,7 +218,7 @@ rebutée ou échangée.
 | `1_cout_parametres.csv` | 1 | Nom / valeur : les **taux horaires** (production 123, qualité 107, ME 76, ingénierie 78,16) et les **minutes de chaque étape** (alerte 41, rédaction 30, au contrôle final 60, support 60, préparation 50, travail minimum 60, recontrôle 30...), les **minutes de logistique** ajoutées quand le travail vient de l'ordre de retouche (15), le facteur des NC internes, le montant forfaitaire d'un retour client | Changez seulement la valeur, avec un point ou une virgule. Une valeur inférieure à zéro arrête l'exécution. |
 | `2_cout_decisions.csv` | 2 | Une décision (RWK retouche, REJ rejet, SCR rebut, EXC échange, DQN design query...) : `1` ou `0` pour chaque étape qu'elle compte (alerte, redaction, support, travail, recontrole), ses heures d'ingénierie, `valeur_piece` (1 = la valeur de la pièce compte), son libellé, et `base` (d'où vient la règle) | Un nouveau code de décision : ajoutez une ligne. |
 | `2_cout_qui_fait_quoi.csv` | 2 | Chaque étape → qui la fait (`production`, `qualite`, `me`), donc à quel taux elle est payée | |
-| `3_cout_temps_defauts.csv` | 3 | Un **type de défaut** : minutes de travail, matière en euros, nom anglais, sous-code de référence, et `base` (d'où vient le temps). Un type peut aussi être **calculé à partir d'un autre** (`calcule_depuis`) × un facteur (`facteur`) : « mauvaise référence » = 2 × « manquant » | Expert : ces minutes font l'essentiel du coût. |
+| `3_cout_temps_defauts.csv` | 3 | Un **type de défaut** : minutes de travail, matière en euros, nom anglais, sous-code de référence, et `base` (d'où vient le temps). À la place, un type peut être **calculé à partir d'un autre** (`calcule_depuis`) × un facteur (`facteur`) : « mauvaise référence » = 2 × « manquant » | Expert : ces minutes font l'essentiel du coût. |
 | `1_prix_pieces.csv` | 1 | **Le prix de chaque pièce** : une ligne par matériel (le numéro de matériel que la NC indique), sa description et son prix unitaire. La valeur d'une pièce rejetée, rebutée ou échangée = prix × quantité | Ajoutez une ligne par matériel, ou collez un export (les colonnes du matériel et du prix sont reconnues par leur nom). Prix vide = pas encore de prix. Les matériels encore sans prix sont listés à chaque exécution dans `fto2_parts_to_price.csv`. Guide : `part_prices.md`. |
 | `3_cout_airbus.csv` | 3 | Le coût standard Airbus par décision (niveau 1 du coût) | Seulement si le standard officiel change. |
 | `3_cout_avance.csv` | 3 | Nom / valeur : la version du modèle, quels types de NC sont « contrôle final » ou « interne », les préfixes d'un ordre de retouche, les classes d'erreur de branchement, si le temps prévu des ordres de retouche et le temps déclaré des aléas remplacent les temps du modèle (`oui`/`non`), la fenêtre de temps qui relie un aléa à une NC | Expert. |
@@ -341,8 +341,8 @@ changement ne demande qu'une nouvelle exécution.
 | les autres tables `0_` et `1_` (livraisons, fermetures, actions MFT) et les paramètres des pages (`1_reglages_pages.csv`, `2_reglages_pages.csv`, `2_categories.csv`, `2_lignes.csv`, `3_alarmes.csv`) | `reference.py` | Regroupés avec le plan et les demandes dans la table `fto2_dash_ref`, que les pages lisent |
 | catégories, causes, sous-codes | `reference.py`, `core.py`, `parser/fto2_logic.py` | Noms et définitions affichés sur les pages, sous-codes officiels des lignes de défaut |
 
-Les pages ne lisent donc jamais `data/config/` elles-mêmes : elles reçoivent les paramètres dont elles ont besoin par
-`fto2_dash_ref`, réécrite à chaque exécution.
+Les pages ne lisent donc jamais `data/config/` elles-mêmes : elles reçoivent les paramètres dont elles ont besoin par la
+table `fto2_dash_ref`, réécrite à chaque exécution.
 
 **Les vérifications avant tout calcul** (`notebook_kit/fto2/config.py`) :
 

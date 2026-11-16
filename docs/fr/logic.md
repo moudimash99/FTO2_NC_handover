@@ -69,7 +69,7 @@ Les fichiers de `notebook_kit/fto2/` :
 
 ## 3. L'exécution, étape par étape
 
-`skywise.py`, fonction `run`. Le notebook affiche chaque étape pendant qu'il tourne, donc la dernière ligne affichée dit où il
+`skywise.py`, fonction `run`. Le notebook affiche chaque étape pendant son exécution, donc la dernière ligne affichée dit où il
 en est.
 
 **A. La sélection standard** (`select_ncs`, puis `selection.apply_rules`)
@@ -102,7 +102,7 @@ Slate sont écrites comme avant.
    l'étiquette.
 5. **Prix des pièces :** les données NC donnent la pièce concernée par chaque NC (colonne `material`) ; son prix vient de
    `1_prix_pieces.csv` (`cost/parts.py`). Les matériels encore sans prix sont écrits dans `fto2_parts_to_price.csv`.
-6. **Coût :** le modèle de coût tourne sur chaque NC (`cost/model.py`, section 4).
+6. **Coût :** le modèle de coût est appliqué à chaque NC (`cost/model.py`, section 4).
 7. **Périmètre :** où chaque NC a été émise : `serie`, `client` (retour client), `autre` (`2_regle_perimetre.csv`).
 8. **Tables :** `core.tables` met le tout dans les deux tables, colonne par colonne, et `core.dis_table` fait la table des
    aléas.
@@ -226,10 +226,10 @@ Les autres fichiers :
 | `params.py` | Transforme les tables de coût de `data/config/` en paramètres du modèle |
 | `orders.py` | Lit les opérations des ordres de retouche et leur temps prévu ; donne un état aux ordres de chaque NC (used, open, no_time, not_found) |
 | `disruptions.py` | Relie les aléas aux NC (même ordre de travail, de 2 h avant à 72 h après) et construit le bloc des aléas sans NC |
-| `parts.py` | La valeur de la pièce : `part_values` donne à chaque NC le prix unitaire de son matériel (`1_prix_pieces.csv`, rapproché sur le numéro de matériel sans les zéros de tête) × sa quantité ; `to_price` liste les matériels qui attendent encore un prix. Guide : `part_prices.md` |
+| `parts.py` | La valeur de la pièce : `part_values` donne à chaque NC le prix unitaire de son matériel (`1_prix_pieces.csv`, retrouvé par le numéro de matériel sans les zéros de tête) × sa quantité ; `to_price` liste les matériels qui attendent encore un prix. Guide : `part_prices.md` |
 | `explain.py` | Écrit l'explication du coût de chaque NC sous forme de table (seulement pour une configuration Slate facultative, non utilisée) |
 
-Le modèle tourne deux fois : une fois sur les étiquettes IA (les chiffres du tableau de bord) et une fois sur les étiquettes
+Le modèle est appliqué deux fois : une fois sur les étiquettes IA (les chiffres du tableau de bord) et une fois sur les étiquettes
 propres au lecteur de défauts (gardées pour comparaison).
 
 ### `reference.py` : ce dont les pages ont besoin en plus des tables de NC
@@ -272,7 +272,7 @@ Un fichier qui n'est pas l'export attendu arrête l'exécution avec un message q
 | `fto2_dash_disruptions` | aléa qualité sans NC | `core.py`, `DIS_COLUMNS` : numéro, date, ligne, poste, ordre de travail, minutes, compté ou non, motif, statut, commentaire |
 | `fto2_dash_ref` | morceau de texte | `partie` (dashboard, mft, elizabeth), `morceau` (0, 1, 2... dans l'ordre), `texte`. Les pages recollent les morceaux d'une partie et les lisent comme un seul bloc de données. Découpée en morceaux parce qu'une cellule ne peut pas tout contenir. |
 
-Sont aussi écrites : `fto2_lines_to_label.csv` (à côté du notebook) et, tant que `garder_anciennes_sorties` vaut `oui`, les
+Sont aussi écrits : `fto2_lines_to_label.csv` (à côté du notebook) et, tant que `garder_anciennes_sorties` vaut `oui`, les
 quatre tables de l'ancienne application.
 
 ## 6. Modifier la logique

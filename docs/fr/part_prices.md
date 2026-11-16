@@ -91,4 +91,4 @@ comprend déjà le temps d'aller chercher ce dont le travail a besoin.
 | L'exécution s'arrête : « 1_prix_pieces.csv: '…' is not a price (line N) » | Un prix contient du texte : corrigez cette ligne |
 | L'exécution s'arrête : « it needs a column for the material number… » | Les noms des colonnes de la liste des prix ne sont pas reconnus : nommez-les `materiel` et `prix_unitaire_eur` |
 | Une NC toujours à 0 € pour sa pièce | Elle n'a pas de matériel, son matériel n'a pas de prix, sa décision ne prend pas en compte la pièce, ou FTO2 n'est pas responsable |
-| Rien n'a de prix | La liste des prix n'est pas dans le dossier des paramètres, ou tous les prix sont vides |
+| Aucune pièce n'a de prix | La liste des prix n'est pas dans le dossier des paramètres, ou tous les prix sont vides |
