@@ -236,7 +236,7 @@ def official_subcode(d):
 
 
 def title_lines(x, defects):
-    """A400M (2 Nov, Mohammad): the 2026 A400M NCs reach us without their long text, so the parser finds no defect line. One line is
+    """A400M: the 2026 A400M NCs reach us without their long text, so the parser finds no defect line. One line is
     made from the NC title (description_short) when a rule of config/3_a400m_titres.csv matches it: an official sub-code,
     which gives the line its sub-category, cause and category as any other line. A rule with no sub-code is a check ("Retouches test
     MSN 161", "Inspection finale"): the title names no defect and the NC keeps no line. Rules are tried in the file's order, on the

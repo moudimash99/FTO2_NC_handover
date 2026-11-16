@@ -137,13 +137,13 @@
       "ncs": 713,
       "defects": 1463,
       "aleas": 99,
-      "js_kb": 1614
+      "js_kb": 1361
     },
-    "level23_js_kb": 730,
+    "level23_js_kb": 477,
     "slate_functions": {
-      "f_fto2_objectifs.js": 52,
-      "f_fto2_alarmes.js": 70,
-      "f_fto2_cout.js": 52
+      "f_fto2_objectifs.js": 51,
+      "f_fto2_alarmes.js": 69,
+      "f_fto2_cout.js": 51
     },
     "pipeline_notebook": true,
     "level4": [
@@ -152,13 +152,6 @@
     ]
   },
   "review_disagreements": 494,
-  "mft_actions": 9,
-  "rca_without_definition": [],
-  "cables": {
-    "requests": 474,
-    "from": "2026-01-05",
-    "to": "2026-09-28"
-  },
   "eqmsn": {
     "products": 10,
     "total_std": 640.46,
@@ -180,5 +173,12 @@
       "A330 PTVU 2137",
       "A330 PTVU 2138"
     ]
+  },
+  "mft_actions": 9,
+  "rca_without_definition": [],
+  "cables": {
+    "requests": 474,
+    "from": "2026-01-05",
+    "to": "2026-09-28"
   }
 }

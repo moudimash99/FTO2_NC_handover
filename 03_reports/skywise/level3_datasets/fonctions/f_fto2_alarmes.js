@@ -72,7 +72,7 @@ try {
         for (var i = 0; i < AL.length; i++) { var x = AL[i];
           if (x[0] === a[3] && new RegExp(x[1]).test(p) && (!x[2] || new RegExp(x[2], 'i').test(a[27]))) { a[26] = x[3]; return; } }
       });
-      // FIN: a panel or harness code (…VU, …VB) is the product, not an equipment FIN (Mohammad, 29 Oct), and a length (250CM) is no FIN;
+      // FIN: a panel or harness code (…VU, …VB) is the product, not an equipment FIN, and a length (250CM) is no FIN;
       // take the next FIN written in the defect text, else none
       var FIN_RE = /\b(\d{1,4}[A-Z]{2,4}\d{0,4}[A-Z]{0,2})\b/g, FIN_NOT = /V[UB]$|^\d+(CM|MM|M|KG|MN|MIN|H|OHM|MOHM|KOHM|NM|DAN|ER|EME|ND|RD|TH|ST|EA|PCS)$/;
       function finOf(fin, text) {
@@ -138,16 +138,14 @@ try {
     /* ===== ADAPTER END ===== */
     var R = fto2RefBlocks(ref); if (!R || !R.dashboard) return null;
     // what the page sets before its calculations
-    var window = { FTO2_PAGE: 'main' };
+    var window = {};
     var D = fto2FromTables(nc, def, R.dashboard, null);
     var SET = D.settings, EQMIN = SET.msn_minimum;
     window.FTO2_ALARM_P = SET.alarmes; window.FTO2_PLACEHOLDER = SET.placeholder;
     window.FTO2_YEAR = +(SET.annee || String(D.meta.from).slice(0, 4));   // the year followed: the alarm engine's weeks
-    var PAGE = 'main', G = { lang: 'fr', minor: true };
-    var DM = null, GN = [], GD = [], GALLOC = [];   // the made-up data of the review pages: never in Skywise
-    function gCost() { return 0; }
+    var G = { lang: 'fr', minor: true };
   /* ===== ALARM ENGINE START ===== */
-  // Alarms (Mohammad, 30 Oct): the bell lists what to look at, few lines, nothing raised by a single bad week. One rule for the
+  // Alarms: the bell lists what to look at, few lines, nothing raised by a single bad week. One rule for the
   // dashboard and the MFT page (build_mft.py copies this block into the MFT page). Four ways something goes wrong, each tested on
   // 2026 against a year where nothing changes:
   //  - rise ("en hausse"): an item of a line (all its defects, a category, a cause, a sub-code, a station, where they are found, a
@@ -409,7 +407,7 @@ try {
     var REP = D.ncs;
     var DMAX = D.meta.to, DMIN = REP.reduce(function (m, n) { return n[1] < m ? n[1] : m; }, DMAX);
     var LINES = lineOrder(REP.map(function (n) { return n[3]; }));
-    var GF0 = { pick: null, src: 'all', org: '', fto2: true, liab: SET.defauts.liab, cost: 'fto2', phase: SET.defauts.phase, line: '', preset: PAGE === 'suivi' ? 'all' : SET.defauts.preset, from: '', to: '' }, GF = Object.assign({}, GF0);
+    var GF0 = { pick: null, src: 'all', org: '', fto2: true, liab: SET.defauts.liab, cost: 'fto2', phase: SET.defauts.phase, line: '', preset: SET.defauts.preset, from: '', to: '' }, GF = Object.assign({}, GF0);
     var PRESETS = ['ytd', 'm1', 'm3', 'm6', 'm12', 'all', 'custom'];
     function plusDays(iso, k) { var d = new Date(iso + 'T12:00:00Z'); d.setUTCDate(d.getUTCDate() + k); return isoDay(d); }
     function minusMonths(iso, k) { var d = new Date(iso + 'T12:00:00Z'), dd = d.getUTCDate(); d.setUTCDate(1); d.setUTCMonth(d.getUTCMonth() - k); d.setUTCDate(Math.min(dd, new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth() + 1, 0)).getUTCDate())); return isoDay(d); }
@@ -420,7 +418,7 @@ try {
       if (k) return [plusDays(minusMonths(DMAX, k), 1), DMAX];
       return [DMIN, DMAX];
     }
-    // who is liable (3 Nov, Mohammad), the three ticks of "Responsabilité": f FTO2 ([5], FTO2 in the liability), s a supplier (a code made
+    // who is liable, the three ticks of "Responsabilité": f FTO2 ([5], FTO2 in the liability), s a supplier (a code made
     // of digits only: 129 of the 133 SUPPLIER NCs of 2026), o anyone else (another Airbus site such as FFF1 or TO, other, blank)
     function liabCat(n) { if (n[5] === 1) return 'f'; var c = String(n[34] || '').replace(/[\[\]\s]/g, '').replace(/^0+/, ''); return /^\d+$/.test(c) ? 's' : 'o'; }
     var LIABS = ['f', 's', 'o'];
@@ -461,7 +459,7 @@ try {
       PICK_NC = null; var p = GF.pick; if (!p || !PICK_DEF[p.k]) return;
       PICK_NC = {}; D.defects.forEach(function (r) { if (String(PICK_DEF[p.k](r)) === String(p.v)) PICK_NC[r[0]] = 1; });
     }
-    function ours(n) { var p = String(n[42] || '').trim().toUpperCase(); return p === 'FTO2' || p === 'FT02'; }   // FTO2's NCs: [42] plant FTO2 / FT02 (as Type_NC_auto); on a GPS / Test list too only if at that plant (Mohammad, 20 Oct)
+    function ours(n) { var p = String(n[42] || '').trim().toUpperCase(); return p === 'FTO2' || p === 'FT02'; }   // FTO2's NCs: [42] plant FTO2 / FT02 (as Type_NC_auto); on a GPS / Test list too only if at that plant
     function gScope(n) { return !GF.fto2 || ours(n); }   // FTO2 plant only: the plant column, nothing else
     // the selection: SEL follows every filter; SER = SEL's FTO2 NCs without the customer returns; CLI = the customer returns, whatever the switch (the tabs that show both apart)
     var SEL_NC = [], SER_NC = [], CLI_NC = [], SEL = {}, SER = {}, CLI = {};
@@ -479,8 +477,7 @@ try {
   
     // ---------------------------------------------------------------- 3. production
     var PR = { src: D.eqmsn ? 'real' : 'dummy', ver: D.eqmsn && D.eqmsn.wd ? 'wd' : 'std' }, PD = null, PA = null, PCOL = {};
-    function pSrc() { return PR.src === 'real' && D.eqmsn ? D.eqmsn : DM && DM.eqmsn ? DM.eqmsn : null; }
-    var CABLE_RCA = { 'Câble Endommagé': 1, 'Câble ou Élément Manquant': 1 };   // fictitious data only: no cable flag there
+    function pSrc() { return PR.src === 'real' && D.eqmsn ? D.eqmsn : null; }
     // the NCs of the selection matched to a product of the output table, months of the period that are not forecast. When the NCs
     // reach into the plan's forecast months (export of 7 Oct, NCs to mid-October), those months count as built up to the last NC
     // day: the month of the last NC with its planned volume × the share of its days gone (P.part), the rest of it goes to the
@@ -492,7 +489,7 @@ try {
       var L = real ? P.months.indexOf(D.meta.to.slice(0, 7)) : -1;
       if (L >= P.fc) { var dm = new Date(Date.UTC(+D.meta.to.slice(0, 4), +D.meta.to.slice(5, 7), 0)).getUTCDate(); P.part[L] = Math.min(1, +D.meta.to.slice(8, 10) / dm); P.fc = L + 1; P.cur = L; }
       P.all = Object.keys(P.prod).sort(function (a, b) { return sumA(P.prod[b]) - sumA(P.prod[a]); });
-      var cnt = {}; (real ? REP.map(function (n) { return E.map[String(n[26] || '').toUpperCase()]; }) : GN.map(function (n) { return n[5]; })).forEach(function (p) { if (p) cnt[p] = (cnt[p] || 0) + 1; });
+      var cnt = {}; REP.map(function (n) { return E.map[String(n[26] || '').toUpperCase()]; }).forEach(function (p) { if (p) cnt[p] = (cnt[p] || 0) + 1; });
       PCOL = {}; P.all.slice().sort(function (a, b) { return (cnt[b] || 0) - (cnt[a] || 0) || sumA(P.prod[b]) - sumA(P.prod[a]); }).forEach(function (p, i) { PCOL[p] = i < 6 ? 'var(--c' + (i + 1) + ')' : 'var(--dim)'; });
       P.prods = P.all.filter(function (p) { return !real || !GF.line || P.line[p] === GF.line; });
       P.mask = P.months.map(function (m, i) { return i < P.fc && (!real || (m + '-31' >= GF.from && m + '-01' <= GF.to)); });
@@ -505,9 +502,6 @@ try {
         });
         D.defects.forEach(function (r) { var i = P.idx[r[0]]; if (i != null && keepMinor(r)) P.defs.push({ n: i, cat: dCat(r), rca: dRca(r), cost: dAlloc(r), cable: !!dCable(r) }); });
         CLI_NC.forEach(function (n) { var p = E.map[String(n[26] || '').toUpperCase()], m = month(n[1]); if (p && P.prods.indexOf(p) >= 0 && m >= 0) P.cli.push({ p: p, m: m }); });
-      } else {
-        GN.forEach(function (n, i) { P.total++; var m = month(n[1]); if (m < 0) return; P.idx[i] = P.ncs.length; P.ncs.push({ id: n[0], m: m, p: n[5], cost: gCost(n), days: n[8], late: n[9] === 'cf' || n[9] === 'test' }); if (n[9] === 'client') P.cli.push({ p: n[5], m: m }); });
-        GD.forEach(function (d, j) { var i = P.idx[d[0]]; if (i != null) P.defs.push({ n: i, cat: d[1], rca: d[2], cost: GALLOC[j], cable: !!CABLE_RCA[d[2]] }); });
       }
       return P;
     }
@@ -607,7 +601,7 @@ try {
       return out;
     }
     var V2W = SET.poids_mois;   // weight of a month in the monthly target (config/2_reglages_pages.csv): July and August lighter
-    // the year's target line by line (Mohammad, 20 Oct): each line's 2025 rate per product delivered - 25 %, times the line's 2026
+    // the year's target line by line: each line's 2025 rate per product delivered - 25 %, times the line's 2026
     // volume month by month, summed over the lines; the NCs whose product is not in the production plan (no volume) keep their 2025
     // value - 25 %, spread over the months like a normal year. f25 / f26: the measure of a 2025 row / of a 2026 product (NCs or cost).
     // null without 2025 under the filters or without the real production plan (the charts then keep their former target).
@@ -615,7 +609,7 @@ try {
       var Y = y25Sel(), L = D.y25 && D.y25.prod, E = pSrc(); if (!Y || !L || !PD || !PA || E !== D.eqmsn) return null;
       var has = function (p) { return L[p] && sumA(L[p]) > 0; }, by = {}, out = 0, z = function () { return PD.months.map(function () { return 0; }); };
       // a product with no 2025 delivery (MDCD) does not take its line's 2025 rate: its target is its own 2026 pace × its planned
-      // volume, with no cut (Mohammad, 29 Oct); its 2025 NCs show in the 2025 bar only
+      // volume, with no cut; its 2025 NCs show in the 2025 bar only
       PD.prods.forEach(function (p) { var l = PD.line[p] || '—', a = by[l] || (by[l] = { l: l, v25: 0, n25o: 0, del: 0, vol: z(), own: z(), v26: 0, eq26: 0 });
         if (has(p)) { a.del += sumA(L[p]); PD.prod[p].forEach(function (v, i) { a.vol[i] += v || 0; }); a.v26 += f26(PA[p]); a.eq26 += PA[p].EQ; }
         else { var r = PA[p] && PA[p].EQ > 0 ? f26(PA[p]) / PA[p].EQ : 0; PD.prod[p].forEach(function (v, i) { a.own[i] += r * (v || 0); }); } });

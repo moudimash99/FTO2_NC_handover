@@ -7,7 +7,7 @@ Rebuild every FTO2 NC output from the raw Skywise exports, in one run.
 Input (the only data read):
     06_input_data/fto2_dashboard_data*.csv     Skywise NC exports (standard + missing-IDs). All files are merged;
                                                when an NC is in several, the most recently changed row wins.
-    04_reference/llm_labels_longtext.csv       Root-cause labels per defect line (Sonnet, full long text, 12 Oct 2026).
+    04_reference/llm_labels_longtext.csv       Root-cause labels per defect line, by a language model reading the full long text (12 Oct 2026).
 
 Steps:
     1. parser v4.8 (02_dashboard_pack/.../fto2_logic.py)  -> one row per defect, one row per NC; where raised (scope) from the pipeline's plant and Type_NC_auto
@@ -20,11 +20,12 @@ Outputs:
     05_outputs/fto2_defects_cnq.csv, fto2_nc_cnq.csv             CNQ step output (parser classification, as in Skywise)
     05_outputs/FTO2_defects_detail.xlsx                          one row per defect, all columns, live summary
     05_outputs/FTO2_llm_longtext_review.xlsx                     disagreements parser vs long-text labels, to review
-    03_reports/FTO2_NC_Dashboard.html                            Pareto · weekly Pareto · CNQ · customer returns · root causes
+    03_reports/FTO2_NC_Dashboard.html                            the dashboard (Essentiel and Deep dive)
+    03_reports/skywise/                                          its Skywise files and the installation zip (build/skywise_pack.py)
     cnq_handoever/sample_output, tests/expected_totals.json, params/*.csv, dashboard/cnq_dashboard.html
     build/build_report.json                                      counts and checks of this run
 """
-import glob, json, os, re, subprocess, sys
+import glob, json, os, subprocess, sys
 import numpy as np
 import pandas as pd
 
@@ -43,8 +44,8 @@ sys.path.insert(0, os.path.join(ROOT, "build"))
 from fto2 import core                                   # noqa: E402   the data steps, shared with the Skywise notebook
 import page_template                                    # noqa: E402   the page template with its calculations (build/templates/model.js)
 from fto2 import reference as REF                       # noqa: E402   the reference data (plan, 2025, cables, actions...)
-from fto2.reference import (EQ_NAMES, alias_product, cable_requests, cnq_explain, mft_actions, product_alias_rules,  # noqa: E402,F401
-                            production_msn, rca_reference, reference_block, working_day_volume)
+from fto2.reference import (EQ_NAMES, alias_product, product_alias_rules, production_msn,  # noqa: E402,F401
+                            reference_block, working_day_volume)
 
 REPORT = {}
 CODE_DESC = {}   # official sub-code -> [en, fr], filled by the data steps
@@ -108,9 +109,6 @@ def load_exports():
     REPORT["inputs"] = {os.path.basename(f): int((x["_source"] == os.path.basename(f)).sum()) for f in files}
     REPORT.update(info)
     return x
-
-
-clean_long_text, week_of = core.clean_long_text, core.week_of
 
 
 def load_orders():
@@ -226,21 +224,16 @@ def refresh_cnq_package(nc_in, d):
 
 
 # ============================================================ pages
-def _page(template, data, name, page="main", title=None):
+def _page(template, data, name, page="main"):
     t = page_template.read(template).replace("__PAGE__", page)
-    if title:
-        t = t.replace("<title>FTO2 NC Dashboard</title>", "<title>" + title + "</title>", 1)
     page = t.replace("__DATA__", json.dumps(data, ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/"))
-    # the published artifact gets its own skeleton; the offline copy needs one
-    os.makedirs(os.path.join(ROOT, "build", "artifacts"), exist_ok=True)
-    open(os.path.join(ROOT, "build", "artifacts", name), "w", encoding="utf-8").write(page)
+    # the template holds the page's content; its skeleton (doctype, head, body) is added here
     full = ('<!doctype html>\n<html lang="fr">\n<head>\n<meta charset="utf-8">\n<meta name="viewport" content="width=device-width, initial-scale=1">\n'
             + page.replace('<div class="wrap">', '</head>\n<body>\n<div class="wrap">', 1) + '\n</body>\n</html>\n')
     open(os.path.join(REP, name), "w", encoding="utf-8").write(full)
     say("page:", name, len(full) // 1024, "KB")
 
 
-S_ = lambda v: "" if v is None or (isinstance(v, float) and np.isnan(v)) else str(v)
 MATERIAL_COLUMNS = ("material", "material_description_fr", "material_description_en")   # the part an NC is about (Skywise NC data)
 
 
@@ -271,114 +264,19 @@ def _scope_css(css, scope=".fto2"):
     return "\n".join(out) + "\n"
 
 
-def slate_pack(data, template="dashboard.html", page="main"):
-    """The dashboard as three pieces for a Slate code box (HTML, CSS, JavaScript), in 03_reports/slate/.
-    No outside resources (fonts, libraries), styles scoped to .fto2, page title and address left alone, errors shown on the page."""
-    t = page_template.read(template)
-    css = re.sub(r"/\*.*?\*/", "", t.split("<style>", 1)[1].split("</style>", 1)[0], flags=re.S)
-    fonts = re.search(r'<link rel="stylesheet" href="(https://fonts\.googleapis\.com/[^"]+)">', t)
-    html = t[t.index('<div class="wrap">'):t.index('<script type="application/json" id="fto2-data">')].strip()   # the page, without its data
-    main = t[t.index("<script>\n(function ()") + len("<script>\n"):t.rindex("</script>")].strip()
-    d = dict(data)
-    d.pop("direct", None)                                          # not used by the page
-    d["defects"] = [r[:6] + [0, 0, 0, 0, 0] + r[11:16] + [0] + r[17:] for r in data["defects"]]   # parser labels not shown
-    blob = json.dumps(d, ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/")
-    out = os.path.join(REP, "slate")
-    os.makedirs(out, exist_ok=True)
-    pre, one_name = ("fto2_slate", "FTO2_NC_Dashboard_Slate.html") if page == "main" else ("fto2_suivi_slate", "FTO2_Suivi_Hebdo_Slate.html")
-    stamp = ("FTO2 NC dashboard" if page == "main" else "FTO2 weekly follow-up") + " for a Slate code box. Data: NCs created %s to %s. Generated by build/build_all.py; do not edit by hand." % (data["meta"]["from"], data["meta"]["to"])
-    open(os.path.join(out, pre + ".html"), "w", encoding="utf-8").write(
-        "<!-- %s -->\n<div class=\"fto2\">\n<div id=\"fto2-err\" class=\"fto2-err\" hidden></div>\n%s\n</div>\n" % (stamp, html))
-    open(os.path.join(out, pre + ".css"), "w", encoding="utf-8").write(
-        "/* %s */\n%s%s.fto2 .fto2-err { background: #fdecea; color: #8a1c12; border: 1px solid #f1b0a8; border-radius: 8px; padding: 10px 14px; font-size: 13px; margin: 12px 20px; }\n" % (stamp, ('/* Fonts: if Slate blocks this address, the page falls back to Georgia and the system sans-serif. */\n@import url("%s");\n' % fonts.group(1)) if fonts else "", _scope_css(css)))
-    js = ("/* %s */\n"
-          "window.FTO2_EMBED = true;\n"
-          "window.FTO2_PAGE = '%s';\n"
-          "window.DASH = %s;\n"
-          "(function () {\n"
-          "  function showError(msg) {\n"
-          "    var e = document.getElementById('fto2-err');\n"
-          "    if (e) { e.hidden = false; e.textContent = 'Le tableau de bord n\\'a pas pu s\\'afficher / The dashboard could not load: ' + msg; }\n"
-          "    if (window.console) console.error('[FTO2 dashboard]', msg);\n"
-          "  }\n"
-          "  window.addEventListener('error', function (ev) { showError((ev && ev.message) || 'unknown error'); });\n"
-          "  function main() {\n%s\n  }\n"
-          "  function start() {\n"
-          "    if (!document.getElementById('tabs')) { showError('HTML part missing: paste the HTML part into the HTML box.'); return; }\n"
-          "    try { main(); } catch (err) { showError((err && err.message) || String(err)); }\n"
-          "  }\n"
-          "  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start); else start();\n"
-          "})();\n") % (stamp, page, blob, main)
-    open(os.path.join(out, pre + ".js"), "w", encoding="utf-8").write(js)
-    # the same three parts in one file: it opens as a normal page, and each part sits between markers to copy into its box
-    one = ("<!doctype html>\n<html lang=\"fr\">\n<head>\n<meta charset=\"utf-8\">\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n"
-           "<title>FTO2 NC Dashboard</title>\n<!--\n  %s\n  One file, three parts. It opens as a page as it is. For a Slate code box, copy each part into its box:\n"
-           "    CSS box        = everything between the lines  CSS START  and  CSS END\n"
-           "    HTML box       = everything between the lines  HTML START  and  HTML END\n"
-           "    JavaScript box = everything between the lines  JS START  and  JS END\n"
-           "-->\n"
-           "<style>\n/* ===== CSS START ===== */\n%s/* ===== CSS END ===== */\n</style>\n</head>\n<body style=\"margin:0\">\n"
-           "<!-- ===== HTML START ===== -->\n%s<!-- ===== HTML END ===== -->\n"
-           "<script>\n/* ===== JS START ===== */\n%s/* ===== JS END ===== */\n</script>\n</body>\n</html>\n") % (
-        stamp,
-        open(os.path.join(out, pre + ".css"), encoding="utf-8").read(),
-        open(os.path.join(out, pre + ".html"), encoding="utf-8").read(),
-        js.replace("</script", "<\\/script"))
-    open(os.path.join(out, one_name), "w", encoding="utf-8").write(one)
-    say("slate pack:", {f: os.path.getsize(os.path.join(out, f)) // 1024 for f in os.listdir(out)}, "KB")
-
-
 def build_dashboard(d, nc, lt, y25=None, dis_t=None):
-    rca = lambda t: L.RCA_NAMES.get(t, t)
-    ncd = nc.set_index("notification_number")
-    defs = []
-    for r in d.itertuples():
-        defs.append([r.notification_number, int(r.seq), r.date_creation, r.semaine, S_(r.ligne), "",
-                     r.groupe, rca(r.rca_type), r.sous_groupe, int(bool(r.mineur)), int(bool(r.defaut_cable)),
-                     r.llm_categorie, r.llm_rca_nom, r.llm_sous_categorie, int(bool(r.llm_mineur)), int(bool(r.llm_defaut_cable)),
-                     round(float(r.cnq_cost_allocated), 2), round(float(r.cnq_cost_allocated_llm), 2), S_(r.text)[:220],
-                     "", r.scope, S_(r.phase), r.sous_code_officiel, S_(r.fin)])   # [19] kept empty: the labelling notes are working notes, not for the page
-    ncs = []
-    for r in nc.itertuples():
-        if not r.date_creation:
-            continue
-        k = int(r.cnq_on_aec)   # FTO2's cost only where FTO2 is liable; every NC counts
-        ncs.append([r.notification_number, r.date_creation, week_of(r.date_creation), S_(r.ligne), "", int(r.cnq_on_aec), r.cnq_rule,
-                    r.cnq_decision_label, r.cnq_where_found] + [round(k * v, 2) for v in (r.cnq_cost_airbus, r.cnq_cost_global, r.cnq_cost_total_parser,
-                    r.cnq_cost_total, r.cnq_cost_admin, r.cnq_cost_work_parser, r.cnq_cost_work, r.cnq_cost_material_parser, r.cnq_cost_material,
-                    r.cnq_cost_engineering)] + [
-                    int(r.nc_cable), int(r.nc_cable_llm), int(r.cnq_defect_lines), S_(r.description_short)[:80], r.scope, S_(r.phase)]
-                   + nc_extras(r) + [S_(r.plant), 0 if k else round(float(r.cnq_cost_total), 2),   # [42] plant (the plant switch), [43] cost FTO2 does not bear
-                                     S_(r.material), S_(r.material_label), round(k * float(r.cnq_cost_part or 0), 2)])   # [44] material, [45] its label, [46] value of the part
-    direct = {"%s|%d" % (r.notification_number, r.seq): [round(float(r.cnq_cost_direct), 2), round(float(r.cnq_cost_direct_llm), 2)]
-              for r in d.itertuples() if r.cnq_cost_allocated or r.cnq_cost_allocated_llm}
-    aec, nl = nc[nc.cnq_on_aec == 1], nc[(nc.cnq_on_aec != 1) & (nc.date_creation != "")]
-    aside = {"other": [int(len(nl)), round(float(nl.cnq_cost_total.sum()), 2)]}   # NCs FTO2 is not liable for: counted, cost 0 for FTO2
-    no_line = int(((nc.scope == "serie") & (nc.cnq_defect_lines == 0)).sum())
-    client, lt_client = customer_return_extras(d, nc, lt)
-    actions = mft_actions()
-    data = {"defects": defs, "ncs": ncs, "direct": direct, "rca": rca_reference(d, CODE_DESC), "client": client, "lt": lt_client, "codes": CODE_DESC, "actions": actions,
-            "cnqp": cnq_explain(d), "cables": cable_requests(),
-            "meta": {"from": config.first_day(), "to": REPORT["created_to"], "aside": aside, "noLine": no_line,
-                     "modelTotal": round(float(aec.cnq_cost_total.sum()), 2)}}
-    # every page carries the production file (rates per MSN); only the review pages carry the made-up gallery data (never in the Slate files)
-    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))   # -I leaves the script folder off the path
-    import dummy_data
-    data["eqmsn"] = REF.eqmsn(nc, os.path.join(OUT, "fto2_msn_semaine.csv"))
-    data["y25"] = y25
-    data["settings"] = REF.page_settings()   # the pages' settings (config/2_reglages_pages.csv...)
+    customer_return_extras(d, nc, lt)   # the customer returns' counts, for the build report
+    eq = REF.eqmsn(nc, os.path.join(OUT, "fto2_msn_semaine.csv"))   # the production file (rates per MSN)
     dis_t = dis_t if dis_t is not None else core.dis_table(None)
-    data["dis"] = [[None if (isinstance(v, float) and np.isnan(v)) else v for v in r] for r in dis_t.values.tolist()]   # as the JS adapter gives it
-    local = dict(data, dummy=dummy_data.make(ROOT))
-    # the main page goes through the two tables, as in Skywise: the JS (fto2FromTables) rebuilds the page's data from them
+    # the page goes through the two tables, as in Skywise: the JS (fto2FromTables) rebuilds the page's data from them
     nc_t, def_t = core.tables(d, nc, lt, REPORT["created_to"])
     nc_t.to_csv(os.path.join(OUT, "fto2_dash_nc.csv"), index=False, encoding="utf-8-sig")
     def_t.to_csv(os.path.join(OUT, "fto2_dash_defects.csv"), index=False, encoding="utf-8-sig")
     dis_t.to_csv(os.path.join(OUT, "fto2_dash_disruptions.csv"), index=False, encoding="utf-8-sig")
     REPORT["dash_tables"] = {"nc": int(len(nc_t)), "defects": int(len(def_t)), "disruptions": int(len(dis_t))}
     # the reference data, as the Skywise notebook writes it (dataset fto2_dash_ref): the dashboard's, the MFT page's, Elizabeth's
-    blocks = {"dashboard": REF.dashboard_block(d, nc, CODE_DESC, y25), "mft": REF.mft_block(data["eqmsn"]),
-              "elizabeth": {"vol": REF.weekly_volume(data["eqmsn"]), "settings": REF.page_settings()}}
+    blocks = {"dashboard": REF.dashboard_block(d, nc, CODE_DESC, y25), "mft": REF.mft_block(eq),
+              "elizabeth": {"vol": REF.weekly_volume(eq), "settings": REF.page_settings()}}
     REF.ref_table(blocks).to_csv(os.path.join(OUT, "fto2_dash_ref.csv"), index=False, encoding="utf-8-sig")
     # the cost explanation of each NC as the notebook works it out (fto2_dash_cout): read by the page only in the Skywise set-up
     # with two Slate functions; the laptop page works it out itself
@@ -387,19 +285,8 @@ def build_dashboard(d, nc, lt, y25=None, dis_t=None):
     REPORT["dash_tables"]["cout"] = int(len(cx_t))
     src = {"tables": {"nc": colmajor(nc_t), "def": colmajor(def_t), "dis": colmajor(dis_t)}, "ref": blocks["dashboard"]}
     _page("dashboard.html", src, "FTO2_NC_Dashboard.html")
-    # the proposed final layout, chart by chart, with the choices to make (review page, local only)
-    _page("dashboard.html", local, "FTO2_Revue_Proposition.html", page="review")
-    # the same layout as a mock-up of the final dashboard, every chart scored a to e at its side (local only)
-    _page("dashboard.html", local, "FTO2_Maquette_Notee.html", page="mock")
-    _page("dashboard.html", data, "FTO2_Suivi_Hebdo.html", page="suivi")
-    # the two monthly views, Synthèse (QCM) and Détail (QLS), made of this dashboard's charts (build/build_vues.py rebuilds it alone)
-    _page("dashboard.html", src, "FTO2_Vues.html", page="vues", title="FTO2 · Synthèse et détail")
-    slate_pack(data)
-    slate_pack(data, page="suivi")
     import skywise_pack   # the four Skywise migration levels (03_reports/skywise): build/skywise_pack.py
     REPORT["skywise"] = skywise_pack.build(src["ref"], ROOT, _scope_css, say)
-    import views_pack   # Synthèse and Détail for Slate, two ways (03_reports/skywise/views): build/views_pack.py
-    views_pack.build(say)
     import install_zip   # every file of the Skywise set-up in one download: 03_reports/skywise/FTO2_Skywise_installation.zip
     install_zip.write(say)
 
@@ -407,10 +294,6 @@ def build_dashboard(d, nc, lt, y25=None, dis_t=None):
 def colmajor(df):
     """A table as Slate returns a query result: one array per column (empty -> null)."""
     return {c: [None if (isinstance(v, float) and np.isnan(v)) else v for v in df[c].tolist()] for c in df.columns}
-
-
-def nc_extras(r):
-    return core.nc_extras(r, REPORT["created_to"])
 
 
 def customer_return_extras(d, nc, lt):

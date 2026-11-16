@@ -284,7 +284,7 @@ function elzFromTables(ncIn, defIn) {
 function elzMain(D, REF) {
   'use strict';
   var NCS = D.ncs, DEFS = D.defs;
-  // ---------------------------------------------------------------- families (Mohammad for Elizabeth, 30 Oct)
+  // ---------------------------------------------------------------- families
   // Each NC in one family only, the first that fits in this order, so the shares add up to 100 %. Câbles: any cable problem, whatever
   // its category (the cable to remake or resupply, damaged or cut, missing, of the wrong length, its printing: a missing item or a
   // printing defect only when its text speaks of a cable), every NC of the cable shop (NC type CABLES), and an NC with no text whose
@@ -375,7 +375,7 @@ function elzMain(D, REF) {
   // NCs per week, all of them ('nc') or a family's, for the line and the production type
   function weekly(k) { var a = WEEKS.map(function () { return 0; }); NCS.forEach(function (n, i) { if (inScope(i) && (k === 'nc' || n.f === k)) a[NCW[i]]++; }); return a; }
   function sumOver(ser, ws) { return ws.reduce(function (t, i) { return t + (ser[i] || 0); }, 0); }
-  // the threshold (Mohammad, 30 Oct: 10 % rather than 10 NC): by default a family's share of the week's NCs, over 10 %; or a count of
+  // the threshold (10 % rather than 10 NC): by default a family's share of the week's NCs, over 10 %; or a count of
   // NCs per week. A share is read on the working weeks only (a closure week's few NCs make shares that mean nothing)
   function share(SER, k, i) { return SER.nc[i] ? SER[k][i] / SER.nc[i] * 100 : 0; }
   function hotWeek(SER, k, i) { return S.tm === 'pct' ? k !== 'nc' && valid(i) && SER.nc[i] > 0 && share(SER, k, i) > S.thr : SER[k][i] > S.thr; }

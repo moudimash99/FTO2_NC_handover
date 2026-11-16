@@ -1,13 +1,13 @@
 """The MFT page for a Slate code sandbox, fed by the dashboard's level-3 queries. Writes 03_reports/skywise/mft/.
 
-Same page as 03_reports/FTO2_MFT.html (07_scripts/mft/mft_template.html), with three changes for Slate:
+Same page as 03_reports/FTO2_MFT.html (07_scripts/mft/mft_template.html), with two changes for Slate:
 - its data come from the queries q_fto2_nc and q_fto2_def (the datasets fto2_dash_nc and fto2_dash_defects the Skywise notebook
   writes), turned into the page's data in the browser by mftFromTables (07_scripts/mft/mft_slate.js), as build_mft.data() does
   from the CSV files;
 - the fixed references (sub-code names, production plan products, MSN per week, end of build per MSN, the MFT trackers' actions)
-  are written in the JavaScript, as the dashboard's are;
-- the actions and alarm marks are kept in the browser (Slate gives a code sandbox no shared store); the first time, the actions
-  are the trackers'.
+  come from the query q_fto2_ref (part "mft" of the dataset fto2_dash_ref), as the dashboard's do.
+Both pages keep the actions and the alarm marks in the browser, through the store of mft_slate.js (Slate gives a code sandbox no
+shared store): the trackers' actions, from the table, and the ones typed on the page.
 
     python3 -I 07_scripts/mft/build_mft_slate.py        (also run by build_mft.py)
 """
@@ -37,6 +37,14 @@ def refs():
     return {"plan": {str(a).upper(): B.EQ_NAMES.get(b, b) for a, b in zip(t.produit_nc, t.produit_eqmsn)}, "alias": B.product_alias_rules(),
             "codes": {str(k): M.tidy(v, 90) for k, v in fr.items() if M.tidy(v, 90)}, "codesEn": M.codes_en(), "vol": M.weekly_volume(), "msnEnd": M.msn_end(),
             "actions": M.seed_actions()}
+
+
+def dashboard_tables():
+    """The dashboard page's tables, from its data block (03_reports/FTO2_NC_Dashboard.html, written by build_all.py)."""
+    src = open(os.path.join(ROOT, "03_reports", "FTO2_NC_Dashboard.html"), encoding="utf-8").read()
+    mark = '<script type="application/json" id="fto2-data">'
+    a = src.index(mark) + len(mark)
+    return json.loads(src[a:src.index("</script>", a)].replace("<\\/", "</"))["tables"]
 
 
 def parts():
@@ -69,9 +77,7 @@ def build(say=print):
     for q in ("q_fto2_nc", "q_fto2_def", "q_fto2_ref"):   # the dashboard's level-3 queries, unchanged
         shutil.copyfile(os.path.join(L3, q + ".sql"), os.path.join(OUT, q + ".sql"))
     # local preview: the dashboard's real tables handed over as Slate would (never paste this file into Slate)
-    sys.path.insert(0, os.path.join(ROOT, "build"))
-    import views_pack   # noqa: E402   reads the tables from the dashboard page's data block
-    t = views_pack.dash_data()["tables"]
+    t = dashboard_tables()
     pre = SP.fake_slate(SP._blob(t["nc"]), "null", SP._blob(t["def"]), SP._blob(SP.ref_columns(ROOT)))
     open(os.path.join(OUT, "preview_local_only.html"), "w", encoding="utf-8").write(
         one.replace("<!-- ===== HTML START ===== -->", pre + "<!-- ===== HTML START ===== -->", 1))

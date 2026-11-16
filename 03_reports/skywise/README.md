@@ -74,8 +74,8 @@ the notebook. An action typed on the MFT page itself stays in that browser only,
 
 **5. The Tableau Elizabeth** (optional): a third page, same as the MFT with the files of `elizabeth/`.
 
-Not needed: `views/` (now the dashboard's Essentiel mode), `level1_dummy_in_js` and `level2_dummy_queries` (tests on made-up
-data, only if something fails), `level4_import` (untested).
+Not needed: `level1_dummy_in_js` and `level2_dummy_queries` (tests on made-up data, only if something fails),
+`level4_import` (untested).
 
 **6. The NC writer** (optional): a page where an operator writes an NC with the official codes; each NC is saved as an
 object of the object type "a30 Nc Writer Dataset" through its action. The files and the Slate set-up (a sandbox, an event,
