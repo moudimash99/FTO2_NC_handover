@@ -164,7 +164,7 @@ async function fullFlow(browser) {
   assert.strictEqual(defs.length, 2);
   assert.strictEqual(defs[1].qte, 3);
   assert.strictEqual(defs[1].cdve, true);
-  assert.match(await text(page, ".ok"), /NC transmise à Slate/);
+  assert.match(await text(page, ".ok"), /appuyez sur « Submit »/);
   await shot(page, "5_done");
 
   await act(page, "new-nc");
@@ -204,7 +204,7 @@ async function oldSlate(browser) {
   assert.strictEqual(calls[0][0], "setState");
   assert.strictEqual(calls[0][1].submission.msn, "1");
   assert.deepStrictEqual(calls[1], ["triggerEvent", "submit"]);
-  assert.match(await text(page, ".ok"), /NC transmise à Slate/);
+  assert.match(await text(page, ".ok"), /appuyez sur « Submit »/);
   assert.deepStrictEqual(errors, []);
   await page.close();
 }

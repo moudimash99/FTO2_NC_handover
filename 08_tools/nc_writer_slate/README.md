@@ -90,7 +90,9 @@ The names of the state key and the event are in `CONFIG` at the top of `nc_write
 ## 4. Check it works
 
 1. In Slate preview, fill an NC with two defects and press **Soumettre la NC**.
-2. The widget shows "NC transmise à Slate (NCW-…)" and the text; the action's form shows the NC.
+2. The widget shows "NC prête à enregistrer" and the text; the action's form shows the NC. (The two sentences are
+   `doneTitle` and `doneText` in `CONFIG`: if Slate is set to submit the action by itself, change them to say the NC is
+   saved.)
 3. Press the action's Submit. A new object exists, with the MSN typed.
 
 The steps were first checked with the test box of `test_action/` (values written by code, the same event and variable).

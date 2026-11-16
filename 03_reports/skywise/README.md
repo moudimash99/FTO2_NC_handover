@@ -17,11 +17,14 @@ Details (what each level proves, what was tested): `DETAILS.md`.
 1. Upload the whole folder `level3_datasets/notebook_kit` next to the notebook (the code).
 2. Upload the folder `level3_datasets/config` into `data/`, so that it becomes `data/config/` (the settings). Do this once:
    from then on the settings are changed there, and uploading the folder again would overwrite those changes.
-   The `data/` folder keeps the station mapping, the GPS register and the Test list, and the files the team downloads:
+   Put in `data/` the three files of the team, under the names of `data/config/2_sources.csv`: the station mapping
+   `fto2_station_mapping.csv` (the notebook stops without it), the GPS register and the Test list (without them the
+   notebook runs and says so). The `data/` folder also keeps the files the team downloads:
    the exports of the Tableau Avances / Retards (named `Avances_Retards...csv`; keep the earlier ones) and the export of
    the cable team's tracker (with `cables` in its name). The run reads the production plan and the cable requests from
    them; without any, it uses the tables `0_plan_msn.csv` and `0_demandes_cables.csv` of `data/config/`.
-3. Upload `level3_datasets/notebook_kit/fto2_ai_labels.csv` once, as a dataset named `fto2_ai_labels`.
+3. Upload `level3_datasets/notebook_kit/fto2_ai_labels.csv` once, as a dataset named `fto2_ai_labels` (3,489 rows).
+   If the dataset exists already with fewer rows, give it the content of this file.
 4. Replace the notebook by `level3_datasets/fto2_pipeline_notebook.ipynb` (a few lines: the steps are in `notebook_kit/fto2/`).
 5. In the Data panel, add these datasets with these names:
 
@@ -35,8 +38,12 @@ Details (what each level proves, what was tested): `DETAILS.md`.
 
 6. Run all cells. The last lines list the tables written.
 
-While the old Slate app is still in use, the notebook also writes its four old outputs. Once the new app has replaced it,
-set `garder_anciennes_sorties` to `non` in `data/config/2_parametres.csv`.
+While the old Slate app is still in use, the notebook also writes its four old outputs (they must then be in the Data
+panel too). With no old app to feed, or once the new app has replaced it, set `garder_anciennes_sorties` to `non` in
+`data/config/2_parametres.csv`.
+
+A dataset missing from the Data panel stops the run where it is first read or written, with the error `AliasNotDefined`
+and the list of the names the panel holds (`definedAliases`): add it under its name, then run all cells again.
 
 **2. Sync** `fto2_dash_nc`, `fto2_dash_defects`, `fto2_dash_disruptions` and `fto2_dash_ref` to Postgres, same names, schema
 `foundry_sync`, as was done for `fto2_plant`.
@@ -70,7 +77,11 @@ the notebook. An action typed on the MFT page itself stays in that browser only,
 Not needed: `views/` (now the dashboard's Essentiel mode), `level1_dummy_in_js` and `level2_dummy_queries` (tests on made-up
 data, only if something fails), `level4_import` (untested).
 
-**6. Optional: the calculations in Slate functions.** The targets and forecast, the alarms and the cost explanation can run
+**6. The NC writer** (optional): a page where an operator writes an NC with the official codes; each NC is saved as an
+object of the object type "a30 Nc Writer Dataset" through its action. The files and the Slate set-up (a sandbox, an event,
+a variable, the action) are in `nc_writer/` of the zip, its `README.md` section 3.
+
+**7. Optional: the calculations in Slate functions.** The targets and forecast, the alarms and the cost explanation can run
 as Slate functions instead of in the page, so that the page only draws. Two ways to set it up, both explained in
 `level3_datasets/fonctions/README.md`. The page works without them.
 

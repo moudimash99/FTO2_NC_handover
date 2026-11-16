@@ -245,7 +245,12 @@ section 7.7 says which ones to repeat.</p>
     <tr><td><code>mft/fto2_mft.css</code>, <code>.html</code>, <code>.js</code>, <code>state.json</code></td><td>The MFT page.</td></tr>
   </tbody>
 </table>
-<p>The NC writer is not in the zip: its three files are in <code>08_tools/nc_writer_slate/</code> of the source.</p>
+<table class="keep">
+  <tbody>
+    <tr><td style="width:74mm"><code>nc_writer/nc_writer.css</code>, <code>.html</code>, <code>.js</code>, <code>README.md</code></td><td>The NC writer (section 7.5).
+      Its source is <code>08_tools/nc_writer_slate/</code>.</td></tr>
+  </tbody>
+</table>
 <p><b>Three files of the team</b>, which are not in the source: the station list <code>fto2_station_mapping.csv</code> (the
 notebook stops without it), the GPS register and the Test list (without them the notebook runs and says so). Their names
 are in <code>2_sources.csv</code>. Optionally, the latest exports of the Tableau Avances / Retards and of the cable tracker.</p>
@@ -333,8 +338,9 @@ it hands the NC over with an event; the event fills a Slate variable; the action
       </tbody>
     </table>
     The key, Timestamp, is filled by the action itself.</li>
-  <li><b>Check.</b> Write a short NC, press <b>Soumettre la NC</b>: the action's form shows it. Press <b>Submit</b>: a new
-    object exists, with the MSN typed. Delete the test object afterwards.</li>
+  <li><b>Check.</b> Write a short NC, press <b>Soumettre la NC</b>: the writer says <b>NC prête à enregistrer</b> and the
+    action's form shows the NC. Press <b>Submit</b>: a new object exists, with the MSN typed. Delete the test object
+    afterwards.</li>
 </ol>
 <figure data-shot="t_nc_writer_events" data-h="50"><figcaption>The event that fills <code>v_submission</code>, and the default parameters of the action.</figcaption></figure>
 <p>To check each link of this chain apart, the folder <code>08_tools/nc_writer_slate/test_action/</code> holds a small test

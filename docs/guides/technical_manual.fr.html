@@ -263,8 +263,12 @@ une nouvelle version : la section 7.7 dit lesquelles refaire.</p>
     <tr><td><code>mft/fto2_mft.css</code>, <code>.html</code>, <code>.js</code>, <code>state.json</code></td><td>La page MFT.</td></tr>
   </tbody>
 </table>
-<p>L’outil de rédaction des NC n’est pas dans le zip : ses trois fichiers sont dans <code>08_tools/nc_writer_slate/</code> des
-sources.</p>
+<table class="keep">
+  <tbody>
+    <tr><td style="width:74mm"><code>nc_writer/nc_writer.css</code>, <code>.html</code>, <code>.js</code>, <code>README.md</code></td><td>L’outil de rédaction des NC
+      (section 7.5). Sa source est <code>08_tools/nc_writer_slate/</code>.</td></tr>
+  </tbody>
+</table>
 <p><b>Trois fichiers de l’équipe</b>, qui ne sont pas dans les sources : la liste des postes
 <code>fto2_station_mapping.csv</code> (le notebook s’arrête sans elle), le registre GPS et la liste Test (sans eux le notebook
 tourne et le signale). Leurs noms sont dans <code>2_sources.csv</code>. En option, les derniers exports du Tableau Avances /
@@ -355,8 +359,9 @@ NC est enregistrée comme un objet du type d’objet <b>a30 Nc Writer Dataset</b
       </tbody>
     </table>
     La clé, Timestamp, est remplie par l’action elle-même.</li>
-  <li><b>Vérification.</b> Rédigez une courte NC, appuyez sur <b>Soumettre la NC</b> : le formulaire de l’action l’affiche.
-    Appuyez sur <b>Submit</b> : un nouvel objet existe, avec le MSN saisi. Supprimez ensuite l’objet de test.</li>
+  <li><b>Vérification.</b> Rédigez une courte NC, appuyez sur <b>Soumettre la NC</b> : l’outil affiche <b>NC prête à
+    enregistrer</b> et le formulaire de l’action montre la NC. Appuyez sur <b>Submit</b> : un nouvel objet existe, avec le MSN
+    saisi. Supprimez ensuite l’objet de test.</li>
 </ol>
 <figure data-shot="t_nc_writer_events" data-h="50"><figcaption>L’événement qui remplit <code>v_submission</code>, et les paramètres par défaut de l’action.</figcaption></figure>
 <p>Pour vérifier chaque maillon de cette chaîne séparément, le dossier <code>08_tools/nc_writer_slate/test_action/</code>

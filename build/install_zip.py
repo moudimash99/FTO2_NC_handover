@@ -21,6 +21,7 @@ Follow README.md, steps 1 to 5. Every file it names is in this zip, at the same 
   level3_datasets/   the notebook, its code (notebook_kit), the settings (config),
                      the dashboard page (fto2_level23.*, state.json) and its four queries (q_fto2_*.sql)
   mft/               the MFT page
+  nc_writer/         the NC writer page (optional): its README.md gives the Slate set-up
   elizabeth/         the Tableau Elizabeth (optional)
   docs/              how to change a setting once it runs (comment_faire.md, in French)
 
@@ -44,6 +45,8 @@ def files():
     for page in ("mft", "elizabeth"):
         for f in ("fto2_%s.css" % page, "fto2_%s.html" % page, "fto2_%s.js" % page, "state.json"):
             out.append((os.path.join(SKY, page, f), page + "/" + f))
+    for f in ("nc_writer.css", "nc_writer.html", "nc_writer.js", "README.md"):
+        out.append((os.path.join(ROOT, "08_tools", "nc_writer_slate", f), "nc_writer/" + f))
     out.append((os.path.join(ROOT, "docs", "comment_faire.md"), "docs/comment_faire.md"))
     return out
 

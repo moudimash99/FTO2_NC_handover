@@ -8,7 +8,10 @@
 // What Slate sees on "Soumettre": the widget state gets submission = row, then the event "submit" fires with the row as
 // its value. In Slate, that event sets a variable with the row, and the action reads the variable (README, section 3).
 // Never type two opening curly braces in this file: Slate would read them as a Handlebars template.
-var CONFIG = { stateKey: "submission", eventName: "submit" };
+// doneTitle / doneText: what the operator reads once the NC is handed over. The NC is saved when the action's form is
+// submitted; if Slate submits the action by itself on the event, write here that the NC is saved.
+var CONFIG = { stateKey: "submission", eventName: "submit", doneTitle: "NC prête à enregistrer",
+  doneText: "Vérifiez-la dans le formulaire d’enregistrement, puis appuyez sur « Submit » pour l’enregistrer." };
 
 // --- TAXONOMY: the official code sheet, copied from app_streamlit.py (tests/check_parity.py checks it) ---
 // <DATA>
@@ -682,7 +685,7 @@ function renderReview() {
 function renderDone() {
   var r = S.done.row, slate = S.done.mode === "slate";
   return '<section class="card done-card"><div class="done-icon' + (slate ? "" : " warn-icon") + '">' + (slate ? ICON.check : ICON.doc) + "</div>" +
-    (slate ? "<h2>NC soumise</h2><p class=\"ok\">NC transmise à Slate (" + esc(r.submission_id) + ").</p>"
+    (slate ? "<h2>" + esc(CONFIG.doneTitle) + "</h2><p class=\"ok\">" + esc(CONFIG.doneText) + " (" + esc(r.submission_id) + ")</p>"
            : "<h2>NC prête</h2><p class=\"warn\">Hors Slate : rien n'a été enregistré. Copiez le texte ou téléchargez la ligne.</p>") +
     '<dl class="facts"><div><dt>MSN</dt><dd>' + esc(r.msn) + "</dd></div><div><dt>Produit</dt><dd>" + esc(r.produit) + "</dd></div>" +
     "<div><dt>Détection</dt><dd>" + esc(r.detection) + "</dd></div><div><dt>Quantité totale</dt><dd>" + r.total_defauts + "</dd></div></dl></section>";
