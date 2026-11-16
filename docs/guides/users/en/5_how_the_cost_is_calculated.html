@@ -1,0 +1,60 @@
+<!--
+title: How the cost is calculated
+subtitle: The cost of non-quality, step by step
+kicker: FTO2 NC dashboard · Users
+file: users/en/5 How the cost is calculated
+for: Everyone who reads or discusses the cost of non-quality
+foot: FTO2 NC dashboard · How the cost is calculated
+short: yes
+lang: en
+-->
+
+<h2>The idea</h2>
+<p>The cost of non-quality is an <b>estimate</b>: the time each NC takes, at the hourly rate of who does the work, plus
+engineering studies and parts. It is not an invoice and not an accounting figure. It is made to compare: between causes,
+lines and months. The cost counts only where FTO2 is liable; the other NCs count as NCs, with a cost of 0 for FTO2.</p>
+<p>The minutes and the hourly rates below are those used today. They are settings agreed with the team: when one changes,
+the costs of the whole year follow at the next update. The dashboard always shows the values in use, in <b>Cost of
+non-quality › Explain the calculation</b>.</p>
+
+<h2>The six steps of an NC</h2>
+<table class="keep">
+  <thead><tr><th style="width:44mm">Step</th><th>What it covers</th><th style="width:44mm">Today</th></tr></thead>
+  <tbody>
+    <tr><td><b>Alert</b></td><td>The operator reports the defect.</td><td>41 min, production rate</td></tr>
+    <tr><td><b>Writing the NC</b></td><td>Writing it in SAP.</td><td>30 min (60 at final inspection), quality rate</td></tr>
+    <tr><td><b>Technical support</b></td><td>Checking, estimating, preparing the work order.</td><td>60 min, methods rate</td></tr>
+    <tr><td><b>Setup</b></td><td>Badging, fetching the parts, setting up.</td><td>50 min, production rate</td></tr>
+    <tr><td><b>Hands-on work</b></td><td>The rework itself: minutes for each defect, according to its kind.</td><td>depends on the defects</td></tr>
+    <tr><td><b>Re-check and closing</b></td><td>Checking the rework, then closing the NC.</td><td>30 min, quality rate</td></tr>
+  </tbody>
+</table>
+<p>Today's rates are 123 €/h for production, 107 €/h for quality and 76 €/h for methods. Setup and hands-on work together
+count at least 60 minutes. To these steps are added the <b>engineering study</b> when a design query is raised (8 hours at
+78.16 €/h today) and the <b>material</b> of the defects.</p>
+
+<h2>What each decision counts</h2>
+<p>Not every NC goes through all six steps. A rework counts all of them; a deleted NC only the alert and the writing; a
+rejection or a scrap has no rework but adds the value of the part. The full table is in <b>Explain the calculation › See
+what is charged for each decision</b>.</p>
+
+<h2>The special rules</h2>
+<ul>
+  <li>No alert for an NC found at test or final inspection; a customer return always has the alert.</li>
+  <li>Connection errors: the first in an NC counts 35 minutes, each following one 15 minutes.</li>
+  <li>Internal NCs: setup and hands-on work count twice.</li>
+  <li>When the NC's rework order is closed and has planned times, those times replace setup and hands-on work.</li>
+  <li>When the operator declared a quality aléa for the NC (same work order, from 2 hours before to 72 hours after), the time
+    lost declared replaces the alert.</li>
+  <li>The value of a scrapped or exchanged part is added when its price is known.</li>
+</ul>
+
+<h2>Three levels, for comparison</h2>
+<p>For any NC, <b>Explain the calculation</b> shows three figures. <b>Level 3</b> is the detailed cost above, the one the
+dashboard uses. <b>Level 2</b> is the same NC at average times. <b>Level 1</b> is the Airbus standard cost for its decision,
+whatever the number of defects. The gap between them shows how much the detail of each NC matters.</p>
+
+<h2>Seeing it on a real NC</h2>
+<p>In <b>Cost of non-quality › ▸ Explain the calculation</b>, type an NC number in <b>NC number</b> and click <b>Show</b>, or
+click one of the examples. The table gives each step, how its time was found, the minutes and the cost; under it, the defect
+lines of the NC with the minutes and the material each one adds.</p>
