@@ -1,0 +1,463 @@
+<!--
+title: Tableau de bord NC FTO2
+subtitle: Manuel technique : comment il fonctionne, comment le maintenir, comment le modifier
+kicker: FTO2 · Qualité
+file: FTO2_NC_Dashboard_Manuel_Technique_FR
+for: La personne qui maintient le code
+version: Novembre 2026
+contents: Sommaire
+depth: 2
+lang: fr
+label_for: Pour
+label_version: Version
+-->
+
+<h2>À lire d’abord</h2>
+<p class="lead">Vous reprenez le code du tableau de bord NC FTO2. Inutile de lire ce manuel d’un bout à l’autre. Lisez ce
+chapitre : dix minutes. Gardez le chapitre 2 pour le jour où quelque chose ne va pas. Le reste est une référence, à ouvrir à
+la page utile.</p>
+
+<h3>Ce que c’est</h3>
+<p>Tout le système tient en deux choses : <b>un notebook qui écrit quatre tables</b>, et <b>une application Slate qui les
+lit</b>. Pas de serveur, pas de base de données propre. Rien ne tourne tout seul, sauf la copie des quatre tables vers la
+base que lit Slate.</p>
+<figure class="keep">
+  <svg viewBox="0 0 860 236" xmlns="http://www.w3.org/2000/svg" style="width:100%;font-family:'Inter Guide',Inter,Arial,sans-serif">
+    <defs><marker id="ar" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#4a5666"/></marker></defs>
+    <rect x="4" y="22" width="158" height="150" rx="6" fill="#f3f6f9" stroke="#9aa5b3"/>
+    <text x="16" y="44" font-size="12.5" font-weight="700" fill="#1b2430">Données Skywise</text>
+    <text x="16" y="64" font-size="10.5" fill="#4a5666">non_conformity</text>
+    <text x="16" y="80" font-size="10.5" fill="#4a5666">work_order_operation</text>
+    <text x="16" y="96" font-size="10.5" fill="#4a5666">mes_disruptions</text>
+    <text x="16" y="112" font-size="10.5" fill="#4a5666">fto2_ai_labels</text>
+    <text x="16" y="136" font-size="9.5" fill="#7a8696">lues sous leur nom dans le</text>
+    <text x="16" y="149" font-size="9.5" fill="#7a8696">panneau Data du workspace</text>
+    <rect x="190" y="22" width="190" height="150" rx="6" fill="#e6f1ed" stroke="#1d6b52"/>
+    <text x="202" y="44" font-size="12.5" font-weight="700" fill="#1b2430">Code Workspace</text>
+    <text x="202" y="64" font-size="10.5" fill="#4a5666">fto2_pipeline_notebook.ipynb</text>
+    <text x="202" y="80" font-size="10.5" fill="#4a5666">notebook_kit/fto2/  le programme</text>
+    <text x="202" y="96" font-size="10.5" fill="#4a5666">data/config/  45 tables de paramètres</text>
+    <text x="202" y="112" font-size="10.5" fill="#4a5666">data/  fichiers téléchargés</text>
+    <text x="202" y="136" font-size="9.5" fill="#7a8696">lancé à la main par la personne</text>
+    <text x="202" y="149" font-size="9.5" fill="#7a8696">responsable : quelques minutes</text>
+    <rect x="408" y="22" width="150" height="150" rx="6" fill="#e6f1ed" stroke="#1d6b52"/>
+    <text x="420" y="44" font-size="12.5" font-weight="700" fill="#1b2430">Quatre datasets</text>
+    <text x="420" y="64" font-size="10.5" fill="#4a5666">fto2_dash_nc</text>
+    <text x="420" y="80" font-size="10.5" fill="#4a5666">fto2_dash_defects</text>
+    <text x="420" y="96" font-size="10.5" fill="#4a5666">fto2_dash_disruptions</text>
+    <text x="420" y="112" font-size="10.5" fill="#4a5666">fto2_dash_ref</text>
+    <text x="420" y="136" font-size="9.5" fill="#7a8696">synchronisés vers Postgres,</text>
+    <text x="420" y="149" font-size="9.5" fill="#7a8696">schéma foundry_sync</text>
+    <rect x="586" y="22" width="270" height="150" rx="6" fill="#1b2430"/>
+    <text x="598" y="44" font-size="12.5" font-weight="700" fill="#fff">Application Slate</text>
+    <text x="598" y="64" font-size="10.5" fill="#d9dfe7">requêtes q_fto2_nc, q_fto2_def, q_fto2_dis, q_fto2_ref</text>
+    <text x="598" y="80" font-size="10.5" fill="#d9dfe7">un Code Sandbox par page : CSS, HTML, JS</text>
+    <text x="598" y="96" font-size="10.5" fill="#d9dfe7">la page tableau de bord · la page MFT</text>
+    <text x="598" y="136" font-size="9.5" fill="#aab4c2">le JS filtre, additionne et dessine</text>
+    <text x="598" y="149" font-size="9.5" fill="#aab4c2">dans le navigateur du lecteur</text>
+    <line x1="162" y1="97" x2="188" y2="97" stroke="#4a5666" stroke-width="1.4" marker-end="url(#ar)"/>
+    <line x1="380" y1="97" x2="406" y2="97" stroke="#4a5666" stroke-width="1.4" marker-end="url(#ar)"/>
+    <line x1="558" y1="97" x2="584" y2="97" stroke="#4a5666" stroke-width="1.4" marker-end="url(#ar)"/>
+    <text x="285" y="196" font-size="10.5" fill="#1d6b52" text-anchor="middle">Python : chapitres 3 et 4</text>
+    <text x="721" y="196" font-size="10.5" fill="#1b2430" text-anchor="middle">JavaScript : chapitre 5</text>
+    <text x="430" y="224" font-size="10" fill="#7a8696" text-anchor="middle">Tout est trouvé par son nom : datasets, requêtes, colonnes, fichiers de paramètres. En renommer un casse la chaîne.</text>
+  </svg>
+  <figcaption>La chaîne, avec les noms utilisés dans Skywise.</figcaption>
+</figure>
+
+<h3>Trois sortes de choses, et où chacune se trouve</h3>
+<table class="keep">
+  <thead><tr><th style="width:34mm">Quoi</th><th>Où elle tourne dans Skywise</th><th style="width:60mm">Où est l’original</th></tr></thead>
+  <tbody>
+    <tr><td><b>Les paramètres</b><br>45 petites tables</td><td><code>data/config/</code> dans le Code Workspace. L’équipe les modifie là.</td><td><b>Dans Skywise.</b> Le dossier
+      <code>config</code> des sources n’est que la copie de départ.</td></tr>
+    <tr><td><b>Le programme</b><br>Python</td><td><code>notebook_kit/fto2/</code> dans le Code Workspace, lancé par le notebook.</td><td>Le dossier source, <code>fto2/</code>.</td></tr>
+    <tr><td><b>Les pages</b><br>HTML, CSS, JS</td><td>Collées dans les Code Sandbox de l’application Slate.</td><td>Le dossier source : les modèles, construits en
+      fichiers à coller.</td></tr>
+  </tbody>
+</table>
+<div class="warn"><span class="t">La règle à retenir</span>
+Pour le programme et les pages, <b>Skywise contient des copies, le dossier source contient l’original</b>. Une modification
+tapée directement dans <code>notebook_kit</code> ou dans un Code Sandbox de Slate fonctionne, et disparaît à la prochaine
+installation. Faites la modification dans les sources, lancez les vérifications, construisez, puis installez (chapitres 7
+et 8). Pour les paramètres, c’est l’inverse : l’original est <code>data/config/</code> dans Skywise. Ne chargez jamais le
+dossier <code>config</code> des sources par-dessus.</div>
+
+<h3>Ce qu’on vous demandera, et où est la réponse</h3>
+<table class="keep">
+  <thead><tr><th style="width:74mm">La demande</th><th>Où elle est traitée</th></tr></thead>
+  <tbody>
+    <tr><td>Changer l’objectif, un taux horaire, un arrêt, un prix de pièce, une action MFT ; commencer une nouvelle année.</td><td>Pas pour vous : la personne
+      responsable s’en charge avec le <i>Settings guide</i>. On vous appelle seulement si le notebook s’arrête (chapitre 2).</td></tr>
+    <tr><td>« Le notebook s’est arrêté. » « La page affiche un cadre. » « Les chiffres sont anciens. »</td><td>Chapitre 2.</td></tr>
+    <tr><td>« Cette NC est dans la mauvaise ligne, le mauvais produit, type ou phase. »</td><td>Une table de règles des paramètres : chapitre 3, les sortes de
+      tables et « Chaque table, une par une ». Pas de code.</td></tr>
+    <tr><td>Un nouveau produit, un nouveau programme avion, un nouveau code officiel.</td><td>Paramètres : chapitre 3, « Tâches courantes ».</td></tr>
+    <tr><td>« Ce défaut a la mauvaise cause. »</td><td>Les étiquettes : section 1.5, et chapitre 4.</td></tr>
+    <tr><td>Changer la façon dont quelque chose est compté ou chiffré.</td><td>Vérifiez d’abord que ce n’est pas un paramètre. Sinon chapitre 4,
+      « Modifier la logique ».</td></tr>
+    <tr><td>Changer un texte, une couleur, un graphique ; ajouter un graphique.</td><td>Chapitre 5, puis construire et installer (chapitres 7 et 8).</td></tr>
+    <tr><td>Réinstaller le tableau de bord dans Skywise, ou installer une nouvelle version.</td><td>Chapitre 7.</td></tr>
+  </tbody>
+</table>
+
+<h3>Deux façons de travailler</h3>
+<p><b>Dans Skywise seulement.</b> Suffit pour tout ce qui est un paramètre, et pour réparer : lire le message du notebook,
+corriger une table, remettre le code précédent d’une page. Il faut un navigateur et les droits décrits dans le <i>Access guide</i>.</p>
+<p><b>Avec le dossier source sur un ordinateur.</b> Nécessaire pour modifier le programme ou les pages. Le dossier contient le
+code, les données d’un jour de référence, et des vérifications qui comparent chaque chiffre des pages avec cette référence :
+une modification qui fait bouger un chiffre qui ne devait pas bouger est repérée avant d’arriver dans Skywise. Il faut
+Python 3 et Node.js ; le chapitre 8 explique comment construire et vérifier.</p>
+
+<h3>Ce qui n’est pas terminé, et ce qu’il faut savoir</h3>
+<table>
+  <thead><tr><th style="width:46mm">Sujet</th><th>L’état des choses</th></tr></thead>
+  <tbody>
+    <tr><td><b>La cause des nouveaux défauts</b></td><td>La cause de chaque ligne de défaut est stockée dans le dataset <code>fto2_ai_labels</code>. Ces
+      étiquettes ont été faites en deux passes (12 octobre et 4 novembre 2026) par un modèle de langage lisant le texte complet de
+      chaque NC avec les définitions de l’onglet Définitions, suivies de deux passes de relecture. Une ligne écrite ou modifiée depuis
+      est classée par le lecteur de défauts du programme, un ensemble de règles : sur les lignes qui ont les deux, il donne la même
+      catégorie que l’étiquette stockée pour 94 % d’entre elles et la même cause pour 88 %. <b>Rien n’est à faire pour que le
+      tableau de bord reste complet.</b> Chaque exécution écrit les lignes en attente d’étiquette dans
+      <code>fto2_lines_to_label.csv</code> ; les étiqueter à nouveau demande un outil validé par l’informatique pour les textes
+      des NC (chapitre 4).</td></tr>
+    <tr><td><b>Le début de chaque année</b></td><td>Les alarmes comparent les dernières semaines aux semaines d’avant, à l’intérieur de l’année suivie.
+      Tant que l’année n’a pas seize semaines terminées (fin avril), la cloche dit qu’elle n’a pas assez de semaines, et une action
+      MFT commencée dans les premières semaines de l’année n’a pas de référence. C’est voulu ; regarder dans l’année précédente
+      l’éviterait et n’est pas fait.</td></tr>
+    <tr><td><b>Les actions MFT</b></td><td>La liste partagée est la table <code>1_actions_mft.csv</code>. Slate ne donne pas de stockage partagé à un Code
+      Sandbox : une action tapée sur la page reste dans ce navigateur jusqu’à ce que quelqu’un l’ajoute à la table.</td></tr>
+    <tr><td><b>L’exécution est manuelle</b></td><td>Quelqu’un lance le notebook. Le programme peut aussi tourner comme une transformation planifiée d’un
+      Code Repository (<code>fto2/transform_io.py</code> le prépare) ; cela n’a pas été mis en place.</td></tr>
+    <tr><td><b>L’A400M</b></td><td>Le texte de ses NC n’est pas disponible dans Skywise : elles comptent comme NC et dans le coût, et aucun défaut n’est
+      lu.</td></tr>
+    <tr><td><b>Les aléas</b></td><td>L’extrait de MES Disruptions utilisé pour construire le programme s’arrêtait à exactement 2 500 lignes. Si le nombre
+      d’aléas d’une année reste un nombre rond, cherchez une limite sur ce dataset.</td></tr>
+    <tr><td><b>Le prix des pièces</b></td><td>Seules les pièces dont le prix est saisi dans <code>1_prix_pieces.csv</code> sont valorisées. Chaque exécution
+      liste les pièces encore à chiffrer dans <code>fto2_parts_to_price.csv</code>.</td></tr>
+    <tr><td><b>L’outil de rédaction des NC</b></td><td>Une NC est enregistrée en deux clics : <b>Soumettre la NC</b> dans l’outil, puis <b>Submit</b> dans le
+      formulaire de l’action. La clé de l’objet (Timestamp) est un identifiant créé par l’action : l’heure de rédaction de la NC
+      n’est pas conservée. L’outil transmet aussi <code>submission_id</code>, <code>timestamp</code> et <code>defauts_json</code>,
+      que l’action n’utilise pas aujourd’hui.</td></tr>
+    <tr><td><b>L’ancienne application</b></td><td>Tant que <code>garder_anciennes_sorties</code> vaut <code>oui</code> dans <code>2_parametres.csv</code>, le notebook
+      écrit aussi les quatre tables de l’ancienne application Slate. Mettez <code>non</code> une fois cette application retirée.</td></tr>
+  </tbody>
+</table>
+
+<h2>Quand quelque chose ne va pas</h2>
+<p class="lead">Partez de ce que vous voyez. Chaque ligne renvoie à l’endroit où se trouve le plus souvent la cause. Rien ici
+ne demande le dossier source : tout se fait dans Skywise.</p>
+
+<h3>Le notebook s’arrête</h3>
+<p>Le notebook vérifie d’abord les paramètres, en moins d’une seconde, avant de lire ou d’écrire quoi que ce soit. Une
+exécution qui s’arrête là n’a rien changé : le tableau de bord montre toujours l’exécution précédente.</p>
+<table>
+  <thead><tr><th style="width:62mm">Le dernier message</th><th style="width:50mm">Ce qu’il veut dire</th><th>Que faire</th></tr></thead>
+  <tbody>
+    <tr><td>Nomme un fichier de <code>data/config/</code> et une ligne.</td><td>Une table de paramètres est mal remplie : un <code>;</code> tapé dans une
+      cellule, une date, un mot qui n’est pas un des mots permis.</td><td>Corrigez cette ligne. Le message dit ce qui est attendu. Chapitre 3, « Les
+      bases ».</td></tr>
+    <tr><td>« settings table … not found »</td><td>Une table a été renommée, déplacée ou supprimée.</td><td>Remettez-la dans <code>data/config/</code>, depuis
+      le dossier <code>config</code> de l’installation.</td></tr>
+    <tr><td>Un nom de dataset introuvable ; ou, à la fin de l’exécution, une erreur <code>AliasNotDefined</code> avec
+      <code>'alias': 'fto2_dash_…'</code>.</td><td>Le dataset n’est pas dans le panneau Data du workspace sous ce nom. L’erreur
+      liste les noms que le panneau contient (<code>definedAliases</code>).</td><td>Ajoutez-le dans le panneau Data avec le nom de la
+      section 7.2 (un dataset neuf et vide convient : le notebook le remplit), ou changez le nom dans <code>2_sources.csv</code>.
+      Puis relancez le notebook.</td></tr>
+    <tr><td>Une erreur de permission sur un dataset.</td><td>La personne qui lance le notebook n’y a pas accès.</td><td>Le <i>Access guide</i>, chapitre 5.</td></tr>
+    <tr><td>« … is not a price »</td><td>Du texte dans la colonne du prix de <code>1_prix_pieces.csv</code>.</td><td>Corrigez cette ligne.</td></tr>
+    <tr><td>« fto2_dash_cout not written »</td><td>Normal : cette table ne sert qu’à une installation optionnelle.</td><td>Rien.</td></tr>
+    <tr><td>Un avertissement ⚠️ à la fin, au sujet de l’année.</td><td>L’horloge est dans une nouvelle année et les paramètres suivent encore la
+      précédente.</td><td>La liste de nouvelle année du <i>Settings guide</i>, chapitre 7.</td></tr>
+    <tr><td>Toute autre erreur.</td><td>La dernière étape affichée dit jusqu’où l’exécution est allée.</td><td>Le chapitre 4, « L’exécution, étape par étape »,
+      donne le fichier de chaque étape.</td></tr>
+  </tbody>
+</table>
+<p>Si la même erreur revient après une correction, redémarrez le noyau du notebook et relancez toutes les cellules : Python
+garde en mémoire ce qu’il a déjà chargé.</p>
+
+<h3>Une page affiche un cadre au lieu du tableau de bord</h3>
+<table>
+  <thead><tr><th style="width:62mm">Le cadre dit</th><th style="width:50mm">Ce qu’il veut dire</th><th>Où regarder</th></tr></thead>
+  <tbody>
+    <tr><td>Vert, <b>Chargement des données…</b>, pendant plus de vingt secondes ; puis orange, avec le nom d’une requête.</td><td>Cette requête n’existe pas
+      sous ce nom, ou échoue.</td><td>Dans Slate, la requête : son nom exact, son SQL, et si elle s’exécute pour vous.</td></tr>
+    <tr><td><b>La requête … n’a renvoyé aucune ligne</b></td><td>La requête fonctionne ; la table est vide.</td><td>La synchronisation vers Postgres, puis la
+      dernière exécution du notebook.</td></tr>
+    <tr><td><b>aucune NC lisible … colonnes reçues : …</b></td><td>La requête renvoie des colonnes que la page n’attend pas.</td><td>Comparez avec le SQL de
+      l’installation (chapitre 7) : quelqu’un a changé la requête, ou la table.</td></tr>
+    <tr><td><b>exactement N lignes reçues</b></td><td>Slate a probablement coupé le résultat.</td><td>Une limite de lignes sur la requête.</td></tr>
+    <tr><td>Rouge, avec une erreur et une ligne de code.</td><td>Le JS a une erreur, ou n’a été collé qu’en partie.</td><td>Recollez le JS de l’installation,
+      en entier.</td></tr>
+    <tr><td>La partie HTML manque.</td><td>L’onglet HTML du Code Sandbox est vide.</td><td>Collez la partie HTML.</td></tr>
+    <tr><td>La page fonctionne pour vous et reste vide pour quelqu’un d’autre.</td><td>Cette personne ne voit pas les quatre datasets.</td><td>Le <i>Access guide</i>.</td></tr>
+  </tbody>
+</table>
+
+<h3>Les chiffres sont anciens</h3>
+<p>La date <b>Données au…</b> en haut de la page est le jour de la NC la plus récente reçue par la page. Suivez la chaîne de
+gauche à droite et arrêtez-vous au premier maillon en retard.</p>
+<ol class="steps">
+  <li><b>Le notebook.</b> Quand a-t-il été lancé pour la dernière fois, et a-t-il atteint ses dernières lignes, la liste des
+    tables écrites ? Sinon : lancez-le, ou voyez la section 2.1.</li>
+  <li><b>Les quatre datasets.</b> Ouvrez <code>fto2_dash_nc</code> dans Skywise : sa dernière mise à jour doit être l’heure de
+    l’exécution.</li>
+  <li><b>La synchronisation vers Postgres.</b> Dans Slate, exécutez la requête <code>q_fto2_nc</code> et regardez le
+    <code>created</code> le plus récent. Si le dataset est à jour et la requête non, la synchronisation n’a pas tourné :
+    lancez-la, et cherchez pourquoi elle n’a pas suivi la mise à jour.</li>
+  <li><b>Le navigateur.</b> Rechargez la page.</li>
+</ol>
+<p>Si le notebook a tourné et que les dernières NC manquent toujours, regardez la source : le dataset Non Conformity lui-même
+est peut-être en retard.</p>
+
+<h3>Un chiffre semble faux</h3>
+<p>Avant d’ouvrir le moindre code, utilisez ce que la page donne.</p>
+<ol class="steps">
+  <li><b>Est-ce la sélection ?</b> Cliquez sur <b>ⓘ Comment la sélection est faite</b> : la page montre ce que chaque filtre a
+    retiré. La plupart des « totaux faux » s’arrêtent là.</li>
+  <li><b>Est-ce une NC ?</b> Retrouvez-la dans la liste en bas de l’onglet. Sa ligne, son produit, son type et sa décision
+    sont le résultat des tables de règles. Pour son coût, <b>Coût de non-qualité › Expliquer le calcul</b> montre chaque
+    étape.</li>
+  <li><b>Quelle règle a décidé ?</b> Chaque étiquette d’une NC vient d’une table de règles du groupe 2
+    (<code>2_regle_…csv</code>) : la première règle qui correspond l’emporte. Le chapitre 3 liste les tables et ce que chacune
+    décide.</li>
+  <li><b>Quel code lit une table ?</b> Le fichier <code>lisez_moi.csv</code> des paramètres a une colonne <code>lu_par</code> :
+    le fichier du programme qui lit chaque table. Pour aller d’une table au code qui l’utilise, partez de là.</li>
+  <li><b>Est-ce le calcul ?</b> Chapitre 4 pour ce que calcule le notebook ; chapitre 5 pour ce que calcule la page : taux,
+    objectifs, prévisions et alarmes sont calculés dans la page.</li>
+</ol>
+
+<h3>Après une réparation</h3>
+<ul>
+  <li><b>Un paramètre a été corrigé :</b> lancez le notebook, rechargez la page, comparez les chiffres clés avec ce que vous
+    attendiez.</li>
+  <li><b>Du code a été remis ou modifié dans Skywise :</b> notez-le, et reportez la même modification dans le dossier source ;
+    sinon la prochaine installation l’efface.</li>
+  <li><b>Le programme ou une page a été modifié dans les sources :</b> lancez les vérifications du chapitre 8 avant
+    d’installer.</li>
+</ul>
+
+<!-- md: ../fr/config.md | Les paramètres -->
+<!-- md: ../fr/logic.md | Les calculs -->
+<!-- md: ../fr/front_end.md | Les pages -->
+<!-- md: ../fr/part_prices.md | Le prix des pièces -->
+
+<h2>Installer dans Skywise</h2>
+<p class="lead">Toute l’installation, à partir de rien, dans l’ordre à suivre. Comptez une heure. Les mêmes étapes installent
+une nouvelle version : la section 7.7 dit lesquelles refaire.</p>
+
+<h3>Ce qu’il faut</h3>
+<p><b>Les fichiers d’installation.</b> Ils sont construits depuis le dossier source (chapitre 8) dans
+<code>03_reports/skywise/</code>, et réunis dans un seul fichier, <code>FTO2_Skywise_installation.zip</code> :</p>
+<table>
+  <thead><tr><th style="width:74mm">Dans le dossier d’installation</th><th>Ce que c’est</th></tr></thead>
+  <tbody>
+    <tr><td><code>level3_datasets/fto2_pipeline_notebook.ipynb</code></td><td>Le notebook.</td></tr>
+    <tr><td><code>level3_datasets/notebook_kit/</code></td><td>Le programme que lance le notebook (le dossier <code>fto2/</code> des sources), et le fichier
+      des étiquettes <code>fto2_ai_labels.csv</code>.</td></tr>
+    <tr><td><code>level3_datasets/config/</code></td><td>Les paramètres tels qu’ils sont dans les sources : la copie de départ de <code>data/config</code>.</td></tr>
+    <tr><td><code>level3_datasets/q_fto2_nc.sql</code>, <code>q_fto2_def.sql</code>, <code>q_fto2_dis.sql</code>, <code>q_fto2_ref.sql</code></td><td>Le texte
+      des quatre requêtes Slate.</td></tr>
+    <tr><td><code>level3_datasets/fto2_level23.css</code>, <code>.html</code>, <code>.js</code>, <code>state.json</code></td><td>La page tableau de bord : les
+      trois parties de son Code Sandbox et son état.</td></tr>
+    <tr><td><code>mft/fto2_mft.css</code>, <code>.html</code>, <code>.js</code>, <code>state.json</code></td><td>La page MFT.</td></tr>
+  </tbody>
+</table>
+<p>L’outil de rédaction des NC n’est pas dans le zip : ses trois fichiers sont dans <code>08_tools/nc_writer_slate/</code> des
+sources.</p>
+<p><b>Trois fichiers de l’équipe</b>, qui ne sont pas dans les sources : la liste des postes
+<code>fto2_station_mapping.csv</code> (le notebook s’arrête sans elle), le registre GPS et la liste Test (sans eux le notebook
+tourne et le signale). Leurs noms sont dans <code>2_sources.csv</code>. En option, les derniers exports du Tableau Avances /
+Retards et du suivi des câbles.</p>
+<p><b>Les droits</b> de la personne qui maintient le code (le <i>Access guide</i>), et l’accès aux trois sources Non
+Conformity, Work_Order_Operation et MES Disruptions.</p>
+
+<h3>Le Code Workspace</h3>
+<ol class="steps">
+  <li>Chargez le dossier <code>notebook_kit</code> à la racine du workspace.</li>
+  <li>Créez un dossier <code>data</code>. Chargez-y le dossier <code>config</code>, pour qu’il devienne
+    <code>data/config</code>. À faire une fois : ensuite, les paramètres se modifient là.</li>
+  <li>Mettez les trois fichiers de l’équipe dans <code>data</code>, sous les noms de <code>2_sources.csv</code>, avec les
+    téléchargements si vous les avez (un export du plan : un nom qui commence par <code>Avances_Retards</code> ; du suivi des
+    câbles : un nom qui contient <code>cables</code>).</li>
+  <li>Dans <code>data/config/2_parametres.csv</code>, ligne <code>garder_anciennes_sorties</code> : <code>non</code> si aucune
+    ancienne application n’est à alimenter ; <code>oui</code> écrit en plus les quatre tables de l’ancienne application
+    (elles doivent alors être aussi dans le panneau Data).</li>
+  <li>Chargez le notebook <code>fto2_pipeline_notebook.ipynb</code> à la racine.</li>
+  <li>Dans le panneau <b>Data</b> du workspace, ajoutez les datasets sous exactement ces noms :
+    <table class="keep">
+      <thead><tr><th style="width:54mm">Dataset</th><th style="width:52mm">Nom dans le panneau Data</th><th>Accès</th></tr></thead>
+      <tbody>
+        <tr><td>Non Conformity</td><td><code>non_conformity</code></td><td>lecture</td></tr>
+        <tr><td>Les étiquettes de cause</td><td><code>fto2_ai_labels</code></td><td>lecture</td></tr>
+        <tr><td>Work_Order_Operation</td><td><code>work_order_operation</code></td><td>lecture</td></tr>
+        <tr><td>MES Disruptions</td><td><code>mes_disruptions</code></td><td>lecture</td></tr>
+        <tr><td>Quatre datasets neufs et vides</td><td><code>fto2_dash_nc</code>, <code>fto2_dash_defects</code>, <code>fto2_dash_disruptions</code>, <code>fto2_dash_ref</code></td><td>écriture</td></tr>
+      </tbody>
+    </table></li>
+  <li><code>fto2_ai_labels</code> contient 3 489 lignes. S’il est neuf ou en contient moins, donnez-lui le contenu de
+    <code>notebook_kit/fto2_ai_labels.csv</code>.</li>
+  <li>Lancez toutes les cellules. Les premières lignes disent l’année suivie ; les dernières listent les quatre tables écrites,
+    puis <code>Done.</code> Si l’exécution s’arrête : chapitre 2.</li>
+</ol>
+<figure data-shot="t_data_panel" data-h="55"><figcaption>Le panneau Data du workspace, avec les huit noms.</figcaption></figure>
+
+<h3>La synchronisation vers Postgres</h3>
+<p>Slate lit les quatre tables dans Postgres. Synchronisez <code>fto2_dash_nc</code>, <code>fto2_dash_defects</code>,
+<code>fto2_dash_disruptions</code> et <code>fto2_dash_ref</code>, sous les mêmes noms, schéma <code>foundry_sync</code>.
+Créez chaque synchronisation après une première exécution du notebook, pour que la table ait ses colonnes. La
+synchronisation doit suivre chaque exécution : vérifiez dans la requête (section 7.6) que la NC la plus récente est celle de
+l’exécution.</p>
+
+<h3>L’application Slate</h3>
+<ol class="steps">
+  <li>Créez une application Slate.</li>
+  <li>Ajoutez quatre requêtes sur la source <code>postgate-airbus-2</code>, nommées exactement <code>q_fto2_nc</code>,
+    <code>q_fto2_def</code>, <code>q_fto2_dis</code> et <code>q_fto2_ref</code>, chacune avec le texte de son fichier
+    <code>.sql</code>.</li>
+  <li><b>La page tableau de bord.</b> Ajoutez un Code Sandbox, toute la largeur, environ 1 400 px de haut. Collez
+    <code>fto2_level23.css</code>, <code>.html</code> et <code>.js</code> dans ses onglets CSS, HTML et JavaScript, et
+    <code>state.json</code> dans sa case d’état : il relie les quatre requêtes à la page.</li>
+  <li><b>La page MFT.</b> Sur une deuxième page de l’application, un deuxième Code Sandbox, même taille, avec les fichiers de
+    <code>mft/</code> et son <code>state.json</code>. Elle utilise <code>q_fto2_nc</code>, <code>q_fto2_def</code> et
+    <code>q_fto2_ref</code>.</li>
+  <li>Partagez l’application et les quatre datasets avec les lecteurs (le <i>Access guide</i>).</li>
+</ol>
+<figure data-shot="t_sandbox" data-h="55"><figcaption>Le Code Sandbox de la page tableau de bord, avec ses onglets et sa case d’état.</figcaption></figure>
+<div class="note"><span class="t">Trois règles pour le code collé dans Slate</span>
+<ul>
+  <li>Jamais deux accolades ouvrantes à la suite dans le JavaScript : Slate les lit comme un lien vers une requête.</li>
+  <li>Chaque règle CSS commence par <code>.fto2</code>, pour que les styles n’atteignent pas le reste de la page Slate.</li>
+  <li>Pas de données dans le code : données et paramètres viennent des requêtes.</li>
+</ul></div>
+
+<h3>L’outil de rédaction des NC</h3>
+<p>L’outil de rédaction est une page où un opérateur rédige une NC avec les codes officiels ; il construit le texte SAP. Chaque
+NC est enregistrée comme un objet du type d’objet <b>a30 Nc Writer Dataset</b>, par son action. Le Code Sandbox ne peut rien
+écrire lui-même : il transmet la NC avec un événement ; l’événement remplit une variable Slate ; l’action lit la variable.</p>
+<ol class="steps">
+  <li><b>Le Code Sandbox.</b> Sur une troisième page, ajoutez un Code Sandbox nommé <code>w_nc_writer</code>, environ 1 316 px
+    de large et 900 px de haut. Collez <code>nc_writer.html</code>, <code>nc_writer.css</code> et <code>nc_writer.js</code> dans
+    ses onglets. État : <code>{}</code>. Dans son onglet <b>Interaction</b>, Events : <code>["submit"]</code>. L’écran
+    <b>Nouvelle NC</b> apparaît.</li>
+  <li><b>La variable.</b> Dans le panneau Variables, ajoutez <code>v_submission</code>, valeur <code>{}</code>.</li>
+  <li><b>L’événement.</b> Dans le panneau Events, ajoutez un événement. Déclencheur : <code>w_nc_writer.submit</code>. Action :
+    <code>v_submission.set</code>. Code : <code>return {{slEventValue}};</code></li>
+  <li><b>L’action.</b> Ajoutez un widget Action avec l’action du type d’objet. Dans ses paramètres par défaut :
+    <table class="keep">
+      <thead><tr><th style="width:40mm">Champ</th><th>Valeur</th></tr></thead>
+      <tbody>
+        <tr><td>Detection</td><td><code>"{{v_submission.detection}}"</code></td></tr>
+        <tr><td>Produit</td><td><code>"{{v_submission.produit}}"</code></td></tr>
+        <tr><td>Msn</td><td><code>"{{v_submission.msn}}"</code></td></tr>
+        <tr><td>Texte Sap</td><td><code>"{{v_submission.texte_sap}}"</code></td></tr>
+        <tr><td>Total Defauts</td><td><code>{{v_submission.total_defauts}}</code> (un nombre : sans guillemets)</td></tr>
+      </tbody>
+    </table>
+    La clé, Timestamp, est remplie par l’action elle-même.</li>
+  <li><b>Vérification.</b> Rédigez une courte NC, appuyez sur <b>Soumettre la NC</b> : le formulaire de l’action l’affiche.
+    Appuyez sur <b>Submit</b> : un nouvel objet existe, avec le MSN saisi. Supprimez ensuite l’objet de test.</li>
+</ol>
+<figure data-shot="t_nc_writer_events" data-h="50"><figcaption>L’événement qui remplit <code>v_submission</code>, et les paramètres par défaut de l’action.</figcaption></figure>
+<p>Pour vérifier chaque maillon de cette chaîne séparément, le dossier <code>08_tools/nc_writer_slate/test_action/</code>
+contient un petit Code Sandbox de test et les étapes, d’un état saisi à la main jusqu’à l’événement. Les utilisateurs de
+l’outil ont besoin du droit d’exécuter l’action (le <i>Access guide</i>).</p>
+
+<h3>Vérifier l’installation</h3>
+<ul>
+  <li><b>Le tableau de bord</b> s’ouvre en Essentiel. La date <b>Données au…</b> en haut à droite est le jour de la NC la plus
+    récente. Avec les filtres de l’ouverture (Série, Responsabilité FTO2), Deep dive › Vue d’ensemble affiche un peu plus que
+    868 NC, 3 160 défauts et 388 k€ : ce sont les chiffres du 26 octobre 2026, et la source contient plus de jours.</li>
+  <li><b>La page MFT</b> s’ouvre sur la ligne qui a le plus de NC, sur la dernière semaine terminée, et <b>Suivi des
+    actions</b> montre les actions de <code>1_actions_mft.csv</code>.</li>
+  <li><b>Les requêtes :</b> dans Slate, <code>q_fto2_nc</code> renvoie autant de lignes que le notebook en a écrit dans
+    <code>fto2_dash_nc</code>. Un nombre qui s’arrête à un chiffre rond signale une limite de lignes sur la requête.</li>
+</ul>
+
+<h3>Installer une nouvelle version</h3>
+<table>
+  <thead><tr><th style="width:52mm">Ce qui a changé</th><th>Que faire dans Skywise</th></tr></thead>
+  <tbody>
+    <tr><td><b>Le programme</b> (<code>fto2/</code>)</td><td>Remplacez le dossier <code>notebook_kit</code> par le nouveau, en entier. Redémarrez le noyau du
+      notebook et lancez-le.</td></tr>
+    <tr><td><b>Une page</b></td><td>Gardez une copie du code en place (c’est le retour arrière). Collez le nouveau CSS, HTML et JavaScript dans le Code
+      Sandbox, et le nouveau <code>state.json</code> s’il a changé.</td></tr>
+    <tr><td><b>Les colonnes d’une table</b></td><td>Lancez le notebook, laissez la synchronisation suivre, puis remplacez le texte de la requête concernée.
+      Collez ensuite la page.</td></tr>
+    <tr><td><b>Une nouvelle table de paramètres, ou une nouvelle ligne</b></td><td>Ajoutez cette table, ou cette ligne, dans <code>data/config</code>.
+      <b>Ne chargez jamais</b> le dossier <code>config</code> par-dessus <code>data/config</code> : il contient les modifications de l’équipe.</td></tr>
+  </tbody>
+</table>
+<p>Le notebook relit <code>data/config</code> à chaque exécution : une modification des paramètres ne demande pas de
+redémarrage.</p>
+
+<h2>Modifier le code et le vérifier</h2>
+<p class="lead">Toute modification du programme ou des pages se fait dans le dossier source, est vérifiée contre une
+référence, construite, puis installée. Les vérifications comparent chaque chiffre affiché par les pages avec les chiffres d’un
+jour de référence : une modification qui fait bouger un chiffre qui ne devait pas bouger est vue avant d’arriver à
+l’équipe.</p>
+
+<h3>Ce qu’il faut</h3>
+<ul>
+  <li><b>Python 3</b> avec les paquets de <code>requirements.txt</code> (pandas, numpy, openpyxl).</li>
+  <li><b>Node.js</b> avec <b>Playwright</b> et son Chromium : les vérifications ouvrent les pages dans un navigateur.</li>
+  <li>Le dossier source, avec ses données de référence : <code>06_input_data/</code> (les extraits d’un jour de référence),
+    <code>04_reference/</code>, <code>05_outputs/</code> (ce qu’écrit la construction) et <code>tests/golden/</code> (ce que
+    montraient les pages).</li>
+</ul>
+<p>Lancez les commandes depuis le dossier source. Python est appelé avec <code>-I</code>, ce qui l’empêche de charger quoi que
+ce soit depuis le dossier courant.</p>
+
+<h3>Le dossier source, en bref</h3>
+<table>
+  <thead><tr><th style="width:52mm">Dossier</th><th>Ce qu’il contient</th></tr></thead>
+  <tbody>
+    <tr><td><code>fto2/</code></td><td>Le programme : le même code tourne dans le notebook (comme <code>notebook_kit</code>) et ici. Chapitre 4.</td></tr>
+    <tr><td><code>config/</code></td><td>Les paramètres tels qu’installés la première fois. Chapitre 3.</td></tr>
+    <tr><td><code>build/</code></td><td>La page tableau de bord (<code>templates/dashboard.html</code>, <code>templates/model.js</code>) et les scripts qui construisent
+      les pages et les fichiers d’installation. Chapitre 5.</td></tr>
+    <tr><td><code>07_scripts/mft/</code></td><td>La page MFT et sa construction.</td></tr>
+    <tr><td><code>08_tools/nc_writer_slate/</code></td><td>L’outil de rédaction des NC, avec ses propres vérifications.</td></tr>
+    <tr><td><code>tests/</code></td><td>Les vérifications, et la référence de chaque chiffre (<code>tests/golden/</code>).</td></tr>
+    <tr><td><code>03_reports/skywise/</code></td><td>Les fichiers d’installation, écrits par la construction.</td></tr>
+    <tr><td><code>docs/</code></td><td>Les documents des chapitres 3 à 6 (en français dans <code>docs/fr/</code>), et les guides (<code>docs/guides/</code>,
+      construits en PDF par <code>build_guides.py</code>).</td></tr>
+  </tbody>
+</table>
+
+<h3>Construire</h3>
+<pre>python3 -I build/build_all.py
+python3 -I 07_scripts/mft/build_mft.py</pre>
+<p>La première commande fait tourner le programme sur les données de référence, écrit les tables de <code>05_outputs/</code>,
+la page <code>03_reports/FTO2_NC_Dashboard.html</code> (elle s’ouvre dans un navigateur, avec les données de référence), et
+les fichiers d’installation du tableau de bord. La seconde fait de même pour la page MFT. Les deux réécrivent
+<code>FTO2_Skywise_installation.zip</code>.</p>
+
+<h3>Les vérifications</h3>
+<table>
+  <thead><tr><th style="width:46mm">Vérification</th><th>Ce qu’elle prouve</th><th style="width:18mm">Durée</th></tr></thead>
+  <tbody>
+    <tr><td><b>Règles et paramètres</b><br><code>python3 -m unittest discover -s tests -t .</code></td><td>Les paramètres sont lus et contrôlés comme le notebook
+      les lit ; aucune valeur métier ni année n’est tapée dans le code ; les paramètres de coût, les prix des pièces, les
+      téléchargements.</td><td class="num">secondes</td></tr>
+    <tr><td><b>Le notebook, en répétition</b><br><code>tests/notebook_rehearsal.py</code></td><td>L’exécution du notebook, sur une doublure de Skywise nourrie des
+      données de référence, donne les mêmes tables que la construction.</td><td class="num">1 min</td></tr>
+    <tr><td><b>Chaque chiffre des pages</b><br><code>tests/snapshot/</code></td><td>Les pages, ouvertes dans un navigateur sur 36 vues du tableau de bord et
+      67 de la page MFT, montrent les mêmes chiffres que la référence.</td><td class="num">30 min</td></tr>
+    <tr><td><b>Une autre année</b><br><code>tests/next_year_rehearsal.py</code></td><td>Avec les données décalées d’un an et l’année changée dans les paramètres,
+      tout suit : l’année est une ligne des paramètres.</td><td class="num">3 min</td></tr>
+  </tbody>
+</table>
+<p>Les commandes exactes sont dans <code>tests/README.md</code>. Lancez les deux premières après toute modification ; la
+référence des pages après une modification d’une page ou d’un calcul ; la vérification de l’année après une modification qui
+touche aux dates, aux semaines ou au plan de production.</p>
+
+<h3>La règle d’une modification</h3>
+<ol class="steps">
+  <li>Notez ce qui doit bouger, et ce qui ne doit pas bouger.</li>
+  <li>Faites la modification dans le dossier source.</li>
+  <li>Construisez, puis lancez les vérifications. Lisez chaque différence signalée par la référence des pages.</li>
+  <li>Si seul ce que vous vouliez a bougé, et qu’un chiffre devait changer : faites de la nouvelle capture la référence
+    (<code>tests/README.md</code>), dans la même modification.</li>
+  <li>Installez la nouvelle version (section 7.7), et vérifiez les pages dans Skywise.</li>
+</ol>

@@ -70,6 +70,7 @@ the dashboard changes hands.</p>
     <tr><td><b>The labels dataset</b></td><td><code>fto2_ai_labels</code></td><td style="height:9mm"></td></tr>
     <tr><td><b>The sync to Postgres</b></td><td>schema <code>foundry_sync</code>, source <code>postgate-airbus-2</code></td><td style="height:9mm"></td></tr>
     <tr><td><b>The Slate application</b></td><td>dashboard page and MFT page</td><td style="height:9mm"></td></tr>
+    <tr><td><b>The NC writer's object type</b></td><td><code>a30 Nc Writer Dataset</code>, its action, its dataset <code>nc_writer_dataset</code></td><td style="height:9mm"></td></tr>
     <tr><td><b>The guides</b></td><td>user guide, settings guide, technical manual</td><td style="height:9mm"></td></tr>
   </tbody>
 </table>
@@ -94,6 +95,7 @@ a group of people rather than to one name whenever Skywise lets you.</p>
   <thead><tr><th>What</th><th style="width:27mm">Reader</th><th style="width:31mm">Person in charge</th><th style="width:27mm">Maintainer</th></tr></thead>
   <tbody>
     <tr><td><b>5 · The Slate application</b></td><td>view</td><td>view</td><td>edit</td></tr>
+    <tr><td><b>The NC writer's action</b> (object type <code>a30 Nc Writer Dataset</code>)</td><td>run, for the people who write NCs</td><td>run</td><td>edit</td></tr>
     <tr><td><b>3 · The four datasets</b> <code>fto2_dash_…</code></td><td>view</td><td>edit</td><td>edit</td></tr>
     <tr><td><b>2 · The Code Workspace</b></td><td>none</td><td>edit</td><td>edit</td></tr>
     <tr><td><b>1 · The labels dataset</b> <code>fto2_ai_labels</code></td><td>none</td><td>view</td><td>edit</td></tr>
@@ -120,7 +122,8 @@ in the dashboard depends on a person's name.</p>
 
 <h3>A new reader</h3>
 <ol class="steps">
-  <li>Give <b>viewer</b> rights on the Slate application.</li>
+  <li>Give <b>viewer</b> rights on the Slate application. If the person writes NCs with the NC writer, also the right to run its
+    action (object type <code>a30 Nc Writer Dataset</code>, in Ontology Manager).</li>
   <li>Give <b>viewer</b> rights on the four datasets <code>fto2_dash_…</code> (or on the folder that holds them).</li>
   <li>Send the link of the dashboard, and the <i>User guide</i>.</li>
   <li><b>Check:</b> ask the person to open the link. The page must show the date <b>Données au…</b> and figures. An empty
