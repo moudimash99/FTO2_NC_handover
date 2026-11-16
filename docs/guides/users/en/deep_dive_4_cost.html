@@ -8,37 +8,55 @@ foot: FTO2 NC dashboard · Deep dive – Cost of non-quality
 short: yes
 lang: en
 -->
-
 <h2>What the tab is for</h2>
-<p>The Cost tab answers: <b>what do the NCs cost FTO2, and in what?</b> The cost is an estimate built from the time each NC
-takes, at the hourly rate of who does the work: it is made to compare causes, lines and months, not to replace an
-accounting figure. The method is explained in <i>How the cost is calculated</i>.</p>
-<p>The line under the title gives the whole picture: the total cost for FTO2, the part raised at FTO2, the customer returns,
-and beside them the quality aléas that led to no NC. The key figures give the cost, the number of NCs and the average cost
-per NC.</p>
-
+<p>The Cost tab answers: <b>what do the NCs cost FTO2, and in what?</b> The cost is an estimate built from the time each NC takes, at the hourly rate of who does the work: it is made to compare causes, lines and months, not to replace an accounting figure. The method is in <i>How the cost is calculated</i>.</p>
+<p>The line under the title gives the whole picture: the total cost for FTO2, the part raised at FTO2, the customer returns, and beside them the quality aléas that led to no NC. The key figures give the cost, the number of NCs and the average cost per NC.</p>
 <h2>The charts</h2>
 <h3>Cost split by NC type</h3>
-<p>One bar split by type of NC: cable NCs, test, final inspection, internal, suppliers. It shows which kind of NC carries
-the cost.</p>
+<table class="keep fact"><tbody>
+  <tr><th style="width:30mm">Shows</th><td>One bar split by type of NC: cable NCs, test, final inspection, internal, suppliers.</td></tr>
+  <tr><th>How to read it</th><td>Each part is its share of the cost of the selection.</td></tr>
+  <tr><th>How it helps</th><td>Shows which kind of NC carries the cost.</td></tr>
+  <tr><th>A click</th><td>—</td></tr>
+</tbody></table>
 <h3>Decision, Line, Product, Month created</h3>
-<p>The cost from four angles: by decision taken (rework, rejection, scrap…), by line, by product and by month. A click on a
-bar filters the other cards of the tab and the list, to follow one part of the cost.</p>
+<table class="keep fact"><tbody>
+  <tr><th style="width:30mm">Shows</th><td>The cost from four angles: by decision taken, by line, by product, by month.</td></tr>
+  <tr><th>How to read it</th><td>One bar per value, the largest first.</td></tr>
+  <tr><th>How it helps</th><td>Follows one part of the cost: a decision, a line, a product, a month.</td></tr>
+  <tr><th>A click</th><td>Filters the other charts of this tab, and its list.</td></tr>
+</tbody></table>
 <h3>What the cost is made of, month by month</h3>
-<p>Each month split into the handling of the NC (alert, writing, support, recheck), the rework, the material and the
-engineering studies. It shows whether a rise comes from more NCs, from heavier reworks, or from parts and studies.</p>
+<table class="keep fact"><tbody>
+  <tr><th style="width:30mm">Shows</th><td>Each month split into the handling of the NC, the rework, the material and the engineering studies.</td></tr>
+  <tr><th>How to read it</th><td>Handling = alert, writing, support, recheck.</td></tr>
+  <tr><th>How it helps</th><td>Shows whether a rise comes from more NCs, heavier reworks, or parts and studies.</td></tr>
+  <tr><th>A click</th><td>—</td></tr>
+</tbody></table>
 <h3>Quality aléas with no NC</h3>
-<p>The time lost declared in MES on quality aléas that did not lead to an NC: hours lost per month and per line, and their
-cost at the production rate. These are shown <b>beside</b> the cost of non-quality and are not added to it. When an aléa
-does lead to an NC, its time is already part of that NC's cost. The list of the aléas, one per row, is under the card.</p>
+<table class="keep fact"><tbody>
+  <tr><th style="width:30mm">Shows</th><td>The time lost declared in MES on quality aléas that led to no NC: hours lost per month and per line, and their cost at the production rate.</td></tr>
+  <tr><th>How to read it</th><td>Shown <b>beside</b> the cost of non-quality, not added to it. When an aléa does lead to an NC, its time is already in that NC's cost.</td></tr>
+  <tr><th>How it helps</th><td>Shows lost time that no NC records.</td></tr>
+  <tr><th>A click</th><td><b>▸ The aléas, one per row</b> lists them.</td></tr>
+</tbody></table>
 <h3>Other cost charts</h3>
-<p>Under <b>▸ Other cost charts</b>: every NC over time as a bubble at the size of its cost, with the five most expensive
-named, which shows whether the cost comes from many small NCs or a few big ones; and <b>How the rework is costed</b>, which
-says how many NCs are costed from the planned time of their rework order and how many from the model.</p>
+<p>Under <b>▸ Other cost charts</b>:</p>
+<table class="keep fact"><tbody>
+  <tr><th style="width:52mm">Every NC over time, at its size</th><td>One bubble per NC, at the size of its cost; the five most expensive are named. Shows whether the cost comes from many small NCs or a few big ones.</td></tr>
+  <tr><th style="width:52mm">How the rework is costed</th><td>How many NCs are costed from the planned time of their rework order, and how many from the model.</td></tr>
+</tbody></table>
 <h3>Explain the calculation</h3>
-<p>Under <b>▸ Explain the calculation</b>, the whole calculation with the figures of your selection: the six steps of an NC
-with their time, rate and total; what they add up to; the special rules; what is counted for each decision; and the
-calculation on any real NC (type its number, or click an example). It is the place to answer "how was this number made?".</p>
+<table class="keep fact"><tbody>
+  <tr><th style="width:30mm">Shows</th><td>Under <b>▸ Explain the calculation</b>: the six steps of an NC with their time, rate and total; what they add up to; the special rules; what each decision counts.</td></tr>
+  <tr><th>How to read it</th><td>Type an NC number and click <b>Show</b>, or click an example: the calculation of that NC, line by line.</td></tr>
+  <tr><th>How it helps</th><td>Answers "how was this number made?" with the figures of your selection.</td></tr>
+  <tr><th>A click</th><td>—</td></tr>
+</tbody></table>
 <h3>NC and cost detail</h3>
-<p>The list of the NCs with their cost, where they were found, their decision and their number of defects. Search it by NC
-number or word.</p>
+<table class="keep fact"><tbody>
+  <tr><th style="width:30mm">Shows</th><td>The list behind every chart of the tab, the most recent first: NC, date, line, where it was found, decision, number of defects, cost and title.</td></tr>
+  <tr><th>How to read it</th><td>Search it by NC number, word or FIN. It shows 200 rows at a time; <b>Show 200 more</b> at its end shows more.</td></tr>
+  <tr><th>How it helps</th><td>It is where a figure becomes real cases.</td></tr>
+  <tr><th>A click</th><td>—</td></tr>
+</tbody></table>

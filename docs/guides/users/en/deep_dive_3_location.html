@@ -8,46 +8,70 @@ foot: FTO2 NC dashboard · Deep dive – Location
 short: yes
 lang: en
 -->
-
 <h2>What the tab is for</h2>
-<p>The Location tab answers: <b>where</b> do the NCs come from? It looks at the same NCs by product, by aircraft and by
-station, and sets them against the volume built wherever it can, so that a product built often is not unfairly at the top.
-It has three parts: Products, Aircraft, Stations.</p>
-
+<p>The Location tab answers: <b>where</b> do the NCs come from? It looks at the same NCs by product, by aircraft and by station, and sets them against the volume built wherever it can, so that a product built often is not unfairly at the top. It has three parts: Products, Aircraft, Stations.</p>
 <h2>Products</h2>
 <h3>NCs, defects and cost expected by December, product by product</h3>
-<p>For each product, what is done so far, then what is expected at the end of December if the pace stays the same. The
-switch <b>Per MSN</b> shows the same per aircraft built. It helps to see which products will weigh most on the year, not
-only which weigh most today.</p>
+<table class="keep fact"><tbody>
+  <tr><th style="width:30mm">Shows</th><td>For each product, what is done so far, then what is expected at the end of December.</td></tr>
+  <tr><th>How to read it</th><td>Solid bar: done. Dotted part: the forecast (the rate of the period × the aircraft still planned). The switch <b>Per MSN</b> shows the same per aircraft built.</td></tr>
+  <tr><th>How it helps</th><td>Shows which products will weigh most on the year, not only which weigh most today.</td></tr>
+  <tr><th>A click</th><td>Keeps that product on the whole page.</td></tr>
+</tbody></table>
 <h3>Monthly rate, product by product</h3>
-<p>A grid with one row per product and one column per month: the darker the cell, the more NCs per aircraft built that
-month. A dash means less than half an aircraft was built that month, so no rate. It shows at once whether a product is
-always high or had one bad month.</p>
+<table class="keep fact"><tbody>
+  <tr><th style="width:30mm">Shows</th><td>A grid: one row per product, one column per month.</td></tr>
+  <tr><th>How to read it</th><td>The darker the cell, the more NCs per aircraft built that month. A dash: less than half an aircraft built, so no rate.</td></tr>
+  <tr><th>How it helps</th><td>Shows whether a product is always high, or had one bad month.</td></tr>
+  <tr><th>A click</th><td>Keeps that product on the whole page.</td></tr>
+</tbody></table>
 <h3>Cost by product family</h3>
-<p>The ten costliest product families, with their number of NCs, of aircraft, and the average cost per aircraft. It points
-to the families where non-quality costs most for each aircraft built.</p>
+<table class="keep fact"><tbody>
+  <tr><th style="width:30mm">Shows</th><td>The ten costliest product families, with their NCs, aircraft and average cost per aircraft.</td></tr>
+  <tr><th>How to read it</th><td>The rest is grouped in one row.</td></tr>
+  <tr><th>How it helps</th><td>Points to the families where non-quality costs most for each aircraft built.</td></tr>
+  <tr><th>A click</th><td>Keeps that product family on the whole page.</td></tr>
+</tbody></table>
 <h3>The top three root causes of each product</h3>
-<p>For each product, from the most affected to the least, its three main causes in defects per aircraft built. It tells
-where an action would remove the most defects, product by product.</p>
-
+<table class="keep fact"><tbody>
+  <tr><th style="width:30mm">Shows</th><td>For each product, its three main causes, in defects per aircraft built.</td></tr>
+  <tr><th>How to read it</th><td>Products from the most affected to the least.</td></tr>
+  <tr><th>How it helps</th><td>Tells, product by product, where an action would remove the most defects.</td></tr>
+  <tr><th>A click</th><td>Keeps that cause.</td></tr>
+</tbody></table>
 <h2>Aircraft</h2>
 <h3>Cost per aircraft (MSN)</h3>
-<p>One bar per aircraft, in the order of production, line by line, with the average of the line as a dotted line. The
-aircraft far above the others are named. Hatched bars are aircraft still in production, whose cost can still grow; pale
-bars are aircraft started before this year. It shows whether the problems are spread, or concentrated on a few aircraft.
-A click on a bar shows the NCs of that aircraft.</p>
+<table class="keep fact"><tbody>
+  <tr><th style="width:30mm">Shows</th><td>One bar per aircraft, in the order of production, line by line.</td></tr>
+  <tr><th>How to read it</th><td>Dotted line: the average of the line. Hatched bars: aircraft still in production, whose cost can still grow. Pale bars: aircraft started before this year. The aircraft far above the others are named.</td></tr>
+  <tr><th>How it helps</th><td>Shows whether the problems are spread, or concentrated on a few aircraft.</td></tr>
+  <tr><th>A click</th><td>Keeps the NCs of that aircraft.</td></tr>
+</tbody></table>
 <h3>FINs that come back aircraft after aircraft</h3>
-<p>One column per aircraft, one row per FIN; a square is a defect on that FIN on that aircraft, a dark square two or more. A
-row full of squares is a defect that repeats on almost every aircraft: a strong candidate for an action. It shows the line
-chosen in the filter, or the A350 when all lines are shown.</p>
-
+<table class="keep fact"><tbody>
+  <tr><th style="width:30mm">Shows</th><td>One column per aircraft, one row per FIN.</td></tr>
+  <tr><th>How to read it</th><td>A square: a defect on that FIN on that aircraft; a dark square: two or more. The line chosen in the filter, or the A350 when all lines are shown.</td></tr>
+  <tr><th>How it helps</th><td>A row full of squares is a defect that repeats on almost every aircraft: a strong candidate for an action.</td></tr>
+  <tr><th>A click</th><td>Keeps that FIN.</td></tr>
+</tbody></table>
 <h2>Stations</h2>
 <h3>Defects by station and category</h3>
-<p>The twelve stations whose NCs carry the most defects, split by category. The station is the one where the NC was
-written. It helps to see whether a kind of defect is found mostly at one place.</p>
-
+<table class="keep fact"><tbody>
+  <tr><th style="width:30mm">Shows</th><td>The twelve stations whose NCs carry the most defects, split by category.</td></tr>
+  <tr><th>How to read it</th><td>The station is the one where the NC was written.</td></tr>
+  <tr><th>How it helps</th><td>Shows whether a kind of defect is found mostly at one place.</td></tr>
+  <tr><th>A click</th><td>Keeps that station.</td></tr>
+</tbody></table>
 <h2>Other charts and the list</h2>
-<p>Under <b>▸ Other charts</b>, <b>How far can each product's rate be trusted?</b> shows each product's rate with its margin
-of uncertainty: wide when few aircraft were built, so a high rate on few aircraft may be chance. At the bottom, <b>NC
-detail: product, aircraft, station</b> lists every NC; in this list, a click on a line, product, MSN or station filters the
-whole page.</p>
+<h3>Other charts</h3>
+<p>Under <b>▸ Other charts</b>:</p>
+<table class="keep fact"><tbody>
+  <tr><th style="width:52mm">How far can each product's rate be trusted?</th><td>Each product's rate with its margin of uncertainty: wide when few aircraft were built, so a high rate on few aircraft may be chance.</td></tr>
+</tbody></table>
+<h3>NC detail: product, aircraft, station</h3>
+<table class="keep fact"><tbody>
+  <tr><th style="width:30mm">Shows</th><td>The list behind every chart of the tab, the most recent first: date, line, product, MSN, station, type, cost and title.</td></tr>
+  <tr><th>How to read it</th><td>Search it by NC number, word or FIN. It shows 200 rows at a time; <b>Show 200 more</b> at its end shows more.</td></tr>
+  <tr><th>How it helps</th><td>It is where a figure becomes real cases. In this list, a click on a line, a product, an MSN or a station filters the whole page.</td></tr>
+  <tr><th>A click</th><td>—</td></tr>
+</tbody></table>
