@@ -53,7 +53,7 @@
     if (k) return [plusDays(minusMonths(DMAX, k), 1), DMAX];
     return [DMIN, DMAX];
   }
-  // who is liable (3 Nov, Mohammad), the three ticks of "Responsabilité": f FTO2 ([5], FTO2 in the liability), s a supplier (a code made
+  // who is liable, the three ticks of "Responsabilité": f FTO2 ([5], FTO2 in the liability), s a supplier (a code made
   // of digits only: 129 of the 133 SUPPLIER NCs of 2026), o anyone else (another Airbus site such as FFF1 or TO, other, blank)
   function liabCat(n) { if (n[5] === 1) return 'f'; var c = String(n[34] || '').replace(/[\[\]\s]/g, '').replace(/^0+/, ''); return /^\d+$/.test(c) ? 's' : 'o'; }
   var LIABS = ['f', 's', 'o'];
@@ -94,7 +94,7 @@
     PICK_NC = null; var p = GF.pick; if (!p || !PICK_DEF[p.k]) return;
     PICK_NC = {}; D.defects.forEach(function (r) { if (String(PICK_DEF[p.k](r)) === String(p.v)) PICK_NC[r[0]] = 1; });
   }
-  function ours(n) { var p = String(n[42] || '').trim().toUpperCase(); return p === 'FTO2' || p === 'FT02'; }   // FTO2's NCs: [42] plant FTO2 / FT02 (as Type_NC_auto); on a GPS / Test list too only if at that plant (Mohammad, 20 Oct)
+  function ours(n) { var p = String(n[42] || '').trim().toUpperCase(); return p === 'FTO2' || p === 'FT02'; }   // FTO2's NCs: [42] plant FTO2 / FT02 (as Type_NC_auto); on a GPS / Test list too only if at that plant
   function gScope(n) { return !GF.fto2 || ours(n); }   // FTO2 plant only: the plant column, nothing else
   // the selection: SEL follows every filter; SER = SEL's FTO2 NCs without the customer returns; CLI = the customer returns, whatever the switch (the tabs that show both apart)
   var SEL_NC = [], SER_NC = [], CLI_NC = [], SEL = {}, SER = {}, CLI = {};
@@ -236,7 +236,7 @@
     return out;
   }
   var V2W = SET.poids_mois;   // weight of a month in the monthly target (config/2_reglages_pages.csv): July and August lighter
-  // the year's target line by line (Mohammad, 20 Oct): each line's 2025 rate per product delivered - 25 %, times the line's 2026
+  // the year's target line by line: each line's 2025 rate per product delivered - 25 %, times the line's 2026
   // volume month by month, summed over the lines; the NCs whose product is not in the production plan (no volume) keep their 2025
   // value - 25 %, spread over the months like a normal year. f25 / f26: the measure of a 2025 row / of a 2026 product (NCs or cost).
   // null without 2025 under the filters or without the real production plan (the charts then keep their former target).
@@ -244,7 +244,7 @@
     var Y = y25Sel(), L = D.y25 && D.y25.prod, E = pSrc(); if (!Y || !L || !PD || !PA || E !== D.eqmsn) return null;
     var has = function (p) { return L[p] && sumA(L[p]) > 0; }, by = {}, out = 0, z = function () { return PD.months.map(function () { return 0; }); };
     // a product with no 2025 delivery (MDCD) does not take its line's 2025 rate: its target is its own 2026 pace × its planned
-    // volume, with no cut (Mohammad, 29 Oct); its 2025 NCs show in the 2025 bar only
+    // volume, with no cut; its 2025 NCs show in the 2025 bar only
     PD.prods.forEach(function (p) { var l = PD.line[p] || '—', a = by[l] || (by[l] = { l: l, v25: 0, n25o: 0, del: 0, vol: z(), own: z(), v26: 0, eq26: 0 });
       if (has(p)) { a.del += sumA(L[p]); PD.prod[p].forEach(function (v, i) { a.vol[i] += v || 0; }); a.v26 += f26(PA[p]); a.eq26 += PA[p].EQ; }
       else { var r = PA[p] && PA[p].EQ > 0 ? f26(PA[p]) / PA[p].EQ : 0; PD.prod[p].forEach(function (v, i) { a.own[i] += r * (v || 0); }); } });

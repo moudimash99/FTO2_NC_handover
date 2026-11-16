@@ -1,5 +1,4 @@
 <title>MFT Qualité FTO2</title>
-<meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=Newsreader:opsz,wght@6..72,400;6..72,500&display=swap">
 <style>
@@ -273,7 +272,7 @@ var D = JSON.parse(document.getElementById('mft-data').textContent);   // the da
   function fld(d, k) { var n = NCS[d[0]]; return k === 'cat' ? DIC.cat[d[1]] : k === 'rca' ? DIC.rca[d[2]] : k === 'sub' ? DIC.sub[d[3]] : k === 'code' ? DIC.code[d[4]] : k === 'fin' ? DIC.fin[d[5]] : k === 'where' ? DIC.where[n[6]] :
     k === 'grp' ? grpOf(DIC.code[d[4]]) : k === 'station' ? DIC.station[n[5]] : k === 'msn' ? DIC.msn[n[4]] : k === 'prod' ? (DIC.prod ? DIC.prod[n[7]] : '') : k === 'text' ? d[7] : ''; }
   function grpOf(c) { var m = /^[A-Z]\d{2}/.exec(c || ''); return m ? m[0] : ''; }   // the code of a sub-code: Q11-003 -> Q11
-  // English (2 Nov, Mohammad): FR / EN at the top right, as the dashboard, remembered in the browser. The data keep their words (NC
+  // English: FR / EN at the top right, as the dashboard, remembered in the browser. The data keep their words (NC
   // texts, FIN, stations); category and cause names are the dashboard's English ones, sub-code descriptions the official sheet's.
   var LANG = 'fr'; try { LANG = localStorage.getItem('mft-fto2-lang') === 'en' ? 'en' : 'fr'; } catch (e) { }
   var NAME_EN = {
@@ -323,7 +322,6 @@ var D = JSON.parse(document.getElementById('mft-data').textContent);   // the da
     'référence (8 sem. avant)': 'reference (8 wk before)', 'objectif −{p} %': 'target −{p}%', 'Réf.': 'Ref.', '(début de l’analyse)': '(analysis start)', 'Objectif': 'Target',
     '{n} sem. sur 4': '{n} wk of 4', 'Actuel': 'Current', 'tenu {n} sem.': 'held {n} wk', 'quelqu’un': 'someone',
     '{n} actions': '{n} actions', '{n} action': '{n} action', '{n} à l’objectif': '{n} on target', '{n} en hausse': '{n} rising',
-    'Les actions apparaissent ici quand la page est ouverte dans Claude par une personne connectée.': 'Actions show here when the page is opened in Claude by a signed-in person.',
     'Aucune action close': 'No closed action', 'Aucune action ouverte': 'No open action', 'Aucune action': 'No action', ' sur {l}': ' on {l}',
     'Problème suivi': 'Problem followed', 'Porteur de l’action': 'Action owner', 'Porteur de l’analyse': 'Analysis owner', 'Début de l’analyse': 'Analysis start',
     'Début de l’action': 'Action start', 'Bénéfice attendu': 'Expected benefit', 'Rédigée par': 'Written by', 'Close le': 'Closed on',
@@ -357,7 +355,6 @@ var D = JSON.parse(document.getElementById('mft-data').textContent);   // the da
     'dont {l}': 'incl. {l}', 'aussi : {l}': 'also: {l}', 'action en cours : {t}': 'action in progress: {t}', 'Majeure': 'Major', 'Mineure': 'Minor', '→ Pareto de la semaine': '→ Weekly Pareto',
     'Remettre': 'Put back', 'Vu': 'Seen', 'À regarder · {w}': 'To look at · {w}', 'Pas encore assez de semaines pour comparer.': 'Not enough weeks yet to compare.', 'Rien à signaler.': 'Nothing to report.',
     '{n} autres': '{n} more', '{n} autre': '{n} more', '+{n} sur les autres lignes': '+{n} on the other lines', 'Vues ({n})': 'Seen ({n})',
-    'Les actions sont enregistrées dans la page : ouvrez-la depuis Claude, connecté, pour les voir et les modifier.': 'Actions are saved in the page: open it from Claude, signed in, to see and change them.',
     'Accès en lecture : vous voyez les actions sans pouvoir les modifier.': 'Read access: you see the actions but cannot change them.',
     'La liste des actions ne se met plus à jour : rechargez la page.': 'The action list no longer updates: reload the page.' };
   function T(s0, o) { var t = LANG === 'en' && UI_EN[s0] != null ? UI_EN[s0] : s0; return o ? t.replace(/\{(\w+)\}/g, function (m, k) { return o[k] != null ? o[k] : m; }) : t; }
@@ -409,7 +406,7 @@ var D = JSON.parse(document.getElementById('mft-data').textContent);   // the da
   try { var sv = JSON.parse(localStorage.getItem('mft-fto2') || '{}'); if (sv.line && (sv.line === 'all' || LINES.some(function (x) { return x[0] === sv.line; }))) S.line = sv.line; if (sv.ph != null) S.ph = sv.ph; S.mk = !!sv.mk; if (sv.cnt === 'nc') S.cnt = 'nc'; } catch (e) { }
   function remember() { try { localStorage.setItem('mft-fto2', JSON.stringify({ line: S.line, ph: S.ph, mk: S.mk, cnt: S.cnt })); } catch (e) { } }
   // a press on a bar filters the whole page (figures, the other lists, the table, the Analyse tab), as on the dashboard: one value
-  // per list, each list filtered by the picks of the others (Mohammad, 30 Oct)
+  // per list, each list filtered by the picks of the others
   function selOk(d, except) { for (var k in S.f) { if (k !== except && fld(d, k) !== S.f[k]) return false; } return true; }
   function anySel() { return Object.keys(S.f).length > 0; }
   function selChips() { var ks = Object.keys(S.f); return ks.map(function (k) { return '<span class="chip">' + esc(lev(k) + COL() + shown(k, S.f[k])) + ' <button type="button" data-unsel="' + k + '" aria-label="' + esc(T('Retirer {x}', { x: lev(k) })) + '">✕</button></span>'; }).join('') +
@@ -433,7 +430,7 @@ var D = JSON.parse(document.getElementById('mft-data').textContent);   // the da
   function validBefore(i, n) { var out = []; for (var k = i; k >= 0 && out.length < n; k--) if (valid(k)) out.unshift(k); return out; }
   function per() { var o = []; for (var k = S.from; k <= S.week; k++) o.push(k); return o; }
   // the reference of a period: the working weeks just before it, as many as the period (4 at least), compared per week
-  // (Mohammad, 30 Oct: a week against the 4 before, a month against the month before, the weeks named)
+  // (a week against the 4 before, a month against the month before, the weeks named)
   // weeks of low production are left out too (holidays: the line's MSN that week, from the production plan, under 60 % of its usual
   // week), so that a period after the summer is not compared with August
   var TYP = {};
@@ -445,7 +442,7 @@ var D = JSON.parse(document.getElementById('mft-data').textContent);   // the da
     if (TYP[S.line] == null) { var a = WEEKS.map(function (w, k) { return volOf(k); }).filter(function (x) { return x > 0; }).sort(function (x, y) { return x - y; }); TYP[S.line] = a.length ? a[Math.floor(a.length / 2)] : 0; }
     return TYP[S.line] > 0 && v < TYP[S.line] * SET.semaine_faible;
   }
-  // how far back the reference goes (Mohammad, 2 Nov): a week against the 4 weeks before, 1 month (4 weeks) against the 3 months before
+  // how far back the reference goes: a week against the 4 weeks before, 1 month (4 weeks) against the 3 months before
   // (13 weeks), 3 months (13 weeks) against the 12 months before (52 weeks); a custom period against as many weeks as it has (4 at least).
   // The data start in January of the year followed: early in the year the reference holds the weeks there are, and says which.
   var REFN = SET.mft_fenetres;   // config/2_reglages_pages.csv
@@ -601,7 +598,7 @@ var D = JSON.parse(document.getElementById('mft-data').textContent);   // the da
   // the account's name is not always given to the page, so whoever writes types it; this browser remembers it
   var MYNAME = ''; try { MYNAME = localStorage.getItem('mft-fto2-name') || ''; } catch (e) { }
   function setName(n) { MYNAME = n; try { localStorage.setItem('mft-fto2-name', n); } catch (e) { } }
-  // the problem an action follows (29 Oct, Mohammad): simple = codes or sub-codes (Q11 = every Q11 sub-code; Q11003 or Q11-003 = that
+  // the problem an action follows: simple = codes or sub-codes (Q11 = every Q11 sub-code; Q11003 or Q11-003 = that
   // sub-code); expert = conditions on a column, all of them true: is one of the values, contains one of the words, regular expression.
   // An action saved before ({ level, values }) reads as one 'is' condition (a sub-code level as the simple mode).
   var FIELDS = { cat: 'Catégorie', rca: 'Cause', sub: 'Sous-catégorie', grp: 'Code', code: 'Sous-code', fin: 'FIN', where: 'Lieu de détection', station: 'Poste', msn: 'MSN', text: 'Texte du défaut' };
@@ -700,7 +697,7 @@ var D = JSON.parse(document.getElementById('mft-data').textContent);   // the da
     var box = $('acts'), W = Math.max(260, Math.min(640, Math.floor((box.clientWidth || 900) * (box.clientWidth > 860 ? 0.55 : 1)) - 40)), sts = list.map(stats);
     var nMet = sts.filter(function (o) { return o.st === 'met'; }).length, nUp = sts.filter(function (o) { return o.st === 'up'; }).length;
     $('actSum').textContent = T(list.length > 1 ? '{n} actions' : '{n} action', { n: list.length }) + (nMet ? ' · ' + T('{n} à l’objectif', { n: nMet }) : '') + (nUp ? ' · ' + T('{n} en hausse', { n: nUp }) : '');
-    if (!DB) { box.innerHTML = '<p class="empty">' + esc(T('Les actions apparaissent ici quand la page est ouverte dans Claude par une personne connectée.')) + '</p>'; return; }
+    if (!DB) { box.innerHTML = ''; return; }   // the store answers right after the first drawing
     if (!list.length) { box.innerHTML = '<p class="empty">' + esc(T(S.fSt === 'closed' ? 'Aucune action close' : S.fSt === 'open' ? 'Aucune action ouverte' : 'Aucune action') + (S.line === 'all' ? '' : T(' sur {l}', { l: S.line }))) + '</p>'; return; }
     box.innerHTML = list.map(function (a, n) { var o = sts[n], ed = CANW !== false, closed = a.status === 'Clos' || a.status === 'Abandonnée';
       var dl = [[T('Problème suivi'), esc(problemText(a.problem))], [T('Porteur de l’action'), esc(a.actionOwner || '—')], [T('Porteur de l’analyse'), esc(a.analysisOwner || '—')],
@@ -1041,13 +1038,13 @@ var D = JSON.parse(document.getElementById('mft-data').textContent);   // the da
   var h = (location.hash || '').slice(1); if (h === 'analyse' || h === 'actions' || h === 'pareto') S.tab = h;
   renderAll();
 
-  // ---------------------------------------------------------------- the store: actions shared by everyone who opens the page
+  // ---------------------------------------------------------------- the store: the actions and the alarms' marks
   (async function () {
-    var cl = window.FTO2_STORE || window.claude;   // FTO2_STORE: the Slate version's store (03_reports/skywise/mft), same calls
+    var cl = window.FTO2_STORE;   // the store of 07_scripts/mft/mft_slate.js, in this page as in its Slate version: this browser
     try { USER = cl && cl.use ? await cl.use('user') : null; } catch (e) { USER = null; }
     try { DB = cl && cl.use ? await cl.use('db') : null; } catch (e) { DB = null; }
     if (USER) { try { UID = await USER.id(); } catch (e) { } try { CANW = await USER.can('data.write'); } catch (e) { CANW = null; } }
-    if (!DB) { setNote(function () { return T('Les actions sont enregistrées dans la page : ouvrez-la depuis Claude, connecté, pour les voir et les modifier.'); }); renderAll(); return; }
+    if (!DB) { renderAll(); return; }
     if (cl.note) setNote(function () { return cl.note(LANG); });
     if (CANW === false) setNote(function () { return T('Accès en lecture : vous voyez les actions sans pouvoir les modifier.'); });
     DB.collection('alarmes').onSnapshot(function (snap) { var m = {}; snap.docs.forEach(function (d) { var x = d.data(); if (x && x.key) m[x.key] = x; }); AL.marks = m; alRender(); }, function () { });

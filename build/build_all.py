@@ -7,7 +7,7 @@ Rebuild every FTO2 NC output from the raw Skywise exports, in one run.
 Input (the only data read):
     06_input_data/fto2_dashboard_data*.csv     Skywise NC exports (standard + missing-IDs). All files are merged;
                                                when an NC is in several, the most recently changed row wins.
-    04_reference/llm_labels_longtext.csv       Root-cause labels per defect line (Sonnet, full long text, 12 Oct 2026).
+    04_reference/llm_labels_longtext.csv       Root-cause labels per defect line, by a language model reading the full long text (12 Oct 2026).
 
 Steps:
     1. parser v4.8 (02_dashboard_pack/.../fto2_logic.py)  -> one row per defect, one row per NC; where raised (scope) from the pipeline's plant and Type_NC_auto

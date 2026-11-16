@@ -1135,7 +1135,7 @@ function fto2FromTables(ncIn, defIn, ref, disIn, cxIn) {
     for (var i = 0; i < AL.length; i++) { var x = AL[i];
       if (x[0] === a[3] && new RegExp(x[1]).test(p) && (!x[2] || new RegExp(x[2], 'i').test(a[27]))) { a[26] = x[3]; return; } }
   });
-  // FIN: a panel or harness code (…VU, …VB) is the product, not an equipment FIN (Mohammad, 29 Oct), and a length (250CM) is no FIN;
+  // FIN: a panel or harness code (…VU, …VB) is the product, not an equipment FIN, and a length (250CM) is no FIN;
   // take the next FIN written in the defect text, else none
   var FIN_RE = /\b(\d{1,4}[A-Z]{2,4}\d{0,4}[A-Z]{0,2})\b/g, FIN_NOT = /V[UB]$|^\d+(CM|MM|M|KG|MN|MIN|H|OHM|MOHM|KOHM|NM|DAN|ER|EME|ND|RD|TH|ST|EA|PCS)$/;
   function finOf(fin, text) {
@@ -1587,7 +1587,7 @@ function fto2FromTables(ncIn, defIn, ref, disIn, cxIn) {
   var RULE_FR = { 'Rework to drawing': 'Retouche', 'Exchange': 'Échange', 'Rejection': 'Rebut / rejet', 'Rejection with a rework order': 'Rejet avec ordre de retouche', 'Scrap': 'Rebut', 'Request for design change': 'Demande de DQN',
     'Accept as is': 'Accepté en l’état', 'Potential non-conformity': 'NC potentielle', 'No decision': 'Sans décision', 'Deleted NC': 'NC supprimée', 'Unknown decision code': 'Décision inconnue' };
 
-  // Simple and Expert (30 Oct, Mohammad): the page holds both. Simple: Synthèse and Détail, a few charts; Expert: the full dashboard.
+  // Simple and Expert: the page holds both. Simple: Synthèse and Détail, a few charts; Expert: the full dashboard.
   // A switch in the header goes from one to the other
   var SIMPLE_TABS = ['syn', 'det'], EXPERT_TABS = ['ov', 'pareto', 'where', 'cnq', 'client', 'cbl', 'rca', 'pplan'];
   var h0 = ''; try { h0 = EMBED ? '' : (location.hash || '').replace('#', ''); } catch (e) {}
@@ -1681,7 +1681,7 @@ function fto2FromTables(ncIn, defIn, ref, disIn, cxIn) {
     if (k) return [plusDays(minusMonths(DMAX, k), 1), DMAX];
     return [DMIN, DMAX];
   }
-  // who is liable (3 Nov, Mohammad), the three ticks of "Responsabilité": f FTO2 ([5], FTO2 in the liability), s a supplier (a code made
+  // who is liable, the three ticks of "Responsabilité": f FTO2 ([5], FTO2 in the liability), s a supplier (a code made
   // of digits only: 129 of the 133 SUPPLIER NCs of 2026), o anyone else (another Airbus site such as FFF1 or TO, other, blank)
   function liabCat(n) { if (n[5] === 1) return 'f'; var c = String(n[34] || '').replace(/[\[\]\s]/g, '').replace(/^0+/, ''); return /^\d+$/.test(c) ? 's' : 'o'; }
   var LIABS = ['f', 's', 'o'];
@@ -1722,7 +1722,7 @@ function fto2FromTables(ncIn, defIn, ref, disIn, cxIn) {
     PICK_NC = null; var p = GF.pick; if (!p || !PICK_DEF[p.k]) return;
     PICK_NC = {}; D.defects.forEach(function (r) { if (String(PICK_DEF[p.k](r)) === String(p.v)) PICK_NC[r[0]] = 1; });
   }
-  function ours(n) { var p = String(n[42] || '').trim().toUpperCase(); return p === 'FTO2' || p === 'FT02'; }   // FTO2's NCs: [42] plant FTO2 / FT02 (as Type_NC_auto); on a GPS / Test list too only if at that plant (Mohammad, 20 Oct)
+  function ours(n) { var p = String(n[42] || '').trim().toUpperCase(); return p === 'FTO2' || p === 'FT02'; }   // FTO2's NCs: [42] plant FTO2 / FT02 (as Type_NC_auto); on a GPS / Test list too only if at that plant
   function gScope(n) { return !GF.fto2 || ours(n); }   // FTO2 plant only: the plant column, nothing else
   // the selection: SEL follows every filter; SER = SEL's FTO2 NCs without the customer returns; CLI = the customer returns, whatever the switch (the tabs that show both apart)
   var SEL_NC = [], SER_NC = [], CLI_NC = [], SEL = {}, SER = {}, CLI = {};
@@ -1864,7 +1864,7 @@ function fto2FromTables(ncIn, defIn, ref, disIn, cxIn) {
     return out;
   }
   var V2W = SET.poids_mois;   // weight of a month in the monthly target (config/2_reglages_pages.csv): July and August lighter
-  // the year's target line by line (Mohammad, 20 Oct): each line's 2025 rate per product delivered - 25 %, times the line's 2026
+  // the year's target line by line: each line's 2025 rate per product delivered - 25 %, times the line's 2026
   // volume month by month, summed over the lines; the NCs whose product is not in the production plan (no volume) keep their 2025
   // value - 25 %, spread over the months like a normal year. f25 / f26: the measure of a 2025 row / of a 2026 product (NCs or cost).
   // null without 2025 under the filters or without the real production plan (the charts then keep their former target).
@@ -1872,7 +1872,7 @@ function fto2FromTables(ncIn, defIn, ref, disIn, cxIn) {
     var Y = y25Sel(), L = D.y25 && D.y25.prod, E = pSrc(); if (!Y || !L || !PD || !PA || E !== D.eqmsn) return null;
     var has = function (p) { return L[p] && sumA(L[p]) > 0; }, by = {}, out = 0, z = function () { return PD.months.map(function () { return 0; }); };
     // a product with no 2025 delivery (MDCD) does not take its line's 2025 rate: its target is its own 2026 pace × its planned
-    // volume, with no cut (Mohammad, 29 Oct); its 2025 NCs show in the 2025 bar only
+    // volume, with no cut; its 2025 NCs show in the 2025 bar only
     PD.prods.forEach(function (p) { var l = PD.line[p] || '—', a = by[l] || (by[l] = { l: l, v25: 0, n25o: 0, del: 0, vol: z(), own: z(), v26: 0, eq26: 0 });
       if (has(p)) { a.del += sumA(L[p]); PD.prod[p].forEach(function (v, i) { a.vol[i] += v || 0; }); a.v26 += f26(PA[p]); a.eq26 += PA[p].EQ; }
       else { var r = PA[p] && PA[p].EQ > 0 ? f26(PA[p]) / PA[p].EQ : 0; PD.prod[p].forEach(function (v, i) { a.own[i] += r * (v || 0); }); } });
@@ -2514,7 +2514,7 @@ function fto2FromTables(ncIn, defIn, ref, disIn, cxIn) {
       document.getElementById('cf1').textContent = eur(t3);
       document.getElementById('cf2').textContent = num(SEL_NC.length);
       document.getElementById('cf3').textContent = SEL_NC.length ? eur(t3 / SEL_NC.length) : '—';
-      // how the rework is costed (replaces the costing methods card, Mohammad 29 Oct): from the planned time of the NC's closed rework
+      // how the rework is costed (replaces the costing methods card): from the planned time of the NC's closed rework
       // order, or from the model's minutes per defect; FTO2-liable NCs only (the others cost 0)
       var lia = SEL_NC.filter(costed), byO = lia.filter(function (n) { return cxSteps(n)[8] === 'order'; }), byM = lia.filter(function (n) { return cxSteps(n)[8] !== 'order'; });
       var oc = sum(byO, function (n) { return n[12]; }), mc = sum(byM, function (n) { return n[12]; }), wm = Math.max(byO.length, byM.length, 1);
@@ -2736,7 +2736,7 @@ function fto2FromTables(ncIn, defIn, ref, disIn, cxIn) {
   // ---------------------------------------------------------------- 4e. Production: per line and per product, the volume built, planned and delivered in 2025,
   // the NCs and the rates and targets made from them; the monthly plan by line; then how these numbers are made and used
   /* ===== ALARM ENGINE START ===== */
-  // Alarms (Mohammad, 30 Oct): the bell lists what to look at, few lines, nothing raised by a single bad week. One rule for the
+  // Alarms: the bell lists what to look at, few lines, nothing raised by a single bad week. One rule for the
   // dashboard and the MFT page (build_mft.py copies this block into the MFT page). Four ways something goes wrong, each tested on
   // 2026 against a year where nothing changes:
   //  - rise ("en hausse"): an item of a line (all its defects, a category, a cause, a sub-code, a station, where they are found, a
@@ -2954,7 +2954,7 @@ function fto2FromTables(ncIn, defIn, ref, disIn, cxIn) {
     return { P: P, run: run, seen: seen, week: week, lastDone: lastDone, docId: docId, sig: sig, spark: spark };
   })();
   /* ===== ALARM ENGINE END ===== */
-  // the bell (Mohammad, 30 Oct): what to look at, for the selection's production type, plant and data source, on the lines of the
+  // the bell: what to look at, for the selection's production type, plant and data source, on the lines of the
   // aircraft filter (the other lines counted below), as of the last finished week of the period; five lines at most, the others
   // folded. A problem can be marked as seen (the page's store, collection 'alarmes'; not in Slate): it leaves the list for
   // everyone and comes back if it gets worse.
@@ -3030,9 +3030,10 @@ function fto2FromTables(ncIn, defIn, ref, disIn, cxIn) {
     });
     document.addEventListener('click', function (e) { if (AL.open && !w.contains(e.target)) { AL.open = false; alRender(); } });
     document.addEventListener('keydown', function (e) { if (AL.open && e.key === 'Escape') { AL.open = false; alRender(); document.getElementById('alBtn').focus(); } });
-    if (EMBED || !window.claude || typeof window.claude.use !== 'function') return;
-    window.claude.use('user').then(function (u) { if (u && u.id) return u.id().then(function (id) { AL.uid = id; }); }).catch(function () {});
-    window.claude.use('db').then(function (db) {
+    // the page's store (window.FTO2_STORE, the MFT page's calls), when one is given: none is today, so the bell keeps no mark
+    if (EMBED || !window.FTO2_STORE || typeof window.FTO2_STORE.use !== 'function') return;
+    window.FTO2_STORE.use('user').then(function (u) { if (u && u.id) return u.id().then(function (id) { AL.uid = id; }); }).catch(function () {});
+    window.FTO2_STORE.use('db').then(function (db) {
       if (!db) return; AL.db = db;
       db.collection('alarmes').onSnapshot(function (snap) {
         var m = {}; snap.docs.forEach(function (d) { var x = d.data(); if (x && x.key) m[x.key] = x; }); AL.marks = m; alRender();
@@ -3040,7 +3041,7 @@ function fto2FromTables(ncIn, defIn, ref, disIn, cxIn) {
       alRender();
     }).catch(function () {});
   })();
-  // Câbles (Mohammad, 30 Oct): the cable team's requests for new cables, as on the "Suivi NC câbles" page (D.cables, one row per
+  // Câbles: the cable team's requests for new cables, as on the "Suivi NC câbles" page (D.cables, one row per
   // request: [row, week, date, NC, programme, MSN, reason, imputation, proposed cause, cables, cable type, comment, has an action]),
   // under the filter bar's aircraft and period. A reason, an imputation, a cause or a cable clicked filters the list of requests
   // (chips at the top); the other cards only mark it. Imputation colours: teal, amber, plum (checked for colour blindness), greys.
@@ -3151,7 +3152,7 @@ function fto2FromTables(ncIn, defIn, ref, disIn, cxIn) {
     p.addEventListener('pointerleave', hideTip);
     document.getElementById('cbQ').addEventListener('input', function (e) { CB_Q = e.target.value; cbList(cbRows()); });
   })();
-  // ---------------------------------------------------------------- 2025 and 2026 month by month (Mohammad, 3 Nov): NCs, MSN and NCs per MSN, in three
+  // ---------------------------------------------------------------- 2025 and 2026 month by month: NCs, MSN and NCs per MSN, in three
   // panels on the same months (no second scale). The line group of the per-MSN charts (A330 + A350, or A320; a line chosen in the filter
   // bar wins), split by line. Every filter applies except the period: January 2025 to the last NC. MSN 2025: products delivered in the
   // month (Livraisons 2025, as the 2025 targets); MSN 2026: products built, spread over the working days (the plan, as the other charts).
@@ -3346,7 +3347,7 @@ function fto2FromTables(ncIn, defIn, ref, disIn, cxIn) {
   function catFill(c) { return CATC[c] ? 'var(--c' + CATC[c] + ')' : 'var(--dim)'; }
   function catLabel(c) { return c === 'aside' ? S('asideGroup') : L(c); }
   // the category of a cause and of a sub-code (the most frequent among their defect lines): the colour of their bars, blue for
-  // workmanship and green for connection as everywhere (Mohammad, 20 Oct)
+  // workmanship and green for connection as everywhere
   var RCA_CAT = {}, CODE_CAT = {};
   (function () { var a = {}, b = {}; D.defects.forEach(function (r) { var c = catKey(dCat(r)), x = dRca(r), y = dCode(r);
       if (x) (a[x] || (a[x] = {}))[c] = (a[x][c] || 0) + 1; if (y) (b[y] || (b[y] = {}))[c] = (b[y][c] || 0) + 1; });
@@ -3853,10 +3854,10 @@ function fto2FromTables(ncIn, defIn, ref, disIn, cxIn) {
 
   // monthly totals over the products of the selection (the volume is only the denominator)
   function pMonthly(f, keep) { var os = P_().filter(keep || function () { return true; }); return pAct().map(function (i) { var e = sumA(os.map(function (o) { return o.eqm[i]; })); return { i: i, e: e, v: sumA(os.map(function (o) { return f(o, i); })) }; }).filter(function (x) { return x.e >= EQMIN; }); }
-  // connection errors per MSN: A330 and A350 only (Mohammad, 20 Oct); A320's products are small parts counted one by one, its many units pull the rate down
+  // connection errors per MSN: A330 and A350 only; A320's products are small parts counted one by one, its many units pull the rate down
   var CONN_LINES = { A330: 1, A350: 1 };
   function connOk(o) { return !!CONN_LINES[o.line]; }
-  // the figures and charts that pool products into one per-MSN rate: A330 + A350 by default, a switch shows the A320 (Mohammad, 30 Oct);
+  // the figures and charts that pool products into one per-MSN rate: A330 + A350 by default, a switch shows the A320;
   // a line chosen in the filter bar wins and hides the switch
   var G320 = false;
   function grpOk(o) { var l = (o && o.line) || ''; return GF.line ? true : G320 ? l === 'A320' : !!CONN_LINES[l]; }
@@ -3953,7 +3954,7 @@ function fto2FromTables(ncIn, defIn, ref, disIn, cxIn) {
         tx(lab + pw + 10, y + 4, f2(x.r), 'ink b'); });
     gSet(k, svg(W0, H, g, gT(k)), '<span><i class="sw" style="border-radius:50%;background:var(--ink-2)"></i>' + esc(gx('relRate')) + '</span><span><i class="sw" style="background:var(--ink-2);opacity:.25"></i>' + esc(gx('relCi')) + '</span><span><i class="sw" style="border-radius:50%;background:var(--muted)"></i>' + esc(gx('relMonth')) + '</span>');
   }
-  // 64, second proposal (30 Oct, Mohammad: keep today's look, plot each aircraft's NCs, no scale stretched by one line): one page per
+  // 64, second proposal (keep today's look, plot each aircraft's NCs, no scale stretched by one line): one page per
   // group of lines of a similar scale (A350 · A330, A400M, A320), ◀ ▶ to turn the page; plain scale; per product the period rate, its
   // 95 % confidence interval with both ends written, and one dot per aircraft (its NCs on that product; an aircraft of the production
   // table finished in the period with no NC counts 0)
@@ -4049,9 +4050,9 @@ function fto2FromTables(ncIn, defIn, ref, disIn, cxIn) {
     var hb2 = V2BAND[k] && V2BAND[k].querySelector('.sub'); if (hb2) hb2.textContent = gx('relSub' + V);
     gSet(k, nav + svg(W0, H, g, gT(k)), V === 'P' ? sw(lineCol(os[0].o.line), gx('relRate'), true) + '<span><i class="ln" style="width:22px;height:2px;background:var(--ink-2)"></i>' + esc(gx('relCi')) + '</span>' : '');
   }
-  // 64 (30 Oct, Mohammad): per product, the rate of 2025, of the year to date, of the last 6 and the last 3 months, each with its 95 %
+  // 64: per product, the rate of 2025, of the year to date, of the last 6 and the last 3 months, each with its 95 %
   // confidence interval (Byar), coloured by period from light (2025) to dark (3 months). No summer rule: the volume is counted on
-  // the days the plant works (D.eqmsn.wd), so July and August weigh what they produced (Mohammad, 30 Oct). One page per group of lines.
+  // the days the plant works (D.eqmsn.wd), so July and August weigh what they produced. One page per group of lines.
   function relWin(n) { return pAct().slice(-n).reverse(); }   // month indices of the last n months of the period, newest first
   function byar(n, e) { if (!e) return null; if (!n) return { r: 0, l: 0, u: 3.689 / e };
     var l = n * Math.pow(1 - 1 / (9 * n) - 1.96 / (3 * Math.sqrt(n)), 3), u = (n + 1) * Math.pow(1 - 1 / (9 * (n + 1)) + 1.96 / (3 * Math.sqrt(n + 1)), 3); return { r: n / e, l: Math.max(l, 0) / e, u: u / e }; }
@@ -4089,7 +4090,7 @@ function fto2FromTables(ncIn, defIn, ref, disIn, cxIn) {
   // 64. rate with its 95% interval (Byar), log scale
   function g64(k) {
     var pv = window.FTO2_PREVIEW && window.FTO2_PREVIEW.rel; if (typeof pv === 'string') { g64v(k, pv); return; } if (pv === 2) { g64c(k); return; } if (pv) { g64b(k); return; }
-    g64w(k); return;   // 30 Oct, Mohammad: 2025, year to date, last 6 and last 3 months, each with its 95 % interval, one page per group of lines
+    g64w(k); return;   // 2025, year to date, last 6 and last 3 months, each with its 95 % interval, one page per group of lines
     var W0 = gWd(k), os = pOk().filter(function (o) { return o.NC > 0; }).map(function (o) {
       var n = o.NC, l = n * Math.pow(1 - 1 / (9 * n) - 1.96 / (3 * Math.sqrt(n)), 3), u = (n + 1) * Math.pow(1 - 1 / (9 * (n + 1)) + 1.96 / (3 * Math.sqrt(n + 1)), 3);
       return { o: o, r: n / o.EQ, l: Math.max(l, 0.01) / o.EQ, u: u / o.EQ }; }).sort(function (a, b) { return b.r - a.r; });
@@ -4136,7 +4137,7 @@ function fto2FromTables(ncIn, defIn, ref, disIn, cxIn) {
     var R = y25Rca(), q = R ? y25Rate(R.filter(function (x) { return x.cat === 'Erreur Branchement'; }), function (x) { return x.d; }, function (p) { return !!CONN_LINES[PD.line[p]]; }) : null;   // 2025: connection errors per product delivered, A330 and A350
     pTrend(k, pMonthly(function (o, i) { return o.connm[i]; }, connOk), f2, function (v) { return gx('perEq', { v: f2(v) }); }, tint('--c2', 100), q ? { v: q.r, lab: S('v2Avg25') } : null); }
 
-  // connection errors per million connection operations (Mohammad, 30 Oct: a MIP has 5,572; MIP A350 only until the other products'
+  // connection errors per million connection operations (a MIP has 5,572; MIP A350 only until the other products'
   // counts are known). References: 2025 (per MIP delivered), the target (2025 - 25 %), and the sigma level of the period
   var OPS_MSN = { 'MIP A350': 5572 };
   function invNorm(p) {   // inverse of the standard normal distribution (Acklam), for the sigma level
@@ -4185,7 +4186,7 @@ function fto2FromTables(ncIn, defIn, ref, disIn, cxIn) {
     try { REP.forEach(function (n) { if (gNc(n) && gScope(n)) { var k = liabCat(n); lc[k] = (lc[k] || 0) + 1; } }); } finally { GF.liab = l0; }
     document.getElementById('gLiabMenu').innerHTML = LIABS.map(function (k) { return '<label><input type="checkbox" data-liab="' + k + '"' + (GF.liab.indexOf(k) >= 0 ? ' checked' : '') + '>' + esc(S('liab_' + k)) + '<small>' + num(lc[k] || 0) + '</small></label>'; }).join('');
     document.getElementById('gLiabTxt').textContent = GF.liab === 'fso' ? S('liab_all') : LIABS.filter(function (k) { return GF.liab.indexOf(k) >= 0; }).map(function (k) { return S('liab_' + k); }).join(', ');
-    var rec = GF.phase === 'REC'; document.getElementById('gCostBox').hidden = !rec;   // the cost switch: REC only (Mohammad, 3 Nov)
+    var rec = GF.phase === 'REC'; document.getElementById('gCostBox').hidden = !rec;   // the cost switch: REC only
     if (rec) document.getElementById('gCost').innerHTML = [['fto2', 'cost_fto2'], ['all', 'cost_all']].map(function (x) { return '<button type="button" role="radio" data-cost="' + x[0] + '" aria-checked="' + (GF.cost === x[0]) + '">' + esc(S(x[1])) + '</button>'; }).join('');
     ['gFrom', 'gTo'].forEach(function (id, i) { var el = document.getElementById(id); el.value = i ? GF.to : GF.from; el.min = DMIN; el.max = DMAX; });
     var gp = document.getElementById('gPick'); gp.hidden = !GF.pick; if (GF.pick) { document.getElementById('gPickTxt').textContent = pickLabel(GF.pick); document.getElementById('gPickX').setAttribute('aria-label', S('pkClear')); }
@@ -4300,7 +4301,7 @@ function fto2FromTables(ncIn, defIn, ref, disIn, cxIn) {
     ov: { top: ['VT', 'VN', 'VB', 'a:lead', 'VX'], fold: ['a:cal'] },
     pareto: { top: ['a:bub', 'a:bump', 'a:flow', '78', '76', 'VM', 'VQ', '53'],   // 30 Oct: connection errors by month alone on a row; per million operations beside by product
                 inboard: ['VW'], fold: ['65', 'VK'] },   // under the lists; the hundred squares sit in the lists (20 Oct); swapped pins folded until checked on the real data (21 Oct)
-    where: { top: ['VP', '61', 'a:prod', '54', 'a:msn', 'VF', 'a:station'], fold: ['64'] },   // fleet pictograms removed (Mohammad, 29 Oct)
+    where: { top: ['VP', '61', 'a:prod', '54', 'a:msn', 'VF', 'a:station'], fold: ['64'] },   // fleet pictograms removed
     cnq: { more: ['VC'], fold: ['VE'] }
   };
   var V2F = { VM: v2Mio, VT: v2Target, VN: v2Trend, VB: v2Budget, VS: v2Score, VX: v2Xmr, VW: v2Waffle, VQ: v2Quarters, VP: v2Prod, VF: v2Fins, VI: v2Icons, VC: v2Comp, VE: v2Each, VK: v2Pins };
@@ -4362,7 +4363,7 @@ function fto2FromTables(ncIn, defIn, ref, disIn, cxIn) {
     var ov = document.getElementById('p-ov'), figs = ov.querySelector('.figs');
     var og = v2Grid(V2L.ov.top); og.classList.add('v2ov'); ov.insertBefore(og, figs.nextSibling);
     var pie0 = document.querySelector('#ngx [data-card="prog"]'); if (pie0) { og.appendChild(pie0); ncBoard.watch(pie0); }   // NCs by line: up with the charts (20 Oct)
-    ov.setAttribute('data-lay', '5');   // Magazine, chosen by Mohammad on 19 Oct
+    ov.setAttribute('data-lay', '5');   // the Magazine layout
     var inner = document.querySelector('#ngxBox .inner'); inner.insertBefore(document.getElementById('ncChips'), inner.firstChild);   // the breakdown lists and their filter chips fold together
     var ngx = v2Wire(document.getElementById('ngx'));
     V2L.ov.fold.forEach(function (k) { var b = v2Band(k); if (b) ngx.appendChild(b); });
@@ -4376,7 +4377,7 @@ function fto2FromTables(ncIn, defIn, ref, disIn, cxIn) {
     var cq = v2Grid(V2L.cnq.more); cq.classList.add('v2cq'); document.getElementById('p-cnq').insertBefore(cq, document.getElementById('cgxBox'));
     var cgb = document.getElementById('cgxBox'), cgx = v2Wire(document.getElementById('cgx')); cgb.hidden = false;
     V2L.cnq.fold.forEach(function (k) { var b = v2Band(k); if (b) cgx.appendChild(b); });
-    var wo = document.getElementById('cWo'); if (wo) cgx.appendChild(wo.closest('.card'));   // how the rework is costed: in the other cost charts (Mohammad, 30 Oct)
+    var wo = document.getElementById('cWo'); if (wo) cgx.appendChild(wo.closest('.card'));   // how the rework is costed: in the other cost charts
     cgb.addEventListener('toggle', function () { if (cgb.open) v2Render(); });
     applyText();
   }
@@ -4623,11 +4624,11 @@ function fto2FromTables(ncIn, defIn, ref, disIn, cxIn) {
     var cnt = {}; SEL_NC.forEach(function (n) { cnt[n[2]] = (cnt[n[2]] || 0) + 1; });
     var wk = WEEKS.filter(function (w) { var mo = isoDay(isoMonday(w)); return weekEnd(w) >= GF.from && mo <= GF.to && !isPartial(w); });
     if (wk.length < 6) { pEmpty(k); return; }
-    // shutdown weeks (fewer than 10 série defects, as in the weekly tab) stay out of the mean and the limits
+    // shutdown weeks (fewer than 10 série defects) stay out of the mean and the limits
     var c = wk.map(function (w) { return cnt[w] || 0; }), sh = wk.map(function (w) { return (WEEK_ALL[w] || 0) < SET.semaine_fermeture; }), n = c.length, on = c.filter(function (v, j) { return !sh[j]; }), mean = avgOf(on), mr = [];
     if (on.length < 6) { pEmpty(k); return; }
     for (var i = 1; i < on.length; i++) mr.push(Math.abs(on[i] - on[i - 1]));
-    // σ (standard deviation) = mean week-to-week jump ÷ 1.128 (d2 for two points); 2 σ = attention, 3 σ = alarm (Mohammad, 30 Oct)
+    // σ (standard deviation) = mean week-to-week jump ÷ 1.128 (d2 for two points); 2 σ = attention, 3 σ = alarm
     var mrb = avgOf(mr), sg = mrb / 1.128, ucl = mean + 3 * sg, lcl = Math.max(0, mean - 3 * sg), u2 = mean + 2 * sg, l2 = Math.max(0, mean - 2 * sg);
     var W0 = gWd(k, 300), ml = 34, mrg = 92, pw = W0 - ml - mrg, h1 = 200, mt = 10, H = mt + h1 + 26, g = '';
     function X(j) { return ml + j / (n - 1) * pw; }
@@ -4663,7 +4664,7 @@ function fto2FromTables(ncIn, defIn, ref, disIn, cxIn) {
     gSet(k, svg(side ? Math.min(W0, gw + 384) : gw, Math.max(gw, side ? keys.length * 28 + 8 : 0), g, gT(k)), side ? '' : keys.map(function (c, i) { return sw(catFill(c), catLabel(c) + ' · ' + pct0(raw[i])); }).join(''));
   }
 
-  function v2Quarters(k) {   // 2025 against 2026, per MSN, A330 and A350 only (21 Oct). One row per cause (29 Oct, Mohammad: the slope chart
+  function v2Quarters(k) {   // 2025 against 2026, per MSN, A330 and A350 only (21 Oct). One row per cause (the slope chart
     // hid the causes that fell and crowded its labels): the top 10 causes of either year, hollow dot 2025, filled dot 2026, the arrow between
     if (connNone(k, 'vqOnly')) return;
     var keep = function (p) { return !!CONN_LINES[PD.line[p]]; };   // as the connection errors: A320's small parts counted one by one would pull the rate down
@@ -4704,7 +4705,7 @@ function fto2FromTables(ncIn, defIn, ref, disIn, cxIn) {
       '<span><b style="color:var(--up)">▲</b> ' + esc(gx('vqUp')) + '</span><span><b style="color:var(--down)">▼</b> ' + esc(gx('vqDown')) + '</span><span>= ' + esc(gx('vqFlat')) + '</span><span class="mu">' + esc(S('v2Q25')) + '</span>');
   }
 
-  // five ways to draw causes 2025 vs 2026 (30 Oct); Mohammad chose 'a', the slope chart (30 Oct)
+  // five ways to draw causes 2025 vs 2026; 'a', the slope chart, is the one shown
   var VQV = (window.FTO2_PREVIEW && window.FTO2_PREVIEW.vq) || 'a';
   function vqDir(va, vb) { return vb > va * 1.1 ? 1 : vb < va * 0.9 ? -1 : 0; }
   function vqCol(r) { var ck = RCA_CAT[r]; return ck === 'aside' || !ck ? 'var(--ink-2)' : catFill(ck); }
@@ -4770,7 +4771,7 @@ function fto2FromTables(ncIn, defIn, ref, disIn, cxIn) {
     o.top = Object.keys(top).sort(function (a, b) { return top[b] - top[a]; }).map(function (p) { return p + ' ' + num(top[p]); });
     return o;
   }
-  function v2UnplannedNote() {   // counted in every total, shown as no row of their own (Mohammad, 30 Oct): a note that opens their list
+  function v2UnplannedNote() {   // counted in every total, shown as no row of their own: a note that opens their list
     var u = v2Unplanned(); if (!u.n) return '';
     return '<details class="vdata vnote"><summary>' + esc(S('vpOut', { n: num(u.n) })) + '</summary><div class="table-wrap"><table class="mini"><tbody>' +
       u.list.slice().sort(function (a, b) { return a[1] < b[1] ? 1 : -1; }).map(function (n) { return '<tr><td class="nc"' + pk('nc', n[0]) + '>' + esc(n[0]) + '</td><td class="num">' + esc(shortDay(n[1])) + '</td><td>' + esc(n[3]) + '</td><td>' + esc(prodName(n[26])) + '</td><td>' + esc(n[22]) + '</td></tr>'; }).join('') +
@@ -4838,7 +4839,7 @@ function fto2FromTables(ncIn, defIn, ref, disIn, cxIn) {
     gSet(k, svg(W0, H, g, gT(k)), sw(tint('--seq', 55), gx('one')) + sw('var(--seq)', gx('twoPlus')));
   }
 
-  // swapped wires, pin by pin (from the vision prototype, branch claude/vision-wow; Mohammad, 21 Oct): the two pins read in the defect's
+  // swapped wires, pin by pin (from the vision prototype): the two pins read in the defect's
   // text ("... ENTRE LES BORNES 41 ET 42"; 1 to 3 characters, never a plug name such as 9KSJ26), per connector (FIN), one arc per pair
   var PIN_RE = [/(?:BORNES?|PINS?|CONTACTS?|BROCHES?)\s*[<«"]?\s*([A-Z]{1,2}\d?|\d{1,3}[A-Z]?)\s*[>»"]?\s*(?:ET\s+(?:LA\s+)?BORNE|ET|\/|&|-|AND)\s*[<«"]?\s*([A-Z]{1,2}\d?|\d{1,3}[A-Z]?)(?![A-Z0-9])/i,
     /INVERS\w*[^.]*?ENTRE\s*[<«"]?\s*([A-Z]{1,2}\d?|\d{1,3}[A-Z]?)\s*[>»"]?\s+ET\s*[<«"]?\s*([A-Z]{1,2}\d?|\d{1,3}[A-Z]?)(?![A-Z0-9])/i];
@@ -4997,7 +4998,7 @@ function fto2FromTables(ncIn, defIn, ref, disIn, cxIn) {
   document.getElementById('miIn').addEventListener('click', function () { setMinor(true); });
   document.getElementById('miOut').addEventListener('click', function () { setMinor(false); });
 
-  // ---------------------------------------------------------------- Simple mode (30 Oct, Mohammad): two monthly views made of this dashboard's
+  // ---------------------------------------------------------------- Simple mode: two monthly views made of this dashboard's
   // own charts, for the QCMs (Synthèse: the plant, the year) and the QLS (Détail: one line, one month). Détail's Pareto opens a level at a time
   // (category, then cause, then sub-code), in volume by default; its charts run from January to that month. Charts show without their notes;
   // the icon at a chart's corner opens the complete chart over the page. The Expert layout lends Simple its bands, the Pareto tab's boards

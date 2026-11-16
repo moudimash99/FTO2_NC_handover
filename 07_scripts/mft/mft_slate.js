@@ -47,9 +47,12 @@ function mftFromTables(ncIn, defIn, R) {
 }
 
 // ---------------------------------------------------------------- the store: the page's actions and alarm marks, in this browser
-// Same calls as the page's shared store (collection, doc, set, update, delete, onSnapshot). Slate gives a code sandbox no shared
-// store: the shared actions are the table config/1_actions_mft.csv (they reach the page in FTO2_MFT_REF.actions and replace
-// this browser's copy at every load); an action typed on the page is kept in this browser only, until it is added to the table.
+/* ===== STORE START ===== */
+// The store of both MFT pages: this one and the laptop page (07_scripts/mft/build_mft.py copies this block into it). Its calls:
+// use('db') gives collection(name), then doc(id) with set, update and delete, and onSnapshot; note(lang) says where the actions
+// are kept. Neither page has a shared store: the shared actions are the table config/1_actions_mft.csv (they reach the page in
+// FTO2_MFT_REF.actions and replace this browser's copy at every load); an action typed on the page is kept in this browser
+// only, until it is added to the table.
 window.FTO2_STORE = (function () {
   var mem = {}, subs = {}, ok = true, KEY = 'mft-fto2-slate-';
   function copy(o) { return JSON.parse(JSON.stringify(o)); }
@@ -88,6 +91,7 @@ window.FTO2_STORE = (function () {
       : 'Le navigateur bloque l’enregistrement : les actions modifiées ici seront perdues au rechargement.'; }
   };
 })();
+/* ===== STORE END ===== */
 
 // ---------------------------------------------------------------- the page (07_scripts/mft/mft_template.html), started once the tables are in
 function mftMain() {

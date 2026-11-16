@@ -3,8 +3,9 @@
 Reads the dashboard's two tables (05_outputs/fto2_dash_nc.csv, fto2_dash_defects.csv) and the A330 / A350 MFT trackers
 (config/1_actions_mft.csv).
 Writes 03_reports/FTO2_MFT.html from 07_scripts/mft/mft_template.html, its Slate
-version in 03_reports/skywise/mft/ (build_mft_slate.py), and the tracker actions as 05_outputs/mft_actions_seed.json: the page keeps its actions in its own store (seeded once from that
-file); the page itself carries no action.
+version in 03_reports/skywise/mft/ (build_mft_slate.py), and the tracker actions as 05_outputs/mft_actions_seed.json. The page
+carries the tracker actions and keeps them, with the actions typed on it, in this browser: the store of mft_slate.js, as the
+Slate page.
 
 Scope as the dashboard's default: NCs raised at FTO2 (plant FTO2 or FT02), created in the year followed; the phase is a filter in
 the page (Série by default).
@@ -126,6 +127,14 @@ def alarm_parts():
             cut("/* ===== ALARM CSS START ===== */", "/* ===== ALARM CSS END ===== */"))
 
 
+def store_part():
+    """The store of the Slate page (07_scripts/mft/mft_slate.js, between STORE START and END): the actions and the alarm marks,
+    in this browser. The laptop page uses the same, so that both behave alike."""
+    t = open(os.path.join(HERE, "mft_slate.js"), encoding="utf-8").read()
+    a, b = "/* ===== STORE START ===== */", "/* ===== STORE END ===== */"
+    return t[t.index(a):t.index(b) + len(b)]
+
+
 def seed_actions():
     """The MFT actions (config/1_actions_mft.csv) in the page's own shape, each tied to the problem it targets."""
     out = []
@@ -149,6 +158,12 @@ def main():
     js, css = alarm_parts()
     page = tpl.replace("/*@@DATA@@*/null", blob, 1).replace("/*@@ALARMS@@*/", js, 1).replace("/*@@ALARMCSS@@*/", css, 1)
     assert "@@ALARMS@@" not in page and "@@ALARMCSS@@" not in page
+    # the tracker actions as the Slate page gets them (FTO2_MFT_REF.actions), and the store that keeps them
+    mark = '<script type="application/json" id="mft-data">'
+    ref = json.dumps({"actions": seeds}, ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/")
+    page = page.replace(mark, '<script type="application/json" id="mft-ref">%s</script>\n<script>\n'
+                        "window.FTO2_MFT_REF = JSON.parse(document.getElementById('mft-ref').textContent);   // the tracker actions\n"
+                        "%s\n</script>\n%s" % (ref, store_part(), mark), 1)
     with open(os.path.join(ROOT, "03_reports", "FTO2_MFT.html"), "w", encoding="utf-8") as f:
         f.write(page)
     print("NCs", len(D["ncs"]), "| defect lines", len(D["defs"]), "| data to", D["to"], D["toWeek"], "| tracker actions", len(seeds),

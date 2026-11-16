@@ -155,8 +155,8 @@ def eqmsn(nc, weekly_csv=None):
 
 
 def product_alias_rules():
-    """NC products the production plan does not name, put back on the plan product they belong to (config/2_produits_alias.csv,
-    agreed with Mohammad 29 Oct): [line, product regex, station regex or '', plan product]. The first rule that matches wins, and a
+    """NC products the production plan does not name, put back on the plan product they belong to (config/2_produits_alias.csv):
+    [line, product regex, station regex or '', plan product]. The first rule that matches wins, and a
     rule applies only to a product that is not itself in the plan. The page applies the same rules to the 2026 NCs (fto2FromTables)."""
     path = config.path("2_produits_alias.csv")
     if not os.path.exists(path):

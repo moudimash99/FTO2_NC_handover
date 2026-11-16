@@ -1,6 +1,6 @@
-import sys, pandas as pd
-sys.path.insert(0, '/home/claude/pack/skywise_nc_dashboard_v48/1_pipeline')
-import fto2_logic as L
+import os, sys, pandas as pd
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))   # the repository: the parser is fto2/parser
+from fto2.parser import fto2_logic as L
 pd.set_option('display.width',250); pd.set_option('display.max_rows',200)
 d=sys.argv[1]
 D=pd.read_csv(f'{d}/dash.csv',dtype=str,low_memory=False)
