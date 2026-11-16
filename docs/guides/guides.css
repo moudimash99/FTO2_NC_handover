@@ -115,3 +115,7 @@ dl.gloss { display: grid; grid-template-columns: 38mm 1fr; row-gap: 4pt; column-
 .short main > h2:first-child { margin-top: 0; }
 .next { border-top: 0.8pt solid var(--line); margin-top: 14pt; padding-top: 8pt; }
 .next h2 { margin-top: 0; }
+/* a small fact table per chart (layout A), labelled lines (layout C) */
+table.fact { margin: 3pt 0 8pt; } table.fact th { background: var(--soft); font-size: 8.4pt; text-transform: none; letter-spacing: 0; vertical-align: top; border-bottom: 0.6pt solid var(--line); }
+ul.lab { list-style: none; padding-left: 0; margin: 2pt 0 9pt; } ul.lab > li { position: relative; padding-left: 22mm; margin-bottom: 2.5pt; }
+ul.lab > li > span { position: absolute; left: 0; width: 20mm; font-size: 8.2pt; font-weight: 650; color: var(--accent); text-transform: uppercase; letter-spacing: 0.04em; padding-top: 1pt; }
