@@ -69,8 +69,9 @@ def front(text, name):
     return meta, text[m.end():]
 
 
-def markdown(path, title, chapter):
-    """A Markdown document as chapter number `chapter` of a guide (HTML): see the top of this file."""
+def markdown(path, title, chapter, chapters=None):
+    """A Markdown document as chapter number `chapter` of a guide (HTML): see the top of this file. `chapters`:
+    {document file name: its chapter in the guide}, for the references from one document to another."""
     text = read(path)
     text = re.sub(r"\A\s*# .*\n", "", text)                                                    # its own title
     text = re.sub(r"(?m)^(The three guides|Les trois guides)\b.*\n(?:.+\n)*\n", "", text)       # the pointer to the other guides
@@ -85,21 +86,29 @@ def markdown(path, title, chapter):
     out = re.sub(r"<(/?)h6>", r"<\1h5>", out)
     out = re.sub(r"<pre[^>]*><code[^>]*>", "<pre><code>", out)
     out = out.replace("<table>", '<table class="md">')
-    # "section 3" of the document is section <chapter>.3 of the guide
+    # "`config.md`, section 1": section 1 of the chapter made of config.md; "section 3" alone: of this chapter
+    def other(m):
+        c = (chapters or {}).get(m.group(1))
+        return "%s %d.%s" % (m.group(3), c, m.group(4)) if c else m.group(0)
+    out = re.sub(r"<code>([\w.]+\.md)</code>(,?\s+(?:la\s+)?)([Ss]ections?) (\d+)(?:\.\d+)?\b(?![.\d])", other, out)   # 4.3 -> 4
     out = re.sub(r"\b([Ss]ections?|parties?) (\d+)\b(?![.\d])", lambda m: "%s %d.%s" % (m.group(1), chapter, m.group(2)), out)
     return "<h2>%s</h2>\n%s" % (html.escape(title), out)
 
 
 def includes(body, name):
     """The body with each <!-- md: file | title --> replaced by that document."""
-    out, at, chapter = [], 0, 0
+    found, at, chapter = [], 0, 0
     for m in re.finditer(r"<!--\s*md:\s*([^|>]+?)\s*\|\s*(.*?)\s*-->", body):
-        before = body[at:m.start()]
-        chapter += len(re.findall(r"<h2(?![^>]*class=\"plain\")", before)) + 1
+        chapter += len(re.findall(r"<h2(?![^>]*class=\"plain\")", body[at:m.start()])) + 1
         path = os.path.normpath(os.path.join(HERE, m.group(1).strip()))
         if not os.path.exists(path):
             sys.exit("%s: document not found: %s" % (name, m.group(1).strip()))
-        out += [before, markdown(path, m.group(2).strip(), chapter)]
+        found.append((m, path, chapter))
+        at = m.end()
+    chapters = {os.path.basename(path): c for m, path, c in found}
+    out, at = [], 0
+    for m, path, c in found:
+        out += [body[at:m.start()], markdown(path, m.group(2).strip(), c, chapters)]
         at = m.end()
     return "".join(out) + body[at:]
 
