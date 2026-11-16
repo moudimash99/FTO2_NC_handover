@@ -1,9 +1,12 @@
 # FTO2 NC dashboard
 
-Three pages on the non-conformities (NC) of plant FTO2: the **dashboard** (Essentiel and Deep dive), the **MFT page** (weekly
-Pareto, analysis, action tracking) and the **Tableau Elizabeth**. They run in Skywise (Slate) and as files on a laptop.
+Pages on the non-conformities (NC) of plant FTO2: the **dashboard** (Essentiel and Deep dive), the **MFT page** (weekly
+Pareto, analysis, action tracking), and the **NC writer** (writing an NC with the official codes). They run in Skywise
+(a Code Workspace notebook and a Slate application); this folder builds them and checks them.
 
-New here? Start with **`docs/handover.md`**: what the pages are, how to keep them running, what is still open.
+New here? Start with the **technical manual** (`docs/guides/pdf/FTO2_NC_Dashboard_Technical_Manual_EN.pdf`, in French
+`FTO2_NC_Dashboard_Manuel_Technique_FR.pdf`): chapter 1 in ten minutes, chapter 2 when something breaks. The guides for
+the team are beside it: user guide, settings guide, access guide.
 
 ## How it fits together
 
@@ -23,22 +26,28 @@ Skywise data (NCs, work orders, aléas)          config/  (the settings, one tab
   `config/lisez_moi.csv` lists every table, what it changes and who should edit it.
 - **Downloads**: the production plan (exports of the Tableau Avances / Retards) and the cable requests (the cable team's
   tracker) are read from the files saved beside the notebook as they were downloaded (`fto2/downloads.py`).
-- **`fto2/`**: the backend. One file per subject; the same code runs on the laptop and in the Skywise notebook.
+- **`fto2/`**: the backend. One file per subject; the same code runs here and in the Skywise notebook.
 - **`build/templates/`**: the dashboard page (`dashboard.html`) and its calculations (`model.js`, shared with the optional
   Slate functions).
-- **`build/`**, **`07_scripts/mft/`**, **`07_scripts/elizabeth/`**: build the pages and their Skywise files.
+- **`build/`**, **`07_scripts/mft/`**: build the pages and their Skywise files. **`07_scripts/elizabeth/`**: an optional
+  page (the Tableau Elizabeth), built the same way.
+- **`08_tools/nc_writer_slate/`**: the NC writer, with its own checks and its Slate set-up (`README.md` there).
 - **`tests/`**: the checks, and the reference snapshot of every number the pages show.
 - **`03_reports/skywise/`**: what goes into Skywise, and `README.md` there: how to set it up.
 
-The other folders hold the inputs (`06_input_data/`, `04_reference/` for the AI labels), earlier work and documents.
+- **`docs/`**: the four reference documents below (in French in `docs/fr/`), and the guides (`docs/guides/`: their
+  sources, and the PDF in `docs/guides/pdf/`).
 
-## Run it on the laptop
+The data of a reference day is in `06_input_data/` (extracts), `04_reference/` (the cause labels) and `05_outputs/` (what
+the build writes from it).
+
+## Build and check
 
 ```
 python3 -I build/build_all.py                    # the backend, the dashboard and the Skywise files
 python3 -I 07_scripts/mft/build_mft.py           # the MFT page
 python3 -I 07_scripts/elizabeth/build_elizabeth.py   # the Tableau Elizabeth
-python3 -m unittest discover -s tests -t .       # the checks (seconds)
+python3 -m unittest discover -s tests -t .       # the checks (seconds); the others: tests/README.md
 ```
 
 The pages are written to `03_reports/` (`FTO2_NC_Dashboard.html`, `FTO2_MFT.html`, `FTO2_Elizabeth.html`).
@@ -49,7 +58,7 @@ Needs Python 3 with pandas, numpy and openpyxl (`requirements.txt`); the page ch
 See `docs/comment_faire.md`: change a rule (e.g. what counts as REC), a rate, a target, a product, update the production plan,
 add an MFT action, and check that nothing else moved.
 
-## The three guides
+## The reference documents
 
 | Guide | Explains |
 |---|---|

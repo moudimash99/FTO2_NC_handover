@@ -196,6 +196,9 @@ def main():
 
 # ============================================================ CNQ package
 def refresh_cnq_package(nc_in, d):
+    if not os.path.isdir(CNQ):   # the separate CNQ package is not part of every copy of this folder
+        say("cnq package: folder %s not here, step skipped" % os.path.basename(CNQ))
+        return
     # the package's defect dataset, classified by root cause; the parser columns are kept under parser_*
     dd = d[["notification_number", "seq", "qty", "code", "fin", "text", "provenance", "etat_cable",
             "llm_sous_categorie", "llm_categorie", "llm_rca_type", "llm_rca_nom", "llm_mineur", "llm_defaut_cable",
