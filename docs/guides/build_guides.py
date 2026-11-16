@@ -21,6 +21,13 @@ The first comment of a source:
     lang: en
     -->
 
+A screenshot is a figure with the name of its picture and the height to keep for it, in mm:
+
+    <figure data-shot="d_top" data-h="70"><figcaption>The top of the dashboard.</figcaption></figure>
+
+When img/d_top.png (or .jpg) exists, the picture is shown; otherwise a frame of that height says that a screenshot goes
+there. To add the screenshots, save them in img/ under these names and build the guide again.
+
 A guide can take in a Markdown document of the repository as one chapter, so that the document is written once:
 
     <!-- md: ../config.md | The settings -->         the file (from this folder), then the chapter's title
@@ -95,6 +102,28 @@ def includes(body, name):
         out += [before, markdown(path, m.group(2).strip(), chapter)]
         at = m.end()
     return "".join(out) + body[at:]
+
+
+SHOT = {"en": "Screenshot to insert", "fr": "Capture d’écran à insérer"}
+
+
+def screenshots(body, lang):
+    """The body with each <figure data-shot="name" data-h="mm"> given its picture, or a frame where it goes (see the top of
+    this file); and the list [(name, shown)]."""
+    shots = []
+
+    def one(m):
+        attrs, inner = m.group(1), m.group(2)
+        name = re.search(r'data-shot="([^"]+)"', attrs).group(1)
+        h = re.search(r'data-h="(\d+)"', attrs)
+        pic = next((p for p in ("img/%s.png" % name, "img/%s.jpg" % name) if os.path.exists(os.path.join(HERE, p))), None)
+        shots.append((name, bool(pic)))
+        box = ('<img src="%s" alt="">' % pic if pic else
+               '<div class="ph" style="height:%smm"><span class="ph-t">%s</span><span class="ph-f">%s</span></div>'
+               % (h.group(1) if h else "55", SHOT.get(lang, SHOT["en"]), html.escape(name)))
+        return "<figure%s>%s%s</figure>" % (attrs, box, inner)
+    body = re.sub(r'<figure((?:\s[^>]*)?\sdata-shot="[^"]+"[^>]*)>(.*?)</figure>', one, body, flags=re.S)
+    return body, shots
 
 
 def headings(body, depth):
@@ -175,6 +204,7 @@ def build(name):
     src = os.path.join(HERE, name + ".html")
     meta, body = front(read(src), name)
     body = includes(body, name)
+    body, shots = screenshots(body, meta.get("lang", "en"))
     missing = [m for m in re.findall(r'<img[^>]+src="([^"]+)"', body) if not os.path.exists(os.path.join(HERE, m))]
     if missing:
         sys.exit("%s: figure(s) not found: %s (run: node docs/guides/screens.js)" % (name, ", ".join(sorted(set(missing)))))
@@ -209,6 +239,9 @@ def build(name):
             out.write(f)
     from pypdf import PdfReader
     print("%-24s -> %s (%d pages, %d KB)" % (name, os.path.relpath(pdf, os.path.dirname(os.path.dirname(HERE))), len(PdfReader(pdf).pages), os.path.getsize(pdf) // 1024))
+    todo = [n for n, shown in shots if not shown]
+    if todo:
+        print("%24s    %d screenshot(s) to insert: %s" % ("", len(todo), ", ".join(todo)))
 
 
 def main():
