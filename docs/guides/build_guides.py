@@ -92,6 +92,7 @@ def markdown(path, title, chapter, chapters=None):
         return "%s %d.%s" % (m.group(3), c, m.group(4)) if c else m.group(0)
     out = re.sub(r"<code>([\w.]+\.md)</code>(,?\s+(?:la\s+)?)([Ss]ections?) (\d+)(?:\.\d+)?\b(?![.\d])", other, out)   # 4.3 -> 4
     out = re.sub(r"\b([Ss]ections?|parties?) (\d+)\b(?![.\d])", lambda m: "%s %d.%s" % (m.group(1), chapter, m.group(2)), out)
+    out = re.sub(r"\b(dans|de) (sections? \d)", r"\1 la \2", out)   # French: "dans la section 3.4"
     return "<h2>%s</h2>\n%s" % (html.escape(title), out)
 
 
