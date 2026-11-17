@@ -18,8 +18,8 @@ error. These are the links, in the order the data flows:</p>
     <tr><td><b>Source data</b></td><td><code>non_conformity</code>, <code>work_order_operation</code>, <code>mes_disruptions</code>: owned by other
       teams. <code>fto2_ai_labels</code>: the stored cause labels, owned by the dashboard.</td></tr>
     <tr><td><b>The settings</b></td><td>The Fusion spreadsheet <i>FTO2 NC Dashboard - Settings</i> and its datasets <code>fto2_set_…</code>.</td></tr>
-    <tr><td><b>The pipeline</b></td><td>The Code Workspace: the pipeline notebook, its code, the settings folder and the files saved beside
-      it.</td></tr>
+    <tr><td><b>The pipeline</b></td><td>The Code Repository that runs the update on a schedule (its code, settings and station list). While it is
+      not in use: the Code Workspace with the pipeline notebook.</td></tr>
     <tr><td><b>The four tables</b></td><td><code>fto2_dash_nc</code>, <code>fto2_dash_defects</code>, <code>fto2_dash_disruptions</code>,
       <code>fto2_dash_ref</code>.</td></tr>
     <tr><td><b>The sync</b></td><td>The four tables copied to Postgres, schema <code>foundry_sync</code>, same names.</td></tr>
@@ -39,7 +39,7 @@ holds, and nothing depends on one person's account.</p>
     <tr><td>NC writer's action</td><td>run, for those who write NCs</td><td>run</td><td>edit</td></tr>
     <tr><td>The four tables</td><td>view</td><td>view</td><td>edit</td></tr>
     <tr><td>Fusion spreadsheet</td><td>none</td><td>edit</td><td>edit</td></tr>
-    <tr><td>Code Workspace</td><td>none</td><td>none</td><td>edit</td></tr>
+    <tr><td>Code Repository (or Code Workspace)</td><td>none</td><td>none</td><td>edit</td></tr>
     <tr><td><code>fto2_ai_labels</code></td><td>none</td><td>none</td><td>edit</td></tr>
     <tr><td>Source data</td><td>none</td><td>none</td><td>view</td></tr>
   </tbody>
@@ -69,7 +69,7 @@ least a week before the departure:</p>
   <li>At least two owners on the folder, the leaving person not counted, one of them a manager.</li>
   <li>The successor has their own access to the three source datasets, and has run the update once with their own account.</li>
   <li>The successor opens the application in edit mode and sees the queries and the code of each page.</li>
-  <li>Anything that runs on a schedule runs under an account that stays.</li>
+  <li>The schedule of the update runs under an account that stays, or a project's service account.</li>
   <li>The leaving person's rights are removed afterwards, from the same places or from the group.</li>
 </ol>
 

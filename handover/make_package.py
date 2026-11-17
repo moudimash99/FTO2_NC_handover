@@ -4,14 +4,16 @@
 
     FTO2_NC_Dashboard/
       README.txt
-      for_users/          the guides for the people who read the dashboard, keep its settings, give access (PDF)
-      for_developers/     the technical manuals (PDF, English and French), the Skywise installation file, and the source
+      for_users/          the documents for the people who read the dashboard (PDF, English and French)
+      for_developers/     the documents for the person who maintains it (PDF, English and French), the Skywise files,
+                          and the source
 
 The source is a copy of the files of this repository listed in SOURCE below, without the work folders of the project
 (history, trials, exercises). Before writing, every text file and every PDF of the package is searched for the words of
 MUST_NOT_APPEAR and NAMES; one found stops the script with the file and the line.
 
-The guides are taken as they are in docs/guides/pdf/: build them first (python3 -I docs/guides/build_guides.py).
+The documents are taken as they are in docs/guides/pdf/users/ and developers/: build them first
+(python3 -I docs/guides/build_guides.py). Every English document needs its French one.
 """
 import fnmatch
 import os
@@ -25,8 +27,6 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 NAME = "FTO2_NC_Dashboard"
 PDF = os.path.join(ROOT, "docs", "guides", "pdf")
 
-USERS = ["FTO2_NC_Dashboard_User_Guide.pdf", "FTO2_NC_Dashboard_Settings_Guide.pdf", "FTO2_NC_Dashboard_Access_Guide.pdf"]
-DEVELOPERS = ["FTO2_NC_Dashboard_Technical_Manual_EN.pdf", "FTO2_NC_Dashboard_Manuel_Technique_FR.pdf"]
 INSTALL = os.path.join(ROOT, "03_reports", "skywise", "FTO2_Skywise_installation.zip")
 
 # the source: (path in the repository, path in source/); a folder is copied whole, less SKIP
@@ -123,22 +123,30 @@ def scan(top):
 README = """FTO2 NC dashboard
 =================
 
-for_users/
-  FTO2_NC_Dashboard_User_Guide.pdf       Reading the dashboard and the MFT page. For everyone.
-  FTO2_NC_Dashboard_Settings_Guide.pdf   What to keep up to date (tables, downloads, the yearly change) and how
-                                         to run the update. For the person in charge of the dashboard.
-  FTO2_NC_Dashboard_Access_Guide.pdf     Who needs which rights in Skywise, and the checks before the dashboard
-                                         changes hands. For the owner of the dashboard in Skywise.
+for_users/        The documents for the people who read the dashboard: start with "1 Introduction", then the
+                  "Start here" of your role (QLS, QCM, Manager); one "Deep dive" per tab. English in en/, French in fr/.
 
-for_developers/
-  FTO2_NC_Dashboard_Technical_Manual_EN.pdf   How it works, how to keep it working, how to change it.
-  FTO2_NC_Dashboard_Manuel_Technique_FR.pdf   The same, in French.
-  FTO2_Skywise_installation.zip               Every file the Skywise set-up needs (technical manual, chapter 7).
-  source/                                     The code, the settings as first installed, the checks and their
-                                              reference data (technical manual, chapter 8).
+for_developers/   The documents for the person who maintains the dashboard: start with "1 Start here". English in
+                  en/, French in fr/.
+  FTO2_Skywise_installation.zip   Every file of the Skywise set-up: the update (notebook, or Code Repository in
+                                  code_repository/), the pages and their queries, the settings.
+  source/                         The code, the settings, the checks and their reference data.
 
 The dashboard itself is a Skywise (Slate) application: open it from its link.
 """
+
+
+def documents(group):
+    """{language: [PDF paths]} of a group (users, developers); stops when an English document has no French one."""
+    out = {}
+    for lang in ("en", "fr"):
+        folder = os.path.join(PDF, group, lang)
+        out[lang] = sorted(os.path.join(folder, f) for f in os.listdir(folder) if f.endswith(".pdf")) if os.path.isdir(folder) else []
+    if not out["en"]:
+        sys.exit("no %s document built (python3 -I docs/guides/build_guides.py)" % group)
+    if len(out["fr"]) != len(out["en"]):
+        sys.exit("%s: %d documents in English, %d in French: every one needs both" % (group, len(out["en"]), len(out["fr"])))
+    return out
 
 
 def main():
@@ -149,13 +157,11 @@ def main():
     users, devs = os.path.join(top, "for_users"), os.path.join(top, "for_developers")
     os.makedirs(users)
     os.makedirs(devs)
-    missing = [f for f in USERS + DEVELOPERS if not os.path.exists(os.path.join(PDF, f))]
-    if missing:
-        sys.exit("guide(s) not built: %s (python3 -I docs/guides/build_guides.py)" % ", ".join(missing))
-    for f in USERS:
-        shutil.copy2(os.path.join(PDF, f), users)
-    for f in DEVELOPERS:
-        shutil.copy2(os.path.join(PDF, f), devs)
+    for group, folder in (("users", users), ("developers", devs)):
+        for lang, paths in documents(group).items():
+            os.makedirs(os.path.join(folder, lang))
+            for p in paths:
+                shutil.copy2(p, os.path.join(folder, lang))
     shutil.copy2(INSTALL, devs)
     n = copy_source(os.path.join(devs, "source"))
     with open(os.path.join(top, "README.txt"), "w", encoding="utf-8") as f:

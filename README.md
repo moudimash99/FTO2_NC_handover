@@ -2,11 +2,11 @@
 
 Pages on the non-conformities (NC) of plant FTO2: the **dashboard** (Essentiel and Deep dive), the **MFT page** (weekly
 Pareto, analysis, action tracking), and the **NC writer** (writing an NC with the official codes). They run in Skywise
-(a Code Workspace notebook and a Slate application); this folder builds them and checks them.
+(the update: a Code Repository transform or the Code Workspace notebook; the pages: a Slate application); this folder
+builds them and checks them.
 
-New here? Start with the **technical manual** (`docs/guides/pdf/FTO2_NC_Dashboard_Technical_Manual_EN.pdf`, in French
-`FTO2_NC_Dashboard_Manuel_Technique_FR.pdf`): chapter 1 in ten minutes, chapter 2 when something breaks. The guides for
-the team are beside it: user guide, settings guide, access guide.
+New here? Start with **Start here – Developers** (`docs/guides/pdf/developers/en/1 Start here.pdf`; in French in
+`developers/fr/`): a few short documents, one subject each. The users' documents are in `docs/guides/pdf/users/`.
 
 ## How it fits together
 
@@ -26,7 +26,8 @@ Skywise data (NCs, work orders, aléas)          config/  (the settings, one tab
   `config/lisez_moi.csv` lists every table, what it changes and who should edit it.
 - **Downloads**: the production plan (exports of the Tableau Avances / Retards) and the cable requests (the cable team's
   tracker) are read from the files saved beside the notebook as they were downloaded (`fto2/downloads.py`).
-- **`fto2/`**: the backend. One file per subject; the same code runs here and in the Skywise notebook.
+- **`fto2/`**: the backend. One file per subject; the same code runs here, in the Skywise notebook and in the Code
+  Repository's transform (`fto2/transform_io.py`, `build/repository/`).
 - **`build/templates/`**: the dashboard page (`dashboard.html`) and its calculations (`model.js`, shared with the optional
   Slate functions).
 - **`build/`**, **`07_scripts/mft/`**: build the pages and their Skywise files. **`07_scripts/elizabeth/`**: an optional
@@ -35,8 +36,8 @@ Skywise data (NCs, work orders, aléas)          config/  (the settings, one tab
 - **`tests/`**: the checks, and the reference snapshot of every number the pages show.
 - **`03_reports/skywise/`**: what goes into Skywise, and `README.md` there: how to set it up.
 
-- **`docs/`**: the four reference documents below (in French in `docs/fr/`), and the guides (`docs/guides/`: their
-  sources, and the PDF in `docs/guides/pdf/`).
+- **`docs/`**: the four reference documents below (in French in `docs/fr/`), and the short documents for the users and
+  the developers (`docs/guides/`: their sources in `users/` and `developers/`, the PDF in `docs/guides/pdf/`).
 
 The data of a reference day is in `06_input_data/` (extracts), `04_reference/` (the cause labels) and `05_outputs/` (what
 the build writes from it).

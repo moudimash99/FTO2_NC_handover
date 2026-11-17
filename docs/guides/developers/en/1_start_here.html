@@ -20,7 +20,8 @@ the year is on target. It lives entirely in Skywise. The team only opens the pag
       spreadsheet <i>FTO2 NC Dashboard - Settings</i>, and the rules (which NC counts, which product, which cause) in
       small tables kept with the code.</td></tr>
     <tr><td><b>The update</b></td><td>The pipeline: Python code that reads the NCs from Skywise, applies the rules, reads the defects written in each
-      NC, works out their cost, and writes four tables. It runs from the pipeline notebook.</td></tr>
+      NC, works out their cost, and writes four tables. It runs as a transform of a Code Repository, on a schedule, or by
+      hand from the pipeline notebook: the same code either way.</td></tr>
     <tr><td><b>The four tables</b></td><td><code>fto2_dash_nc</code> (one row per NC), <code>fto2_dash_defects</code> (one row per defect),
       <code>fto2_dash_disruptions</code> (quality aléas with no NC) and <code>fto2_dash_ref</code> (everything else the
       pages need).</td></tr>

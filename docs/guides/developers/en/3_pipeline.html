@@ -11,8 +11,16 @@ lang: en
 
 <h2>What the update does</h2>
 <p>The update reads the NCs from Skywise, decides which ones count, reads the defects written in each NC, gives each defect a
-cause, works out the cost, and writes the four tables the pages read. It is plain Python, one file per subject, run from the
-pipeline notebook. The notebook itself holds only a few lines: it reads the settings, then calls the run.</p>
+cause, works out the cost, and writes the four tables the pages read. It is plain Python, one file per subject (the folder
+<code>fto2</code>), and it runs in one of two ways:</p>
+<ul>
+  <li><b>The Code Repository</b>: a transform, <code>fto2_update.py</code>, that Skywise runs on a schedule. The settings tables
+    are kept with the code (<code>fto2/settings</code>).</li>
+  <li><b>The pipeline notebook</b>, in a Code Workspace, run by hand. The settings are in its <code>data/config</code> folder.</li>
+</ul>
+<p>Both run exactly the same steps and write the same tables. <b>Use one, not both:</b> once the scheduled transform runs, the
+notebook is no longer used, and the code is changed in the repository only. Two copies of the code that drift apart are the
+surest way to get two different dashboards.</p>
 
 <h3>What it reads</h3>
 <table class="keep">
@@ -74,13 +82,15 @@ description, with today's minutes and rates, is <i>How the cost is calculated</i
 <code>cost/</code>.</p>
 
 <h2>Running the update</h2>
+<p>In the Code Repository, the schedule runs it; to run it at once, build <code>fto2_dash_nc</code>. Its log prints the same
+lines as the notebook. In the notebook, run every cell from the first to the last. Either way:</p>
 <ol>
-  <li>Open the pipeline notebook and run every cell, from the first to the last.</li>
   <li>Read the first lines: the year followed, and which settings came from Fusion.</li>
   <li>Read the last lines: the number of NCs and defect lines, the tables written, and any warning.</li>
   <li>A few minutes later, open the dashboard: the date <b>Données au…</b> must be the day of the latest NC.</li>
 </ol>
-<p>The code is read again at every run: there is no need to restart the notebook after a change.</p>
+<p>A change of code in the repository takes effect at the next build, once committed and checked. In the notebook, the code
+is read again at every run: there is no need to restart it.</p>
 
 <h2>Where to change what</h2>
 <table class="keep">
@@ -101,8 +111,9 @@ description, with today's minutes and rates, is <i>How the cost is calculated</i
   <tbody>
     <tr><td>Names a settings table and a line</td><td>That line is badly filled: fix it, run again.</td></tr>
     <tr><td>"settings table … not found"</td><td>A table was renamed or deleted: put it back.</td></tr>
-    <tr><td>A dataset that is not found (AliasNotDefined)</td><td>The dataset is not in the notebook's Data panel, or was renamed: add it, or
-      change its name in <code>2_sources.csv</code>.</td></tr>
+    <tr><td>A dataset that is not found</td><td>Notebook: the dataset is not in the Data panel (AliasNotDefined). Repository: it is not an input
+      of the transform. Add it, or change its name in <code>2_sources.csv</code>.</td></tr>
+    <tr><td>"the station list is missing"</td><td>Repository: <code>fto2_station_mapping.csv</code> must be in <code>fto2/files</code>.</td></tr>
     <tr><td>A Fusion sheet "not used"</td><td>Not an error: the file is used instead. Fix the sheet's column names.</td></tr>
     <tr><td>"fto2_dash_cout not written"</td><td>Normal: that table only serves an optional set-up.</td></tr>
     <tr><td>A list "could not be read"</td><td>The GPS register or the Test list is missing or changed shape: its NCs run without the list's

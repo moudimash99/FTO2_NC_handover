@@ -51,7 +51,7 @@ import unicodedata
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 OUT = os.path.join(HERE, "pdf")
-GUIDES = ["user_guide", "settings_guide", "access_guide", "technical_manual.en", "technical_manual.fr"]
+GUIDES = []   # long guides with a cover and contents (none today: every document is a short one, in users/ and developers/)
 
 
 def read(path):
@@ -178,7 +178,9 @@ def cover_html(meta):
 
 def head_html(meta):
     """The title block of a short document, at the top of its first page."""
-    who = '<p class="for">%s: %s</p>' % (html.escape(meta.get("label_for", "For")), html.escape(meta["for"])) if meta.get("for") else ""
+    fr = meta.get("lang") == "fr"   # in French: "Pour : ...", a thin space before the colon
+    who = '<p class="for">%s%s %s</p>' % (html.escape(meta.get("label_for", "Pour" if fr else "For")), "\u202f:" if fr else ":",
+                                          html.escape(meta["for"])) if meta.get("for") else ""
     return ('<header class="dochead"><div class="kicker">%s</div><h1>%s</h1><p class="sub">%s</p>%s</header>'
             % (html.escape(meta.get("kicker", "")), html.escape(meta["title"]), html.escape(meta["subtitle"]), who))
 
