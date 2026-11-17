@@ -49,16 +49,23 @@ muette tant que l’année n’a pas 16 semaines terminées (fin avril).</p>
   <tbody>
     <tr><td><b>Part prices</b></td><td>Le prix unitaire de chaque pièce (numéro de matériel), pour qu’une pièce rebutée ou échangée soit comptée
       dans le coût. Chaque mise à jour liste les pièces encore sans prix.</td><td>Quand un prix est connu ou change.</td></tr>
-    <tr><td><b>Cable tracker</b></td><td>Le suivi de l’équipe câbles, collé tel quel, à partir de sa ligne d’en-tête.</td><td>À chaque mise à jour
-      du suivi.</td></tr>
-    <tr><td><b>GPS register</b></td><td>Le registre GPS de l’année suivie, collé à partir de sa ligne d’en-tête.</td><td>À chaque mise à jour du
-      registre.</td></tr>
-    <tr><td><b>Test list</b></td><td>La liste des NC de l’équipe Test, collée à partir de sa ligne d’en-tête.</td><td>À chaque mise à jour de la
-      liste.</td></tr>
+    <tr><td><b>Cable tracker</b></td><td>Le suivi de l’équipe câbles : toute la feuille Google, collée telle quelle.</td><td>À chaque
+      mise à jour du suivi.</td></tr>
+    <tr><td><b>GPS register</b></td><td>Le registre GPS de l’année suivie : toute la feuille Google, collée telle quelle.</td><td>À
+      chaque mise à jour du registre.</td></tr>
+    <tr><td><b>Test list</b></td><td>La liste des NC de l’équipe Test : toute la feuille Google, collée telle quelle.</td><td>À chaque
+      mise à jour de la liste.</td></tr>
+    <tr><td><b>Production plan</b></td><td>L’export du Tableau Avances / Retards, collé tel quel.</td><td>À chaque nouvel
+      export.</td></tr>
   </tbody>
 </table>
-<p>Trois règles pour chaque feuille : gardez la première ligne (les noms des colonnes) exactement comme elle est ; une ligne
+<p>Les feuilles remplies à la main : gardez la première ligne (les noms des colonnes) exactement comme elle est ; une ligne
 par élément, pas de cellules fusionnées, pas de totaux ; une date s’écrit 2026-05-15 ou 15/05/2026.</p>
+<p>Les quatre dernières feuilles sont <b>collées en entier, telles quelles</b> : videz la feuille, copiez tout à la source
+(Ctrl+A puis Ctrl+C dans Google Sheets ou dans l’export) et collez en A1. Ne supprimez et ne renommez rien : la mise à jour
+trouve elle-même la ligne d’en-tête parmi les premières lignes, et laisse de côté les lignes de titre au-dessus et les
+colonnes dont elle n’a pas besoin. La date du plan est une date écrite au-dessus de l’en-tête de l’export s’il y en a une,
+sinon le jour de la mise à jour.</p>
 
 <h2>Comment la mise à jour lit les feuilles</h2>
 <ul>
@@ -69,7 +76,10 @@ par élément, pas de cellules fusionnées, pas de totaux ; une date s’écri
     écrire un peu différemment. Une feuille à laquelle il manque une colonne n’est pas utilisée : la mise à jour nomme la
     colonne et garde le fichier.</li>
   <li>Une feuille qui n’a que son en-tête n’est pas utilisée : le fichier est gardé plutôt que vidé.</li>
-  <li>Les premières lignes affichées par la mise à jour listent les réglages venus de Fusion. Lisez-les après chaque
+  <li>Les premières lignes affichées par la mise à jour listent les réglages venus de Fusion et, pour chaque feuille collée en
+    entier, la ligne où elle a trouvé l’en-tête et le nombre de lignes prises (<i>Fusion sheet GPS register: header on row 4,
+    812 rows</i>). Une feuille qu’elle ne peut pas utiliser reçoit un avertissement, <i>NOT USED</i>, avec la raison (les
+    colonnes non trouvées) et ce qui est gardé à la place ; l’avertissement revient à la fin. Lisez-les après chaque
     changement.</li>
   <li>La feuille <i>Target and pages</i> peut aussi être lue directement par les pages (une option de l’installation Skywise : son
     README, étape 3). Une modification s’affiche alors à la prochaine ouverture d’une page, sans attendre la mise à jour. Une

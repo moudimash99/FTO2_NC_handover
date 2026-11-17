@@ -47,13 +47,15 @@ Everything else stays as it is.
    - `FUSION`: the path of the folder that holds the datasets of the Fusion spreadsheet (*FTO2 NC Dashboard - Settings -
      Blackout days*, *... - Cost rates and times*...), ending with `/`. Copy it, do not type it: a folder name cut short on
      the screen, or a capital letter, and the build says the dataset does not exist. The datasets' names are already in the
-     file. If one of them was renamed or moved, write its id (*Copy RID*) on its own line instead.
+     file. If one of them was renamed or moved, write its id (*Copy RID*) on its own line instead. The spreadsheet needs
+     its sheet *Production plan*, synced like the others (`UPDATE.md`, step 1).
    - `FOLDER`: where the tables are written, in the repository's project. Its line holds the team's folder already.
    - Leave `TEST = "_test"`.
 9. **Commit**, then wait until the *Checks* tab is green.
 10. **Test build.** With `fto2_update.py` open, press *Build* (right-hand panel) and choose `fto2_dash_nc_test`. It takes a
-    few minutes. The log starts with *Settings from Fusion: ...* (one entry per sheet) and ends with the tables written.
-    Open `fto2_dash_nc_test`: it holds this year's NCs and last year's.
+    few minutes. The log starts with *Settings from Fusion: ...*, then one line for each sheet pasted whole (*Fusion
+    sheet GPS register: header on row 4, 812 rows*), and ends with the tables written. A line that starts with ⚠️ names a
+    sheet the update could not use, and why. Open `fto2_dash_nc_test`: it holds this year's NCs and last year's.
 11. **Switch.** In `fto2_update.py`, set `TEST = ""`. Commit, then build `fto2_dash_nc`.
 12. **The sync.** Point the Postgres sync at the four new tables `fto2_dash_nc`, `fto2_dash_defects`,
     `fto2_dash_disruptions`, `fto2_dash_ref`, under the same names as today.
@@ -73,10 +75,10 @@ Everything else stays as it is.
 
 ## Later
 
-- **The production plan.** Until it is set up, the plan stays as it was last saved (`src/fto2/settings/0_plan_msn.csv`).
-  To read new exports of the Tableau Avances / Retards: put them, one file per download, in a dataset (the date at the end of
-  each name, `Avances_Retards_2026-11-03.csv`; keep the older ones). In `fto2_update.py`, remove the `#` on the two lines
-  `fto2_plan_exports` (one in the list of inputs, one under `def compute(`) and write that dataset's path. Commit.
+- **The production plan, the cable tracker, the GPS register, the Test list:** empty the Fusion sheet, paste the new
+  export or the whole Google sheet there, as it is, from cell A1, then build (or wait for the schedule). Nothing to delete
+  or rename: the update finds the header row itself. The plan's older aircraft come from
+  `src/fto2/settings/0_plan_msn.csv`; the export's date is the one written above its header, else the day of the update.
 - **A rule changed** (a table of `src/fto2/settings`): edit the table, commit, build. The settings people fill in by hand are
   in Fusion: nothing to commit for them.
 
@@ -85,7 +87,8 @@ Everything else stays as it is.
 | What you see | What to do |
 |---|---|
 | The checks fail on code style (*line too long*, *E501*...) | In `src/setup.cfg`, add the line `exclude = fto2` under `[flake8]` and under `[pycodestyle]`. In `src/.pylintrc`, under `[MASTER]`, add `ignore=fto2`. Commit again. |
-| *Alias ... does not exist* (*FTO2 NC Dashboard - Settings - ...*) | Step 8: copy the `FUSION` folder's path again (ending with `/`), or put each dataset's id on its line |
+| *Alias ... does not exist* (*FTO2 NC Dashboard - Settings - ...*) | Step 8: copy the `FUSION` folder's path again (ending with `/`), or put each dataset's id on its line. *... - Production plan*: the sheet and its sync are not made yet (`UPDATE.md`, step 1) |
+| *⚠️ Fusion sheet ... NOT USED* in the log, or the cables or the plan not updated on the dashboard | The line says why (the columns it did not find) and what was kept instead. Empty the sheet and paste the whole sheet again, as it is, from A1. If a column was renamed at the source, the line names it: tell the developer |
 | *... could not be created since the user is not authorized. Datasets can only be created in the same project as the code repository* | Step 0: the repository is outside the project of `FOLDER` (a personal folder, for example) |
 | An input of another project must be added to the project | Accept the offer to add it to the project's references (a project owner may have to approve) |
 | `No module named` pandas, pyarrow or polars | Step 5 |

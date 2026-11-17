@@ -16,8 +16,8 @@ Steps:
   D. the dashboard's three tables: parser, root-cause labels, rework orders, aléas, cost model -> fto2_dash_nc,
      fto2_dash_defects, fto2_dash_disruptions; plus fto2_lines_to_label.csv for the next labelling pass
   E. the reference data of the three pages (production plan, comparison year, cables, MFT actions, cost settings, cause tree)
-     -> fto2_dash_ref. The production plan and the cable requests come from the files saved in data/ as they were
-     downloaded (fto2/downloads.py).
+     -> fto2_dash_ref. The production plan and the cable requests come from their exports as they are: pasted in the
+     Fusion sheets (fto2/fusion.py), or saved in data/ (fto2/downloads.py).
 All the settings come from data/config/ (1_parametres.csv, 2_sources.csv and the other tables).
 """
 import time
@@ -266,6 +266,9 @@ def run(Dataset, Column, say=None, old_outputs=None):
         why = "the dataset is not in the Data panel" if isinstance(e, KeyError) or "AliasNotDefined" in str(e) else str(e).splitlines()[0][:200]
         print("fto2_dash_cout not written (%s): normal, only an optional Slate set-up reads it." % why)
     say("Done.")
+    from . import fusion
+    for line in fusion.ALERTS:   # a Fusion sheet pasted as it is that the run could not use: said at the start, and here
+        print(line)
     for path in manual_lists.NOT_READ:
         print(f"⚠️ The list '{path}' could not be read (see the error above): its NCs carry no GPS / Test information in this run.\n"
               f"   Its name is in data/config/2_sources.csv ({{annee}} stands for the year followed).")

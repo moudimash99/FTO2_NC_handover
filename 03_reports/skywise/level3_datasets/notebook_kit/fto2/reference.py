@@ -157,10 +157,10 @@ MILESTONES = ["impression", "enclenchement", "se", "meca", "inte", "test", "qual
 
 
 def _production_export():
-    """The production plan per aircraft, from the exports of the 'Tableau Avances / Retards' saved beside the notebook and the
-    table config/0_plan_msn.csv (fto2/downloads.py, plan): the date of the newest export and one record per MSN and product,
-    {line, prod, msn, plan, real} with the 8 milestone dates (Impression, Enclenchement, SE, MECA, INTE, TEST, QUALITE,
-    Départ OTA). (None, []) without a plan."""
+    """The production plan per aircraft, from the exports of the 'Tableau Avances / Retards' (pasted in Fusion, or saved beside
+    the notebook) and the table config/0_plan_msn.csv (fto2/downloads.py, plan): the date of the newest export and one
+    record per MSN and product, {line, prod, msn, plan, real} with the 8 milestone dates (Impression, Enclenchement, SE,
+    MECA, INTE, TEST, QUALITE, Départ OTA). (None, []) without a plan."""
     import datetime as dt
     t = downloads.plan()
     if not len(t):

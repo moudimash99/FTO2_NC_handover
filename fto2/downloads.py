@@ -1,17 +1,20 @@
-"""The files the team downloads and saves beside the notebook as they are (data/), read at each run.
+"""The downloads the team does not retype, read at each run as they are: the production plan and the cable requests.
 
-    production plan   every export of the Tableau Avances / Retards (CSV)      2_sources.csv, line exports_plan
-    cable requests    the export of the cable team's tracker (CSV)             2_sources.csv, line suivi_cables
+    production plan   the export of the Tableau Avances / Retards pasted in the Fusion sheet "Production plan";
+                      in the notebook, also every export saved in data/      2_sources.csv, line exports_plan
+    cable requests    the cable team's tracker pasted in the Fusion sheet "Cable tracker" (fto2/fusion.py turns it into a
+                      file and names it on the line suivi_cables of 2_sources.csv), else the export saved in data/
 
-Nobody fills a table by hand for these: a new download is saved in data/ beside the earlier ones, and the next run reads it.
-Each line of 2_sources.csv gives where the files are, with * for any text (data/Avances_Retards*.csv); an empty or missing
-line means no file is read, and the table of config/ is used alone.
+Nobody fills a table by hand for these: a new export is pasted whole into its Fusion sheet (or saved in data/ beside the
+earlier ones), and the next run reads it. Each line of 2_sources.csv gives where the files are, with * for any text
+(data/Avances_Retards*.csv); an empty or missing line means no file is read, and the table of config/ is used alone.
 
 The production plan is made of every export, oldest first. An aircraft takes its row from the newest export that lists it.
 An aircraft the newest export no longer lists keeps its last row if it was delivered by then (its Départ OTA, the real date
 or else the planned one, is before that export): the plan remembers the aircraft of the year before, whose deliveries the
 targets start from. A row that left the export before its delivery has left the plan. The table config/0_plan_msn.csv is
-the plan as it stood when the exports started to be saved in data/: it is read as one more export, at its own date.
+the plan as it stood when the exports started to be read: it is read as one more export, at its own date. The export
+pasted in Fusion comes last (fto2/fusion.py writes it into the settings folder, PLAN_SHEET, dated in its name).
 
 The cable requests are those of the newest export of the tracker; without one, the table config/0_demandes_cables.csv.
 """
@@ -35,6 +38,7 @@ CABLE_COLUMNS = ["ligne", "semaine", "date", "mois", "trimestre", "nc", "program
 CABLE_NUMBER = r"\b\d{4}\s?[-–]\s?\d{4}\b"                                              # e.g. 4411-0298
 CABLE_TYPE = r"\b(ADB|AD|DRB|DRC|DR|MLB|KL|VNA|VNB|VNC|WX|MMG|DK)\s?(\d\d)\b"           # e.g. WX26
 READ = {}   # what the last call read, for the run's report: {"plan": [...files], "cables": file}
+PLAN_SHEET = "fusion_fto2_set_plan_{day}.csv"   # the export pasted in Fusion, as fto2/fusion.py writes it (settings folder)
 
 
 def file_day(path):
@@ -82,28 +86,39 @@ def _day(s):
         return ""
 
 
-def plan_of_export(path, older=()):
+def _dmy(day):
+    """'2026-11-03' -> '03/11/2026', as an export writes its dates."""
+    return "/".join(reversed(day.split("-"))) if day else ""
+
+
+def plan_of_export(path, older=(), base=None):
     """One export as plan rows (PLAN_COLUMNS): one row per aircraft (MSN) and product, with the planned and the real date of
     its 8 milestones. An MSN that reads "#N/A" in the export (an Excel error) takes its MSN, and its planned dates that read
-    "#N/A", from the older exports, the newest of them first, matched on line, product and rank."""
+    "#N/A", from the older exports, the newest of them first, else from the plan as last read (base: the table
+    config/0_plan_msn.csv, so that an export pasted alone in Fusion is repaired too), matched on line, product and rank."""
     names, _ = config.mapping("2_produits_noms_plan.csv", "nom_plan", "nom_affiche")
+    product = lambda r: names.get(r[2].strip(), r[2].strip())
     bad = lambda v: v.strip() in ("", "#N/A")
-    known = {}   # (line, product, rank) -> the planned row of an older export that has its MSN
+    known = {}   # (line, product, rank) -> an older planned row that has its MSN (as an export writes it), and the note
+    for _, b in (base.iterrows() if base is not None else ()):
+        if not bad(b["msn"]):
+            row = ["", b["ligne"], "", b["msn"], b["rang"]] + [_dmy(b["prevu_" + m]) for m in MILESTONES]
+            known[(b["ligne"].strip(), b["produit"].strip(), b["rang"].strip())] = (
+                row, b["note"] or "MSN et dates #N/A repris du plan du %s" % b["export_du"])
     for f in sorted(older, key=file_day):
         for r in _export_rows(f):
             if len(r) >= 15 and r[14] == "date prévue du début" and not bad(r[3]):
-                known[(r[1].strip(), r[2].strip(), r[4].strip())] = (r, file_day(f))
+                known[(r[1].strip(), product(r), r[4].strip())] = (r, "MSN et dates #N/A repris de l'export du %s" % file_day(f))
     asof, out, cur = file_day(path), [], None
     for r in _export_rows(path):
         if len(r) < 15:
             continue
         note = ""
         if r[14] == "date prévue du début" and bad(r[3]):
-            o = known.get((r[1].strip(), r[2].strip(), r[4].strip()))
+            o = known.get((r[1].strip(), product(r), r[4].strip()))
             if o:
-                o, when = o
+                o, note = o
                 r = r[:3] + [o[3]] + r[4:5] + [x if not bad(x) else y for x, y in zip(r[5:13], o[5:13])] + r[13:]
-                note = "MSN et dates #N/A repris de l'export du %s" % when
         if r[14] == "date prévue du début" and r[3].strip():
             cur = {"ligne": r[1].strip(), "produit": names.get(r[2].strip(), r[2].strip()), "msn": r[3].strip(), "rang": r[4].strip(),
                    "export_du": asof, "note": note}
@@ -132,23 +147,32 @@ def merge_plan(layers):
 _PLAN = {}
 
 
+def plan_exports():
+    """The exports of the production plan, oldest first: those saved in data/ (2_sources.csv, line exports_plan) and the one
+    pasted in the Fusion sheet "Production plan" when the run took it (PLAN_SHEET, in the settings folder; on the same day
+    as an export of data/, it comes after it)."""
+    sheet = glob.glob(config.path(PLAN_SHEET.format(day="*")))
+    return sorted(files("exports_plan") + sheet, key=lambda p: (file_day(p), p in sheet, os.path.basename(p)))
+
+
 def plan():
     """The production plan, one row per aircraft and product (PLAN_COLUMNS, as text): the table of config/ and every export
-    saved in data/."""
-    exports = files("exports_plan")
+    (plan_exports)."""
+    exports = plan_exports()
     base = config.path(PLAN_TABLE)
     stamp = (config.folder(),) + tuple((p, os.path.getmtime(p), os.path.getsize(p)) for p in ([base] if os.path.exists(base) else []) + exports)
     if _PLAN.get("stamp") != stamp:
-        layers = []
+        layers, t = [], None
         if os.path.exists(base):
             t = config.table(PLAN_TABLE, ["ligne", "produit", "msn", "export_du"])
             for c in PLAN_COLUMNS:
                 if c not in t.columns:
                     t[c] = ""
+            t = t[PLAN_COLUMNS]
             days = [d for d in t["export_du"] if d]
-            layers.append((max(days) if days else "", t[PLAN_COLUMNS]))
+            layers.append((max(days) if days else "", t))
         for i, f in enumerate(exports):
-            layers.append((file_day(f), plan_of_export(f, exports[:i])))
+            layers.append((file_day(f), plan_of_export(f, exports[:i], t)))
         _PLAN.update(stamp=stamp, table=merge_plan(layers))
         READ["plan"] = [os.path.basename(f) for f in exports]
     return _PLAN["table"]
@@ -217,12 +241,20 @@ def cables():
     return config.table(CABLE_TABLE) if os.path.exists(config.path(CABLE_TABLE)) else None
 
 
+def _shown(name):
+    """A file the run read, as its report names it: a sheet pasted in Fusion by the sheet's name."""
+    m = re.fullmatch(PLAN_SHEET.format(day=r"(\d{4}-\d{2}-\d{2})"), name)
+    if m:
+        return "the Fusion sheet Production plan (export of %s)" % m.group(1)
+    return "the Fusion sheet Cable tracker" if name == "fusion_fto2_set_cables.csv" else "the export " + name
+
+
 def report():
-    """What the run read from data/, in two lines for its log."""
+    """What the run read from data/ and from the Fusion sheets, in two lines for its log."""
     p, c = READ.get("plan"), READ.get("cables")
     table = plan()
     days = [d for d in table["export_du"] if d] if len(table) else []
     return ["production plan: %d aircraft and products, as of %s (%s)" % (
                 len(table), max(days) if days else "?",
-                "exports read: " + ", ".join(p) if p else "no export in data/: the table config/%s alone" % PLAN_TABLE),
-            "cable requests: " + ("from the export %s" % c if c else "no export in data/: the table config/%s" % CABLE_TABLE)]
+                "read: " + ", ".join(map(_shown, p)) if p else "no export: the table config/%s alone" % PLAN_TABLE),
+            "cable requests: " + ("from %s" % _shown(c) if c else "no export: the table config/%s" % CABLE_TABLE)]

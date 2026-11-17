@@ -1,4 +1,5 @@
-"""The settings spreadsheet for Fusion: the tables filled in by hand, one sheet each, with today's values.
+"""The settings spreadsheet for Fusion: the tables filled in by hand, one sheet each, with today's values, and the sheets
+where the lists and the production plan are pasted whole, as they are (empty but for a note in A1 that says how).
 
     python3 -I build/fusion_sheet.py
 
@@ -20,22 +21,33 @@ CONFIG = os.path.join(ROOT, "config")
 OUT = os.path.join(ROOT, "03_reports", "skywise", "fusion", "FTO2 NC Dashboard - Settings.xlsx")
 
 HOQ, CM = "Head of Quality", "Configuration manager"
-# sheet, dataset, who fills it, what it holds, when it changes, where today's values come from
+# the note in A1 of a sheet pasted whole (the update's header search passes over it: it holds no column name)
+NNBSP = " "   # the narrow no-break space of French typography, before : and ;
+PASTE = ("Collez ici la feuille entière, telle quelle, à partir de la cellule A1" + NNBSP + ": dans Google Sheets, Ctrl+A puis "
+         "Ctrl+C" + NNBSP + "; ici, cliquez sur A1 puis Ctrl+V. Pour une mise à jour, videz d'abord cette feuille (Ctrl+A puis "
+         "Suppr). Ne retouchez rien" + NNBSP + ": les lignes de titre et les colonnes en plus sont ignorées.")
+PASTE_PLAN = ("Collez ici l'export du Tableau Avances / Retards en entier, tel quel, à partir de la cellule A1" + NNBSP + ": dans "
+              "l'export, Ctrl+A puis Ctrl+C" + NNBSP + "; ici, cliquez sur A1 puis Ctrl+V. À chaque nouvel export, videz "
+              "d'abord cette feuille (Ctrl+A puis Suppr). Ne retouchez rien" + NNBSP + ": les lignes au-dessus de l'en-tête "
+              "sont ignorées.")
+# sheet, dataset, who fills it, what it holds, when it changes, where today's values come from (a sheet pasted whole: its note)
 SHEETS = [
     ("Target and pages", "fto2_set_targets", HOQ, "The cut of the target (0.25 = 25 % fewer NCs per MSN than the comparison year), what the pages "
-     "show when they open, the target of an MFT action.", "When the target or the review changes.", ("1_reglages_pages.csv", None)),
+     "show when they open, the target of an MFT action.", "When the target or the review changes.", "1_reglages_pages.csv"),
     ("Cost rates and times", "fto2_set_cost", HOQ, "The hourly rates of production, quality and methods, and the minutes each step of an NC takes.",
-     "When a rate or a process time changes.", ("1_cout_parametres.csv", None)),
+     "When a rate or a process time changes.", "1_cout_parametres.csv"),
     ("Blackout days", "fto2_set_blackout", HOQ, "The days the plant is closed (weight 0) or half closed (weight 0.5). One row per period.",
-     "Each year, and when a closure is added.", ("1_calendrier_production.csv", None)),
+     "Each year, and when a closure is added.", "1_calendrier_production.csv"),
     ("Part prices", "fto2_set_part_prices", CM, "The unit price of each part (material number), so that a scrapped or exchanged part is counted in the "
-     "cost. The update lists the parts still to price.", "When a price is known or changes.", ("1_prix_pieces.csv", None)),
-    ("Cable tracker", "fto2_set_cables", CM, "The cable team's tracker of cable requests, pasted as it is, from its header row.",
-     "At each update of the tracker.", ("../06_input_data/cable_team_tracker_A30_NC_cables.csv", None)),
-    ("GPS register", "fto2_set_gps", CM, "The GPS register of the year followed, pasted as it is, from its header row.",
-     "At each update of the register.", (None, ["N°  NC / AM / AF", "Date SAP"])),
-    ("Test list", "fto2_set_test", CM, "The Test team's NC list, pasted as it is, from its header row.",
-     "At each update of the list.", (None, ["N° NC", "Dates"])),
+     "cost. The update lists the parts still to price.", "When a price is known or changes.", "1_prix_pieces.csv"),
+    ("Cable tracker", "fto2_set_cables", CM, "The cable team's tracker of cable requests: the whole Google sheet, pasted as it is.",
+     "At each update of the tracker.", PASTE),
+    ("GPS register", "fto2_set_gps", CM, "The GPS register of the year followed: the whole Google sheet, pasted as it is.",
+     "At each update of the register.", PASTE),
+    ("Test list", "fto2_set_test", CM, "The Test team's NC list: the whole Google sheet, pasted as it is.",
+     "At each update of the list.", PASTE),
+    ("Production plan", "fto2_set_plan", CM, "The export of the Tableau Avances / Retards, pasted as it is.",
+     "At each new export.", PASTE_PLAN),
 ]
 
 HEAD_FONT, HEAD_FILL = Font(bold=True, color="FFFFFF"), PatternFill("solid", fgColor="1D6B52")
@@ -77,9 +89,11 @@ def main():
     rm.title = "Read me"
     rm.append(["FTO2 NC Dashboard - Settings"])
     rm["A1"].font = Font(bold=True, size=14)
-    rm.append(["The values of the dashboard that people fill in by hand. One sheet per table; keep the first row (the column "
-               "names) exactly as it is. Each sheet is synced to the dataset named below, which the update reads. The change shows "
-               "on the dashboard after the next update."])
+    rm.append(["The values of the dashboard that people fill in by hand, one sheet per table. In the first four sheets, keep the "
+               "first row (the column names) exactly as it is. The last four are pasted whole, as they are, from cell A1 (in "
+               "Google Sheets or in the export: Ctrl+A, Ctrl+C; here: Ctrl+V in A1), after emptying the sheet: the update finds "
+               "the header row itself and leaves out the title rows and the columns it does not need. Each sheet is synced to "
+               "the dataset named below, which the update reads. The change shows on the dashboard after the next update."])
     rm.append([])
     rm.append(["Sheet", "Filled in by", "What it holds", "When it changes", "Dataset"])
     for c in range(1, 6):
@@ -91,14 +105,13 @@ def main():
     for row in rm.iter_rows(min_row=2):
         for x in row:
             x.alignment = WRAP
-    for title, dataset, who, what, when, (src, keep) in SHEETS:
-        if src is None:
-            sheet(wb, title, [keep])
+    for title, dataset, who, what, when, src in SHEETS:
+        if src in (PASTE, PASTE_PLAN):   # pasted whole: only the note, which the paste covers
+            ws = wb.create_sheet(title)
+            ws["A1"] = src
+            ws["A1"].font = Font(italic=True, color="555555")
             continue
-        rows = read(os.path.normpath(os.path.join(CONFIG, src)))
-        if keep:
-            rows = [rows[0]] + [r for r in rows[1:] if r and r[0] in keep]
-        sheet(wb, title, rows)
+        sheet(wb, title, read(os.path.join(CONFIG, src)))
     os.makedirs(os.path.dirname(OUT), exist_ok=True)
     wb.save(OUT)
     print("written:", os.path.relpath(OUT, ROOT), "-", len(SHEETS), "sheets")

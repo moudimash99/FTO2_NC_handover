@@ -48,15 +48,22 @@ weeks (late April).</p>
   <tbody>
     <tr><td><b>Part prices</b></td><td>The unit price of each part (material number), so that a scrapped or exchanged part is counted in the
       cost. Each update lists the parts still to price.</td><td>When a price is known or changes.</td></tr>
-    <tr><td><b>Cable tracker</b></td><td>The cable team's tracker, pasted as it is, from its header row.</td><td>At each update of the
+    <tr><td><b>Cable tracker</b></td><td>The cable team's tracker: the whole Google sheet, pasted as it is.</td><td>At each update of the
       tracker.</td></tr>
-    <tr><td><b>GPS register</b></td><td>The GPS register of the year followed, pasted from its header row.</td><td>At each update of the
-      register.</td></tr>
-    <tr><td><b>Test list</b></td><td>The Test team's NC list, pasted from its header row.</td><td>At each update of the list.</td></tr>
+    <tr><td><b>GPS register</b></td><td>The GPS register of the year followed: the whole Google sheet, pasted as it is.</td><td>At each
+      update of the register.</td></tr>
+    <tr><td><b>Test list</b></td><td>The Test team's NC list: the whole Google sheet, pasted as it is.</td><td>At each update of the
+      list.</td></tr>
+    <tr><td><b>Production plan</b></td><td>The export of the Tableau Avances / Retards, pasted as it is.</td><td>At each new
+      export.</td></tr>
   </tbody>
 </table>
-<p>Three rules for every sheet: keep the first row (the column names) exactly as it is; one row per item, no merged cells,
+<p>The sheets filled in by hand: keep the first row (the column names) exactly as it is; one row per item, no merged cells,
 no totals; a date written as 2026-05-15 or 15/05/2026.</p>
+<p>The last four sheets are <b>pasted whole, as they are</b>: empty the sheet, copy everything at the source (Ctrl+A, Ctrl+C in
+Google Sheets or in the export) and paste it in cell A1. Delete nothing and rename nothing: the update finds the header row
+itself, among the first rows, and leaves out the title rows above it and the columns it does not need. The plan's date is a
+date written above the export's header if there is one, else the day of the update.</p>
 
 <h2>How the update reads the sheets</h2>
 <ul>
@@ -65,7 +72,10 @@ no totals; a date written as 2026-05-15 or 15/05/2026.</p>
   <li>The column names are matched loosely (case, accents, spaces), because a sync may write them a little differently. A
     sheet with a column missing is not used: the update names the column and keeps the file.</li>
   <li>A sheet with its header only is not used: the file is kept rather than emptied.</li>
-  <li>The first lines printed by the update list which settings came from Fusion. Read them after any change.</li>
+  <li>The first lines printed by the update list which settings came from Fusion, and for each sheet pasted whole, on which
+    row it found the header and how many rows it took (<i>Fusion sheet GPS register: header on row 4, 812 rows</i>). A sheet
+    it cannot use gets a warning, <i>NOT USED</i>, with the reason (the columns it did not find) and what it kept instead;
+    the warning comes again at the end. Read them after any change.</li>
   <li>The sheet <i>Target and pages</i> can also be read by the pages themselves (an option of the Skywise set-up: its README,
     step 3). A change there then shows the next time a page is opened, without waiting for the update. A line missing or
     wrongly written keeps the update's value.</li>

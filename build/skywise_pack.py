@@ -458,12 +458,12 @@ NOTEBOOK = """# FTO2 NC pipeline and dashboard tables (Skywise Code Workspace).
 #   - upload the folder notebook_kit next to this notebook (the code; upload it again after each update);
 #   - upload the folder config into data/, so that it becomes data/config (the settings). Then change the settings there;
 #     do not upload the folder again, it would overwrite the changes;
-#   - data/ keeps the station mapping, the GPS register and the Test list, and the files saved as they are downloaded:
-#     the exports of the Tableau Avances / Retards (production plan) and of the cable team's tracker (their names are in
-#     data/config/2_sources.csv);
+#   - data/ keeps the station mapping, and the files the Fusion sheets stand in for when they are not in the Data panel:
+#     the GPS register, the Test list, the exports of the Tableau Avances / Retards (production plan) and of the cable
+#     team's tracker (their names are in data/config/2_sources.csv);
 #   - Data panel: read non_conformity, fto2_ai_labels, work_order_operation, mes_disruptions, and the settings kept in
-#     Fusion: fto2_set_targets, fto2_set_cost, fto2_set_blackout, fto2_set_deliveries, fto2_set_eqmsn, fto2_set_plant,
-#     fto2_set_part_prices, fto2_set_cables, fto2_set_gps, fto2_set_test (each one missing: its file in data/ is used);
+#     Fusion: fto2_set_targets, fto2_set_cost, fto2_set_blackout, fto2_set_part_prices, fto2_set_cables, fto2_set_gps,
+#     fto2_set_test, fto2_set_plan (each one missing: its file in data/ is used);
 #     write fto2_dash_nc, fto2_dash_defects, fto2_dash_disruptions, and while 'garder_anciennes_sorties' is oui
 #     (data/config/2_parametres.csv) also fto2_dashboard_data, fto2_dashboard_data_missing_ids, fto2_parsed_defects,
 #     fto2_parsed_defects_missing_ids.
