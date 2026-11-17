@@ -88,6 +88,7 @@ def load_exports():
     key = lambda s: s.astype(str).str.strip().str.replace(r"\.0$", "", regex=True).str.lstrip("0")
     have = set().union(*[set(key(x["notification_number"])) for x in frames]) if frames else set()
     raws = sorted(glob.glob(os.path.join(ROOT, "06_input_data", "nc_%d_skywise_*.csv*" % config.year())))
+    raws += sorted(glob.glob(os.path.join(ROOT, "06_input_data", "nc_%d_skywise_*.csv*" % config.comparison_year())))   # read too, as in Skywise
     materials = {}
     for f in raws:
         raw = pd.read_csv(f, dtype=str, keep_default_na=False, na_values=[""], low_memory=False)
@@ -103,11 +104,14 @@ def load_exports():
         frames.append(r)
         files.append(f)
     x, info = core.merge_exports(frames)
-    # as the notebook does today: every NC through the exclusion rules, and only the NCs created in the year followed (the
-    # exports were made when the NCs fetched by number from the GPS register and the Test list skipped both)
+    # as the notebook does today: every NC through the exclusion rules, and the NCs created in the comparison year and the
+    # year followed (the exports were made when the NCs fetched by number from the GPS register and the Test list skipped
+    # both, and when only the year followed was read)
     from fto2 import selection
     when = pd.to_datetime(x["creation_time"], errors="coerce", utc=True, format="mixed")
-    keep = ~selection.exclusions(x) & ~(when < pd.Timestamp(config.first_day(), tz="UTC")) & ~(when >= pd.Timestamp(config.year_end(), tz="UTC"))
+    listed = x["_origin"].eq("missing_ids") if "_origin" in x.columns else pd.Series(False, index=x.index)   # fetched by number from this year's lists
+    start = pd.Series(pd.Timestamp(config.first_day_read(), tz="UTC"), index=x.index).where(~listed, pd.Timestamp(config.first_day(), tz="UTC"))
+    keep = ~selection.exclusions(x) & ~(when < start) & ~(when >= pd.Timestamp(config.year_end(), tz="UTC"))
     REPORT["left_out_by_rules_or_year"] = int((~keep).sum())
     x = x[keep.values].reset_index(drop=True)
     for c, values in materials.items():
@@ -140,15 +144,11 @@ def load_disruptions():
     return pd.concat(frames, ignore_index=True).drop_duplicates("disruption_id")
 
 
-def comparison_year(x):
-    """The comparison year for the targets and the year comparisons (fto2/reference.py), from the raw Skywise NC extract of
-    that year (06_input_data/nc_<year>_skywise_fto2.csv.gz). None when the extract is missing."""
-    path = os.path.join(ROOT, "06_input_data", "nc_%d_skywise_fto2.csv.gz" % config.comparison_year())
-    if not os.path.exists(path):
-        return None
-    raw = pd.read_csv(path, dtype=str, keep_default_na=False, na_values=[""])
-    out = REF.comparison_year(raw, core.station_pairs([x]))
-    REPORT["comparison_year"] = REF.REPORT["comparison_year"]
+def comparison_year(p):
+    """The comparison year for the targets and the year comparisons (fto2/reference.py), from the processed NCs, which hold
+    that year too (its extract, 06_input_data/nc_<year>_skywise_fto2.csv.gz, is read with the others). None without it."""
+    out = REF.comparison_year(p)
+    REPORT["comparison_year"] = REF.REPORT.get("comparison_year")
     return out
 
 
@@ -158,9 +158,9 @@ def main():
     say("exports:", REPORT["inputs"], "->", len(x), "NCs")
     ops, dis = load_orders(), load_disruptions()
     lab = pd.read_csv(os.path.join(ROOT, "04_reference", "llm_labels_longtext.csv"), dtype={"notification_number": str}, encoding="utf-8-sig")
-    y25 = comparison_year(x.copy())   # 'y25': the pages' name for the comparison year's block, whatever the year
-    say("comparison year:", REPORT.get("comparison_year"))
     p = core.prepare(x, lab, ops, dis)   # parser, labels, CNQ, rework orders, aléas, scope: build/fto2_core.py
+    y25 = comparison_year(p)   # 'y25': the pages' name for the comparison year's block, whatever the year
+    say("comparison year:", REPORT.get("comparison_year"))
     d, nc_ref, lt, nc_in = p["d"], p["nc"], p["lt"], p["nc_in"]
     nl_, dl_ = p["nc_llm"], p["def_llm"]
     CODE_DESC.update(p["codes"])

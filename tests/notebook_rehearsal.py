@@ -133,7 +133,11 @@ def stand_in(days=0, days_before=0, data_year=None, until=None):
             known = nc["notification_number"].map(raw.dropna(subset=[c]).set_index("notification_number")[c])
             nc[c] = nc[c].where(nc[c].notna(), known) if c in nc.columns else known
     before = pd.read_csv(os.path.join(ROOT, "06_input_data", "nc_%d_skywise_fto2.csv.gz" % (year - 1)), dtype=str, keep_default_na=False, na_values=[""])
-    before = shift_dates(before, days_before)
+    sys.path.insert(0, os.path.join(ROOT, "build"))
+    import build_all   # the raw extract gives local times: as Skywise does, the times in UTC (the exports' form)
+    before = build_all._raw_times_as_export(before)
+    cur = before["creation_time"].astype(str).str[:4] == str(year)   # the extract also holds early NCs of the data's own year: moved with it
+    before = pd.concat([shift_dates(before[~cur], days_before), shift_dates(before[cur], days)], ignore_index=True)
     nc = pd.concat([nc, before[~before.notification_number.isin(nc.notification_number)]], ignore_index=True)   # the NCs of the comparison year
     tables = {
         "non_conformity": nc,

@@ -48,7 +48,10 @@ def _num(v):
 
 
 def table(nc_t, def_t, cnqp):
-    """fto2_dash_cout from the dashboard's two tables (fto2/core.py, NC_COLUMNS and DEF_COLUMNS) and the cost settings."""
+    """fto2_dash_cout from the dashboard's two tables (fto2/core.py, NC_COLUMNS and DEF_COLUMNS) and the cost settings: the NCs
+    of the year followed, the ones the dashboard shows."""
+    from .. import config
+    nc_t = nc_t[nc_t["created"].astype(str) >= config.first_day()]
     p, rules, cls = cnqp["p"], cnqp["rules"], cnqp["cls"]
     rates = p.get("rates") or {}
     rate = lambda k: rates[k] if rates.get(k) is not None else p["rate"]

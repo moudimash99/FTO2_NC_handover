@@ -1,0 +1,82 @@
+<!--
+title: Skywise : accès et propriété
+subtitle: Chaque objet du tableau de bord, qui a besoin de quel droit, et que vérifier avant un départ
+kicker: Tableau de bord NC FTO2 · Développeurs
+file: developers/fr/5 Skywise - accès et propriété
+for: le développeur et les propriétaires
+foot: Tableau de bord NC FTO2 · Skywise : accès et propriété
+short: yes
+lang: fr
+-->
+
+<h2>Les objets</h2>
+<p>Le tableau de bord n’est pas un seul objet dans Skywise, mais une chaîne. Une personne à qui il manque l’accès à un maillon
+voit une page vide ou une erreur. Voici les maillons, dans l’ordre où circulent les données :</p>
+<table class="keep">
+  <thead><tr><th style="width:48mm">Objet</th><th>Ce que c’est</th></tr></thead>
+  <tbody>
+    <tr><td><b>Données sources</b></td><td><code>non_conformity</code>, <code>work_order_operation</code>, <code>mes_disruptions</code> : propriété d’autres
+      équipes. <code>fto2_ai_labels</code> : les étiquettes de cause enregistrées, propriété du tableau de bord.</td></tr>
+    <tr><td><b>Les réglages</b></td><td>Le classeur Fusion <i>FTO2 NC Dashboard - Settings</i> et ses datasets <code>fto2_set_…</code>.</td></tr>
+    <tr><td><b>Le pipeline</b></td><td>Le Code Repository qui lance la mise à jour selon une planification (son code, ses réglages et sa liste des
+      postes). Tant qu’il n’est pas en service : le Code Workspace avec le notebook du pipeline.</td></tr>
+    <tr><td><b>Les quatre tables</b></td><td><code>fto2_dash_nc</code>, <code>fto2_dash_defects</code>, <code>fto2_dash_disruptions</code>,
+      <code>fto2_dash_ref</code>.</td></tr>
+    <tr><td><b>La synchronisation</b></td><td>Les quatre tables copiées dans Postgres, schéma <code>foundry_sync</code>, sous les mêmes noms.</td></tr>
+    <tr><td><b>L’application Slate</b></td><td>Les pages et leurs quatre requêtes ; la Saisie structurée de NC, son type d’objet <i>a30 Nc Writer Dataset</i>
+      et son action.</td></tr>
+    <tr><td><b>Les documents</b></td><td>Le dossier Quality › NC dashboard, avec <i>for users</i> et <i>for developers</i>.</td></tr>
+  </tbody>
+</table>
+<p>Gardez tout dans un seul dossier du projet de l’équipe, jamais dans un dossier personnel : partager le dossier partage alors
+tout ce qu’il contient, et rien ne dépend du compte d’une seule personne.</p>
+
+<h2>Qui a besoin de quoi</h2>
+<table class="keep">
+  <thead><tr><th style="width:44mm">Objet</th><th style="width:30mm">Lecteur</th><th style="width:40mm">Responsable qualité, gestionnaire de configuration</th><th>Développeur</th></tr></thead>
+  <tbody>
+    <tr><td>Application Slate</td><td>lecture</td><td>lecture</td><td>modification</td></tr>
+    <tr><td>Action de la Saisie structurée de NC</td><td>exécution, pour ceux qui rédigent des NC</td><td>exécution</td><td>modification</td></tr>
+    <tr><td>Les quatre tables</td><td>lecture</td><td>lecture</td><td>modification</td></tr>
+    <tr><td>Classeur Fusion</td><td>aucun</td><td>modification</td><td>modification</td></tr>
+    <tr><td>Code Repository (ou Code Workspace)</td><td>aucun</td><td>aucun</td><td>modification</td></tr>
+    <tr><td><code>fto2_ai_labels</code></td><td>aucun</td><td>aucun</td><td>modification</td></tr>
+    <tr><td>Données sources</td><td>aucun</td><td>aucun</td><td>lecture</td></tr>
+  </tbody>
+</table>
+<p>Donnez chaque rôle à un groupe plutôt qu’à une personne, chaque fois que Skywise le permet.</p>
+
+<h3>Deux règles qui expliquent la plupart des problèmes d’accès</h3>
+<ul>
+  <li><b>Un lecteur a besoin de l’application et des quatre tables.</b> La page lit les tables avec les droits de la personne
+    qui l’ouvre : quelqu’un qui peut ouvrir l’application mais pas les tables obtient une page vide.</li>
+  <li><b>La mise à jour tourne avec les droits de la personne qui la lance.</b> Cette personne doit pouvoir lire chaque source et
+    écrire les quatre tables. Les données sources appartiennent à d’autres équipes : l’accès se demande à leurs propriétaires,
+    et cela peut prendre des jours. Demandez-le tôt.</li>
+</ul>
+
+<h2>Donner un accès</h2>
+<p>Ouvrez le dossier qui contient l’objet, sélectionnez l’objet, choisissez <b>Partager</b>, ajoutez la personne ou le groupe, et
+choisissez le rôle. Pour vérifier un nouveau lecteur : il ouvre le lien du tableau de bord et voit la date <b>Données au…</b>
+avec des chiffres. Un encadré qui nomme une requête, ou une page vide, veut dire que ses droits ne couvrent pas les quatre
+tables.</p>
+
+<h2>Avant un départ</h2>
+<p>Un tableau de bord s’arrête le jour où le compte de son seul propriétaire est fermé. Parcourez cette liste avec le successeur
+au clavier, au moins une semaine avant le départ :</p>
+<ol>
+  <li>Rien n’est dans un dossier personnel. Ce qui s’y trouvait est déplacé dans le dossier de l’équipe, et le tableau de bord
+    est ouvert une fois après le déplacement, pour vérifier qu’il affiche toujours des données.</li>
+  <li>Au moins deux propriétaires sur le dossier, sans compter la personne qui part, dont un manager.</li>
+  <li>Le successeur a son propre accès aux trois datasets sources, et a lancé la mise à jour une fois avec son propre compte.</li>
+  <li>Le successeur ouvre l’application en mode édition et voit les requêtes et le code de chaque page.</li>
+  <li>La planification de la mise à jour tourne sous un compte qui reste, ou sous le compte de service d’un projet.</li>
+  <li>Les droits de la personne qui part sont retirés ensuite, aux mêmes endroits ou dans le groupe.</li>
+</ol>
+
+<div class="next">
+<h2>À lire ensuite</h2>
+<ul>
+  <li><i>Pour commencer – Développeurs</i>, <i>Votre première semaine</i>.</li>
+</ul>
+</div>

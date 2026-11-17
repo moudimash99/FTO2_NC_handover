@@ -42,7 +42,7 @@ def tidy(s, n=320):
 def data():
     n = pd.read_csv(os.path.join(ROOT, "05_outputs", "fto2_dash_nc.csv"), dtype=str, keep_default_na=False, encoding="utf-8-sig")
     d = pd.read_csv(os.path.join(ROOT, "05_outputs", "fto2_dash_defects.csv"), dtype=str, keep_default_na=False, encoding="utf-8-sig")
-    home, since = config.parameter_list("usines_maison"), config.first_day()   # config/2_parametres.csv: the plant, the year followed
+    home, since = config.parameter_list("usines_maison"), config.first_day_read()   # the plant; the comparison year and the year followed
     n = n[n.plant.str.strip().str.upper().isin(home) & (n.created >= since)].sort_values("created")
     dic = {k: [] for k in ("line", "phase", "msn", "station", "where", "cat", "rca", "sub", "code", "fin", "prod")}
     plan_prod = plan_products()

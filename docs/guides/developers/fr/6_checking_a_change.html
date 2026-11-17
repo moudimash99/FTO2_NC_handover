@@ -1,0 +1,68 @@
+<!--
+title: Vérifier une modification
+subtitle: Comment s’assurer qu’une modification ne fait bouger que ce qu’elle doit
+kicker: Tableau de bord NC FTO2 · Développeurs
+file: developers/fr/6 Vérifier une modification
+for: le développeur
+foot: Tableau de bord NC FTO2 · Vérifier une modification
+short: yes
+lang: fr
+-->
+
+<h2>Le principe</h2>
+<p>Une modification doit faire bouger ce qu’elle devait faire bouger, et rien d’autre. Le seul moyen de le savoir est de
+regarder les mêmes chiffres avant et après. Cela prend dix minutes, et c’est la vérification qui attrape la plupart des
+erreurs.</p>
+
+<h2>Avant la modification</h2>
+<ol>
+  <li>Notez les dernières lignes affichées par la mise à jour : le nombre de NC, de lignes de défaut, et le coût.</li>
+  <li>Sur le tableau de bord, avec les filtres tels qu’ils sont à l’ouverture de la page, notez les quatre chiffres clés
+    d’<b>Essentiel › Synthèse</b> : NC depuis janvier, NC par MSN, coût de non-qualité, retours clients. Notez aussi les chiffres
+    d’une ligne.</li>
+  <li>Gardez une copie de ce que vous allez changer : le fichier de code, la table, ou le JS de la page. C’est votre moyen de
+    revenir en arrière.</li>
+</ol>
+
+<h2>Après la modification</h2>
+<ol>
+  <li>Lancez la mise à jour, et lisez ses premières et ses dernières lignes.</li>
+  <li>Comparez avec vos notes. Seul ce que vous vouliez changer doit bouger. Un réglage censé changer l’objectif d’une ligne ne
+    doit pas changer le nombre de NC d’une autre ligne.</li>
+  <li>Pour une modification de page : ouvrez la page dans les deux langues, en Essentiel et en Deep dive, avec quelques filtres,
+    et ouvrez le graphique modifié avec ⤢ <b>Agrandir</b>. Vérifiez aussi la page MFT quand la modification touche la cloche
+    ou les tables.</li>
+  <li>Si quelque chose a bougé qui n’aurait pas dû, remettez la copie et relancez avant de chercher plus loin.</li>
+</ol>
+
+<h2>Que vérifier, selon la modification</h2>
+<table class="keep">
+  <thead><tr><th style="width:52mm">Modification</th><th>Ce qu’il faut regarder</th></tr></thead>
+  <tbody>
+    <tr><td>Une feuille Fusion</td><td>Les premières lignes de la mise à jour : la feuille est listée comme utilisée. Puis le chiffre qu’elle
+      alimente (un objectif, un coût, le volume d’un mois).</td></tr>
+    <tr><td>Une table de règles</td><td>Le panneau ⓘ sous les filtres, <i>Comment la sélection est faite</i> : combien de NC chaque filtre garde,
+      avant et après.</td></tr>
+    <tr><td>Le lecteur de défauts</td><td>Le nombre de lignes de défaut, et le Pareto par cause sur une ligne. Un petit changement du lecteur
+      peut faire bouger des centaines de lignes.</td></tr>
+    <tr><td>Le modèle de coût</td><td>Le coût d’une NC avec <b>Expliquer le calcul</b>, étape par étape, puis le total.</td></tr>
+    <tr><td>Un graphique</td><td>Le même nombre dans un autre graphique ou un autre onglet : deux graphiques qui montrent la même chose doivent
+      être d’accord.</td></tr>
+    <tr><td>La cloche</td><td>La liste de la cloche sur le tableau de bord et sur la page MFT : les deux doivent sonner de la même façon.</td></tr>
+  </tbody>
+</table>
+
+<h2>Les vérifications automatiques</h2>
+<p>Le code est livré avec des vérifications automatiques, dans son dossier <code>tests</code>. Les plus rapides prennent quelques
+secondes : chaque table de réglages est complète et lisible, les règles fonctionnent, les feuilles Fusion redonnent les mêmes
+réglages que les fichiers, et aucune valeur métier ni aucune année n’est écrite dans le code. Lancez-les après chaque
+modification du code.</p>
+
+<h2>Trois habitudes</h2>
+<ul>
+  <li><b>Une modification à la fois.</b> Deux modifications faites ensemble ne peuvent plus être distinguées ensuite.</li>
+  <li><b>Écrivez pourquoi.</b> Une ligne dans la colonne de commentaire de la table, ou un commentaire au-dessus du code, dit
+    pourquoi la règle existe. Sinon, la personne suivante voudra la supprimer.</li>
+  <li><b>Prévenez les utilisateurs quand un chiffre bouge pour une raison voulue.</b> Un objectif qui change du jour au lendemain
+    sans un mot leur fait perdre confiance dans le tableau de bord plus vite qu’une erreur.</li>
+</ul>

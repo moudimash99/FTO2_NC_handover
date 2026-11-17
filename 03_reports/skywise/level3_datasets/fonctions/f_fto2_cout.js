@@ -48,9 +48,10 @@ try {
       }
       function clean(t) { return t.trim().split(/\s+/).join(' ').replace(/^[ *:\-]+|[ *:\-]+$/g, ''); }
       var ncs = [], byNc = {}, notLiable = [];
+      var year = ref.settings && ref.settings.annee ? String(ref.settings.annee) : '';   // the tables hold the comparison year too: the page shows the year followed
       rows(ncIn).forEach(function (r) {
         var id = str(r.nc).trim().replace(/\.0$/, ''), created = day(r.created);
-        if (!id || !created) return;
+        if (!id || !created || (year && created.slice(0, 4) !== year)) return;
         var k = int(r.on_aec) === 1 ? 1 : 0;   // FTO2's cost only where FTO2 is liable; the NC still counts
         if (!k) notLiable.push(num(r.cost_total));
         var a = [id, created, isoWeek(created), str(r.line), '', int(r.on_aec), str(r.rule), str(r.decision_label), str(r.where_found),

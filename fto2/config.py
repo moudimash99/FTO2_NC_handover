@@ -251,6 +251,13 @@ def year_end():
     return "%d-01-01" % (year() + 1)
 
 
+def first_day_read():
+    """The first creation date read: 1 January of the comparison year. The run reads and works out both years the same way;
+    the pages show the year followed and compare it with the other."""
+    return "%d-01-01" % comparison_year()
+
+
 def aleas_since():
-    """The aléas are read from 1 December of the year before: an NC of early January can follow an aléa of late December."""
-    return "%d-12-01" % (year() - 1)
+    """The aléas are read from 1 December before the first year read: an NC of early January can follow an aléa of late
+    December."""
+    return "%d-12-01" % (comparison_year() - 1)

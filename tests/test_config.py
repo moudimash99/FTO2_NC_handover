@@ -94,7 +94,8 @@ class Year(unittest.TestCase):
     def test_dates_follow_the_year(self):
         self.values.update(annee="2027", annee_comparaison="")
         self.assertEqual((config.year(), config.comparison_year()), (2027, 2026))
-        self.assertEqual((config.first_day(), config.year_end(), config.aleas_since()), ("2027-01-01", "2028-01-01", "2026-12-01"))
+        self.assertEqual((config.first_day(), config.year_end(), config.first_day_read(), config.aleas_since()),
+                         ("2027-01-01", "2028-01-01", "2026-01-01", "2025-12-01"))   # both years are read
 
     def test_comparison_year_can_be_named(self):
         self.values.update(annee="2027", annee_comparaison="2025")

@@ -1,0 +1,129 @@
+<!--
+title: Les pages
+subtitle: Comment une page reçoit ses données, comment modifier un graphique, la cloche, et les encadrés qu’une page peut afficher
+kicker: Tableau de bord NC FTO2 · Développeurs
+file: developers/fr/4 Les pages
+for: le développeur
+foot: Tableau de bord NC FTO2 · Les pages
+short: yes
+lang: fr
+-->
+
+<h2>Les pages</h2>
+<p>L’application Slate contient le tableau de bord, la page MFT et le Tableau Elizabeth. Chaque page est un code sandbox Slate en
+quatre parties : CSS (l’apparence), HTML (le cadre, un emplacement vide par graphique), JS (du JavaScript simple, sans
+bibliothèque extérieure) et State (les liens vers les requêtes). Les pages ne font que filtrer, additionner et dessiner ;
+chaque chiffre qu’elles affichent a été décidé par la mise à jour.</p>
+
+<h2>Comment une page reçoit ses données</h2>
+<ol>
+  <li><b>Les requêtes</b> <code>q_fto2_nc</code>, <code>q_fto2_def</code>, <code>q_fto2_dis</code> et <code>q_fto2_ref</code> lisent les quatre
+    tables dans Postgres (schéma <code>foundry_sync</code>). Leur SQL ne fait que lister les colonnes.</li>
+  <li><b>Le State</b> du sandbox donne à chaque résultat un nom que la page connaît : <code>nc</code>, <code>def</code>, <code>dis</code>,
+    <code>ref</code>.</li>
+  <li><b>Le chargeur</b>, tout à la fin du JS, attend que les quatre soient arrivés, puis démarre la page. Si l’un d’eux manque
+    toujours, il affiche un encadré qui le nomme.</li>
+  <li><b>Les données de référence</b> arrivent en morceaux ; <code>fto2RefBlocks</code> les recolle en un bloc par page.</li>
+  <li><b>L’adaptateur</b> <code>fto2FromTables</code> transforme les tables en listes propres à la page, <code>D.ncs</code> et
+    <code>D.defects</code>, chaque ligne étant une liste de valeurs par position. Les positions y sont listées, à côté de la
+    colonne d’où vient chacune.</li>
+</ol>
+
+<h2>S’y retrouver dans le code du tableau de bord</h2>
+<p>Le JS est long ; cherchez ces repères, de haut en bas :</p>
+<table class="keep">
+  <thead><tr><th style="width:62mm">Repère</th><th>Ce qu’on y trouve</th></tr></thead>
+  <tbody>
+    <tr><td><code>ADAPTER START</code></td><td>Les tables deviennent <code>D</code></td></tr>
+    <tr><td><code>var STR = {</code></td><td>Tous les textes de la page, en français et en anglais</td></tr>
+    <tr><td><code>MODEL START</code></td><td>Les calculs sans dessin : les filtres, le volume de production, les objectifs et la prévision,
+      l’explication du coût, ce que suit la cloche</td></tr>
+    <tr><td><code>// ---- 1. Overview</code>, <code>2. Pareto</code>…</td><td>Une section par onglet, avec ses graphiques</td></tr>
+    <tr><td><code>ALARM ENGINE START</code></td><td>Les statistiques de la cloche</td></tr>
+    <tr><td><code>Dashboard v2 (main page)</code></td><td>Quel graphique est sur quel onglet, et leurs fonctions de dessin</td></tr>
+    <tr><td><code>filter bar</code></td><td>Les filtres, et ce qui se passe quand ils changent</td></tr>
+    <tr><td><code>Simple mode</code></td><td>Le mode Essentiel (Synthèse et Détail)</td></tr>
+  </tbody>
+</table>
+
+<h3>Ce qui se passe lors d’un clic</h3>
+<p>Les filtres sont gardés dans un seul objet, <code>GF</code>. Un changement passe par <code>setGF</code>, qui appelle <code>select()</code> pour
+faire les listes de NC à l’écran (<code>SEL_NC</code> : tout ce que les filtres gardent ; <code>SER_NC</code> : les NC propres à l’usine ;
+<code>CLI_NC</code> : les retours clients), puis <code>renderAll()</code> redessine. Un clic sur un graphique passe par l’attribut
+<code>data-pick</code> de l’élément dessiné ; une infobulle, par <code>data-tip</code>.</p>
+
+<h2>Modifier un graphique</h2>
+<ul>
+  <li><b>Où il est placé :</b> <code>V2L</code> liste les cartes de chaque onglet, par clé. Déplacez une clé pour déplacer un graphique ;
+    supprimez-la pour cacher le graphique.</li>
+  <li><b>Quel code le dessine :</b> une clé en lettres (<code>VT</code>, <code>VN</code>…) est dessinée par la fonction nommée dans
+    <code>V2F</code> ; un nombre, par la fonction donnée dans <code>PSPEC</code> ; une clé qui commence par <code>a:</code>, par
+    <code>RV_ANA</code>. Le plus rapide : cherchez quelques mots du titre du graphique dans le JS ; ils mènent à sa clé.</li>
+  <li><b>Le modifier :</b> continuez à compter à partir de <code>SEL_NC</code> pour que les filtres s’appliquent, et mettez tout nouveau
+    texte dans <code>STR</code>, dans les deux langues.</li>
+  <li><b>En ajouter un :</b> copiez la fonction d’un graphique semblable sous une nouvelle clé, ajoutez la clé à <code>V2F</code>, ses
+    titres à <code>GSTR</code>, et la clé à <code>V2L</code>.</li>
+  <li><b>Téléchargement :</b> les graphiques les plus importants ont un bouton <b>PNG</b> qui les enregistre en image. Un nouveau
+    graphique en reçoit un quand on ajoute sa clé à <code>V2PNG</code>.</li>
+</ul>
+<p>La page ne contient aucune année à elle : les années arrivent avec les réglages, et les textes les écrivent <code>{YEAR}</code> et
+<code>{PREV}</code>. Les noms <code>y25</code> et <code>v26</code> dans le code datent de la première année suivie : lisez-les comme
+« l’année de comparaison » et « l’année suivie ».</p>
+
+<h2>Le calendrier dans les pages</h2>
+<p>Les pages tirent le temps de travail des jours de fermeture, par les données de référence : le poids de chaque jour et de
+chaque semaine ISO de l’année. Une semaine sous <code>semaine_faible_moins_de</code> (60 % d’une semaine normale) est une semaine
+de fermeture, laissée hors des moyennes et des références sur chaque page (<code>calW</code>). Le mois en cours compte la part
+de son temps de travail déjà écoulée (<code>dayShare</code>), pas celle de ses jours calendaires. Les textes qui nomment le
+volume de l’an dernier l’écrivent par <code>withYears</code> : « livrés » tant qu’il vient de la table des livraisons 2025,
+« fabriqués » dès qu’il est mesuré à partir du plan.</p>
+
+<h2>La cloche</h2>
+<p>Ligne par ligne, la cloche compare les défauts des 4 dernières semaines terminées aux 12 semaines d’avant, par avion
+produit, et sonne quand la hausse est trop forte pour être due au hasard. Elle repère aussi les hausses lentes et les avions
+qui ont bien plus de NC que d’habitude. Ses réglages sont dans <code>3_alarmes.csv</code>. <b>La page MFT a sa propre copie du
+moteur d’alarmes :</b> une modification de l’une doit être faite aussi dans l’autre, sinon les deux pages sonneront
+différemment.</p>
+
+<h2>La page MFT et le Tableau Elizabeth</h2>
+<p>Les deux lisent les mêmes tables, par leur propre adaptateur, plus simple. La page MFT montre une ligne à la fois : le Pareto
+de la semaine, l’analyse, et le suivi des actions MFT. Le Tableau Elizabeth montre les NC d’une ligne en trois familles, avec
+les semaines au-dessus d’un seuil.</p>
+
+<h2>La Saisie structurée de NC</h2>
+<p>La Saisie structurée de NC est une page à part, qui aide à rédiger une NC selon le standard. Quand le texte est prêt, elle
+remplit une variable Slate au moyen d’un événement, et l’action du type d’objet <i>a30 Nc Writer Dataset</i> l’enregistre avec
+les valeurs de cette variable. Ses listes (produits, défauts, causes) sont en haut de son JS, dans un seul objet de
+réglages.</p>
+
+<h2>Trois règles pour le code dans Slate</h2>
+<ul>
+  <li><b>Jamais deux <code>{</code> à la suite dans le JS.</b> Slate les lit comme un lien vers une requête et casse le code.</li>
+  <li><b>Chaque règle CSS commence par <code>.fto2</code></b>, pour que les styles restent dans le sandbox.</li>
+  <li><b>Pas de données dans le code.</b> Une liste ou une valeur que quelqu’un peut vouloir changer a sa place dans un
+    réglage, lu par la mise à jour et passé à la page.</li>
+</ul>
+<p>Avant toute modification, copiez le JS actuel hors du sandbox et gardez-le : c’est votre moyen de revenir en arrière.
+L’éditeur de Slate est lent avec un fichier aussi long ; modifiez-le dans un éditeur de texte et recollez-le.</p>
+
+<h2>Quand une page affiche un encadré</h2>
+<table class="keep">
+  <thead><tr><th style="width:66mm">L’encadré dit</th><th>Où regarder</th></tr></thead>
+  <tbody>
+    <tr><td>Toujours en attente d’une requête, avec son nom</td><td>Le nom et le SQL de la requête dans Slate</td></tr>
+    <tr><td>La requête n’a renvoyé aucune ligne</td><td>La synchronisation, puis la dernière exécution de la mise à jour</td></tr>
+    <tr><td>Aucune NC lisible, avec les colonnes reçues</td><td>La requête renvoie des colonnes que la page n’attend pas : comparez avec la table</td></tr>
+    <tr><td>Exactement N lignes reçues</td><td>Une limite de lignes sur la requête : Slate a coupé le résultat</td></tr>
+    <tr><td>Une erreur avec une ligne de code</td><td>Le JS contient une erreur : recollez la version précédente</td></tr>
+  </tbody>
+</table>
+<p>Une page vide, sans aucun encadré, est en général un problème de droits : la personne peut ouvrir l’application mais pas
+les quatre tables (<i>Skywise : accès et propriété</i>).</p>
+
+<div class="next">
+<h2>À lire ensuite</h2>
+<ul>
+  <li><i>Vérifier une modification</i>.</li>
+  <li><i>Skywise : accès et propriété</i>.</li>
+</ul>
+</div>

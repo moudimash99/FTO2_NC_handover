@@ -94,6 +94,8 @@ def check(nc_t, def_t, dis_t, written):
 
     lap = pd.read_csv(os.path.join(ROOT, "05_outputs", "fto2_dash_nc.csv"), dtype=str, keep_default_na=False).set_index("nc")
     got = nc_t.astype(str).replace({"nan": "", "None": ""}).set_index("nc")
+    # both tables hold the comparison year too (the pages choose the year they show): each run's own year is compared
+    lap, got = lap[lap.created.str.startswith(str(DATA_YEAR))], got[got.created.str.startswith(str(YEAR))]
     both = sorted(set(got.index) & set(lap.index))
     print("\n%d: %d NCs written; laptop build of %d: %d; in both: %d" % (YEAR, len(got), DATA_YEAR, len(lap), len(both)))
     expect(len(both) > 1000, "the NCs of the year are there (%d)" % len(both))

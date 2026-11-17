@@ -3,10 +3,11 @@
   "inputs": {
     "fto2_dashboard_data_12.csv": 1000,
     "fto2_dashboard_data_missing_ids_3.csv": 110,
-    "nc_2026_skywise_fto2_2026-10-26.csv": 154
+    "nc_2026_skywise_fto2_2026-10-26.csv": 154,
+    "nc_2025_skywise_fto2.csv.gz": 1130
   },
-  "nc_rows": 1281,
-  "created_from": "2025-12-15",
+  "nc_rows": 2411,
+  "created_from": "2025-01-03",
   "created_to": "2026-10-26",
   "order_inputs": {
     "wo_s03_operations_fto2_sep2026.csv.gz": 2743
@@ -33,18 +34,19 @@
   },
   "labels": {
     "ok": 3473,
-    "titre": 89
+    "a_labelliser": 3301,
+    "titre": 167
   },
   "subcodes": {
-    "exact": 3351,
-    "parent_or_none": 211
+    "exact": 3477,
+    "parent_or_none": 3464
   },
   "unknown_cnq_classes": [],
   "rework_orders": {
-    "ncs_with_link": 920,
+    "ncs_with_link": 1708,
     "operations": 2743,
     "state": {
-      "not_found": 816,
+      "not_found": 1604,
       "used": 71,
       "open": 20,
       "no_time": 13
@@ -52,10 +54,10 @@
   },
   "aleas": {
     "rows": 2500,
-    "ncs_with_alea": 201,
-    "quality_without_nc": 107,
-    "block": 89,
-    "block_hours": 66.9
+    "ncs_with_alea": 203,
+    "quality_without_nc": 105,
+    "block": 87,
+    "block_hours": 64.4
   },
   "parts": {
     "ncs_with_material": 127,
@@ -65,26 +67,26 @@
   },
   "cnq": {
     "classification": "root cause (long text)",
-    "nc_on_aec": 939,
-    "level1": 441299.78,
-    "level2": 318415.93,
-    "level3": 415714.48,
-    "cable_allocated": 125689.7,
-    "cable_share": 0.3023,
-    "level3_parser": 418367.46,
-    "cable_share_parser": 0.3014
+    "nc_on_aec": 1763,
+    "level1": 825615.35,
+    "level2": 601546.39,
+    "level3": 794256.49,
+    "cable_allocated": 242765.38,
+    "cable_share": 0.3057,
+    "level3_parser": 796909.47,
+    "cable_share_parser": 0.3052
   },
   "scope": {
-    "serie": 1136,
+    "serie": 2266,
     "client": 69,
     "autre": 59
   },
   "report_scope": {
     "serie": {
-      "ncs": 1136,
-      "ncs_without_defect_line": 20,
-      "defects": 3430,
-      "cnq": 484976.22
+      "ncs": 2266,
+      "ncs_without_defect_line": 65,
+      "defects": 6809,
+      "cnq": 965865.17
     },
     "client": {
       "ncs": 69,
@@ -100,22 +102,22 @@
     }
   },
   "defects_by_scope": {
-    "serie": 3430,
+    "serie": 6809,
     "client": 73,
     "autre": 59
   },
   "cnq_package_checks": {
     "build_dashboard.py": "OK",
     "test_queries.py": "FAILED: AS month,\n    COUNT(*)                               AS nc_count,\n    ROUND(SUM(cnq_cost_modelled), 0)       AS cost_estimated,\n    SUM(cnq_customer_amount_known)         AS real_amounts_known,\n    ROUND(SUM(cnq_cost_total), 0)          AS cost_total\nFROM fto2_nc_cnq\nWHERE cnq_on_aec = 1 AND cnq_customer_return = 1\nGROUP BY cnq_month\nORDER BY cnq_month\n': no such column: cnq_customer_amount_known\n",
-    "test_dashboard.js": "FAILED: level1_airbus_aec         441299.78 pipeline    441299.78 OK\nlevel2_global_aec         318415.93 pipeline    318415.93 OK\nlevel3_detailed_aec       415591.48 pipeline    415714.48 DIFFERENT\nper-NC check: 1264 NCs, 4 different\nFAILED\n"
+    "test_dashboard.js": "FAILED: level1_airbus_aec         825615.35 pipeline    825615.35 OK\nlevel2_global_aec         601546.39 pipeline    601546.39 OK\nlevel3_detailed_aec       794133.49 pipeline    794256.49 DIFFERENT\nper-NC check: 2394 NCs, 4 different\nFAILED\n"
   },
   "cnq_package_totals": {
-    "nc_rows": 1264,
-    "nc_on_aec": 939,
+    "nc_rows": 2394,
+    "nc_on_aec": 1763,
     "nc_no_master_data": 0,
-    "level1_airbus_aec": 441299.78,
-    "level2_global_aec": 318415.93,
-    "level3_detailed_aec": 415714.48
+    "level1_airbus_aec": 825615.35,
+    "level2_global_aec": 601546.39,
+    "level3_detailed_aec": 794256.49
   },
   "customer_returns": {
     "ncs": 69,
@@ -128,21 +130,21 @@
     }
   },
   "dash_tables": {
-    "nc": 1264,
-    "defects": 3562,
-    "disruptions": 107,
-    "cout": 4826
+    "nc": 2394,
+    "defects": 6941,
+    "disruptions": 105,
+    "cout": 4848
   },
   "skywise": {
     "level1": {
       "ncs": 713,
       "defects": 1463,
       "aleas": 99,
-      "js_kb": 1386
+      "js_kb": 1394
     },
-    "level23_js_kb": 501,
+    "level23_js_kb": 502,
     "slate_functions": {
-      "f_fto2_objectifs.js": 52,
+      "f_fto2_objectifs.js": 53,
       "f_fto2_alarmes.js": 70,
       "f_fto2_cout.js": 52
     },

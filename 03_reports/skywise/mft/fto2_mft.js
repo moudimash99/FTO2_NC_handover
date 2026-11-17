@@ -42,7 +42,8 @@ function mftFromTables(ncIn, defIn, R) {
   var keys = ['line', 'phase', 'msn', 'station', 'where', 'cat', 'rca', 'sub', 'code', 'fin', 'prod'], dic = {}, idx = {};
   keys.forEach(function (k) { dic[k] = []; idx[k] = {}; });
   function code(k, v) { v = tidy(v, 120); if (!(v in idx[k])) { idx[k][v] = dic[k].length; dic[k].push(v); } return idx[k][v]; }
-  var year = R.settings && R.settings.annee, since = year ? year + '-01-01' : '';
+  // the comparison year too: a week, a month or an action is compared with the weeks before it, across the new year
+  var year = R.settings && (R.settings.annee_ref || R.settings.annee), since = year ? year + '-01-01' : '';
   var n = rows(ncIn).map(function (r) { return { r: r, created: str(r.created), plant: str(r.plant).trim().toUpperCase() }; })
     .filter(function (x) { return (x.plant === 'FTO2' || x.plant === 'FT02') && x.created >= since; });
   n.sort(function (a, b) { return a.created < b.created ? -1 : a.created > b.created ? 1 : 0; });
@@ -260,8 +261,9 @@ var D = window.FTO2_MFT_D;
   var NW = WEEKS.length, PARTIAL = new Date(D.to + 'T00:00:00Z').getUTCDay() !== 0;   // the week of the last NC is incomplete unless it ends on Sunday
   var NCW = NCS.map(function (n) { return WIDX[isoWeek(n[1])]; });
   // a week's working time (config/1_calendrier_production.csv: weekends, public holidays, closures), 1 = a normal week; weeks of
-  // another year than the one followed count as normal
-  function calW(w) { var P = SET.semaines_poids || [], n = +String(w).slice(6); return String(w).slice(0, 4) === String(YEAR) && P[n - 1] != null ? P[n - 1] : 1; }
+  // a year with no calendar (before the comparison year) count as normal
+  function calW(w) { var P = SET.semaines_poids || {}, y = String(w).slice(0, 4), n = +String(w).slice(6), L = Array.isArray(P) ? (y === String(YEAR) ? P : null) : P[y];
+    return L && L[n - 1] != null ? L[n - 1] : 1; }
   var SHUT = WEEKS.map(function (w, i) { return calW(w) < SET.semaine_faible && !(PARTIAL && i === NW - 1); });   // closure weeks, from the blackout days
   function valid(i) { return i >= 0 && i < NW && !SHUT[i] && !(PARTIAL && i === NW - 1); }
   var LASTC = NW - 1; while (LASTC > 0 && !valid(LASTC)) LASTC--;   // the last complete, working week
@@ -394,7 +396,8 @@ var D = window.FTO2_MFT_D;
     $('cntNote').textContent = S.cnt === 'nc' ? T('Une NC compte une fois par barre, même avec plusieurs défauts.') : '';
     barList($('bCat'), 'cat'); barList($('bRca'), 'rca', 12); barList($('bCode'), 'code', 10); barList($('bFin'), 'fin', 10);
     $('selRow').hidden = !sel; $('selChip').innerHTML = selChips();
-    var rows = defs.slice().sort(function (a, b) { return NCS[b[0]][1] < NCS[a[0]][1] ? -1 : NCS[b[0]][1] > NCS[a[0]][1] ? 1 : 0; });
+    var rows = defs.slice().sort(function (a, b) {   // the newest first; one day's NCs by number, whatever order the data came in
+      var x = NCS[a[0]], y = NCS[b[0]]; return y[1] < x[1] ? -1 : y[1] > x[1] ? 1 : String(y[0]) < String(x[0]) ? -1 : String(y[0]) > String(x[0]) ? 1 : 0; });
     $('detH').textContent = sel ? T('Les défauts') + ' · ' + Object.keys(S.f).map(function (k) { return shown(k, S.f[k]); }).join(' · ') : T('Les défauts');
     $('detN').textContent = T(rows.length > 1 ? '{n} lignes' : '{n} ligne', { n: num(rows.length) });
     $('detB').innerHTML = rows.length ? rows.slice(0, S.lim).map(function (d) { var n = NCS[d[0]];

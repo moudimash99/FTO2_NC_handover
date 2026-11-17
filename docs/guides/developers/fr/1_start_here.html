@@ -1,0 +1,80 @@
+<!--
+title: Pour commencer – Développeurs
+subtitle: De quoi est fait le tableau de bord, qui change quoi, et quoi lire ensuite
+kicker: Tableau de bord NC FTO2 · Développeurs
+file: developers/fr/1 Pour commencer
+for: la personne qui maintient le tableau de bord
+foot: Tableau de bord NC FTO2 · Pour commencer – Développeurs
+short: yes
+lang: fr
+-->
+
+<h2>Ce que vous reprenez</h2>
+<p>Le tableau de bord NC FTO2 suit les non-conformités (NC) de l’usine : combien, de quelle nature, ce qu’elles coûtent, et si
+l’année est dans l’objectif. Il vit entièrement dans Skywise. L’équipe ne fait qu’ouvrir les pages ; tout ce qu’il y a derrière
+est à vous.</p>
+<p>Il est fait de cinq parties, l’une après l’autre :</p>
+<table class="keep">
+  <thead><tr><th style="width:44mm">Partie</th><th>Ce que c’est</th></tr></thead>
+  <tbody>
+    <tr><td><b>Les réglages</b></td><td>Les valeurs que des personnes remplissent à la main (objectif, taux, jours de fermeture, prix des pièces, listes) dans le classeur
+      Fusion <i>FTO2 NC Dashboard - Settings</i>, et les règles (quelle NC compte, quel produit, quelle cause) dans de petites
+      tables gardées avec le code.</td></tr>
+    <tr><td><b>La mise à jour</b></td><td>Le pipeline : du code Python qui lit les NC dans Skywise, applique les règles, lit les défauts écrits dans
+      chaque NC, calcule leur coût et écrit quatre tables. Il tourne comme un transform d’un Code Repository, de façon planifiée,
+      ou à la main depuis le notebook du pipeline : le même code dans les deux cas.</td></tr>
+    <tr><td><b>Les quatre tables</b></td><td><code>fto2_dash_nc</code> (une ligne par NC), <code>fto2_dash_defects</code> (une ligne par défaut),
+      <code>fto2_dash_disruptions</code> (les aléas qualité sans NC) et <code>fto2_dash_ref</code> (tout le reste dont les
+      pages ont besoin).</td></tr>
+    <tr><td><b>La synchronisation</b></td><td>Les quatre tables sont copiées dans Postgres, où les pages Slate peuvent les lire.</td></tr>
+    <tr><td><b>Les pages</b></td><td>Une application Slate : le tableau de bord, la page MFT, le Tableau Elizabeth, et la Saisie structurée de NC,
+      qui aide à rédiger une NC selon le standard.</td></tr>
+  </tbody>
+</table>
+
+<h2>Une règle explique l’essentiel de la conception</h2>
+<p><b>La mise à jour décide et calcule ; les pages ne font que filtrer, additionner et dessiner.</b> Quelle NC compte, ce
+qu’est chaque défaut, ce qu’il coûte : tout est décidé une seule fois, dans la mise à jour. Les pages ne le recalculent
+jamais. Un chiffre faux partout est donc une question de mise à jour ; un chiffre faux sur un seul graphique est une question
+de page.</p>
+<p>Une deuxième règle en découle : <b>aucune valeur métier dans le code.</b> Un taux, une date, un nom de produit ou un seuil a
+sa place dans une table de réglages, pas dans le code. La plupart des demandes de changement sont donc une ligne dans une
+table, pas une modification du code.</p>
+
+<h2>Qui change quoi</h2>
+<table class="keep">
+  <thead><tr><th style="width:44mm">Qui</th><th>Ce qu’il change</th></tr></thead>
+  <tbody>
+    <tr><td><b>Responsable qualité</b></td><td>Les valeurs décidées : la baisse visée par l’objectif, les taux horaires et les minutes, les jours de
+      fermeture, les livraisons de l’an dernier, le volume prévu, le code de l’usine. Dans le classeur Fusion.</td></tr>
+    <tr><td><b>Gestionnaire de configuration</b></td><td>Les valeurs qui évoluent avec le travail : les prix des pièces, le suivi des câbles, le registre GPS, la
+      liste Test. Dans le classeur Fusion. Aussi les tables de règles, avec prudence.</td></tr>
+    <tr><td><b>Développeur (vous)</b></td><td>Le code de la mise à jour et des pages, les tables techniques, les droits d’accès, et l’aide aux deux
+      autres quand une valeur ne fait pas ce qu’ils attendent.</td></tr>
+  </tbody>
+</table>
+<p>L’année suivie change toute seule le 1er janvier : personne n’a à y toucher.</p>
+
+<h2>Votre première semaine</h2>
+<ol>
+  <li>Vérifiez que vous pouvez ouvrir chacune des parties listées ci-dessus, avec votre propre compte (<i>Skywise : accès et propriété</i>).</li>
+  <li>Lancez la mise à jour une fois, du début à la fin, et lisez ce qu’elle affiche (<i>Le pipeline</i>).</li>
+  <li>Ouvrez le tableau de bord et vérifiez que la date <b>Données au…</b>, en haut, est passée au jour de la dernière NC.</li>
+  <li>Ouvrez les pages en mode édition et trouvez le code d’un graphique (<i>Les pages</i>).</li>
+  <li>Lisez <i>Limites connues et travail en cours</i> : ce document liste ce que l’on sait imparfait, pour vous éviter de le
+    redécouvrir.</li>
+</ol>
+
+<div class="next">
+<h2>Les documents de ce dossier</h2>
+<ul>
+  <li><i>Configuration</i> : les réglages, qui remplit lesquels, et ce que change chacun.</li>
+  <li><i>Le pipeline</i> : comment fonctionne la mise à jour, comment la lancer, et que faire quand elle s’arrête.</li>
+  <li><i>Les pages</i> : comment une page reçoit ses données, comment modifier un graphique, la cloche, et les encadrés qu’une
+    page peut afficher.</li>
+  <li><i>Skywise : accès et propriété</i> : chaque objet, qui a besoin de quel droit, et que vérifier avant un départ.</li>
+  <li><i>Vérifier une modification</i>, et <i>Limites connues et travail en cours</i>.</li>
+</ul>
+<p>Le dossier des utilisateurs contient les guides des personnes qui lisent le tableau de bord ; <i>Comment le coût est calculé</i>,
+dans ce dossier, est aussi la meilleure description en clair du modèle de coût.</p>
+</div>

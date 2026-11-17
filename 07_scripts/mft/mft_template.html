@@ -403,8 +403,9 @@ var D = JSON.parse(document.getElementById('mft-data').textContent);   // the da
   var NW = WEEKS.length, PARTIAL = new Date(D.to + 'T00:00:00Z').getUTCDay() !== 0;   // the week of the last NC is incomplete unless it ends on Sunday
   var NCW = NCS.map(function (n) { return WIDX[isoWeek(n[1])]; });
   // a week's working time (config/1_calendrier_production.csv: weekends, public holidays, closures), 1 = a normal week; weeks of
-  // another year than the one followed count as normal
-  function calW(w) { var P = SET.semaines_poids || [], n = +String(w).slice(6); return String(w).slice(0, 4) === String(YEAR) && P[n - 1] != null ? P[n - 1] : 1; }
+  // a year with no calendar (before the comparison year) count as normal
+  function calW(w) { var P = SET.semaines_poids || {}, y = String(w).slice(0, 4), n = +String(w).slice(6), L = Array.isArray(P) ? (y === String(YEAR) ? P : null) : P[y];
+    return L && L[n - 1] != null ? L[n - 1] : 1; }
   var SHUT = WEEKS.map(function (w, i) { return calW(w) < SET.semaine_faible && !(PARTIAL && i === NW - 1); });   // closure weeks, from the blackout days
   function valid(i) { return i >= 0 && i < NW && !SHUT[i] && !(PARTIAL && i === NW - 1); }
   var LASTC = NW - 1; while (LASTC > 0 && !valid(LASTC)) LASTC--;   // the last complete, working week

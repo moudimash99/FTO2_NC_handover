@@ -104,12 +104,12 @@ def station_descriptions(path):
     return dict(zip(pairs["station"], pairs["station_description"]))
 
 
-def select_ncs(Dataset, Column, mode, missing_ids=()):
+def select_ncs(Dataset, Column, mode, missing_ids=(), since=None):
     """The NCs to process. mode STANDARD: the plant's NCs created in the year followed plus the other plants' NCs where the
     plant is liable; mode MISSING_IDS: the NCs whose numbers are given (those of the GPS register and the Test list that the
     standard selection did not catch), kept when created in the year followed. Both then go through the exclusion rules."""
     plant = config.parameter("usine")
-    since = config.first_day() + " 00:00:00"
+    since = (since or config.first_day()) + " 00:00:00"
     nc = config.parameter("dataset_nc", manual_lists.SOURCES)
     if mode == "STANDARD":
         home = (Dataset.get(nc).where((Column.get("plant") == plant) & (Column.get("creation_time") >= since))
@@ -173,7 +173,7 @@ def run(Dataset, Column, say=None, old_outputs=None):
     say(f"   {len(ids)} NC numbers on the lists dated {config.year()}")
 
     say("Standard selection: fetching the plant's NCs and the NCs it is liable for...")
-    standard = manual_lists.add_external(select_ncs(Dataset, Column, "STANDARD"), external)
+    standard = manual_lists.add_external(select_ncs(Dataset, Column, "STANDARD", since=config.first_day_read()), external)
     say(f"   standard selection: {len(standard)} NCs")
     caught = set(standard["notification_number"].astype(str).str.lstrip("0"))
     missing = sorted(i.lstrip("0") for i in ids if i.lstrip("0") not in caught)
@@ -190,18 +190,19 @@ def run(Dataset, Column, say=None, old_outputs=None):
     frames = []
     for name, final_df in runs:
         final_df["Ext_Nb_Defauts"] = pd.to_numeric(final_df["Ext_Nb_Defauts"], errors="coerce")
-        if keep_old:   # the former outputs, for the former Slate app
+        if keep_old:   # the former outputs, for the former Slate app: the year followed only, as it has always had
             from .parser.nc_defect_parser import explode_dataframe
             say(f"Former outputs: parsing and writing {name}...")
-            _, defects_df = explode_dataframe(df=final_df, text_col="description_long_text", id_col="notification_number",
+            old_df = _since(final_df, "creation_time", config.first_day())
+            _, defects_df = explode_dataframe(df=old_df, text_col="description_long_text", id_col="notification_number",
                                               manual_count_col="Ext_Nb_Defauts")
             for col in ["code", "fin", "text", "source_format", "mode_erreur", "type_reporting", "loc", "severite", "sub_code",
                         "confidence", "resolved_by", "sap_type", "severite_off"]:
                 if col in defects_df.columns:
                     defects_df[col] = defects_df[col].astype(str).fillna("")
             Dataset.get(name.replace("fto2_dashboard_data", "fto2_parsed_defects")).write_table(defects_df)
-            Dataset.get(name).write_table(final_df)
-            print(f"✅ {name}: {len(final_df)} NCs, {len(defects_df)} defects (former outputs)")
+            Dataset.get(name).write_table(old_df)
+            print(f"✅ {name}: {len(old_df)} NCs, {len(defects_df)} defects (former outputs)")
         final_df = final_df.copy()
         final_df["_source"] = name   # origin of each NC: normal, or missing_ids
         frames.append(final_df)
@@ -242,15 +243,9 @@ def run(Dataset, Column, say=None, old_outputs=None):
     where = _work_list(Dataset, "fto2_parts_to_price", to_price, sep=";")
     print("parts:", info.get("parts"), "|", len(to_price), "materials with no price yet ->", where)
 
-    year = config.comparison_year()
-    say(f"Reading the NCs of {year} (comparison year)...")
-    nc = config.parameter("dataset_nc", manual_lists.SOURCES)
-    raw_year = (Dataset.get(nc).where((Column.get("plant") == plant) & (Column.get("creation_time") >= f"{year}-01-01 00:00:00"))
-                .select(*NC_COLUMNS).read_table(format="pandas"))
-    raw_year = _until(raw_year, "creation_time", f"{year + 1}-01-01")
-    say(f"   {len(raw_year)} NCs")
-    stations = station_descriptions(config.parameter("postes", manual_lists.SOURCES))
-    y25 = reference.comparison_year(raw_year, stations) if len(raw_year) else None   # 'y25': the block's name for it, whatever the year
+    say(f"The comparison year {config.comparison_year()}, from the same NCs...")
+    y25 = reference.comparison_year(prepared)   # 'y25': the block's name for it, whatever the year
+    say("   %s NCs" % (reference.REPORT.get("comparison_year", {}).get("ncs", 0) if y25 else "no"))
     say("Reference data: production plan, cable requests, MFT actions, settings...")
     eq = reference.eqmsn(prepared["nc"])
     blocks = {"dashboard": reference.dashboard_block(prepared["d"], prepared["nc"], prepared["codes"], y25),

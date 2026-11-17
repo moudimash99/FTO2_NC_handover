@@ -1,0 +1,142 @@
+<!--
+title: Le pipeline
+subtitle: Comment fonctionne la mise à jour, comment la lancer, et que faire quand elle s’arrête
+kicker: Tableau de bord NC FTO2 · Développeurs
+file: developers/fr/3 Le pipeline
+for: le développeur
+foot: Tableau de bord NC FTO2 · Le pipeline
+short: yes
+lang: fr
+-->
+
+<h2>Ce que fait la mise à jour</h2>
+<p>La mise à jour lit les NC dans Skywise, décide lesquelles comptent, lit les défauts écrits dans chaque NC, donne une cause à
+chaque défaut, calcule le coût, et écrit les quatre tables que lisent les pages. C’est du Python simple, un fichier par sujet
+(le dossier <code>fto2</code>), et elle tourne de l’une de ces deux façons :</p>
+<ul>
+  <li><b>Le Code Repository</b> : un transform, <code>fto2_update.py</code>, que Skywise lance selon une planification. Les tables
+    de réglages sont gardées avec le code (<code>fto2/settings</code>).</li>
+  <li><b>Le notebook du pipeline</b>, dans un Code Workspace, lancé à la main. Les réglages sont dans son dossier <code>data/config</code>.</li>
+</ul>
+<p>Les deux font exactement les mêmes étapes et écrivent les mêmes tables. <b>Utilisez l’un ou l’autre, pas les deux :</b> une
+fois que le transform planifié tourne, le notebook n’est plus utilisé, et le code ne se modifie plus que dans le Code
+Repository. Deux copies du code qui divergent sont le moyen le plus sûr d’obtenir deux tableaux de bord différents.</p>
+
+<h3>Ce qu’elle lit</h3>
+<table class="keep">
+  <thead><tr><th style="width:48mm">Source</th><th>Ce qu’elle donne</th></tr></thead>
+  <tbody>
+    <tr><td><code>non_conformity</code></td><td>Les NC : celles de l’usine, et celles d’autres usines dont l’usine est responsable.</td></tr>
+    <tr><td><code>fto2_ai_labels</code></td><td>L’étiquette de cause enregistrée pour chaque ligne de défaut.</td></tr>
+    <tr><td><code>work_order_operation</code></td><td>Les ordres de retouche et leur temps planifié, pour le coût.</td></tr>
+    <tr><td><code>mes_disruptions</code></td><td>Les aléas MES, pour le temps d’alerte et les aléas qui n’ont mené à aucune NC.</td></tr>
+    <tr><td><code>fto2_set_…</code></td><td>Les réglages gardés dans Fusion (<i>Configuration</i>).</td></tr>
+    <tr><td>Le dossier des réglages, et les fichiers à côté du notebook</td><td>Les tables de règles, la liste des postes, les exports du plan de production.</td></tr>
+  </tbody>
+</table>
+
+<h3>Les étapes, dans l’ordre</h3>
+<ol>
+  <li><b>Réglages.</b> Chaque réglage est lu et vérifié en premier. Une erreur arrête l’exécution ici, avant toute récupération
+    de données. L’arbre des causes de l’onglet Définitions est vérifié par rapport au code, et une fermeture qui manque dans
+    les jours de fermeture est signalée.</li>
+  <li><b>Sélection.</b> Les NC créées cette année sont récupérées, les NC exclues sont laissées de côté, et chaque NC reçoit ses
+    étiquettes des tables de règles : phase (série, REC, FTI), décision, origine, type, produit.</li>
+  <li><b>Les listes.</b> Les NC du registre GPS et de la liste Test que la sélection n’a pas trouvées sont récupérées par leur
+    numéro. Elles passent par les mêmes règles d’exclusion, et ne comptent que si elles ont été créées dans l’année suivie.</li>
+  <li><b>Défauts.</b> Le lecteur de défauts découpe le texte de chaque NC en lignes de défaut et donne à chacune une
+    sous-catégorie. Les NC A400M n’ont pas de texte dans Skywise : une ligne est faite à partir du titre.</li>
+  <li><b>Causes.</b> Chaque ligne de défaut prend son étiquette enregistrée, si son texte n’a pas changé depuis qu’elle a été
+    étiquetée. Un sous-code officiel écrit dans la NC par une personne l’emporte toujours sur l’étiquette. Une ligne sans
+    étiquette utilisable garde la cause du lecteur de défauts et est listée « à étiqueter ».</li>
+  <li><b>Coût.</b> Les ordres de retouche, les aléas et les prix des pièces sont rattachés, et le modèle de coût tourne sur
+    chaque NC.</li>
+  <li><b>Données de référence.</b> Le plan de production, l’année de comparaison (ses NC passent par les mêmes étapes, puis sont
+    additionnées par mois ; son volume est mesuré comme celui de cette année : produits fabriqués, répartis sur les jours
+    ouvrés, sauf 2025, tiré de sa table de livraisons), les demandes de câbles, les actions MFT, l’arbre des causes, les
+    réglages des pages et le poids de travail de chaque jour et de chaque semaine de l’année (tiré des jours de
+    fermeture).</li>
+  <li><b>Écriture.</b> Les quatre tables sont écrites, puis synchronisées vers Postgres.</li>
+</ol>
+<p>L’exécution affiche chaque étape au fur et à mesure : la dernière ligne affichée dit donc où elle en est.</p>
+
+<h2>Les quatre tables</h2>
+<table class="keep">
+  <thead><tr><th style="width:44mm">Table</th><th>Une ligne par</th></tr></thead>
+  <tbody>
+    <tr><td><code>fto2_dash_nc</code></td><td>NC : dates, ligne, usine, responsabilité, coût et ses étapes, phase, MSN, produit, poste, type, source.</td></tr>
+    <tr><td><code>fto2_dash_defects</code></td><td>Ligne de défaut : catégorie, cause, sous-catégorie, câble ou non, part du coût de la NC, texte,
+      sous-code, FIN, d’où vient sa cause.</td></tr>
+    <tr><td><code>fto2_dash_disruptions</code></td><td>Aléa qualité qui n’a mené à aucune NC.</td></tr>
+    <tr><td><code>fto2_dash_ref</code></td><td>Morceau de texte. Les données de référence forment un grand bloc par page, découpé en morceaux
+      parce qu’une cellule ne peut pas tout contenir ; les pages recollent les morceaux.</td></tr>
+  </tbody>
+</table>
+<p>Le sens de chaque colonne est écrit à côté d’elle, en haut de <code>core.py</code>. Deux fichiers de travail sont aussi
+écrits à côté du notebook : les lignes à étiqueter, et les pièces encore sans prix.</p>
+
+<h2>L’année</h2>
+<p>L’année suivie est l’année en cours, et l’année de comparaison celle d’avant. Chaque date de l’exécution vient de ces deux
+années, par cinq petites fonctions de <code>config.py</code> ; aucune année n’est écrite nulle part dans le code. Pour
+regarder une année passée, écrivez-la sur la ligne <code>annee</code> de <code>1_parametres.csv</code> ; videz de nouveau la
+ligne ensuite.</p>
+
+<h2>Le modèle de coût, en bref</h2>
+<p>Chaque NC passe par six étapes au plus : l’alerte, la rédaction de la NC, le support technique, la préparation du travail,
+l’intervention, et le recontrôle. Chaque étape prend des minutes, comptées au taux horaire de qui la fait. S’y ajoutent les
+heures d’ingénierie, la matière et le prix d’une pièce rejetée, rebutée ou échangée. La décision (retouche, rebut, demande
+de DQN…) dit quelles étapes sont comptées. Quand une NC a un ordre de retouche clos avec un temps planifié, ce temps remplace
+l’estimation du modèle. La description complète, avec les minutes et les taux d’aujourd’hui, se trouve dans <i>Comment le
+coût est calculé</i>, dans le dossier des utilisateurs ; le code est dans <code>cost/</code>.</p>
+
+<h2>Lancer la mise à jour</h2>
+<p>Dans le Code Repository, c’est la planification qui la lance ; pour la lancer tout de suite, lancez un build de
+<code>fto2_dash_nc</code>. Son journal affiche les mêmes lignes que le notebook. Dans le notebook, exécutez toutes les
+cellules, de la première à la dernière. Dans les deux cas :</p>
+<ol>
+  <li>Lisez les premières lignes : l’année suivie, et les réglages venus de Fusion.</li>
+  <li>Lisez les dernières lignes : le nombre de NC et de lignes de défaut, les tables écrites, et tout avertissement.</li>
+  <li>Quelques minutes plus tard, ouvrez le tableau de bord : la date <b>Données au…</b> doit être le jour de la dernière NC.</li>
+</ol>
+<p>Une modification du code dans le Code Repository prend effet au build suivant, une fois commitée et vérifiée. Dans le
+notebook, le code est relu à chaque exécution : inutile de le redémarrer.</p>
+
+<h2>Où changer quoi</h2>
+<table class="keep">
+  <thead><tr><th style="width:74mm">Vous voulez changer…</th><th>Où</th></tr></thead>
+  <tbody>
+    <tr><td>Une règle, un taux, un produit, une date</td><td>D’abord un réglage (<i>Configuration</i>), pas le code</td></tr>
+    <tr><td>Quelles NC sont récupérées dans Skywise</td><td><code>skywise.py</code>, <code>select_ncs</code></td></tr>
+    <tr><td>Comment les défauts sont lus dans le texte</td><td><code>parser/nc_defect_parser.py</code> (règles d’expert ; testez bien)</td></tr>
+    <tr><td>Une nouvelle colonne dans les tables</td><td><code>core.py</code>, puis la requête et la page (<i>Les pages</i>)</td></tr>
+    <tr><td>Comment le coût est calculé</td><td><code>cost/model.py</code></td></tr>
+    <tr><td>Ce que les pages reçoivent en plus des tables</td><td><code>reference.py</code></td></tr>
+  </tbody>
+</table>
+
+<h2>Quand la mise à jour s’arrête</h2>
+<table class="keep">
+  <thead><tr><th style="width:58mm">Le message</th><th>Que faire</th></tr></thead>
+  <tbody>
+    <tr><td>Nomme une table de réglages et une ligne</td><td>Cette ligne est mal remplie : corrigez-la, puis relancez.</td></tr>
+    <tr><td>« settings table … not found »</td><td>Une table a été renommée ou supprimée : remettez-la.</td></tr>
+    <tr><td>Un dataset introuvable</td><td>Notebook : le dataset n’est pas dans le panneau Data (AliasNotDefined). Code Repository : ce
+      n’est pas une entrée du transform. Ajoutez-le, ou changez son nom dans <code>2_sources.csv</code>.</td></tr>
+    <tr><td>« the station list is missing »</td><td>Code Repository : <code>fto2_station_mapping.csv</code> doit être dans <code>fto2/files</code>.</td></tr>
+    <tr><td>Une feuille Fusion « not used »</td><td>Ce n’est pas une erreur : le fichier est utilisé à la place. Corrigez les noms des colonnes de
+      la feuille.</td></tr>
+    <tr><td>« fto2_dash_cout not written »</td><td>Normal : cette table ne sert qu’à une installation facultative.</td></tr>
+    <tr><td>Une liste « could not be read »</td><td>Le registre GPS ou la liste Test manque ou a changé de forme : ses NC passent sans les
+      informations de la liste.</td></tr>
+    <tr><td>Toute autre erreur</td><td>La dernière étape affichée dit où elle en était ; c’est dans le fichier de cette étape qu’il faut
+      chercher.</td></tr>
+  </tbody>
+</table>
+
+<div class="next">
+<h2>À lire ensuite</h2>
+<ul>
+  <li><i>Les pages</i> : ce que les pages font des quatre tables.</li>
+  <li><i>Vérifier une modification</i>.</li>
+</ul>
+</div>

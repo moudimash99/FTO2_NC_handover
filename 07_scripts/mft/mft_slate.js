@@ -30,7 +30,8 @@ function mftFromTables(ncIn, defIn, R) {
   var keys = ['line', 'phase', 'msn', 'station', 'where', 'cat', 'rca', 'sub', 'code', 'fin', 'prod'], dic = {}, idx = {};
   keys.forEach(function (k) { dic[k] = []; idx[k] = {}; });
   function code(k, v) { v = tidy(v, 120); if (!(v in idx[k])) { idx[k][v] = dic[k].length; dic[k].push(v); } return idx[k][v]; }
-  var year = R.settings && R.settings.annee, since = year ? year + '-01-01' : '';
+  // the comparison year too: a week, a month or an action is compared with the weeks before it, across the new year
+  var year = R.settings && (R.settings.annee_ref || R.settings.annee), since = year ? year + '-01-01' : '';
   var n = rows(ncIn).map(function (r) { return { r: r, created: str(r.created), plant: str(r.plant).trim().toUpperCase() }; })
     .filter(function (x) { return (x.plant === 'FTO2' || x.plant === 'FT02') && x.created >= since; });
   n.sort(function (a, b) { return a.created < b.created ? -1 : a.created > b.created ? 1 : 0; });

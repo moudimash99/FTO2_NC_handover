@@ -1,0 +1,112 @@
+<!--
+title: Configuration
+subtitle: Les réglages du tableau de bord : qui remplit lesquels, et ce que change chacun
+kicker: Tableau de bord NC FTO2 · Développeurs
+file: developers/fr/2 Configuration
+for: le développeur, le responsable qualité et le gestionnaire de configuration
+foot: Tableau de bord NC FTO2 · Configuration
+short: yes
+lang: fr
+-->
+
+<h2>Deux sortes de réglages</h2>
+<p>Presque tout ce qui peut changer dans le tableau de bord est un réglage, pas du code. Il y en a deux sortes :</p>
+<ul>
+  <li><b>Les valeurs que des personnes remplissent à la main</b> sont dans le classeur Fusion <i>FTO2 NC Dashboard - Settings</i>.
+    Chaque feuille est synchronisée vers son propre dataset (<code>fto2_set_…</code>), que la mise à jour lit.</li>
+  <li><b>Les règles et les tables techniques</b> (quelle NC compte, quel produit, quelle cause, les détails du modèle de coût)
+    sont de petites tables gardées avec le code, dans le dossier des réglages. Elles changent rarement, et seulement avec
+    prudence.</li>
+</ul>
+<p>Un changement apparaît sur le tableau de bord après la mise à jour suivante. On ne change rien dans les pages elles-mêmes.</p>
+
+<h2>Partie 1 – Les feuilles du responsable qualité</h2>
+<p>Les valeurs décidées. Elles sont peu nombreuses, et chacune fait bouger des chiffres de toute l’année.</p>
+<table class="keep">
+  <thead><tr><th style="width:40mm">Feuille</th><th>Ce qu’elle contient</th><th style="width:34mm">Quand elle change</th></tr></thead>
+  <tbody>
+    <tr><td><b>Target and pages</b></td><td>La baisse visée par l’objectif (0,25 = 25 % de NC en moins par produit que l’année de comparaison),
+      ce que les pages affichent à l’ouverture, l’objectif d’une action MFT.</td><td>Quand l’objectif ou la revue change.</td></tr>
+    <tr><td><b>Cost rates and times</b></td><td>Les taux horaires de la production, de la qualité et des méthodes, et les minutes que prend chaque
+      étape d’une NC.</td><td>Quand un taux ou un temps de processus change.</td></tr>
+    <tr><td><b>Blackout days</b></td><td>Les jours où l’usine est fermée (poids 0) ou à moitié fermée (poids 0,5), une ligne par période. Le
+      volume d’un mois est réparti sur ses jours ouvrés : ces jours décident donc du volume de chaque mois et de chaque semaine,
+      de la part du mois en cours, et des semaines de fermeture que chaque page laisse hors de ses moyennes. Un jour sans ligne
+      est un jour ouvré complet : la mise à jour prévient quand l’année, ou sa période de Noël, n’a aucune fermeture.</td><td>Chaque
+      année, Noël compris, et quand une fermeture est ajoutée.</td></tr>
+  </tbody>
+</table>
+<p>Trois valeurs ne sont plus des réglages. L’<b>année suivie</b> est l’année en cours, et elle change toute seule le 1er
+janvier. Les <b>volumes</b> viennent du plan de production : ceux de l’an dernier aussi, mesurés de la même façon (produits
+fabriqués, répartis sur les jours ouvrés), sauf 2025, que le plan ne couvre pas (<code>0_livraisons_2025.csv</code>, ses
+livraisons). L’<b>usine</b> est écrite dans plusieurs règles et dans les pages : la changer est une tâche de développeur.</p>
+<p>Comme l’année change le 1er janvier, le tableau de bord démarre presque vide début janvier ; c’est normal. La cloche reste
+muette tant que l’année n’a pas 16 semaines terminées (fin avril).</p>
+
+<h2>Partie 2 – Les feuilles du gestionnaire de configuration</h2>
+<table class="keep">
+  <thead><tr><th style="width:40mm">Feuille</th><th>Ce qu’elle contient</th><th style="width:34mm">Quand elle change</th></tr></thead>
+  <tbody>
+    <tr><td><b>Part prices</b></td><td>Le prix unitaire de chaque pièce (numéro de matériel), pour qu’une pièce rebutée ou échangée soit comptée
+      dans le coût. Chaque mise à jour liste les pièces encore sans prix.</td><td>Quand un prix est connu ou change.</td></tr>
+    <tr><td><b>Cable tracker</b></td><td>Le suivi de l’équipe câbles, collé tel quel, à partir de sa ligne d’en-tête.</td><td>À chaque mise à jour
+      du suivi.</td></tr>
+    <tr><td><b>GPS register</b></td><td>Le registre GPS de l’année suivie, collé à partir de sa ligne d’en-tête.</td><td>À chaque mise à jour du
+      registre.</td></tr>
+    <tr><td><b>Test list</b></td><td>La liste des NC de l’équipe Test, collée à partir de sa ligne d’en-tête.</td><td>À chaque mise à jour de la
+      liste.</td></tr>
+  </tbody>
+</table>
+<p>Trois règles pour chaque feuille : gardez la première ligne (les noms des colonnes) exactement comme elle est ; une ligne
+par élément, pas de cellules fusionnées, pas de totaux ; une date s’écrit 2026-05-15 ou 15/05/2026.</p>
+
+<h2>Comment la mise à jour lit les feuilles</h2>
+<ul>
+  <li>Une feuille est utilisée quand la mise à jour peut lire son dataset (dans le notebook : quand il est dans le panneau
+    Data). Sinon, la mise à jour prend le fichier du dossier des réglages qui a le même contenu, et le dit à son
+    démarrage.</li>
+  <li>Les noms des colonnes sont reconnus avec souplesse (majuscules, accents, espaces), parce qu’une synchronisation peut les
+    écrire un peu différemment. Une feuille à laquelle il manque une colonne n’est pas utilisée : la mise à jour nomme la
+    colonne et garde le fichier.</li>
+  <li>Une feuille qui n’a que son en-tête n’est pas utilisée : le fichier est gardé plutôt que vidé.</li>
+  <li>Les premières lignes affichées par la mise à jour listent les réglages venus de Fusion. Lisez-les après chaque
+    changement.</li>
+</ul>
+
+<h2>Les tables de règles</h2>
+<p>Les règles sont dans le dossier des réglages, sous forme de petites tables qui s’ouvrent dans Excel. Leur nom dit qui doit y
+toucher :</p>
+<table class="keep">
+  <thead><tr><th style="width:24mm">Commence par</th><th>Ce que c’est</th></tr></thead>
+  <tbody>
+    <tr><td><code>0_</code></td><td>Historique et valeurs de secours : les livraisons 2025, le plan de production tel qu’il a été lu la dernière
+      fois. Pas de modification à la main.</td></tr>
+    <tr><td><code>1_</code></td><td>Les valeurs des deux parties ci-dessus, sous forme de fichiers : le secours quand Fusion ne peut pas être lu.
+      Aussi les actions MFT.</td></tr>
+    <tr><td><code>2_</code></td><td>Les règles et les noms : quelles NC comptent, la ligne de chaque programme, le produit de chaque NC, son type,
+      son origine, les noms des causes, les catégories et leurs couleurs, les noms des datasets et des fichiers sources.</td></tr>
+    <tr><td><code>3_</code></td><td>Expert : les détails du modèle de coût, les réglages de la cloche, les sous-codes officiels.</td></tr>
+  </tbody>
+</table>
+<p>La table <code>lisez_moi.csv</code> liste chaque table, ce qu’elle change et quelle partie du code la lit.</p>
+
+<h3>Comment fonctionne une table de règles</h3>
+<p>Chaque NC est testée règle après règle, dans l’ordre de la colonne <code>ordre</code>. Les lignes d’une même règle doivent toutes être
+vraies ; la première règle qui correspond donne le résultat ; la règle marquée <code>toujours</code> est la règle par défaut. Un
+test lit une colonne des données de la NC : égal à, l’une des valeurs d’une liste, contient, commence par, ou un motif.</p>
+<p>Ainsi, pour envoyer un nouveau programme vers sa ligne, ajoutez une règle à <code>2_regle_ligne.csv</code> ; pour laisser de
+côté une sorte de NC, ajoutez-en une à <code>2_regle_exclusion.csv</code>. Placez la nouvelle règle avant une règle plus
+large, sinon c’est la plus large qui l’emporte.</p>
+
+<h2>Une erreur dans un réglage</h2>
+<p>La mise à jour lit tous les réglages avant d’aller chercher quoi que ce soit. Une valeur mal remplie l’arrête en quelques
+secondes, sans rien écrire, avec un message clair qui nomme la table, la ligne et ce qu’il faut corriger, par exemple
+<i>1_cout_parametres.csv, taux_qualite: 'abc' is not a number</i>. Corrigez la ligne et relancez la mise à jour.</p>
+
+<div class="next">
+<h2>À lire ensuite</h2>
+<ul>
+  <li><i>Le pipeline</i> : ce que la mise à jour fait de ces réglages.</li>
+  <li><i>Comment le coût est calculé</i> (dossier des utilisateurs) : ce que veulent dire les taux et les minutes.</li>
+</ul>
+</div>

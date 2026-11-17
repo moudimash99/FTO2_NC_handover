@@ -28,17 +28,20 @@ def say(*a):
     print(*a, flush=True)
 
 
-def comparison_year(raw, station_desc):
+def comparison_year(p):
     """The comparison year (config.comparison_year: the year before the one followed, unless 2_parametres.csv names another)
-    for the targets and the year comparisons: the raw Skywise NCs of that year through the pipeline's rules, the parser and
-    the CNQ model, summed per month, scope, phase, line and product; and that year's deliveries per product (deliveries)."""
+    for the targets and the year comparisons, from the processed NCs of the run (core.prepare), which hold that year too: the
+    same rules, labels, rework orders, aléas and cost model as the year followed. Summed per month, scope, phase, line and
+    product; with its defects by cause, its NCs per aircraft, and its volume per product (deliveries)."""
     year = config.comparison_year()
     rules, plan = product_alias_rules(), {str(k).upper() for k in config.frame("2_produits_plan.csv").produit_nc}
     alias = lambda line, prod, station: alias_product(rules, plan, line, prod, station)   # products off the plan put back on their plan product
-    rows, info, p = core.year_baseline(raw, station_desc, year, alias)
+    rows, info = core.year_rows(p, year, alias)
+    if not rows:
+        return None
     out = {"cols": ["month", "scope", "phase", "line", "product", "nc", "def", "defMajor", "cost", "cost2", "cost1", "liab", "costAll"], "rows": rows,
            "from": info["created_from"], "to": info["created_to"], "prod": None}
-    out["rcaCols"], out["rca"] = core.year_causes(p, year)   # that year's defects by cause (parser labels), for the cause charts of both years
+    out["rcaCols"], out["rca"] = core.year_causes(p, year)   # that year's defects by cause, for the cause charts of both years
     then = p["nc"][p["nc"].date_creation.astype(str).str.startswith(str(year)) & (p["nc"].scope == "serie")]
     msn = then.msn.fillna("").astype(str).str.replace(r"\.0$", "", regex=True).str.lstrip("0")
     out["byMsn"] = {"%s|%s" % k: int(v) for k, v in then.assign(m=msn)[msn != ""].groupby(["ligne", "m"]).size().items()}   # that year's NCs per aircraft: built partly then
@@ -580,7 +583,7 @@ def page_settings():
             "mft_baisse_min": n("mft_baisse_min_base"), "mft_baisse_facteur": n("mft_baisse_facteur"), "mft_fin_min": n("mft_fin_min_avions"),
             "action_baisse": action_cut, "action_coef": round(1 - action_cut, 12),
             "action_semaines": n("action_semaines_tenues"), "action_tendance": n("action_seuil_tendance"),
-            "semaines_poids": calendar_weights()["weeks"], "msn_minimum": n("msn_minimum"),
+            "semaines_poids": {str(y): calendar_weights(y)["weeks"] for y in (config.comparison_year(), config.year())}, "msn_minimum": n("msn_minimum"),
             "placeholder": config.parameter("souscodes_non_precis", F, keep_spaces=True).strip(),
             "defauts": opening,
             "categories": [{"nom": r["categorie"], "couleur": int(r["couleur"]) if r["couleur"].strip() else None,

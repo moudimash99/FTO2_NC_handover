@@ -587,6 +587,7 @@ def lines_to_label(d, lt):
     """Defect lines without a usable stored label (new, or text changed since it was labelled), for the periodic AI pass.
     snippet is the line's full text: a label is used only while the line's text stays the same as its snippet."""
     t = d[~d.llm_status.isin(["ok", "titre", "code", "code_famille"])]   # the A400M title lines and the lines with a code written in the NC need no label
+    t = t[t.date_creation.astype(str) >= config.first_day()]   # the year followed: the comparison year keeps the labels it has
     out = pd.DataFrame({"notification_number": t.notification_number, "seq": t.seq, "snippet": t.text.fillna(""),
                         "parser_sous_categorie": t.sous_groupe, "ligne": t.ligne, "date_creation": t.date_creation,
                         "long_text": t.notification_number.map(lambda n: (lt.get(n, "") or "")[:4000])})
@@ -617,7 +618,7 @@ def liab_cat(nc):
 
 
 def year_causes(p, year):
-    """The year's defect lines per month, scope, phase, line, product, category and root cause, from year_baseline's third output
+    """The year's defect lines per month, scope, phase, line, product, category and root cause, from the processed NCs (prepare)
     (the parser's labels: the 2025 extract has no stored labels): (columns, rows) with rows
     [month, scope, phase, line, product, category, root cause, defect lines, major defect lines, liable (f FTO2, s supplier, o other)]."""
     nc, d = p["nc"], p["d"]
@@ -633,19 +634,16 @@ def year_causes(p, year):
     return ["month", "scope", "phase", "line", "product", "cat", "rca", "def", "defMajor", "liab"], rows
 
 
-def year_baseline(raw, station_desc, year, alias=None):
-    """One year of NCs through the pipeline's rules, the parser and the CNQ model (no stored labels: parser classes), summed per
-    month, report scope, phase, line and product: [month, scope, phase, line, product, NCs, defect lines, major defect lines,
-    level-3 cost, level-2, level-1, liable (f FTO2, s supplier, o other), level-3 cost whoever is liable]. The work minutes are the model's (no rework-order operations for that year).
-    Same scope rule as the dashboard (serie = plant FTO2 or FT02; client = customer return)."""
-    x, _ = merge_exports([pipeline_rules(raw, station_desc)])
-    empty = pd.DataFrame(columns=["notification_number", "seq", "snippet", "llm_sous_categorie", "llm_sous_code", "llm_defaut_cable", "llm_confiance", "llm_symptome"])
-    p = prepare(x, empty)
-    if alias:   # alias(line, product, station) -> the plan product (build_all.alias_product): products off the plan put back on theirs
-        st = p["nc"]["station_description"] if "station_description" in p["nc"].columns else p["nc"].get("station", pd.Series("", index=p["nc"].index))
-        p["nc"]["produit"] = [alias(S_(l), S_(q) or "Other", S_(t)) for l, q, t in zip(p["nc"].ligne, p["nc"].produit, st)]
+def year_rows(p, year, alias=None):
+    """One year of the processed NCs (prepare: the same rules, labels, rework orders, aléas and cost model as every NC),
+    summed per month, report scope, phase, line and product: [month, scope, phase, line, product, NCs, defect lines, major
+    defect lines, level-3 cost, level-2, level-1, liable (f FTO2, s supplier, o other), level-3 cost whoever is liable].
+    Same scope rule as the dashboard (serie = plant FTO2 or FT02; client = customer return). Returns (rows, info)."""
     nc, d = p["nc"], p["d"]
-    nc = nc[nc.date_creation.str.startswith(str(year))].copy()
+    nc = nc[nc.date_creation.astype(str).str.startswith(str(year))].copy()
+    if alias:   # alias(line, product, station) -> the plan product (build_all.alias_product): products off the plan put back on theirs
+        st = nc["station_description"] if "station_description" in nc.columns else nc.get("station", pd.Series("", index=nc.index))
+        nc["produit"] = [alias(S_(l), S_(q) or "Other", S_(t)) for l, q, t in zip(nc.ligne, nc.produit, st)]
     nc["c3all"] = nc["cnq_cost_total"]   # the cost of the work whoever is liable (the REC cost switch)
     for c in ("cnq_cost_total", "cnq_cost_global", "cnq_cost_airbus"):   # FTO2's cost: only where FTO2 is liable
         nc[c] = nc[c] * nc["cnq_on_aec"]
@@ -662,4 +660,4 @@ def year_baseline(raw, station_desc, year, alias=None):
     aec = nc[nc.cnq_on_aec == 1]
     info = {"ncs": int(len(nc)), "serie": int((nc.scope == "serie").sum()), "client": int((nc.scope == "client").sum()), "autre": int((nc.scope == "autre").sum()),
             "level3_aec": round(float(aec.cnq_cost_total.sum()), 2), "created_from": nc.date_creation.min(), "created_to": nc.date_creation.max()}
-    return rows, info, p
+    return rows, info

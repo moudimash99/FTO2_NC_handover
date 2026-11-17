@@ -1,0 +1,138 @@
+<!--
+title: Introduction au tableau de bord
+subtitle: Ce qu’il montre, comment l’ouvrir, comment choisir ce que vous regardez
+kicker: Tableau de bord NC FTO2 · Utilisateurs
+file: users/fr/1 Introduction
+for: tous ceux qui lisent le tableau de bord
+foot: Tableau de bord NC FTO2 · Introduction
+short: yes
+lang: fr
+-->
+
+<h2>Ce que montre le tableau de bord</h2>
+<p>Le tableau de bord montre les non-conformités (NC) de FTO2 : combien il y en a, sur quelles lignes, quels produits et quels
+avions, pour quelles causes, à quel coût, et si chaque ligne est dans son objectif. Il ne fait qu’afficher : aucun clic ne
+modifie une NC, ni aucune donnée.</p>
+<p>Les NC viennent de SAP, via Skywise. Le nombre d’avions produits vient du plan de production. Les données sont mises à jour
+par le responsable du tableau de bord ; la date <b>Données au…</b>, en haut à droite de la page, indique jusqu’à quel jour
+elles vont.</p>
+
+<h2>Ouvrir le tableau de bord</h2>
+<ol class="steps">
+  <li>Ouvrez le lien du tableau de bord, en étant connecté à Skywise comme d’habitude. Gardez-le dans les favoris de votre
+    navigateur.</li>
+  <li>Attendez quelques secondes : un encadré vert indique que les données se chargent, puis la page apparaît.</li>
+  <li>La page s’ouvre en français. Le bouton <b>EN</b>, en haut à droite, la passe en anglais ; ce guide utilise les mots
+    français. Les textes des NC eux-mêmes restent toujours en français.</li>
+</ol>
+<p>Si la page reste sur l’encadré de chargement, ou affiche un encadré rouge, consultez <i>Limites connues</i>, ou prévenez le
+responsable du tableau de bord.</p>
+
+<h2>La page de haut en bas</h2>
+<ul class="desc">
+  <li><b>En haut à droite :</b> <b>Données au…</b>, le jour de la NC la plus récente ; la <b>cloche</b>, ce qui mérite un coup
+    d’œil cette semaine (ci-dessous) ; <b>FR / EN</b>, la langue ; et un grand interrupteur <b>Essentiel / Deep dive</b>, les
+    deux modes.</li>
+  <li><b>Sous le titre : les filtres.</b> Deux ou trois rangées de listes et de boutons, qui décident des NC que vous regardez
+    (ci-dessous). En dessous, une courte ligne compte les NC et les défauts gardés, par exemple <i>868 NC · 3 160 défauts dans
+    la sélection</i>.</li>
+  <li><b>Les onglets</b> du mode où vous êtes, puis le contenu de l’onglet : une rangée de chiffres clés, puis les graphiques,
+    chacun dans une carte blanche avec son titre et une ligne qui dit comment le lire.</li>
+</ul>
+
+<h2>Essentiel ou Deep dive</h2>
+<table class="keep">
+  <thead><tr><th style="width:26mm">Mode</th><th style="width:52mm">Onglets</th><th>Utilisez-le pour</th></tr></thead>
+  <tbody>
+    <tr><td><b>Essentiel</b></td><td><b>Synthèse</b>, <b>Détail</b></td><td>Suivre l’année et préparer les revues mensuelles : les quelques graphiques
+      qui comptent, assez grands pour être montrés sur un écran.</td></tr>
+    <tr><td><b>Deep dive</b></td><td><b>Vue d’ensemble, Pareto, Localisation, Coût de non-qualité, Retours clients, Câbles,
+      Définitions, Production</b></td><td>Analyser : tous les graphiques, toutes les listes, l’explication de chaque calcul. Chaque
+      onglet a son propre petit document Deep dive.</td></tr>
+  </tbody>
+</table>
+<p>Les filtres restent tels quels quand vous changez d’onglet ou de mode.</p>
+
+<h2>Ce que chaque graphique sait faire</h2>
+<table class="keep">
+  <thead><tr><th style="width:52mm">Vous faites</th><th>Vous obtenez</th></tr></thead>
+  <tbody>
+    <tr><td>Survoler une barre, un point, une case</td><td>Un petit encadré avec ses chiffres exacts.</td></tr>
+    <tr><td>Cliquer sur une barre, une ligne, un mois</td><td>La page ne garde que cette partie des données (ci-dessous).</td></tr>
+    <tr><td>Cliquer sur ⤢ <b>Agrandir</b> (mode Essentiel)</td><td>Le graphique seul à l’écran, pour une réunion. <b>Fermer</b> le remet en
+      place.</td></tr>
+    <tr><td>Cliquer sur <b>PNG</b>, à côté d’Agrandir</td><td>Le graphique enregistré en image, avec son titre et sa légende, pour une
+      présentation.</td></tr>
+    <tr><td>Ouvrir <b>▸ Voir les données</b></td><td>Les chiffres du graphique, sous forme de tableau.</td></tr>
+    <tr><td>Ouvrir une ligne qui commence par ▸</td><td>D’autres graphiques, ou la liste des NC derrière l’onglet, avec un champ de
+      recherche.</td></tr>
+  </tbody>
+</table>
+
+<h2>Choisir ce que vous regardez</h2>
+<p>Les filtres décident des NC affichées ; chaque chiffre de chaque onglet les suit. À l’ouverture, la page montre les NC
+<b>série</b> <b>émises à FTO2</b>, dont <b>FTO2 est responsable</b>, créées <b>depuis le 1er janvier</b>.</p>
+<table class="keep">
+  <thead><tr><th style="width:40mm">Filtre</th><th>Ce qu’il fait</th></tr></thead>
+  <tbody>
+    <tr><td><b>Avion</b></td><td>Une ligne : A350, A330, A320, A400M ; ou toutes.</td></tr>
+    <tr><td><b>Type de production</b></td><td>Série, REC ou FTI, ou tous.</td></tr>
+    <tr><td><b>Période</b></td><td>Depuis le 1er janvier, le dernier mois, les 3, 6 ou 12 derniers mois, toutes les dates, ou deux dates de
+      votre choix.</td></tr>
+    <tr><td><b>Responsabilité</b></td><td>Qui est responsable de la NC dans SAP : FTO2, les fournisseurs, les autres.</td></tr>
+    <tr><td><b>Usine FTO2 uniquement</b></td><td>Oui : seulement les NC émises à FTO2. Non : aussi celles émises ailleurs, comme les
+      retours clients.</td></tr>
+    <tr><td><b>Défauts mineurs</b></td><td>Compter ou laisser de côté les défauts mineurs (tyrap, capuchon ou bouchon manquant). Change
+      le nombre de défauts, jamais le nombre de NC.</td></tr>
+    <tr><td><b>Source des données</b>, <b>Origine</b></td><td>Rarement utiles : les NC présentes aussi dans le registre GPS ou la liste
+      Test, et la façon dont chaque NC a été trouvée.</td></tr>
+  </tbody>
+</table>
+<p><b>Un clic sur un graphique filtre aussi.</b> Cliquez sur une ligne, un produit, un mois ou un avion : une étiquette apparaît
+au bout des filtres, par exemple <i>Produit : MIP A350 ✕</i>, et toute la page suit ; son ✕ la retire. Dans les onglets Pareto,
+Coût de non-qualité et Retours clients, un clic sur une barre ne filtre que les autres cartes de cet onglet ; <b>Tout
+effacer</b> retire ces choix. <b>Réinitialiser</b>, à droite des filtres, remet tout comme à l’ouverture de la page.</p>
+<p><b>Avant de vous fier à un total, lisez la ligne qui compte la sélection.</b> Si un nombre vous surprend, cliquez sur
+<b>ⓘ Comment la sélection est faite</b> : la page rejoue les filtres un par un et montre ce que chacun a retiré.</p>
+
+<h2>La cloche</h2>
+<p>La cloche assure la veille hebdomadaire. Ligne par ligne, elle compare les quatre dernières semaines terminées aux douze
+semaines d’avant, en tenant compte du nombre d’avions produits, et liste ce qui augmente plus que le hasard ne peut
+l’expliquer : une catégorie, une cause, un sous-code, un poste, un produit, un avion avec bien plus de NC que d’habitude. Un
+chiffre sur la cloche indique combien il y a d’alarmes ; il est rouge quand l’une d’elles est une forte hausse.</p>
+<ul>
+  <li>Cliquez sur la cloche pour voir la liste, puis cliquez sur une alarme : la page ouvre le bon onglet, filtré sur ce
+    problème.</li>
+  <li>Une alarme est une question à poser, pas un verdict : regardez les NC qui sont derrière.</li>
+  <li>Elle suit les filtres <b>Avion</b> et <b>Type de production</b>, pas la période : elle regarde toujours les dernières
+    semaines.</li>
+  <li>De janvier à fin avril, elle affiche <i>Pas encore assez de semaines pour comparer</i> : il lui faut seize semaines de
+    l’année.</li>
+</ul>
+
+<h2>Les mots que vous rencontrerez</h2>
+<table class="keep">
+  <tbody>
+    <tr><td style="width:40mm"><b>NC</b></td><td>Une non-conformité dans SAP. Elle compte une fois, quel que soit son contenu. Les NC
+      supprimées sont comptées aussi.</td></tr>
+    <tr><td><b>Défaut</b></td><td>Une ligne de défaut dans une NC : une NC avec 16 lignes de défaut, c’est 1 NC et 16 défauts.</td></tr>
+    <tr><td><b>NC par MSN</b></td><td>Le taux : les NC divisées par les avions et les produits fabriqués sur la même période. Il rend
+      les mois et les lignes comparables.</td></tr>
+    <tr><td><b>Objectif</b></td><td>Le taux de l’an dernier de chaque ligne, diminué de la baisse décidée pour l’année (25 %
+      aujourd’hui).</td></tr>
+    <tr><td><b>Coût de non-qualité</b></td><td>Une estimation de ce que coûtent les NC : le temps que prend chacune, au taux horaire
+      de qui fait le travail. Faite pour comparer ; ce n’est pas un chiffre comptable.</td></tr>
+    <tr><td><b>Catégorie, cause</b></td><td>Chaque défaut est classé dans une cause (il y en a 25), qui appartient à l’une des
+      9 catégories. L’onglet Définitions les explique une à une.</td></tr>
+  </tbody>
+</table>
+
+<div class="next">
+<h2>À lire ensuite</h2>
+<ul>
+  <li><b>Votre guide de départ :</b> <i>Pour commencer – QLS</i>, <i>Pour commencer – QCM</i> ou
+    <i>Pour commencer – Manager</i>. Chacun dit quels graphiques répondent à vos questions.</li>
+  <li><b>Un document Deep dive par onglet</b> du mode Deep dive, quand vous avez besoin du détail d’un onglet.</li>
+  <li><i>Comment le coût est calculé</i>, et <i>Limites connues</i>.</li>
+</ul>
+</div>

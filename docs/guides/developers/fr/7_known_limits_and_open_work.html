@@ -1,0 +1,78 @@
+<!--
+title: Limites connues et travail en cours
+subtitle: Ce que l’on sait imparfait, et ce qui était prévu mais n’est pas terminé
+kicker: Tableau de bord NC FTO2 · Développeurs
+file: developers/fr/7 Limites connues et travail en cours
+for: le développeur
+foot: Tableau de bord NC FTO2 · Limites connues et travail en cours
+short: yes
+lang: fr
+-->
+
+<h2>Limites connues</h2>
+<p>Elles sont connues, et acceptées pour l’instant. Le document des utilisateurs <i>Limites connues</i> explique celles qu’ils
+peuvent voir.</p>
+<table class="keep">
+  <thead><tr><th style="width:52mm">Limite</th><th>Ce que cela veut dire</th></tr></thead>
+  <tbody>
+    <tr><td><b>Nouvelles lignes de défaut</b></td><td>Une ligne de défaut reçoit sa cause précise quand elle est étiquetée. D’ici là, elle garde la cause
+      du lecteur de défauts, un peu moins précise. Chaque mise à jour liste les lignes encore à étiqueter.</td></tr>
+    <tr><td><b>L’A400M</b></td><td>Ses NC arrivent dans Skywise sans leur texte. Une ligne de défaut est tirée du titre quand une
+      règle le reconnaît ; sinon, la NC compte, sans défaut.</td></tr>
+    <tr><td><b>Le coût est une estimation</b></td><td>Fait pour comparer causes, lignes et mois, pas pour être comptabilisé. Il n’a pas été comparé
+      avec la méthode officielle d’Airbus.</td></tr>
+    <tr><td><b>Prix des pièces</b></td><td>Beaucoup de pièces n’ont pas encore de prix : leurs NC comptent sans la valeur de la pièce. Chaque mise
+      à jour les liste, les plus fréquentes d’abord.</td></tr>
+    <tr><td><b>Numéros de matériel dans Fusion</b></td><td>Un numéro de matériel tapé comme un nombre perd ses zéros de tête. La mise à jour
+      rapproche les numéros sans leurs zéros de tête, mais gardez la colonne en texte dans la feuille.</td></tr>
+    <tr><td><b>Début janvier</b></td><td>L’année suivie change seule le 1er janvier : le tableau de bord démarre donc presque vide. La cloche
+      reste muette les 16 premières semaines (fin avril).</td></tr>
+    <tr><td><b>Deux copies de la cloche</b></td><td>Le tableau de bord et la page MFT ont chacun leur propre copie du moteur d’alarmes. Une
+      modification de l’une doit être faite aussi dans l’autre.</td></tr>
+    <tr><td><b>Les objectifs 2026</b></td><td>2025 est compté en produits livrés (le plan ne remonte pas jusqu’à 2025), 2026 en produits fabriqués
+      sur les jours ouvrés : les taux diffèrent de quelques pour cent par ligne (environ 6 % sur l’A320). À partir de 2027, les
+      deux années sont mesurées à partir du plan, de la même façon.</td></tr>
+    <tr><td><b>Le coût de l’an dernier</b></td><td>L’an dernier est chiffré sans temps d’ordre de retouche, temps d’aléa, étiquette
+      enregistrée ni type de NC du registre GPS, que cette année utilise tous : l’objectif de coût compare la méthode autant que
+      l’année.</td></tr>
+    <tr><td><b>NC supprimées</b></td><td>Comptées, par décision : le travail qu’elles ont causé a été fait. Certaines sont des copies d’une NC
+      active (même avion, même texte, à quelques jours d’écart), comptées deux fois.</td></tr>
+    <tr><td><b>Actions MFT au changement d’année</b></td><td>Les tables ne contiennent que les NC de l’année suivie. Le 1er janvier, une action
+      commencée l’année d’avant perd les huit semaines auxquelles elle est comparée, et la fenêtre « 3 mois contre 12 » de la
+      page MFT est courte.</td></tr>
+    <tr><td><b>Les aléas de décembre dernier</b></td><td>Lus seulement pour relier les NC de début janvier ; ils ne sont pas comptés comme aléas
+      sans NC.</td></tr>
+  </tbody>
+</table>
+
+<h2>Travail en cours</h2>
+<table class="keep">
+  <thead><tr><th style="width:52mm">Sujet</th><th>Où on en est</th></tr></thead>
+  <tbody>
+    <tr><td><b>Garder les NC de l’an dernier dans les tables</b></td><td>La mise à jour lit de toute façon les NC de l’an dernier, pour les
+      objectifs. Gardées dans les tables (et laissées hors de l’année du tableau de bord), elles donneraient aux actions MFT leur
+      référence au changement d’année, une vraie fenêtre de 12 mois, et une cloche qui fonctionne dès janvier.</td></tr>
+    <tr><td><b>Un seul endroit pour chaque règle</b></td><td>Encore écrites deux fois : les groupes « Responsabilité » (la table
+      <code>2_regle_responsabilite.csv</code> pour l’an dernier, la copie propre aux pages pour cette année) ; le code de l’usine
+      (règles, réglages du coût, pages) ; les noms des lieux de détection et des décisions (les pages les traduisent avec leurs
+      propres listes) ; l’arbre des causes (décidé dans le code du lecteur de défauts, décrit dans
+      <code>3_sous_categories.csv</code> : la mise à jour s’arrête si les deux diffèrent). Pour chacune : la calculer une seule
+      fois dans la mise à jour et l’envoyer aux pages.</td></tr>
+    <tr><td><b>Lancer la mise à jour de façon planifiée</b></td><td>Le transform pour le Code Repository est prêt, et vérifié : il écrit
+      exactement les tables du notebook. Ses étapes sont dans le README du kit Code Repository : ajouter les fichiers, faire un
+      premier build vers des tables à lui, comparer, puis basculer et planifier. D’ici là, le notebook est lancé à la main.</td></tr>
+    <tr><td><b>Étiqueter les nouvelles lignes de défaut</b></td><td>Les lignes à étiqueter sont listées à chaque mise à jour. Aucun texte de NC
+      ne peut sortir de Skywise vers un outil extérieur sans l’accord de l’IT et du propriétaire des données.</td></tr>
+    <tr><td><b>Actions MFT gardées pour tous</b></td><td>Une action tapée sur la page MFT n’est gardée que dans ce navigateur, jusqu’à ce qu’elle
+      soit ajoutée à la table des actions MFT. Prévu : les garder dans un objet du type d’objet de la Saisie structurée de NC,
+      pour que la page les lise et les enregistre pour tout le monde. Testé en partie.</td></tr>
+    <tr><td><b>Les anciennes sorties</b></td><td>Tant que la ligne <code>garder_anciennes_sorties</code> vaut <code>oui</code>, la mise à jour écrit
+      encore les tables de l’ancienne application Slate. Passez-la à <code>non</code> dès que plus personne n’utilise cette
+      application.</td></tr>
+    <tr><td><b>Les calculs en fonctions Slate</b></td><td>Les objectifs, la cloche et l’explication du coût peuvent aussi tourner comme
+      fonctions Slate, au lieu de tourner dans la page. Prêt, et vérifié : les chiffres sont les mêmes ; pas essayé dans
+      Skywise. Les pages fonctionnent sans.</td></tr>
+    <tr><td><b>Une table de référence plus propre</b></td><td><code>fto2_dash_ref</code> contient de grands blocs de texte découpés en morceaux.
+      Cela fonctionne, mais une table par sujet serait plus facile à lire. Pas urgent.</td></tr>
+  </tbody>
+</table>

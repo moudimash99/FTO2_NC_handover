@@ -1,0 +1,134 @@
+<!--
+title: Deep dive – Pareto
+subtitle: Les défauts triés : par catégorie, cause, ligne, sous-code et FIN
+kicker: Tableau de bord NC FTO2 · Utilisateurs · Mode Deep dive
+file: users/fr/Deep dive 2 - Pareto
+for: tous ceux qui analysent les causes des NC
+foot: Tableau de bord NC FTO2 · Deep dive – Pareto
+short: yes
+lang: fr
+-->
+<h2>À quoi sert l’onglet</h2>
+<p>L’onglet Pareto répond à la question <b>qu’est-ce qui ne va pas, et combien ?</b> Il trie les défauts de la sélection du plus grand groupe au plus petit, sous plusieurs angles, et vous permet de suivre une cause jusqu’aux défauts eux-mêmes. Il compte des <b>défauts</b>, pas des NC : une NC avec quatre défauts compte quatre fois. Il montre les NC émises à FTO2 dont FTO2 est responsable, selon les filtres du haut de la page.</p>
+<p>Deux interrupteurs se trouvent au-dessus des graphiques. <b>Mesure</b> : <b>Volume (défauts)</b> compte les défauts, <b>Coût de non-qualité</b> leur coût ; l’onglet s’ouvre sur le coût, et une cause peut peser peu en nombre mais beaucoup en coût. <b>Défauts câble dans les barres</b> : <b>Affichés</b> marque, dans chaque barre, la part qui vient d’un défaut câble.</p>
+<h2>Les cartes du Pareto</h2>
+<h3>Catégorie</h3>
+<table class="keep fact"><tbody>
+  <tr><th style="width:30mm">Ce qu’on voit</th><td>Les neuf familles de défauts, de la plus grande à la plus petite, avec les défauts, les NC et la part cumulée (<b>Cumul</b>).</td></tr>
+  <tr><th>Comment le lire</th><td>« 65 % » dans Cumul sur la deuxième ligne : les deux premières catégories font 65 % des défauts. Dans la colonne NC, une NC est partagée entre ses défauts, d’où les décimales.</td></tr>
+  <tr><th>À quoi ça sert</th><td>La vue d’ensemble d’un seul regard : là où l’effort rapporte le plus.</td></tr>
+  <tr><th>Un clic</th><td>Filtre les autres graphiques de cet onglet, et sa liste.</td></tr>
+</tbody></table>
+<h3>Cause (RCA)</h3>
+<table class="keep fact"><tbody>
+  <tr><th style="width:30mm">Ce qu’on voit</th><td>Les mêmes défauts par cause : 25 causes, chaque barre à la couleur de sa catégorie.</td></tr>
+  <tr><th>Comment le lire</th><td>Une ligne par cause, la plus grande en premier.</td></tr>
+  <tr><th>À quoi ça sert</th><td>La carte d’où partir quand vous voulez agir : une cause dit ce qui s’est mal passé (une inversion, un obturateur manquant, un câble endommagé).</td></tr>
+  <tr><th>Un clic</th><td>Filtre les autres graphiques de cet onglet, et sa liste.</td></tr>
+</tbody></table>
+<h3>Ligne</h3>
+<table class="keep fact"><tbody>
+  <tr><th style="width:30mm">Ce qu’on voit</th><td>Les mêmes défauts par ligne d’avion.</td></tr>
+  <tr><th>Comment le lire</th><td>Une rangée par ligne.</td></tr>
+  <tr><th>À quoi ça sert</th><td>Cliquez d’abord sur une cause : cette carte dit alors où elle se produit.</td></tr>
+  <tr><th>Un clic</th><td>Filtre les autres graphiques de cet onglet, et sa liste.</td></tr>
+</tbody></table>
+<h3>Sous-code officiel</h3>
+<table class="keep fact"><tbody>
+  <tr><th style="width:30mm">Ce qu’on voit</th><td>Les défauts par sous-code de la fiche de codes officielle (Q11-003, T04…).</td></tr>
+  <tr><th>Comment le lire</th><td>Une ligne par sous-code.</td></tr>
+  <tr><th>À quoi ça sert</th><td>Le niveau le plus précis, et celui qu’utilisent SAP et la fiche de codes : utile avec d’autres équipes ou pour comparer avec un rapport officiel.</td></tr>
+  <tr><th>Un clic</th><td>Filtre les autres graphiques de cet onglet, et sa liste.</td></tr>
+</tbody></table>
+<h3>FIN (repère)</h3>
+<table class="keep fact"><tbody>
+  <tr><th style="width:30mm">Ce qu’on voit</th><td>Les 20 repères les plus cités dans les défauts.</td></tr>
+  <tr><th>Comment le lire</th><td>Les défauts sans FIN écrit sont laissés de côté, de même que les noms de produit écrits à la place d’un FIN (740VU…).</td></tr>
+  <tr><th>À quoi ça sert</th><td>Un FIN qui reste haut désigne un connecteur ou un équipement où le même problème se répète : souvent la correction la plus rapide.</td></tr>
+  <tr><th>Un clic</th><td>Filtre les autres graphiques de cet onglet, et sa liste.</td></tr>
+</tbody></table>
+<h2>Les autres graphiques</h2>
+<h3>Cent défauts</h3>
+<table class="keep fact"><tbody>
+  <tr><th style="width:30mm">Ce qu’on voit</th><td>Cent cases, chacune valant 1 % des défauts, colorées par catégorie.</td></tr>
+  <tr><th>Comment le lire</th><td>Comptez les cases d’une couleur : c’est sa part en %.</td></tr>
+  <tr><th>À quoi ça sert</th><td>Les parts d’un coup d’œil ; facile à montrer en réunion.</td></tr>
+  <tr><th>Un clic</th><td>—</td></tr>
+</tbody></table>
+<h3>Volume ou coût unitaire</h3>
+<table class="keep fact"><tbody>
+  <tr><th style="width:30mm">Ce qu’on voit</th><td>Une bulle par cause.</td></tr>
+  <tr><th>Comment le lire</th><td>Plus à droite : plus fréquente. Plus haut : plus chère par défaut. Plus grosse : plus coûteuse au total. Les courbes en pointillé relient les causes de même coût total.</td></tr>
+  <tr><th>À quoi ça sert</th><td>Aide à choisir le type d’action : à droite et en bas, un problème de volume ; en haut et à gauche, un problème de coût unitaire.</td></tr>
+  <tr><th>Un clic</th><td>Garde cette cause.</td></tr>
+</tbody></table>
+<h3>Classement mensuel des causes</h3>
+<table class="keep fact"><tbody>
+  <tr><th style="width:30mm">Ce qu’on voit</th><td>Le rang des huit premières causes, mois après mois.</td></tr>
+  <tr><th>Comment le lire</th><td>Une courbe qui monte vers le rang 1 est une cause qui prend plus de place ; une bande grise marque un mois avec peu de défauts.</td></tr>
+  <tr><th>À quoi ça sert</th><td>Montre des tendances que cache un total sur l’année.</td></tr>
+  <tr><th>Un clic</th><td>Suit cette cause.</td></tr>
+</tbody></table>
+<h3>Du lieu de détection à la décision</h3>
+<table class="keep fact"><tbody>
+  <tr><th style="width:30mm">Ce qu’on voit</th><td>Le flux des défauts : où la NC a été trouvée, la catégorie, puis la décision prise.</td></tr>
+  <tr><th>Comment le lire</th><td>Plus la bande est épaisse, plus il y a de défauts. Survolez un bloc pour ne voir que ses bandes.</td></tr>
+  <tr><th>À quoi ça sert</th><td>Montre quels défauts ne sont détectés qu’au contrôle final, tard et cher, et lesquels finissent en rejet plutôt qu’en retouche.</td></tr>
+  <tr><th>Un clic</th><td>—</td></tr>
+</tbody></table>
+<h3>Les causes mois par mois</h3>
+<table class="keep fact"><tbody>
+  <tr><th style="width:30mm">Ce qu’on voit</th><td>Quelques causes, une courbe chacune, mois après mois : les trois premières de la sélection, plus des causes ajoutées à la main. Déverrouillage et FOD sont là dès le départ, pour la sécurité.</td></tr>
+  <tr><th>Comment le lire</th><td>− et + changent le nombre de premières causes affichées ; ✕ retire une cause ajoutée à la main. La mesure est celle de l’onglet (défauts ou coût) ; un interrupteur sur la carte compte les NC à la place. Deux causes d’une même catégorie partagent sa couleur, l’une en tirets.</td></tr>
+  <tr><th>À quoi ça sert</th><td>Suit les causes sur lesquelles vous travaillez, mois après mois, côte à côte.</td></tr>
+  <tr><th>Un clic</th><td>—</td></tr>
+</tbody></table>
+<h3>Une cause par MSN, mois par mois</h3>
+<table class="keep fact"><tbody>
+  <tr><th style="width:30mm">Ce qu’on voit</th><td>Une cause par avion produit, mois par mois : la cause que vous suivez dans <b>Classement mensuel des causes</b> (cliquez sur sa courbe) ; sans clic, la première cause du dernier mois.</td></tr>
+  <tr><th>Comment le lire</th><td>Trait : la moyenne de la période ; pointillé : la moyenne sur trois mois ; tirets rouges : le taux de cette cause l’an dernier. A330 et A350 quand toutes les lignes sont affichées, sinon la ligne du filtre.</td></tr>
+  <tr><th>À quoi ça sert</th><td>Montre si la cause sur laquelle vous travaillez s’améliore, quelle que soit la variation de volume.</td></tr>
+  <tr><th>Un clic</th><td>Garde ce mois.</td></tr>
+</tbody></table>
+<h3>Erreurs de branchement (deux graphiques)</h3>
+<table class="keep fact"><tbody>
+  <tr><th style="width:30mm">Ce qu’on voit</th><td>Inversions, mauvaises bornes et fils non connectés : par produit et par cause ; par million d’opérations de branchement sur le MIP A350.</td></tr>
+  <tr><th>Comment le lire</th><td>Trait : la moyenne de la période ; tirets rouges : l’an dernier.</td></tr>
+  <tr><th>À quoi ça sert</th><td>Montre si la plus grande famille de défauts bien définie s’améliore.</td></tr>
+  <tr><th>Un clic</th><td>Garde ce produit.</td></tr>
+</tbody></table>
+<h3>Causes : 2025 contre 2026</h3>
+<table class="keep fact"><tbody>
+  <tr><th style="width:30mm">Ce qu’on voit</th><td>Pour les principales causes de chaque année, les défauts par avion produit l’an dernier et cette année.</td></tr>
+  <tr><th>Comment le lire</th><td>Un trait qui monte est une cause qui a augmenté depuis l’an dernier. ▲ hausse de plus de 10 %, ▼ baisse de plus de 10 %. Le graphique suit le filtre <b>Avion</b> : A330 et A350 quand toutes les lignes sont affichées, sinon cette ligne. Un interrupteur sur la carte (A330 + A350, A330, A350) l’emporte jusqu’à ce que le filtre change.</td></tr>
+  <tr><th>À quoi ça sert</th><td>Montre quelles causes ont augmenté, quelle que soit la variation de volume.</td></tr>
+  <tr><th>Un clic</th><td>Garde cette cause.</td></tr>
+</tbody></table>
+<h3>Les causes rapportées au volume</h3>
+<table class="keep fact"><tbody>
+  <tr><th style="width:30mm">Ce qu’on voit</th><td>Les causes classées en défauts par avion produit.</td></tr>
+  <tr><th>Comment le lire</th><td>Une barre par cause.</td></tr>
+  <tr><th>À quoi ça sert</th><td>Rend les causes comparables entre des lignes qui produisent des nombres d’avions très différents.</td></tr>
+  <tr><th>Un clic</th><td>Garde cette cause.</td></tr>
+</tbody></table>
+<h3>Autres graphiques</h3>
+<p>Sous <b>▸ Autres graphiques</b> :</p>
+<table class="keep fact"><tbody>
+  <tr><th style="width:52mm">Défauts câble par MSN, mois par mois</th><td>Si les défauts câble reculent, par avion produit.</td></tr>
+  <tr><th style="width:52mm">Quelles broches sont inversées</th><td>Pour les connecteurs où les inversions sont les plus fréquentes, les paires de broches inversées : souvent les deux mêmes broches voisines, d’un avion à l’autre.</td></tr>
+</tbody></table>
+<h3>Détail des défauts et de leur coût</h3>
+<table class="keep fact"><tbody>
+  <tr><th style="width:30mm">Ce qu’on voit</th><td>La liste derrière tous les graphiques de l’onglet, les plus récents en premier : NC, date, ligne, catégorie, cause, sous-code, sa part du coût de la NC, et son texte tel qu’écrit dans la NC.</td></tr>
+  <tr><th>Comment le lire</th><td>Cherchez-y par numéro de NC, mot ou FIN. Elle affiche 200 lignes à la fois ; <b>Afficher 200 de plus</b>, en bas, en affiche davantage.</td></tr>
+  <tr><th>À quoi ça sert</th><td>C’est là qu’un chiffre devient des cas réels.</td></tr>
+  <tr><th>Un clic</th><td>—</td></tr>
+</tbody></table>
+<h2>Comment les cartes fonctionnent ensemble</h2>
+<p>Un clic sur une barre ne garde que cette partie dans les autres cartes et dans la liste : une cause, puis une ligne, puis un FIN resserrent la sélection pas à pas. Une étiquette au-dessus des cartes montre chaque choix ; <b>Tout effacer</b> les retire. Ces clics ne filtrent que cet onglet : les filtres du haut de la page restent tels quels.</p>
+<h2>Bon à savoir</h2>
+<ul>
+  <li>L’A320 est laissé de côté dans les graphiques « par avion produit » : ses produits sont de petites pièces comptées à l’unité et feraient baisser les taux.</li>
+  <li>Un nom de cause dont vous n’êtes pas sûr : l’onglet Définitions donne sa définition et des exemples réels.</li>
+  <li>Le bouton PNG, à côté de ⤢ <b>Agrandir</b>, enregistre le graphique en image, avec son titre et sa légende, prêt pour une présentation.</li>
+</ul>
