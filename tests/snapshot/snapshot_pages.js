@@ -74,9 +74,10 @@ async function dashStep(p, s) {
   else if (kind === 'src' || kind === 'org') {   // the ticks of the source list: only those of the value ('man': both lists)
     const on = kind === 'src' ? (a === 'man' ? ['gps', 'test'] : a.split('|')) : a.split('|'), at = kind === 'src' ? 'data-src' : 'data-org';
     await p.click('#gSrcTxt');
-    for (const want of [true, false]) for (const el of await p.$$('[' + at + ']')) {   // ticks on first, so one always stays
-      const k = await el.getAttribute(at), checked = await el.isChecked();
-      if (on.includes(k) === want && checked !== want) { await el.click(); await p.waitForTimeout(150); }
+    const keys = await p.$$eval('[' + at + ']', es => es.map(e => e.getAttribute(e.hasAttribute('data-src') ? 'data-src' : 'data-org')));
+    for (const want of [true, false]) for (const k of keys) {   // ticks on first, so one always stays; the list is drawn again after each tick
+      const sel = '[' + at + '="' + k + '"]';
+      if (on.includes(k) === want && (await p.isChecked(sel)) !== want) { await p.click(sel); await p.waitForTimeout(150); }
     }
     await p.click('body', { position: { x: 2, y: 2 } });
   }
