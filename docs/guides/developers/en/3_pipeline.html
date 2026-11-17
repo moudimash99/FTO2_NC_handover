@@ -39,8 +39,9 @@ surest way to get two different dashboards.</p>
 <ol>
   <li><b>Settings.</b> Every setting is read and checked first. A mistake stops the run here, before anything is fetched. The
     cause tree of the Definitions tab is checked against the code, and a missing closure in the blackout days is reported.</li>
-  <li><b>Selection.</b> The NCs created this year are fetched, the excluded ones are left out, and each NC gets its labels from
-    the rule tables: phase (series, REC, FTI), decision, origin, type, product.</li>
+  <li><b>Selection.</b> The NCs created since 1 January of the comparison year are fetched (both years: the pages choose the
+    year they show), the excluded ones are left out, and each NC gets its labels from the rule tables: phase (series, REC,
+    FTI), decision, origin, type, product.</li>
   <li><b>The lists.</b> The NCs of the GPS register and the Test list that the selection missed are fetched by number. They
     go through the same exclusion rules, and count only when created in the year followed.</li>
   <li><b>Defects.</b> The defect reader splits each NC's text into defect lines and gives each one a sub-category. A400M NCs
@@ -49,10 +50,10 @@ surest way to get two different dashboards.</p>
     sub-code written in the NC by a person always wins over the label. A line with no usable label keeps the reader's
     own cause and is listed "to label".</li>
   <li><b>Cost.</b> Rework orders, aléas and part prices are attached, and the cost model runs on every NC.</li>
-  <li><b>Reference data.</b> The production plan, the comparison year (its NCs go through the same steps, then are summed per
-    month; its volume is measured as this year's: products built over the working days, except 2025, from its deliveries
-    table), the cable requests, the MFT actions, the cause tree, the page settings and the working weight of each day and
-    week of the year (from the blackout days).</li>
+  <li><b>Reference data.</b> The production plan; the comparison year's figures, summed from the same processed NCs (so both
+    years are counted and costed the same way), with its volume measured as this year's (products built over the working
+    days; 2025 from its deliveries table); the cable requests, the MFT actions, the cause tree, the page settings and the
+    working weight of each day and week of both years (from the blackout days).</li>
   <li><b>Writing.</b> The four tables are written, then synced to Postgres.</li>
 </ol>
 <p>The run prints each step as it goes, so the last line printed says where it is.</p>
@@ -73,8 +74,9 @@ surest way to get two different dashboards.</p>
 beside the notebook: the lines to label, and the parts still to price.</p>
 
 <h2>The year</h2>
-<p>The year followed is the current year, and the comparison year the one before. Every date of the run comes from these two,
-through five small functions of <code>config.py</code>; no year is written anywhere in the code. To look back at a past year,
+<p>The year followed is the current year, and the comparison year the one before. The update reads and writes both years;
+the pages filter the year they show (front-end choices stay in the front end). Every date of the run comes from these two
+years, through a few small functions of <code>config.py</code>; no year is written anywhere in the code. To look back at a past year,
 write it on the line <code>annee</code> of <code>1_parametres.csv</code>; empty the line again afterwards.</p>
 
 <h2>The cost model, in short</h2>

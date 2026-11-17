@@ -32,15 +32,12 @@ peuvent voir.</p>
     <tr><td><b>Les objectifs 2026</b></td><td>2025 est compté en produits livrés (le plan ne remonte pas jusqu’à 2025), 2026 en produits fabriqués
       sur les jours ouvrés : les taux diffèrent de quelques pour cent par ligne (environ 6 % sur l’A320). À partir de 2027, les
       deux années sont mesurées à partir du plan, de la même façon.</td></tr>
-    <tr><td><b>Le coût de l’an dernier</b></td><td>L’an dernier est chiffré sans temps d’ordre de retouche, temps d’aléa, étiquette
-      enregistrée ni type de NC du registre GPS, que cette année utilise tous : l’objectif de coût compare la méthode autant que
-      l’année.</td></tr>
+    <tr><td><b>Le type de NC de l’an dernier</b></td><td>Les deux années passent par les mêmes étapes, mais seul le registre GPS de cette
+      année est lu : les NC de l’an dernier prennent leur type de la table de règles, celles de cette année du registre quand
+      il les liste. Le type change quelques règles de coût (contrôle final, travail interne).</td></tr>
     <tr><td><b>NC supprimées</b></td><td>Comptées, par décision : le travail qu’elles ont causé a été fait. Certaines sont des copies d’une NC
       active (même avion, même texte, à quelques jours d’écart), comptées deux fois.</td></tr>
-    <tr><td><b>Actions MFT au changement d’année</b></td><td>Les tables ne contiennent que les NC de l’année suivie. Le 1er janvier, une action
-      commencée l’année d’avant perd les huit semaines auxquelles elle est comparée, et la fenêtre « 3 mois contre 12 » de la
-      page MFT est courte.</td></tr>
-    <tr><td><b>Les aléas de décembre dernier</b></td><td>Lus seulement pour relier les NC de début janvier ; ils ne sont pas comptés comme aléas
+        <tr><td><b>Les aléas de décembre dernier</b></td><td>Lus seulement pour relier les NC de début janvier ; ils ne sont pas comptés comme aléas
       sans NC.</td></tr>
   </tbody>
 </table>
@@ -49,9 +46,9 @@ peuvent voir.</p>
 <table class="keep">
   <thead><tr><th style="width:52mm">Sujet</th><th>Où on en est</th></tr></thead>
   <tbody>
-    <tr><td><b>Garder les NC de l’an dernier dans les tables</b></td><td>La mise à jour lit de toute façon les NC de l’an dernier, pour les
-      objectifs. Gardées dans les tables (et laissées hors de l’année du tableau de bord), elles donneraient aux actions MFT leur
-      référence au changement d’année, une vraie fenêtre de 12 mois, et une cloche qui fonctionne dès janvier.</td></tr>
+    <tr><td><b>L’an dernier sur le tableau de bord</b></td><td>Les tables contiennent maintenant les NC de l’an dernier, que la page MFT
+      utilise. Le tableau de bord ne montre toujours que l’année suivie ; une vue sur 12 mois à cheval sur deux années, ou une
+      cloche qui fonctionne dès janvier, les liraient aussi.</td></tr>
     <tr><td><b>Un seul endroit pour chaque règle</b></td><td>Encore écrites deux fois : les groupes « Responsabilité » (la table
       <code>2_regle_responsabilite.csv</code> pour l’an dernier, la copie propre aux pages pour cette année) ; le code de l’usine
       (règles, réglages du coût, pages) ; les noms des lieux de détection et des décisions (les pages les traduisent avec leurs

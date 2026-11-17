@@ -40,8 +40,9 @@ Repository. Deux copies du code qui divergent sont le moyen le plus sûr d’obt
   <li><b>Réglages.</b> Chaque réglage est lu et vérifié en premier. Une erreur arrête l’exécution ici, avant toute récupération
     de données. L’arbre des causes de l’onglet Définitions est vérifié par rapport au code, et une fermeture qui manque dans
     les jours de fermeture est signalée.</li>
-  <li><b>Sélection.</b> Les NC créées cette année sont récupérées, les NC exclues sont laissées de côté, et chaque NC reçoit ses
-    étiquettes des tables de règles : phase (série, REC, FTI), décision, origine, type, produit.</li>
+  <li><b>Sélection.</b> Les NC créées depuis le 1er janvier de l’année de comparaison sont récupérées (les deux années : les
+    pages choisissent l’année qu’elles montrent), les NC exclues sont laissées de côté, et chaque NC reçoit ses étiquettes des
+    tables de règles : phase (série, REC, FTI), décision, origine, type, produit.</li>
   <li><b>Les listes.</b> Les NC du registre GPS et de la liste Test que la sélection n’a pas trouvées sont récupérées par leur
     numéro. Elles passent par les mêmes règles d’exclusion, et ne comptent que si elles ont été créées dans l’année suivie.</li>
   <li><b>Défauts.</b> Le lecteur de défauts découpe le texte de chaque NC en lignes de défaut et donne à chacune une
@@ -51,11 +52,11 @@ Repository. Deux copies du code qui divergent sont le moyen le plus sûr d’obt
     étiquette utilisable garde la cause du lecteur de défauts et est listée « à étiqueter ».</li>
   <li><b>Coût.</b> Les ordres de retouche, les aléas et les prix des pièces sont rattachés, et le modèle de coût tourne sur
     chaque NC.</li>
-  <li><b>Données de référence.</b> Le plan de production, l’année de comparaison (ses NC passent par les mêmes étapes, puis sont
-    additionnées par mois ; son volume est mesuré comme celui de cette année : produits fabriqués, répartis sur les jours
-    ouvrés, sauf 2025, tiré de sa table de livraisons), les demandes de câbles, les actions MFT, l’arbre des causes, les
-    réglages des pages et le poids de travail de chaque jour et de chaque semaine de l’année (tiré des jours de
-    fermeture).</li>
+  <li><b>Données de référence.</b> Le plan de production ; les chiffres de l’année de comparaison, additionnés à partir des
+    mêmes NC traitées (les deux années sont donc comptées et chiffrées de la même façon), avec son volume mesuré comme celui
+    de cette année (produits fabriqués, répartis sur les jours ouvrés ; 2025 tiré de sa table de livraisons) ; les demandes
+    de câbles, les actions MFT, l’arbre des causes, les réglages des pages et le poids de travail de chaque jour et de chaque
+    semaine des deux années (tiré des jours de fermeture).</li>
   <li><b>Écriture.</b> Les quatre tables sont écrites, puis synchronisées vers Postgres.</li>
 </ol>
 <p>L’exécution affiche chaque étape au fur et à mesure : la dernière ligne affichée dit donc où elle en est.</p>
@@ -76,8 +77,10 @@ Repository. Deux copies du code qui divergent sont le moyen le plus sûr d’obt
 écrits à côté du notebook : les lignes à étiqueter, et les pièces encore sans prix.</p>
 
 <h2>L’année</h2>
-<p>L’année suivie est l’année en cours, et l’année de comparaison celle d’avant. Chaque date de l’exécution vient de ces deux
-années, par cinq petites fonctions de <code>config.py</code> ; aucune année n’est écrite nulle part dans le code. Pour
+<p>L’année suivie est l’année en cours, et l’année de comparaison celle d’avant. La mise à jour lit et écrit les deux
+années ; les pages filtrent l’année qu’elles montrent (ce qui relève des pages reste dans les pages). Chaque date de
+l’exécution vient de ces deux années, par quelques petites fonctions de <code>config.py</code> ; aucune année n’est écrite
+nulle part dans le code. Pour
 regarder une année passée, écrivez-la sur la ligne <code>annee</code> de <code>1_parametres.csv</code> ; videz de nouveau la
 ligne ensuite.</p>
 

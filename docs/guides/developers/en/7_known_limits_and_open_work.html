@@ -31,12 +31,11 @@ lang: en
     <tr><td><b>The 2026 targets</b></td><td>2025 is counted in products delivered (the plan does not reach back to 2025), 2026 in
       products built over the working days: the rates differ by a few percent per line (about 6 % on the A320). From 2027 both
       years are measured from the plan, the same way.</td></tr>
-    <tr><td><b>Last year's cost</b></td><td>The comparison year is costed without rework-order times, aléa times, stored labels or the GPS
-      register's NC type, all of which this year uses: the cost target compares the method as well as the year.</td></tr>
+    <tr><td><b>Last year's NC type</b></td><td>Both years go through the same steps, but only this year's GPS register is read: last year's NCs
+      take their type from the rule table, this year's from the register when it lists them. The type changes a few cost
+      rules (final inspection, internal work).</td></tr>
     <tr><td><b>Deleted NCs</b></td><td>Counted, by decision: the work they caused was done. Some are copies of a live NC (same aircraft,
       same text, within days), counted twice.</td></tr>
-    <tr><td><b>MFT actions over the new year</b></td><td>The tables hold the NCs of the year followed only. On 1 January, an action started the
-      year before loses the eight weeks it is compared with, and the "3 months against 12" window of the MFT page is short.</td></tr>
     <tr><td><b>Last December's aléas</b></td><td>Read only to link the NCs of early January; they are not counted as aléas with no NC.</td></tr>
   </tbody>
 </table>
@@ -45,9 +44,8 @@ lang: en
 <table class="keep">
   <thead><tr><th style="width:52mm">Item</th><th>Where it stands</th></tr></thead>
   <tbody>
-    <tr><td><b>Keep last year's NCs in the tables</b></td><td>The update reads last year's NCs anyway, for the targets. Kept in the tables (and
-      left out of the dashboard's year), they would give the MFT actions their reference across the new year, a real 12-month
-      window, and a bell that works from January.</td></tr>
+    <tr><td><b>Last year on the dashboard</b></td><td>The tables now hold last year's NCs, which the MFT page uses. The dashboard still shows the
+      year followed only; a 12-month view across the new year, or a bell that works from January, would read them too.</td></tr>
     <tr><td><b>One place for each rule</b></td><td>Still written twice: the "Responsabilité" groups (the table <code>2_regle_responsabilite.csv</code>
       for last year, the pages' own copy for this year); the plant code (rules, cost settings, pages); the names of the places
       of detection and decisions (the pages translate them with their own lists); the cause tree (decided in the parser's
