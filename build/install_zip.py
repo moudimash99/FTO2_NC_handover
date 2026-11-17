@@ -25,6 +25,7 @@ zip, at the same place.
   mft/               the MFT page (q_fto2_mft_store.sql is optional: the actions kept for everyone)
   nc_writer/         the NC writer page (optional): its README.md gives the Slate set-up
   elizabeth/         the Tableau Elizabeth (optional)
+  fusion/            the Fusion spreadsheet "FTO2 NC Dashboard - Settings" to import (the settings filled in by hand)
   docs/              how to change a setting once it runs (comment_faire.md, in French)
   code_repository/   the same update as a transform that Skywise runs on a schedule (its README.md gives the steps)
 
@@ -51,6 +52,7 @@ def files():
     for f in ("nc_writer.css", "nc_writer.html", "nc_writer.js", "README.md"):
         out.append((os.path.join(ROOT, "08_tools", "nc_writer_slate", f), "nc_writer/" + f))
     out.append((os.path.join(ROOT, "docs", "comment_faire.md"), "docs/comment_faire.md"))
+    out.append((os.path.join(SKY, "fusion", "FTO2 NC Dashboard - Settings.xlsx"), "fusion/FTO2 NC Dashboard - Settings.xlsx"))
     for d, dirs, names in os.walk(os.path.join(SKY, "code_repository")):   # the update as a scheduled transform
         dirs[:] = sorted(x for x in dirs if x != "__pycache__")
         for n in sorted(names):
