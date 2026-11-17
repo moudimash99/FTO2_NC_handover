@@ -3,12 +3,12 @@
 The same steps as the pipeline notebook. The code is in src/fto2 (start with fto2/skywise.py), the settings in
 src/fto2/settings, the station list in src/fto2/files.
 
-Inputs: the four Skywise datasets (their ids below) and the six datasets of the Fusion spreadsheet "FTO2 NC Dashboard -
-Settings" that the update reads, named by Fusion after the spreadsheet and the sheet ("FTO2 NC Dashboard - Settings -
-Blackout days"); in the code each one keeps a short name (fto2_set_blackout). The pages read the seventh sheet, "Target and
-pages", themselves.
-Optional: fto2_plan_exports, a dataset holding the exports of the Tableau Avances / Retards (production plan), one file per
-download, the date at the end of its name, the older ones kept. Without it, the plan stays as last read.
+Inputs: the four Skywise datasets (their ids below) and the six datasets of the Fusion spreadsheet
+"FTO2 NC Dashboard - Settings" that the update reads, named by Fusion after the spreadsheet and the sheet
+("FTO2 NC Dashboard - Settings - Blackout days"); in the code each one keeps a short name (fto2_set_blackout).
+The pages read the seventh sheet, "Target and pages", themselves.
+Optional: fto2_plan_exports, a dataset holding the exports of the Tableau Avances / Retards (production plan), one
+file per download, the date at the end of its name, the older ones kept. Without it, the plan stays as last read.
 Outputs: the four tables the pages read, and two work lists (the defect lines still to label, the parts still to price).
 """
 from transforms.api import Input, LightweightInput, LightweightOutput, Output, transform
