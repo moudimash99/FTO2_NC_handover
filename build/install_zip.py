@@ -16,7 +16,8 @@ TOP = "FTO2_Skywise_installation/"
 L3 = "level3_datasets"
 NOTE = """FTO2 NC dashboard: the files to set it up in Skywise
 
-Follow README.md, steps 1 to 5. Every file it names is in this zip, at the same place.
+Already installed? Follow UPDATE.md. A first installation: README.md, steps 1 to 5. Every file they name is in this
+zip, at the same place.
 
   level3_datasets/   the notebook, its code (notebook_kit), the settings (config),
                      the dashboard page (fto2_level23.*, state.json) and its four queries (q_fto2_*.sql)
@@ -32,7 +33,7 @@ Not in this zip: the Slate functions (step 6 of README.md, optional) and the loc
 
 def files():
     """(path on disk, path in the zip) of every file of the set-up."""
-    out = [(os.path.join(SKY, f), f) for f in ("README.md", "DETAILS.md")]
+    out = [(os.path.join(SKY, f), f) for f in ("README.md", "UPDATE.md", "DETAILS.md")]
     for f in ("fto2_pipeline_notebook.ipynb", "q_fto2_nc.sql", "q_fto2_def.sql", "q_fto2_dis.sql", "q_fto2_ref.sql",
               "fto2_level23.css", "fto2_level23.html", "fto2_level23.js", "state.json", "columns.json"):
         out.append((os.path.join(SKY, L3, f), L3 + "/" + f))

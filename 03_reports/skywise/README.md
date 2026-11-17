@@ -2,6 +2,9 @@
 
 **Everything to download is in one file: `FTO2_Skywise_installation.zip`** (in this folder, kept up to date by the build).
 
+**Already installed? Follow `UPDATE.md`** (November 2026: the settings from Fusion, two years in the tables, the MFT actions
+kept for everyone). This file sets everything up from nothing.
+
 What you end up with: one notebook that writes four tables, and one Slate app with the dashboard (Essentiel and Deep dive in
 one page) and the MFT page. The Tableau Elizabeth is optional. Every file named below is in this folder.
 
@@ -15,8 +18,9 @@ Details (what each level proves, what was tested): `DETAILS.md`.
 **1. The notebook** (the Code Workspace where the pipeline notebook runs today)
 
 1. Upload the whole folder `level3_datasets/notebook_kit` next to the notebook (the code).
-2. Upload the folder `level3_datasets/config` into `data/`, so that it becomes `data/config/` (the settings). Do this once:
-   from then on the settings are changed there, and uploading the folder again would overwrite those changes.
+2. Upload the folder `level3_datasets/config` into `data/`, so that it becomes `data/config/` (the rules, and the fallback
+   values used when a Fusion dataset is not in the Data panel: the values people change are in the Fusion spreadsheet
+   *FTO2 NC Dashboard - Settings*, `fusion/`). Uploading it again with a new version is safe.
    Put in `data/` the three files of the team, under the names of `data/config/2_sources.csv`: the station mapping
    `fto2_station_mapping.csv` (the notebook stops without it), the GPS register and the Test list (without them the
    notebook runs and says so). The `data/` folder also keeps the files the team downloads:
@@ -34,6 +38,7 @@ Details (what each level proves, what was tested): `DETAILS.md`.
    | `fto2_ai_labels` | `fto2_ai_labels` | read |
    | Work_Order_Operation | `work_order_operation` | read |
    | MES Disruptions | `mes_disruptions` | read |
+   | the Fusion settings | `fto2_set_cost`, `fto2_set_blackout`, `fto2_set_part_prices`, `fto2_set_cables`, `fto2_set_gps`, `fto2_set_test` | read (each one optional) |
    | four new datasets | `fto2_dash_nc`, `fto2_dash_defects`, `fto2_dash_disruptions`, `fto2_dash_ref` | write |
 
 6. Run all cells. The last lines list the tables written.
