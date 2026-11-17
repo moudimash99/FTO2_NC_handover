@@ -1,0 +1,19 @@
+ordre;resultat;colonne;test;valeur;commentaire
+1;QUALITE;status_open_closed;contient;Deleted;NC FTO2 supprimée
+1;QUALITE;plant;egal;FTO2;
+2;TEST;Origin_auto;egal;Test;Ouverte par le test (voir 2_regle_origine)
+3;NC Retour client;plant;different;FTO2|FT02;Ouverte dans une autre usine
+4;NC Fournisseur;liability_description;egal;[SUPPLIER];Responsabilité fournisseur
+5;NC Fournisseur;responsible_defect_level1;egal;Y4;Code fournisseur Y4
+6;CABLES;workflow_list;regex;^R[E]?W-CA-IMP;Workflow câbles...
+6;CABLES;description_short + article_version_description;ne_contient_pas;etiquette|plaquette;...sauf étiquettes et plaquettes
+7;CABLES;description_short + article_version_description;regex;c[aâ]ble|harnais|wire;Texte qui parle d'un câble...
+7;CABLES;workflow_list;commence_par;REW-MP-IMP;...avec un workflow REW-MP-IMP
+8;NC Interne;workflow_list;commence_par;REJ-LO-BP;
+9;NC Interne;workflow_list;commence_par;REW-LIGNE;REW-LIGNE ouvert par Derichebourg
+9;NC Interne;user_department;contient;DERICHEBOURG;
+10;DEMANDE DE DQN;workflow_list;commence_par;LIGNE-F-DQN;
+11;CONTROLE FINAL;workflow_list;commence_par;REW-LIGNE;REW-LIGNE, pas Derichebourg
+11;CONTROLE FINAL;user_department;ne_contient_pas;DERICHEBOURG;
+12;CONTROLE FINAL;workflow_list;contient;TEST;
+99;NC Interne;;toujours;;Tout le reste

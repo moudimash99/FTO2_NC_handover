@@ -1,4 +1,4 @@
-"""Reads the settings in config/ (on Skywise: data/config/ next to the notebook).
+"""Reads the settings in config/ (in the Skywise notebook: data/config/; in the Code Repository: fto2/settings/).
 
 Every setting is a small ';' table that opens in Excel. The file name starts with its group:
   0_  data: filled from the files the team downloads (fto2/downloads.py), or history; not edited by hand
@@ -17,6 +17,7 @@ from . import rules
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 LAPTOP_DIR = os.path.join(os.path.dirname(HERE), "config")
+PACKAGE_DIR = os.path.join(HERE, "settings")   # in the Code Repository: the settings kept with the code
 SKYWISE_DIR = os.path.join("data", "config")
 
 
@@ -25,10 +26,14 @@ class ConfigError(ValueError):
 
 
 def folder():
-    """The settings folder: config/ on the laptop, data/config/ in the Skywise notebook, or FTO2_CONFIG if set."""
+    """The settings folder: FTO2_CONFIG if set, else config/ on the laptop, fto2/settings/ in the Code Repository,
+    data/config/ in the Skywise notebook."""
     if os.environ.get("FTO2_CONFIG"):
         return os.environ["FTO2_CONFIG"]
-    return LAPTOP_DIR if os.path.isdir(LAPTOP_DIR) else SKYWISE_DIR
+    for d in (LAPTOP_DIR, PACKAGE_DIR):
+        if os.path.isdir(d):
+            return d
+    return SKYWISE_DIR
 
 
 def _text(path):

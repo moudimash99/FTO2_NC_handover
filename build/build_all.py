@@ -290,6 +290,8 @@ def build_dashboard(d, nc, lt, y25=None, dis_t=None):
     _page("dashboard.html", src, "FTO2_NC_Dashboard.html")
     import skywise_pack   # the four Skywise migration levels (03_reports/skywise): build/skywise_pack.py
     REPORT["skywise"] = skywise_pack.build(src["ref"], ROOT, _scope_css, say)
+    import repository_pack   # the same update as a Code Repository transform: 03_reports/skywise/code_repository
+    repository_pack.write(say)
     import install_zip   # every file of the Skywise set-up in one download: 03_reports/skywise/FTO2_Skywise_installation.zip
     install_zip.write(say)
 

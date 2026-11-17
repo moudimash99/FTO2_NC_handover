@@ -155,6 +155,9 @@ def plan():
 
 
 # ---------------------------------------------------------------- the cable requests
+# any run of spaces, the non-breaking ones included (pandas may search with an engine whose \s does not cover them)
+SPACES = "[\\s\u00a0\u2007\u202f]+"
+
 # the columns of the cable team's tracker that the run reads
 TRACKER_COLUMNS = ("NC", "Date de création de la NC", "Date de réalisation OF", "Semaine", "Programme", "MSN", "Motifs", "Imputation",
                    "Commentaires analyses", "Action", "Statut")
@@ -189,7 +192,7 @@ def cables_of_export(path):
     bad = d.isna() | (filed.notna() & (d.dt.year != filed))
     d = d.where(~bad, of)
     origins, other = config.mapping("2_cables_origines.csv", "imputation", "origine")
-    comment = t["Commentaires analyses"].str.replace(r"\s+", " ", regex=True).str.strip()
+    comment = t["Commentaires analyses"].str.replace(SPACES, " ", regex=True).str.strip()
     entity = next((c for c in t.columns if c.strip() == "Entité en charge du rattrapage"), None)
     out = pd.DataFrame({
         "ligne": t["ligne"], "semaine": t["Semaine"].str.upper(), "date": d.dt.strftime("%Y-%m-%d"), "mois": d.dt.strftime("%Y-%m"),

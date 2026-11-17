@@ -1,0 +1,5 @@
+genre;texte_regex;etape
+close;attestation|cl[ôo]ture|autoclos;setup
+inspect;inspection|contr[ôo]l;setup
+prep;pr[ée]paration|analys;setup
+test;test;hands_on

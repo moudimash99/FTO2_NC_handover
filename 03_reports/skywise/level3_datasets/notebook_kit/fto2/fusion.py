@@ -14,6 +14,7 @@ Column names are matched without regard to case, accents, spaces and signs, as a
 """
 import csv
 import datetime as dt
+import difflib
 import os
 import re
 import shutil
@@ -97,15 +98,37 @@ def _write(path, header, rows, sep=";"):
         w.writerows(rows)
 
 
+def _match(columns, wanted):
+    """{wanted name: column of the dataset}: the same key first (_key), else the closest key when it is very close (a sync
+    that replaced or dropped a sign or an accented letter: 'Date de cr_ation' for 'Date de création'). Short names must be
+    exact (three letters or fewer). A wanted name with no match is left out."""
+    keys = {c: _key(c) for c in columns}
+    out, used = {}, set()
+    for w in wanted:
+        same = [c for c in columns if keys[c] == _key(w) and c not in used]
+        if same:
+            out[w] = same[0]
+            used.add(same[0])
+    for w in wanted:
+        k = _key(w)
+        if w in out or len(k) < 4:
+            continue
+        score, best = max(((difflib.SequenceMatcher(None, k, keys[c]).ratio(), c) for c in columns if c not in used),
+                          default=(0, None), key=lambda x: x[0])
+        if score >= 0.85:
+            out[w] = best
+            used.add(best)
+    return out
+
+
 def _matched(df, wanted, name):
-    """df with its columns renamed to `wanted` (matched by _key) and in that order; None, with the reason kept, when one is
-    missing."""
-    have = {_key(c): c for c in df.columns}
-    missing = [c for c in wanted if _key(c) not in have]
+    """df with its columns renamed to `wanted` and in that order; None, with the reason kept, when one is missing."""
+    found = _match(list(df.columns), wanted)
+    missing = [c for c in wanted if c not in found]
     if missing:
         KEPT[name] = "column(s) missing: %s" % ", ".join(missing)
         return None
-    return df[[have[_key(c)] for c in wanted]].set_axis(list(wanted), axis=1)
+    return df[[found[c] for c in wanted]].set_axis(list(wanted), axis=1)
 
 
 def _table(Dataset, name, target, folder):
@@ -172,21 +195,29 @@ def _lines(Dataset, name, table, folder):
     USED[name] = "%s: %s" % (table, ", ".join(sorted(values)))
 
 
-def _list(Dataset, name, source, columns, skip, folder, sources):
+def _list_columns(name, sources):
+    """The columns of a list that the run reads (all required), and others it reads when they are there."""
+    from . import downloads, manual_lists
+    if name == "fto2_set_cables":
+        return list(downloads.TRACKER_COLUMNS), ["Année", "Entité en charge du rattrapage"]
+    src, columns, _ = LISTS[name]
+    named = [sources[c] for c in columns]   # the NC number and the date, as 2_sources.csv names them
+    more = manual_lists.GPS_LIST_COLUMNS if name == "fto2_set_gps" else manual_lists.TEST_LIST_COLUMNS
+    return named + list(more), []
+
+
+def _list(Dataset, name, source, skip, folder, sources):
     df = _read(Dataset, name)
     if df is None:
         return
-    exact = [sources[c] for c in columns]
-    if name == "fto2_set_cables":
-        from .downloads import TRACKER_COLUMNS
-        exact = list(TRACKER_COLUMNS)
-    have = {_key(c) for c in df.columns}
-    missing = [c for c in exact if _key(c) not in have]
+    required, optional = _list_columns(name, sources)
+    found = _match(list(df.columns), required + optional)
+    missing = [c for c in required if c not in found]
     if missing:
-        KEPT[name] = "column(s) missing: %s" % ", ".join(missing)
+        KEPT[name] = "column(s) missing: %s" % ", ".join(c.replace("\n", " ") for c in missing)
         return
-    names = {_key(c): c for c in exact}
-    df = df.set_axis([names.get(_key(c), str(c)) for c in df.columns], axis=1)   # the columns the run looks for, spelt as it does
+    back = {v: k for k, v in found.items()}
+    df = df.set_axis([back.get(c, str(c)) for c in df.columns], axis=1)   # the columns the run reads, spelt as it spells them
     path = os.path.join(folder, "fusion_%s.csv" % name)
     rows = _rows(df, day_first=True)
     _write(path, list(df.columns), rows, sep=",")
@@ -212,8 +243,8 @@ def load(Dataset, say=print):
         _lines(Dataset, name, table, work)
     header, rows = config._rows(os.path.join(work, SOURCES), SOURCES)
     sources = {r[header.index("nom")].strip(): r[header.index("valeur")] for r in rows}
-    for name, (src, columns, skip) in LISTS.items():
-        _list(Dataset, name, src, columns, skip, work, sources)
+    for name, (src, _, skip) in LISTS.items():
+        _list(Dataset, name, src, skip, work, sources)
     os.environ["FTO2_CONFIG"] = work
     config._PARAMS.clear()
     if USED:

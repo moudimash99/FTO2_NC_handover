@@ -1,0 +1,13 @@
+ordre;resultat;colonne;test;valeur;commentaire
+1;E-RUDDER;article_version_description + station_description;contient;4714VB|4715VB|4716VB|4717VB|E-RUDDER;L'article d'abord, le poste ensuite
+2;MDCD;article_version_description + station_description;contient;5883VB|5893VB|MDCD;
+3;OHP;article_version_description + station_description;contient;OHP;
+4;300VU;article_version_description + station_description;regex;30[0-5]VU|M8753254100000;300VU à 305VU
+5;MFRL;article_version_description + station_description;contient;WIRE BUNDLE|MFRL;
+6;PTVU;article_version_description + station_description;contient;ELEC ASSY;
+7;MIP A400M;article_version_description + station_description;contient;MIP|1101VB|1212VB|2200VB;MIP de l'A400M
+7;MIP A400M;programme;egal;MT|A400M;
+8;MIP A350;article_version_description + station_description;contient;MIP|1101VB|1212VB|2200VB;Les autres MIP
+8;MIP A350;programme;different;MT|A400M;
+9;{extrait};article_version_description + station_description;extraire;(\d{3,4}V[UB]);Un numéro de meuble (ex. 740VU) : le produit porte ce nom
+99;Other;;toujours;;Tout le reste

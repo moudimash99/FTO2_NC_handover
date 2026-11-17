@@ -1,0 +1,7 @@
+ordre;resultat;colonne;test;valeur;commentaire
+1;A350;programme;regex;350;Le premier motif trouvé dans le programme donne la ligne
+2;A330;programme;regex;330;
+3;A400M;programme;regex;400|^MT$;L'A400M s'appelle MT dans Skywise
+4;A320;programme;regex;32\d;
+98;{extrait};programme;extraire;^\s*(.*\S)\s*$;Autre programme : la ligne porte son nom
+99;Autre;;toujours;;Programme vide

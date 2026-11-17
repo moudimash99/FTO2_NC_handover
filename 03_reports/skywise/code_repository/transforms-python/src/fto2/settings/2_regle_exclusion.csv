@@ -1,0 +1,5 @@
+ordre;resultat;colonne;test;valeur;commentaire
+1;exclure;user_department;contient;ERMA;NC ERMA (pas FTO2)
+2;exclure;status_open_closed;contient;Deleted;NC supprimée d'une autre usine
+2;exclure;plant;different;FTO2;
+99;garder;;toujours;;Tout le reste

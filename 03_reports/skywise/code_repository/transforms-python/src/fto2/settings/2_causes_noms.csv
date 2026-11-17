@@ -1,0 +1,28 @@
+code_parseur;nom;commentaire
+INVERSION_BRANCHEMENT;Inversion;"Ne pas changer le code (il vient du lecteur de défauts) ; le nom est celui affiché"
+ERREUR_BRANCHEMENT;Mauvaise Borne;
+OUBLI_VERROUILLAGE;Déverrouillage;
+NON_CONNECTE;Non Connecté;
+MEO_FRETTAGE_COLLIER;Frettage Incorrect;
+MEO_SERRAGE;Serrage Incorrect;
+MEO_CHEMINEMENT;Mauvais Cheminement;
+MEO_GAINAGE;MEO Gainage;
+MEO_FINITION;Finition Inachevée;
+MEO_SERTISSAGE_STANDARD;Défaut de Sertissage sur câble standard;
+MEO_SERTISSAGE_SPECIFIQUE;Défaut de Sertissage sur câble spécifique;
+MESURE_NON_CONFORME;Défaut de Métallisation;
+ERREUR_REF_HABILLAGE;Erreur Fixation ou Protection;
+ERREUR_REF_ELECTRIQUE;Erreur Composant Électrique;
+MANQUANT_HABILLAGE;Fixation ou Protection Manquante;
+MANQUANT_OBTURATION;Obturateur Manquant;
+MANQUANT_CABLE_ELEMENT;Câble ou Élément Manquant;
+MANQUANT_IDENTIFICATION;Identification Manquante;
+DOMMAGE_CABLE;Câble Endommagé;
+DOMMAGE_COMPOSANT;Composant Endommagé;
+DOMMAGE_HABILLAGE;Protection Endommagée;
+DOMMAGE_STRUCTURE;Structure Endommagée;
+MEO_METALLISATION;Défaut de Métallisation;
+AMONT_IMPRESSION;Défaut d'Impression;
+FOD;FOD;
+PROCESS_DOSSIER;Erreur Dossier;
+AUTRE;Autre;

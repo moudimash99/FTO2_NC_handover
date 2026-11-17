@@ -1,6 +1,7 @@
 """The settings kept in Fusion (fto2/fusion.py): each sheet of the settings spreadsheet, read as a sync would give it, must
 give back the same settings as the files; a sheet that cannot be used leaves its file."""
 import os
+import re
 import shutil
 import unittest
 
@@ -86,13 +87,24 @@ class TestFusion(unittest.TestCase):
         self.assertEqual(config.parameter("usine"), "FTO9")
 
     def test_a_list_pasted_from_its_header(self):
-        FakeDataset.tables = {"fto2_set_gps": pd.DataFrame({"N° NC / AM / AF": [12345678.0, None], "Date SAP": [pd.Timestamp(config.year(), 3, 5), None],
-                                                            "Produit": ["X", None]})}
-        fusion.load(FakeDataset, say=lambda m: None)
         from fto2 import manual_lists
+        cols = {"N_NC_AM_AF": [12345678.0, None], "Date_SAP": [pd.Timestamp(config.year(), 3, 5), None]}
+        for c in manual_lists.GPS_LIST_COLUMNS:   # as a sync may write them: signs and accented letters replaced
+            cols[re.sub(r"[^0-9A-Za-z]", "_", c)] = ["x", None]
+        FakeDataset.tables = {"fto2_set_gps": pd.DataFrame(cols)}
+        fusion.load(FakeDataset, say=lambda m: None)
         self.assertEqual(manual_lists._src("liste_gps_lignes_avant_entete"), "0")
         self.assertIn("12345678", manual_lists._ids(manual_lists._src("liste_gps"), manual_lists._src("liste_gps_colonne_numero"),
                                                     manual_lists._src("liste_gps_colonne_date"), 0, config.year()))
+        ext = manual_lists.external_table()
+        self.assertEqual(ext.loc[ext.notification_number == "12345678", "GPS_Type_NC"].tolist(), ["x"])
+
+    def test_a_list_missing_a_column_keeps_the_file(self):
+        FakeDataset.tables = {"fto2_set_gps": pd.DataFrame({"N° NC / AM / AF": [1.0], "Date SAP": ["05/03/2026"]})}
+        said = []
+        fusion.load(FakeDataset, say=said.append)
+        self.assertNotIn("fto2_set_gps", fusion.USED)
+        self.assertTrue(any("fto2_set_gps not used, column(s) missing: Produit" in m for m in said))
 
 
 if __name__ == "__main__":

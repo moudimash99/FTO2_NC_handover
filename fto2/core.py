@@ -31,7 +31,7 @@ import unicodedata
 import numpy as np
 import pandas as pd
 
-from . import config, rules, selection
+from . import config, downloads, rules, selection
 from .parser import fto2_logic as L
 
 HOME_PLANTS = tuple(config.parameter_list("usines_maison"))   # our plant's codes in the data (both spellings): config/2_parametres.csv
@@ -353,7 +353,7 @@ def prepare(x, lab, ops=None, dis=None, say=None):
     defects["seq"] = pd.to_numeric(defects["seq"], errors="coerce").astype("Int64")
     d = defects.merge(lab, on=["notification_number", "seq"], how="left")
     d["seq"] = d["seq"].astype(int)
-    norm = lambda s: s.fillna("").astype(str).str.replace(r"\s+", " ", regex=True).str.strip()
+    norm = lambda s: s.fillna("").astype(str).str.replace(downloads.SPACES, " ", regex=True).str.strip()
     same_text = (norm(d["text"]) == norm(d["snippet"])) | (norm(d["text"]).isin(["", "N/A"]) & (norm(d["snippet"]) == ""))
     d["llm_status"] = np.where(d["llm_sous_categorie"].isna(), "a_labelliser", np.where(same_text, "ok", "texte_change"))
     # a code written in the NC by a person wins over the stored label: a full official sub-code (Q03-006) decides the line

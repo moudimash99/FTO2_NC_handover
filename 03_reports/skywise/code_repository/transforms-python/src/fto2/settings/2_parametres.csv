@@ -1,0 +1,5 @@
+nom;valeur;description
+usine;FTO2;Usine suivie : ses NC, et celles des autres usines où elle est responsable
+usines_maison;FTO2|FT02;Codes de l'usine dans les données (les deux orthographes) : une NC émise ici est « Série »
+garder_anciennes_sorties;oui;oui tant que l'ancienne app Slate est utilisée : le notebook écrit aussi ses 4 anciennes tables
+limite_nc;;Vide = toutes les NC. Un nombre = seulement les N plus récentes (l'ancienne limite était 1000)

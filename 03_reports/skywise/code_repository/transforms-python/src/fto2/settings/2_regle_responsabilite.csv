@@ -1,0 +1,4 @@
+ordre;resultat;colonne;test;valeur;commentaire
+1;f;cnq_on_aec;egal;1|1.0;f = FTO2 responsable (la colonne vient du modèle de coût : responsabilité = usine_responsable de 3_cout_avance.csv)
+2;s;liability;regex;^[\[\]\s]*0*[1-9][0-9]*[\[\]\s]*$;s = un fournisseur : un code de responsabilité fait seulement de chiffres
+99;o;;toujours;;o = les autres (autre site Airbus, autre, vide)

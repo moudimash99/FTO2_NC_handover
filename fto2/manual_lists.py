@@ -68,24 +68,27 @@ GPS_COLUMNS = ["notification_number", "Ext_Produit", "Ext_Nb_Defauts", "Ext_Defa
                "GPS_Type_NC", "GPS_Statut_decision", "GPS_Imputation", "GPS_Retouches_majeures", "GPS_Retouches_mineures"]
 
 
+# the columns of each list that the run reads (besides the NC number and the date, named in 2_sources.csv), and what they become
+TEST_LIST_COLUMNS = {"Produit": "Ext_Produit", "VU\nuniquement PTVU": None, "Nb défaut": "Ext_Nb_Defauts", "Défaut majeur": "Ext_Defaut_Constate"}
+GPS_LIST_COLUMNS = {"Produit": "Ext_Produit", "Nombre total retouches": "Ext_Nb_Defauts", "Non conformité constatée": "Ext_Defaut_Constate",
+                    "Type NC": "GPS_Type_NC", "Statut décision": "GPS_Statut_decision", "IMPUTATION \n(après analyse)": "GPS_Imputation",
+                    "Nombre de retouches majeures": "GPS_Retouches_majeures", "Nombre de retouches mineures": "GPS_Retouches_mineures"}
+
+
 def external_table():
     """The two lists merged: one row per NC number with the Ext_ and GPS_ columns. A list that cannot be read (the new
     year's register is not saved yet) counts as empty: the run goes on and says so at its end (NOT_READ)."""
     test = _load(_src("liste_test"), int(_src("liste_test_lignes_avant_entete")), _src("liste_test_colonne_numero"))
     if not test.empty:
         test["Ext_Produit"] = (test["Produit"].fillna("") + " " + test["VU\nuniquement PTVU"].fillna("")).str.strip()
-        test = test.rename(columns={"Nb défaut": "Ext_Nb_Defauts", "Défaut majeur": "Ext_Defaut_Constate"})
+        test = test.rename(columns={k: v for k, v in TEST_LIST_COLUMNS.items() if v and k != "Produit"})
         test["Ext_Source"] = "Test"
         test = test[["notification_number", "Ext_Produit", "Ext_Nb_Defauts", "Ext_Defaut_Constate", "Ext_Source"]].copy()
     else:
         test = pd.DataFrame(columns=["notification_number", "Ext_Produit", "Ext_Nb_Defauts", "Ext_Defaut_Constate", "Ext_Source"])
     gps = _load(_src("liste_gps"), int(_src("liste_gps_lignes_avant_entete")), _src("liste_gps_colonne_numero"))
     if not gps.empty:
-        gps = gps.rename(columns={"Produit": "Ext_Produit", "Nombre total retouches": "Ext_Nb_Defauts",
-                                  "Non conformité constatée": "Ext_Defaut_Constate", "Type NC": "GPS_Type_NC",
-                                  "Statut décision": "GPS_Statut_decision", "IMPUTATION \n(après analyse)": "GPS_Imputation",
-                                  "Nombre de retouches majeures": "GPS_Retouches_majeures",
-                                  "Nombre de retouches mineures": "GPS_Retouches_mineures"})
+        gps = gps.rename(columns=GPS_LIST_COLUMNS)
         gps["Ext_Source"] = "GPS"
         gps = gps[GPS_COLUMNS].copy()
     else:

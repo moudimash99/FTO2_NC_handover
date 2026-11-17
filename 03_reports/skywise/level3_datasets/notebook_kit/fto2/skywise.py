@@ -141,14 +141,15 @@ def check_settings():
     reference.cable_requests()       # the cable team's tracker
 
 
-def run(Dataset, Column, say=None):
-    """The whole run. Returns the three dashboard tables (also written to Skywise)."""
+def run(Dataset, Column, say=None, old_outputs=None):
+    """The whole run. Returns the three dashboard tables (also written to Skywise). old_outputs: write the former Slate app's
+    tables too (None: as the line garder_anciennes_sorties of 2_parametres.csv says; the scheduled transform says no)."""
     from . import core   # the data steps (parser, labels, cost model, tables)
     t0 = time.time()
     say = say or (lambda msg: print(f"[{time.time() - t0:6.1f} s] {msg}", flush=True))
     say("Checking the settings and the downloaded files...")
     check_settings()
-    keep_old = config.parameter_yes("garder_anciennes_sorties")
+    keep_old = config.parameter_yes("garder_anciennes_sorties") if old_outputs is None else old_outputs
     since = config.aleas_since() + " 00:00:00"
     plant = config.parameter("usine")
     say(f"Year followed: {config.year()} (compared with {config.comparison_year()})")
@@ -252,7 +253,8 @@ def run(Dataset, Column, say=None):
         Dataset.get("fto2_dash_cout").write_table(cx_t)
         print("✅ fto2_dash_cout:", len(cx_t), "rows (the cost explanation of each NC)")
     except Exception as e:
-        print("fto2_dash_cout not written (%s). Only the Slate set-up with two functions reads it: add the dataset to the Data panel to use it." % e)
+        why = "the dataset is not in the Data panel" if isinstance(e, KeyError) or "AliasNotDefined" in str(e) else str(e).splitlines()[0][:200]
+        print("fto2_dash_cout not written (%s): normal, only an optional Slate set-up reads it." % why)
     say("Done.")
     for path in manual_lists.NOT_READ:
         print(f"⚠️ The list '{path}' could not be read (see the error above): its NCs carry no GPS / Test information in this run.\n"

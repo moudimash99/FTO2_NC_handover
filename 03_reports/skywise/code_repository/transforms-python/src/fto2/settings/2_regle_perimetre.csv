@@ -1,0 +1,5 @@
+ordre;resultat;colonne;test;valeur;commentaire
+1;client;type_nc_auto;egal;NC Retour client;Retour client : NC ouverte dans une autre usine (type « NC Retour client »)...
+1;client;liability;contient;FTO2;... et FTO2 est dans la responsabilité
+2;serie;plant;egal;FTO2|FT02;NC émise à l'usine FTO2
+99;autre;;toujours;;Le reste : émise dans une autre usine, pas un retour client
