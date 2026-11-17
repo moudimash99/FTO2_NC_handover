@@ -9,7 +9,7 @@ changed: annee = 2027. Then the same run as tests/notebook_rehearsal.py, and the
 
   - each NC comes out as in the laptop build of 2026 (line, scope, product, defect lines, cost...), created 371 days later;
   - the production volume is the plan's, in the months and the weeks of 2027;
-  - the comparison year is 2026, with its deliveries counted in the production plan.
+  - the comparison year is 2026, its volume measured from the production plan as the year followed's.
 
 With a folder: also writes there the Skywise page fed with these tables (FTO2_NC_Dashboard.html), for
 tests/next_year_page.js, which checks the page itself (the years it shows, its totals, the bell).
@@ -128,8 +128,9 @@ def check(nc_t, def_t, dis_t, written):
     expect(e["forecastFrom"].startswith(str(YEAR)) and e["asof"].startswith(str(YEAR)), "the plan's date and its forecast months are of %d (%s, from %s)" % (YEAR, e["asof"], e["forecastFrom"]))
     months = {r[0][:4] for r in y["rows"]}
     expect(months == {str(YEAR - 1)}, "the comparison year's NCs are those of %d (%d NCs)" % (YEAR - 1, sum(r[5] for r in y["rows"])))
-    delivered = tot(y["prod"] or {})
-    expect(y.get("delivered") == "plan" and abs(delivered / then - 1) < 0.10, "its deliveries are counted in the production plan: %d products (%.1f MSN built that year)" % (delivered, then))
+    built = tot(y["prod"] or {})
+    expect(y.get("delivered") == "built" and abs(built / then - 1) < 0.10, "its volume is measured from the plan as the year followed's: "
+           "%.1f MSN built in %d (%.1f in the %d run)" % (built, YEAR - 1, then, DATA_YEAR))
     return bad
 
 
