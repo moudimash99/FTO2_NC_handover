@@ -55,8 +55,16 @@ Everything else stays as it is.
     `fto2_dash_disruptions`, `fto2_dash_ref`, under the same names as today.
 13. **The pages.** Right after the first sync, paste the new files of the three pages (`UPDATE.md`, step 4): the pages of
     before would count last year's NCs too.
-14. **Schedule.** On `fto2_dash_nc`, add a schedule, for example every weekday at 6:00. It must run under an account that
-    stays (or the project's service account), never under the account of someone who leaves.
+14. **Schedule.** Best done by the person who takes over (a schedule runs under its owner's account):
+    - open the dataset `fto2_dash_nc`, then *Schedules* (or, in Data Lineage, select it and open the *Schedules* panel),
+      and create a new schedule;
+    - *Trigger*: time, every weekday (Monday to Friday) at 6:00, time zone Europe/Paris;
+    - *Target*: `fto2_dash_nc` alone: build only this dataset, not what is upstream (the source data belongs to other
+      teams). The one build writes all six tables;
+    - if offered, make it run for the project (project scope) rather than as a person, and tick the notification on
+      failure for the owner;
+    - name it *FTO2 NC dashboard - daily update* and save. Check the next morning: the build ran (the *Builds* history)
+      and the dashboard's date *Données au…* moved.
 15. **The notebook** is no longer used. Keep its workspace as a backup; change the code here only.
 
 ## Later
