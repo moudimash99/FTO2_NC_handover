@@ -10,6 +10,7 @@ Run them after any change, from the repository folder.
 | Every number of the pages against the reference | see below | 30 min |
 | The Slate functions, run as Slate runs them | part of the first line (`tests/test_slate_functions.py`) | seconds |
 | The Skywise page with the Slate functions, every number | see the end | 25 min |
+| The Skywise pages' options: the Fusion sheet, the MFT actions kept for everyone | see the end | 1 min |
 
 ## Every number of the pages: the snapshot
 
@@ -60,9 +61,25 @@ the event and the variable. Each set-up must show the same numbers as the laptop
 
 ```
 python3 -I build/build_all.py
+python3 -I 07_scripts/mft/build_mft.py
 python3 -I tests/slate/make_pages.py /tmp/slate
 FTO2_PAGES=/tmp/slate/3_fonctions node tests/snapshot/snapshot_pages.js /tmp/slate3 dashboard
 python3 -I tests/snapshot/compare.py tests/golden /tmp/slate3 dashboard
 ```
 
-and the same for `2_fonctions` and `sans_fonction`.
+and the same for `2_fonctions` and `sans_fonction` (which also holds the Skywise MFT page: add `mft` after `dashboard`).
+
+## The Skywise pages' options
+
+Two keys of a sandbox's state are optional: `reglages` (the query `q_fto2_set_targets`, the Fusion sheet "Target and pages")
+on the dashboard and the MFT page, and `store` (the query `q_fto2_mft_store`, the MFT actions kept for everyone) on the MFT
+page. Without them the pages are as before: the three set-ups above have neither, and their snapshot must not change.
+`make_pages.py` also writes set-ups with them (`fusion_partage`, `fusion_3_fonctions`, `fusion_ouverture`, `partage_vide`),
+which `check_state_keys.js` checks: the targets follow the sheet (also in the Slate functions), the filters at opening too, a
+wrong line keeps the notebook's value; the MFT page shows the store's latest actions, a change fires the event `save` with the
+whole list, the note asks for Submit until the query brings the save back.
+
+```
+python3 -I tests/slate/make_pages.py /tmp/slate
+node tests/slate/check_state_keys.js /tmp/slate
+```

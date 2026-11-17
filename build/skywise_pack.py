@@ -46,6 +46,80 @@ JS_REF_READER = """function fto2RefBlocks(v) {
   return out;
 }
 """
+# the settings of the Fusion sheet "Target and pages" (dataset fto2_set_targets): the pages read them themselves, through the
+# optional query q_fto2_set_targets (state key "reglages"), so that a change in the sheet shows without the notebook's next run
+SETTINGS_SQL = ('-- FTO2 pages: the settings of the Fusion sheet "Target and pages" (dataset fto2_set_targets, synced from the spreadsheet\n'
+                '-- "FTO2 NC Dashboard - Settings"): one row per setting, its name (nom) and its value (valeur). Slate query\n'
+                '-- q_fto2_set_targets, optional: the dashboard and the MFT page read it through the state key "reglages".\n'
+                '-- Every column is taken: the pages find nom and valeur however the sync wrote their names.\n'
+                'SELECT\n    *\nFROM "foundry_sync"."fto2_set_targets"\n')
+# the dashboard and the MFT page (levels 2 and 3): the lines of that sheet replace the reference values before the page uses them
+JS_REGLAGES = r"""// The settings of the Fusion sheet "Target and pages" (dataset fto2_set_targets, Slate query q_fto2_set_targets, state key
+// "reglages"; optional): the page reads them itself, so that a change in the sheet shows without waiting for the notebook's
+// next run. One row per setting, columns nom and valeur (names written in any case, with or without accents, spaces or signs);
+// the table comes as rows, one array per column, or JSON text. Each line below replaces the reference value (fto2/reference.py,
+// page_settings) before the page uses it; a line missing or wrong keeps the reference value, and the console says which.
+function fto2Reglages(SET, v) {
+  function say(kind, t) { if (window.console && console[kind]) console[kind]('[FTO2] Fusion settings (q_fto2_set_targets): ' + t); }
+  if (typeof v === 'string') { var s = v.trim(); try { v = s ? JSON.parse(s) : null; } catch (e) { say('warn', 'not readable as a table: every reference value is kept'); return []; } }
+  if (!SET || !v || typeof v !== 'object') { say('warn', 'no table received: every reference value is kept'); return []; }
+  function key(t) { return String(t == null ? '' : t).normalize('NFKD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^0-9a-z]/g, ''); }
+  function text(x) { return String(x == null ? '' : x).replace(/\u00a0/g, ' ').trim(); }
+  function num(x) {   // 0.25, '0,25', ' 4 ': a number; null otherwise
+    if (typeof x === 'number') return isFinite(x) ? x : null;
+    var t = text(x).replace(/,/g, '.');
+    return /^[-+]?(\d+\.?\d*|\.\d+)(e[-+]?\d+)?$/i.test(t) ? parseFloat(t) : null;
+  }
+  function share(x) {   // 0.25, '0,25', '25 %' and 25 all mean a quarter
+    var n = num(typeof x === 'string' ? x.replace(/%/g, '') : x);
+    if (n != null && n > 1) n = n / 100;
+    return n != null && n >= 0 && n <= 1 ? n : undefined;
+  }
+  function coef(x) { return Math.round((1 - x) * 1e12) / 1e12; }
+  var rows = v;
+  if (!Array.isArray(v)) {   // one array per column, as Slate gives a query result
+    rows = []; var cols = Object.keys(v), n = 0;
+    cols.forEach(function (c) { if (Array.isArray(v[c]) && v[c].length > n) n = v[c].length; });
+    for (var i = 0; i < n; i++) { var o = {}; cols.forEach(function (c) { o[c] = Array.isArray(v[c]) ? v[c][i] : null; }); rows.push(o); }
+  }
+  var got = {};
+  rows.forEach(function (r) {
+    if (!r || typeof r !== 'object') return;
+    var nom = null, val = null;
+    Object.keys(r).forEach(function (c) { var k = key(c); if (k === 'nom') nom = r[c]; else if (k === 'valeur') val = r[c]; });
+    if (key(nom)) got[key(nom)] = val;
+  });
+  var DEF = SET.defauts || (SET.defauts = {});
+  // [line of the sheet, what it must be, its reading (undefined: wrong), the value the page has, how to set it]
+  var LINES = [
+    ['objectif_baisse', 'a share (0.25, 0,25 or 25 %)', share, function () { return SET.objectif_baisse; },
+      function (x) { SET.objectif_baisse = x; SET.objectif_coef = coef(x); }],
+    ['defaut_phase', 'SERIE, REC, FTI or empty', function (x) { var t = text(x).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toUpperCase();
+      return ['SERIE', 'REC', 'FTI', ''].indexOf(t) >= 0 ? t : undefined; }, function () { return DEF.phase; }, function (x) { DEF.phase = x; }],
+    ['defaut_responsabilite', 'letters among f, s, o', function (x) { var t = text(x).toLowerCase();
+      return t && !/[^fso]/.test(t) ? 'fso'.split('').filter(function (c) { return t.indexOf(c) >= 0; }).join('') : undefined; },
+      function () { return DEF.liab; }, function (x) { DEF.liab = x; }],
+    ['defaut_periode', 'one of ytd, m1, m3, m6, m12, all', function (x) { var t = text(x).toLowerCase();
+      return ['ytd', 'm1', 'm3', 'm6', 'm12', 'all'].indexOf(t) >= 0 ? t : undefined; }, function () { return DEF.preset; }, function (x) { DEF.preset = x; }],
+    ['action_objectif_baisse', 'a share (0.3, 0,3 or 30 %)', share, function () { return SET.action_baisse; },
+      function (x) { SET.action_baisse = x; SET.action_coef = coef(x); }],
+    ['action_semaines_tenues', 'a whole number of weeks, 1 or more', function (x) { var n = num(x); return n != null && n >= 1 && Math.floor(n) === n ? n : undefined; },
+      function () { return SET.action_semaines; }, function (x) { SET.action_semaines = x; }]
+  ];
+  var used = [], missing = [];
+  LINES.forEach(function (L) {
+    var k = key(L[0]);
+    if (!Object.prototype.hasOwnProperty.call(got, k)) { missing.push(L[0]); return; }
+    var x = L[2](got[k]), was = L[3]();
+    if (x === undefined) { say('warn', L[0] + ': "' + text(got[k]) + '" is not ' + L[1] + ', the reference value ' + JSON.stringify(was) + ' is kept'); return; }
+    if (x === was) return;
+    L[4](x); used.push(L[0] + ' ' + JSON.stringify(x) + ' (reference ' + JSON.stringify(was) + ')');
+  });
+  if (used.length) say('info', 'taken from the sheet: ' + used.join(', '));
+  if (missing.length) say('info', 'not in the sheet, the reference value is kept: ' + missing.join(', '));
+  return used;
+}
+"""
 
 JS_HEAD = """/* @@STAMP@@ */
 window.FTO2_EMBED = true;
@@ -77,7 +151,8 @@ JS_L1 = JS_HEAD + """window.FTO2_TABLES = @@TABLES@@;
 """
 # levels 2 and 3: the tables come from Slate queries, through the code sandbox's state {"nc": "{{q_fto2_nc}}", "def": "{{q_fto2_def}}",
 # "dis": "{{q_fto2_dis}}"}. The third (disruption block) is optional: without it the page starts after a few seconds, without the block.
-JS_L23 = JS_HEAD + """@@ADAPTER@@
+# Also optional: "reglages": "{{q_fto2_set_targets}}", the Fusion sheet's settings, applied before the page starts.
+JS_L23 = JS_HEAD + JS_REGLAGES + """@@ADAPTER@@
 (function () {
   var MSG = {
     wait: 'Chargement des données Slate… / Loading the Slate data…',
@@ -97,7 +172,7 @@ JS_L23 = JS_HEAD + """@@ADAPTER@@
   function main() {
 @@MAIN@@
   }
-  var got = {}, started = false, ready = false, disTimer = null, cxTimer = null;
+  var got = {}, started = false, ready = false, disTimer = null, cxTimer = null, rgTimer = null;
   // The calculations Slate runs as functions (03_reports/skywise/level3_datasets/fonctions/): the state key "fonctions" lists them
   // ("objectifs alarmes cout", or "objectifs alarmes" with the cost explanation from the notebook's table, state key "cout_table").
   // The page asks through the state key "filtres" and the sandbox event fto2Filtres (which sets the variable v_fto2_filtres); each
@@ -154,6 +229,11 @@ JS_L23 = JS_HEAD + """@@ADAPTER@@
       if (!cxTimer) cxTimer = setTimeout(function () { cxTimer = 'over'; tryStart(); }, 8000);
       return;
     }
+    var withSheet = 'reglages' in st0 || got.reglages != null;   // the state reads the Fusion sheet's settings (optional)
+    if (withSheet && !loaded(parse(got.reglages)) && rgTimer !== 'over') {   // a few seconds for them to arrive
+      if (!rgTimer) rgTimer = setTimeout(function () { rgTimer = 'over'; tryStart(); }, 8000);
+      return;
+    }
     started = true;
     try {
       try { fonctions((api.getState && api.getState() || {}).fonctions); } catch (e) {}
@@ -161,6 +241,7 @@ JS_L23 = JS_HEAD + """@@ADAPTER@@
       if (Object.keys(SLF.use).length) window.FTO2_SLATE = SLF;
       var cx = parse(got.cout_table);
       window.DASH = fto2FromTables(nc, def, R.dashboard, loaded(dis) ? dis : null, !SLF.use.cout && loaded(cx) ? cx : null);
+      if (withSheet) fto2Reglages(window.DASH.settings, got.reglages);   // before the page reads its settings (texts, filters at opening, targets)
       if (!window.DASH.ncs.length) {   // rows arrived but none could be read: say what came, to fix the query or the state
         var c = Array.isArray(nc) ? Object.keys(nc[0] || {}) : Object.keys(nc);
         showError('aucune NC lisible dans q_fto2_nc (colonnes reçues : ' + c.join(', ') + ') / no readable NC in q_fto2_nc (columns received: ' + c.join(', ') + ')');
@@ -177,7 +258,7 @@ JS_L23 = JS_HEAD + """@@ADAPTER@@
   }
   var api = window.SlateFunctions;
   if (api && typeof api.watch === 'function') {
-    ['nc', 'def', 'dis', 'tables', 'ref', 'fonctions', 'cout_table'].forEach(function (k) { api.watch(k, function (v) { got[k] = v; tryStart(); }); });
+    ['nc', 'def', 'dis', 'tables', 'ref', 'fonctions', 'cout_table', 'reglages'].forEach(function (k) { api.watch(k, function (v) { got[k] = v; tryStart(); }); });
     ['objectifs', 'alarmes', 'cout'].forEach(function (k) { api.watch(k, function (v) { var x = parse(v); if (!x) return; SLF.latest[k] = x; if (SLF.take) SLF.take(k, x); }); });
     api.watch('filtres', function (v) { if (sent && (typeof v === 'string' ? v : JSON.stringify(v)) === sent) setTimeout(fire, 0); });
   }
@@ -464,7 +545,7 @@ def build(ref, root, scope_css, say):
     sql3 = (("q_fto2_nc", level3_sql("fto2_dash_nc", NC_COLUMNS, "FTO2 NC dashboard, level 3: one row per NC (dataset fto2_dash_nc, written by the Skywise notebook). Slate query q_fto2_nc.", "created, nc")),
             ("q_fto2_def", level3_sql("fto2_dash_defects", DEF_COLUMNS, "FTO2 NC dashboard, level 3: one row per defect line (dataset fto2_dash_defects). Slate query q_fto2_def.", "nc, seq")),
             ("q_fto2_dis", level3_sql("fto2_dash_disruptions", DIS_COLUMNS, "FTO2 NC dashboard, level 3: one row per quality aléa with no NC, the disruption block (dataset fto2_dash_disruptions). Slate query q_fto2_dis.", "opened, id")))
-    for name, sql in sql3 + (("q_fto2_ref", REF_SQL),):
+    for name, sql in sql3 + (("q_fto2_ref", REF_SQL), ("q_fto2_set_targets", SETTINGS_SQL)):   # the last one optional (Fusion sheet)
         open(os.path.join(l3, name + ".sql"), "w", encoding="utf-8").write(sql)
     # the Slate functions (targets and forecast, alarms, cost explanation), two ways to set them up: level3_datasets/fonctions/
     import slate_functions

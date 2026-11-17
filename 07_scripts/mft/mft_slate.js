@@ -2,6 +2,7 @@
 // The reference data (sub-code names, the production plan's products and their alias rules, MSN built per line and week, the
 // end of build of each MSN, the MFT actions) comes from the query q_fto2_ref, part "mft" (dataset fto2_dash_ref).
 @@REF_READER@@
+@@REGLAGES@@
 // ---------------------------------------------------------------- the two Slate tables -> the page's data
 // As 07_scripts/mft/build_mft.py data() does from the CSV files: NCs raised at FTO2 (plant FTO2 or FT02) created in the year
 // followed (config/2_parametres.csv, annee: it comes with the settings), their
@@ -93,18 +94,141 @@ window.FTO2_STORE = (function () {
 })();
 /* ===== STORE END ===== */
 
+// ---------------------------------------------------------------- the shared store: the actions kept for everyone (Slate only)
+// Used when the sandbox's state has the key "store" (the query q_fto2_mft_store); without it, the browser store above. The
+// actions are kept in one object of the NC writer's object type ("a30 Nc Writer Dataset"): the object whose Msn is MFT-ACTIONS,
+// its Texte Sap holding every action as JSON {page, saved_at, actions}. Each save adds such an object; the page reads the one
+// saved last (saved_at). A row without the page's mark (the test box of 08_tools/mft_store_test) is not read. With no row at
+// all, the page starts from the table's actions (config/1_actions_mft.csv), and its first save writes them into the store.
+// Writing takes the NC writer's route: at each change the page fires the event "save" with the row to write (and puts it in
+// its state, key "store_row"); a Slate event copies it into a variable, the object type's Action widget takes its default
+// values from that variable, and the user presses Submit. Meanwhile the page keeps its own copy, and its note asks to press
+// Submit until the query brings back a row saved at or after that copy.
+// Same calls as the browser store (use, collection, doc, set, update, delete, onSnapshot, note), so the page itself does not
+// change. The alarms' marks (collection 'alarmes') stay in the browser store.
+//   api: SlateFunctions; local: the browser store; seed: the table's actions (FTO2_MFT_REF.actions)
+function fto2SharedStore(api, local, seed) {
+  var MSN = 'MFT-ACTIONS', PAGE = 'MFT', LIMIT = 30000;
+  var mem = {}, subs = [], ready = false, cur = '', pending = '', size = 0, bad = 0, open = null;
+  var whenRead = new Promise(function (res) { open = res; });   // the page gets the store once the query has answered
+  function copy(o) { return JSON.parse(JSON.stringify(o)); }
+  function key(t) { return String(t == null ? '' : t).normalize('NFKD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^0-9a-z]/g, ''); }
+  function cell(r, name) { var ks = Object.keys(r); for (var i = 0; i < ks.length; i++) if (key(ks[i]) === name) return r[ks[i]]; return null; }   // msn, Msn, MSN...
+  function rowsOf(v) {   // rows, or one array per column
+    if (Array.isArray(v)) return v;
+    var cols = Object.keys(v), n = 0, out = [];
+    cols.forEach(function (c) { if (Array.isArray(v[c]) && v[c].length > n) n = v[c].length; });
+    for (var i = 0; i < n; i++) { var o = {}; cols.forEach(function (c) { o[c] = Array.isArray(v[c]) ? v[c][i] : null; }); out.push(o); }
+    return out;
+  }
+  // a value of the state key: the latest store row, and how many later store rows could not be read; null before the query answers
+  function read(v) {
+    if (typeof v === 'string') { var s = v.trim(); if (!s) return null; try { v = JSON.parse(s); } catch (e) { return null; } }
+    if (!v || typeof v !== 'object' || (!Array.isArray(v) && !Object.keys(v).length)) return null;
+    var best = null, cut = [];
+    rowsOf(v).forEach(function (r) {
+      if (!r || typeof r !== 'object' || String(cell(r, 'msn') == null ? '' : cell(r, 'msn')).trim().toUpperCase() !== MSN) return;
+      var t = cell(r, 'textesap'), x = null;
+      try { x = typeof t === 'string' ? JSON.parse(t) : t; } catch (e) {   // a text cut short: kept aside, to say so if it is the latest
+        var raw = String(t), at = /"saved_at":"([^"]*)"/.exec(raw);
+        if (raw.indexOf('"page":"' + PAGE + '"') >= 0) cut.push(at ? at[1] : '');
+        return;
+      }
+      if (!x || typeof x !== 'object' || x.page !== PAGE || !Array.isArray(x.actions)) return;   // another tool's row
+      x.saved_at = String(x.saved_at || ''); x.size = typeof t === 'string' ? t.length : JSON.stringify(x).length;
+      if (!best || x.saved_at > best.saved_at) best = x;
+    });
+    return { best: best, bad: cut.filter(function (at) { return !best || !at || at > best.saved_at; }).length };
+  }
+  function adopt(list, at, n) {   // this copy becomes a row's actions (or the table's)
+    mem = {}; (list || []).forEach(function (a) { if (a && a.id != null) { var o = copy(a); delete o.id; mem[String(a.id)] = o; } });
+    cur = at; size = n || 0;
+  }
+  function emit() { setTimeout(function () {
+    var docs = Object.keys(mem).map(function (k) { var x = mem[k]; return { id: k, data: function () { return copy(x); } }; });
+    subs.slice().forEach(function (f) { try { f({ docs: docs }); } catch (e) { } }); }, 0); }
+  function pad(n) { return (n < 10 ? '0' : '') + n; }
+  function send() {   // the whole list as one row, the way the NC writer hands over an NC: state key "store_row", then the event "save"
+    var t = Date.now(), c = Date.parse(cur); if (isFinite(c) && t <= c) t = c + 1;   // later than the copy it changes, whatever this computer's clock says
+    var d = new Date(t), at = d.toISOString(), list = Object.keys(mem).map(function (k) { return Object.assign({ id: k }, mem[k]); });
+    var text = JSON.stringify({ page: PAGE, saved_at: at, actions: list });
+    var row = { timestamp: d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()) + ' ' + pad(d.getHours()) + ':' + pad(d.getMinutes()) + ':' + pad(d.getSeconds()),
+      msn: MSN, produit: 'MFT', detection: 'store', total_defauts: list.length, texte_sap: text };
+    if (api.setState.length >= 2) api.setState('store_row', row); else { var st = {}; st.store_row = row; api.setState(st); }
+    api.triggerEvent('save', row);
+    cur = pending = at; size = text.length;
+    if (size > LIMIT && window.console) console.warn('[FTO2 MFT] the actions take ' + size + ' characters: beyond ' + LIMIT + ', the save may cut them');
+  }
+  function change(f) {   // a change of the actions: on this copy at once (the page redraws), then sent
+    if (!ready) return Promise.reject(new Error('the shared actions are not read yet'));
+    if (!api || typeof api.setState !== 'function' || typeof api.triggerEvent !== 'function') return Promise.reject(new Error('SlateFunctions.setState / triggerEvent missing'));
+    var keep = copy(mem), was = [cur, pending, size], err = f(); if (err) return err;
+    try { send(); } catch (e) {
+      mem = keep; cur = was[0]; pending = was[1]; size = was[2];
+      if (window.console) console.error('[FTO2 MFT] the actions could not be sent', e);
+      return Promise.reject(e);
+    }
+    emit(); return Promise.resolve();
+  }
+  var actions = {
+    doc: function (k) {
+      k = k || 'a' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+      return {
+        id: k,
+        set: function (b) { return change(function () { mem[k] = copy(b); }); },
+        update: function (f) { return change(function () { if (!mem[k]) return Promise.reject(new Error('introuvable')); Object.assign(mem[k], copy(f)); }); },
+        delete: function () { return change(function () { delete mem[k]; }); }
+      };
+    },
+    onSnapshot: function (f) { subs.push(f); if (ready) emit(); return function () { subs = subs.filter(function (g) { return g !== f; }); }; }
+  };
+  return {
+    use: function (k) {
+      if (k !== 'db') return Promise.resolve(null);
+      return Promise.all([whenRead, local && local.use ? local.use('db') : null]).then(function (x) {
+        var ldb = x[1];
+        return { collection: function (c) { return c === 'actions' ? actions : ldb ? ldb.collection(c) : null; } };
+      });
+    },
+    note: function (lang) {
+      var en = lang === 'en', out = [], n = size.toLocaleString(en ? 'en-GB' : 'fr-FR');
+      if (pending) out.push(en ? 'Change kept on this screen only: press Submit in the actions’ save form so that everyone sees it.'
+        : 'Modification gardée sur cet écran seulement : appuyez sur « Submit » dans le formulaire d’enregistrement des actions pour que tout le monde la voie.');
+      if (size > LIMIT) out.push(en ? 'Warning: the actions take ' + n + ' characters; beyond 30,000 the save may cut them. Delete some closed actions.'
+        : 'Attention : les actions font ' + n + ' caractères ; au-delà de 30 000, l’enregistrement risque de les couper. Supprimez des actions closes.');
+      if (bad) out.push(en ? 'A later save of the actions cannot be read (its text was cut?): the page shows the last one it can read.'
+        : 'Un enregistrement plus récent des actions est illisible (texte coupé ?) : la page montre le dernier lisible.');
+      return out.join(' ');
+    },
+    // a value of the state key "store": the first one gives the actions; then a later save replaces this copy, and a row
+    // saved at or after this copy's last change ends the note asking for Submit
+    take: function (v) {
+      var r = read(v), b = r && r.best; if (!r) return;
+      bad = r.bad;
+      if (!ready) { if (b) adopt(b.actions, b.saved_at, b.size); else adopt(seed, '', 0); ready = true; open(); }
+      else if (b && b.saved_at > cur) adopt(b.actions, b.saved_at, b.size);
+      if (pending && b && b.saved_at >= pending) pending = '';
+      emit();
+    },
+    ready: function () { return ready; }
+  };
+}
+
 // ---------------------------------------------------------------- the page (07_scripts/mft/mft_template.html), started once the tables are in
 function mftMain() {
 @@MAIN@@
 }
 
 // ---------------------------------------------------------------- Slate: wait for the two queries, then start the page
+// Optional state keys: "reglages" (q_fto2_set_targets, the Fusion sheet's settings: the page waits a few seconds for them, then
+// applies them before it starts) and "store" (q_fto2_mft_store, the actions kept for everyone: the shared store above).
 (function () {
   var MSG = {
     wait: 'Chargement des données Slate… / Loading the Slate data…',
     empty: 'La requête q_fto2_nc n’a renvoyé aucune ligne : vérifiez la requête et son jeu de données. / The q_fto2_nc query returned no row: check the query and its dataset.',
     noapi: 'État Slate introuvable : ce JavaScript doit tourner dans un code sandbox Slate dont l’état contient les deux requêtes (voir state.json). / No Slate state: this JavaScript must run in a Slate code sandbox whose state holds the two queries (see state.json).',
-    slow: 'Toujours en attente de {q} : vérifiez que la requête existe, porte ce nom et s’exécute sans erreur. / Still waiting for {q}: check that the query exists, has this name and runs without error.'
+    slow: 'Toujours en attente de {q} : vérifiez que la requête existe, porte ce nom et s’exécute sans erreur. / Still waiting for {q}: check that the query exists, has this name and runs without error.',
+    store: 'Les actions partagées ne sont pas encore lues : vérifiez la requête q_fto2_mft_store. D’ici là, les actions ne s’affichent pas et ne peuvent pas être modifiées. / The shared actions are not read yet: check the query q_fto2_mft_store. Until then the actions are not shown and cannot be changed.'
   };
   function showError(msg) {
     var e = document.getElementById('fto2-err');
@@ -117,29 +241,46 @@ function mftMain() {
   function parse(v) { if (typeof v !== 'string') return v; var s = v.trim(); if (!s) return null; try { return JSON.parse(s); } catch (e) { return null; } }
   function count(t) { if (!t) return 0; if (Array.isArray(t)) return t.length; var k = Object.keys(t); for (var i = 0; i < k.length; i++) if (t[k[i]] && t[k[i]].length) return t[k[i]].length; return 0; }
   function loaded(t) { return !!t && (Array.isArray(t) || Object.keys(t).length > 0); }
-  var got = {}, started = false;
+  var got = {}, started = false, api = null, rgTimer = null, shared = null, storeLate = false;
+  function stateKeys() { var st = {}; try { st = (api.getState && api.getState()) || {}; } catch (e) { } return st; }
   function tryStart() {
     if (started) return;
     var nc = parse(got.nc), def = parse(got.def), R = fto2RefBlocks(got.ref);
     if (loaded(nc) && !count(nc)) { status(MSG.empty, true); return; }
     if (!count(nc) || !loaded(def) || !R) { status(MSG.wait); return; }   // the queries can arrive one after the other
+    var st0 = stateKeys(), has = function (k) { return k in st0 || got[k] != null; };   // a key of the state, or a value arrived for it
+    if (has('reglages') && !loaded(parse(got.reglages)) && rgTimer !== 'over') {   // the Fusion sheet's settings: a few seconds to arrive
+      if (!rgTimer) rgTimer = setTimeout(function () { rgTimer = 'over'; tryStart(); }, 8000);
+      return;
+    }
     started = true;
     try {
       var D = window.FTO2_MFT_D = mftFromTables(nc, def, window.FTO2_MFT_REF = R.mft);
+      if (has('reglages')) fto2Reglages(D.settings, got.reglages);   // before the page reads its settings (the action target)
       if (!D.ncs.length) {   // rows arrived but none is an FTO2 NC of the year followed: say what came, to fix the query or the state
         var c = Array.isArray(nc) ? Object.keys(nc[0] || {}) : Object.keys(nc);
         showError('aucune NC FTO2 de l’année suivie lisible dans q_fto2_nc (colonnes reçues : ' + c.join(', ') + ') / no readable FTO2 NC of the year followed in q_fto2_nc (columns received: ' + c.join(', ') + ')');
         return;
+      }
+      if (has('store')) {   // the actions kept for everyone; without the key, in this browser (the browser store)
+        shared = window.FTO2_STORE = fto2SharedStore(api, window.FTO2_STORE, R.mft.actions || []);
+        if (got.store !== undefined) shared.take(got.store);
+        setTimeout(function () { if (!shared.ready()) { storeLate = true; status(MSG.store, true); } }, 20000);
       }
       status(''); mftMain();
     } catch (e) { showError((e && e.message) || String(e)); }
   }
   function boot() {
     if (!document.getElementById('lines')) { showError('HTML part missing: paste fto2_mft.html into the HTML tab.'); return; }
-    var api = window.SlateFunctions;
+    api = window.SlateFunctions;
     if (!api || !api.watch) { showError(MSG.noapi); return; }
     status(MSG.wait);
-    ['nc', 'def', 'ref'].forEach(function (k) { api.watch(k, function (v) { got[k] = v; tryStart(); }); });
+    api.watch('store', function (v) {   // each answer of q_fto2_mft_store: after a Submit, once the query has run again
+      got.store = v; if (!shared) return;
+      shared.take(v);
+      if (storeLate && shared.ready()) { storeLate = false; status(''); }
+    });
+    ['reglages', 'nc', 'def', 'ref'].forEach(function (k) { api.watch(k, function (v) { got[k] = v; tryStart(); }); });   // the optional keys first
     setTimeout(function () {
       if (started) return;
       var miss = []; if (!count(parse(got.nc))) miss.push('q_fto2_nc'); if (!loaded(parse(got.def))) miss.push('q_fto2_def'); if (!fto2RefBlocks(got.ref)) miss.push('q_fto2_ref');

@@ -1597,8 +1597,8 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
   function calcSlate(name) {
     var k = CALC_KEY[name](), c = CALC.res[name];
     if (Object.prototype.hasOwnProperty.call(c, k)) return c[k];
-    if (!CALC.wait[name + k]) {
-      CALC.wait[name + k] = { n: name, k: k, at: Date.now(), f: { gf: { from: GF.from, to: GF.to, src: GF.src, org: GF.org, fto2: GF.fto2, liab: GF.liab, cost: GF.cost, phase: GF.phase, line: GF.line, pick: GF.pick }, minor: G.minor, lang: G.lang, pr: [PR.src, PR.ver] } };
+    if (!CALC.wait[name + k]) {   // coef: the target's cut this page uses (it may come from the Fusion sheet), so that Slate uses the same
+      CALC.wait[name + k] = { n: name, k: k, at: Date.now(), f: { gf: { from: GF.from, to: GF.to, src: GF.src, org: GF.org, fto2: GF.fto2, liab: GF.liab, cost: GF.cost, phase: GF.phase, line: GF.line, pick: GF.pick }, minor: G.minor, lang: G.lang, pr: [PR.src, PR.ver], coef: V2CUT } };
       calcSend();
     }
     return null;
