@@ -568,7 +568,14 @@
   grid-template-areas: "rca line fin" "rca waf fin" "code code code"; }
 .fto2 .v2par { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; align-items: stretch; margin: 6px 0 28px; }
 .fto2 #parTop > .v2-band, .fto2 #pgl > .v2-band, .fto2 #kgl > .v2-band { grid-column: auto; }
-.fto2 #parTop > [data-v2="a:flow"], .fto2 #parTop > [data-v2="78"], .fto2 #parFold [data-v2="VK"] { grid-column: 1 / -1; }
+.fto2 #parTop > [data-v2="a:flow"], .fto2 #parTop > [data-v2="78"], .fto2 #parTop > [data-v2="a:cmo"], .fto2 #parFold [data-v2="VK"] { grid-column: 1 / -1; }
+.fto2 .cmo-ctl { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin: 2px 0 8px; }
+.fto2 .cmo-ctl .grpseg { margin: 0; }
+.fto2 .cmo-n { display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; color: var(--ink-2); }
+.fto2 .cmo-n button { font: inherit; font-size: 13px; line-height: 1; width: 24px; height: 24px; border: 1px solid var(--ring); border-radius: 6px; background: var(--surface); color: var(--ink); cursor: pointer; }
+.fto2 .cmo-n button:disabled { opacity: .4; cursor: default; }
+.fto2 .cmo-n b { min-width: 1.2em; text-align: center; font-variant-numeric: tabular-nums; }
+.fto2 .cmo-ctl select { font: inherit; font-size: 12.5px; padding: 3px 6px; border: 1px solid var(--ring); border-radius: 6px; background: var(--surface); color: var(--ink); max-width: 16rem; }
 .fto2 #parTop > .v2-band, .fto2 #pgl > .v2-band, .fto2 #kgl > .v2-band { grid-template-columns: minmax(0, 1fr); background: var(--surface); border: 1px solid var(--ring); border-radius: 10px; padding: 18px 20px 16px; box-shadow: none; clip-path: none; row-gap: 10px; align-content: start; min-width: 0; }
 .fto2 #parTop > .v2-band > .bhead, .fto2 #pgl > .v2-band > .bhead, .fto2 #kgl > .v2-band > .bhead { position: static; grid-column: 1; gap: 6px; }
 .fto2 #parTop > .v2-band > .custom, .fto2 #pgl > .v2-band > .custom, .fto2 #kgl > .v2-band > .custom { grid-column: 1; grid-row: auto; }
@@ -744,6 +751,12 @@
 .fto2 .mode-sw button:focus-visible { outline: 2px solid var(--s1); outline-offset: 2px; }
 .fto2 .vu .vu-band .bhead { position: relative; padding-right: 40px; }
 .fto2 .vu-x { display: none; }
+.fto2 .v2-band.png-b { position: relative; }
+.fto2 .v2-band.png-b > .bhead { padding-right: 48px; }
+.fto2 .png-x { position: absolute; top: 12px; right: 12px; display: inline-grid; place-items: center; height: 26px; padding: 0 7px; font: inherit; font-size: 10.5px; font-weight: 700; letter-spacing: .06em; line-height: 1; color: var(--muted); background: transparent; border: 1px solid var(--ring); border-radius: 7px; cursor: pointer; opacity: .6; }
+.fto2 .png-x:hover, .fto2 .png-x:focus-visible { opacity: 1; color: var(--ink); background: var(--surface); }
+.fto2 .vu .vu-band.png-b .bhead { padding-right: 76px; }
+.fto2 .vu .vu-band .bhead .png-x { top: 2px; right: 36px; }
 .fto2 .vu .vu-x { display: inline-grid; place-items: center; position: absolute; top: 0; right: 0; width: 30px; height: 30px; font: inherit; font-size: 15px; line-height: 1; color: var(--muted); background: transparent; border: 1px solid transparent; border-radius: 8px; padding: 0; cursor: pointer; opacity: .7; transition: opacity .2s, border-color .2s, color .2s; }
 .fto2 .vu .vu-band:hover .vu-x, .fto2 .vu .vu-x:focus-visible { opacity: 1; color: var(--ink); border-color: var(--ring); background: var(--surface); }
 .fto2 .vu-up { color: var(--up); font-weight: 700; }

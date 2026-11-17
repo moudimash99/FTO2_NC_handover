@@ -555,17 +555,6 @@ def page_settings():
     F = "2_reglages_pages.csv"   # read with its 1_ part: the manager's lines (config.SPLIT)
     get = lambda k: config.parameter(k, F)
     at = lambda k: "%s, %s" % (config.held_by(k, F), k)
-    weights = {}
-    for item in config.parameter_list("poids_mois", F):
-        try:
-            m, w = item.split("=")
-            m = int(m)
-        except ValueError:
-            m = 0
-        if not 1 <= m <= 12:
-            raise config.ConfigError("%s: '%s' is not a month and its weight: write the month's number, =, its weight, "
-                                     "e.g. 7=0.6|8=0.6 for July and August at 60 %%" % (at("poids_mois"), item))
-        weights[str(m)] = _num(w, at("poids_mois"))
     cats = config.table("2_categories.csv", ["categorie", "ordre", "couleur", "a_part"])
     cats = sorted(cats.to_dict("records"), key=lambda r: _num(r["ordre"], "2_categories.csv, ordre"))
     lines = config.table("2_lignes.csv", ["ligne", "couleur"])
@@ -585,7 +574,7 @@ def page_settings():
                "liab": "".join(c for c in "fso" if c in liab),
                "preset": _one_of(get("defaut_periode").lower(), ["ytd", "m1", "m3", "m6", "m12", "all"], at("defaut_periode"))}
     return {"annee": config.year(), "annee_ref": config.comparison_year(),
-            "objectif_baisse": cut, "objectif_coef": round(1 - cut, 12), "poids_mois": weights,
+            "objectif_baisse": cut, "objectif_coef": round(1 - cut, 12),
             "semaine_faible": n("semaine_faible_moins_de"), "mft_fenetres": windows,
             "mft_hausse_min": n("mft_hausse_min_defauts"), "mft_hausse_facteur": n("mft_hausse_facteur"),
             "mft_baisse_min": n("mft_baisse_min_base"), "mft_baisse_facteur": n("mft_baisse_facteur"), "mft_fin_min": n("mft_fin_min_avions"),

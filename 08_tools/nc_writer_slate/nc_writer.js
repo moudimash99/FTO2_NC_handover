@@ -164,7 +164,7 @@ var NATURES = [
   ] }
 ];
 
-var PRODUITS = ["MIP A350", "MIP 400M", "740VU", "PTVU", "300VU", "OHP", "E Rudder", "MFRL", "MDCD", "Autre"];
+var PRODUITS = ["MIP A350", "MIP 400M", "740VU", "PTVU", "300VU", "OHP", "E Rudder", "MFRL", "MDCD", "CA", "CA Superior", "Element OTP", "Autre"];
 var DETECTIONS = ["Poste", "Test", "Contrôle Final", "Réception", "Client", "Autre"];
 var FIN_GLOBAL_SUGGEST = ["740VU", "300VT101", "300VT400", "9KS", "115VM", "3RN1A", "3RN3B", "51CV", "300VT301", "3CB"];
 var FIN_MAPPING = {

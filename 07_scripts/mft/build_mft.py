@@ -158,9 +158,13 @@ def main():
     js, css = alarm_parts()
     page = tpl.replace("/*@@DATA@@*/null", blob, 1).replace("/*@@ALARMS@@*/", js, 1).replace("/*@@ALARMCSS@@*/", css, 1)
     assert "@@ALARMS@@" not in page and "@@ALARMCSS@@" not in page
-    # the tracker actions as the Slate page gets them (FTO2_MFT_REF.actions), and the store that keeps them
+    # the tracker actions as the Slate page gets them (FTO2_MFT_REF.actions), the production plan's products and their alias rules
+    # as it gets them too (FTO2_MFT_REF.plan, alias: the FIN lists leave out product names), and the store that keeps the actions
     mark = '<script type="application/json" id="mft-data">'
-    ref = json.dumps({"actions": seeds}, ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/")
+    t = config.frame("2_produits_plan.csv")
+    plan = {str(a).upper(): REF.EQ_NAMES.get(b, b) for a, b in zip(t.produit_nc, t.produit_eqmsn)}
+    ref = json.dumps({"actions": seeds, "plan": plan, "alias": REF.product_alias_rules()},
+                     ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/")
     page = page.replace(mark, '<script type="application/json" id="mft-ref">%s</script>\n<script>\n'
                         "window.FTO2_MFT_REF = JSON.parse(document.getElementById('mft-ref').textContent);   // the tracker actions\n"
                         "%s\n</script>\n%s" % (ref, store_part(), mark), 1)
