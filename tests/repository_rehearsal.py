@@ -3,15 +3,18 @@
     python3 -I tests/repository_rehearsal.py [folder]
 
 Runs build/repository/fto2_update.py (the transform, with a stand-in for transforms.api and polars inputs) on the same
-data as tests/notebook_rehearsal.py, with the settings and the lists given as Fusion datasets would give them (the settings
-spreadsheet; the GPS register, the Test list and the cable tracker with their column names written as a sync may write
-them) and the production plan exports as a dataset of files. Then compares the tables it writes with the notebook's run:
-they must be the same. Exits 1 if they are not.
+data as tests/notebook_rehearsal.py, with the settings given as Fusion datasets would give them (the settings
+spreadsheet), and the GPS register, the Test list, the cable tracker and the newest export of the Tableau Avances /
+Retards pasted whole into their sheets, as they are, title rows included, as a sync gives such a sheet (its first row as
+the column names, the real header a row of data). The plan's sheet has a title row with the export's date, as the notebook
+dates the export by its file name. Then compares the tables it writes with the notebook's run: they must be the same.
+Exits 1 if they are not.
 """
+import csv
 import importlib.util
 import inspect
+import io
 import os
-import re
 import shutil
 import sys
 import tempfile
@@ -23,7 +26,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 os.environ.setdefault("FTO2_CONFIG", os.path.join(ROOT, "config"))
 import tests.notebook_rehearsal as R  # noqa: E402
-from fto2 import config, manual_lists, transform_io  # noqa: E402
+from fto2 import downloads, fusion as F, manual_lists, transform_io  # noqa: E402
 
 SHEET = os.path.join(ROOT, "03_reports", "skywise", "fusion", "FTO2 NC Dashboard - Settings.xlsx")
 
@@ -31,8 +34,8 @@ SHEET = os.path.join(ROOT, "03_reports", "skywise", "fusion", "FTO2 NC Dashboard
 class FakeInput:
     """A lightweight transform input over a pandas table."""
 
-    def __init__(self, df=None, folder=None):
-        self.df, self.folder = df, folder
+    def __init__(self, df):
+        self.df = df
 
     def polars(self, lazy=False):
         import polars as pl
@@ -41,9 +44,6 @@ class FakeInput:
 
     def pandas(self):
         return self.df.copy()
-
-    def path(self):
-        return self.folder
 
 
 class FakeOutput:
@@ -73,35 +73,30 @@ def fake_transforms_api():
 
 
 SHIPPED = ["non_conformity", "fto2_ai_labels", "work_order_operation", "mes_disruptions", "fto2_set_cost", "fto2_set_blackout",
-           "fto2_set_part_prices", "fto2_set_cables", "fto2_set_gps", "fto2_set_test", "fto2_dash_nc", "fto2_dash_defects",
-           "fto2_dash_disruptions", "fto2_dash_ref", "fto2_lines_to_label", "fto2_parts_to_price"]
+           "fto2_set_part_prices", "fto2_set_cables", "fto2_set_gps", "fto2_set_test", "fto2_set_plan", "fto2_dash_nc",
+           "fto2_dash_defects", "fto2_dash_disruptions", "fto2_dash_ref", "fto2_lines_to_label", "fto2_parts_to_price"]
 
 
 def load_transform(folder):
-    """build/repository/fto2_update.py: as shipped, its inputs and outputs checked; then run with its optional input (the
-    production plan's exports) turned on, its two lines without their #, as the README says to do."""
-    src = open(os.path.join(ROOT, "build", "repository", "fto2_update.py"), encoding="utf-8").read()
-
-    def module(text, name):
-        path = os.path.join(folder, name + ".py")
-        with open(path, "w", encoding="utf-8") as f:
-            f.write(text)
-        spec = importlib.util.spec_from_file_location(name, path)
-        m = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(m)
-        return m
-    shipped = module(src, "fto2_update_shipped")
+    """build/repository/fto2_update.py as shipped, its inputs and outputs checked (named, no **kwargs, the same on both
+    sides)."""
+    path = os.path.join(folder, "fto2_update_shipped.py")
+    shutil.copyfile(os.path.join(ROOT, "build", "repository", "fto2_update.py"), path)
+    spec = importlib.util.spec_from_file_location("fto2_update_shipped", path)
+    shipped = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(shipped)
     names = list(inspect.signature(shipped.compute).parameters)
     assert names == SHIPPED and sorted(shipped.compute.io) == sorted(SHIPPED), "fto2_update.py declares %s" % names
-    for line in ("    # fto2_plan_exports=Input(", "    # fto2_plan_exports: LightweightInput,"):
-        assert src.count(line) == 1, "fto2_update.py: the line %r is not there" % line
-        src = src.replace(line, line.replace("# ", "", 1))
-    return module(src, "fto2_update_with_plan")
+    return shipped
 
 
-def synced(df):
-    """Column names as a sync may write them: signs and accented letters replaced."""
-    return df.set_axis([re.sub(r"[^0-9A-Za-z]", "_", str(c)) for c in df.columns], axis=1)
+def pasted(path, title=()):
+    """A file pasted whole into a Fusion sheet, as it is (title rows above it), as the sheet's sync gives it: its first row
+    as the column names (a blank cell gets a name of its own), the other rows as data, every cell as text."""
+    rows = ([list(title)] if title else []) + list(csv.reader(io.StringIO(downloads._text(path), newline="")))
+    n = max(len(r) for r in rows)
+    rows = [r + [""] * (n - len(r)) for r in rows]
+    return pd.DataFrame(rows[1:], columns=[c if c.strip() else "Column %d" % (i + 1) for i, c in enumerate(rows[0])])
 
 
 def main():
@@ -111,30 +106,25 @@ def main():
     work = tempfile.mkdtemp(prefix="fto2_repo_rehearsal_")
     try:
         R.data_files(work, tables["non_conformity"], exports, downloads=True)
-        data = os.path.join(work, "data")
-        files, plan = os.path.join(work, "files"), os.path.join(work, "plan")
+        data, files = os.path.join(work, "data"), os.path.join(work, "files")
         os.makedirs(files)
-        os.makedirs(plan)
         shutil.copy(os.path.join(data, "fto2_station_mapping.csv"), files)
-        for f in os.listdir(data):
-            if f.startswith("Avances_Retards"):
-                shutil.copy(os.path.join(data, f), plan)
         transform_io.FILES, transform_io.SETTINGS = files, os.path.join(ROOT, "config")
-        # the Fusion datasets
+        # the Fusion datasets: the settings tables of the spreadsheet; the lists and the plan pasted whole, as they are
         readme = pd.read_excel(SHEET, sheet_name="Read me", header=3)
-        fusion = {d: pd.read_excel(SHEET, sheet_name=s) for d, s in zip(readme["Dataset"], readme["Sheet"])
-                  if d not in ("fto2_set_gps", "fto2_set_test", "fto2_set_cables")}
-        gps = pd.read_csv(os.path.join(work, manual_lists._src("liste_gps")), skiprows=3, dtype=str)
-        gps[" Date SAP"] = pd.to_datetime(gps[" Date SAP"], format="%d/%m/%Y")
-        test = pd.read_csv(os.path.join(work, manual_lists._src("liste_test")), skiprows=2, dtype=str)
+        fusion = {d: pd.read_excel(SHEET, sheet_name=s) for d, s in zip(readme["Dataset"], readme["Sheet"]) if d not in F.PASTED}
+        fusion["fto2_set_gps"] = pasted(os.path.join(work, manual_lists._src("liste_gps")))     # 3 title rows, then the header
+        fusion["fto2_set_test"] = pasted(os.path.join(work, manual_lists._src("liste_test")))   # 2 title rows
         cables = [f for f in os.listdir(data) if "cables" in f.lower() and f.endswith(".csv")]
-        fusion["fto2_set_gps"], fusion["fto2_set_test"] = synced(gps), synced(test)
-        fusion["fto2_set_cables"] = synced(pd.read_csv(os.path.join(data, cables[0]), dtype=str, keep_default_na=False))
+        fusion["fto2_set_cables"] = pasted(os.path.join(data, cables[0]), ["Suivi des demandes de câbles A30"])
+        newest = sorted(f for f in os.listdir(data) if f.startswith("Avances_Retards"))[-1]   # 5 rows of legend above its header
+        fusion["fto2_set_plan"] = pasted(os.path.join(data, newest),
+                                         ["", "Tableau Avances / Retards au %s" % downloads._dmy(downloads.file_day(newest))])
         nc = tables["non_conformity"].copy()
         # the liability is a list in Skywise: a list for every NC (the comparison year's rows are still text here)
         nc["liability"] = nc["liability"].map(R._as_list).map(lambda v: v if isinstance(v, list) else [v] if isinstance(v, str) else None)
         inputs = {"non_conformity": FakeInput(nc), **{k: FakeInput(v) for k, v in tables.items() if k != "non_conformity"},
-                  **{k: FakeInput(v) for k, v in fusion.items()}, "fto2_plan_exports": FakeInput(folder=plan)}
+                  **{k: FakeInput(v) for k, v in fusion.items()}}
         outputs = {k: FakeOutput() for k in ("fto2_dash_nc", "fto2_dash_defects", "fto2_dash_disruptions", "fto2_dash_ref",
                                              "fto2_lines_to_label", "fto2_parts_to_price")}
         fake_transforms_api()

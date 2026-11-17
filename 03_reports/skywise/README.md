@@ -23,10 +23,11 @@ Details (what each level proves, what was tested): `DETAILS.md`.
    *FTO2 NC Dashboard - Settings*, `fusion/`). Uploading it again with a new version is safe.
    Put in `data/` the three files of the team, under the names of `data/config/2_sources.csv`: the station mapping
    `fto2_station_mapping.csv` (the notebook stops without it), the GPS register and the Test list (without them the
-   notebook runs and says so). The `data/` folder also keeps the files the team downloads:
-   the exports of the Tableau Avances / Retards (named `Avances_Retards...csv`; keep the earlier ones) and the export of
-   the cable team's tracker (with `cables` in its name). The run reads the production plan and the cable requests from
-   them; without any, it uses the tables `0_plan_msn.csv` and `0_demandes_cables.csv` of `data/config/`.
+   notebook runs and says so). With the Fusion sheets in the Data panel (step 5), the lists, the cable tracker and the
+   production plan are pasted there instead, whole, as they are. Without them, the `data/` folder keeps the files the
+   team downloads: the exports of the Tableau Avances / Retards (named `Avances_Retards...csv`; keep the earlier ones) and
+   the export of the cable team's tracker (with `cables` in its name); without any, the run uses the tables
+   `0_plan_msn.csv` and `0_demandes_cables.csv` of `data/config/`.
 3. Upload `level3_datasets/notebook_kit/fto2_ai_labels.csv` once, as a dataset named `fto2_ai_labels` (3,489 rows).
    If the dataset exists already with fewer rows, give it the content of this file.
 4. Replace the notebook by `level3_datasets/fto2_pipeline_notebook.ipynb` (a few lines: the steps are in `notebook_kit/fto2/`).
@@ -38,7 +39,7 @@ Details (what each level proves, what was tested): `DETAILS.md`.
    | `fto2_ai_labels` | `fto2_ai_labels` | read |
    | Work_Order_Operation | `work_order_operation` | read |
    | MES Disruptions | `mes_disruptions` | read |
-   | the Fusion settings (*FTO2 NC Dashboard - Settings - Cost rates and times*, *... - Blackout days*, *... - Part prices*, *... - Cable tracker*, *... - GPS register*, *... - Test list*) | `fto2_set_cost`, `fto2_set_blackout`, `fto2_set_part_prices`, `fto2_set_cables`, `fto2_set_gps`, `fto2_set_test` | read (each one optional) |
+   | the Fusion settings (*FTO2 NC Dashboard - Settings - Cost rates and times*, *... - Blackout days*, *... - Part prices*, *... - Cable tracker*, *... - GPS register*, *... - Test list*, *... - Production plan*) | `fto2_set_cost`, `fto2_set_blackout`, `fto2_set_part_prices`, `fto2_set_cables`, `fto2_set_gps`, `fto2_set_test`, `fto2_set_plan` | read (each one optional) |
    | four new datasets | `fto2_dash_nc`, `fto2_dash_defects`, `fto2_dash_disruptions`, `fto2_dash_ref` | write |
 
 6. Run all cells. The last lines list the tables written.
@@ -237,15 +238,17 @@ Both are options. Without them the pages work as before, so step 1 alone is enou
   has run.
 - **A new year** (each January): nothing to write, the year followed changes by itself (the line `annee` of
   `1_parametres.csv` stays empty). In the Fusion spreadsheet, add the new year's blackout days (sheet *Blackout days*) and
-  its GPS register (sheet *GPS register*); save a fresh export of the Tableau Avances / Retards in `data/`, keeping the older
-  ones; run the update. Nothing to paste in Slate. The details: `docs/comment_faire.md` ("Commencer une nouvelle année").
+  its GPS register (sheet *GPS register*, pasted whole); paste a fresh export of the Tableau Avances / Retards into the sheet
+  *Production plan*; run the update. Nothing to paste in Slate. The details: `docs/comment_faire.md` ("Commencer une nouvelle année").
 - **A setting people change** (the cost rates, the part prices, the blackout days, the lists): in the Fusion spreadsheet,
   then run the update. The target, the filters at opening and the target of an MFT action: the sheet "Target and pages",
   read by the pages themselves (step 3): a change shows the next time the page is opened, once Fusion has synced.
 - **A rule** (the exclusions, the NC types, the causes...): its table in `data/config/`, then run the update.
 - **An MFT action:** on the MFT page itself, with the actions kept for everyone (step 4); otherwise in
   `data/config/1_actions_mft.csv`, then run the update.
-- **The production plan, the cable requests:** save the new download in `data/` and run the notebook.
+- **The production plan, the cable requests, the lists:** empty their Fusion sheet and paste the new export or sheet there
+  whole, as it is, from cell A1; then run the update. Its first lines say, for each of these sheets, on which row it found
+  the header, or why it could not use the sheet.
 - **A change of the code** (a page's look, a new chart): run `python3 -I build/build_all.py`,
   `python3 -I 07_scripts/mft/build_mft.py` and `python3 -I 07_scripts/elizabeth/build_elizabeth.py` on the laptop, then paste
   the new files into the sandboxes. If `notebook_kit` changed, upload it again and run the notebook.

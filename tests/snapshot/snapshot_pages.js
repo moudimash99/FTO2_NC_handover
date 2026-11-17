@@ -61,7 +61,7 @@ const DASH_VIEWS = [
   { name: 'pick station', steps: [['pick', 'station|FINITION WF492']] },
   { name: 'pick where found', steps: [['pick', 'wgrp|fin']] },
   { name: 'english', lang: 'en' },
-  { name: 'A330 REC 3 months cause', steps: [['line', 'A330'], ['phase', 'REC'], ['preset', 'm3'], ['pick', 'rca|*']] },
+  { name: 'A330 REC cause', steps: [['line', 'A330'], ['phase', 'REC'], ['pick', 'rca|*']] },   // the year: 3 months held no NC
   { name: 'essentiel A350 last month', mode: 'simple', steps: [['line', 'A350'], ['preset', 'm1']] },
 ];
 

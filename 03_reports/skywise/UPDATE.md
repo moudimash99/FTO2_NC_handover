@@ -6,7 +6,8 @@ page. Follow the steps in this order: the new pages need the data of the new upd
 
 What changes:
 - The update runs in the Code Repository, on a schedule, instead of the notebook.
-- The settings people fill in by hand come from the Fusion spreadsheet *FTO2 NC Dashboard - Settings*.
+- The settings people fill in by hand come from the Fusion spreadsheet *FTO2 NC Dashboard - Settings*. The lists, the
+  cable tracker and the production plan are pasted there whole, as they are.
 - The tables hold two years, the comparison year and the year followed; each page chooses what it shows.
 - The target and the pages' opening view are read by the pages straight from Fusion: a change shows at the next reload,
   without an update.
@@ -17,21 +18,30 @@ What changes:
 
 ## 1. Fusion
 
-The spreadsheet has seven sheets. If an earlier version had the sheets *Planned volume*, *Deliveries last year* or *Plant*,
-delete them: nothing reads them any more.
+The spreadsheet has eight sheets. If an earlier version had the sheets *Planned volume*, *Deliveries last year* or *Plant*,
+delete them: nothing reads them any more. The sheet *Production plan* is new: add it (the sheets are in
+`fusion/FTO2 NC Dashboard - Settings.xlsx`) and sync it to a dataset like the others.
 
 Fusion names each sheet's dataset after the spreadsheet and the sheet: *FTO2 NC Dashboard - Settings - Blackout days*. The
 code calls each one by a short name:
 
-| Sheet | Short name in the code | Read by |
-|---|---|---|
-| Target and pages | `fto2_set_targets` | the pages (step 4), through the sync |
-| Cost rates and times | `fto2_set_cost` | the update (step 2) |
-| Blackout days | `fto2_set_blackout` | the update |
-| Part prices | `fto2_set_part_prices` | the update |
-| Cable tracker | `fto2_set_cables` | the update |
-| GPS register | `fto2_set_gps` | the update |
-| Test list | `fto2_set_test` | the update |
+| Sheet | Short name in the code | Filled | Read by |
+|---|---|---|---|
+| Target and pages | `fto2_set_targets` | by hand | the pages (step 4), through the sync |
+| Cost rates and times | `fto2_set_cost` | by hand | the update (step 2) |
+| Blackout days | `fto2_set_blackout` | by hand | the update |
+| Part prices | `fto2_set_part_prices` | by hand | the update |
+| Cable tracker | `fto2_set_cables` | pasted whole, as it is | the update |
+| GPS register | `fto2_set_gps` | pasted whole, as it is | the update |
+| Test list | `fto2_set_test` | pasted whole, as it is | the update |
+| Production plan | `fto2_set_plan` | pasted whole, as it is | the update |
+
+**Pasted whole, as it is**: empty the sheet, then paste the whole Google sheet (Ctrl+A, Ctrl+C there) or the whole export
+of the Tableau Avances / Retards from cell A1. Delete nothing and rename nothing: the update finds the header row itself
+and leaves out the title rows and the columns it does not need. Its first lines say, for each of these sheets, on which row
+it found the header and how many rows it took; a line starting with ⚠️ says a sheet was not used, why, and what was kept
+instead (it is said again at the end). The plan's date is a date written above the export's header if there is one, else
+the day of the update.
 
 In *Blackout days*, add this year's Christmas closure (one row: first day, last day, 0, the reason). Until it is there, the
 update warns at its start and its end.
@@ -45,7 +55,7 @@ schedule.
 The tables now hold last year's NCs too: about twice the rows.
 
 To stay on the notebook instead (the fallback): in the Code Workspace, replace `notebook_kit`, `data/config` and the notebook by
-those of `level3_datasets/`, add the six Fusion datasets of the update to the Data panel, each under its short name (`fto2_set_cost`...), and run all
+those of `level3_datasets/`, add the seven Fusion datasets of the update to the Data panel, each under its short name (`fto2_set_cost`...), and run all
 cells.
 
 ## 3. The sync to Postgres

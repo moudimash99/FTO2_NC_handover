@@ -13,11 +13,9 @@ The names of the inputs and outputs are the ones of fto2/settings/2_sources.csv 
 (fto2_set_..., see fto2/fusion.py) and of the tables the run writes. A dataset that is not declared raises KeyError when it
 is read or written: the run treats the optional ones that way (a Fusion sheet not declared: its file is used) and says so.
 
-Besides the datasets, the run needs two kinds of files, which the transform puts where the notebook has them (data/):
-  - the station list, fto2/files/fto2_station_mapping.csv, kept in the repository;
-  - the exports of the production plan (Tableau Avances / Retards), from the input fto2_plan_exports: a dataset holding the
-    exports as files, one per download, the date at the end of each name. Without it, the plan stays as it was last read
-    (fto2/settings/0_plan_msn.csv).
+Besides the datasets, the run needs one file, which the transform puts where the notebook has it (data/): the station list,
+fto2/files/fto2_station_mapping.csv, kept in the repository. The production plan, the cable requests and the two lists come
+from the Fusion sheets they are pasted in (fto2_set_plan, fto2_set_cables, fto2_set_gps, fto2_set_test).
 """
 import glob
 import os
@@ -29,7 +27,6 @@ import pandas as pd
 HERE = os.path.dirname(os.path.abspath(__file__))
 FILES = os.path.join(HERE, "files")          # files kept with the code (the station list)
 SETTINGS = os.path.join(HERE, "settings")    # the settings tables kept with the code
-PLAN_EXPORTS = "fto2_plan_exports"
 
 
 # ---------------------------------------------------------------- reading: a small filter language over polars
@@ -217,36 +214,11 @@ def bind(datasets):
     return Dataset, Column
 
 
-# ---------------------------------------------------------------- files
-def copy_files(source, folder, suffix=".csv"):
-    """Copy the files of a dataset of files (input) into a folder. Returns their names."""
-    names = []
-    try:
-        root = source.path()   # the dataset's files on the local disk
-    except Exception:
-        root = None
-    if root and os.path.isdir(root):
-        for d, _, files in os.walk(root):
-            for f in files:
-                if f.lower().endswith(suffix):
-                    shutil.copyfile(os.path.join(d, f), os.path.join(folder, f))
-                    names.append(f)
-        return names
-    fs = source.filesystem()
-    for status in fs.ls():
-        if status.path.lower().endswith(suffix):
-            name = os.path.basename(status.path)
-            with fs.open(status.path, "rb") as r, open(os.path.join(folder, name), "wb") as w:
-                shutil.copyfileobj(r, w)
-            names.append(name)
-    return names
-
-
 # ---------------------------------------------------------------- the whole update
 def run(datasets, say=None):
-    """The update inside a transform: the notebook's layout rebuilt in a working folder (data/ with the station list and
-    the plan exports), the settings kept in Fusion read over those of the repository, then the same run as the notebook.
-    Returns the three dashboard tables."""
+    """The update inside a transform: the notebook's layout rebuilt in a working folder (data/ with the station list), the
+    settings, the lists and the production plan kept in Fusion read over those of the repository, then the same run as the
+    notebook. Returns the three dashboard tables."""
     import time
     t0 = time.time()
     say = say or (lambda msg: print("[%6.1f s] %s" % (time.time() - t0, msg), flush=True))
@@ -258,11 +230,6 @@ def run(datasets, say=None):
     if not os.path.exists(os.path.join(data, "fto2_station_mapping.csv")):
         raise FileNotFoundError("the station list is missing: put fto2_station_mapping.csv (the notebook's data/ file) "
                                 "in fto2/files/ of the repository")
-    if PLAN_EXPORTS in datasets:
-        names = copy_files(datasets[PLAN_EXPORTS], data)
-        say("Production plan: %d export(s) read from %s" % (len(names), PLAN_EXPORTS))
-    else:
-        say("Production plan: no input %s, the plan stays as last read (0_plan_msn.csv)" % PLAN_EXPORTS)
     os.environ.pop("FTO2_FUSION_FROM", None)
     os.environ["FTO2_CONFIG"] = SETTINGS
     Dataset, Column_ = bind(datasets)
