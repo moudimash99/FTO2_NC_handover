@@ -700,8 +700,8 @@ var D = JSON.parse(document.getElementById('mft-data').textContent);   // the da
   }
 
   // ---------------------------------------------------------------- tab 3: actions
-  var DBN = null;   // the note above the actions, a function so that it follows the language
-  function setNote(f) { DBN = f; $('dbNote').hidden = !f; if (f) $('dbNote').textContent = f(); }
+  var DBN = null;   // the note above the actions, a function so that it follows the language (and the store: an empty note hides it)
+  function setNote(f) { DBN = f; var t = f ? f() : ''; $('dbNote').hidden = !t; if (f) $('dbNote').textContent = t; }
   var ACTIONS = [], DB = null, USER = null, UID = null, CANW = null, NAMES = {}, CONF = null, CONFL = null, BUSY = false, OPEN = {};   // OPEN: cards whose details are unfolded; CONFL: point waiting for its delete confirmation
   // the account's name is not always given to the page, so whoever writes types it; this browser remembers it
   var MYNAME = ''; try { MYNAME = localStorage.getItem('mft-fto2-name') || ''; } catch (e) { }
@@ -1366,13 +1366,13 @@ var D = JSON.parse(document.getElementById('mft-data').textContent);   // the da
   document.addEventListener('scroll', function () { tip.hidden = true; }, true);
   var rt; addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(renderAll, 150); });
 
-  function renderAll() { applyText(); if (DBN) $('dbNote').textContent = DBN(); renderControls(); if (S.tab === 'pareto') renderPareto(); else if (S.tab === 'analyse') renderAnalyse(); else renderActions(); $('nAct').textContent = ACTIONS.filter(function (a) { return onLine(a) && a.status !== 'Clos' && a.status !== 'Abandonnée'; }).length; alRender(); }
+  function renderAll() { applyText(); if (DBN) setNote(DBN); renderControls(); if (S.tab === 'pareto') renderPareto(); else if (S.tab === 'analyse') renderAnalyse(); else renderActions(); $('nAct').textContent = ACTIONS.filter(function (a) { return onLine(a) && a.status !== 'Clos' && a.status !== 'Abandonnée'; }).length; alRender(); }
   var h = (location.hash || '').slice(1); if (h === 'analyse' || h === 'actions' || h === 'pareto') S.tab = h;
   renderAll();
 
   // ---------------------------------------------------------------- the store: the actions and the alarms' marks
   (async function () {
-    var cl = window.FTO2_STORE;   // the store of 07_scripts/mft/mft_slate.js, in this page as in its Slate version: this browser
+    var cl = window.FTO2_STORE;   // the store of 07_scripts/mft/mft_slate.js: this browser; in Slate with the state key "store", the shared one
     try { USER = cl && cl.use ? await cl.use('user') : null; } catch (e) { USER = null; }
     try { DB = cl && cl.use ? await cl.use('db') : null; } catch (e) { DB = null; }
     if (USER) { try { UID = await USER.id(); } catch (e) { } try { CANW = await USER.can('data.write'); } catch (e) { CANW = null; } }

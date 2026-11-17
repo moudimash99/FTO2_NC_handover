@@ -142,11 +142,11 @@
       "aleas": 99,
       "js_kb": 1394
     },
-    "level23_js_kb": 502,
+    "level23_js_kb": 507,
     "slate_functions": {
       "f_fto2_objectifs.js": 53,
-      "f_fto2_alarmes.js": 70,
-      "f_fto2_cout.js": 52
+      "f_fto2_alarmes.js": 71,
+      "f_fto2_cout.js": 53
     },
     "pipeline_notebook": true,
     "level4": [

@@ -50,6 +50,17 @@ header.top .wrap { display: flex; flex-wrap: wrap; align-items: center; gap: 10p
 @media (max-width: 620px) { .ctl.per { flex: 1 1 100%; } .ctl.per #per { flex: 1 1 100%; } .ctl.per select { flex: 1 1 8em; width: auto; } }
 .ctl > label, .lbl { font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
 .seg { display: inline-flex; border: 1px solid var(--ring); border-radius: 8px; overflow: hidden; background: var(--surface); }
+/* the Responsabilité dropdown, as the dashboard's */
+.fb-multi { position: relative; }
+.fb-multi > summary { list-style: none; cursor: pointer; font: inherit; font-size: 13.5px; font-weight: 600; padding: 6px 30px 6px 12px; border: 1px solid var(--ring); border-radius: 8px; background: var(--surface); color: var(--ink-2); white-space: nowrap; position: relative; min-width: 7em; }
+.fb-multi > summary::-webkit-details-marker { display: none; }
+.fb-multi > summary::after { content: "▾"; position: absolute; right: 11px; top: 50%; transform: translateY(-50%); color: var(--ink-2); font-size: 12px; }
+.fb-multi[open] > summary { border-color: var(--ink-2); }
+.fb-menu { position: absolute; z-index: 30; top: calc(100% + 4px); left: 0; min-width: 100%; background: var(--surface); border: 1px solid var(--ring); border-radius: 8px; box-shadow: 0 8px 24px rgba(0,0,0,.12); padding: 6px; display: grid; gap: 2px; }
+.fb-menu label { display: flex; align-items: center; gap: 9px; padding: 7px 10px; border-radius: 6px; font-size: 14px; cursor: pointer; white-space: nowrap; color: var(--ink); text-transform: none; letter-spacing: 0; font-weight: 400; }
+.fb-menu label:hover { background: var(--band); }
+.fb-menu input { width: 16px; height: 16px; accent-color: var(--focus); margin: 0; }
+.fb-menu small { color: var(--muted); margin-left: auto; padding-left: 12px; font-variant-numeric: tabular-nums; }
 .seg button { font: inherit; font-size: 13.5px; font-weight: 600; padding: 6px 12px; border: 0; background: none; color: var(--ink-2); cursor: pointer; }
 .seg button + button { border-left: 1px solid var(--ring); }
 .seg button[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); }

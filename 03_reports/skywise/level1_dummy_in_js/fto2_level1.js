@@ -980,11 +980,13 @@ function fto2FromTables(ncIn, defIn, ref, disIn, cxIn) {
   }
 
   // ---------------------------------------------------------------- 8. in a Slate function: the filters the page asks for
-  // The page sends a list of requests through the Slate variable v_fto2_filtres: {n: calculation, k: its key, f: the filters}.
+  // The page sends a list of requests through the Slate variable v_fto2_filtres: {n: calculation, k: its key, f: the filters,
+  // with f.coef the target's cut the page uses}.
   // Each function computes the requests for its own calculation, for each set of filters, and answers {results: {key: result}}.
   function appliquer(f) {   // put the page's filters in place, then the selection and the production that follow from them
     var g = f.gf || {}; Object.keys(g).forEach(function (k) { GF[k] = g[k]; }); GF.preset = 'custom';
     G.minor = f.minor !== false; G.lang = f.lang === 'en' ? 'en' : 'fr';
+    if (typeof f.coef === 'number' && f.coef >= 0 && f.coef <= 1) V2CUT = f.coef;   // the page's target cut (it may come from the Fusion sheet)
     if (f.pr) { PR.src = f.pr[0]; PR.ver = f.pr[1]; }
     pickPrep(); select(); PD = pSrc() ? pData() : null; PA = PD ? pAgg(PD) : null;
   }
@@ -1014,8 +1016,8 @@ function fto2FromTables(ncIn, defIn, ref, disIn, cxIn) {
   function calcSlate(name) {
     var k = CALC_KEY[name](), c = CALC.res[name];
     if (Object.prototype.hasOwnProperty.call(c, k)) return c[k];
-    if (!CALC.wait[name + k]) {
-      CALC.wait[name + k] = { n: name, k: k, at: Date.now(), f: { gf: { from: GF.from, to: GF.to, src: GF.src, org: GF.org, fto2: GF.fto2, liab: GF.liab, cost: GF.cost, phase: GF.phase, line: GF.line, pick: GF.pick }, minor: G.minor, lang: G.lang, pr: [PR.src, PR.ver] } };
+    if (!CALC.wait[name + k]) {   // coef: the target's cut this page uses (it may come from the Fusion sheet), so that Slate uses the same
+      CALC.wait[name + k] = { n: name, k: k, at: Date.now(), f: { gf: { from: GF.from, to: GF.to, src: GF.src, org: GF.org, fto2: GF.fto2, liab: GF.liab, cost: GF.cost, phase: GF.phase, line: GF.line, pick: GF.pick }, minor: G.minor, lang: G.lang, pr: [PR.src, PR.ver], coef: V2CUT } };
       calcSend();
     }
     return null;

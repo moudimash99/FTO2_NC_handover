@@ -43,7 +43,9 @@ la valeur de la ligne 3 (`-CRE|-PNC|A30-REJ-PVU2|-RCX`), ou ajouter une ligne `4
 **Un taux horaire** : `config/1_cout_parametres.csv`, colonne `valeur` de `taux_production`, `taux_qualite` ou `taux_me`.
 
 **L'objectif** (−25 % par rapport à l'année de comparaison) : `config/1_reglages_pages.csv`, ligne `objectif_baisse`
-(0.25, 0,25 ou 25 % = −25 %). Les textes des pages affichent le pourcentage écrit ici.
+(0.25, 0,25 ou 25 % = −25 %). Les textes des pages affichent le pourcentage écrit ici. Si les pages lisent la feuille Fusion
+« Target and pages » (`03_reports/skywise/README.md`, étape 3), la changer là : les pages la prennent à leur prochaine
+ouverture, sans attendre le notebook (de même pour les filtres à l'ouverture et l'objectif d'une action MFT).
 
 **Commencer une nouvelle année** (chaque mois de janvier) : l'année suivie change toute seule (la ligne `annee` de
 `config/1_parametres.csv` reste vide). Puis :
@@ -71,6 +73,8 @@ lignes du notebook disent quels fichiers ont été lus.
 détection ; les mots français sont lus aussi) et `valeurs` (séparées par `|`), écrites comme sur le tableau de bord.
 Elle apparaît sur la page MFT, pour tout le monde, au prochain lancement du notebook, avec son résultat.
 Une action tapée directement sur la page MFT reste dans ce navigateur seulement : pour la partager, l'ajouter à la table.
+Sauf si les actions sont gardées pour tous (`03_reports/skywise/README.md`, étape 4) : une action tapée sur la page est alors
+partagée dès qu'on appuie sur « Submit », et la table ne sert plus qu'au départ (ajouter les nouvelles actions sur la page).
 
 **Les demandes de câbles** : télécharger le suivi de l'équipe câbles en CSV et déposer le fichier dans `data/` (son nom
 contient `cables`). Le plus récent remplace la liste. La cause proposée vient des mots-clés de

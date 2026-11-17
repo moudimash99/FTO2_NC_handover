@@ -65,17 +65,86 @@ and the list of the names the panel holds (`definedAliases`): add it under its n
 Check: on the laptop data to 26 October 2026 (Série, Responsabilité: FTO2 only, the defaults), Deep dive, Vue d'ensemble shows
 **868 NC, 3 160 défauts, 388 k€**. Skywise holds a few more days of NCs, so its figures are a little higher.
 
+**Optional: the target and the filters at opening read from the Fusion sheet.** The Head of Quality fills the sheet "Target
+and pages" of the Fusion spreadsheet (`fusion/`), synced to the dataset `fto2_set_targets`. With the three steps below the pages
+read that sheet themselves: a change there shows the next time the page is opened, without waiting for the notebook.
+
+1. Sync `fto2_set_targets` to Postgres, same name, schema `foundry_sync`, as the four tables.
+2. Add a query `q_fto2_set_targets` on `postgate-airbus-2`. Its text is in `level3_datasets/q_fto2_set_targets.sql`.
+3. In the dashboard's state box, add this line just after the first `{`: `"reglages": "{{q_fto2_set_targets}}",`
+
+The page then takes from the sheet the target (`objectif_baisse`: 0.25, 0,25 or 25 % all mean 25 % fewer NCs), the filters at
+opening (`defaut_phase`, `defaut_responsabilite`, `defaut_periode`) and the target of an MFT action (`action_objectif_baisse`,
+`action_semaines_tenues`). A line missing or wrongly written keeps the notebook's value, and the browser's console (F12) says
+which. Without the line in the state box, the page works as before.
+
+Check: write 0.3 on the line `objectif_baisse` of the sheet, let the sync run, open the page again: Deep dive, the Production
+tab says "Objectif = taux 2025 − 30 %". Put 0.25 back afterwards.
+
 **4. The MFT page** (a second page in the same app)
 
 1. It uses the queries `q_fto2_nc`, `q_fto2_def` and `q_fto2_ref`: nothing to add.
-2. Add a Code Sandbox, full width, about 1,400 px high. Paste `mft/fto2_mft.css`, `mft/fto2_mft.html`, `mft/fto2_mft.js`
-   into its CSS, HTML and JS tabs, and `mft/state.json` into its state box.
+2. Add a Code Sandbox, full width, about 1,400 px high, named `w_fto2_mft`. Paste `mft/fto2_mft.css`, `mft/fto2_mft.html`,
+   `mft/fto2_mft.js` into its CSS, HTML and JS tabs, and `mft/state.json` into its state box.
 
 Check: the page opens on the line with the most NCs, on the last full week (laptop data to 26 October: A330, S43, 11 NC, 21 défauts).
 The browser remembers the line last chosen.
 
+With the Fusion sheet (optional, step 3): add the same line to this page's state box, `"reglages": "{{q_fto2_set_targets}}",`.
+The MFT page takes the target of an action from it.
+
 The MFT actions are the table `data/config/1_actions_mft.csv`: an action added there appears for everyone after the next run of
-the notebook. An action typed on the MFT page itself stays in that browser only, until it is added to the table.
+the notebook. An action typed on the MFT page itself stays in that browser only, until it is added to the table. Unless the
+actions are kept for everyone, as below.
+
+**Optional: the MFT actions kept for everyone.** The actions are then kept in one object of the NC writer's object type
+"a30 Nc Writer Dataset" (its Msn is `MFT-ACTIONS`, its Texte Sap holds all the actions). It is saved the way the NC writer
+saves an NC: the page hands over the whole list, and the user presses Submit in a save form. These are the steps tried with the
+test box of `08_tools/mft_store_test/` (it used `w_store` and `v_store`).
+
+1. In the MFT page's sandbox (`w_fto2_mft`), Interaction tab, Events: `["save"]`.
+2. Variables panel: add `v_mft_store`, value `{}`.
+3. Events panel: add an event. Trigger: `w_fto2_mft.save`. Action: `v_mft_store.set`. Code: `return ` followed by the binding
+   of `slEventValue` (double curly braces) and `;`.
+4. Under the page, add an Action widget with the action of the object type "a30 Nc Writer Dataset" (the NC writer's). In its
+   default parameters, give each field the binding of `v_mft_store.<field>` (double curly braces), text fields between quotes:
+
+   | Field of the action | Binding (inside double curly braces) |
+   |---|---|
+   | Detection | `v_mft_store.detection` |
+   | Produit | `v_mft_store.produit` |
+   | Msn | `v_mft_store.msn` |
+   | Texte Sap | `v_mft_store.texte_sap` |
+   | Total Defauts | `v_mft_store.total_defauts` (no quotes: a number) |
+
+5. The dataset the action writes to (the one read back in the test): sync it to Postgres, schema `foundry_sync`, under the name
+   `fto2_mft_store`.
+6. Add a query `q_fto2_mft_store` on `postgate-airbus-2`. Its text is in `mft/q_fto2_mft_store.sql`.
+7. Events panel: add an event. Trigger: the Action widget's submit, once it has succeeded (in the list of triggers, under the
+   Action widget's name). Action: run the query `q_fto2_mft_store`. The page then reads the save at once. Without this event,
+   it reads it the next time the page is opened.
+8. In the MFT page's state box, add this line just after the first `{`: `"store": "{{q_fto2_mft_store}}",`
+
+What the users see: a change on the "Suivi des actions" tab (a new action, an edit, a closing, a weekly point...) shows at once,
+with a grey note saying to press Submit in the save form so that everyone sees it. After Submit, the note goes once the query
+has read the save back. Several changes can wait for one Submit: the form always holds the whole list.
+
+Check: close an action on the page, press Submit, open the page on another computer: the action is closed there too.
+
+Good to know:
+
+- At the start the store is empty: the page shows the actions of `1_actions_mft.csv`, and the first Submit keeps them in the
+  store. From then on the page shows the store's actions: an action added to the table afterwards does not show. Type it on the
+  page.
+- Each Submit adds one object. The page takes the one saved last; the query reads the 20 latest. The objects written by the
+  test box are not read.
+- If two people change the actions at the same time, the one saved last wins.
+- The "Vu" marks of the bell stay in each browser.
+- If a column name is refused by the query, write it as Postgres has it, between double quotes (the comment at the top of the
+  query says how).
+- The page warns when the list of actions grows beyond 30,000 characters: the object may cut a longer text. Delete closed
+  actions then.
+- Without the line `"store"` in the state box, the page works as before (actions in each browser).
 
 **5. The Tableau Elizabeth** (optional): a third page, same as the MFT with the files of `elizabeth/`.
 
@@ -88,7 +157,8 @@ a variable, the action) are in `nc_writer/` of the zip, its `README.md` section 
 
 **7. Optional: the calculations in Slate functions.** The targets and forecast, the alarms and the cost explanation can run
 as Slate functions instead of in the page, so that the page only draws. Two ways to set it up, both explained in
-`level3_datasets/fonctions/README.md`. The page works without them.
+`level3_datasets/fonctions/README.md`. The page works without them. With the Fusion sheet (step 3), the page sends its target
+to the functions with each request, so they compute with the sheet's target too.
 
 ## Already set up? What to change (4 November: settings in tables, reference data from the notebook)
 
@@ -141,6 +211,17 @@ Can be done together with the two changes above: it replaces their step 2.
 4. Restart the kernel and run the notebook. Its last lines say which year is followed and which downloads were read.
 5. In Slate: nothing more than the JS files of the change above.
 
+## Already set up? What to change (17 November: the Fusion sheet read by the pages, the MFT actions kept for everyone)
+
+Both are options. Without them the pages work as before, so step 1 alone is enough.
+
+1. In Slate: paste the new `level3_datasets/fto2_level23.js` into the dashboard's sandbox and `mft/fto2_mft.js` into the
+   MFT's (the MFT's CSS and HTML changed only in their first line). With the Slate functions (step 7), paste the three
+   function files again too: the page now sends its target with each request.
+2. To read the target and the filters at opening from the Fusion sheet: step 3, "Optional: the target and the filters at
+   opening read from the Fusion sheet", then the same state line for the MFT page (step 4).
+3. To keep the MFT actions for everyone: step 4, "Optional: the MFT actions kept for everyone".
+
 ## Keep it up to date
 
 - **New NCs:** run the notebook. The pages follow once the sync has run.
@@ -149,7 +230,9 @@ Can be done together with the two changes above: it replaces their step 2.
   `1_calendrier_production.csv`, and run the notebook. Nothing to paste in Slate. The steps are in
   `docs/comment_faire.md` ("Commencer une nouvelle année").
 - **A setting** (a rule, a rate, the target, an MFT action...): change its table in `data/config/` and run the
-  notebook. Nothing to paste in Slate.
+  notebook. Nothing to paste in Slate. With the Fusion sheet read by the pages (step 3), the target, the filters at opening
+  and the target of an MFT action change in the sheet "Target and pages" and show the next time the page is opened, once
+  Fusion has synced. With the MFT actions kept for everyone (step 4), an action is changed on the MFT page itself.
 - **The production plan, the cable requests:** save the new download in `data/` and run the notebook.
 - **A change of the code** (a page's look, a new chart): run `python3 -I build/build_all.py`,
   `python3 -I 07_scripts/mft/build_mft.py` and `python3 -I 07_scripts/elizabeth/build_elizabeth.py` on the laptop, then paste
@@ -166,3 +249,5 @@ The box says what is wrong:
 - **"aucune NC lisible … colonnes reçues : …":** Slate passes the data in a form the page does not expect. Send the list of
   columns it shows.
 - **"exactement N lignes reçues":** Slate probably cut the result. Look for a row limit on the query.
+- **"Les actions partagées ne sont pas encore lues"** (MFT page, actions kept for everyone): the query `q_fto2_mft_store`
+  gave nothing after 20 seconds. Check that it runs: its table name, and the column names (step 4).

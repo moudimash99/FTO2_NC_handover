@@ -20,8 +20,9 @@ Already installed? Follow UPDATE.md. A first installation: README.md, steps 1 to
 zip, at the same place.
 
   level3_datasets/   the notebook, its code (notebook_kit), the settings (config),
-                     the dashboard page (fto2_level23.*, state.json) and its four queries (q_fto2_*.sql)
-  mft/               the MFT page
+                     the dashboard page (fto2_level23.*, state.json) and its queries (q_fto2_*.sql;
+                     q_fto2_set_targets.sql is optional: the Fusion sheet's settings read by the pages)
+  mft/               the MFT page (q_fto2_mft_store.sql is optional: the actions kept for everyone)
   nc_writer/         the NC writer page (optional): its README.md gives the Slate set-up
   elizabeth/         the Tableau Elizabeth (optional)
   docs/              how to change a setting once it runs (comment_faire.md, in French)
@@ -35,7 +36,7 @@ def files():
     """(path on disk, path in the zip) of every file of the set-up."""
     out = [(os.path.join(SKY, f), f) for f in ("README.md", "UPDATE.md", "DETAILS.md")]
     for f in ("fto2_pipeline_notebook.ipynb", "q_fto2_nc.sql", "q_fto2_def.sql", "q_fto2_dis.sql", "q_fto2_ref.sql",
-              "fto2_level23.css", "fto2_level23.html", "fto2_level23.js", "state.json", "columns.json"):
+              "q_fto2_set_targets.sql", "fto2_level23.css", "fto2_level23.html", "fto2_level23.js", "state.json", "columns.json"):
         out.append((os.path.join(SKY, L3, f), L3 + "/" + f))
     for sub in ("notebook_kit", "config"):
         for d, dirs, names in os.walk(os.path.join(SKY, L3, sub)):
@@ -45,7 +46,7 @@ def files():
                     p = os.path.join(d, n)
                     out.append((p, os.path.relpath(p, SKY).replace(os.sep, "/")))
     for page in ("mft", "elizabeth"):
-        for f in ("fto2_%s.css" % page, "fto2_%s.html" % page, "fto2_%s.js" % page, "state.json"):
+        for f in ("fto2_%s.css" % page, "fto2_%s.html" % page, "fto2_%s.js" % page, "state.json") + (("q_fto2_mft_store.sql",) if page == "mft" else ()):
             out.append((os.path.join(SKY, page, f), page + "/" + f))
     for f in ("nc_writer.css", "nc_writer.html", "nc_writer.js", "README.md"):
         out.append((os.path.join(ROOT, "08_tools", "nc_writer_slate", f), "nc_writer/" + f))
