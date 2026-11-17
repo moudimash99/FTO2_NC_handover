@@ -20,6 +20,10 @@ four parts: CSS (the look), HTML (the frame, one empty box per chart), JS (plain
     tables in Postgres (schema <code>foundry_sync</code>). Their SQL only lists the columns.</li>
   <li><b>The State</b> of the sandbox gives each result a name the page knows: <code>nc</code>, <code>def</code>, <code>dis</code>,
     <code>ref</code>.</li>
+  <li><b>Two optional queries:</b> <code>q_fto2_set_targets</code> (the Fusion sheet <i>Target and pages</i>, state key
+    <code>reglages</code>) on the dashboard and the MFT page, and <code>q_fto2_mft_store</code> (the MFT actions, state key
+    <code>store</code>) on the MFT page. Their lines are added to the State by hand. Without them a page works as before: the
+    target and the opening view of the last update, the MFT actions kept in each browser.</li>
   <li><b>The loader</b>, at the very end of the JS, waits until all four have arrived, then starts the page. If one stays
     missing, it shows a box naming it.</li>
   <li><b>The reference data</b> arrives in pieces; <code>fto2RefBlocks</code> glues them back into one block per page.</li>
@@ -88,6 +92,12 @@ made to the other, or the two pages will ring differently.</p>
 <p>Both read the same tables through their own, simpler adapter. The MFT page shows one line at a time: the week's Pareto,
 the analysis, and the follow-up of the MFT actions. The Tableau Elizabeth shows a line's NCs in three families, with the weeks
 above a threshold.</p>
+<p>The MFT page has the dashboard's <b>Responsabilité</b> list: each NC gets a group from the table (FTO2 when the NC is on
+FTO2, Suppliers when its liability is a supplier's number, Others for the rest), and every count, chart and the bell follow the
+groups ticked. With the key <code>store</code>, the MFT actions are kept in one object of the NC writer's object type (its Msn
+is <code>MFT-ACTIONS</code>, its Texte Sap the whole list as JSON): a change fires the event <code>save</code> with the whole
+list, the user's <b>Submit</b> in the Action widget saves it, and the page takes the object saved last. The set-up:
+<code>README.md</code> of the Skywise folder, step 4.</p>
 
 <h2>The NC writer</h2>
 <p>The NC writer is a page of its own that helps write an NC to the standard. When the text is ready, it fills a Slate variable
@@ -112,6 +122,7 @@ file this long; edit in a text editor and paste it back.</p>
     <tr><td>The query returned no row</td><td>The sync, then the update's last run</td></tr>
     <tr><td>No readable NC, with the columns received</td><td>The query returns columns the page does not expect: compare with the table</td></tr>
     <tr><td>Exactly N rows received</td><td>A row limit on the query: Slate cut the result</td></tr>
+    <tr><td>The shared actions are not read yet (MFT page)</td><td>The query <code>q_fto2_mft_store</code>: its table and its column names</td></tr>
     <tr><td>An error with a line of code</td><td>The JS has a mistake: paste the previous version back</td></tr>
   </tbody>
 </table>

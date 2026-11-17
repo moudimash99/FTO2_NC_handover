@@ -46,8 +46,9 @@ surest way to get two different dashboards.</p>
     go through the same exclusion rules, and count only when created in the year followed.</li>
   <li><b>Defects.</b> The defect reader splits each NC's text into defect lines and gives each one a sub-category. A400M NCs
     have no text in Skywise: one line is made from the title.</li>
-  <li><b>Causes.</b> Each defect line takes its stored label, if its text has not changed since it was labelled. An official
-    sub-code written in the NC by a person always wins over the label. A line with no usable label keeps the reader's
+  <li><b>Causes.</b> Each defect line takes its stored label, if its text has not changed since it was labelled. A code written in
+    the NC by a person wins over the label: written with the NC writer, the whole sub-code (Q03-006) decides the line; typed by
+    hand, the code counts by its family (Q03), and a label from another family gives way to it. A line with no usable label keeps the reader's
     own cause and is listed "to label".</li>
   <li><b>Cost.</b> Rework orders, aléas and part prices are attached, and the cost model runs on every NC.</li>
   <li><b>Reference data.</b> The production plan; the comparison year's figures, summed from the same processed NCs (so both

@@ -1,0 +1,127 @@
+<!--
+title: La page MFT
+subtitle: La revue hebdomadaire d’une ligne : Pareto, hausses, baisses et actions MFT
+kicker: Tableau de bord NC FTO2 · Utilisateurs
+file: users/fr/7 La page MFT
+for: le QLS d’une ligne, et tous ceux qui participent à la revue MFT de la semaine
+foot: Tableau de bord NC FTO2 · La page MFT
+short: yes
+lang: fr
+-->
+
+<h2>À quoi sert la page</h2>
+<p>La page MFT sert à la revue hebdomadaire d’une ligne : le Pareto des défauts de la semaine, ce qui monte et ce qui baisse,
+et le suivi des actions MFT. Elle compte les NC <b>émises à FTO2</b> et leurs défauts, sur deux ans : l’année suivie et la
+précédente. Une semaine, un mois ou une action sont ainsi toujours comparés aux semaines qui les précèdent, même au passage de
+la nouvelle année. <b>Données au…</b> est le jour de la NC la plus récente.</p>
+
+<h2>Les réglages en haut de la page</h2>
+<table class="keep">
+  <tbody>
+    <tr><td style="width:32mm"><b>Ligne</b></td><td>Une ligne (A330, A350, A400M, A320), ou <b>Toutes</b>. Au départ, celle qui a le plus de NC.</td></tr>
+    <tr><td><b>Production</b></td><td><b>Série</b> (au départ), <b>REC</b>, <b>FTI</b>, ou <b>Tout</b>.</td></tr>
+    <tr><td><b>Responsabilité</b></td><td>Une liste à cocher : <b>FTO2</b>, <b>Fournisseurs</b>, <b>Autres</b>, chacun avec son
+      nombre de NC sur les semaines affichées. FTO2 est coché au départ, comme sur le tableau de bord.</td></tr>
+    <tr><td><b>Période</b></td><td><b>Semaine</b>, <b>1 mois</b>, <b>3 mois</b> ou <b>Personnalisée</b> (<b>du</b> …
+      <b>au</b> …), puis la semaine, choisie dans la liste. Au départ, la dernière semaine terminée.</td></tr>
+  </tbody>
+</table>
+<p>Les <b>semaines de fermeture</b> viennent des jours de fermeture de l’usine : marquées <i>(fermeture)</i> et dessinées en
+pâle, elles restent hors de toutes les moyennes et de toutes les références.</p>
+
+<h2>Pareto de la semaine</h2>
+<p>Quatre chiffres ouvrent l’onglet : <b>NC</b>, <b>Défauts</b>, <b>Défauts par NC</b>, <b>Première catégorie</b>. NC et
+défauts sont comparés, par semaine, aux semaines d’avant : <i>+18 % vs 15,3 (S39–S42)</i>, c’est 18 % de plus que la moyenne
+des semaines 39 à 42. Une semaine est comparée aux 4 semaines de travail d’avant, 1 mois aux 3 mois d’avant, 3 mois aux
+12 mois d’avant. <b>Compter</b> passe les barres de <b>Défauts</b> à <b>NC</b>.</p>
+<h3>Catégories, Causes, Sous-codes officiels, FIN (repères)</h3>
+<table class="keep fact"><tbody>
+  <tr><th style="width:30mm">Ce qu’on voit</th><td>Les défauts de la période par famille, cause, sous-code officiel et FIN, du plus grand au plus petit ; le trait noir : la moyenne des semaines d’avant.</td></tr>
+  <tr><th>Comment le lire</th><td>Une barre qui dépasse son trait : plus que d’habitude. Le % est la part cumulée dans Catégories, ailleurs la part de chaque ligne. Les noms de produit écrits comme FIN (740VU…) sont laissés de côté.</td></tr>
+  <tr><th>À quoi ça sert</th><td>De la famille au problème précis : la cause, son code, puis l’endroit.</td></tr>
+  <tr><th>Un clic</th><td>Garde cette valeur sur toute la page (ci-dessous).</td></tr>
+</tbody></table>
+<h3>Les défauts</h3>
+<table class="keep fact"><tbody>
+  <tr><th style="width:30mm">Ce qu’on voit</th><td>Les défauts derrière les barres, les plus récents d’abord, avec le texte de la NC.</td></tr>
+  <tr><th>Comment le lire</th><td>Date, NC, MSN, poste, FIN, cause ; <b>Voir plus</b> en affiche davantage.</td></tr>
+  <tr><th>À quoi ça sert</th><td>C’est là qu’un chiffre devient des cas réels, à discuter en revue.</td></tr>
+  <tr><th>Un clic</th><td>—</td></tr>
+</tbody></table>
+<p><b>Un clic sur une barre filtre toute la page</b>, onglet Analyse compris : une cause, puis un FIN, resserrent la sélection.
+Une étiquette montre chaque choix ; son ✕ le retire. Changer de ligne les efface.</p>
+
+<h2>Analyse</h2>
+<h3>Défauts par semaine, par catégorie</h3>
+<table class="keep fact"><tbody>
+  <tr><th style="width:30mm">Ce qu’on voit</th><td>Une barre par semaine, colorée par catégorie, sur 26 semaines.</td></tr>
+  <tr><th>Comment le lire</th><td>En pâle : fermeture ou semaine en cours. <b>▼ Débuts d’action</b> marque le début des actions.</td></tr>
+  <tr><th>À quoi ça sert</th><td>Distingue un pic d’une tendance, et montre ce qui a suivi une action.</td></tr>
+  <tr><th>Un clic</th><td>Sur une semaine : ouvre son Pareto de la semaine.</td></tr>
+</tbody></table>
+<h3>Ce qui monte, Ce qui baisse</h3>
+<table class="keep fact"><tbody>
+  <tr><th style="width:30mm">Ce qu’on voit</th><td>Les causes en nette hausse ou baisse : les 4 dernières semaines de travail face aux 8 d’avant.</td></tr>
+  <tr><th>Comment le lire</th><td><i>2,1 → 4,3 / sem.</i> : 2,1 défauts par semaine avant, 4,3 maintenant. Seuls les changements nets sont listés : au moins un quart, sur assez de défauts.</td></tr>
+  <tr><th>À quoi ça sert</th><td>Voir un problème qui démarre, ou une action qui marche, avant la fin du mois.</td></tr>
+  <tr><th>Un clic</th><td><b>+ Action</b> ouvre une nouvelle action sur cette cause.</td></tr>
+</tbody></table>
+<h3>Nouveau cette semaine, FIN récurrents</h3>
+<table class="keep fact"><tbody>
+  <tr><th style="width:30mm">Ce qu’on voit</th><td>Les causes et sous-codes vus cette semaine et absents des 8 semaines de travail d’avant ; les FIN vus sur 3 avions ou plus en 8 semaines de travail.</td></tr>
+  <tr><th>Comment le lire</th><td>Avec leur nombre de défauts ; un FIN avec sa cause principale. Les noms de produit (740VU…) sont laissés de côté.</td></tr>
+  <tr><th>À quoi ça sert</th><td>Un nouveau défaut dès sa première apparition ; un même endroit fautif sur plusieurs avions, souvent une seule cause.</td></tr>
+  <tr><th>Un clic</th><td><b>+ Action</b>, comme ci-dessus.</td></tr>
+</tbody></table>
+
+<h2>La cloche</h2>
+<p>La cloche, en haut à droite, assure la veille hebdomadaire avec la règle du tableau de bord : elle compare les quatre
+dernières semaines terminées aux douze d’avant, en tenant compte des avions produits, et liste ce qui augmente plus que le
+hasard ne peut l’expliquer, selon les réglages choisis. Une alarme cliquée ouvre le Pareto de la semaine filtré sur elle ; <b>+ Action</b> ouvre une action dessus, <b>Vu</b> la met de côté. De janvier à fin
+avril, elle affiche <i>Pas encore assez de semaines pour comparer</i> : il lui faut seize semaines de l’année.</p>
+
+<h2>Suivi des actions</h2>
+<p>L’onglet liste les actions MFT de la ligne (<b>Ouvertes</b>, <b>Toutes</b>, <b>Closes</b>), résumées en une ligne :
+<i>4 actions · 1 à l’objectif · 2 en hausse</i>. Chaque carte donne le statut (<b>À lancer</b>, <b>En cours</b>, <b>Clos</b>,
+<b>Abandonnée</b>), le verdict, le <b>Problème suivi</b> (les défauts visés) et un graphique.</p>
+<h3>Le problème suivi, semaine par semaine</h3>
+<table class="keep fact"><tbody>
+  <tr><th style="width:30mm">Ce qu’on voit</th><td>Les défauts du problème par semaine, leur moyenne sur 4 semaines (trait noir), la référence (tirets) et l’objectif (pointillé vert).</td></tr>
+  <tr><th>Comment le lire</th><td><i>Réf. 8,0 / sem. · Objectif ≤ 5,6 · Actuel 4,0 / sem. · −50 % · tenu 8 sem.</i></td></tr>
+  <tr><th>À quoi ça sert</th><td>Montre si l’action marche, semaine après semaine.</td></tr>
+  <tr><th>Un clic</th><td>—</td></tr>
+</tbody></table>
+<h3>Comment une action est jugée</h3>
+<p>Par rapport aux semaines d’avant. La <b>référence</b> : la moyenne de défauts du problème par semaine sur les 8 semaines
+de travail avant le début de l’action (ou de l’analyse, sans date d’action). L’<b>objectif</b> : la référence moins 30 %.
+La valeur <b>actuelle</b> : la moyenne des 4 dernières semaines de travail.</p>
+<table class="keep">
+  <tbody>
+    <tr><td style="width:44mm"><b>Objectif atteint</b></td><td>Au niveau de l’objectif ou en dessous, 4 semaines de suite : comptée <i>à l’objectif</i>.</td></tr>
+    <tr><td><b>Sous l’objectif</b></td><td>Sous l’objectif, depuis moins de 4 semaines.</td></tr>
+    <tr><td><b>En baisse</b>, <b>En hausse</b>, <b>Stable</b></td><td>Au moins 10 % sous la référence, au moins 10 % au-dessus
+      (comptée <i>en hausse</i>), ou entre les deux.</td></tr>
+    <tr><td><b>Trop tôt pour juger</b>, <b>Pas de référence</b></td><td>Moins de 4 semaines de travail depuis le début, ou
+      avant.</td></tr>
+  </tbody>
+</table>
+<h3>Ajouter ou modifier une action</h3>
+<ol class="steps">
+  <li>Appuyez sur <b>+ Nouvelle action</b>, ou sur <b>+ Action</b> à côté d’une cause, d’un sous-code, d’un FIN ou d’une
+    alarme : le problème est alors déjà rempli.</li>
+  <li>Remplissez le formulaire. Pour le <b>Problème suivi</b>, <b>Simple</b> prend un code (Q11 : tous ses sous-codes) ou un
+    sous-code (Q11-003) ; <b>Expert</b>, des conditions comme une cause ou un FIN. Vérifiez ce que le problème attrape, affiché
+    en dessous.</li>
+  <li>Appuyez sur <b>Créer l’action</b> (<b>Enregistrer</b> pour une modification). Puis, comme après tout changement sur une
+    carte (<b>Modifier</b>, <b>Clore</b>, <b>Supprimer</b>, <b>Ajouter le point</b>), appuyez sur <b>Submit</b>
+    dans le formulaire d’enregistrement, sous la page. D’ici là, une note grise indique que la modification est gardée sur
+    cet écran seulement ; plusieurs changements peuvent attendre un seul Submit. Les actions sont gardées pour tous : chacun voit
+    le changement une fois les données rafraîchies (rechargez la page).</li>
+</ol>
+
+<div class="next">
+<h2>À lire ensuite</h2>
+<ul>
+  <li><i>Introduction au tableau de bord</i>, et <i>Limites connues</i>.</li>
+</ul>
+</div>

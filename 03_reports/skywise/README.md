@@ -62,8 +62,8 @@ and the list of the names the panel holds (`definedAliases`): add it under its n
 4. Paste `level3_datasets/fto2_level23.css`, `fto2_level23.html` and `fto2_level23.js` into its CSS, HTML and JS tabs.
 5. Paste `level3_datasets/state.json` into its state box (it shows `"input": "Hello World"` at first).
 
-Check: on the laptop data to 26 October 2026 (Série, Responsabilité: FTO2 only, the defaults), Deep dive, Vue d'ensemble shows
-**868 NC, 3 160 défauts, 388 k€**. Skywise holds a few more days of NCs, so its figures are a little higher.
+Check: the page opens with the date *Données au…* of the latest NC, on Série with Responsabilité FTO2 (the defaults);
+Deep dive, Vue d'ensemble shows the year's NCs, defects and cost.
 
 **Optional: the target and the filters at opening read from the Fusion sheet.** The Head of Quality fills the sheet "Target
 and pages" of the Fusion spreadsheet (`fusion/`), synced to the dataset `fto2_set_targets`. With the three steps below the pages
@@ -79,7 +79,7 @@ opening (`defaut_phase`, `defaut_responsabilite`, `defaut_periode`) and the targ
 which. Without the line in the state box, the page works as before.
 
 Check: write 0.3 on the line `objectif_baisse` of the sheet, let the sync run, open the page again: Deep dive, the Production
-tab says "Objectif = taux 2025 − 30 %". Put 0.25 back afterwards.
+tab says "Objectif = taux" of last year "− 30 %". Put 0.25 back afterwards.
 
 **4. The MFT page** (a second page in the same app)
 
@@ -87,7 +87,7 @@ tab says "Objectif = taux 2025 − 30 %". Put 0.25 back afterwards.
 2. Add a Code Sandbox, full width, about 1,400 px high, named `w_fto2_mft`. Paste `mft/fto2_mft.css`, `mft/fto2_mft.html`,
    `mft/fto2_mft.js` into its CSS, HTML and JS tabs, and `mft/state.json` into its state box.
 
-Check: the page opens on the line with the most NCs, on the last full week (laptop data to 26 October: A330, S43, 11 NC, 21 défauts).
+Check: the page opens on the line with the most NCs, on the last full week, with Responsabilité FTO2.
 The browser remembers the line last chosen.
 
 With the Fusion sheet (optional, step 3): add the same line to this page's state box, `"reglages": "{{q_fto2_set_targets}}",`.
@@ -213,6 +213,8 @@ Can be done together with the two changes above: it replaces their step 2.
 
 ## Already set up? What to change (17 November: the Fusion sheet read by the pages, the MFT actions kept for everyone)
 
+The whole update of November, in order (Fusion, the notebook, the sync, Slate): `UPDATE.md`.
+
 Both are options. Without them the pages work as before, so step 1 alone is enough.
 
 1. In Slate: paste the new `level3_datasets/fto2_level23.js` into the dashboard's sandbox and `mft/fto2_mft.js` into the
@@ -224,15 +226,18 @@ Both are options. Without them the pages work as before, so step 1 alone is enou
 
 ## Keep it up to date
 
-- **New NCs:** run the notebook. The pages follow once the sync has run.
-- **A new year** (each January): write the year on the line `annee` of `data/config/1_parametres.csv`, save a fresh export
-  of the Tableau Avances / Retards and the new year's GPS register in `data/`, add the year's shutdowns to
-  `1_calendrier_production.csv`, and run the notebook. Nothing to paste in Slate. The steps are in
-  `docs/comment_faire.md` ("Commencer une nouvelle année").
-- **A setting** (a rule, a rate, the target, an MFT action...): change its table in `data/config/` and run the
-  notebook. Nothing to paste in Slate. With the Fusion sheet read by the pages (step 3), the target, the filters at opening
-  and the target of an MFT action change in the sheet "Target and pages" and show the next time the page is opened, once
-  Fusion has synced. With the MFT actions kept for everyone (step 4), an action is changed on the MFT page itself.
+- **New NCs:** run the update (the notebook, or the transform once it runs on a schedule). The pages follow once the sync
+  has run.
+- **A new year** (each January): nothing to write, the year followed changes by itself (the line `annee` of
+  `1_parametres.csv` stays empty). In the Fusion spreadsheet, add the new year's blackout days (sheet *Blackout days*) and
+  its GPS register (sheet *GPS register*); save a fresh export of the Tableau Avances / Retards in `data/`, keeping the older
+  ones; run the update. Nothing to paste in Slate. The details: `docs/comment_faire.md` ("Commencer une nouvelle année").
+- **A setting people change** (the cost rates, the part prices, the blackout days, the lists): in the Fusion spreadsheet,
+  then run the update. The target, the filters at opening and the target of an MFT action: the sheet "Target and pages",
+  read by the pages themselves (step 3): a change shows the next time the page is opened, once Fusion has synced.
+- **A rule** (the exclusions, the NC types, the causes...): its table in `data/config/`, then run the update.
+- **An MFT action:** on the MFT page itself, with the actions kept for everyone (step 4); otherwise in
+  `data/config/1_actions_mft.csv`, then run the update.
 - **The production plan, the cable requests:** save the new download in `data/` and run the notebook.
 - **A change of the code** (a page's look, a new chart): run `python3 -I build/build_all.py`,
   `python3 -I 07_scripts/mft/build_mft.py` and `python3 -I 07_scripts/elizabeth/build_elizabeth.py` on the laptop, then paste

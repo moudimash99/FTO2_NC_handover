@@ -22,8 +22,10 @@ error. These are the links, in the order the data flows:</p>
       not in use: the Code Workspace with the pipeline notebook.</td></tr>
     <tr><td><b>The four tables</b></td><td><code>fto2_dash_nc</code>, <code>fto2_dash_defects</code>, <code>fto2_dash_disruptions</code>,
       <code>fto2_dash_ref</code>.</td></tr>
-    <tr><td><b>The sync</b></td><td>The four tables copied to Postgres, schema <code>foundry_sync</code>, same names.</td></tr>
-    <tr><td><b>The Slate application</b></td><td>The pages and their four queries; the NC writer, its object type <i>a30 Nc Writer Dataset</i>
+    <tr><td><b>The sync</b></td><td>The four tables copied to Postgres, schema <code>foundry_sync</code>, same names; with them
+      <code>fto2_set_targets</code> (the sheet <i>Target and pages</i>, read by the pages) and, as <code>fto2_mft_store</code>, the
+      dataset the NC writer's action writes to (the MFT actions).</td></tr>
+    <tr><td><b>The Slate application</b></td><td>The pages and their queries (the four tables, the settings, the MFT actions); the NC writer, its object type <i>a30 Nc Writer Dataset</i>
       and its action.</td></tr>
     <tr><td><b>The documents</b></td><td>The folder Quality › NC dashboard, with <i>for users</i> and <i>for developers</i>.</td></tr>
   </tbody>
@@ -36,8 +38,8 @@ holds, and nothing depends on one person's account.</p>
   <thead><tr><th style="width:44mm">Object</th><th style="width:30mm">Reader</th><th style="width:40mm">Head of Quality, configuration manager</th><th>Developer</th></tr></thead>
   <tbody>
     <tr><td>Slate application</td><td>view</td><td>view</td><td>edit</td></tr>
-    <tr><td>NC writer's action</td><td>run, for those who write NCs</td><td>run</td><td>edit</td></tr>
-    <tr><td>The four tables</td><td>view</td><td>view</td><td>edit</td></tr>
+    <tr><td>NC writer's action</td><td>run, for those who write NCs or change the MFT actions</td><td>run</td><td>edit</td></tr>
+    <tr><td>The four tables, <code>fto2_set_targets</code>, <code>fto2_mft_store</code></td><td>view</td><td>view</td><td>edit</td></tr>
     <tr><td>Fusion spreadsheet</td><td>none</td><td>edit</td><td>edit</td></tr>
     <tr><td>Code Repository (or Code Workspace)</td><td>none</td><td>none</td><td>edit</td></tr>
     <tr><td><code>fto2_ai_labels</code></td><td>none</td><td>none</td><td>edit</td></tr>
@@ -48,7 +50,7 @@ holds, and nothing depends on one person's account.</p>
 
 <h3>Two rules that explain most access problems</h3>
 <ul>
-  <li><b>A reader needs the application and the four tables.</b> The page reads the tables with the rights of the person who
+  <li><b>A reader needs the application and the tables it reads</b> (the four tables, the settings and the MFT actions). The page reads the tables with the rights of the person who
     opens it: someone who can open the application but not the tables gets an empty page.</li>
   <li><b>The update runs with the rights of the person who runs it.</b> That person must be able to read every source and
     write the four tables. The source data belongs to other teams: access is requested from their owners, and it can take

@@ -831,7 +831,8 @@ var D = JSON.parse(document.getElementById('mft-data').textContent);   // the da
   function rxErr(r) { var v = (r.v || []).join('|'); if (!v.trim()) return T('Saisissez l’expression.'); try { new RegExp(v, 'i'); return ''; } catch (e) { return T('Expression non valide') + COL() + e.message; } }
   function prevHtml() {
     var p = problemPred(FORM.problem); if (!p) return esc(T(FORM.problem.mode === 'simple' ? 'Choisissez au moins un code pour suivre le problème.' : 'Complétez chaque condition pour suivre le problème.'));
-    var last8 = validBefore(LASTC, 8), ser = weekly(p, FORM.line), all = ser.reduce(function (s, v) { return s + v; }, 0), ex = [];
+    var last8 = validBefore(LASTC, 8), ser = weekly(p, FORM.line), all = 0, ex = [];
+    DEFS.forEach(function (d) { if (inScope(d[0], FORM.line) && p(d) && String(NCS[d[0]][1]).slice(0, 4) === YEAR) all++; });   // since January: the year followed only
     for (var k = DEFS.length - 1; k >= 0 && ex.length < 3; k--) { var d = DEFS[k]; if (inScope(d[0], FORM.line) && p(d)) ex.push(d); }
     ex.sort(function (a, b) { return NCS[b[0]][1] < NCS[a[0]][1] ? -1 : 1; });
     var n8 = last8.reduce(function (s, i) { return s + ser[i]; }, 0);

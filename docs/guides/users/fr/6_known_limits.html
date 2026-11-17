@@ -17,8 +17,8 @@ lang: fr
   <li><b>Les NC supprimées sont comptées.</b> Le travail qu’elles ont causé a bien été fait. C’est une des raisons pour
     lesquelles un total peut différer d’un autre rapport ; <b>ⓘ Comment la sélection est faite</b> montre ce que chaque filtre
     garde et retire.</li>
-  <li><b>L’A400M</b> n’a pas de texte de NC dans Skywise : ses NC comptent comme NC et dans le coût, mais aucun défaut ne peut y
-    être lu.</li>
+  <li><b>L’A400M</b> n’a pas de texte de NC dans Skywise : une NC reçoit un défaut tiré de son titre quand le titre nomme un
+    problème connu ; les autres comptent comme NC et dans le coût, sans défaut.</li>
   <li><b>Les textes des NC</b> restent en français, tels qu’écrits dans SAP, y compris sur la page en anglais.</li>
 </ul>
 
@@ -36,7 +36,8 @@ lang: fr
 
 <h2>À propos des causes</h2>
 <ul>
-  <li>Chaque ligne de défaut est classée dans une cause. Un sous-code officiel écrit dans la NC décide. Les lignes écrites ou
+  <li>Chaque ligne de défaut est classée dans une cause. Un code écrit dans la NC décide : avec la Saisie
+    structurée de NC, son code officiel donne la cause ; un code tapé à la main donne au moins sa famille. Les lignes écrites ou
     modifiées récemment peuvent être classées par des règles plus simples jusqu’à la classification suivante : leur cause peut
     être moins précise pendant un temps.</li>
   <li>Si un défaut est clairement dans la mauvaise cause, donnez son numéro de NC au responsable du tableau de bord.</li>

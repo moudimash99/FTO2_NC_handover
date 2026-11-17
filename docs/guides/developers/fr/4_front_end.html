@@ -21,6 +21,10 @@ chaque chiffre qu’elles affichent a été décidé par la mise à jour.</p>
     tables dans Postgres (schéma <code>foundry_sync</code>). Leur SQL ne fait que lister les colonnes.</li>
   <li><b>Le State</b> du sandbox donne à chaque résultat un nom que la page connaît : <code>nc</code>, <code>def</code>, <code>dis</code>,
     <code>ref</code>.</li>
+  <li><b>Deux requêtes facultatives :</b> <code>q_fto2_set_targets</code> (la feuille Fusion <i>Target and pages</i>, clé
+    <code>reglages</code> du State) sur le tableau de bord et la page MFT, et <code>q_fto2_mft_store</code> (les actions MFT, clé
+    <code>store</code>) sur la page MFT. Leurs lignes s’ajoutent au State à la main. Sans elles, une page marche comme avant :
+    l’objectif et la vue d’ouverture de la dernière mise à jour, les actions MFT gardées dans chaque navigateur.</li>
   <li><b>Le chargeur</b>, tout à la fin du JS, attend que les quatre soient arrivés, puis démarre la page. Si l’un d’eux manque
     toujours, il affiche un encadré qui le nomme.</li>
   <li><b>Les données de référence</b> arrivent en morceaux ; <code>fto2RefBlocks</code> les recolle en un bloc par page.</li>
@@ -92,6 +96,13 @@ différemment.</p>
 <p>Les deux lisent les mêmes tables, par leur propre adaptateur, plus simple. La page MFT montre une ligne à la fois : le Pareto
 de la semaine, l’analyse, et le suivi des actions MFT. Le Tableau Elizabeth montre les NC d’une ligne en trois familles, avec
 les semaines au-dessus d’un seuil.</p>
+<p>La page MFT a la liste <b>Responsabilité</b> du tableau de bord : chaque NC reçoit un groupe tiré de la table (FTO2 quand
+la NC est imputée à FTO2, Fournisseurs quand sa responsabilité est un numéro de fournisseur, Autres pour le reste), et chaque
+compte, chaque graphique et la cloche suivent les groupes cochés. Avec la clé <code>store</code>, les actions MFT sont gardées
+dans un objet du type d’objet de la Saisie structurée de NC (son Msn vaut <code>MFT-ACTIONS</code>, son Texte Sap la liste entière
+en JSON) : un changement envoie l’événement <code>save</code> avec toute la liste, le <b>Submit</b> de l’utilisateur dans le
+widget Action l’enregistre, et la page prend l’objet enregistré en dernier. La mise en place : <code>README.md</code> du
+dossier Skywise, étape 4.</p>
 
 <h2>La Saisie structurée de NC</h2>
 <p>La Saisie structurée de NC est une page à part, qui aide à rédiger une NC selon le standard. Quand le texte est prêt, elle
@@ -117,6 +128,7 @@ L’éditeur de Slate est lent avec un fichier aussi long ; modifiez-le dans u
     <tr><td>La requête n’a renvoyé aucune ligne</td><td>La synchronisation, puis la dernière exécution de la mise à jour</td></tr>
     <tr><td>Aucune NC lisible, avec les colonnes reçues</td><td>La requête renvoie des colonnes que la page n’attend pas : comparez avec la table</td></tr>
     <tr><td>Exactement N lignes reçues</td><td>Une limite de lignes sur la requête : Slate a coupé le résultat</td></tr>
+    <tr><td>Les actions partagées ne sont pas encore lues (page MFT)</td><td>La requête <code>q_fto2_mft_store</code> : sa table et le nom de ses colonnes</td></tr>
     <tr><td>Une erreur avec une ligne de code</td><td>Le JS contient une erreur : recollez la version précédente</td></tr>
   </tbody>
 </table>

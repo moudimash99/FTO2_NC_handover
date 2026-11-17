@@ -15,7 +15,8 @@ lang: en
     recent NC. If it is old, the update has not been run; the figures are right, but stop at that date.</li>
   <li><b>Deleted NCs are counted.</b> The work they caused was done. This is one reason a total can differ from another
     report; <b>ⓘ How the selection is made</b> shows what each filter keeps and removes.</li>
-  <li><b>The A400M</b> has no NC text in Skywise: its NCs count as NCs and in the cost, but no defect can be read from them.</li>
+  <li><b>The A400M</b> has no NC text in Skywise: an NC gets one defect from its title when the title names a known problem;
+    the others count as NCs and in the cost, with no defect.</li>
   <li><b>The texts of the NCs</b> stay in French, as written in SAP, also on the English page.</li>
 </ul>
 
@@ -32,7 +33,8 @@ lang: en
 
 <h2>About the causes</h2>
 <ul>
-  <li>Each defect line is classified into a cause. An official sub-code written in the NC decides. Lines written or changed
+  <li>Each defect line is classified into a cause. A code written in the NC decides: with the NC writer, its official code gives
+    the cause; a code typed by hand gives at least its family. Lines written or changed
     recently may be classified by simpler rules until the next classification: their cause can be less precise for a while.</li>
   <li>If a defect is clearly in the wrong cause, give its NC number to the person in charge of the dashboard.</li>
 </ul>

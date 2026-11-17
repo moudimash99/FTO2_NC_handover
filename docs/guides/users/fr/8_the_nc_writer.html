@@ -1,0 +1,105 @@
+<!--
+title: La saisie structurée de NC
+subtitle: Écrire une NC au standard de l’usine, avec les codes officiels
+kicker: Tableau de bord NC FTO2 · Utilisateurs
+file: users/fr/8 La saisie structurée de NC
+for: tous ceux qui écrivent des NC à FTO2
+foot: Tableau de bord NC FTO2 · La saisie structurée de NC
+short: yes
+lang: fr
+-->
+
+<h2>À quoi sert l’outil</h2>
+<p>La <b>Saisie structurée de NC</b> vous aide à écrire une NC au standard de l’usine : une ligne par défaut, chacune avec son
+code officiel tiré de la fiche de codes de l’usine, son FIN et sa quantité. L’outil écrit le texte pour vous, toujours de la
+même façon, pour que le tableau de bord lise chaque défaut correctement : combien il y en a, où, et pour quelle cause.</p>
+<p>À gauche, les étapes. À droite, le <b>Texte SAP</b> : le texte de la NC tel qu’il se construit, avec le nombre de défauts, la
+quantité totale et le nombre de défauts majeurs ; <b>Copier</b> le copie.</p>
+
+<h2>Du début à la NC enregistrée</h2>
+<ol class="steps">
+  <li><b>Nouvelle NC.</b> Tapez le <b>MSN</b> de l’avion, choisissez le <b>Produit</b>, et cliquez sur l’étape où le défaut a
+    été vu (<b>Détection</b> : Poste, Test, Contrôle Final, Réception, Client, Autre). Puis <b>Continuer</b>.</li>
+  <li><b>Contexte de découverte</b> (optionnel) : cliquez sur un début de phrase, comme <i>Lors du contrôle final</i>, et
+    complétez-le si besoin. Un second clic le retire.</li>
+  <li><b>Ajouter un défaut</b>, pour chaque défaut, en trois étapes :
+    <ul>
+      <li><b>Nature</b> : tapez un mot ou un code dans la recherche (contact, obturateur, T04… ; les accents ne comptent pas),
+        ou cliquez sur une famille. Les familles de l’inspection (Q01 à Q16) et celles du test (T01 à T08) forment deux
+        groupes ; celles du test viennent en premier quand la détection est Test.</li>
+      <li><b>Objet</b> : cliquez sur l’élément concerné. Chacun montre son sous-code et sa sévérité habituelle ; <i>CDVE
+        possible</i> signale une variante commandes de vol.</li>
+      <li><b>Détails</b> : la <b>Localisation (FIN / zone)</b>, choisie parmi les FIN proposés pour ce code ou tapée dans la case
+        en dessous ; une <b>Précision</b> et un <b>Complément libre</b> si utile (tous deux optionnels) ; la <b>Quantité</b> ; la
+        <b>Sévérité</b>, donnée par le code, que vous pouvez changer. Pour un circuit de commandes de vol, l’interrupteur
+        <b>CDVE</b> passe le code à sa variante CDVE et la sévérité à majeure. <b>Ligne générée</b> montre la ligne telle
+        qu’elle sera écrite. Puis <b>Enregistrer le défaut</b>.</li>
+    </ul></li>
+  <li><b>Action demandée</b> (optionnel) : cliquez sur une phrase, comme <i>Merci de remettre en conformité</i>, et ajoutez vos
+    mots.</li>
+  <li><b>Vérifier et soumettre</b> : l’écran <b>Vérification</b> montre le tableau des défauts et, à droite, le texte exactement
+    tel qu’il sera envoyé. <b>Retour aux défauts</b> permet de corriger.</li>
+  <li><b>Soumettre la NC</b>. La page affiche <b>NC prête à enregistrer</b> : la NC est prête, pas encore enregistrée.</li>
+  <li>Vérifiez la NC dans le formulaire d’enregistrement, puis appuyez sur <b>Submit</b> : la NC est enregistrée. <b>Nouvelle
+    NC</b> commence la suivante.</li>
+</ol>
+<p>Dans la liste des défauts, <b>Dupliquer le dernier</b> commence un nouveau défaut à partir du dernier, avec le même code et le
+même FIN : pratique pour une série du même défaut. Chaque défaut se modifie ou se supprime avec ses deux boutons ; les lignes
+sont renumérotées. <b>Modifier</b>, en haut, change le MSN, le produit ou la détection.</p>
+
+<h2>Le texte qu’il écrit</h2>
+<pre>### DEFAUTS v1 | PRODUIT: CA Superior | DETECTION: CONTRÔLE FINAL
+
+Lors du contrôle final
+
+DEF 1 - Q01-001 : 100VG301 — Contact — broche 12
+DEF 2 - Q03-006 - QTE 3 : 3CBB — Collier
+
+Merci de remettre en conformité
+
+### TOTAL: 4</pre>
+<p>La première ligne donne le format, le produit et l’étape où le défaut a été vu. Puis vient une ligne par défaut : son numéro,
+son code officiel, sa quantité quand il y en a plusieurs, le FIN, l’élément et vos mots. La dernière ligne donne la quantité
+totale : un contrôle qu’aucun défaut ne s’est perdu en route.</p>
+<p>Le texte est fait pour SAP : collez-le tel quel dans la NC, sans toucher à ses lignes <b>DEF</b>. Le tableau de bord les lit
+une à une, même après les étoiles et les espaces ajoutés par SAP.</p>
+
+<h2>Les contrôles qu’il fait</h2>
+<ul>
+  <li><b>Continuer</b> reste grisé tant que le MSN, le produit et la détection ne sont pas remplis.</li>
+  <li>Aucun FIN n’est choisi pour vous : vous le choisissez ou le tapez.</li>
+  <li>Un défaut ne peut pas être enregistré avec une quantité qui n’est pas un nombre entier d’au moins 1, ni avec <b>Autre</b>
+    comme localisation sans rien taper : un message rouge dit quoi corriger.</li>
+  <li><b>Vérifier et soumettre</b> reste grisé tant que la NC n’a aucun défaut.</li>
+  <li>Si l’envoi échoue, la page le dit et la NC n’est pas perdue : copiez le texte avec <b>Copier</b>, ou réessayez.</li>
+</ul>
+
+<h2>Les produits proposés</h2>
+<p>MIP A350, MIP 400M, 740VU, PTVU, 300VU, OHP, E Rudder, MFRL, MDCD, et les produits REC CA, CA Superior et Element OTP. Pour un
+autre produit, choisissez <b>Autre</b> et tapez-le sous la liste.</p>
+
+<h2>Quand quelque chose n’est pas dans la liste</h2>
+<ul>
+  <li><b>Un produit ou une détection :</b> choisissez <b>Autre</b> et tapez-le.</li>
+  <li><b>Un FIN :</b> tapez-le dans la case sous la liste, ou choisissez <b>Autre</b> et tapez-le. Une zone convient quand il n’y
+    a pas de FIN.</li>
+  <li><b>Un code :</b> la liste est la fiche de codes officielle de l’usine. Essayez un autre mot, ou le code lui-même, ou ouvrez
+    les familles une à une. Si aucun code ne convient vraiment, n’en prenez pas un qui s’en approche seulement : le code décide
+    de la cause sur le tableau de bord (ci-dessous). Signalez au responsable du tableau de bord le défaut qui n’avait pas de
+    code, pour que la liste soit vérifiée face à la fiche de codes officielle.</li>
+</ul>
+
+<h2>Pourquoi le code décide de la cause sur le tableau de bord</h2>
+<p>Sur le tableau de bord, chaque défaut est classé dans une cause, à l’intérieur d’une catégorie. Pour une NC écrite avec cet
+outil, <b>le code officiel de chaque défaut décide de sa cause, devant tout classement automatique.</b> Sans code, la cause est
+déduite des mots du texte, ce qui peut être moins précis. Le tableau de bord range donc chacun de vos défauts directement dans
+la cause de son code, dans chaque graphique, dans la cloche et dans les actions MFT. Choisissez le code avec soin : c’est la
+cause qui sera comptée.</p>
+
+<div class="next">
+<h2>À lire ensuite</h2>
+<ul>
+  <li><i>Introduction au tableau de bord</i>.</li>
+  <li><i>Deep dive – Définitions</i> : ce que couvre chaque cause, avec ses codes officiels et des exemples réels.</li>
+</ul>
+</div>

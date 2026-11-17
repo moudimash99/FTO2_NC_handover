@@ -33,9 +33,10 @@
     "deliveries_from": "sheet"
   },
   "labels": {
-    "ok": 3473,
+    "ok": 3466,
     "a_labelliser": 3301,
-    "titre": 167
+    "titre": 167,
+    "code": 7
   },
   "subcodes": {
     "exact": 3477,
@@ -73,7 +74,7 @@
     "level3": 794256.49,
     "cable_allocated": 242765.38,
     "cable_share": 0.3057,
-    "level3_parser": 796909.47,
+    "level3_parser": 796908.95,
     "cable_share_parser": 0.3052
   },
   "scope": {
@@ -154,7 +155,7 @@
       "FTO2_NC_Dashboard_level3.slate.json"
     ]
   },
-  "review_disagreements": 483,
+  "review_disagreements": 479,
   "eqmsn": {
     "products": 10,
     "total_std": 625.13,

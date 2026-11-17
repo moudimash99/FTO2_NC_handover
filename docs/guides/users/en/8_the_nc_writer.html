@@ -1,0 +1,104 @@
+<!--
+title: The NC writer
+subtitle: Writing an NC to the plant's standard, with the official codes
+kicker: FTO2 NC dashboard · Users
+file: users/en/8 The NC writer
+for: Everyone who writes NCs at FTO2
+foot: FTO2 NC dashboard · The NC writer
+short: yes
+lang: en
+-->
+
+<h2>What the tool is for</h2>
+<p>The NC writer, called <b>Saisie structurée de NC</b> on screen, helps you write an NC to the plant's standard: one line per
+defect, each with its official code from the plant's code sheet, its FIN and its quantity. The tool writes the text for you,
+the same way every time, so that the dashboard reads every defect right: how many there are, where, and from which cause.</p>
+<p>The tool is in French only; this guide gives its words as they appear on screen. On the left are the steps. On the right is
+the <b>Texte SAP</b>, the text of the NC as it builds up, with the number of defects, the total quantity and the number of
+major defects; <b>Copier</b> copies it.</p>
+
+<h2>From the start to the saved NC</h2>
+<ol class="steps">
+  <li><b>Nouvelle NC</b> (new NC). Type the <b>MSN</b> of the aircraft, choose the <b>Produit</b>, and click where the defect
+    was seen (<b>Détection</b>: Poste, Test, Contrôle Final, Réception, Client, Autre). Then <b>Continuer</b>.</li>
+  <li><b>Contexte de découverte</b> (optional): click the start of a sentence, such as <i>Lors du contrôle final</i>, and
+    complete it if needed. A second click removes it.</li>
+  <li><b>Ajouter un défaut</b> (add a defect), for each defect, in three steps:
+    <ul>
+      <li><b>Nature</b>: type a word or a code in the search box (contact, obturateur, T04…; accents do not matter), or click a
+        family. Inspection families (Q01 to Q16) and test families (T01 to T08) form two groups; the test ones come first when
+        the detection is Test.</li>
+      <li><b>Objet</b>: click the element. Each one shows its sub-code and its usual severity; <i>CDVE possible</i> means it has
+        a flight-controls variant.</li>
+      <li><b>Détails</b>: the <b>Localisation (FIN / zone)</b>, chosen among the FINs suggested for this code or typed in the box
+        under them; a <b>Précision</b> and a <b>Complément libre</b> if useful (both optional); the <b>Quantité</b>; the
+        <b>Sévérité</b>, set by the code, which you can change. For a flight-controls circuit, the <b>CDVE</b> switch changes the
+        code to its CDVE variant and the severity to major. <b>Ligne générée</b> shows the line as it will be written. Then
+        <b>Enregistrer le défaut</b> (save the defect).</li>
+    </ul></li>
+  <li><b>Action demandée</b> (optional): click a sentence, such as <i>Merci de remettre en conformité</i>, and add your own
+    words.</li>
+  <li><b>Vérifier et soumettre</b> (check and submit): the <b>Vérification</b> screen shows a table of the defects and, on the
+    right, the text exactly as it will be sent. <b>Retour aux défauts</b> takes you back to correct it.</li>
+  <li><b>Soumettre la NC</b>. The page says <b>NC prête à enregistrer</b>: the NC is ready, not saved yet.</li>
+  <li>Check the NC in the record form, then press <b>Submit</b>: the NC is saved. <b>Nouvelle NC</b> starts the next one.</li>
+</ol>
+<p>In the list of defects, <b>Dupliquer le dernier</b> starts a new defect from the last one, with the same code and FIN: handy
+for a series of the same defect. Each defect can be changed or deleted with its two buttons; the lines are numbered again.
+<b>Modifier</b>, at the top, changes the MSN, the product or the detection.</p>
+
+<h2>The text it writes</h2>
+<pre>### DEFAUTS v1 | PRODUIT: CA Superior | DETECTION: CONTRÔLE FINAL
+
+Lors du contrôle final
+
+DEF 1 - Q01-001 : 100VG301 — Contact — broche 12
+DEF 2 - Q03-006 - QTE 3 : 3CBB — Collier
+
+Merci de remettre en conformité
+
+### TOTAL: 4</pre>
+<p>The first line gives the format, the product and where the defect was seen. Then comes one line per defect: its number, its
+official code, its quantity when there are several, the FIN, the element and your own words. The last line gives the total
+quantity: a check that no defect was lost on the way.</p>
+<p>The text is made for SAP: paste it into the NC as it is, and leave its <b>DEF</b> lines unchanged. The dashboard reads them
+one by one, even after SAP has added its stars and spaces.</p>
+
+<h2>The checks it makes</h2>
+<ul>
+  <li><b>Continuer</b> stays grey until the MSN, the product and the detection are filled in.</li>
+  <li>No FIN is chosen for you: you pick it or type it.</li>
+  <li>A defect cannot be saved with a quantity that is not a whole number of 1 or more, or with <b>Autre</b> as its location and
+    nothing typed: a red message says what to fix.</li>
+  <li><b>Vérifier et soumettre</b> stays grey until the NC has at least one defect.</li>
+  <li>If the sending fails, the page says so and the NC is not lost: copy the text with <b>Copier</b>, or try again.</li>
+</ul>
+
+<h2>The products offered</h2>
+<p>MIP A350, MIP 400M, 740VU, PTVU, 300VU, OHP, E Rudder, MFRL, MDCD, and the REC products CA, CA Superior and Element OTP. For
+another product, choose <b>Autre</b> and type it under the list.</p>
+
+<h2>When something is not in the list</h2>
+<ul>
+  <li><b>A product or a detection:</b> choose <b>Autre</b> and type it.</li>
+  <li><b>A FIN:</b> type it in the box under the list, or choose <b>Autre</b> and type it. A zone will do when there is no
+    FIN.</li>
+  <li><b>A code:</b> the list is the plant's official code sheet. Try another word, or the code itself, or open the families one
+    by one. If no code really fits, do not take one that is only close: the code decides the cause on the dashboard (below).
+    Tell the person in charge of the dashboard which defect had no code, so that the list can be checked against the official
+    code sheet.</li>
+</ul>
+
+<h2>Why the code decides the cause on the dashboard</h2>
+<p>On the dashboard, each defect is put in one cause, inside one category. For an NC written with this tool, <b>the official
+code of each defect decides its cause, over any automatic classification.</b> Without a code, the cause is worked out from the
+words of the text, which can be less precise. So the dashboard puts each of your defects straight in its code's cause, in
+every chart, in the bell and in the MFT actions. Choose the code with care: it is the cause that will be counted.</p>
+
+<div class="next">
+<h2>Read next</h2>
+<ul>
+  <li><i>Introduction to the dashboard</i>.</li>
+  <li><i>Deep dive – Definitions</i>: what each cause covers, with its official codes and real examples.</li>
+</ul>
+</div>

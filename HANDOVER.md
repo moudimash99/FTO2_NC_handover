@@ -23,7 +23,7 @@ Read sections 1, 2 and 9 first. Everything else is reference. Every number below
 
 | Workstream | Status | Where |
 | --- | --- | --- |
-| Defect parser | v4.8, frozen, validated | `01_parser/nc_defect_parser.py` |
+| Defect parser | v4.9 (v4.8 + the NC writer's lines read as written), validated | `01_parser/nc_defect_parser.py` |
 | Pareto taxonomy (9 categories, RCA names) | Approved by Mohammad 7 Oct | section 4, `04_reference/sous_categories.csv` |
 | Skywise dashboard pack v4.8 | Delivered, **install not confirmed**; MT → A400M and customer-return scope fixed 12 Oct; A400M chart still to drop | `02_dashboard_pack/`, handover doc (section 10) |
 | Real pipeline notebook | Running in Skywise today, uses an older parser; read-only context | `06_input_data/pipeline_notebook.py`, section 5 |

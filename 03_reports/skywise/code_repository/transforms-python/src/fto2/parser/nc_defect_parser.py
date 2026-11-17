@@ -147,6 +147,13 @@ v4.8 (octobre 2026) — the nine Pareto categories
   * Mesure hors tolérance moves to Grounding/Bonding; its RCA joins MEO_METALLISATION.
   * A line that joins two defects with "+" becomes two defects (split_plus).
   * A loose plate held by frettes is Frettage / colliers – pose again.
+
+v4.9 (novembre 2026) — NCs written with the NC writer
+------------------------------------------------------
+  * The DEFAUTS v1 template is read as the NC writer writes it (DEF 1 - Q05-001 - QTE 2 : FIN — object — ...) and as
+    SAP gives it back ("# # #", "* " paragraphs, wrapped lines). The written sub-code decides the line, test codes (T04)
+    and quantities are kept, and the closing sentence is no longer part of the last defect.
+  * Only the NCs with the DEFAUTS v1 header change (5 of the 2026 NCs on 26 Oct); every other NC reads as in v4.8.
 """
 
 from __future__ import annotations
@@ -241,13 +248,25 @@ CUE_RE       = re.compile(r"D[EÉeé]FAUTS?\s+SUIVANTS|POINTS?\s+SUIVANTS", re.I
 DASH_RE      = re.compile(r"^\s*\*?\s*[-•]\s+(?=\S)", re.M)
 FIN_RE       = re.compile(r"\b(\d{1,4}[A-Z]{2,4}\d{0,4}[A-Z]{0,2})\b")
 
-# --- DEFAUTS v1 template (the writing standard) ---
-TPL_HDR_RE   = re.compile(r"###\s*DEFAUTS\s*v1\b", re.I)
+# --- DEFAUTS v1 template (the writing standard, as the NC writer writes it) ---
+#   ### DEFAUTS v1 | PRODUIT: PTVU | DETECTION: CONTRÔLE FINAL
+#   DEF 1 - Q05-001 - QTE 2 : 245LF-A — Élément électrique — détail — commentaire
+#   ### TOTAL: 2
+# The sub-code (a test code alone: T04), the quantity when above 1, then after the colon the FIN ("-" if none), the object,
+# its detail and the comment, between long dashes. In SAP the "###" come back as "# # #" or go, each paragraph starts with
+# "* " and long lines wrap onto the next line.
+TPL_HDR_RE   = re.compile(r"DEFAUTS\s*v1\b", re.I)
+TPL_TOOL_RE  = re.compile(r"^[ \t*]*DEF\s*(\d{1,3})\s*-\s*([QT]\d{2}(?:-(?:\d{3}|CDVE))?)(?:\s*-\s*QTE\s*(\d{1,3}))?\s*:",
+                          re.I | re.M)
+TPL_END_RE   = re.compile(r"\n[ \t]*[*\n]|(?:#\s*){3}TOTAL|(?:--\s*){6,}|\d{2}\.\d{2}\.\d{4} \d{2}:\d{2}:\d{2} CET", re.I)
+# an earlier form of the template, the FIN before the colon: DEF 1 - Q05 - 245LF - QTE 2 : text
 TPL_LINE_RE  = re.compile(
     r"^\s*DEF\s*(\d{1,3})\s*-\s*([A-Z]{1,3}\d{0,2}(?:-\d{1,3})?)\s*-\s*([^:\n]+?)"
     r"(?:\s*-\s*CABLE\s+(\S+))?(?:\s*-\s*QTE\s+(\d{1,3}))?\s*:\s*(.*)$",
     re.I | re.M)
-TPL_TOTAL_RE = re.compile(r"###\s*TOTAL\s*:\s*(\d+)", re.I)
+TPL_TOTAL_RE = re.compile(r"(?:#\s*){3}TOTAL\s*:\s*(\d+)", re.I)
+TPL_CDVE     = {"Q01-003", "Q05-005", "Q07-006", "Q07-007", "Q07-008", "Q07-009", "Q07-010", "Q09-004", "Q09-005", "Q09-006",
+                "Q11-016", "Q11-018", "Q11-019", "Q11-022", "Q11-026", "Q12-007", "Q12-008"}
 
 @dataclass
 class Defect:
@@ -378,6 +397,31 @@ def split_plus(defects: list) -> list:
     return res
 
 
+def _template_defects(text: str) -> list[Defect]:
+    """The defect lines of an NC written with the template (the NC writer's text): the written sub-code decides."""
+    def defect(seq, code, loc, qte, body):
+        cu = code.upper()
+        fin = FIN_RE.search(norm(loc))
+        return Defect(seq=int(seq), code=cu[:3], sub_code=cu if "-" in cu else None,
+                      cdve=cu.endswith("CDVE") or cu in TPL_CDVE, fin=fin.group(1) if fin else None,
+                      text=body[:300], source_format="template_v1", loc=loc if loc not in ("", "-") else None,
+                      qty=int(qte) if qte else 1)
+    out = []
+    marks = list(TPL_TOOL_RE.finditer(text))
+    for i, m in enumerate(marks):
+        seq, code, qte = m.groups()
+        stop = marks[i + 1].start() if i + 1 < len(marks) else len(text)
+        end = TPL_END_RE.search(text, m.end(), stop)
+        body = " ".join(text[m.end(): end.start() if end else stop].split())
+        out.append(defect(seq, code, body.split("—")[0].strip(), qte, body))
+    if out:
+        return out
+    for m in TPL_LINE_RE.finditer(text):
+        seq, code, loc, cable, qte, txt = m.groups()
+        out.append(defect(seq, code, loc.strip(), qte, (f"CABLE {cable} " if cable else "") + txt.strip()))
+    return out
+
+
 def split_defects(raw_text: str) -> list[Defect]:
     text = clean_text(raw_text)
 
@@ -392,22 +436,7 @@ def split_defects(raw_text: str) -> list[Defect]:
 
     # DEFAUTS v1 template: strict grammar, highest-confidence path
     if TPL_HDR_RE.search(text):
-        out = []
-        for m in TPL_LINE_RE.finditer(text):
-            seq, code, loc, cable, qte, txt = m.groups()
-            loc = loc.strip()
-            fin = FIN_RE.search(norm(loc))
-            body = (f"CABLE {cable} " if cable else "") + txt.strip()
-            cu = code.upper()
-            out.append(Defect(seq=int(seq), code=cu[:3],
-                              sub_code=cu if "-" in cu else None,
-                              cdve=cu.endswith("CDVE") or cu in {"Q01-003","Q05-005","Q07-006","Q07-007",
-                                   "Q07-008","Q07-009","Q07-010","Q09-004","Q09-005","Q09-006",
-                                   "Q11-016","Q11-018","Q11-019","Q11-022","Q11-026","Q12-007","Q12-008"},
-                              fin=fin.group(1) if fin else None,
-                              text=body[:300], source_format="template_v1",
-                              loc=loc if loc != "-" else None,
-                              qty=int(qte) if qte else 1))
+        out = _template_defects(text)
         if out:
             return out
 

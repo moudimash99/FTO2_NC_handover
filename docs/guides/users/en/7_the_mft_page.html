@@ -1,0 +1,126 @@
+<!--
+title: The MFT page
+subtitle: The weekly review of a line: the week's Pareto, what rises and falls, the MFT actions
+kicker: FTO2 NC dashboard · Users
+file: users/en/7 The MFT page
+for: The QLS of a line, and everyone at the weekly MFT review
+foot: FTO2 NC dashboard · The MFT page
+short: yes
+lang: en
+-->
+
+<h2>What the page is for</h2>
+<p>The MFT page serves the weekly review of one line: the Pareto of the week's defects, what rises and falls compared with the
+weeks before, and the follow-up of the MFT actions. It counts the NCs <b>raised at FTO2</b> and their defects, over two years:
+the year followed and the one before. So a week, a month or an action is always compared with the weeks just before it, even
+across the new year. <b>Data as of…</b> is the day of the most recent NC. The page opens in French; <b>EN</b>, at the top
+right, switches to the English words this guide uses.</p>
+
+<h2>The controls at the top</h2>
+<table class="keep">
+  <tbody>
+    <tr><td style="width:26mm"><b>Line</b></td><td>One line (A330, A350, A400M, A320), or <b>All</b>. At first, the line with the most NCs.</td></tr>
+    <tr><td><b>Production</b></td><td><b>Series</b> (at first), <b>REC</b>, <b>FTI</b>, or <b>All</b>.</td></tr>
+    <tr><td><b>Liability</b></td><td>A drop-down list: <b>FTO2</b>, <b>Suppliers</b>, <b>Others</b>, each with its number of NCs
+      in the weeks shown. FTO2 is ticked at first, as on the dashboard; tick others to add them.</td></tr>
+    <tr><td><b>Period</b></td><td><b>Week</b>, <b>1 month</b> (4 weeks), <b>3 months</b> (13 weeks) or <b>Custom</b>
+      (<b>from</b> … <b>to</b> …), then the week, chosen in the list. At first, the last finished week.</td></tr>
+  </tbody>
+</table>
+<p><b>Closure weeks</b> come from the plant's blackout days: marked <i>(shutdown)</i> in the list and drawn pale, they stay
+out of every average and every reference.</p>
+
+<h2>Weekly Pareto</h2>
+<p>Four figures open the tab: <b>NCs</b>, <b>Defects</b>, <b>Defects per NC</b>, <b>Top category</b>. NCs and defects are
+compared, per week, with the weeks before: <i>+18% vs 15.3 (W39–W42)</i> means 18 % more than the average of weeks 39 to 42. A
+week is compared with the 4 working weeks before it, 1 month with the 3 months before, 3 months with the 12 months before.
+<b>Count</b> switches the bars between <b>Defects</b> and <b>NCs</b>.</p>
+<h3>Categories, Causes, Official sub-codes, FIN (reference)</h3>
+<table class="keep fact"><tbody>
+  <tr><th style="width:30mm">Shows</th><td>The defects of the period by family, then by cause, official sub-code and FIN, the largest first. The black tick on each bar: the average of the weeks before.</td></tr>
+  <tr><th>How to read it</th><td>A bar past its tick: more than usual. In Categories the % is the running share, elsewhere each row's share. FINs that are product names (740VU…) are left out.</td></tr>
+  <tr><th>How it helps</th><td>From the family to the precise problem: the cause, its code, then where it happens.</td></tr>
+  <tr><th>A click</th><td>Keeps that value on the whole page (below).</td></tr>
+</tbody></table>
+<h3>Defects</h3>
+<table class="keep fact"><tbody>
+  <tr><th style="width:30mm">Shows</th><td>The defects behind the bars, the most recent first, with their text as written in the NC.</td></tr>
+  <tr><th>How to read it</th><td>One row per defect: date, NC, MSN, station, FIN, cause. <b>Show more</b> adds rows.</td></tr>
+  <tr><th>How it helps</th><td>Where a figure becomes real cases, to discuss in the review.</td></tr>
+  <tr><th>A click</th><td>—</td></tr>
+</tbody></table>
+<p><b>A click on a bar filters the whole page</b>, the Analysis tab included: a cause, then a FIN, narrows it step by step. A
+label above the figures shows each choice; its ✕ removes it. Changing the line clears them.</p>
+
+<h2>Analysis</h2>
+<h3>Defects per week, by category</h3>
+<table class="keep fact"><tbody>
+  <tr><th style="width:30mm">Shows</th><td>The 26 weeks up to the week chosen, one bar per week, coloured by category.</td></tr>
+  <tr><th>How to read it</th><td>Pale: a closure week or the week in progress. <b>▼ Action starts</b> marks when each action of the line started.</td></tr>
+  <tr><th>How it helps</th><td>Tells a peak from a trend, and shows what followed an action.</td></tr>
+  <tr><th>A click</th><td>On a week: opens its Weekly Pareto.</td></tr>
+</tbody></table>
+<h3>Rising, Falling</h3>
+<table class="keep fact"><tbody>
+  <tr><th style="width:30mm">Shows</th><td>The causes clearly up, or down: the last 4 working weeks against the 8 before.</td></tr>
+  <tr><th>How to read it</th><td><i>2.1 → 4.3 / wk</i>: 2.1 defects a week before, 4.3 now. Only clear changes are listed: at least a quarter up or down, on enough defects.</td></tr>
+  <tr><th>How it helps</th><td>Shows a problem starting, or an action working, before the month ends.</td></tr>
+  <tr><th>A click</th><td><b>+ Action</b> opens a new action on that cause.</td></tr>
+</tbody></table>
+<h3>New this week, Recurring FINs</h3>
+<table class="keep fact"><tbody>
+  <tr><th style="width:30mm">Shows</th><td>The causes and sub-codes found this week and in none of the 8 working weeks before; the FINs found on 3 aircraft or more over the last 8 working weeks.</td></tr>
+  <tr><th>How to read it</th><td>Each with its number of defects; a FIN with its main cause. Product names written as a FIN (740VU…) are left out.</td></tr>
+  <tr><th>How it helps</th><td>A new kind of defect, the first time it shows; the same place going wrong on several aircraft, often one cause to fix once.</td></tr>
+  <tr><th>A click</th><td><b>+ Action</b>, as above.</td></tr>
+</tbody></table>
+
+<h2>The bell</h2>
+<p>The bell, at the top right, does the weekly watch with the dashboard's rule: it compares the last four finished weeks with
+the twelve before, taking into account the aircraft built, and lists what rises more than chance can explain, for the line,
+week, production and liability chosen. Click an alarm to open the Weekly Pareto filtered on it; <b>+ Action</b> opens a new
+action on it, <b>Seen</b> sets it aside. From January to late April it says <i>Not enough weeks yet to compare</i>: it needs
+sixteen weeks of the year.</p>
+
+<h2>Action tracking</h2>
+<p>The tab lists the MFT actions of the line: <b>Open</b>, <b>All</b> or <b>Closed</b>, summed up in one line such as
+<i>4 actions · 1 on target · 2 rising</i>. Each card gives the action's status (<b>To start</b>, <b>In progress</b>,
+<b>Closed</b>, <b>Dropped</b>), its verdict, the <b>Problem followed</b> (the defects it targets), the owners, the dates and a
+chart.</p>
+<h3>The problem followed, week by week</h3>
+<table class="keep fact"><tbody>
+  <tr><th style="width:30mm">Shows</th><td>The problem's defects per week on the action's line, their 4-week average (black line), the reference (dashed) and the target (green dots).</td></tr>
+  <tr><th>How to read it</th><td><i>Ref. 8.0 / wk · Target ≤ 5.6 · Current 4.0 / wk · −50% · held 8 wk</i>.</td></tr>
+  <tr><th>How it helps</th><td>Shows whether the action works, week after week.</td></tr>
+  <tr><th>A click</th><td>—</td></tr>
+</tbody></table>
+<h3>How an action is judged</h3>
+<p>Against the weeks before it. The <b>reference</b> is the problem's average number of defects per week over the 8 working
+weeks before the action start (or the analysis start, until the action has a start date). The <b>target</b> is the reference minus
+30 %. The <b>current</b> value is the average of the last 4 working weeks.</p>
+<table class="keep">
+  <tbody>
+    <tr><td style="width:44mm"><b>Target met</b></td><td>At or under the target for 4 weeks in a row: counted as <i>on target</i>.</td></tr>
+    <tr><td><b>Below target</b></td><td>Under the target, for less than 4 weeks so far.</td></tr>
+    <tr><td><b>Falling</b>, <b>Rising</b>, <b>Steady</b></td><td>At least 10 % under the reference, at least 10 % over it (counted as <i>rising</i>), or in between.</td></tr>
+    <tr><td><b>Too early to tell</b>, <b>No reference</b></td><td>Fewer than 4 working weeks since the start, or before it.</td></tr>
+  </tbody>
+</table>
+<h3>Adding or changing an action</h3>
+<ol class="steps">
+  <li>Press <b>+ New action</b>, or <b>+ Action</b> beside a cause, a sub-code, a FIN or an alarm: the form then opens with that
+    problem filled in.</li>
+  <li>Fill in the form. For the <b>Problem followed</b>, <b>Simple</b> takes a code (Q11: all its sub-codes) or a sub-code
+    (Q11-003); <b>Expert</b> takes conditions, such as a cause or a FIN. The form shows what the problem catches: check it.</li>
+  <li>Press <b>Create the action</b> (<b>Save</b> for a change). Then, as after any change on a card (<b>Edit</b>,
+    <b>Close</b>, <b>Delete</b>, <b>Add the point</b> for this week's point), press <b>Submit</b> in the save form below the
+    page. Until you do, a grey note says the change is kept on this screen only; several changes can wait for one Submit.
+    The actions are kept for everyone: everyone sees the change once the data is refreshed (reload the page).</li>
+</ol>
+
+<div class="next">
+<h2>Read next</h2>
+<ul>
+  <li><i>Introduction to the dashboard</i>, and <i>Known limits</i>.</li>
+</ul>
+</div>
