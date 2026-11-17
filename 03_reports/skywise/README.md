@@ -72,7 +72,8 @@ read that sheet themselves: a change there shows the next time the page is opene
 1. Sync *FTO2 NC Dashboard - Settings - Target and pages* to Postgres under the name `fto2_set_targets`, schema
    `foundry_sync`, as the four tables.
 2. Add a query `q_fto2_set_targets` on `postgate-airbus-2`. Its text is in `level3_datasets/q_fto2_set_targets.sql`.
-3. In the dashboard's state box, add this line just after the first `{`: `"reglages": "{{q_fto2_set_targets}}",`
+3. The dashboard's `state.json` already holds the line `"reglages": "{{q_fto2_set_targets}}",`: nothing to add if it was
+   pasted whole. Without this query in the app, remove that line from the state box.
 
 The page then takes from the sheet the target (`objectif_baisse`: 0.25, 0,25 or 25 % all mean 25 % fewer NCs), the filters at
 opening (`defaut_phase`, `defaut_responsabilite`, `defaut_periode`) and the target of an MFT action (`action_objectif_baisse`,
@@ -91,7 +92,9 @@ tab says "Objectif = taux" of last year "− 30 %". Put 0.25 back afterwards.
 Check: the page opens on the line with the most NCs, on the last full week, with Responsabilité FTO2.
 The browser remembers the line last chosen.
 
-With the Fusion sheet (optional, step 3): add the same line to this page's state box, `"reglages": "{{q_fto2_set_targets}}",`.
+The MFT page's `state.json` holds the lines `"reglages"` (step 3) and `"store"` (below): the app needs the queries
+`q_fto2_set_targets` and `q_fto2_mft_store` too (and `q_fto2_nc`, `q_fto2_def`, `q_fto2_ref` if this page is in an app of
+its own). Without one of them, remove its line from the state box.
 The MFT page takes the target of an action from it.
 
 The MFT actions are the table `data/config/1_actions_mft.csv`: an action added there appears for everyone after the next run of
@@ -124,7 +127,10 @@ test box of `08_tools/mft_store_test/` (it used `w_store` and `v_store`).
 7. Events panel: add an event. Trigger: the Action widget's submit, once it has succeeded (in the list of triggers, under the
    Action widget's name). Action: run the query `q_fto2_mft_store`. The page then reads the save at once. Without this event,
    it reads it the next time the page is opened.
-8. In the MFT page's state box, add this line just after the first `{`: `"store": "{{q_fto2_mft_store}}",`
+8. The MFT page's state box holds the line `"store": "{{q_fto2_mft_store}}",` (it comes with `mft/state.json`).
+9. **Save in one click.** Events panel: add an event. Trigger: the variable `v_mft_store` changes. Action: submit the Action
+   widget of step 4. The page then saves each change by itself, and its grey note goes once the save is read back. Check it
+   once: change an action, wait, reload: the change is there. The Action widget can then be made small.
 
 What the users see: a change on the "Suivi des actions" tab (a new action, an edit, a closing, a weekly point...) shows at once,
 with a grey note saying to press Submit in the save form so that everyone sees it. After Submit, the note goes once the query

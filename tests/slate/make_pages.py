@@ -64,6 +64,14 @@ def read(path):
         return f.read()
 
 
+OPTIONAL = ("reglages", "store")
+
+
+def shipped(path):
+    """A state file as shipped, less its optional keys: each set-up below says which ones it has."""
+    return {k: v for k, v in json.loads(read(path)).items() if k not in OPTIONAL}
+
+
 def query(name, columns):
     """A table of 05_outputs as Slate gives a query result: one array per column, typed as the dataset."""
     t = pd.read_csv(os.path.join(ROOT, "05_outputs", name), dtype=str, keep_default_na=False)
@@ -125,7 +133,7 @@ def extra_queries(keys, name):
 
 def dashboard_page(setup, Q):
     state_path, functions, keys = SETUPS[setup][0]
-    setup_js = {"state": dict(json.loads(read(state_path)), **keys), "queries": dict(Q, **extra_queries(keys, setup)),
+    setup_js = {"state": dict(shipped(state_path), **keys), "queries": dict(Q, **extra_queries(keys, setup)),
                 "functions": {f: read(os.path.join(FN, f + ".js")) for f in functions},
                 "events": {"fto2Filtres": {"text": read(os.path.join(FN, "event_fto2Filtres.js")), "variable": "v_fto2_filtres"}},
                 "variables": {"v_fto2_filtres": {}}, "delay": 80}
@@ -134,7 +142,7 @@ def dashboard_page(setup, Q):
 
 def mft_page(setup, Q):
     state_path, keys = SETUPS[setup][1]
-    state = dict(json.loads(read(state_path)), **keys)
+    state = dict(shipped(state_path), **keys)
     setup_js = {"state": state, "queries": dict({k: Q[k] for k in ("q_fto2_nc", "q_fto2_def", "q_fto2_ref")}, **extra_queries(keys, setup)),
                 "functions": {}, "events": {"save": {"text": "return {{slEventValue}};", "variable": "v_mft_store"}},   # the event of the README, step 4
                 "variables": {"v_mft_store": {}}, "delay": 80}

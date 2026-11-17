@@ -537,7 +537,9 @@ def build(ref, root, scope_css, say):
     for out in (l2, l3):
         one = write_level(out, "fto2_level23", stamp23, "FTO2 NC Dashboard - levels 2 and 3", css, html, js23)
         open(os.path.join(out, "FTO2_Level23_Slate.html"), "w", encoding="utf-8").write(one)
-        json.dump(STATE, open(os.path.join(out, "state.json"), "w"), indent=2)
+        # level 3 (the real set-up): with the Fusion sheet's settings (query q_fto2_set_targets), one paste in Slate
+        json.dump(dict(STATE, reglages="{{q_fto2_set_targets}}") if out == l3 else STATE,
+                  open(os.path.join(out, "state.json"), "w"), indent=2)
         if out == l2 and pre:
             open(os.path.join(out, "preview_local_only.html"), "w", encoding="utf-8").write(
                 one.replace("<!-- ===== HTML START ===== -->", pre + "<!-- ===== HTML START ===== -->", 1))

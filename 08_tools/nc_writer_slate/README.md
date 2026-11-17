@@ -69,6 +69,10 @@ In Slate:
    | Total Defauts | `v_submission.total_defauts` (no quotes: a number) |
 
    The object's key (Timestamp) is filled by the action itself.
+4. **Save in one click.** Events panel: add an event. Trigger: the variable `v_submission` changes. Action: submit the
+   Action widget of step 3. The NC is then saved when the operator presses "Soumettre la NC", with no second button. The
+   widget says "NC envoyée"; its sentence asks to press Submit only if the NC does not show as saved (`doneTitle` and
+   `doneText` in `CONFIG`).
 
 The NC handed over has these fields; the action uses the five above:
 
@@ -90,7 +94,7 @@ The names of the state key and the event are in `CONFIG` at the top of `nc_write
 ## 4. Check it works
 
 1. In Slate preview, fill an NC with two defects and press **Soumettre la NC**.
-2. The widget shows "NC prête à enregistrer" and the text; the action's form shows the NC. (The two sentences are
+2. The widget shows "NC envoyée" and the text; the action's form shows the NC. (The two sentences are
    `doneTitle` and `doneText` in `CONFIG`: if Slate is set to submit the action by itself, change them to say the NC is
    saved.)
 3. Press the action's Submit. A new object exists, with the MSN typed.

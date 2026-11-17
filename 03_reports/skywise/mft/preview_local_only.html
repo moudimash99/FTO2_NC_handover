@@ -588,8 +588,8 @@ function fto2SharedStore(api, local, seed) {
     },
     note: function (lang) {
       var en = lang === 'en', out = [], n = size.toLocaleString(en ? 'en-GB' : 'fr-FR');
-      if (pending) out.push(en ? 'Change kept on this screen only: press Submit in the actions’ save form so that everyone sees it.'
-        : 'Modification gardée sur cet écran seulement : appuyez sur « Submit » dans le formulaire d’enregistrement des actions pour que tout le monde la voie.');
+      if (pending) out.push(en ? 'Saving the change for everyone… (if this note stays, press Submit in the actions’ save form)'
+        : 'Enregistrement de la modification pour tous… (si cette note reste, appuyez sur « Submit » dans le formulaire d’enregistrement des actions)');
       if (size > LIMIT) out.push(en ? 'Warning: the actions take ' + n + ' characters; beyond 30,000 the save may cut them. Delete some closed actions.'
         : 'Attention : les actions font ' + n + ' caractères ; au-delà de 30 000, l’enregistrement risque de les couper. Supprimez des actions closes.');
       if (bad) out.push(en ? 'A later save of the actions cannot be read (its text was cut?): the page shows the last one it can read.'

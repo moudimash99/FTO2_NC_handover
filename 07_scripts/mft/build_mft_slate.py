@@ -96,7 +96,8 @@ def build(say=print):
     assert "{{" not in js, "a double brace in the MFT page's JS: Slate would read it as a binding"
     one = SP.write_level(OUT, "fto2_mft", stamp, "MFT Qualité FTO2 - Slate", css, html, js)
     open(os.path.join(OUT, "FTO2_MFT_Slate.html"), "w", encoding="utf-8").write(one)
-    json.dump({"nc": "{{q_fto2_nc}}", "def": "{{q_fto2_def}}", "ref": "{{q_fto2_ref}}"}, open(os.path.join(OUT, "state.json"), "w"), indent=2)
+    json.dump({"nc": "{{q_fto2_nc}}", "def": "{{q_fto2_def}}", "ref": "{{q_fto2_ref}}", "reglages": "{{q_fto2_set_targets}}",
+               "store": "{{q_fto2_mft_store}}"}, open(os.path.join(OUT, "state.json"), "w"), indent=2)
     for q in ("q_fto2_nc", "q_fto2_def", "q_fto2_ref", "q_fto2_set_targets"):   # the dashboard's level-3 queries, unchanged (the last optional)
         shutil.copyfile(os.path.join(L3, q + ".sql"), os.path.join(OUT, q + ".sql"))
     with open(os.path.join(OUT, "q_fto2_mft_store.sql"), "w", encoding="utf-8") as f:   # optional: the actions kept for everyone

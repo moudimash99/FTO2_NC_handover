@@ -67,19 +67,20 @@ class NoDataInTheCode(unittest.TestCase):
                 self.assertNotIn("{{", f.read(), rel)
 
     def test_optional_keys(self):
-        """The two optional keys (reglages: the Fusion sheet's settings; store: the MFT actions kept for everyone) are added by
-        hand in Slate (03_reports/skywise/README.md, steps 3 and 4): the states written do not hold them, so a page set up before
-        works as it did. Their queries are written beside the pages."""
-        for rel in ["03_reports/skywise/level3_datasets/state.json", "03_reports/skywise/mft/state.json",
-                    "03_reports/skywise/level3_datasets/fonctions/state_2_fonctions.json",
-                    "03_reports/skywise/level3_datasets/fonctions/state_3_fonctions.json"]:
+        """The two keys reglages (the Fusion sheet's settings) and store (the MFT actions kept for everyone) are in the states
+        of the set-up installed, so that one paste does it: the dashboard's has reglages, the MFT page's both. The states of
+        the Slate functions' set-ups have neither (added by hand there). Their queries are written beside the pages."""
+        for rel, keys in [("03_reports/skywise/level3_datasets/state.json", ["q_fto2_set_targets"]),
+                          ("03_reports/skywise/mft/state.json", ["q_fto2_set_targets", "q_fto2_mft_store"]),
+                          ("03_reports/skywise/level3_datasets/fonctions/state_2_fonctions.json", []),
+                          ("03_reports/skywise/level3_datasets/fonctions/state_3_fonctions.json", [])]:
             path = os.path.join(ROOT, rel)
             if not os.path.exists(path):
                 self.skipTest("build the pages first (python3 -I build/build_all.py ...)")
             with open(path, encoding="utf-8") as f:
                 text = f.read()
-            self.assertNotIn("q_fto2_set_targets", text, rel)
-            self.assertNotIn("q_fto2_mft_store", text, rel)
+            for q in ("q_fto2_set_targets", "q_fto2_mft_store"):
+                (self.assertIn if q in keys else self.assertNotIn)(q, text, rel)
         for rel, table in [("03_reports/skywise/level3_datasets/q_fto2_set_targets.sql", "fto2_set_targets"),
                            ("03_reports/skywise/mft/q_fto2_mft_store.sql", "fto2_mft_store")]:
             with open(os.path.join(ROOT, rel), encoding="utf-8") as f:

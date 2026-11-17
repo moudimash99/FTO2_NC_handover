@@ -2,5 +2,6 @@
   "nc": "{{q_fto2_nc}}",
   "def": "{{q_fto2_def}}",
   "dis": "{{q_fto2_dis}}",
-  "ref": "{{q_fto2_ref}}"
+  "ref": "{{q_fto2_ref}}",
+  "reglages": "{{q_fto2_set_targets}}"
 }
