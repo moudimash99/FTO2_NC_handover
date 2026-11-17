@@ -209,6 +209,11 @@ def bind(datasets):
         def get(name):
             return _Handle(name)
 
+        @staticmethod
+        def has(name):
+            """True when the transform declares this dataset (input or output)."""
+            return datasets.get(name) is not None
+
     return Dataset, Column
 
 

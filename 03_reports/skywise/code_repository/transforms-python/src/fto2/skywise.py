@@ -75,14 +75,13 @@ def _until(df, column, day):
 
 
 def _work_list(Dataset, name, table, sep):
-    """Write a work list (lines to label, materials to price): to the dataset of that name when the run has one (the scheduled
-    pipeline), else to a CSV file beside the notebook. Returns where it went."""
-    try:
+    """Write a work list (lines to label, materials to price): to the dataset of that name when the run has one (the Code
+    Repository's transform declares both), else to a CSV file beside the notebook. Returns where it went."""
+    if getattr(Dataset, "has", lambda n: False)(name):
         Dataset.get(name).write_table(table)
         return "dataset " + name
-    except Exception:
-        table.to_csv(name + ".csv", index=False, sep=sep, encoding="utf-8-sig")
-        return name + ".csv"
+    table.to_csv(name + ".csv", index=False, sep=sep, encoding="utf-8-sig")
+    return name + ".csv"
 
 
 def station_descriptions(path):
