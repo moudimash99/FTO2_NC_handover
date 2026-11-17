@@ -12,3 +12,10 @@ Core rule, every message, especially after any analysis: **write in plain, every
 - If it would not make sense read out loud to him, rewrite it.
 
 The dashboard itself stays in French. Chat stays in English.
+
+# His figures are not ours
+
+He works on the live Skywise data; the data in this repository is a snapshot of one day. The figures will never match, and
+he does not care about ours. When he asks whether something changed, answer about the structure: the Pareto's columns,
+the categories and causes, the charts, the filters, the rules. Do not compare counts or costs with his, and do not present
+a figure from the snapshot as if it were his.
