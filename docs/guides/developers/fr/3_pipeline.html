@@ -128,8 +128,9 @@ notebook, le code est relu à chaque exécution : inutile de le redémarrer.</
     <tr><td>Un dataset introuvable</td><td>Notebook : le dataset n’est pas dans le panneau Data (AliasNotDefined). Code Repository : ce
       n’est pas une entrée du transform. Ajoutez-le, ou changez son nom dans <code>2_sources.csv</code>.</td></tr>
     <tr><td>« the station list is missing »</td><td>Code Repository : <code>fto2_station_mapping.csv</code> doit être dans <code>fto2/files</code>.</td></tr>
-    <tr><td>Une feuille Fusion « not used »</td><td>Ce n’est pas une erreur : le fichier est utilisé à la place. Corrigez les noms des colonnes de
-      la feuille.</td></tr>
+    <tr><td>⚠️ Une feuille Fusion « NOT USED »</td><td>La mise à jour garde la table précédente et dit pourquoi : le plus
+      souvent la ligne d’en-tête n’a pas été trouvée (une colonne manquante ou renommée dans la source). Videz la feuille, recollez
+      toute la source en A1, et relancez.</td></tr>
     <tr><td>« fto2_dash_cout not written »</td><td>Normal : cette table ne sert qu’à une installation facultative.</td></tr>
     <tr><td>Une liste « could not be read »</td><td>Le registre GPS ou la liste Test manque ou a changé de forme : ses NC passent sans les
       informations de la liste.</td></tr>

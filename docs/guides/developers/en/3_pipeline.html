@@ -121,7 +121,8 @@ is read again at every run: there is no need to restart it.</p>
     <tr><td>A dataset that is not found</td><td>Notebook: the dataset is not in the Data panel (AliasNotDefined). Repository: it is not an input
       of the transform. Add it, or change its name in <code>2_sources.csv</code>.</td></tr>
     <tr><td>"the station list is missing"</td><td>Repository: <code>fto2_station_mapping.csv</code> must be in <code>fto2/files</code>.</td></tr>
-    <tr><td>A Fusion sheet "not used"</td><td>Not an error: the file is used instead. Fix the sheet's column names.</td></tr>
+    <tr><td>⚠️ A Fusion sheet "NOT USED"</td><td>The run keeps the previous table and says why: usually the header row was not
+      found (a column missing or renamed in the source). Empty the sheet, paste the whole source again at A1, and build.</td></tr>
     <tr><td>"fto2_dash_cout not written"</td><td>Normal: that table only serves an optional set-up.</td></tr>
     <tr><td>A list "could not be read"</td><td>The GPS register or the Test list is missing or changed shape: its NCs run without the list's
       information.</td></tr>
