@@ -40,9 +40,10 @@ Everything else stays as it is.
 7. **The station list.** In the old Code Workspace, download `data/fto2_station_mapping.csv`, and drag it onto
    `src/fto2/files`.
 8. **Two lines in `fto2_update.py`**, at the top:
-   - `FUSION`: the folder that holds the six datasets of the Fusion spreadsheet: `fto2_set_cost`, `fto2_set_blackout`,
-     `fto2_set_part_prices`, `fto2_set_cables`, `fto2_set_gps`, `fto2_set_test`. To find it: open one of them in Skywise
-     and copy its folder's path. If one of them has another name or folder, write its own path on its line instead.
+   - `FUSION`: the path of the folder that holds the datasets of the Fusion spreadsheet (*FTO2 NC Dashboard - Settings -
+     Blackout days*, *... - Cost rates and times*...), ending with `/`. To find it: open that folder in Skywise and copy
+     its path (or copy the path of one of those datasets and keep it up to the last `/`). The datasets' names are already
+     in the file. If one of them was renamed or moved, write its whole path (or its id) on its own line instead.
    - `FOLDER`: where the tables are written. Your own folder is fine for the test.
    - Leave `TEST = "_test"`.
 9. **Commit**, then wait until the *Checks* tab is green.
@@ -81,7 +82,7 @@ Everything else stays as it is.
 | What you see | What to do |
 |---|---|
 | The checks fail on code style (*line too long*, *E501*...) | In `src/setup.cfg`, add the line `exclude = fto2` under `[flake8]` and under `[pycodestyle]`. In `src/.pylintrc`, under `[MASTER]`, add `ignore=fto2`. Commit again. |
-| A dataset not found (`fto2_set_...`) | Step 8: the `FUSION` folder, or that dataset's own path on its line |
+| A dataset not found (*FTO2 NC Dashboard - Settings - ...*) | Step 8: the `FUSION` folder (ending with `/`), or that dataset's own path on its line |
 | `No module named` pandas, pyarrow or polars | Step 5 |
 | A settings table not found | Step 6 |
 | *The station list is missing* | Step 7 |

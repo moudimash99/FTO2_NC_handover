@@ -38,7 +38,7 @@ Details (what each level proves, what was tested): `DETAILS.md`.
    | `fto2_ai_labels` | `fto2_ai_labels` | read |
    | Work_Order_Operation | `work_order_operation` | read |
    | MES Disruptions | `mes_disruptions` | read |
-   | the Fusion settings | `fto2_set_cost`, `fto2_set_blackout`, `fto2_set_part_prices`, `fto2_set_cables`, `fto2_set_gps`, `fto2_set_test` | read (each one optional) |
+   | the Fusion settings (*FTO2 NC Dashboard - Settings - Cost rates and times*, *... - Blackout days*, *... - Part prices*, *... - Cable tracker*, *... - GPS register*, *... - Test list*) | `fto2_set_cost`, `fto2_set_blackout`, `fto2_set_part_prices`, `fto2_set_cables`, `fto2_set_gps`, `fto2_set_test` | read (each one optional) |
    | four new datasets | `fto2_dash_nc`, `fto2_dash_defects`, `fto2_dash_disruptions`, `fto2_dash_ref` | write |
 
 6. Run all cells. The last lines list the tables written.
@@ -66,10 +66,11 @@ Check: the page opens with the date *Données au…* of the latest NC, on Série
 Deep dive, Vue d'ensemble shows the year's NCs, defects and cost.
 
 **Optional: the target and the filters at opening read from the Fusion sheet.** The Head of Quality fills the sheet "Target
-and pages" of the Fusion spreadsheet (`fusion/`), synced to the dataset `fto2_set_targets`. With the three steps below the pages
+and pages" of the Fusion spreadsheet (`fusion/`), synced to the dataset *FTO2 NC Dashboard - Settings - Target and pages*. With the three steps below the pages
 read that sheet themselves: a change there shows the next time the page is opened, without waiting for the notebook.
 
-1. Sync `fto2_set_targets` to Postgres, same name, schema `foundry_sync`, as the four tables.
+1. Sync *FTO2 NC Dashboard - Settings - Target and pages* to Postgres under the name `fto2_set_targets`, schema
+   `foundry_sync`, as the four tables.
 2. Add a query `q_fto2_set_targets` on `postgate-airbus-2`. Its text is in `level3_datasets/q_fto2_set_targets.sql`.
 3. In the dashboard's state box, add this line just after the first `{`: `"reglages": "{{q_fto2_set_targets}}",`
 

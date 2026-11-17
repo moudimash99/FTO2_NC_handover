@@ -20,9 +20,12 @@ What changes:
 The spreadsheet has seven sheets. If an earlier version had the sheets *Planned volume*, *Deliveries last year* or *Plant*,
 delete them: nothing reads them any more.
 
-| Sheet | Dataset | Read by |
+Fusion names each sheet's dataset after the spreadsheet and the sheet: *FTO2 NC Dashboard - Settings - Blackout days*. The
+code calls each one by a short name:
+
+| Sheet | Short name in the code | Read by |
 |---|---|---|
-| Target and pages | `fto2_set_targets` | the pages (step 4) |
+| Target and pages | `fto2_set_targets` | the pages (step 4), through the sync |
 | Cost rates and times | `fto2_set_cost` | the update (step 2) |
 | Blackout days | `fto2_set_blackout` | the update |
 | Part prices | `fto2_set_part_prices` | the update |
@@ -42,7 +45,8 @@ schedule.
 The tables now hold last year's NCs too: about twice the rows.
 
 To stay on the notebook instead (the fallback): in the Code Workspace, replace `notebook_kit`, `data/config` and the notebook by
-those of `level3_datasets/`, add the six Fusion datasets to the Data panel under their own names, and run all cells.
+those of `level3_datasets/`, add the six Fusion datasets of the update to the Data panel, each under its short name (`fto2_set_cost`...), and run all
+cells.
 
 ## 3. The sync to Postgres
 
@@ -50,7 +54,7 @@ those of `level3_datasets/`, add the six Fusion datasets to the Data panel under
   `fto2_dash_ref`, schema `foundry_sync`, under the same names as today.
 
 For the options of step 4 (they can come later), add two datasets, same schema:
-- `fto2_set_targets` (the sheet *Target and pages*), same name;
+- the dataset *FTO2 NC Dashboard - Settings - Target and pages*, under the name `fto2_set_targets`;
 - the dataset the NC writer's action writes to (the output dataset set on the action of *a30 Nc Writer Dataset*), under the
   name `fto2_mft_store`. It holds the MFT actions.
 
