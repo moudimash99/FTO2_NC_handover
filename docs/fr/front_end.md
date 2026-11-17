@@ -60,6 +60,12 @@ chiffre faux sur un seul graphique est une question de page.
    couleurs, paramètres des alarmes).
 5. **L'adaptateur** `fto2FromTables` (entre `ADAPTER START` et `ADAPTER END`) transforme les deux tables en données de la
    page, `D`.
+6. **Deux clés facultatives** (Skywise seulement). `reglages`, la query `q_fto2_set_targets` (la feuille Fusion « Target and
+   pages »), sur le tableau de bord et la page MFT : `fto2Reglages`, vers le haut du JS, écrit ses lignes dans les paramètres
+   de la page avant qu'elle démarre (la baisse visée par l'objectif, les filtres à l'ouverture, l'objectif d'une action MFT) :
+   un changement dans la feuille n'attend pas le notebook. Une ligne absente ou mal écrite garde la valeur de référence ; la
+   console du navigateur dit laquelle. Avec les fonctions Slate, la page envoie sa baisse avec chaque demande. `store`, sur la
+   page MFT seulement : section 6. Sans ces clés dans le champ State, les pages marchent comme avant.
 
 **Les données dans la page.** `D.ncs` est une liste de NC, chacune étant une liste de valeurs par position :
 
@@ -261,6 +267,7 @@ Une ligne à la fois : le Pareto de la semaine, l'analyse et le suivi des action
 |---|---|
 | `the two Slate tables -> the page's data` | son propre adaptateur (plus simple que celui du tableau de bord) |
 | `the store` | où sont gardées les actions tapées sur la page : **dans ce navigateur seulement** |
+| `the shared store` | dans Skywise avec la clé d'état `store` : les actions gardées pour tous (`fto2SharedStore`, plus bas) |
 | `data`, `weeks (ISO)`, `state`, `helpers` | les données, les numéros de semaine, ce que l'utilisateur a choisi (ligne, phase, période) |
 | `controls` | les boutons de ligne, de phase et de période |
 | `tab 1: the week's Pareto` | le Pareto de la semaine comparé aux semaines d'avant |
@@ -273,6 +280,17 @@ Une ligne à la fois : le Pareto de la semaine, l'analyse et le suivi des action
 
 **D'où viennent les actions :** `1_actions_mft.csv` dans les paramètres, par `ref`. Elles remplacent la copie du navigateur à
 chaque chargement. Une action tapée sur la page reste dans ce navigateur jusqu'à ce que quelqu'un l'ajoute à la table.
+
+**Les actions gardées pour tous** (Skywise, clé d'état `store`, la query `q_fto2_mft_store` ; mise en place dans
+`03_reports/skywise/README.md`, étape 4). Les actions sont gardées dans un objet du type d'objet du rédacteur de NC : Msn
+`MFT-ACTIONS`, son Texte Sap contient `{page, saved_at, actions}` en JSON. `fto2SharedStore` (dans
+`07_scripts/mft/mft_slate.js`, après le stockage du navigateur) a les mêmes appels que le stockage du navigateur : le code de
+la page ne change pas. Il lit la ligne enregistrée en dernier (sans ligne : les actions de la table) ; à chaque changement il met
+sa copie à jour tout de suite, puis lance l'événement `save` avec toute la liste en une ligne, comme le rédacteur de NC le fait
+pour une NC. Un événement Slate met la ligne dans une variable, le widget Action du type d'objet la prend comme valeurs par
+défaut, et l'utilisateur appuie sur Submit. Tant que la query ne ramène pas une ligne enregistrée au moment du changement ou
+après, la note au-dessus des actions demande d'appuyer sur Submit. Les marques « Vu » des alarmes restent dans le navigateur. La
+page du portable garde seulement le stockage du navigateur.
 
 **Ses seuils** (« ce qui monte », « ce qui baisse », FIN récurrents : les lignes `mft_`) viennent de `2_reglages_pages.csv`,
 les objectifs des actions (les lignes `action_`) de `1_reglages_pages.csv`.

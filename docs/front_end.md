@@ -57,6 +57,12 @@ chart only is a page question.
    each part's pieces back together and reads them as one block: the production plan, 2025, the cable requests, the MFT
    actions, the cost settings, the cause tree, and the page settings (target, filters at opening, colours, alarm settings).
 5. **The adapter** `fto2FromTables` (between `ADAPTER START` and `ADAPTER END`) turns the two tables into the page's data `D`.
+6. **Two optional keys** (Skywise only). `reglages`, the query `q_fto2_set_targets` (the Fusion sheet "Target and pages"), on
+   the dashboard and the MFT page: `fto2Reglages`, near the top of the JS, writes its lines into the page settings before the
+   page starts (the target's cut, the filters at opening, the target of an MFT action), so a change in the sheet needs no
+   notebook run. A line missing or wrongly written keeps the reference value; the browser's console says which. With the Slate
+   functions, the page sends its cut with each request. `store`, on the MFT page only: section 6. Without these keys in the
+   state box, the pages work as before.
 
 **The data inside the page.** `D.ncs` is a list of NCs, each one a list of values by position:
 
@@ -245,6 +251,7 @@ One line at a time: the week's Pareto, the analysis, and the follow-up of the MF
 |---|---|
 | `the two Slate tables -> the page's data` | its own adapter (simpler than the dashboard's) |
 | `the store` | where actions typed on the page are kept: **in this browser only** |
+| `the shared store` | in Skywise with the state key `store`: the actions kept for everyone (`fto2SharedStore`, below) |
 | `data`, `weeks (ISO)`, `state`, `helpers` | the data, the week numbers, what the user chose (line, phase, period) |
 | `controls` | the line, phase and period buttons |
 | `tab 1: the week's Pareto` | the Pareto of the week against the weeks before |
@@ -257,6 +264,16 @@ One line at a time: the week's Pareto, the analysis, and the follow-up of the MF
 
 **Where the actions come from:** `1_actions_mft.csv` in the settings, through `ref`. They replace the browser's copy at every
 load. An action typed on the page stays in that browser until someone adds it to the table.
+
+**The actions kept for everyone** (Skywise, state key `store`, the query `q_fto2_mft_store`; set-up in
+`03_reports/skywise/README.md`, step 4). The actions are kept in one object of the NC writer's object type: Msn `MFT-ACTIONS`,
+its Texte Sap holding `{page, saved_at, actions}` as JSON. `fto2SharedStore` (in `07_scripts/mft/mft_slate.js`, after the
+browser store) has the same calls as the browser store, so the page's code does not change. It reads the store row saved last
+(with no row: the table's actions); at each change it updates its copy at once, then fires the event `save` with the whole list
+as one row, as the NC writer does with an NC. A Slate event puts the row into a variable, the Action widget of the object type
+takes it as its default values, and the user presses Submit. Until the query brings back a row saved at or after the change,
+the note above the actions asks for Submit. The alarms' "Vu" marks stay in the browser. The laptop page keeps the browser
+store only.
 
 **Its thresholds** ("what goes up", "what goes down", recurring FINs: the `mft_` rows) come from `2_reglages_pages.csv`,
 the action targets (the `action_` rows) from `1_reglages_pages.csv`.

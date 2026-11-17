@@ -26,6 +26,11 @@ event copies them into the variable `v_fto2_filtres`. The two functions that rea
 answer, and the page draws it. While it waits, the chart says **"Calcul dans Slate…"**. On the laptop this round trip takes
 about half a second.
 
+With each request the page also sends the target it uses (the cut, `objectif_baisse`). It is the notebook's, or the Fusion
+sheet's when the page reads that sheet (`../../README.md`, step 3). `f_fto2_objectifs` computes with it, so the page and the
+function always show the same target. Function files from before 17 November ignore it and keep the notebook's target: paste
+the files again.
+
 If a function fails, or gives no answer within 15 seconds, the page computes that calculation itself and says so in a yellow
 box at the top. The dashboard keeps working either way.
 

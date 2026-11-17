@@ -43,8 +43,14 @@ with no row, or the columns it received when no 2026 FTO2 NC could be read.
 - **Actions are saved in the browser**, on the computer where they are entered: a Slate code sandbox has no shared store.
   The first time, the page shows the trackers' actions; new actions, edits, weekly points and the alarms' "Vu" marks stay on
   that computer and are not shared with the other users of the app. The note above the actions says so. If Slate's sandbox
-  blocks the browser's storage, the note says that instead: edits then last until the page reloads. Sharing them needs a
-  table Slate can write to (or a Foundry action), to be set up.
+  blocks the browser's storage, the note says that instead: edits then last until the page reloads.
+- **Or the actions kept for everyone** (optional): with the state key `"store": "{{q_fto2_mft_store}}"` and the query
+  `q_fto2_mft_store` (`q_fto2_mft_store.sql`), the actions are kept in one object of the NC writer's object type, and saved
+  for everyone when Submit is pressed in a save form (an Action widget under the page). The set-up: `../README.md`, step 4.
+  The alarms' "Vu" marks stay in each browser.
+- **The Fusion sheet** (optional): with the state key `"reglages": "{{q_fto2_set_targets}}"` and the query
+  `q_fto2_set_targets` (`q_fto2_set_targets.sql`), the target of an action comes from the sheet "Target and pages", without
+  waiting for the notebook (`../README.md`, step 3).
 - The action form saves without a form submission (Slate's sandbox allows none), with its button or Enter, and opens where
   the click was when the widget is taller than the screen.
 - **A press on a bar filters the whole page**, as on the dashboard: the figures, the other lists, the defect table and the

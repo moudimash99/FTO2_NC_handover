@@ -196,8 +196,17 @@ Tested here:
   described in level 3 A. This found and fixed one problem: the pipeline writes its empty GPS / Test columns as `''`,
   which was read as a GPS NC type (423 NCs lost their type); empty text now counts as missing.
 - The messages for a missing query, an empty query, wrong columns, and a page opened outside Slate.
+- The two optional keys of the state (`tests/slate/check_state_keys.js`, with a stand-in for Slate): the Fusion sheet's
+  settings (the targets' texts and figures, the Slate functions computing with the page's target, the filters at opening, a
+  wrong line kept out) and the MFT actions kept for everyone (the latest store row read, a change sent with the event `save`
+  as the whole list, the note until the save is read back, a start from the table's actions). Without the keys, the pages
+  show the same as before on every view of the snapshot.
 
 Not testable here, to watch on the first try:
+
+- The MFT actions kept for everyone in Skywise with the page itself (the test box showed the event, the variable, the Action
+  widget and the reading work): the name of the Action widget's trigger after a successful Submit, how soon the sync to
+  Postgres follows a Submit, and the longest text the object's Texte Sap keeps (the page warns beyond 30,000 characters).
 
 - How Slate passes a query result into the sandbox state. The page accepts an object with one array per column (how
   Slate returns queries), a list of rows, or the same as JSON text.
