@@ -33,6 +33,8 @@ function mftFromTables(ncIn, defIn, R) {
   function isoWeek(s) { var d = new Date(s.slice(0, 10) + 'T00:00:00Z'), dw = (d.getUTCDay() + 6) % 7; d.setUTCDate(d.getUTCDate() - dw + 3);
     var y = d.getUTCFullYear(), j4 = new Date(Date.UTC(y, 0, 4)), w = 1 + Math.round(((d - j4) / 864e5 - 3 + ((j4.getUTCDay() + 6) % 7)) / 7); return y + '-W' + (w < 10 ? '0' : '') + w; }
   var plan = R.plan || {}, alias = R.alias || [];
+  // the NC's Responsabilité group, as the dashboard decides it (model.js liabCat): f FTO2 liable, s a supplier's number, o the others
+  function liabGroup(r) { if (Math.round(parseFloat(r.on_aec) || 0) === 1) return 'f'; var c = str(r.liability).replace(/[\[\]\s]/g, '').replace(/^0+/, ''); return /^\d+$/.test(c) ? 's' : 'o'; }
   function planProd(line, prod, station) {   // build_all.alias_product, then the plan's name; '' when not in the plan
     var p = prod || 'Other';
     if (!plan[p.toUpperCase()]) for (var i = 0; i < alias.length; i++) { var x = alias[i];
@@ -50,7 +52,7 @@ function mftFromTables(ncIn, defIn, R) {
   var ncs = [], pos = {}, to = '';
   n.forEach(function (x) { var r = x.r, c = x.created.slice(0, 10), k = id(r.nc); pos[k] = ncs.length; if (c > to) to = c;
     ncs.push([k, c, code('line', str(r.line) || '—'), code('phase', r.phase), code('msn', id(r.msn)), code('station', r.station), code('where', r.where_found),
-      code('prod', planProd(str(r.line), str(r.product), str(r.station))), Math.round(parseFloat(r.on_aec) || 0) === 1 ? 1 : 0]); });   // last: 1 if FTO2 is liable
+      code('prod', planProd(str(r.line), str(r.product), str(r.station))), liabGroup(r)]); });   // last: the Responsabilité group
   var defs = [];
   rows(defIn).forEach(function (r) { var i = pos[id(r.nc)]; if (i == null) return;
     defs.push([i, code('cat', r.cat), code('rca', r.rca), code('sub', r.sub), code('code', r.subcode), code('fin', r.fin), Math.round(parseFloat(r.minor) || 0), tidy(r.text)]); });
@@ -172,7 +174,7 @@ var D = window.FTO2_MFT_D;
     'Catégorie': 'Category', 'Sous-catégorie': 'Sub-category', 'Sous-code': 'Sub-code', 'Code': 'Code', 'Lieu de détection': 'Where found', 'Produit': 'Product', 'Texte du défaut': 'Defect text',
     'est l’une des valeurs': 'is one of the values', 'contient l’un des mots': 'contains one of the words', 'expression régulière': 'regular expression',
     'À lancer': 'To start', 'En cours': 'In progress', 'Clos': 'Closed', 'Abandonnée': 'Dropped',
-    'Retirer {x}': 'Remove {x}', 'Tout retirer': 'Remove all', 'Toutes les lignes': 'All lines', 'Toutes': 'All', 'Tout': 'All', 'Série': 'Series', 'Responsabilité': 'Liability', 'FTO2 responsable': 'FTO2 liable',
+    'Retirer {x}': 'Remove {x}', 'Tout retirer': 'Remove all', 'Toutes les lignes': 'All lines', 'Toutes': 'All', 'Tout': 'All', 'Série': 'Series', 'Responsabilité': 'Liability', 'Fournisseurs': 'Suppliers', 'Autres': 'Others',
     'en cours': 'in progress', 'fermeture': 'shutdown', 'Semaine': 'Week', '1 mois': '1 month', '3 mois': '3 months', 'Personnalisée': 'Custom', 'Jusqu’à la semaine': 'Up to week',
     'Données au {d}': 'Data as of {d}', 'Ouvertes': 'Open', 'Closes': 'Closed',
     'A400M : les textes des NC sont masqués, aucun défaut n’est lu.': 'A400M: the NC texts are hidden, no defect is read.', 'Aucun défaut sur la période.': 'No defect in the period.',
@@ -278,7 +280,7 @@ var D = window.FTO2_MFT_D;
   // ---------------------------------------------------------------- state
   var LINES = (function () { var c = {}; NCS.forEach(function (n) { var l = DIC.line[n[2]]; if (l && l !== '—') c[l] = (c[l] || 0) + 1; }); return Object.keys(c).sort(function (a, b) { return c[b] - c[a]; }).map(function (l) { return [l, c[l]]; }); })();
   var S = { line: LINES.length ? LINES[0][0] : 'all', from: LASTC, week: LASTC, pm: 1, mk: false, ph: 'SERIE', liab: 'f', tab: 'pareto', cnt: 'def', per: 1, f: {}, lim: 40, fSt: 'open' };   // from..week: the weeks shown, per: how many; pm: 1, 4 or 13 weeks ending at week, 0 = chosen freely
-  try { var sv = JSON.parse(localStorage.getItem('mft-fto2') || '{}'); if (sv.line && (sv.line === 'all' || LINES.some(function (x) { return x[0] === sv.line; }))) S.line = sv.line; if (sv.ph != null) S.ph = sv.ph; if (sv.liab === '' || sv.liab === 'f') S.liab = sv.liab; S.mk = !!sv.mk; if (sv.cnt === 'nc') S.cnt = 'nc'; } catch (e) { }
+  try { var sv = JSON.parse(localStorage.getItem('mft-fto2') || '{}'); if (sv.line && (sv.line === 'all' || LINES.some(function (x) { return x[0] === sv.line; }))) S.line = sv.line; if (sv.ph != null) S.ph = sv.ph; if (typeof sv.liab === 'string' && /^f?s?o?$/.test(sv.liab) && sv.liab) S.liab = sv.liab; S.mk = !!sv.mk; if (sv.cnt === 'nc') S.cnt = 'nc'; } catch (e) { }
   function remember() { try { localStorage.setItem('mft-fto2', JSON.stringify({ line: S.line, ph: S.ph, liab: S.liab, mk: S.mk, cnt: S.cnt })); } catch (e) { } }
   // a press on a bar filters the whole page (figures, the other lists, the table, the Analyse tab), as on the dashboard: one value
   // per list, each list filtered by the picks of the others
@@ -287,7 +289,8 @@ var D = window.FTO2_MFT_D;
   function selChips() { var ks = Object.keys(S.f); return ks.map(function (k) { return '<span class="chip">' + esc(lev(k) + COL() + shown(k, S.f[k])) + ' <button type="button" data-unsel="' + k + '" aria-label="' + esc(T('Retirer {x}', { x: lev(k) })) + '">✕</button></span>'; }).join('') +
     (ks.length > 1 ? '<button type="button" class="btn sm" data-unsel="*">' + esc(T('Tout retirer')) + '</button>' : ''); }
   // the NCs the page counts: the line, the type of production, and (by default, as the dashboard opens) only those FTO2 is liable for
-  function inScope(ni, line) { var n = NCS[ni], l = line || S.line; return (l === 'all' || DIC.line[n[2]] === l) && (!S.ph || DIC.phase[n[3]] === S.ph) && (!S.liab || n[8] === 1); }
+  function inScope(ni, line) { var n = NCS[ni], l = line || S.line; return (l === 'all' || DIC.line[n[2]] === l) && (!S.ph || DIC.phase[n[3]] === S.ph) && S.liab.indexOf(n[8]) >= 0; }
+  var LIABS = [['f', 'FTO2'], ['s', 'Fournisseurs'], ['o', 'Autres']];
   function lineName() { return S.line === 'all' ? T('Toutes les lignes') : S.line; }
   function onLine(a) { return S.line === 'all' || a.line === S.line; }
   function setRange(f, t) { S.from = Math.max(0, Math.min(f, t)); S.week = Math.max(f, t); S.per = S.week - S.from + 1; }
@@ -334,7 +337,10 @@ var D = window.FTO2_MFT_D;
   function renderControls() {
     seg($('lines'), [['all', T('Toutes')]].concat(LINES.map(function (x) { return [x[0], x[0]]; })), S.line, 'data-line');
     seg($('phases'), [['SERIE', T('Série')], ['REC', 'REC'], ['FTI', 'FTI'], ['', T('Tout')]], S.ph, 'data-ph');
-    seg($('liabs'), [['f', T('FTO2 responsable')], ['', T('Toutes')]], S.liab, 'data-liab');
+    var pw = per(), w0 = pw[0], w1 = pw[pw.length - 1], lc = {};   // the ticks, with how many NCs each holds in the weeks shown
+    NCS.forEach(function (n, i) { if (NCW[i] >= w0 && NCW[i] <= w1 && (S.line === 'all' || DIC.line[n[2]] === S.line) && (!S.ph || DIC.phase[n[3]] === S.ph)) lc[n[8]] = (lc[n[8]] || 0) + 1; });
+    $('liabMenu').innerHTML = LIABS.map(function (x) { return '<label><input type="checkbox" data-liabk="' + x[0] + '"' + (S.liab.indexOf(x[0]) >= 0 ? ' checked' : '') + '>' + esc(T(x[1])) + '<small>' + num(lc[x[0]] || 0) + '</small></label>'; }).join('');
+    $('liabTxt').textContent = S.liab === 'fso' ? T('Toutes') : LIABS.filter(function (x) { return S.liab.indexOf(x[0]) >= 0; }).map(function (x) { return T(x[1]); }).join(', ');
     var wkOpts = function (cur) { return WEEKS.map(function (w, i) { return i; }).reverse().map(function (i) { return '<option value="' + i + '"' + (i === cur ? ' selected' : '') + '>' + esc(wkLong(i) + (PARTIAL && i === NW - 1 ? ' (' + T('en cours') + ')' : SHUT[i] ? ' (' + T('fermeture') + ')' : '')) + '</option>'; }).join(''); };
     $('wkF').innerHTML = wkOpts(S.from); $('wk').innerHTML = wkOpts(S.week);
     seg($('per'), [[1, T('Semaine')], [4, T('1 mois')], [13, T('3 mois')], [0, T('Personnalisée')]], S.pm, 'data-per');
@@ -955,7 +961,7 @@ var D = window.FTO2_MFT_D;
     function it(line, lv, v, hist) { var k = line + '|' + lv + '|' + v; return items[k] || (items[k] = { key: k, line: line, lv: lv, v: v, w: z(), e: V[line], n: [], d: [], hist: !!hist }); }
     function add(o, i, id, dk) { o.w[i]++; (o.n[i] || (o.n[i] = [])).push(id); if (dk != null) (o.d[i] || (o.d[i] = [])).push(dk); if (i < w0) w0 = i; }
     function tally(m, k, v) { var q = m[k] || (m[k] = {}); q[v] = (q[v] || 0) + 1; }
-    var inPh = function (n) { return (!S.ph || DIC.phase[n[3]] === S.ph) && (!S.liab || n[8] === 1); };
+    var inPh = function (n) { return (!S.ph || DIC.phase[n[3]] === S.ph) && S.liab.indexOf(n[8]) >= 0; };
     DEFS.forEach(function (d, j) {
       var n = NCS[d[0]]; if (!inPh(n)) return;
       var l = DIC.line[n[2]], i = ALARM.week(n[1]); if (!V[l] || i < 0) return;
@@ -1056,13 +1062,18 @@ var D = window.FTO2_MFT_D;
   })();
 
   // ---------------------------------------------------------------- events
+  $('liabMenu').addEventListener('change', function (e) {   // the Responsabilité ticks; at least one stays, as on the dashboard
+    var on = Array.prototype.slice.call(document.querySelectorAll('#liabMenu input:checked')).map(function (x) { return x.getAttribute('data-liabk'); });
+    if (!on.length) { e.target.checked = true; return; }
+    S.liab = LIABS.map(function (x) { return x[0]; }).filter(function (k) { return on.indexOf(k) >= 0; }).join(''); remember(); renderAll(); $('liab').open = true;
+  });
+  document.addEventListener('click', function (e) { var d = $('liab'); if (d && d.open && !d.contains(e.target)) d.open = false; });
   document.addEventListener('click', function (e) {
     var t = e.target.closest('button, [data-wk]'); if (!t) return;
     var a = t.getAttribute.bind(t);
     if (a('data-lang')) { LANG = a('data-lang') === 'en' ? 'en' : 'fr'; try { localStorage.setItem('mft-fto2-lang', LANG); } catch (x) { } renderAll(); if (FORM && !$('ov').hidden) drawForm(); return; }
     if (a('data-line') != null) { S.line = a('data-line'); S.f = {}; S.lim = 40; remember(); renderAll(); return; }   // values differ by line: picks cleared
     if (a('data-ph') != null) { S.ph = a('data-ph'); remember(); renderAll(); return; }
-    if (a('data-liab') != null) { S.liab = a('data-liab'); remember(); renderAll(); return; }
     if (a('data-tab')) { S.tab = a('data-tab'); try { history.replaceState(null, '', '#' + S.tab); } catch (x) { } renderAll(); return; }
     if (a('data-k')) { var k = a('data-k'), v = a('data-v'); if (S.f[k] === v) delete S.f[k]; else S.f[k] = v; S.lim = 40; renderAll(); return; }
     if (a('data-unsel')) { var u = a('data-unsel'); if (u === '*') S.f = {}; else delete S.f[u]; S.lim = 40; renderAll(); return; }

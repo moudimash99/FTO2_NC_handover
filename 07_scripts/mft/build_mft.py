@@ -39,6 +39,15 @@ def tidy(s, n=320):
     return re.sub(r"\s+", " ", str(s)).strip()[:n]
 
 
+def liab_group(on_aec, liability):
+    """The NC's Responsabilité group, as the dashboard decides it (build/templates/model.js, liabCat): f when FTO2 is liable,
+    s when the liability is a supplier's number, o otherwise."""
+    if str(on_aec).strip() in ("1", "1.0"):
+        return "f"
+    code = re.sub(r"[\[\]\s]", "", str(liability)).lstrip("0")
+    return "s" if code.isdigit() else "o"
+
+
 def data():
     n = pd.read_csv(os.path.join(ROOT, "05_outputs", "fto2_dash_nc.csv"), dtype=str, keep_default_na=False, encoding="utf-8-sig")
     d = pd.read_csv(os.path.join(ROOT, "05_outputs", "fto2_dash_defects.csv"), dtype=str, keep_default_na=False, encoding="utf-8-sig")
@@ -57,9 +66,9 @@ def data():
 
     ncs, pos = [], {}
     for r in n.itertuples():
-        pos[r.nc] = len(ncs)   # [nc, date, line, phase, msn, station, where found, plan product, 1 if FTO2 is liable]
+        pos[r.nc] = len(ncs)   # [nc, date, line, phase, msn, station, where found, plan product, Responsabilité: f, s or o]
         ncs.append([r.nc, r.created[:10], code("line", r.line or "—"), code("phase", r.phase), code("msn", r.msn), code("station", r.station),
-                    code("where", r.where_found), code("prod", plan_prod(r.line, r.product, r.station)), 1 if str(r.on_aec).strip() in ("1", "1.0") else 0])
+                    code("where", r.where_found), code("prod", plan_prod(r.line, r.product, r.station)), liab_group(r.on_aec, r.liability)])
     defs = []
     for r in d.itertuples():
         i = pos.get(r.nc)

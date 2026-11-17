@@ -21,6 +21,8 @@ function mftFromTables(ncIn, defIn, R) {
   function isoWeek(s) { var d = new Date(s.slice(0, 10) + 'T00:00:00Z'), dw = (d.getUTCDay() + 6) % 7; d.setUTCDate(d.getUTCDate() - dw + 3);
     var y = d.getUTCFullYear(), j4 = new Date(Date.UTC(y, 0, 4)), w = 1 + Math.round(((d - j4) / 864e5 - 3 + ((j4.getUTCDay() + 6) % 7)) / 7); return y + '-W' + (w < 10 ? '0' : '') + w; }
   var plan = R.plan || {}, alias = R.alias || [];
+  // the NC's Responsabilité group, as the dashboard decides it (model.js liabCat): f FTO2 liable, s a supplier's number, o the others
+  function liabGroup(r) { if (Math.round(parseFloat(r.on_aec) || 0) === 1) return 'f'; var c = str(r.liability).replace(/[\[\]\s]/g, '').replace(/^0+/, ''); return /^\d+$/.test(c) ? 's' : 'o'; }
   function planProd(line, prod, station) {   // build_all.alias_product, then the plan's name; '' when not in the plan
     var p = prod || 'Other';
     if (!plan[p.toUpperCase()]) for (var i = 0; i < alias.length; i++) { var x = alias[i];
@@ -38,7 +40,7 @@ function mftFromTables(ncIn, defIn, R) {
   var ncs = [], pos = {}, to = '';
   n.forEach(function (x) { var r = x.r, c = x.created.slice(0, 10), k = id(r.nc); pos[k] = ncs.length; if (c > to) to = c;
     ncs.push([k, c, code('line', str(r.line) || '—'), code('phase', r.phase), code('msn', id(r.msn)), code('station', r.station), code('where', r.where_found),
-      code('prod', planProd(str(r.line), str(r.product), str(r.station))), Math.round(parseFloat(r.on_aec) || 0) === 1 ? 1 : 0]); });   // last: 1 if FTO2 is liable
+      code('prod', planProd(str(r.line), str(r.product), str(r.station))), liabGroup(r)]); });   // last: the Responsabilité group
   var defs = [];
   rows(defIn).forEach(function (r) { var i = pos[id(r.nc)]; if (i == null) return;
     defs.push([i, code('cat', r.cat), code('rca', r.rca), code('sub', r.sub), code('code', r.subcode), code('fin', r.fin), Math.round(parseFloat(r.minor) || 0), tidy(r.text)]); });
