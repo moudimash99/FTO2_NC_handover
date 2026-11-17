@@ -57,9 +57,9 @@ def data():
 
     ncs, pos = [], {}
     for r in n.itertuples():
-        pos[r.nc] = len(ncs)   # [nc, date, line, phase, msn, station, where found, plan product]
+        pos[r.nc] = len(ncs)   # [nc, date, line, phase, msn, station, where found, plan product, 1 if FTO2 is liable]
         ncs.append([r.nc, r.created[:10], code("line", r.line or "—"), code("phase", r.phase), code("msn", r.msn), code("station", r.station),
-                    code("where", r.where_found), code("prod", plan_prod(r.line, r.product, r.station))])
+                    code("where", r.where_found), code("prod", plan_prod(r.line, r.product, r.station)), 1 if str(r.on_aec).strip() in ("1", "1.0") else 0])
     defs = []
     for r in d.itertuples():
         i = pos.get(r.nc)

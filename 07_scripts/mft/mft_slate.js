@@ -38,7 +38,7 @@ function mftFromTables(ncIn, defIn, R) {
   var ncs = [], pos = {}, to = '';
   n.forEach(function (x) { var r = x.r, c = x.created.slice(0, 10), k = id(r.nc); pos[k] = ncs.length; if (c > to) to = c;
     ncs.push([k, c, code('line', str(r.line) || '—'), code('phase', r.phase), code('msn', id(r.msn)), code('station', r.station), code('where', r.where_found),
-      code('prod', planProd(str(r.line), str(r.product), str(r.station)))]); });
+      code('prod', planProd(str(r.line), str(r.product), str(r.station))), Math.round(parseFloat(r.on_aec) || 0) === 1 ? 1 : 0]); });   // last: 1 if FTO2 is liable
   var defs = [];
   rows(defIn).forEach(function (r) { var i = pos[id(r.nc)]; if (i == null) return;
     defs.push([i, code('cat', r.cat), code('rca', r.rca), code('sub', r.sub), code('code', r.subcode), code('fin', r.fin), Math.round(parseFloat(r.minor) || 0), tidy(r.text)]); });

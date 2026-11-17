@@ -194,6 +194,7 @@ header.top .al-wrap { margin-left: auto; }
   <div class="brand"><b data-i>MFT Qualité FTO2</b><span id="asof"></span></div>
   <div class="ctl"><label id="lLine" data-i>Ligne</label><div class="seg" role="group" aria-labelledby="lLine" id="lines"></div></div>
   <div class="ctl"><label id="lPh" data-i>Production</label><div class="seg" role="group" aria-labelledby="lPh" id="phases"></div></div>
+  <div class="ctl"><label id="lLiab" data-i>Responsabilité</label><div class="seg" role="group" aria-labelledby="lLiab" id="liabs"></div></div>
   <div class="ctl per"><label id="lPer" data-i>Période</label><div class="seg" role="group" aria-labelledby="lPer" id="per"></div><label for="wkF" id="lF" data-i>du</label><select id="wkF"></select><label for="wk" id="lT" data-i>au</label><select id="wk"></select></div>
   <div class="al-wrap" id="alWrap"><button type="button" class="al-btn" id="alBtn" aria-haspopup="dialog" aria-expanded="false" aria-controls="alPop" aria-label="Alarmes" data-ia hidden><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M12 2.5a6.5 6.5 0 0 0-6.5 6.5v3.4l-1.8 3.1A1 1 0 0 0 4.6 17h14.8a1 1 0 0 0 .9-1.5l-1.8-3.1V9A6.5 6.5 0 0 0 12 2.5zm-2.6 16a2.7 2.7 0 0 0 5.2 0z"/></svg><span class="al-n" id="alN" hidden></span></button>
     <div class="al-pop" id="alPop" role="dialog" aria-labelledby="alT" hidden></div></div>
@@ -314,7 +315,7 @@ var D = JSON.parse(document.getElementById('mft-data').textContent);   // the da
     'Catégorie': 'Category', 'Sous-catégorie': 'Sub-category', 'Sous-code': 'Sub-code', 'Code': 'Code', 'Lieu de détection': 'Where found', 'Produit': 'Product', 'Texte du défaut': 'Defect text',
     'est l’une des valeurs': 'is one of the values', 'contient l’un des mots': 'contains one of the words', 'expression régulière': 'regular expression',
     'À lancer': 'To start', 'En cours': 'In progress', 'Clos': 'Closed', 'Abandonnée': 'Dropped',
-    'Retirer {x}': 'Remove {x}', 'Tout retirer': 'Remove all', 'Toutes les lignes': 'All lines', 'Toutes': 'All', 'Tout': 'All', 'Série': 'Series',
+    'Retirer {x}': 'Remove {x}', 'Tout retirer': 'Remove all', 'Toutes les lignes': 'All lines', 'Toutes': 'All', 'Tout': 'All', 'Série': 'Series', 'Responsabilité': 'Liability', 'FTO2 responsable': 'FTO2 liable',
     'en cours': 'in progress', 'fermeture': 'shutdown', 'Semaine': 'Week', '1 mois': '1 month', '3 mois': '3 months', 'Personnalisée': 'Custom', 'Jusqu’à la semaine': 'Up to week',
     'Données au {d}': 'Data as of {d}', 'Ouvertes': 'Open', 'Closes': 'Closed',
     'A400M : les textes des NC sont masqués, aucun défaut n’est lu.': 'A400M: the NC texts are hidden, no defect is read.', 'Aucun défaut sur la période.': 'No defect in the period.',
@@ -419,16 +420,17 @@ var D = JSON.parse(document.getElementById('mft-data').textContent);   // the da
 
   // ---------------------------------------------------------------- state
   var LINES = (function () { var c = {}; NCS.forEach(function (n) { var l = DIC.line[n[2]]; if (l && l !== '—') c[l] = (c[l] || 0) + 1; }); return Object.keys(c).sort(function (a, b) { return c[b] - c[a]; }).map(function (l) { return [l, c[l]]; }); })();
-  var S = { line: LINES.length ? LINES[0][0] : 'all', from: LASTC, week: LASTC, pm: 1, mk: false, ph: 'SERIE', tab: 'pareto', cnt: 'def', per: 1, f: {}, lim: 40, fSt: 'open' };   // from..week: the weeks shown, per: how many; pm: 1, 4 or 13 weeks ending at week, 0 = chosen freely
-  try { var sv = JSON.parse(localStorage.getItem('mft-fto2') || '{}'); if (sv.line && (sv.line === 'all' || LINES.some(function (x) { return x[0] === sv.line; }))) S.line = sv.line; if (sv.ph != null) S.ph = sv.ph; S.mk = !!sv.mk; if (sv.cnt === 'nc') S.cnt = 'nc'; } catch (e) { }
-  function remember() { try { localStorage.setItem('mft-fto2', JSON.stringify({ line: S.line, ph: S.ph, mk: S.mk, cnt: S.cnt })); } catch (e) { } }
+  var S = { line: LINES.length ? LINES[0][0] : 'all', from: LASTC, week: LASTC, pm: 1, mk: false, ph: 'SERIE', liab: 'f', tab: 'pareto', cnt: 'def', per: 1, f: {}, lim: 40, fSt: 'open' };   // from..week: the weeks shown, per: how many; pm: 1, 4 or 13 weeks ending at week, 0 = chosen freely
+  try { var sv = JSON.parse(localStorage.getItem('mft-fto2') || '{}'); if (sv.line && (sv.line === 'all' || LINES.some(function (x) { return x[0] === sv.line; }))) S.line = sv.line; if (sv.ph != null) S.ph = sv.ph; if (sv.liab === '' || sv.liab === 'f') S.liab = sv.liab; S.mk = !!sv.mk; if (sv.cnt === 'nc') S.cnt = 'nc'; } catch (e) { }
+  function remember() { try { localStorage.setItem('mft-fto2', JSON.stringify({ line: S.line, ph: S.ph, liab: S.liab, mk: S.mk, cnt: S.cnt })); } catch (e) { } }
   // a press on a bar filters the whole page (figures, the other lists, the table, the Analyse tab), as on the dashboard: one value
   // per list, each list filtered by the picks of the others
   function selOk(d, except) { for (var k in S.f) { if (k !== except && fld(d, k) !== S.f[k]) return false; } return true; }
   function anySel() { return Object.keys(S.f).length > 0; }
   function selChips() { var ks = Object.keys(S.f); return ks.map(function (k) { return '<span class="chip">' + esc(lev(k) + COL() + shown(k, S.f[k])) + ' <button type="button" data-unsel="' + k + '" aria-label="' + esc(T('Retirer {x}', { x: lev(k) })) + '">✕</button></span>'; }).join('') +
     (ks.length > 1 ? '<button type="button" class="btn sm" data-unsel="*">' + esc(T('Tout retirer')) + '</button>' : ''); }
-  function inScope(ni, line) { var n = NCS[ni], l = line || S.line; return (l === 'all' || DIC.line[n[2]] === l) && (!S.ph || DIC.phase[n[3]] === S.ph); }
+  // the NCs the page counts: the line, the type of production, and (by default, as the dashboard opens) only those FTO2 is liable for
+  function inScope(ni, line) { var n = NCS[ni], l = line || S.line; return (l === 'all' || DIC.line[n[2]] === l) && (!S.ph || DIC.phase[n[3]] === S.ph) && (!S.liab || n[8] === 1); }
   function lineName() { return S.line === 'all' ? T('Toutes les lignes') : S.line; }
   function onLine(a) { return S.line === 'all' || a.line === S.line; }
   function setRange(f, t) { S.from = Math.max(0, Math.min(f, t)); S.week = Math.max(f, t); S.per = S.week - S.from + 1; }
@@ -475,6 +477,7 @@ var D = JSON.parse(document.getElementById('mft-data').textContent);   // the da
   function renderControls() {
     seg($('lines'), [['all', T('Toutes')]].concat(LINES.map(function (x) { return [x[0], x[0]]; })), S.line, 'data-line');
     seg($('phases'), [['SERIE', T('Série')], ['REC', 'REC'], ['FTI', 'FTI'], ['', T('Tout')]], S.ph, 'data-ph');
+    seg($('liabs'), [['f', T('FTO2 responsable')], ['', T('Toutes')]], S.liab, 'data-liab');
     var wkOpts = function (cur) { return WEEKS.map(function (w, i) { return i; }).reverse().map(function (i) { return '<option value="' + i + '"' + (i === cur ? ' selected' : '') + '>' + esc(wkLong(i) + (PARTIAL && i === NW - 1 ? ' (' + T('en cours') + ')' : SHUT[i] ? ' (' + T('fermeture') + ')' : '')) + '</option>'; }).join(''); };
     $('wkF').innerHTML = wkOpts(S.from); $('wk').innerHTML = wkOpts(S.week);
     seg($('per'), [[1, T('Semaine')], [4, T('1 mois')], [13, T('3 mois')], [0, T('Personnalisée')]], S.pm, 'data-per');
@@ -871,13 +874,13 @@ var D = JSON.parse(document.getElementById('mft-data').textContent);   // the da
   function alCompute() {
     var V = D.vol; if (!V) return null;
     var wi = S.week; if (PARTIAL && wi === NW - 1) wi--;
-    var wk = WEEKS[wi] || '', last = wk.slice(0, 4) === YEAR ? +wk.slice(6) - 1 : -1, key = [S.ph, last, ACTIONS.length, ACTIONS.map(function (a) { return a.id + a.status + a.actionStart; }).join()].join('|');
+    var wk = WEEKS[wi] || '', last = wk.slice(0, 4) === YEAR ? +wk.slice(6) - 1 : -1, key = [S.ph, S.liab, last, ACTIONS.length, ACTIONS.map(function (a) { return a.id + a.status + a.actionStart; }).join()].join('|');
     if (key === AL.sigK) return AL.res;
     var items = {}, planes = {}, cnt = { rca: {}, code: {} }, w0 = 53, z = function () { var a = []; for (var i = 0; i < 53; i++) a.push(0); return a; }, ME = D.msnEnd || {};
     function it(line, lv, v, hist) { var k = line + '|' + lv + '|' + v; return items[k] || (items[k] = { key: k, line: line, lv: lv, v: v, w: z(), e: V[line], n: [], d: [], hist: !!hist }); }
     function add(o, i, id, dk) { o.w[i]++; (o.n[i] || (o.n[i] = [])).push(id); if (dk != null) (o.d[i] || (o.d[i] = [])).push(dk); if (i < w0) w0 = i; }
     function tally(m, k, v) { var q = m[k] || (m[k] = {}); q[v] = (q[v] || 0) + 1; }
-    var inPh = function (n) { return !S.ph || DIC.phase[n[3]] === S.ph; };
+    var inPh = function (n) { return (!S.ph || DIC.phase[n[3]] === S.ph) && (!S.liab || n[8] === 1); };
     DEFS.forEach(function (d, j) {
       var n = NCS[d[0]]; if (!inPh(n)) return;
       var l = DIC.line[n[2]], i = ALARM.week(n[1]); if (!V[l] || i < 0) return;
@@ -984,6 +987,7 @@ var D = JSON.parse(document.getElementById('mft-data').textContent);   // the da
     if (a('data-lang')) { LANG = a('data-lang') === 'en' ? 'en' : 'fr'; try { localStorage.setItem('mft-fto2-lang', LANG); } catch (x) { } renderAll(); if (FORM && !$('ov').hidden) drawForm(); return; }
     if (a('data-line') != null) { S.line = a('data-line'); S.f = {}; S.lim = 40; remember(); renderAll(); return; }   // values differ by line: picks cleared
     if (a('data-ph') != null) { S.ph = a('data-ph'); remember(); renderAll(); return; }
+    if (a('data-liab') != null) { S.liab = a('data-liab'); remember(); renderAll(); return; }
     if (a('data-tab')) { S.tab = a('data-tab'); try { history.replaceState(null, '', '#' + S.tab); } catch (x) { } renderAll(); return; }
     if (a('data-k')) { var k = a('data-k'), v = a('data-v'); if (S.f[k] === v) delete S.f[k]; else S.f[k] = v; S.lim = 40; renderAll(); return; }
     if (a('data-unsel')) { var u = a('data-unsel'); if (u === '*') S.f = {}; else delete S.f[u]; S.lim = 40; renderAll(); return; }
