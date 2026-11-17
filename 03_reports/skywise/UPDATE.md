@@ -93,7 +93,7 @@ If the Slate functions are set up on the dashboard, paste their three files agai
 ## 5. Checks
 
 - The dashboard opens with the date *Données au…* of the latest NC and shows this year only. Deep dive › Pareto ends with
-  *Les causes mois par mois*; the main charts have a **PNG** button.
+  *Les causes mois par mois*; every chart has an **⤓ Image** button; under *Détail des NC*, two CSV downloads.
 - Change the target in the sheet *Target and pages* (for example 0.25 to 0.30), wait for the sheet to sync, reload the
   dashboard: Deep dive, the Production tab says *Objectif = taux* of last year *− 30 %*. Put the value back.
 - The MFT page opens with *Responsabilité: FTO2*. On the *Suivi des actions* tab, change an action (for example its weekly

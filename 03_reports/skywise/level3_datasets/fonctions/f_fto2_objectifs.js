@@ -192,6 +192,13 @@ try {
     var LINES = lineOrder(REP.map(function (n) { return n[3]; }));
     var GF0 = { pick: null, src: 'all', org: '', fto2: true, liab: SET.defauts.liab, cost: 'fto2', phase: SET.defauts.phase, line: '', preset: SET.defauts.preset, from: '', to: '' }, GF = Object.assign({}, GF0);
     var PRESETS = ['ytd', 'm1', 'mp', 'm3', 'm6', 'm12', 'all', 'custom'];
+    // the data source [39] (sky Skywise, gps the GPS register, test the Test list) and the pipeline output [41] (normal, missing_ids):
+    // the ticks of one list on the page. GF.src: 'all', else the ticked sources joined by | ('man': both lists, as before 17 Nov);
+    // GF.org: '' for both outputs, else the one ticked
+    var SRCS = ['sky', 'gps', 'test'], ORGS = ['normal', 'missing_ids'];
+    function srcOn(k) { return GF.src === 'all' || (GF.src === 'man' ? k !== 'sky' : GF.src.split('|').indexOf(k) >= 0); }
+    function srcOk(n) { return srcOn(n[39]); }
+    function orgOk(n) { return !GF.org || GF.org.split('|').indexOf(n[41] || 'normal') >= 0; }
     function plusDays(iso, k) { var d = new Date(iso + 'T12:00:00Z'); d.setUTCDate(d.getUTCDate() + k); return isoDay(d); }
     function minusMonths(iso, k) { var d = new Date(iso + 'T12:00:00Z'), dd = d.getUTCDate(); d.setUTCDate(1); d.setUTCMonth(d.getUTCMonth() - k); d.setUTCDate(Math.min(dd, new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth() + 1, 0)).getUTCDate())); return isoDay(d); }
     // presets end on the last NC of the extract; m1: the last 30 days; mp: the last full month (in November, all of October; the
@@ -221,8 +228,7 @@ try {
     }
     function gNc(n, anyLine) {
       if (!n) return false;
-      if (GF.src !== 'all' && (GF.src === 'man' ? n[39] === 'sky' : n[39] !== GF.src)) return false;
-      if (GF.org && (n[41] || 'normal') !== GF.org) return false;   // [41] the pipeline output the NC comes from: normal or missing_ids
+      if (!srcOk(n) || !orgOk(n)) return false;
       if (GF.liab !== 'fso' && GF.liab.indexOf(liabCat(n)) < 0) return false;   // "Responsabilité" ticks (3 Nov): FTO2 only by default
       if (GF.pick && !pickNc(n)) return false;
       if (GF.phase && n[24] !== GF.phase) return false;
@@ -460,7 +466,7 @@ try {
     // a sub-code that only says the defect has none yet: "T04 (non précisé)" (a new line not yet labelled by the AI pass), "Non codé".
     // New lines all land there until they are labelled, which looks like a rise: no alarm on them (3 Nov)
     var PLACEHOLDER = new RegExp(window.FTO2_PLACEHOLDER);   // sub-codes "not specified": no alarm on them (config/2_reglages_pages.csv)
-    function alNc(n) { return ours(n) && n[23] !== 'client' && (!GF.phase || n[24] === GF.phase) && (GF.src === 'all' || (GF.src === 'man' ? n[39] !== 'sky' : n[39] === GF.src)) && (!GF.org || (n[41] || 'normal') === GF.org) && (GF.liab === 'fso' || GF.liab.indexOf(liabCat(n)) >= 0); }
+    function alNc(n) { return ours(n) && n[23] !== 'client' && (!GF.phase || n[24] === GF.phase) && srcOk(n) && orgOk(n) && (GF.liab === 'fso' || GF.liab.indexOf(liabCat(n)) >= 0); }
     function alCompute(at) {   // at: a week index instead of the period's end (checks)
       var E = D.eqmsn && D.eqmsn.wdw; if (!E) return null;
       var last = at != null ? at : ALARM.lastDone(GF.to < D.meta.to ? GF.to : D.meta.to), k = [GF.phase, GF.src, GF.org, GF.liab, last, G.lang].join('|');

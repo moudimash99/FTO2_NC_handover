@@ -59,8 +59,8 @@ function fto2Reglages(SET, v) {
     ['defaut_responsabilite', 'letters among f, s, o', function (x) { var t = text(x).toLowerCase();
       return t && !/[^fso]/.test(t) ? 'fso'.split('').filter(function (c) { return t.indexOf(c) >= 0; }).join('') : undefined; },
       function () { return DEF.liab; }, function (x) { DEF.liab = x; }],
-    ['defaut_periode', 'one of ytd, m1, m3, m6, m12, all', function (x) { var t = text(x).toLowerCase();
-      return ['ytd', 'm1', 'm3', 'm6', 'm12', 'all'].indexOf(t) >= 0 ? t : undefined; }, function () { return DEF.preset; }, function (x) { DEF.preset = x; }],
+    ['defaut_periode', 'one of ytd, m1, mp, m3, m6, m12, all', function (x) { var t = text(x).toLowerCase();
+      return ['ytd', 'm1', 'mp', 'm3', 'm6', 'm12', 'all'].indexOf(t) >= 0 ? t : undefined; }, function () { return DEF.preset; }, function (x) { DEF.preset = x; }],
     ['action_objectif_baisse', 'a share (0.3, 0,3 or 30 %)', share, function () { return SET.action_baisse; },
       function (x) { SET.action_baisse = x; SET.action_coef = coef(x); }],
     ['action_semaines_tenues', 'a whole number of weeks, 1 or more', function (x) { var n = num(x); return n != null && n >= 1 && Math.floor(n) === n ? n : undefined; },
@@ -1365,6 +1365,8 @@ var D = window.FTO2_MFT_D;
 (function () {
   var MSG = {
     wait: 'Chargement des données Slate… / Loading the Slate data…',
+    nostore: ['Enregistrement impossible : la requête q_fto2_mft_store n’a pas répondu (vérifiez qu’elle existe dans l’app et s’exécute, et la ligne "store" de l’état). Les actions modifiées ici seront perdues au rechargement.',
+      'Saving impossible: the query q_fto2_mft_store did not answer (check it exists in the app and runs, and the line "store" of the state). Actions changed here will be lost on reload.'],
     empty: 'La requête q_fto2_nc n’a renvoyé aucune ligne : vérifiez la requête et son jeu de données. / The q_fto2_nc query returned no row: check the query and its dataset.',
     noapi: 'État Slate introuvable : ce JavaScript doit tourner dans un code sandbox Slate dont l’état contient les deux requêtes (voir state.json). / No Slate state: this JavaScript must run in a Slate code sandbox whose state holds the two queries (see state.json).',
     slow: 'Toujours en attente de {q} : vérifiez que la requête existe, porte ce nom et s’exécute sans erreur. / Still waiting for {q}: check that the query exists, has this name and runs without error.',
@@ -1381,7 +1383,7 @@ var D = window.FTO2_MFT_D;
   function parse(v) { if (typeof v !== 'string') return v; var s = v.trim(); if (!s) return null; try { return JSON.parse(s); } catch (e) { return null; } }
   function count(t) { if (!t) return 0; if (Array.isArray(t)) return t.length; var k = Object.keys(t); for (var i = 0; i < k.length; i++) if (t[k[i]] && t[k[i]].length) return t[k[i]].length; return 0; }
   function loaded(t) { return !!t && (Array.isArray(t) || Object.keys(t).length > 0); }
-  var got = {}, started = false, api = null, rgTimer = null, shared = null, storeLate = false;
+  var got = {}, started = false, api = null, rgTimer = null, stTimer = null, shared = null, storeLate = false;
   function stateKeys() { var st = {}; try { st = (api.getState && api.getState()) || {}; } catch (e) { } return st; }
   function tryStart() {
     if (started) return;
@@ -1391,6 +1393,13 @@ var D = window.FTO2_MFT_D;
     var st0 = stateKeys(), has = function (k) { return k in st0 || got[k] != null; };   // a key of the state, or a value arrived for it
     if (has('reglages') && !loaded(parse(got.reglages)) && rgTimer !== 'over') {   // the Fusion sheet's settings: a few seconds to arrive
       if (!rgTimer) rgTimer = setTimeout(function () { rgTimer = 'over'; tryStart(); }, 8000);
+      return;
+    }
+    // the actions kept for everyone: the query q_fto2_mft_store may answer after the NCs, and with no row while the store is
+    // empty: a few seconds for it, and any answer counts (17 Nov: a page started before it had answered kept the actions in the
+    // browser, which Slate blocks)
+    if (!has('store') && stTimer !== 'over') {
+      if (!stTimer) stTimer = setTimeout(function () { stTimer = 'over'; tryStart(); }, 8000);
       return;
     }
     started = true;
@@ -1406,6 +1415,9 @@ var D = window.FTO2_MFT_D;
         shared = window.FTO2_STORE = fto2SharedStore(api, window.FTO2_STORE, R.mft.actions || []);
         if (got.store !== undefined) shared.take(got.store);
         setTimeout(function () { if (!shared.ready()) { storeLate = true; status(MSG.store, true); } }, 20000);
+      } else if (window.FTO2_STORE && window.FTO2_STORE.note) {   // no answer from q_fto2_mft_store: say so, rather than blame the browser
+        var note0 = window.FTO2_STORE.note;
+        window.FTO2_STORE.note = function (lang) { var t = note0(lang); return /bloque|blocks/.test(t) ? MSG.nostore[lang === 'en' ? 1 : 0] : t; };
       }
       status(''); mftMain();
     } catch (e) { showError((e && e.message) || String(e)); }
@@ -1416,7 +1428,7 @@ var D = window.FTO2_MFT_D;
     if (!api || !api.watch) { showError(MSG.noapi); return; }
     status(MSG.wait);
     api.watch('store', function (v) {   // each answer of q_fto2_mft_store: after a Submit, once the query has run again
-      got.store = v; if (!shared) return;
+      got.store = v; if (!shared) { tryStart(); return; }
       shared.take(v);
       if (storeLate && shared.ready()) { storeLate = false; status(''); }
     });

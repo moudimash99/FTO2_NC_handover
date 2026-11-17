@@ -111,6 +111,8 @@
 .fto2 .fb-menu label { display: flex; align-items: center; gap: 9px; padding: 7px 10px; border-radius: 6px; font-size: 14px; cursor: pointer; white-space: nowrap; color: var(--ink); text-transform: none; letter-spacing: 0; font-weight: 400; }
 .fto2 .fb-menu label:hover { background: var(--band); }
 .fto2 .fb-menu input { width: 16px; height: 16px; accent-color: var(--s1); margin: 0; }
+.fto2 .csv-row { grid-column: 1 / -1; width: 100%; display: flex; flex-wrap: wrap; justify-content: flex-start; align-items: center; gap: 8px 10px; margin: 10px 0 4px; font-size: 13px; color: var(--muted); text-align: left; }
+.fto2 .fb-menu .fb-mh { font-size: 11.5px; color: var(--muted); padding: 6px 10px 2px; text-transform: uppercase; letter-spacing: .04em; }
 .fto2 .fb-menu small { color: var(--muted); margin-left: auto; padding-left: 12px; font-variant-numeric: tabular-nums; }
 .fto2 .fb-reset { font: inherit; font-size: 13px; color: var(--s1); background: none; border: 1px solid var(--ring); border-radius: 6px; padding: 5px 12px; cursor: pointer; }
 .fto2 .fb-note { font-size: 11.5px; color: var(--muted); max-width: 16em; line-height: 1.3; }
@@ -568,7 +570,7 @@
   grid-template-areas: "rca line fin" "rca waf fin" "code code code"; }
 .fto2 .v2par { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; align-items: stretch; margin: 6px 0 28px; }
 .fto2 #parTop > .v2-band, .fto2 #pgl > .v2-band, .fto2 #kgl > .v2-band { grid-column: auto; }
-.fto2 #parTop > [data-v2="a:flow"], .fto2 #parTop > [data-v2="78"], .fto2 #parTop > [data-v2="a:cmo"], .fto2 #parFold [data-v2="VK"] { grid-column: 1 / -1; }
+.fto2 #parTop > [data-v2="a:flow"], .fto2 #parTop > [data-v2="VQ"], .fto2 #parTop > [data-v2="a:cmo"], .fto2 #parFold [data-v2="VK"] { grid-column: 1 / -1; }
 .fto2 .cmo-ctl { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin: 2px 0 8px; }
 .fto2 .cmo-ctl .grpseg { margin: 0; }
 .fto2 .cmo-n { display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; color: var(--ink-2); }
@@ -752,10 +754,11 @@
 .fto2 .vu .vu-band .bhead { position: relative; padding-right: 40px; }
 .fto2 .vu-x { display: none; }
 .fto2 .v2-band.png-b { position: relative; }
-.fto2 .v2-band.png-b > .bhead { padding-right: 48px; }
+.fto2 .v2-band.png-b:not(:has(.mk-body svg)) .png-x { display: none; }
+.fto2 .v2-band.png-b > .bhead { padding-right: 84px; }
 .fto2 .png-x { position: absolute; top: 12px; right: 12px; display: inline-grid; place-items: center; height: 26px; padding: 0 7px; font: inherit; font-size: 10.5px; font-weight: 700; letter-spacing: .06em; line-height: 1; color: var(--muted); background: transparent; border: 1px solid var(--ring); border-radius: 7px; cursor: pointer; opacity: .6; }
 .fto2 .png-x:hover, .fto2 .png-x:focus-visible { opacity: 1; color: var(--ink); background: var(--surface); }
-.fto2 .vu .vu-band.png-b .bhead { padding-right: 76px; }
+.fto2 .vu .vu-band.png-b .bhead { padding-right: 112px; }
 .fto2 .vu .vu-band .bhead .png-x { top: 2px; right: 36px; }
 .fto2 .vu .vu-x { display: inline-grid; place-items: center; position: absolute; top: 0; right: 0; width: 30px; height: 30px; font: inherit; font-size: 15px; line-height: 1; color: var(--muted); background: transparent; border: 1px solid transparent; border-radius: 8px; padding: 0; cursor: pointer; opacity: .7; transition: opacity .2s, border-color .2s, color .2s; }
 .fto2 .vu .vu-band:hover .vu-x, .fto2 .vu .vu-x:focus-visible { opacity: 1; color: var(--ink); border-color: var(--ring); background: var(--surface); }

@@ -22,8 +22,7 @@
     <section class="fbar" aria-labelledby="fbLab">
       <h2 class="fb-title" id="fbLab" data-t="fbTitle"></h2>
       <div class="fb-row">
-        <div class="fb"><label for="gSrc" data-t="fSrc"></label><select id="gSrc"></select></div>
-        <div class="fb"><label for="gOrg" data-t="fOrg"></label><select id="gOrg"></select></div>
+        <div class="fb" id="gSrcBox"><span id="gSrcLab" data-t="fSrc"></span><details class="fb-multi" id="gSrcD"><summary id="gSrcTxt" aria-describedby="gSrcLab"></summary><div class="fb-menu" id="gSrcMenu"></div></details></div>
         <div class="fb" id="gPlantBox"><span id="gPlantLab" data-t="fPlant"></span><button type="button" role="switch" class="switch" id="gPlant" aria-labelledby="gPlantLab"><i aria-hidden="true"></i><b id="gPlantTxt"></b></button><small class="fb-note" id="gPlantNote" hidden></small></div>
         <div class="fb" id="gLiabBox"><span id="gLiabLab" data-t="fLiab"></span><details class="fb-multi" id="gLiab"><summary id="gLiabTxt" aria-describedby="gLiabLab"></summary><div class="fb-menu" id="gLiabMenu"></div></details></div>
         <div class="fb"><span id="gPhLab" data-t="fPhase"></span><div class="seg" role="radiogroup" aria-labelledby="gPhLab" id="gPhase"></div></div>
@@ -36,7 +35,7 @@
         <span class="fb-pick" id="gPick" hidden><span id="gPickTxt"></span><button type="button" id="gPickX" aria-label="✕">✕</button></span>
         <button type="button" class="fb-reset" id="gReset" data-t="fReset" hidden></button>
       </div>
-      <div class="fb-sumrow"><p class="fb-sum" id="fbSum" aria-live="polite"></p><button type="button" class="fb-info" id="gInfoBtn" aria-expanded="false" aria-controls="gInfo"><span aria-hidden="true">ⓘ</span> <span data-t="infoBtn"></span></button><button type="button" class="fb-info" id="gCsvBtn"><span aria-hidden="true">⤓</span> <span data-t="csvBtn"></span></button></div>
+      <div class="fb-sumrow"><p class="fb-sum" id="fbSum" aria-live="polite"></p><button type="button" class="fb-info" id="gInfoBtn" aria-expanded="false" aria-controls="gInfo"><span aria-hidden="true">ⓘ</span> <span data-t="infoBtn"></span></button></div>
       <div class="fb-funnel" id="gInfo" hidden></div>
     </section>
   </header>
@@ -75,6 +74,7 @@
         <div class="table-wrap"><table><thead><tr id="nth"></tr></thead><tbody id="ntb"></tbody></table></div>
         <button type="button" class="more" id="nm" hidden></button>
       </div></details>
+    <div class="csv-row"><span data-t="csvLab"></span><button type="button" class="fb-info" data-csv="short"><span aria-hidden="true">⤓</span> <span data-t="csvShort"></span></button><button type="button" class="fb-info" data-csv="full"><span aria-hidden="true">⤓</span> <span data-t="csvFull"></span></button></div>
   </div>
 
   <!-- 2. Pareto: volume (defects) or cost, same breakdowns -->
@@ -190,6 +190,7 @@
         <div class="table-wrap"><table><thead><tr id="whTh"></tr></thead><tbody id="whTb"></tbody></table></div>
         <button type="button" class="more" id="whM" hidden></button>
       </div></details>
+    <div class="csv-row"><span data-t="csvLab"></span><button type="button" class="fb-info" data-csv="short"><span aria-hidden="true">⤓</span> <span data-t="csvShort"></span></button><button type="button" class="fb-info" data-csv="full"><span aria-hidden="true">⤓</span> <span data-t="csvFull"></span></button></div>
   </div>
 
   <!-- Never shown: the cards of the Analyses charts are made here, then placed in the tabs (v2Build) -->

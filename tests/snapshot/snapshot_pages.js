@@ -71,8 +71,15 @@ async function dashStep(p, s) {
   else if (kind === 'cost') await p.click(`#gCost [data-cost="${a}"]`);
   else if (kind === 'line') await p.selectOption('#gLine', a);
   else if (kind === 'preset') await p.selectOption('#gPreset', a);
-  else if (kind === 'src') await p.selectOption('#gSrc', a);
-  else if (kind === 'org') await p.selectOption('#gOrg', a);
+  else if (kind === 'src' || kind === 'org') {   // the ticks of the source list: only those of the value ('man': both lists)
+    const on = kind === 'src' ? (a === 'man' ? ['gps', 'test'] : a.split('|')) : a.split('|'), at = kind === 'src' ? 'data-src' : 'data-org';
+    await p.click('#gSrcTxt');
+    for (const want of [true, false]) for (const el of await p.$$('[' + at + ']')) {   // ticks on first, so one always stays
+      const k = await el.getAttribute(at), checked = await el.isChecked();
+      if (on.includes(k) === want && checked !== want) { await el.click(); await p.waitForTimeout(150); }
+    }
+    await p.click('body', { position: { x: 2, y: 2 } });
+  }
   else if (kind === 'plant') await p.click('#gPlant');
   else if (kind === 'minor') await p.evaluate((id) => document.getElementById(id).click(), a ? 'miIn' : 'miOut');   // the switch is hidden on some tabs
   else if (kind === 'dates') {
