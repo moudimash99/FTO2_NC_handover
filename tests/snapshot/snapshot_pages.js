@@ -49,9 +49,7 @@ const DASH_VIEWS = [
   { name: 'plant switch off', steps: [['plant']] },
   { name: 'source gps', steps: [['src', 'gps']] },
   { name: 'source test', steps: [['src', 'test']] },
-  { name: 'source manual lists', steps: [['src', 'man']] },
   { name: 'source skywise', steps: [['src', 'sky']] },
-  { name: 'origin missing ids', steps: [['org', 'missing_ids']] },
   { name: 'minor defects out', steps: [['minor', false]] },
   { name: 'pick category', steps: [['pick', 'cat|Erreur Branchement']] },
   { name: 'pick cause', steps: [['pick', 'rca|Inversion']] },
@@ -71,16 +69,7 @@ async function dashStep(p, s) {
   else if (kind === 'cost') await p.click(`#gCost [data-cost="${a}"]`);
   else if (kind === 'line') await p.selectOption('#gLine', a);
   else if (kind === 'preset') await p.selectOption('#gPreset', a);
-  else if (kind === 'src' || kind === 'org') {   // the ticks of the source list: only those of the value ('man': both lists)
-    const on = kind === 'src' ? (a === 'man' ? ['gps', 'test'] : a.split('|')) : a.split('|'), at = kind === 'src' ? 'data-src' : 'data-org';
-    await p.click('#gSrcTxt');
-    const keys = await p.$$eval('[' + at + ']', es => es.map(e => e.getAttribute(e.hasAttribute('data-src') ? 'data-src' : 'data-org')));
-    for (const want of [true, false]) for (const k of keys) {   // ticks on first, so one always stays; the list is drawn again after each tick
-      const sel = '[' + at + '="' + k + '"]';
-      if (on.includes(k) === want && (await p.isChecked(sel)) !== want) { await p.click(sel); await p.waitForTimeout(150); }
-    }
-    await p.click('body', { position: { x: 2, y: 2 } });
-  }
+  else if (kind === 'src') await p.selectOption('#gSrc', a);
   else if (kind === 'plant') await p.click('#gPlant');
   else if (kind === 'minor') await p.evaluate((id) => document.getElementById(id).click(), a ? 'miIn' : 'miOut');   // the switch is hidden on some tabs
   else if (kind === 'dates') {

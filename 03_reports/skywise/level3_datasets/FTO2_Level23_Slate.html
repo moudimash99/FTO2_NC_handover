@@ -126,7 +126,6 @@
 .fto2 .fb-menu label:hover { background: var(--band); }
 .fto2 .fb-menu input { width: 16px; height: 16px; accent-color: var(--s1); margin: 0; }
 .fto2 .csv-row { grid-column: 1 / -1; width: 100%; display: flex; flex-wrap: wrap; justify-content: flex-start; align-items: center; gap: 8px 10px; margin: 10px 0 4px; font-size: 13px; color: var(--muted); text-align: left; }
-.fto2 .fb-menu .fb-mh { font-size: 11.5px; color: var(--muted); padding: 6px 10px 2px; text-transform: uppercase; letter-spacing: .04em; }
 .fto2 .fb-menu small { color: var(--muted); margin-left: auto; padding-left: 12px; font-variant-numeric: tabular-nums; }
 .fto2 .fb-reset { font: inherit; font-size: 13px; color: var(--s1); background: none; border: 1px solid var(--ring); border-radius: 6px; padding: 5px 12px; cursor: pointer; }
 .fto2 .fb-note { font-size: 11.5px; color: var(--muted); max-width: 16em; line-height: 1.3; }
@@ -817,7 +816,7 @@
     <section class="fbar" aria-labelledby="fbLab">
       <h2 class="fb-title" id="fbLab" data-t="fbTitle"></h2>
       <div class="fb-row">
-        <div class="fb" id="gSrcBox"><span id="gSrcLab" data-t="fSrc"></span><details class="fb-multi" id="gSrcD"><summary id="gSrcTxt" aria-describedby="gSrcLab"></summary><div class="fb-menu" id="gSrcMenu"></div></details></div>
+        <div class="fb"><label for="gSrc" data-t="fSrc"></label><select id="gSrc"></select></div>
         <div class="fb" id="gPlantBox"><span id="gPlantLab" data-t="fPlant"></span><button type="button" role="switch" class="switch" id="gPlant" aria-labelledby="gPlantLab"><i aria-hidden="true"></i><b id="gPlantTxt"></b></button><small class="fb-note" id="gPlantNote" hidden></small></div>
         <div class="fb" id="gLiabBox"><span id="gLiabLab" data-t="fLiab"></span><details class="fb-multi" id="gLiab"><summary id="gLiabTxt" aria-describedby="gLiabLab"></summary><div class="fb-menu" id="gLiabMenu"></div></details></div>
         <div class="fb"><span id="gPhLab" data-t="fPhase"></span><div class="seg" role="radiogroup" aria-labelledby="gPhLab" id="gPhase"></div></div>
@@ -1428,7 +1427,7 @@ function fto2FromTables(ncIn, defIn, ref, disIn, cxIn) {
       ppH2t: 'Comment une NC est rattachée à un produit', ppH2: 'Le produit de la NC (Produit_auto du pipeline) est relié à un produit du plan. {n} NC n’ont pas de produit du plan ({p}) : elles comptent dans tous les totaux, mais pas dans les taux par MSN, les prévisions par produit ni les objectifs par ligne.',
       ppH3t: 'Ce qu’on en fait', ppH3: 'NC par MSN = NC d’un mois ÷ MSN produits ce mois-là. Prévision à décembre = taux de la période × MSN prévus. Objectif d’une ligne = son taux {PREV} (NC par produit {LIV}é) − {CUT} %, × sa production {YEAR} ; objectif toutes lignes = somme des lignes, plus les NC hors plan de {PREV} − {CUT} %. Objectif de coût : le même calcul avec le coût. Un produit sans {LIVN1} en {PREV}{x} garde son rythme {YEAR} comme objectif.',
       ppH4t: 'À savoir', ppH4: 'A320 : les produits sont de petites pièces comptées à l’unité ({a} {LIV}ées en {PREV}), d’où un taux par unité très bas ; c’est pourquoi l’objectif se fait ligne par ligne et pas sur un taux commun. A400M : les textes des NC sont masqués ; une NC reçoit un défaut tiré de son titre quand le titre nomme un problème connu.',
-      fbTitle: 'Filtres', fSrc: 'Source des données', fOrg: 'Origine (pipeline)', org_all: 'Les deux sorties', org_normal: 'Sortie normale', org_missing_ids: 'IDs manquants', src_all: 'Toutes les données', src_sky: 'Skywise', srcGrp: 'Source', orgGrp: 'Sortie du pipeline', src_man: 'Listes manuelles (GPS ou Test)', src_gps: 'Registre GPS', src_test: 'Liste Test',
+      fbTitle: 'Filtres', fSrc: 'Source des données', fOrg: 'Origine (pipeline)', org_all: 'Les deux sorties', org_normal: 'Sortie normale', org_missing_ids: 'IDs manquants', src_all: 'Toutes les données', src_sky: 'Skywise seulement', src_man: 'Listes manuelles (GPS ou Test)', src_gps: 'Registre GPS', src_test: 'Liste Test',
       fPlant: 'Usine FTO2 uniquement', fLiab: 'Responsabilité', fCost: 'Coût', liab_f: 'FTO2', liab_s: 'Fournisseurs', liab_o: 'Autres', liab_all: 'Toutes', cost_fto2: 'FTO2 responsable', cost_all: 'Toutes les NC', fYes: 'Oui', fNo: 'Non', fPlantOff: 'Sans effet ici : l’onglet sépare déjà FTO2 et retours clients.',
       fPhase: 'Type de production', ph_all: 'Tous', ph_SERIE: 'Série', ph_REC: 'REC', ph_FTI: 'FTI', fLine: 'Avion', line_all: 'Tous les avions',
       fPeriod: 'Période', pr_ytd: 'Depuis le 1er janvier', pr_m1: '30 derniers jours', pr_mp: 'Dernier mois complet', pr_m3: '3 derniers mois', pr_m6: '6 derniers mois', pr_m12: '12 derniers mois', pr_all: 'Toutes les dates', pr_custom: 'Dates choisies',
@@ -1593,7 +1592,7 @@ function fto2FromTables(ncIn, defIn, ref, disIn, cxIn) {
       ppH2t: 'How an NC is matched to a product', ppH2: 'The NC’s product (the pipeline’s Produit_auto) is linked to a product of the plan. {n} NCs have no product of the plan ({p}): they count in every total, but not in the per-MSN rates, the per-product forecasts or the line targets.',
       ppH3t: 'What they are used for', ppH3: 'NCs per MSN = a month’s NCs ÷ the MSN built that month. December forecast = the period rate × the MSN planned. A line’s target = its {PREV} rate (NCs per product {DLV}) − {CUT}%, × its {YEAR} output; all lines = the sum of the lines, plus {PREV}’s out-of-plan NCs − {CUT}%. Cost target: the same with the cost. A product with no {PREV} {DLVN1}{x} keeps its {YEAR} pace as its target.',
       ppH4t: 'Good to know', ppH4: 'A320: the products are small parts counted one by one ({a} {DLV} in {PREV}), so its rate per unit is very low; this is why the target is built line by line and not on a pooled rate. A400M: NC texts are redacted; an NC gets one defect from its title when the title names a known problem.',
-      fbTitle: 'Filters', fSrc: 'Data source', fOrg: 'Origin (pipeline)', org_all: 'Both outputs', org_normal: 'Normal output', org_missing_ids: 'Missing IDs', src_all: 'All data', src_sky: 'Skywise', srcGrp: 'Source', orgGrp: 'Pipeline output', src_man: 'Manual lists (GPS or Test)', src_gps: 'GPS register', src_test: 'Test list',
+      fbTitle: 'Filters', fSrc: 'Data source', fOrg: 'Origin (pipeline)', org_all: 'Both outputs', org_normal: 'Normal output', org_missing_ids: 'Missing IDs', src_all: 'All data', src_sky: 'Skywise only', src_man: 'Manual lists (GPS or Test)', src_gps: 'GPS register', src_test: 'Test list',
       fPlant: 'FTO2 plant only', fLiab: 'Liability', fCost: 'Cost', liab_f: 'FTO2', liab_s: 'Suppliers', liab_o: 'Others', liab_all: 'All', cost_fto2: 'FTO2 liable', cost_all: 'All NCs', fYes: 'Yes', fNo: 'No', fPlantOff: 'No effect here: this tab already shows FTO2 and customer returns apart.',
       fPhase: 'Production type', ph_all: 'All', ph_SERIE: 'Series', ph_REC: 'REC', ph_FTI: 'FTI', fLine: 'Aircraft', line_all: 'All aircraft',
       fPeriod: 'Period', pr_ytd: 'Year to date', pr_m1: 'Last 30 days', pr_mp: 'Last full month', pr_m3: 'Last 3 months', pr_m6: 'Last 6 months', pr_m12: 'Last 12 months', pr_all: 'All dates', pr_custom: 'Custom dates',
@@ -3768,7 +3767,7 @@ function fto2FromTables(ncIn, defIn, ref, disIn, cxIn) {
     var W0 = vWidth('cmo', 360), ml = mode === 'cost' ? 62 : 40, mt = 14, h = 240, H = mt + h + 26, pw = W0 - ml - 12, n = months.length;
     var stack = months.map(function (m, j) { return sumA(shown.map(function (a) { return (val[a] || [])[j] || 0; })); });
     var mx = Math.max.apply(null, stack.concat([1e-9])), nt = pNice(mx * 1.08), g = '';
-    var gw = pw / n, bw = Math.max(6, Math.min(56, gw * 0.62));
+    var gw = pw / n, bw = Math.max(6, Math.min(30, gw * 0.34));
     function Y(v) { return mt + h - v / nt.top * h; }
     for (var t = 0; t <= nt.top + 1e-9; t += nt.step) g += '<line x1="' + ml + '" x2="' + (ml + pw) + '" y1="' + r1(Y(t)) + '" y2="' + r1(Y(t)) + '" stroke="var(--grid)"/>' + tx(ml - 6, Y(t) + 4, (mode === 'cost' && nt.top >= 10000 ? kEur : fmt)(Math.round(t * 100) / 100), 'mu', 'end');
     months.forEach(function (m, j) { g += tx(ml + gw * (j + 0.5), H - 6, v2Mo(m, gw, j), 'mu', 'middle'); });
@@ -4102,13 +4101,15 @@ function fto2FromTables(ncIn, defIn, ref, disIn, cxIn) {
   function grpSeg() { return GF.line ? '' : '<div class="seg grpseg" role="group">' + [['0', 'A330 + A350'], ['1', 'A320']].map(function (x) { return '<button type="button" data-g320="' + x[0] + '" aria-pressed="' + ((x[0] === '1') === G320) + '">' + x[1] + '</button>'; }).join('') + '</div>'; }
   document.addEventListener('click', function (e) { var b = e.target.closest && e.target.closest('[data-g320]'); if (!b) return; G320 = b.getAttribute('data-g320') === '1'; renderAll(); });
   function connNone(k, msg) { if (GF.line && !CONN_LINES[GF.line]) { gSet(k, '<p class="empty">' + esc(S(msg || 'connOnly')) + '</p>'); return true; } return false; }
-  // sig: the limits at 2 and 3 sigma around the period's rate, month by month: a month's count of defects varies by chance around
-  // rate × MSN (Poisson), so a month's rate has sigma = √(rate ÷ MSN of the month): fewer aircraft, wider limits (a u chart)
+  // sig: two straight lines, the period's rate + 2 and + 3 sigma, sigma the usual spread of the monthly values of the period (the
+  // month in progress left out); none with fewer than 3 months (18 Nov: limits that moved with the month's volume confused)
   function pTrend(k, rows, fmt, unitTip, col, ref, sig) {   // ref: { v, lab } a reference rate drawn dashed (2025)
     col = col || 'var(--s1)';
     if (rows.length < 2) { pEmpty(k); return; }
     var W0 = gWd(k), ml = 46, mr = 92, mt = 16, h = 220, H = mt + h + 26, pw = W0 - ml - mr, r = rows.map(function (x) { return x.v / x.e; }), mean = sumA(rows.map(function (x) { return x.v; })) / sumA(rows.map(function (x) { return x.e; }));
-    var lim = sig ? [2, 3].map(function (z) { return rows.map(function (x) { return x.e > 0 ? mean + z * Math.sqrt(mean / x.e) : mean; }); }) : [];
+    var cj0 = rows.length > 2 && rows[rows.length - 1].i === PD.cur ? rows.length - 1 : -1, mo = cj0 > 0 ? r.slice(0, cj0) : r, sd = 0;
+    if (sig && mo.length >= 3) { var mm = sumA(mo) / mo.length; sd = Math.sqrt(sumA(mo.map(function (v) { return (v - mm) * (v - mm); })) / (mo.length - 1)); }
+    var lim = sd > 0 ? [2, 3].map(function (z) { return rows.map(function () { return mean + z * sd; }); }) : [];
     var nt = pNice(Math.max.apply(null, r.concat(ref ? [].concat(ref).map(function (q) { return q.v; }) : []).concat(lim.length ? lim[1] : [])) * 1.1), g = '';
     function X(j) { return ml + j / (rows.length - 1) * pw; } function Y(v) { return mt + h - v / nt.top * h; }
     var cj = rows.length > 2 && rows[rows.length - 1].i === PD.cur ? rows.length - 1 : -1;   // the running month: out of the 3-month average
@@ -4428,12 +4429,7 @@ function fto2FromTables(ncIn, defIn, ref, disIn, cxIn) {
   function opts(el, items, cur) { el.innerHTML = items.map(function (p) { return '<option value="' + esc(p[0]) + '"' + (p[0] === cur ? ' selected' : '') + '>' + esc(p[1]) + '</option>'; }).join(''); }
   function plantOff() { return G.tab === 'client' || G.tab === 'rca'; }
   function renderBar() {
-    var sc = {}, s0 = GF.src, o0 = GF.org; GF.src = 'all'; GF.org = '';   // the source ticks, with how many NCs each holds under the other filters
-    try { REP.forEach(function (n) { if (gNc(n) && gScope(n)) { sc[n[39]] = (sc[n[39]] || 0) + 1; sc[n[41] || 'normal'] = (sc[n[41] || 'normal'] || 0) + 1; } }); } finally { GF.src = s0; GF.org = o0; }
-    var tick = function (k, on, a) { return '<label><input type="checkbox" ' + a + '="' + k + '"' + (on ? ' checked' : '') + '>' + esc(S((a === 'data-src' ? 'src_' : 'org_') + k)) + '<small>' + num(sc[k] || 0) + '</small></label>'; };
-    document.getElementById('gSrcMenu').innerHTML = '<div class="fb-mh">' + esc(S('srcGrp')) + '</div>' + SRCS.map(function (k) { return tick(k, srcOn(k), 'data-src'); }).join('') +
-      '<div class="fb-mh">' + esc(S('orgGrp')) + '</div>' + ORGS.map(function (k) { return tick(k, !GF.org || GF.org.split('|').indexOf(k) >= 0, 'data-org'); }).join('');
-    document.getElementById('gSrcTxt').textContent = srcText();
+    opts(document.getElementById('gSrc'), ['all', 'sky', 'gps', 'test'].map(function (k) { return [k, S('src_' + k)]; }), GF.src);
     opts(document.getElementById('gLine'), [['', S('line_all')]].concat(LINES.map(function (l) { return [l, l]; })), GF.line);
     opts(document.getElementById('gPreset'), PRESETS.map(function (k) { return [k, S('pr_' + k)]; }), GF.preset);
     document.getElementById('gPhase').innerHTML = [['', 'ph_all'], ['SERIE', 'ph_SERIE'], ['REC', 'ph_REC'], ['FTI', 'ph_FTI']].map(function (p) {
@@ -4472,7 +4468,7 @@ function fto2FromTables(ncIn, defIn, ref, disIn, cxIn) {
       var c = {}; g.forEach(function (n) { c[n[24] || '—'] = (c[n[24] || '—'] || 0) + 1; });
       return Object.keys(c).length ? S('inf_phaseS', { v: phaseOrder(Object.keys(c)).map(function (k) { return k + ' ' + num(c[k]); }).join(' · ') }) : ''; });
     step(S('inf_line'), !!GF.line, GF.line, function (n) { return n[3] === GF.line; });
-    step(S('inf_src'), GF.src !== 'all', srcText(), srcOk);
+    step(S('inf_src'), GF.src !== 'all', S('src_' + GF.src), srcOk);
     step(S('inf_org'), !!GF.org, GF.org ? S('org_' + GF.org) : '', orgOk);
     step(S('inf_plant'), !!GF.fto2, S('fYes'), ours, function (g) {
       var cli = g.filter(function (n) { return n[23] === 'client'; }).length, oth = g.filter(function (n) { return n[23] !== 'client'; }), pl = {};
@@ -4543,24 +4539,15 @@ function fto2FromTables(ncIn, defIn, ref, disIn, cxIn) {
   document.getElementById('gLine').addEventListener('change', function (e) { setGF({ line: e.target.value }); });
   document.getElementById('gPreset').addEventListener('change', function (e) { setGF({ preset: e.target.value }); });
   document.getElementById('gPlant').addEventListener('click', function () { if (!plantOff()) setGF({ fto2: !GF.fto2 }); });
-  // the text of the source list: "Toutes les données", else what is ticked in each group that is not all ticked
-  function srcText() {
-    var a = GF.src === 'all' ? [] : SRCS.filter(srcOn).map(function (k) { return S('src_' + k); }),
-      b = GF.org ? [S('org_' + GF.org)] : [];
-    return a.length || b.length ? a.concat(b).join(', ') : S('src_all');
-  }
-  document.getElementById('gSrcMenu').addEventListener('change', function (e) {   // at least one tick stays in each group
-    var on = function (a) { return [].filter.call(this.querySelectorAll('[' + a + ']'), function (i) { return i.checked; }).map(function (i) { return i.getAttribute(a); }); }.bind(this);
-    var s = on('data-src'), o = on('data-org');
-    if (!s.length || !o.length) { e.target.checked = true; return; }
-    setGF({ src: s.length === SRCS.length ? 'all' : s.join('|'), org: o.length === ORGS.length ? '' : o.join('|') }); document.getElementById('gSrcD').open = true;
-  });
+  // the data source: all, Skywise only, or the NCs also on the GPS register or the Test list (18 Nov: one choice; the "missing
+  // IDs", the NCs of those lists the normal Skywise search does not find, are no filter: they show in the ⓘ panel and the full extract)
+  document.getElementById('gSrc').addEventListener('change', function (e) { setGF({ src: e.target.value }); });
   document.getElementById('gLiabMenu').addEventListener('change', function (e) {   // at least one tick stays
     var on = [].filter.call(this.querySelectorAll('[data-liab]'), function (i) { return i.checked; }).map(function (i) { return i.getAttribute('data-liab'); });
     if (!on.length) { e.target.checked = true; return; }
     setGF({ liab: LIABS.filter(function (k) { return on.indexOf(k) >= 0; }).join('') }); document.getElementById('gLiab').open = true;
   });
-  document.addEventListener('click', function (e) { ['gLiab', 'gSrcD'].forEach(function (id) { var d = document.getElementById(id); if (d && d.open && !d.contains(e.target)) d.open = false; }); });
+  document.addEventListener('click', function (e) { var d = document.getElementById('gLiab'); if (d && d.open && !d.contains(e.target)) d.open = false; });
   document.getElementById('gCost').addEventListener('click', function (e) { var b = e.target.closest('[data-cost]'); if (!b) return;   // "Toutes les NC" shows them all: every tick on
     var c = b.getAttribute('data-cost'); setGF(c === 'all' ? { cost: c, liab: 'fso' } : { cost: c }); });
   var PHS = ['', 'SERIE', 'REC', 'FTI'];
