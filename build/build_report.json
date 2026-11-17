@@ -141,9 +141,9 @@
       "ncs": 713,
       "defects": 1463,
       "aleas": 99,
-      "js_kb": 1394
+      "js_kb": 1398
     },
-    "level23_js_kb": 507,
+    "level23_js_kb": 511,
     "slate_functions": {
       "f_fto2_objectifs.js": 53,
       "f_fto2_alarmes.js": 71,

@@ -575,7 +575,7 @@ def page_settings():
     plain = lambda t: "".join(c for c in unicodedata.normalize("NFD", t) if not unicodedata.combining(c)).upper()   # Série -> SERIE
     opening = {"phase": _one_of(plain(get("defaut_phase")), ["SERIE", "REC", "FTI", ""], at("defaut_phase")),
                "liab": "".join(c for c in "fso" if c in liab),
-               "preset": _one_of(get("defaut_periode").lower(), ["ytd", "m1", "m3", "m6", "m12", "all"], at("defaut_periode"))}
+               "preset": _one_of(get("defaut_periode").lower(), ["ytd", "m1", "mp", "m3", "m6", "m12", "all"], at("defaut_periode"))}
     return {"annee": config.year(), "annee_ref": config.comparison_year(),
             "objectif_baisse": cut, "objectif_coef": round(1 - cut, 12),
             "semaine_faible": n("semaine_faible_moins_de"), "mft_fenetres": windows,

@@ -59,8 +59,8 @@ function fto2Reglages(SET, v) {
     ['defaut_responsabilite', 'letters among f, s, o', function (x) { var t = text(x).toLowerCase();
       return t && !/[^fso]/.test(t) ? 'fso'.split('').filter(function (c) { return t.indexOf(c) >= 0; }).join('') : undefined; },
       function () { return DEF.liab; }, function (x) { DEF.liab = x; }],
-    ['defaut_periode', 'one of ytd, m1, m3, m6, m12, all', function (x) { var t = text(x).toLowerCase();
-      return ['ytd', 'm1', 'm3', 'm6', 'm12', 'all'].indexOf(t) >= 0 ? t : undefined; }, function () { return DEF.preset; }, function (x) { DEF.preset = x; }],
+    ['defaut_periode', 'one of ytd, m1, mp, m3, m6, m12, all', function (x) { var t = text(x).toLowerCase();
+      return ['ytd', 'm1', 'mp', 'm3', 'm6', 'm12', 'all'].indexOf(t) >= 0 ? t : undefined; }, function () { return DEF.preset; }, function (x) { DEF.preset = x; }],
     ['action_objectif_baisse', 'a share (0.3, 0,3 or 30 %)', share, function () { return SET.action_baisse; },
       function (x) { SET.action_baisse = x; SET.action_coef = coef(x); }],
     ['action_semaines_tenues', 'a whole number of weeks, 1 or more', function (x) { var n = num(x); return n != null && n >= 1 && Math.floor(n) === n ? n : undefined; },
@@ -306,6 +306,7 @@ function fto2FromTables(ncIn, defIn, ref, disIn, cxIn) {
       minorLabel: 'Défauts mineurs', minorIn: 'Inclus', minorOut: 'Exclus',
       tabPareto: 'Pareto', tabCost: 'Pareto des coûts', tabCnq: 'Coût de non-qualité', tabClient: 'Retours clients', tabCbl: 'Câbles', tabRca: 'Définitions', tabPplan: 'Production',
       serieSub: 'NC émises à FTO2 (plant FTO2), toutes : supprimées et hors responsabilité FTO2 comprises.', serieSubAec: 'NC émises à FTO2 (plant FTO2) dont FTO2 est responsable, supprimées comprises.', serieSubAllAec: 'NC dont FTO2 est responsable, émises à FTO2 ou ailleurs (retours clients compris).', serieSubAll: 'Toutes les NC, émises à FTO2 ou dans d’autres usines (retours clients compris).',
+      csvBtn: 'Télécharger le détail des NC', csvT: 'Les NC de la sélection, une ligne par défaut, à ouvrir dans Excel', csvName: 'NC FTO2 - détail du {a} au {b}', csvCols: 'NC|Date de création|Semaine|Ligne|Produit|MSN|Poste|Phase|Type de NC|Origine|Responsabilité|Lieu de détection|Décision|Statut|Ouverte|Coût FTO2 de la NC (€)|Lignes de défaut|Titre|N° du défaut|Catégorie|Cause|Sous-catégorie|Sous-code|FIN|Coût du défaut (€)|Mineur|Câble|Texte du défaut', csvOrg: 'série|retour client|autre usine', csvYes: 'oui|non',
       infoBtn: 'Comment la sélection est faite', inf_title: 'Ce que chaque filtre retire, dans l’ordre', inf_out: 'Retirées', inf_left: 'Restent',
       inf_start: 'NC fournies par le pipeline', inf_startS: '{a} sortie normale · {b} IDs manquants ; le tableau n’en retire aucune d’office',
       inf_period: 'Période', inf_phase: 'Type de production', inf_line: 'Avion', inf_src: 'Source des données', inf_org: 'Origine (pipeline)', inf_plant: 'Usine FTO2 uniquement (plant = FTO2 ou FT02)', inf_pick: 'Clic sur un graphique',
@@ -340,7 +341,7 @@ function fto2FromTables(ncIn, defIn, ref, disIn, cxIn) {
       fbTitle: 'Filtres', fSrc: 'Source des données', fOrg: 'Origine (pipeline)', org_all: 'Les deux sorties', org_normal: 'Sortie normale', org_missing_ids: 'IDs manquants', src_all: 'Toutes les données', src_sky: 'Skywise uniquement', src_man: 'Listes manuelles (GPS ou Test)', src_gps: 'Registre GPS', src_test: 'Liste Test',
       fPlant: 'Usine FTO2 uniquement', fLiab: 'Responsabilité', fCost: 'Coût', liab_f: 'FTO2', liab_s: 'Fournisseurs', liab_o: 'Autres', liab_all: 'Toutes', cost_fto2: 'FTO2 responsable', cost_all: 'Toutes les NC', fYes: 'Oui', fNo: 'Non', fPlantOff: 'Sans effet ici : l’onglet sépare déjà FTO2 et retours clients.',
       fPhase: 'Type de production', ph_all: 'Tous', ph_SERIE: 'Série', ph_REC: 'REC', ph_FTI: 'FTI', fLine: 'Avion', line_all: 'Tous les avions',
-      fPeriod: 'Période', pr_ytd: 'Depuis le 1er janvier', pr_m1: 'Dernier mois', pr_m3: '3 derniers mois', pr_m6: '6 derniers mois', pr_m12: '12 derniers mois', pr_all: 'Toutes les dates', pr_custom: 'Dates choisies',
+      fPeriod: 'Période', pr_ytd: 'Depuis le 1er janvier', pr_m1: '30 derniers jours', pr_mp: 'Dernier mois complet', pr_m3: '3 derniers mois', pr_m6: '6 derniers mois', pr_m12: '12 derniers mois', pr_all: 'Toutes les dates', pr_custom: 'Dates choisies',
       fFrom: 'Du', fTo: 'Au', fReset: 'Réinitialiser', pkClear: 'Retirer ce filtre', pk_wgrp: 'Trouvée à', pk_age: 'Encore ouvertes', pkAgeV: 'plus de {n} jours après leur création', kmAgeMark: 'filtre : ouvertes après {n} j', kmClick: 'Cliquez : garder les {n} NC encore ouvertes après {d} jours', pk_stcat: 'Poste et catégorie', pk_finmsn: 'FIN et avion', pk_dgrp: 'Décision', pk_lgrp: 'Décision', pk_open: 'Statut', pkOpenV: 'encore ouvertes', kmOpenN: 'Encore ouvertes : {n}', pk_month: 'Mois', pk_week: 'Semaine', pk_day: 'Jour', pk_prod: 'Produit', pk_pprod: 'Produit', pk_msn: 'Avion (MSN)', pk_station: 'Poste', pk_type: 'Type de NC', pk_ntype: 'Type de NC', pk_rule: 'Décision', pk_where: 'Détection', pk_nc: 'NC', pk_hour: 'Heure', pk_cat: 'NC avec un défaut', pk_rca: 'NC avec la cause', pk_sub: 'NC avec le défaut', pk_fin: 'NC avec un défaut sur', pk_code: 'NC avec le sous-code', fbSum: '{n} NC · {d} défauts dans la sélection', fbSumCli: '{n} NC retours clients · {d} défauts dans la sélection',
       foot5: 'Source des données : toutes les NC viennent de Skywise ; « listes manuelles » : NC retrouvées aussi dans le registre GPS ou la liste Test (champ Ext_Source). Type de production : phase de la NC (Série, REC, FTI). Périodes comptées jusqu’à la dernière NC de l’extraction.',
       paretoTitle: 'Pareto des défauts', costTitle: 'Pareto des coûts de non-qualité',
@@ -468,6 +469,7 @@ function fto2FromTables(ncIn, defIn, ref, disIn, cxIn) {
       minorLabel: 'Minor defects', minorIn: 'Included', minorOut: 'Excluded',
       tabPareto: 'Pareto', tabCost: 'Cost Pareto', tabCnq: 'Cost of non-quality', tabClient: 'Customer returns', tabCbl: 'Cables', tabRca: 'Definitions', tabPplan: 'Production',
       serieSub: 'Every NC raised at FTO2 (plant FTO2), deleted and not-liable ones included.', serieSubAec: 'NCs raised at FTO2 (plant FTO2) that FTO2 is liable for, deleted ones included.', serieSubAllAec: 'NCs FTO2 is liable for, raised at FTO2 or elsewhere (customer returns included).', serieSubAll: 'Every NC, raised at FTO2 or at other plants (customer returns included).',
+      csvBtn: 'Download the NCs in detail', csvT: 'The NCs of the selection, one row per defect, to open in Excel', csvName: 'FTO2 NCs - detail from {a} to {b}', csvCols: 'NC|Created|Week|Line|Product|MSN|Station|Phase|NC type|Origin|Liability|Where found|Decision|Status|Open|FTO2 cost of the NC (EUR)|Defect lines|Title|Defect no.|Category|Cause|Sub-category|Sub-code|FIN|Defect cost (EUR)|Minor|Cable|Defect text', csvOrg: 'series|customer return|other plant', csvYes: 'yes|no',
       infoBtn: 'How the selection is made', inf_title: 'What each filter removes, in order', inf_out: 'Removed', inf_left: 'Left',
       inf_start: 'NCs from the pipeline', inf_startS: '{a} normal output · {b} missing IDs; the page drops none of them by itself',
       inf_period: 'Period', inf_phase: 'Production type', inf_line: 'Aircraft', inf_src: 'Data source', inf_org: 'Origin (pipeline)', inf_plant: 'FTO2 plant only (plant = FTO2 or FT02)', inf_pick: 'Click on a chart',
@@ -502,7 +504,7 @@ function fto2FromTables(ncIn, defIn, ref, disIn, cxIn) {
       fbTitle: 'Filters', fSrc: 'Data source', fOrg: 'Origin (pipeline)', org_all: 'Both outputs', org_normal: 'Normal output', org_missing_ids: 'Missing IDs', src_all: 'All data', src_sky: 'Skywise only', src_man: 'Manual lists (GPS or Test)', src_gps: 'GPS register', src_test: 'Test list',
       fPlant: 'FTO2 plant only', fLiab: 'Liability', fCost: 'Cost', liab_f: 'FTO2', liab_s: 'Suppliers', liab_o: 'Others', liab_all: 'All', cost_fto2: 'FTO2 liable', cost_all: 'All NCs', fYes: 'Yes', fNo: 'No', fPlantOff: 'No effect here: this tab already shows FTO2 and customer returns apart.',
       fPhase: 'Production type', ph_all: 'All', ph_SERIE: 'Series', ph_REC: 'REC', ph_FTI: 'FTI', fLine: 'Aircraft', line_all: 'All aircraft',
-      fPeriod: 'Period', pr_ytd: 'Year to date', pr_m1: 'Last month', pr_m3: 'Last 3 months', pr_m6: 'Last 6 months', pr_m12: 'Last 12 months', pr_all: 'All dates', pr_custom: 'Custom dates',
+      fPeriod: 'Period', pr_ytd: 'Year to date', pr_m1: 'Last 30 days', pr_mp: 'Last full month', pr_m3: 'Last 3 months', pr_m6: 'Last 6 months', pr_m12: 'Last 12 months', pr_all: 'All dates', pr_custom: 'Custom dates',
       fFrom: 'From', fTo: 'To', fReset: 'Reset', pkClear: 'Remove this filter', pk_wgrp: 'Found at', pk_age: 'Still open', pkAgeV: 'more than {n} days after creation', kmAgeMark: 'filter: open after {n} d', kmClick: 'Click: keep the {n} NCs still open after {d} days', pk_stcat: 'Station and category', pk_finmsn: 'FIN and aircraft', pk_dgrp: 'Decision', pk_lgrp: 'Decision', pk_open: 'Status', pkOpenV: 'still open', kmOpenN: 'Still open: {n}', pk_month: 'Month', pk_week: 'Week', pk_day: 'Day', pk_prod: 'Product', pk_pprod: 'Product', pk_msn: 'Aircraft (MSN)', pk_station: 'Station', pk_type: 'NC type', pk_ntype: 'NC type', pk_rule: 'Decision', pk_where: 'Found at', pk_nc: 'NC', pk_hour: 'Hour', pk_cat: 'NCs with a defect', pk_rca: 'NCs with the cause', pk_sub: 'NCs with the defect', pk_fin: 'NCs with a defect on', pk_code: 'NCs with the sub-code', fbSum: '{n} NCs · {d} defects in the selection', fbSumCli: '{n} customer-return NCs · {d} defects in the selection',
       foot5: 'Data source: every NC comes from Skywise; “manual lists”: NCs also found in the GPS register or the Test list (Ext_Source field). Production type: the NC phase (Series, REC, FTI). Periods count up to the last NC of the extract.',
       paretoTitle: 'Defect Pareto', costTitle: 'Cost of non-quality Pareto',
@@ -687,13 +689,17 @@ function fto2FromTables(ncIn, defIn, ref, disIn, cxIn) {
   var DMAX = D.meta.to, DMIN = REP.reduce(function (m, n) { return n[1] < m ? n[1] : m; }, DMAX);
   var LINES = lineOrder(REP.map(function (n) { return n[3]; }));
   var GF0 = { pick: null, src: 'all', org: '', fto2: true, liab: SET.defauts.liab, cost: 'fto2', phase: SET.defauts.phase, line: '', preset: SET.defauts.preset, from: '', to: '' }, GF = Object.assign({}, GF0);
-  var PRESETS = ['ytd', 'm1', 'm3', 'm6', 'm12', 'all', 'custom'];
+  var PRESETS = ['ytd', 'm1', 'mp', 'm3', 'm6', 'm12', 'all', 'custom'];
   function plusDays(iso, k) { var d = new Date(iso + 'T12:00:00Z'); d.setUTCDate(d.getUTCDate() + k); return isoDay(d); }
   function minusMonths(iso, k) { var d = new Date(iso + 'T12:00:00Z'), dd = d.getUTCDate(); d.setUTCDate(1); d.setUTCMonth(d.getUTCMonth() - k); d.setUTCDate(Math.min(dd, new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth() + 1, 0)).getUTCDate())); return isoDay(d); }
-  // presets end on the last NC of the extract
+  // presets end on the last NC of the extract; m1: the last 30 days; mp: the last full month (in November, all of October; the
+  // month of the last NC itself once that NC is of its last day)
   function presetRange(p) {
-    var k = { m1: 1, m3: 3, m6: 6, m12: 12 }[p];
+    var k = { m3: 3, m6: 6, m12: 12 }[p];
     if (p === 'ytd') return [DMAX.slice(0, 4) + '-01-01', DMAX];
+    if (p === 'm1') return [plusDays(DMAX, -29), DMAX];
+    if (p === 'mp') { var end = plusDays(plusDays(DMAX, 1).slice(0, 8) + '01', -1) === DMAX ? DMAX : plusDays(DMAX.slice(0, 8) + '01', -1);
+      return [end.slice(0, 8) + '01', end]; }
     if (k) return [plusDays(minusMonths(DMAX, k), 1), DMAX];
     return [DMIN, DMAX];
   }
@@ -3378,6 +3384,31 @@ function fto2FromTables(ncIn, defIn, ref, disIn, cxIn) {
     if (cur.length !== SEL_NC.length) notes.push('⚠ ' + num(cur.length) + ' ≠ ' + num(SEL_NC.length));   // the panel and the page must agree
     box.innerHTML = h + notes.filter(Boolean).map(function (t) { return '<p class="fn-note">' + esc(t) + '</p>'; }).join('');
   }
+  // ---------------------------------------------------------------- the NCs of the selection as a CSV file (Excel, French settings: ";" and
+  // a decimal comma), one row per defect line (the minor ones as the switch says; with a pick on a defect, its lines only), an NC with no
+  // defect line on one row. Saved like the PNG files: a link with a "download" name (a data URL, as tested in Slate; a blob when too big)
+  function csvOf() {
+    var p = GF.pick, keep = p && PICK_DEF[p.k] ? function (r) { return String(PICK_DEF[p.k](r)) === String(p.v); } : function () { return true; };
+    var lines = {}; D.defects.forEach(function (r) { if (SEL[r[0]] && keepMinor(r) && keep(r)) (lines[r[0]] || (lines[r[0]] = [])).push(r); });
+    var org = S('csvOrg').split('|'), yn = S('csvYes').split('|'), ORG = { serie: org[0], client: org[1], autre: org[2] };
+    var cell = function (v) { var t = v == null ? '' : typeof v === 'number' ? String(Math.round(v * 100) / 100).replace('.', ',') : String(v);
+      return /[;"\n\r]/.test(t) ? '"' + t.replace(/"/g, '""') + '"' : t; };
+    var out = [S('csvCols').split('|').map(cell).join(';')];
+    SEL_NC.slice().sort(function (a, b) { return a[1] < b[1] ? -1 : a[1] > b[1] ? 1 : a[0] < b[0] ? -1 : 1; }).forEach(function (n) {
+      var head = [n[0], n[1], n[2], n[3], n[26], n[25], n[27], n[24], n[33], ORG[n[23]] || n[23], S('liab_' + liabCat(n)), n[8], n[7], n[38],
+        n[30] ? yn[0] : yn[1], n[12], n[21], n[22]];
+      var ds = (lines[n[0]] || []).slice().sort(function (a, b) { return a[1] - b[1]; });
+      if (!ds.length) { out.push(head.concat(['', '', '', '', '', '', '', '', '', '']).map(cell).join(';')); return; }
+      ds.forEach(function (r) { out.push(head.concat([r[1], dCat(r), dRca(r), dSub(r), dCode(r), dFin(r), dAlloc(r), dMinor(r) ? yn[0] : yn[1],
+        dCable(r) ? yn[0] : yn[1], r[18]]).map(cell).join(';')); });
+    });
+    var text = '\ufeff' + out.join('\r\n'), name = pngName(S('csvName', { a: GF.from, b: GF.to })).replace(/\.png$/, '.csv'), url = 'data:text/csv;charset=utf-8,' + encodeURIComponent(text), blob = null;
+    if (url.length > 1800000 && window.Blob && window.URL && URL.createObjectURL) { blob = URL.createObjectURL(new Blob([text], { type: 'text/csv;charset=utf-8' })); url = blob; }
+    var ln = document.createElement('a'); ln.href = url; ln.download = name; ln.style.display = 'none';
+    document.body.appendChild(ln); ln.click(); setTimeout(function () { ln.remove(); if (blob) URL.revokeObjectURL(blob); }, 1000);
+    return out.length - 1;
+  }
+  document.getElementById('gCsvBtn').addEventListener('click', function () { csvOf(); });
   document.getElementById('gInfoBtn').addEventListener('click', function () {
     var box = document.getElementById('gInfo'), open = box.hidden; box.hidden = !open; this.setAttribute('aria-expanded', String(open)); renderInfo();
   });
@@ -4179,6 +4210,7 @@ function fto2FromTables(ncIn, defIn, ref, disIn, cxIn) {
   function applyText() {
     if (!EMBED) { document.documentElement.lang = G.lang; document.title = S('title'); }
     document.querySelectorAll('[data-t]').forEach(function (el) { el.textContent = S(el.getAttribute('data-t')); });
+    document.getElementById('gCsvBtn').title = S('csvT');
     document.querySelectorAll('[data-ta]').forEach(function (el) { el.setAttribute('aria-label', S(el.getAttribute('data-ta'))); });
     var dates = { from: day(D.meta.from), to: day(D.meta.to) }, A = D.meta.aside;
     document.getElementById('period').textContent = S('period', { from: day(GF.from), to: day(GF.to) });

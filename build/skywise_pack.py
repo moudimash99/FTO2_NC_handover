@@ -99,8 +99,8 @@ function fto2Reglages(SET, v) {
     ['defaut_responsabilite', 'letters among f, s, o', function (x) { var t = text(x).toLowerCase();
       return t && !/[^fso]/.test(t) ? 'fso'.split('').filter(function (c) { return t.indexOf(c) >= 0; }).join('') : undefined; },
       function () { return DEF.liab; }, function (x) { DEF.liab = x; }],
-    ['defaut_periode', 'one of ytd, m1, m3, m6, m12, all', function (x) { var t = text(x).toLowerCase();
-      return ['ytd', 'm1', 'm3', 'm6', 'm12', 'all'].indexOf(t) >= 0 ? t : undefined; }, function () { return DEF.preset; }, function (x) { DEF.preset = x; }],
+    ['defaut_periode', 'one of ytd, m1, mp, m3, m6, m12, all', function (x) { var t = text(x).toLowerCase();
+      return ['ytd', 'm1', 'mp', 'm3', 'm6', 'm12', 'all'].indexOf(t) >= 0 ? t : undefined; }, function () { return DEF.preset; }, function (x) { DEF.preset = x; }],
     ['action_objectif_baisse', 'a share (0.3, 0,3 or 30 %)', share, function () { return SET.action_baisse; },
       function (x) { SET.action_baisse = x; SET.action_coef = coef(x); }],
     ['action_semaines_tenues', 'a whole number of weeks, 1 or more', function (x) { var n = num(x); return n != null && n >= 1 && Math.floor(n) === n ? n : undefined; },

@@ -41,6 +41,7 @@ const DASH_VIEWS = [
   { name: 'line A320', steps: [['line', 'A320']] },
   { name: 'line A400M', steps: [['line', 'A400M']] },
   { name: 'last month', steps: [['preset', 'm1']] },
+  { name: 'last full month', steps: [['preset', 'mp']] },
   { name: 'last 3 months', steps: [['preset', 'm3']] },
   { name: 'last 12 months', steps: [['preset', 'm12']] },
   { name: 'all dates', steps: [['preset', 'all']] },

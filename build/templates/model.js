@@ -43,13 +43,17 @@
   var DMAX = D.meta.to, DMIN = REP.reduce(function (m, n) { return n[1] < m ? n[1] : m; }, DMAX);
   var LINES = lineOrder(REP.map(function (n) { return n[3]; }));
   var GF0 = { pick: null, src: 'all', org: '', fto2: true, liab: SET.defauts.liab, cost: 'fto2', phase: SET.defauts.phase, line: '', preset: SET.defauts.preset, from: '', to: '' }, GF = Object.assign({}, GF0);
-  var PRESETS = ['ytd', 'm1', 'm3', 'm6', 'm12', 'all', 'custom'];
+  var PRESETS = ['ytd', 'm1', 'mp', 'm3', 'm6', 'm12', 'all', 'custom'];
   function plusDays(iso, k) { var d = new Date(iso + 'T12:00:00Z'); d.setUTCDate(d.getUTCDate() + k); return isoDay(d); }
   function minusMonths(iso, k) { var d = new Date(iso + 'T12:00:00Z'), dd = d.getUTCDate(); d.setUTCDate(1); d.setUTCMonth(d.getUTCMonth() - k); d.setUTCDate(Math.min(dd, new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth() + 1, 0)).getUTCDate())); return isoDay(d); }
-  // presets end on the last NC of the extract
+  // presets end on the last NC of the extract; m1: the last 30 days; mp: the last full month (in November, all of October; the
+  // month of the last NC itself once that NC is of its last day)
   function presetRange(p) {
-    var k = { m1: 1, m3: 3, m6: 6, m12: 12 }[p];
+    var k = { m3: 3, m6: 6, m12: 12 }[p];
     if (p === 'ytd') return [DMAX.slice(0, 4) + '-01-01', DMAX];
+    if (p === 'm1') return [plusDays(DMAX, -29), DMAX];
+    if (p === 'mp') { var end = plusDays(plusDays(DMAX, 1).slice(0, 8) + '01', -1) === DMAX ? DMAX : plusDays(DMAX.slice(0, 8) + '01', -1);
+      return [end.slice(0, 8) + '01', end]; }
     if (k) return [plusDays(minusMonths(DMAX, k), 1), DMAX];
     return [DMIN, DMAX];
   }

@@ -55,7 +55,7 @@ class Mistakes(unittest.TestCase):
 
     def test_the_opening_view(self):
         self.change("1_reglages_pages.csv", "defaut_periode;ytd", "defaut_periode;3 mois")
-        self.stops_with("1_reglages_pages.csv, defaut_periode: '3 mois' is not one of ytd, m1, m3, m6, m12, all")
+        self.stops_with("1_reglages_pages.csv, defaut_periode: '3 mois' is not one of ytd, m1, mp, m3, m6, m12, all")
 
     def test_the_year(self):
         self.change("1_parametres.csv", "annee;;", "annee;26;")
