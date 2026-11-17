@@ -110,7 +110,7 @@ step A; they go through the same rules, defect reader, part prices and cost mode
 requests, the MFT actions, the cost settings, the cause tree and the page settings. They are packed into `fto2_dash_ref`
 (section 5).
 
-**The year.** Every date of the run comes from one line, `annee` in `1_parametres.csv`, through five functions of
+**The year.** Every date of the run comes from one line, `annee` in `1_parametres.csv` (empty: the current year), through five functions of
 `config.py`: `year()`, `comparison_year()`, `first_day()` (1 January), `year_end()` (1 January of the next year) and
 `aleas_since()` (1 December of the year before: an NC of early January can follow an aléa of late December). No year is
 written in the code: `tests/test_config.py` fails if one is. When the year followed is over, the last lines of the run say

@@ -155,6 +155,11 @@ def plan():
 
 
 # ---------------------------------------------------------------- the cable requests
+# the columns of the cable team's tracker that the run reads
+TRACKER_COLUMNS = ("NC", "Date de création de la NC", "Date de réalisation OF", "Semaine", "Programme", "MSN", "Motifs", "Imputation",
+                   "Commentaires analyses", "Action", "Statut")
+
+
 def cables_of_export(path):
     """The cable team's tracker (CSV export) as request rows (CABLE_COLUMNS): one row per request of the tracker (lines
     without an NC number are skipped), with
@@ -165,8 +170,7 @@ def cables_of_export(path):
       - the cable numbers and the first cable type found in the comment.
     The initials of people are left out."""
     import io
-    need = ["NC", "Date de création de la NC", "Date de réalisation OF", "Semaine", "Programme", "MSN", "Motifs", "Imputation", "Commentaires analyses",
-            "Action", "Statut"]
+    need = TRACKER_COLUMNS
     text = _text(path)
     for sep in (",", ";"):   # a CSV export, or the same saved from a French Excel
         t = pd.read_csv(io.StringIO(text), dtype=str, keep_default_na=False, sep=sep)

@@ -45,8 +45,8 @@ la valeur de la ligne 3 (`-CRE|-PNC|A30-REJ-PVU2|-RCX`), ou ajouter une ligne `4
 **L'objectif** (−25 % par rapport à l'année de comparaison) : `config/1_reglages_pages.csv`, ligne `objectif_baisse`
 (0.25, 0,25 ou 25 % = −25 %). Les textes des pages affichent le pourcentage écrit ici.
 
-**Commencer une nouvelle année** (chaque mois de janvier) : dans `config/1_parametres.csv`, écrire la nouvelle année sur la
-ligne `annee`. Puis :
+**Commencer une nouvelle année** (chaque mois de janvier) : l'année suivie change toute seule (la ligne `annee` de
+`config/1_parametres.csv` reste vide). Puis :
 - déposer un export récent du Tableau Avances / Retards dans `data/`, **sans supprimer les anciens** : ils donnent les
   livraisons de l'année d'avant, donc les objectifs ;
 - ajouter les fermetures de la nouvelle année dans `config/1_calendrier_production.csv` ;
@@ -55,8 +55,8 @@ ligne `annee`. Puis :
   place de l'année. La liste Test garde son nom.
 
 Rien d'autre à changer : les NC affichées, l'année de comparaison, les objectifs, la cloche et tous les textes des pages
-suivent. La cloche reste muette tant que l'année n'a pas 16 semaines terminées (fin avril). Tant que la ligne `annee` n'est pas
-changée, les pages gardent l'année écrite, complète, et le notebook le rappelle à la fin de chaque lancement.
+suivent. La cloche reste muette tant que l'année n'a pas 16 semaines terminées (fin avril). Si une année est écrite sur la
+ligne `annee`, les pages gardent cette année, complète, et le notebook le rappelle à la fin de chaque lancement.
 
 **Un nouveau produit** : la règle qui le reconnaît dans `config/2_regle_produit.csv` ; son nom dans le plan de production
 dans `config/2_produits_plan.csv`.

@@ -193,7 +193,6 @@ Two rules of thumb: put special cases **before** general ones (a smaller `ordre`
 | `0_eqmsn_mois.csv` | 0 | One product and version (`std` = Standard sheet, `adj` = Adjusted sheet): its EqMSN for each month of 2026, the export date, the first forecast month | Not edited. The pages count the volume from the production plan (each aircraft spread over the days the plant works); this table only adds the EqMSN sheet's two versions while its months are those of the year followed. For another year it is ignored. |
 | `1_calendrier_production.csv` | 1 | A period of shutdown or slow production: start, end, **weight** (0 = closed, 0.5 = half a normal week), reason | Add a row for each new shutdown or bridge day, each year. It changes the MSN volume of the months and weeks concerned. Dates as `2026-12-24` or `24/12/2026`. |
 | `0_livraisons_2025.csv` | 0 | One product delivered in 2025: its name, its name in the plan, its line, the count per month of 2025, the total | Not edited. The basis of the 2026 targets. For a later comparison year no such table is needed: the deliveries are counted in the production plan (see "The year" below). A table `0_livraisons_<year>.csv` of the same shape is used instead when it exists. |
-| `0_livraisons_2025_lignes.csv` | 0 | One line: whole MSN delivered in 2025 | Not edited. |
 | `2_produits_plan.csv` | 2 | Product name on the NCs → product name in the plan (`produit_eqmsn`); `a_confirmer` = oui if not yet confirmed | A new product: add its row. |
 | `2_produits_noms_plan.csv` | 2 | Name in the plan → name shown (`MIP` → `MIP A350`) | |
 | `2_produits_alias.csv` | 2 | NCs whose product is not in the plan, sent to the plan product they belong to: line, product pattern, optional station pattern, target product | Patterns are regular expressions (expert): `^\d{3}VU$` = three digits then VU. |
@@ -261,10 +260,11 @@ The defects are sorted in three layers: **category** (e.g. Erreur Branchement) �
 ### The year
 
 The pages follow **one calendar year**: the NCs created that year, its production plan, its targets. The year is one line
-of `1_parametres.csv`:
+of `1_parametres.csv`, left **empty**: the year followed is then the current year, and it changes by itself on 1 January.
+Write a year there only to look back at a past year:
 
 ```
-annee;2026
+annee;
 ```
 
 Everything tied to the year follows from that line, with nothing else to change:
@@ -279,9 +279,9 @@ Everything tied to the year follows from that line, with nothing else to change:
 | The bell | Its weeks are the weeks of the year; it needs 16 weeks of the year before it can compare |
 | Every text of the pages | The two years and the target's percentage are written in from the settings |
 
-**To start a new year** (each January):
+**At the start of a new year** (each January) the year changes by itself. What still needs a hand:
 
-1. In `1_parametres.csv`, write the new year on the line `annee`.
+1. Nothing to write on the line `annee` (leave it empty).
 2. Save a fresh export of the Tableau Avances / Retards in `data/`, **beside the earlier ones** (they give last year's
    deliveries: never delete them).
 3. Add the new year's shutdowns to `1_calendrier_production.csv`.
@@ -290,7 +290,7 @@ Everything tied to the year follows from that line, with nothing else to change:
    The Test list keeps its name.
 5. Run the notebook. If a list is missing, its last lines say which file it looked for.
 
-Until the line is changed, the pages keep showing the year written there, complete, and the notebook says so at the end of
+When a year is written on the line, the pages keep showing that year, complete, and the notebook says so at the end of
 each run once that year is over.
 
 ---
@@ -303,7 +303,7 @@ each run once that year is over.
 | Price the rejected parts | `1_prix_pieces.csv` | One row per material: `materiel;designation;prix_unitaire_eur`. What is left to price: `fto2_parts_to_price.csv`, written at each run. |
 | Change an hourly rate | `1_cout_parametres.csv` | Change `valeur` of `taux_production`, `taux_qualite` or `taux_me`. |
 | Change the target | `1_reglages_pages.csv` | `objectif_baisse`: 0.30 for −30 %. |
-| Start a new year | `1_parametres.csv` | `annee`: the new year; then the production plan, the shutdowns and the GPS register (see "The year"). |
+| Start a new year | — | The year changes by itself; then the production plan, the shutdowns and the GPS register (see "The year"). |
 | Add a product | `2_regle_produit.csv`, then `2_produits_plan.csv` | A rule that recognises it, then its name in the plan. |
 | Update the production plan | a file in `data/` | Download the Tableau Avances / Retards as CSV and save it in `data/` beside the earlier exports. |
 | Update the cable requests | a file in `data/` | Download the cable team's tracker as CSV and save it in `data/`. |

@@ -49,7 +49,7 @@ NC_COLUMNS = [
 WO_COLUMNS = ["order_number", "order_type", "operation_number", "operation_short_text", "plant", "labor_standard_value",
               "unit_of_measure_for_the_standard_value_labor", "setup_standard_value", "unit_of_measure_for_the_standard_value_setup"]
 ALEA_COLUMNS = ["disruption_id", "plant", "physical_station", "work_order", "wo_designation", "ds_material", "type_desc", "open_date_time",
-                "open_date_time_tz", "status", "time_lost", "program", "comment"]
+                "status", "time_lost", "program", "comment"]
 
 
 def _liable(element, plant):
@@ -260,5 +260,5 @@ def run(Dataset, Column, say=None):
     import datetime as dt
     if dt.date.today().year > config.year():
         print(f"⚠️ The year followed is {config.year()} and we are in {dt.date.today().year}: the pages show the NCs of {config.year()} only.\n"
-              f"   To start the new year, write it on the line 'annee' of data/config/1_parametres.csv and run the notebook again.")
+              f"   To follow the current year, empty the line 'annee' of data/config/1_parametres.csv and run the notebook again.")
     return nc_t, def_t, dis_t

@@ -116,7 +116,8 @@ DEF_COLUMNS = [
     ("text", "text", "defect text (220 characters)"),
     ("subcode", "text", "official sub-code"),
     ("fin", "text", "FIN read by the parser"),
-    ("label_src", "text", "ai (stored root-cause label), titre (A400M: from the NC title, a400m_titres_souscodes.csv) or parser (no label yet)"),
+    ("label_src", "text", "ai (stored root-cause label), code (an official sub-code written in the NC: it wins over the label), "
+                          "titre (A400M: from the NC title, a400m_titres_souscodes.csv) or parser (no label yet, or a family code written in the NC that the label contradicts)"),
     ("ai_conf", "text", "confidence of the stored label: high, medium, low"),
     ("cr_nature", "text", "customer returns: damage type (phys, hs, nc, recu)"),
     ("cr_detection", "text", "customer returns: moment of detection"),
@@ -223,7 +224,7 @@ def official_subcode(d):
         desc.setdefault(c[:3] + " (non précisé)", ["Sub-code not specified", "Sous-code non précisé"])
     out = []
     for code, sub, status in zip(d.llm_sous_code.fillna("").astype(str).str.strip(), d.llm_sous_categorie, d.llm_status):
-        if status in ("ok", "titre") and code in desc:
+        if status in ("ok", "titre", "code") and code in desc:
             out.append(code)
         elif sub in fallback:
             out.append(fallback[sub])
@@ -355,6 +356,17 @@ def prepare(x, lab, ops=None, dis=None, say=None):
     norm = lambda s: s.fillna("").astype(str).str.replace(r"\s+", " ", regex=True).str.strip()
     same_text = (norm(d["text"]) == norm(d["snippet"])) | (norm(d["text"]).isin(["", "N/A"]) & (norm(d["snippet"]) == ""))
     d["llm_status"] = np.where(d["llm_sous_categorie"].isna(), "a_labelliser", np.where(same_text, "ok", "texte_change"))
+    # a code written in the NC by a person wins over the stored label: a full official sub-code (Q03-006) decides the line
+    # (status "code": no AI label needed); a family code alone (Q06) wins over a stored label from another family
+    written = d["souscat_source"].fillna("").eq("SOUS-CODE") if "souscat_source" in d.columns else pd.Series(False, index=d.index)
+    head = d["code"].fillna("").astype(str).str.upper().str.extract(r"^\s*([QT]\d{2})", expand=False) if "code" in d.columns else pd.Series(np.nan, index=d.index)
+    off_family = [h in PARSER.HEAD_SOUSCATS and s_ not in PARSER.HEAD_SOUSCATS[h] for h, s_ in zip(head, d["llm_sous_categorie"])]
+    outvoted = (d["llm_status"] == "ok") & ~written & pd.Series(off_family, index=d.index)
+    d.loc[written, "llm_status"] = "code"
+    d.loc[written, "llm_sous_code"] = d.loc[written, "sub_code"].astype(str).str.strip().str.upper()
+    d.loc[outvoted, "llm_status"] = "code_famille"
+    d.loc[outvoted, "llm_sous_code"] = ""
+    report["written_code"] = {"sub_code": int(written.sum()), "family_code_over_label": int(outvoted.sum())}
     use = d["llm_status"] == "ok"
     for c_llm, c_par in (("llm_sous_categorie", "sous_groupe"), ("llm_defaut_cable", "defaut_cable")):
         d[c_llm] = d[c_llm].where(use, d[c_par])
@@ -510,7 +522,7 @@ def tables(d, nc, lt, created_to):
         x = extra.get("%s|%d" % (r.notification_number, r.seq), ["", "", ""])
         rows.append([r.notification_number, int(r.seq), r.llm_categorie, r.llm_rca_nom, r.llm_sous_categorie, int(bool(r.llm_mineur)),
                      int(bool(r.llm_defaut_cable)), round(float(r.cnq_cost_allocated_llm), 2), int(r.qty) if pd.notna(r.qty) else 1,
-                     S_(r.text)[:220], r.sous_code_officiel, S_(r.fin), "ai" if ok else "titre" if r.llm_status == "titre" else "parser", S_(r.llm_confiance) if ok else "", x[0], x[1], x[2]])
+                     S_(r.text)[:220], r.sous_code_officiel, S_(r.fin), "ai" if ok else r.llm_status if r.llm_status in ("titre", "code") else "parser", S_(r.llm_confiance) if ok else "", x[0], x[1], x[2]])
     def_t = pd.DataFrame(rows, columns=[c[0] for c in DEF_COLUMNS])
     return nc_t, def_t
 
@@ -553,7 +565,7 @@ def build(frames, labels, ops=None, dis=None, say=None):
 def lines_to_label(d, lt):
     """Defect lines without a usable stored label (new, or text changed since it was labelled), for the periodic AI pass.
     snippet is the line's full text: a label is used only while the line's text stays the same as its snippet."""
-    t = d[~d.llm_status.isin(["ok", "titre"])]   # the A400M title lines need no label
+    t = d[~d.llm_status.isin(["ok", "titre", "code", "code_famille"])]   # the A400M title lines and the lines with a code written in the NC need no label
     out = pd.DataFrame({"notification_number": t.notification_number, "seq": t.seq, "snippet": t.text.fillna(""),
                         "parser_sous_categorie": t.sous_groupe, "ligne": t.ligne, "date_creation": t.date_creation,
                         "long_text": t.notification_number.map(lambda n: (lt.get(n, "") or "")[:4000])})

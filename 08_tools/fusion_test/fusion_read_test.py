@@ -3,12 +3,10 @@
 from foundry.transforms import Dataset
 
 EXPECTED = {
-    "fto2_set_year": ["nom", "valeur", "description"],
     "fto2_set_targets": ["nom", "valeur", "description"],
     "fto2_set_cost": ["nom", "valeur", "unite", "description"],
     "fto2_set_blackout": ["debut", "fin", "poids", "motif"],
     "fto2_set_deliveries": ["produit_livraison", "produit_eqmsn", "ligne"],
-    "fto2_set_deliveries_lines": ["ligne", "msn_entiers_livres_2025", "note"],
     "fto2_set_eqmsn": ["produit", "version"],
     "fto2_set_plant": ["nom", "valeur", "description"],
     "fto2_set_part_prices": ["materiel", "designation", "prix_unitaire_eur"],

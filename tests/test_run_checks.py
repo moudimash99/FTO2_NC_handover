@@ -58,7 +58,7 @@ class Mistakes(unittest.TestCase):
         self.stops_with("1_reglages_pages.csv, defaut_periode: '3 mois' is not one of ytd, m1, m3, m6, m12, all")
 
     def test_the_year(self):
-        self.change("1_parametres.csv", "annee;2026", "annee;26")
+        self.change("1_parametres.csv", "annee;;", "annee;26;")
         self.stops_with("1_parametres.csv, annee: '26' is not a year")
 
     def test_a_shutdown_date(self):

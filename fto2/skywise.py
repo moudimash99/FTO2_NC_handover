@@ -260,5 +260,5 @@ def run(Dataset, Column, say=None):
     import datetime as dt
     if dt.date.today().year > config.year():
         print(f"⚠️ The year followed is {config.year()} and we are in {dt.date.today().year}: the pages show the NCs of {config.year()} only.\n"
-              f"   To start the new year, write it on the line 'annee' of data/config/1_parametres.csv and run the notebook again.")
+              f"   To follow the current year, empty the line 'annee' of data/config/1_parametres.csv and run the notebook again.")
     return nc_t, def_t, dis_t

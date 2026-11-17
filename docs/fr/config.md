@@ -201,7 +201,6 @@ Deux règles simples : mettez les cas particuliers **avant** les cas généraux 
 | `0_eqmsn_mois.csv` | 0 | Un produit et une version (`std` = feuille Standard, `adj` = feuille Adjusted) : son EqMSN pour chaque mois de 2026, la date de l'export, le premier mois de prévision | Ne se modifie pas. Les pages comptent le volume à partir du plan de production (chaque avion réparti sur les jours où l'usine travaille) ; cette table ajoute seulement les deux versions de la feuille EqMSN tant que ses mois sont ceux de l'année suivie. Pour une autre année, elle est ignorée. |
 | `1_calendrier_production.csv` | 1 | Une période de fermeture ou de production ralentie : début, fin, **poids** (0 = fermé, 0,5 = la moitié d'une semaine normale), motif | Ajoutez une ligne pour chaque nouvelle fermeture ou chaque nouveau pont, chaque année. Cela change le volume MSN des mois et des semaines concernés. Dates sous la forme `2026-12-24` ou `24/12/2026`. |
 | `0_livraisons_2025.csv` | 0 | Un produit livré en 2025 : son nom, son nom dans le plan, sa ligne, le nombre par mois de 2025, le total | Ne se modifie pas. La base des objectifs 2026. Pour une année de comparaison plus récente, aucune table de ce genre n'est nécessaire : les livraisons sont comptées dans le plan de production (voir « L'année » plus bas). Une table `0_livraisons_<year>.csv` de même forme est utilisée à la place quand elle existe. |
-| `0_livraisons_2025_lignes.csv` | 0 | Une ligne avion : les MSN entiers livrés en 2025 | Ne se modifie pas. |
 | `2_produits_plan.csv` | 2 | Nom du produit sur les NC → nom du produit dans le plan (`produit_eqmsn`) ; `a_confirmer` = oui s'il n'est pas encore confirmé | Un nouveau produit : ajoutez sa ligne. |
 | `2_produits_noms_plan.csv` | 2 | Nom dans le plan → nom affiché (`MIP` → `MIP A350`) | |
 | `2_produits_alias.csv` | 2 | Les NC dont le produit n'est pas dans le plan, renvoyées vers le produit du plan dont elles font partie : ligne, motif du produit, motif du poste (facultatif), produit cible | Les motifs sont des expressions régulières (expert) : `^\d{3}VU$` = trois chiffres puis VU. |
@@ -270,10 +269,11 @@ Inversion) → **sous-code** (le code officiel, par exemple T04).
 ### L'année
 
 Les pages suivent **une année civile** : les NC créées cette année-là, son plan de production, ses objectifs. L'année est
-une ligne de `1_parametres.csv` :
+une ligne de `1_parametres.csv`, laissée **vide** : l'année suivie est alors l'année en cours, et elle change toute seule
+le 1er janvier. N'y écrire une année que pour revoir une année passée :
 
 ```
-annee;2026
+annee;
 ```
 
 Tout ce qui dépend de l'année découle de cette ligne, sans rien d'autre à changer :
@@ -288,9 +288,9 @@ Tout ce qui dépend de l'année découle de cette ligne, sans rien d'autre à ch
 | La cloche | Ses semaines sont les semaines de l'année ; il lui faut 16 semaines de l'année avant de pouvoir comparer |
 | Chaque texte des pages | Les deux années et le pourcentage de l'objectif y sont écrits à partir des paramètres |
 
-**Pour commencer une nouvelle année** (chaque mois de janvier) :
+**Au début d'une nouvelle année** (chaque mois de janvier), l'année change toute seule. Ce qu'il reste à faire :
 
-1. Dans `1_parametres.csv`, écrivez la nouvelle année sur la ligne `annee`.
+1. Rien à écrire sur la ligne `annee` (la laisser vide).
 2. Déposez un export récent du Tableau Avances / Retards dans `data/`, **à côté des précédents** (ils donnent les livraisons
    de l'année dernière : ne les supprimez jamais).
 3. Ajoutez les fermetures de la nouvelle année dans `1_calendrier_production.csv`.
@@ -312,7 +312,7 @@ signale à la fin de chaque exécution une fois cette année terminée.
 | Chiffrer les pièces rejetées | `1_prix_pieces.csv` | Une ligne par matériel : `materiel;designation;prix_unitaire_eur`. Ce qui reste à chiffrer : `fto2_parts_to_price.csv`, écrit à chaque exécution. |
 | Changer un taux horaire | `1_cout_parametres.csv` | Changez la `valeur` de `taux_production`, `taux_qualite` ou `taux_me`. |
 | Changer l'objectif | `1_reglages_pages.csv` | `objectif_baisse` : 0.30 pour −30 %. |
-| Commencer une nouvelle année | `1_parametres.csv` | `annee` : la nouvelle année ; puis le plan de production, les fermetures et le registre GPS (voir « L'année »). |
+| Commencer une nouvelle année | — | L'année change toute seule ; puis le plan de production, les fermetures et le registre GPS (voir « L'année »). |
 | Ajouter un produit | `2_regle_produit.csv`, puis `2_produits_plan.csv` | Une règle qui le reconnaît, puis son nom dans le plan. |
 | Mettre à jour le plan de production | un fichier dans `data/` | Téléchargez le Tableau Avances / Retards en CSV et déposez-le dans `data/` à côté des exports précédents. |
 | Mettre à jour les demandes de câbles | un fichier dans `data/` | Téléchargez le suivi de l'équipe câbles en CSV et déposez-le dans `data/`. |

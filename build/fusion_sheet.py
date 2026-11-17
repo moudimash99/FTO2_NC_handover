@@ -7,6 +7,7 @@ Writes 03_reports/skywise/fusion/FTO2 NC Dashboard - Settings.xlsx, to import in
 the pipeline reads. The rules and the other technical tables stay as files in config/.
 """
 import csv
+import io
 import os
 import re
 
@@ -21,8 +22,6 @@ OUT = os.path.join(ROOT, "03_reports", "skywise", "fusion", "FTO2 NC Dashboard -
 HOQ, CM = "Head of Quality", "Configuration manager"
 # sheet, dataset, who fills it, what it holds, when it changes, where today's values come from
 SHEETS = [
-    ("Year", "fto2_set_year", HOQ, "The year the dashboard follows, and the year it is compared with (empty: the year before).",
-     "Each January.", ("1_parametres.csv", None)),
     ("Target and pages", "fto2_set_targets", HOQ, "The cut of the target (0.25 = 25 % fewer NCs per MSN than the comparison year), the weight of July and "
      "August, what the pages show when they open, the target of an MFT action.", "When the target or the review changes.", ("1_reglages_pages.csv", None)),
     ("Cost rates and times", "fto2_set_cost", HOQ, "The hourly rates of production, quality and methods, and the minutes each step of an NC takes.",
@@ -31,8 +30,6 @@ SHEETS = [
      "Each year, and when a closure is added.", ("1_calendrier_production.csv", None)),
     ("Deliveries last year", "fto2_set_deliveries", HOQ, "Products delivered each month of the comparison year: the base of this year's targets.",
      "Each January, for the year just ended.", ("0_livraisons_2025.csv", None)),
-    ("Deliveries per line", "fto2_set_deliveries_lines", HOQ, "Whole aircraft delivered in the comparison year, per line.",
-     "Each January.", ("0_livraisons_2025_lignes.csv", None)),
     ("Planned volume", "fto2_set_eqmsn", HOQ, "The planned volume (EqMSN) of each product, month by month, as in the EqMSN sheet.",
      "When the EqMSN sheet is updated.", ("0_eqmsn_mois.csv", None)),
     ("Plant", "fto2_set_plant", HOQ, "The plant followed, and how its code is written in SAP.", "Rarely.", ("2_parametres.csv", ("usine", "usines_maison"))),
@@ -54,7 +51,7 @@ def read(path):
     with open(path, encoding="utf-8-sig", newline="") as f:
         text = f.read()
     sep = ";" if text.splitlines()[0].count(";") >= text.splitlines()[0].count(",") else ","
-    return list(csv.reader(text.splitlines(), delimiter=sep))
+    return list(csv.reader(io.StringIO(text, newline=""), delimiter=sep))   # a text in quotes may hold line breaks
 
 
 def cell(v):
@@ -106,7 +103,7 @@ def main():
         rows = read(os.path.normpath(os.path.join(CONFIG, src)))
         if keep:
             rows = [rows[0]] + [r for r in rows[1:] if r and r[0] in keep]
-        sheet(wb, title, rows, numeric=title in ("Deliveries last year", "Deliveries per line", "Planned volume"))
+        sheet(wb, title, rows, numeric=title in ("Deliveries last year", "Planned volume"))
     os.makedirs(os.path.dirname(OUT), exist_ok=True)
     wb.save(OUT)
     print("written:", os.path.relpath(OUT, ROOT), "-", len(SHEETS), "sheets")

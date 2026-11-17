@@ -37,7 +37,7 @@ def comparison_year(raw, station_desc):
     alias = lambda line, prod, station: alias_product(rules, plan, line, prod, station)   # products off the plan put back on their plan product
     rows, info, p = core.year_baseline(raw, station_desc, year, alias)
     out = {"cols": ["month", "scope", "phase", "line", "product", "nc", "def", "defMajor", "cost", "cost2", "cost1", "liab", "costAll"], "rows": rows,
-           "from": info["created_from"], "to": info["created_to"], "prod": None, "msn": None}
+           "from": info["created_from"], "to": info["created_to"], "prod": None}
     out["rcaCols"], out["rca"] = core.year_causes(p, year)   # that year's defects by cause (parser labels), for the cause charts of both years
     then = p["nc"][p["nc"].date_creation.astype(str).str.startswith(str(year)) & (p["nc"].scope == "serie")]
     msn = then.msn.fillna("").astype(str).str.replace(r"\.0$", "", regex=True).str.lstrip("0")
@@ -51,9 +51,8 @@ def comparison_year(raw, station_desc):
 
 def deliveries(year):
     """The products delivered in a past year, month by month: the volume that year's rates are counted on.
-    {"prod": {product: 12 months}, "months": [...], "msn": {line: aircraft delivered} or None, "delivered": "sheet" or "plan"}.
-      - from config/0_livraisons_<year>.csv when that table exists (2025: the Livraisons 2025 sheet), with the aircraft per
-        line of 0_livraisons_<year>_lignes.csv;
+    {"prod": {product: 12 months}, "months": [...], "delivered": "sheet" or "plan"}.
+      - from config/0_livraisons_<year>.csv when that table exists (2025: the Livraisons 2025 sheet);
       - else counted in the production plan (_production_export): a product is delivered in the month its build ends, its
         Départ OTA (the real date, else the planned one), with the same date corrections as the volumes of the year followed.
     None when neither holds a delivery of that year."""
@@ -61,15 +60,8 @@ def deliveries(year):
     if os.path.exists(config.path(name)):
         t = config.frame(name)
         months = [c for c in t.columns if c.startswith("%d-" % year)]
-        out = {"prod": {EQ_NAMES.get(k, k): [float(v) for v in vals] for k, vals in zip(t.produit_eqmsn, t[months].values)},
-               "months": months, "msn": None, "delivered": "sheet"}
-        lines = "0_livraisons_%d_lignes.csv" % year
-        if os.path.exists(config.path(lines)):
-            ln = config.frame(lines)
-            col = next((c for c in ln.columns if c.startswith("msn_entiers_livres")), None)
-            if col:
-                out["msn"] = dict(zip(ln.ligne, ln[col].astype(int)))
-        return out
+        return {"prod": {EQ_NAMES.get(k, k): [float(v) for v in vals] for k, vals in zip(t.produit_eqmsn, t[months].values)},
+                "months": months, "delivered": "sheet"}
     asof, recs = _production_export()
     prod = {}
     for c, _, end in _build_spans(asof, recs) if asof else []:
@@ -77,7 +69,7 @@ def deliveries(year):
             prod.setdefault(c["prod"], [0.0] * 12)[end.month - 1] += 1.0
     if not prod:
         return None
-    return {"prod": prod, "months": ["%d-%02d" % (year, m) for m in range(1, 13)], "msn": None, "delivered": "plan"}
+    return {"prod": prod, "months": ["%d-%02d" % (year, m) for m in range(1, 13)], "delivered": "plan"}
 
 
 
