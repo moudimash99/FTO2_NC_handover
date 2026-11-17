@@ -79,12 +79,12 @@ class TestFusion(unittest.TestCase):
         self.assertTrue(any("fto2_set_cost not used" in m for m in said))
 
     def test_column_names_written_differently(self):
-        t = self.sheets["fto2_set_plant"].copy()
+        t = self.sheets["fto2_set_cost"].copy()
         t.columns = [c.upper() for c in t.columns]
-        t.loc[t.iloc[:, 0] == "usine", t.columns[1]] = "FTO9"
-        FakeDataset.tables = {"fto2_set_plant": t}
+        t.loc[t.iloc[:, 0] == "taux_qualite", t.columns[1]] = 99
+        FakeDataset.tables = {"fto2_set_cost": t}
         fusion.load(FakeDataset, say=lambda m: None)
-        self.assertEqual(config.parameter("usine"), "FTO9")
+        self.assertEqual(config.table("1_cout_parametres.csv").set_index("nom").valeur["taux_qualite"], "99")
 
     def test_a_list_pasted_from_its_header(self):
         from fto2 import manual_lists

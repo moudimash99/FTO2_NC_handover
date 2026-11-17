@@ -19,6 +19,7 @@ block  one row per quality aléa that led to no NC, with in_block = False for th
 import numpy as np
 import pandas as pd
 
+from .. import config
 from . import params as P
 
 
@@ -60,8 +61,12 @@ def nc_alea_times(nc, ds, params=P):
     times = led.groupby("notification_number").agg(aleas=("disruption_id", lambda x: " ".join(sorted(x))), alea_minutes=("minutes", "sum")).reset_index()
     block = q[~q["disruption_id"].isin(lk["disruption_id"])].copy()
     erma = block.get("wo_designation", pd.Series("", index=block.index)).astype("string").fillna("").str.contains(params.ALEA_ERMA_DESIGNATION, case=False)
-    erma |= block.get("ds_material", pd.Series("", index=block.index)).astype("string").fillna("").str.contains("1101")
+    erma |= block.get("ds_material", pd.Series("", index=block.index)).astype("string").fillna("").str.contains(params.ALEA_ERMA_MATERIAL)
     block["opened"] = _opened(block)
+    # the aléas of December of the year before are read only to link the NCs of early January: not in the block
+    start = pd.Timestamp(config.first_day()).tz_localize("Europe/Paris").tz_convert("UTC")
+    keep = ~(block["opened"] < start)
+    block, erma = block[keep].copy(), erma[keep]
     block["in_block"] = ~erma.fillna(False).astype(bool)
     block["reason"] = np.where(block["in_block"], "", "erma")
     return times, block.reset_index(drop=True)

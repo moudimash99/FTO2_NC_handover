@@ -1,7 +1,8 @@
 {
+  "left_out_by_rules_or_year": 17,
   "inputs": {
     "fto2_dashboard_data_12.csv": 1000,
-    "fto2_dashboard_data_missing_ids_3.csv": 127,
+    "fto2_dashboard_data_missing_ids_3.csv": 110,
     "nc_2026_skywise_fto2_2026-10-26.csv": 154
   },
   "nc_rows": 1281,
@@ -31,19 +32,19 @@
     "deliveries_from": "sheet"
   },
   "labels": {
-    "ok": 3489,
-    "titre": 90
+    "ok": 3473,
+    "titre": 89
   },
   "subcodes": {
-    "exact": 3368,
+    "exact": 3351,
     "parent_or_none": 211
   },
   "unknown_cnq_classes": [],
   "rework_orders": {
-    "ncs_with_link": 927,
+    "ncs_with_link": 920,
     "operations": 2743,
     "state": {
-      "not_found": 823,
+      "not_found": 816,
       "used": 71,
       "open": 20,
       "no_time": 13
@@ -64,26 +65,26 @@
   },
   "cnq": {
     "classification": "root cause (long text)",
-    "nc_on_aec": 945,
-    "level1": 444081.44,
-    "level2": 320514.95,
-    "level3": 417916.0,
-    "cable_allocated": 127891.22,
-    "cable_share": 0.306,
-    "level3_parser": 420664.28,
-    "cable_share_parser": 0.3043
+    "nc_on_aec": 939,
+    "level1": 441299.78,
+    "level2": 318415.93,
+    "level3": 415714.48,
+    "cable_allocated": 125689.7,
+    "cable_share": 0.3023,
+    "level3_parser": 418367.46,
+    "cable_share_parser": 0.3014
   },
   "scope": {
-    "serie": 1142,
-    "autre": 70,
-    "client": 69
+    "serie": 1136,
+    "client": 69,
+    "autre": 59
   },
   "report_scope": {
     "serie": {
-      "ncs": 1142,
+      "ncs": 1136,
       "ncs_without_defect_line": 20,
-      "defects": 3436,
-      "cnq": 487177.74
+      "defects": 3430,
+      "cnq": 484976.22
     },
     "client": {
       "ncs": 69,
@@ -92,29 +93,29 @@
       "cnq": 26312.33
     },
     "autre": {
-      "ncs": 70,
+      "ncs": 59,
       "ncs_without_defect_line": 0,
-      "defects": 70,
-      "cnq": 19307.92
+      "defects": 59,
+      "cnq": 17501.37
     }
   },
   "defects_by_scope": {
-    "serie": 3436,
+    "serie": 3430,
     "client": 73,
-    "autre": 70
+    "autre": 59
   },
   "cnq_package_checks": {
     "build_dashboard.py": "OK",
-    "test_queries.py": "OK",
-    "test_dashboard.js": "FAILED: level1_airbus_aec         444081.44 pipeline    444081.44 OK\nlevel2_global_aec         320514.95 pipeline    320514.95 OK\nlevel3_detailed_aec       417793.00 pipeline       417916 DIFFERENT\nper-NC check: 1281 NCs, 4 different\nFAILED\n"
+    "test_queries.py": "FAILED: AS month,\n    COUNT(*)                               AS nc_count,\n    ROUND(SUM(cnq_cost_modelled), 0)       AS cost_estimated,\n    SUM(cnq_customer_amount_known)         AS real_amounts_known,\n    ROUND(SUM(cnq_cost_total), 0)          AS cost_total\nFROM fto2_nc_cnq\nWHERE cnq_on_aec = 1 AND cnq_customer_return = 1\nGROUP BY cnq_month\nORDER BY cnq_month\n': no such column: cnq_customer_amount_known\n",
+    "test_dashboard.js": "FAILED: level1_airbus_aec         441299.78 pipeline    441299.78 OK\nlevel2_global_aec         318415.93 pipeline    318415.93 OK\nlevel3_detailed_aec       415591.48 pipeline    415714.48 DIFFERENT\nper-NC check: 1264 NCs, 4 different\nFAILED\n"
   },
   "cnq_package_totals": {
-    "nc_rows": 1281,
-    "nc_on_aec": 945,
+    "nc_rows": 1264,
+    "nc_on_aec": 939,
     "nc_no_master_data": 0,
-    "level1_airbus_aec": 444081.44,
-    "level2_global_aec": 320514.95,
-    "level3_detailed_aec": 417916.0
+    "level1_airbus_aec": 441299.78,
+    "level2_global_aec": 318415.93,
+    "level3_detailed_aec": 415714.48
   },
   "customer_returns": {
     "ncs": 69,
@@ -127,17 +128,17 @@
     }
   },
   "dash_tables": {
-    "nc": 1281,
-    "defects": 3579,
+    "nc": 1264,
+    "defects": 3562,
     "disruptions": 107,
-    "cout": 4860
+    "cout": 4826
   },
   "skywise": {
     "level1": {
       "ncs": 713,
       "defects": 1463,
       "aleas": 99,
-      "js_kb": 1361
+      "js_kb": 1362
     },
     "level23_js_kb": 477,
     "slate_functions": {
@@ -151,10 +152,10 @@
       "FTO2_NC_Dashboard_level3.slate.json"
     ]
   },
-  "review_disagreements": 494,
+  "review_disagreements": 483,
   "eqmsn": {
     "products": 10,
-    "total_std": 640.46,
+    "total_std": 625.13,
     "total_wd": 625.13,
     "msn_dates": 795,
     "msn_asof": "2026-11-03",

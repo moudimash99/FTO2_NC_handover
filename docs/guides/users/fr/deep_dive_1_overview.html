@@ -1,0 +1,80 @@
+<!--
+title: Deep dive – Vue d’ensemble
+subtitle: Toute la sélection, comptée en NC
+kicker: Tableau de bord NC FTO2 · Utilisateurs · Mode Deep dive
+file: users/fr/Deep dive 1 - Vue d'ensemble
+for: tous ceux qui analysent les NC
+foot: Tableau de bord NC FTO2 · Deep dive – Vue d’ensemble
+short: yes
+lang: fr
+-->
+<h2>À quoi sert l’onglet</h2>
+<p>L’onglet Vue d’ensemble donne toute la sélection d’un coup d’œil, comptée en <b>NC</b> : chaque NC compte une fois, quel que soit son nombre de défauts. Il répond à quatre questions : combien de NC, sommes-nous dans l’objectif, quelque chose sort-il de l’ordinaire, et à quelle vitesse les NC sont-elles closes ?</p>
+<h2>Les graphiques</h2>
+<h3>Chiffres clés</h3>
+<table class="keep fact"><tbody>
+  <tr><th style="width:30mm">Ce qu’on voit</th><td>NC, défauts, défauts par NC, coût de non-qualité et NC par MSN, pour la sélection.</td></tr>
+  <tr><th>Comment le lire</th><td>NC par MSN a un interrupteur, A330 + A350 ou A320 : les produits de l’A320 sont de petites pièces comptées à l’unité et ne peuvent pas partager un taux avec les autres lignes.</td></tr>
+  <tr><th>À quoi ça sert</th><td>La taille de la sélection en une ligne, avant de lire le moindre graphique.</td></tr>
+  <tr><th>Un clic</th><td>—</td></tr>
+</tbody></table>
+<h3>Chaque ligne face à son objectif</h3>
+<table class="keep fact"><tbody>
+  <tr><th style="width:30mm">Ce qu’on voit</th><td>Une barre par ligne : ses NC par avion produit cette année.</td></tr>
+  <tr><th>Comment le lire</th><td>Le trait noir est l’objectif, le petit cercle le taux de l’an dernier, le pourcentage l’écart à l’objectif (en rouge quand il est au-dessus).</td></tr>
+  <tr><th>À quoi ça sert</th><td>Le moyen le plus rapide de voir quelle ligne demande de l’attention.</td></tr>
+  <tr><th>Un clic</th><td>Garde cette ligne sur toute la page.</td></tr>
+</tbody></table>
+<h3>NC cumulées sur l’année</h3>
+<table class="keep fact"><tbody>
+  <tr><th style="width:30mm">Ce qu’on voit</th><td>Les NC additionnées mois après mois, face à l’objectif et à l’an dernier.</td></tr>
+  <tr><th>Comment le lire</th><td>Tirets : l’objectif à date. Trait gris : l’an dernier. Point vert : un mois sous son objectif ; rouge : au-dessus. Pointillé : la prévision jusqu’à décembre.</td></tr>
+  <tr><th>À quoi ça sert</th><td>Montre si l’année est sur la bonne voie, et depuis quel mois elle dérive.</td></tr>
+  <tr><th>Un clic</th><td>Garde les NC créées ce mois-là.</td></tr>
+</tbody></table>
+<h3>Coût de non-qualité cumulé</h3>
+<table class="keep fact"><tbody>
+  <tr><th style="width:30mm">Ce qu’on voit</th><td>La même courbe en euros, avec sa propre prévision et son propre objectif.</td></tr>
+  <tr><th>Comment le lire</th><td>Se lit comme la courbe des NC.</td></tr>
+  <tr><th>À quoi ça sert</th><td>Montre si le coût suit le nombre de NC, ou augmente plus vite à cause de quelques cas coûteux.</td></tr>
+  <tr><th>Un clic</th><td>Garde ce mois.</td></tr>
+</tbody></table>
+<h3>Combien de temps une NC reste ouverte</h3>
+<table class="keep fact"><tbody>
+  <tr><th style="width:30mm">Ce qu’on voit</th><td>Pour chaque type de décision, la part des NC encore ouvertes, jour après jour depuis leur création.</td></tr>
+  <tr><th>Comment le lire</th><td>Chaque courbe part de 100 % et descend au fil des clôtures. Le point est le jour où la moitié des NC sont closes (par exemple 7 jours pour une retouche).</td></tr>
+  <tr><th>À quoi ça sert</th><td>Montre où la clôture prend du temps.</td></tr>
+  <tr><th>Un clic</th><td>Garde les NC encore ouvertes après ce nombre de jours.</td></tr>
+</tbody></table>
+<h3>NC par semaine, avec leurs limites</h3>
+<table class="keep fact"><tbody>
+  <tr><th style="width:30mm">Ce qu’on voit</th><td>Les NC de chaque semaine, autour de la semaine moyenne.</td></tr>
+  <tr><th>Comment le lire</th><td>Pointillés : le niveau d’attention. Tirets rouges : le niveau d’alarme. Les semaines de fermeture sont hors calcul.</td></tr>
+  <tr><th>À quoi ça sert</th><td>Distingue une semaine qui sort de l’ordinaire des hauts et des bas normaux.</td></tr>
+  <tr><th>Un clic</th><td>Garde cette semaine.</td></tr>
+</tbody></table>
+<h3>NC par programme</h3>
+<table class="keep fact"><tbody>
+  <tr><th style="width:30mm">Ce qu’on voit</th><td>La part de chaque ligne dans les NC.</td></tr>
+  <tr><th>Comment le lire</th><td>Une barre par ligne.</td></tr>
+  <tr><th>À quoi ça sert</th><td>Le poids de chaque ligne d’un coup d’œil.</td></tr>
+  <tr><th>Un clic</th><td>Garde cette ligne sur toute la page.</td></tr>
+</tbody></table>
+<h3>Autres listes et graphiques</h3>
+<p>Sous <b>▸ Autres listes et graphiques</b> :</p>
+<table class="keep fact"><tbody>
+  <tr><th style="width:52mm">NC par produit</th><td>Quels produits portent les NC.</td></tr>
+  <tr><th style="width:52mm">Décision et statut</th><td>Ce qui a été décidé, et combien de NC sont encore ouvertes.</td></tr>
+  <tr><th style="width:52mm">NC ouvertes et closes par mois</th><td>Si le stock de NC ouvertes augmente ou diminue.</td></tr>
+  <tr><th style="width:52mm">Répartition du coût par type de NC</th><td>Quel type de NC (câble, test, contrôle final, interne, fournisseur) porte le coût.</td></tr>
+  <tr><th style="width:52mm">Responsabilité</th><td>Qui est responsable des NC dans SAP.</td></tr>
+  <tr><th style="width:52mm">Code défaut SAP, Cause SAP</th><td>Les NC selon les codes saisis dans SAP.</td></tr>
+  <tr><th style="width:52mm">Calendrier des défauts</th><td>Les défauts jour par jour : le rythme des semaines, et les jours sans défaut (congés, fermetures).</td></tr>
+</tbody></table>
+<h3>Détail des NC</h3>
+<table class="keep fact"><tbody>
+  <tr><th style="width:30mm">Ce qu’on voit</th><td>La liste derrière tous les graphiques de l’onglet, les plus récentes en premier : date, ligne, produit, type, décision, statut, poste et titre.</td></tr>
+  <tr><th>Comment le lire</th><td>Cherchez-y par numéro de NC, mot ou FIN. Elle affiche 200 lignes à la fois ; <b>Afficher 200 de plus</b>, en bas, en affiche davantage.</td></tr>
+  <tr><th>À quoi ça sert</th><td>C’est là qu’un chiffre devient des cas réels.</td></tr>
+  <tr><th>Un clic</th><td>—</td></tr>
+</tbody></table>

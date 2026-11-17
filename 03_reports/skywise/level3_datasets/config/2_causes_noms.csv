@@ -10,7 +10,6 @@ MEO_GAINAGE;MEO Gainage;
 MEO_FINITION;Finition Inachevée;
 MEO_SERTISSAGE_STANDARD;Défaut de Sertissage sur câble standard;
 MEO_SERTISSAGE_SPECIFIQUE;Défaut de Sertissage sur câble spécifique;
-MESURE_NON_CONFORME;Défaut de Métallisation;
 ERREUR_REF_HABILLAGE;Erreur Fixation ou Protection;
 ERREUR_REF_ELECTRIQUE;Erreur Composant Électrique;
 MANQUANT_HABILLAGE;Fixation ou Protection Manquante;

@@ -77,18 +77,22 @@ class Deliveries(unittest.TestCase):
         reference._production_export = self.export
 
     def test_counted_in_the_production_plan(self):
-        """A year with no deliveries table: a product is delivered in the month of its Départ OTA, the real date when there
-        is one."""
+        """A year with no deliveries table is measured as the year followed is: each product built, spread over the days the
+        plant worked from its printing to its OTA (the real date when there is one), so that both years' rates count alike."""
         recs = [aircraft("A350", "MIP A350", "901", D(2029, 11, 5), D(2030, 1, 20), real_end=D(2030, 2, 3)),
                 aircraft("A350", "MIP A350", "902", D(2030, 1, 7), D(2030, 2, 25)),
                 aircraft("A330", "PTVU", "2501", D(2030, 10, 1), D(2031, 1, 15)),
                 aircraft("A330", "PTVU", "2502", D(2029, 9, 1), D(2029, 12, 15))]
         reference._production_export = lambda: (D(2031, 3, 1), recs)
         got = reference.deliveries(2030)
-        self.assertEqual(got["delivered"], "plan")
-        self.assertEqual(got["prod"], {"MIP A350": [0, 2.0] + [0] * 10})   # 901 on its real date, 902 on its planned one
+        self.assertEqual(got["delivered"], "built")
         self.assertEqual(got["months"][0], "2030-01")
-        self.assertIsNone(reference.deliveries(2028))   # nothing was delivered that year
+        self.assertEqual(got["prod"], {p: v for p, v in reference.working_day_volume(D(2031, 3, 1), recs, year=2030).items() if sum(v)})
+        mip, ptvu = got["prod"]["MIP A350"], got["prod"]["PTVU"]
+        self.assertTrue(1 < sum(mip) < 2)                        # 902 built whole in 2030, 901 partly (begun in 2029)
+        self.assertEqual(sum(mip[2:]), 0)                         # 901 ended on 3 February (its real date), 902 on 25 February
+        self.assertTrue(0 < sum(ptvu) < 1 and sum(ptvu[:9]) == 0)   # 2501 from October 2030 to January 2031
+        self.assertIsNone(reference.deliveries(2028))   # nothing was built that year
 
     def test_the_deliveries_table_wins(self):
         """2025 has its table (config/0_livraisons_2025.csv): the plan is not asked."""

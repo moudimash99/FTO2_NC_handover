@@ -110,12 +110,11 @@ class Year(unittest.TestCase):
             config.year()
         self.assertIn("1_parametres.csv, annee: '26' is not a year", str(e.exception))   # the table that holds the line
 
-    def test_settings_written_before_the_line_existed(self):
+    def test_a_former_start_date_does_not_hold_the_year(self):
+        import datetime as dt
         del self.values["annee"]
-        self.values["date_debut"] = "2026-01-01"   # the former start date gives the year
-        self.assertEqual((config.year(), config.first_day()), (2026, "2026-01-01"))
-        self.values["date_debut"] = "01/01/2026"   # as Excel saves it
-        self.assertEqual(config.year(), 2026)
+        self.values["date_debut"] = "2025-01-01"   # left from older settings: not read
+        self.assertEqual(config.year(), dt.date.today().year)
 
     def test_an_empty_year_is_the_current_year(self):
         import datetime as dt

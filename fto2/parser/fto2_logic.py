@@ -83,7 +83,12 @@ def nc_fields(sap_nc: pd.DataFrame) -> pd.DataFrame:
     nc = nc.drop_duplicates("notification_number").reset_index(drop=True)
     nc["texte"] = nc["texte"].fillna("").astype(str)
     nc["nc_id"] = nc["notification_number"].str.lstrip("0")
-    dt = pd.to_datetime(nc["date_creation"], errors="coerce", utc=True)
+    try:   # a column may hold dates written two ways ('2026-01-19 22:24:31' and '2026-01-19T22:24:31Z')
+        dt = pd.to_datetime(nc["date_creation"], errors="coerce", utc=True, format="mixed")
+    except (TypeError, ValueError):   # older pandas: no format="mixed"
+        dt = pd.to_datetime(nc["date_creation"], errors="coerce", utc=True)
+    if dt.isna().any():
+        print("⚠️ %d NC(s) with a creation date that cannot be read, left out: %s" % (int(dt.isna().sum()), ", ".join(nc.loc[dt.isna(), "notification_number"].astype(str).head(5))))
     nc["date_creation"] = dt.dt.strftime("%Y-%m-%d").fillna("")
     keep = dt.dt.strftime("%Y-%m-%d") >= PERIOD_START
     nc["dans_periode"] = keep.fillna(False).astype(bool)

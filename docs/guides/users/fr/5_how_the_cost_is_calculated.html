@@ -1,0 +1,64 @@
+<!--
+title: Comment le coût est calculé
+subtitle: Le coût de non-qualité, étape par étape
+kicker: Tableau de bord NC FTO2 · Utilisateurs
+file: users/fr/5 Comment le coût est calculé
+for: tous ceux qui lisent le coût de non-qualité ou en discutent
+foot: Tableau de bord NC FTO2 · Comment le coût est calculé
+short: yes
+lang: fr
+-->
+
+<h2>Le principe</h2>
+<p>Le coût de non-qualité est une <b>estimation</b> : le temps que prend chaque NC, au taux horaire de qui fait le travail, plus
+les études d’ingénierie et les pièces. Ce n’est ni une facture ni un chiffre comptable. Il est fait pour comparer : entre
+causes, lignes et mois. Le coût ne compte que là où FTO2 est responsable ; les autres NC comptent comme NC, avec un coût de 0
+pour FTO2.</p>
+<p>Les minutes et les taux horaires ci-dessous sont ceux utilisés aujourd’hui. Ce sont des réglages convenus avec l’équipe :
+quand l’un d’eux change, les coûts de toute l’année suivent à la mise à jour suivante. Le tableau de bord montre toujours les
+valeurs en vigueur, dans
+<b>Coût de non-qualité › Expliquer le calcul</b>.</p>
+
+<h2>Les six étapes d’une NC</h2>
+<table class="keep">
+  <thead><tr><th style="width:44mm">Étape</th><th>Ce qu’elle couvre</th><th style="width:44mm">Aujourd’hui</th></tr></thead>
+  <tbody>
+    <tr><td><b>Aléa</b></td><td>L’opérateur signale le défaut.</td><td>41 min, taux production</td></tr>
+    <tr><td><b>Rédaction de la NC</b></td><td>La saisie dans SAP.</td><td>30 min (60 au contrôle final), taux qualité</td></tr>
+    <tr><td><b>Support technique</b></td><td>Vérification, estimation, préparation de l’ordre de travail.</td><td>60 min, taux méthodes</td></tr>
+    <tr><td><b>Préparation</b></td><td>Badgeage, approvisionnement des pièces, mise en place.</td><td>50 min, taux production</td></tr>
+    <tr><td><b>Intervention</b></td><td>La retouche elle-même : des minutes pour chaque défaut, selon sa nature.</td><td>selon les défauts</td></tr>
+    <tr><td><b>Recontrôle et clôture</b></td><td>Contrôle de la retouche, puis clôture de la NC.</td><td>30 min, taux qualité</td></tr>
+  </tbody>
+</table>
+<p>Les taux actuels sont de 123 €/h pour la production, 107 €/h pour la qualité et 76 €/h pour les méthodes. Préparation et
+intervention comptent ensemble au moins 60 minutes. À ces étapes s’ajoutent l’<b>étude d’ingénierie</b> quand il y a une
+demande de DQN (8 heures à 78,16 €/h aujourd’hui) et la <b>matière</b> des défauts.</p>
+
+<h2>Ce que compte chaque décision</h2>
+<p>Toutes les NC ne passent pas par les six étapes. Une retouche les compte toutes ; une NC supprimée, seulement l’aléa et la
+rédaction ; un rejet ou un rebut n’a pas de retouche mais ajoute la valeur de la pièce. Le tableau complet est dans
+<b>Expliquer le calcul › Voir ce qui est compté pour chaque décision</b>.</p>
+
+<h2>Les règles particulières</h2>
+<ul>
+  <li>Pas d’alerte pour une NC trouvée au test ou au contrôle final ; un retour client a toujours l’alerte.</li>
+  <li>Erreurs de branchement : la première d’une NC compte 35 minutes, chacune des suivantes 15 minutes.</li>
+  <li>NC internes : préparation et intervention comptent deux fois.</li>
+  <li>Quand l’ordre de retouche de la NC est clos et a des temps planifiés, ces temps remplacent la préparation et
+    l’intervention.</li>
+  <li>Quand l’opérateur a déclaré un aléa qualité pour la NC (même ordre de travail, de 2 heures avant à 72 heures après), le
+    temps perdu déclaré remplace l’alerte.</li>
+  <li>La valeur d’une pièce rebutée ou échangée est ajoutée quand son prix est connu.</li>
+</ul>
+
+<h2>Trois niveaux, pour comparer</h2>
+<p>Pour toute NC, <b>Expliquer le calcul</b> montre trois chiffres. Le <b>niveau 3</b> est le coût détaillé ci-dessus, celui
+qu’utilise le tableau de bord. Le <b>niveau 2</b> est la même NC aux temps moyens. Le <b>niveau 1</b> est le coût standard
+Airbus pour sa décision, quel que soit le nombre de défauts. L’écart entre eux montre combien le détail de chaque NC
+compte.</p>
+
+<h2>Le voir sur une NC réelle</h2>
+<p>Dans <b>Coût de non-qualité › ▸ Expliquer le calcul</b>, tapez un numéro de NC dans <b>Numéro de NC</b> et cliquez sur
+<b>Afficher</b>, ou cliquez sur un des exemples. Le tableau donne chaque étape, d’où vient son temps, les minutes et le coût ;
+en dessous, les lignes de défaut de la NC, avec les minutes et la matière que chacune ajoute.</p>

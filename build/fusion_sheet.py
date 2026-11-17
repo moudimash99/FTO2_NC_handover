@@ -22,17 +22,12 @@ OUT = os.path.join(ROOT, "03_reports", "skywise", "fusion", "FTO2 NC Dashboard -
 HOQ, CM = "Head of Quality", "Configuration manager"
 # sheet, dataset, who fills it, what it holds, when it changes, where today's values come from
 SHEETS = [
-    ("Target and pages", "fto2_set_targets", HOQ, "The cut of the target (0.25 = 25 % fewer NCs per MSN than the comparison year), the weight of July and "
-     "August, what the pages show when they open, the target of an MFT action.", "When the target or the review changes.", ("1_reglages_pages.csv", None)),
+    ("Target and pages", "fto2_set_targets", HOQ, "The cut of the target (0.25 = 25 % fewer NCs per MSN than the comparison year), what the pages "
+     "show when they open, the target of an MFT action.", "When the target or the review changes.", ("1_reglages_pages.csv", None)),
     ("Cost rates and times", "fto2_set_cost", HOQ, "The hourly rates of production, quality and methods, and the minutes each step of an NC takes.",
      "When a rate or a process time changes.", ("1_cout_parametres.csv", None)),
     ("Blackout days", "fto2_set_blackout", HOQ, "The days the plant is closed (weight 0) or half closed (weight 0.5). One row per period.",
      "Each year, and when a closure is added.", ("1_calendrier_production.csv", None)),
-    ("Deliveries last year", "fto2_set_deliveries", HOQ, "Products delivered each month of the comparison year: the base of this year's targets.",
-     "Each January, for the year just ended.", ("0_livraisons_2025.csv", None)),
-    ("Planned volume", "fto2_set_eqmsn", HOQ, "The planned volume (EqMSN) of each product, month by month, as in the EqMSN sheet.",
-     "When the EqMSN sheet is updated.", ("0_eqmsn_mois.csv", None)),
-    ("Plant", "fto2_set_plant", HOQ, "The plant followed, and how its code is written in SAP.", "Rarely.", ("2_parametres.csv", ("usine", "usines_maison"))),
     ("Part prices", "fto2_set_part_prices", CM, "The unit price of each part (material number), so that a scrapped or exchanged part is counted in the "
      "cost. The update lists the parts still to price.", "When a price is known or changes.", ("1_prix_pieces.csv", None)),
     ("Cable tracker", "fto2_set_cables", CM, "The cable team's tracker of cable requests, pasted as it is, from its header row.",
@@ -103,7 +98,7 @@ def main():
         rows = read(os.path.normpath(os.path.join(CONFIG, src)))
         if keep:
             rows = [rows[0]] + [r for r in rows[1:] if r and r[0] in keep]
-        sheet(wb, title, rows, numeric=title in ("Deliveries last year", "Planned volume"))
+        sheet(wb, title, rows)
     os.makedirs(os.path.dirname(OUT), exist_ok=True)
     wb.save(OUT)
     print("written:", os.path.relpath(OUT, ROOT), "-", len(SHEETS), "sheets")

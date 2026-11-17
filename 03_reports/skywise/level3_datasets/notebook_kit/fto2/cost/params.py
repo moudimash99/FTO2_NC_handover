@@ -146,7 +146,7 @@ _F = "3_cout_avance.csv"
 _a = _values(_F)
 _need(_a, _F, ["version_modele", "usine_responsable", "types_controle_final", "types_sans_alerte", "prefixes_ordre_retouche",
                "classes_branchement", "types_internes", "utiliser_temps_ordres", "types_ordres", "unites_minutes",
-               "utiliser_temps_aleas", "types_aleas", "fenetre_alea_heures", "aleas_erma_regex", "colonne_cout_retour_client",
+               "utiliser_temps_aleas", "types_aleas", "fenetre_alea_heures", "aleas_erma_regex", "aleas_erma_materiel",
                "logistique_seulement_avec_materiel"])
 MODEL_VERSION = _a["version_modele"]
 AEC_PLANT_CODE = _a["usine_responsable"]
@@ -162,5 +162,5 @@ USE_ALEA_TIME = _yes(_a["utiliser_temps_aleas"], _F + ", utiliser_temps_aleas")
 ALEA_TYPES = _list(_a["types_aleas"])
 ALEA_LINK_HOURS = tuple(_number(x, _F + ", fenetre_alea_heures") for x in _list(_a["fenetre_alea_heures"]))
 ALEA_ERMA_DESIGNATION = _a["aleas_erma_regex"]
-CUSTOMER_RETURN_COST_COLUMN = _a["colonne_cout_retour_client"]
+ALEA_ERMA_MATERIAL = _a["aleas_erma_materiel"]
 LOGISTICS_ONLY_WITH_MATERIAL = _yes(_a["logistique_seulement_avec_materiel"], _F + ", logistique_seulement_avec_materiel")

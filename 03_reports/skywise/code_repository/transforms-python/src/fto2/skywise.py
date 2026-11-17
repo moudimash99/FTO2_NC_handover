@@ -63,15 +63,23 @@ def _liable(element, plant):
     return False
 
 
+def _when(df, column):
+    try:
+        return pd.to_datetime(df[column], errors="coerce", utc=True, format="mixed")
+    except (TypeError, ValueError):   # older pandas: no format="mixed"
+        return pd.to_datetime(df[column], errors="coerce", utc=True)
+
+
+def _since(df, column, day):
+    """The rows dated on or after a day ('AAAA-MM-JJ'); a row whose date cannot be read is kept (see _until)."""
+    return df[~(_when(df, column) < pd.Timestamp(day, tz="UTC"))].reset_index(drop=True)
+
+
 def _until(df, column, day):
     """The rows dated before a day ('AAAA-MM-JJ'); a row whose date cannot be read is kept. Skywise's filter fails when three
     conditions are joined with & (TypeError in OpAndWrapper): the reads give two, and the end of the year is cut here. The
     column is a date (Skywise) or text in mixed formats."""
-    try:
-        when = pd.to_datetime(df[column], errors="coerce", utc=True, format="mixed")
-    except (TypeError, ValueError):   # older pandas: no format="mixed"
-        when = pd.to_datetime(df[column], errors="coerce", utc=True)
-    return df[~(when >= pd.Timestamp(day, tz="UTC"))].reset_index(drop=True)
+    return df[~(_when(df, column) >= pd.Timestamp(day, tz="UTC"))].reset_index(drop=True)
 
 
 def _work_list(Dataset, name, table, sep):
@@ -98,7 +106,8 @@ def station_descriptions(path):
 
 def select_ncs(Dataset, Column, mode, missing_ids=()):
     """The NCs to process. mode STANDARD: the plant's NCs created in the year followed plus the other plants' NCs where the
-    plant is liable, then the exclusion rules; mode MISSING_IDS: the NCs whose numbers are given (no exclusion)."""
+    plant is liable; mode MISSING_IDS: the NCs whose numbers are given (those of the GPS register and the Test list that the
+    standard selection did not catch), kept when created in the year followed. Both then go through the exclusion rules."""
     plant = config.parameter("usine")
     since = config.first_day() + " 00:00:00"
     nc = config.parameter("dataset_nc", manual_lists.SOURCES)
@@ -114,11 +123,12 @@ def select_ncs(Dataset, Column, mode, missing_ids=()):
     elif mode == "MISSING_IDS":
         df = (Dataset.get(nc).where(Column.get("notification_no_leading_zeros").isin(list(missing_ids)))
               .select(*NC_COLUMNS).read_table(format="pandas"))
+        df = _since(_until(df, "creation_time", config.year_end()), "creation_time", config.first_day())
     else:
         raise ValueError("mode must be STANDARD or MISSING_IDS")
     print(f"Total rows fetched: {len(df)}")
     stations = station_descriptions(config.parameter("postes", manual_lists.SOURCES))
-    df = selection.apply_rules(df, stations, exclude=(mode == "STANDARD"))
+    df = selection.apply_rules(df, stations, exclude=True)
     df = df.sort_values(by="creation_time", ascending=False)
     cap = config.parameter("limite_nc")
     return df.head(int(cap)) if cap else df
@@ -129,14 +139,18 @@ def check_settings():
     a mistake in one of them stops the run here, in a few seconds, with its message and with nothing changed. (The rule
     tables are checked when the first NCs go through them, also before anything is written.)"""
     from .cost import params, parts   # noqa: F401   the cost settings are read when the module loads
+    from . import core
     config.year()
     config.comparison_year()
+    core.check_cause_tree()          # the Définitions tab's cause tree says what the code decides
     reference.page_settings()        # the target, the opening view, the technical page settings, colours, alarm settings
     reference.mft_actions_page()     # the MFT actions: ids, kind of problem, dates
     parts.price_list()               # the part prices
     asof, recs = reference._production_export()   # the exports of the production plan
     if asof:
         reference.working_day_volume(asof, recs)  # ... and the shutdown calendar
+    for note in reference.calendar_notes():
+        print("⚠️ " + note)
     reference.cable_requests()       # the cable team's tracker
 
 
@@ -169,7 +183,8 @@ def run(Dataset, Column, say=None, old_outputs=None):
         say(f"Missing IDs: fetching {len(missing)} NCs by number...")
         extra = manual_lists.add_external(select_ncs(Dataset, Column, "MISSING_IDS", missing), external)
         found = set(extra["notification_number"].astype(str).str.lstrip("0"))
-        print(f"   found in the NC dataset: {len(found)}; not in Skywise at all: {len(set(missing) - found)}")
+        print(f"   kept: {len(found)}; the other {len(set(missing) - found)} are dated another year, left out by the "
+              f"exclusion rules, or not in Skywise")
         runs.append(("fto2_dashboard_data_missing_ids", extra))
 
     frames = []
@@ -198,7 +213,8 @@ def run(Dataset, Column, say=None, old_outputs=None):
     wo = config.parameter("dataset_ordres", manual_lists.SOURCES)
     if wo:
         say(f"Reading {wo} (rework orders at {plant})...")
-        ops = (Dataset.get(wo).where((Column.get("plant") == plant) & (Column.get("order_type") == "S03"))
+        from .cost import params as cost_settings
+        ops = (Dataset.get(wo).where((Column.get("plant") == plant) & Column.get("order_type").isin(list(cost_settings.ORDER_TYPES)))
                .select(*WO_COLUMNS).read_table(format="pandas"))
         say(f"   {len(ops)} operations")
     al = config.parameter("dataset_aleas", manual_lists.SOURCES)
@@ -258,6 +274,8 @@ def run(Dataset, Column, say=None, old_outputs=None):
     for path in manual_lists.NOT_READ:
         print(f"⚠️ The list '{path}' could not be read (see the error above): its NCs carry no GPS / Test information in this run.\n"
               f"   Its name is in data/config/2_sources.csv ({{annee}} stands for the year followed).")
+    for note in reference.calendar_notes():   # again at the end, where it is read
+        print("⚠️ " + note)
     import datetime as dt
     if dt.date.today().year > config.year():
         print(f"⚠️ The year followed is {config.year()} and we are in {dt.date.today().year}: the pages show the NCs of {config.year()} only.\n"

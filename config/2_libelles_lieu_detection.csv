@@ -1,9 +1,12 @@
 valeur;libelle_en
 CONTROLE FINAL;Final inspection
 INTERNE;In-process (internal)
+NC INTERNE;In-process (internal)
 CABLES;Cables
 FOURNISSEUR;Supplier
+NC FOURNISSEUR;Supplier
 CLIENT;Customer return
+NC RETOUR CLIENT;Customer return
 DEMANDE DE DQN;Design query request
 DAMAGES;Damage
 CASSE;Breakage

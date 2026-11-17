@@ -23,8 +23,6 @@
 216084911,1,,,,,,,,,30.0,0.18,Mauvaise réf. – électrique / détrompage,Wrong reference: electrical or keying
 216084911,2,,,,,,,,,30.0,0.18,Mauvaise réf. – électrique / détrompage,Wrong reference: electrical or keying
 216084911,3,,,,,,,,,3.0,0.0,Manquant – colliers,Missing: clamps or ties
-216072176,0,84.05,53.5,76.0,102.5,30.75,53.5,1.0,0.0,,,,
-216072176,1,,,,,,,,,15.0,0.0,Manquant – câble / shunt / élément,"Missing: cable, shunt or part"
 216060124,0,84.05,53.5,76.0,205.0,123.0,53.5,2.0,0.0,,,,
 216060124,1,,,,,,,,,30.0,0.0,Dommage – composant cassé,Damage: broken component
 216064223,0,0.0,53.5,76.0,102.5,61.5,53.5,1.0,0.0,,,,
@@ -258,8 +256,6 @@
 216223943,1,,,,,,,,,30.0,2.01,Dommage – câble,Damage: cable
 216159014,0,84.05,53.5,76.0,102.5,20.5,53.5,1.0,0.0,,,,
 216159014,1,,,,,,,,,10.0,0.0,Dommage – tresse de masse,Damage: ground braid
-215968284,0,84.05,53.5,76.0,102.5,61.5,53.5,1.0,0.0,,,,
-215968284,1,,,,,,,,,30.0,0.0,Dommage – composant cassé,Damage: broken component
 216184552,0,84.05,53.5,76.0,0.0,0.0,53.5,1.0,0.0,,,,
 216184552,1,,,,,,,,,4.0,0.0,Mauvaise réf. – mécanique,Wrong reference: mechanical part
 216230049,0,123.0,53.5,76.0,102.5,61.5,53.5,1.0,0.0,,,,
@@ -812,8 +808,6 @@
 216541701,1,,,,,,,,,60.0,0.0,Câble à refaire (ligne),Cable to remake (line)
 216207223,0,84.05,53.5,76.0,112.75,10.25,53.5,1.0,0.0,,,,
 216207223,1,,,,,,,,,5.0,0.0,Amont · Câble,Upstream: cable
-10682844,0,84.05,53.5,0.0,0.0,0.0,0.0,1.0,0.0,,,,
-10682844,1,,,,,,,,,20.0,0.85,Dommage – structure,Damage: structure
 216357178,0,0.0,53.5,76.0,102.5,410.0,53.5,1.0,0.0,,,,
 216357178,1,,,,,,,,,30.0,0.18,Mauvaise réf. – électrique / détrompage,Wrong reference: electrical or keying
 216357178,2,,,,,,,,,35.0,0.0,Erreur de branchement,Wrong connection
@@ -1077,8 +1071,6 @@
 216336723,1,,,,,,,,,30.0,0.0,Composant HS,Component out of order
 216265972,0,84.05,53.5,76.0,0.0,0.0,53.5,2.0,0.0,,,,
 216265972,1,,,,,,,,,30.0,0.0,Dommage – composant cassé,Damage: broken component
-216657391,0,84.05,53.5,76.0,102.5,61.5,53.5,1.0,0.0,,,,
-216657391,1,,,,,,,,,30.0,2.01,Dommage – câble,Damage: cable
 216194905,0,84.05,53.5,76.0,0.0,0.0,53.5,1.0,0.0,,,,
 216194905,1,,,,,,,,,30.0,0.0,Dommage – composant cassé,Damage: broken component
 216195247,0,84.05,53.5,76.0,0.0,0.0,53.5,1.0,0.0,,,,
@@ -1133,12 +1125,8 @@
 216699966,20,,,,,,,,,6.0,0.0,Mauvaise réf. – colliers / frettage,Wrong reference: clamp or tie
 216678821,0,84.05,53.5,76.0,114.8,8.2,53.5,1.0,0.0,,,,
 216678821,1,,,,,,,,,4.0,0.0,Mauvaise réf. – mécanique,Wrong reference: mechanical part
-216656797,0,84.05,53.5,76.0,102.5,61.5,53.5,1.0,0.0,,,,
-216656797,1,,,,,,,,,30.0,2.01,Dommage – câble,Damage: cable
 216698452,0,30.75,53.5,76.0,102.5,30.75,53.5,1.0,0.0,,,,
 216698452,1,,,,,,,,,15.0,0.0,Manquant – câble / shunt / élément,"Missing: cable, shunt or part"
-216698369,0,84.05,53.5,0.0,0.0,0.0,0.0,1.0,0.0,,,,
-216698369,1,,,,,,,,,30.0,2.01,Dommage – câble,Damage: cable
 216676916,0,0.0,53.5,76.0,102.5,440.75,53.5,1.0,0.0,,,,
 216676916,1,,,,,,,,,10.0,0.0,Déverrouillage,Contact not locked
 216676916,2,,,,,,,,,35.0,0.0,Erreur de branchement,Wrong connection
@@ -1779,8 +1767,6 @@
 216758007,1,,,,,,,,,30.0,0.0,Dommage – composant cassé,Damage: broken component
 217033006,0,123.0,53.5,76.0,102.5,61.5,53.5,1.0,0.0,,,,
 217033006,1,,,,,,,,,30.0,2.01,Dommage – câble,Damage: cable
-216879671,0,84.05,53.5,76.0,118.9,4.1,53.5,1.0,0.0,,,,
-216879671,1,,,,,,,,,2.0,7.2,Cheminement – longueur / tension,Routing: length or tension
 216366914,0,84.05,53.5,76.0,102.5,41.0,53.5,1.0,0.0,,,,
 216366914,1,,,,,,,,,20.0,0.85,Dommage – structure,Damage: structure
 217026822,0,84.05,53.5,76.0,0.0,0.0,53.5,2.0,0.0,,,,
@@ -1861,8 +1847,6 @@
 217075785,13,,,,,,,,,1.0,0.0,Cheminement – clash,Routing: clash
 217075785,14,,,,,,,,,1.0,0.0,Cheminement – clash,Routing: clash
 217075785,15,,,,,,,,,6.0,0.0,Mauvaise réf. – colliers / frettage,Wrong reference: clamp or tie
-216698668,0,84.05,53.5,76.0,102.5,30.75,53.5,1.0,0.0,,,,
-216698668,1,,,,,,,,,15.0,0.0,Manquant – câble / shunt / élément,"Missing: cable, shunt or part"
 216972425,0,84.05,53.5,76.0,225.5,20.5,53.5,2.0,0.0,,,,
 216972425,1,,,,,,,,,5.0,0.0,Amont · Identification / barrette VT,Upstream: identification or terminal block
 217040142,0,84.05,53.5,76.0,0.0,0.0,53.5,1.0,0.0,,,,
@@ -2843,10 +2827,6 @@
 217509313,1,,,,,,,,,15.0,0.0,Manquant – câble / shunt / élément,"Missing: cable, shunt or part"
 217507424,0,84.05,53.5,76.0,102.5,61.5,53.5,1.0,0.0,,,,
 217507424,1,,,,,,,,,30.0,0.18,Mauvaise réf. – électrique / détrompage,Wrong reference: electrical or keying
-10729475,0,84.05,53.5,0.0,0.0,0.0,0.0,1.0,0.0,,,,
-10729475,1,,,,,,,,,2.0,0.0,Manquant – mécanique / freinage,Missing: mechanical part or locking
-10730446,0,84.05,53.5,0.0,0.0,0.0,0.0,1.0,0.0,,,,
-10730446,1,,,,,,,,,2.0,0.0,Manquant – mécanique / freinage,Missing: mechanical part or locking
 217530973,0,0.0,53.5,76.0,102.5,202.95,53.5,1.0,0.0,,,,
 217530973,1,,,,,,,,,4.0,0.0,Mauvaise réf. – mécanique,Wrong reference: mechanical part
 217530973,2,,,,,,,,,35.0,0.0,Inversion,Swapped connection
@@ -3047,8 +3027,6 @@
 217642570,0,84.05,53.5,76.0,205.0,266.5,53.5,2.0,0.0,,,,
 217642570,1,,,,,,,,,35.0,0.0,Erreur de branchement,Wrong connection
 217642570,2,,,,,,,,,30.0,2.01,Dommage – câble,Damage: cable
-10739560,0,84.05,53.5,0.0,0.0,0.0,0.0,2.0,0.0,,,,
-10739560,1,,,,,,,,,2.0,0.0,Dommage – habillage,Damage: sleeving or dressing
 217687101,0,84.05,53.5,76.0,237.8,8.2,53.5,2.0,0.0,,,,
 217687101,1,,,,,,,,,2.0,0.0,Manquant – mécanique / freinage,Missing: mechanical part or locking
 217695381,0,0.0,107.0,76.0,102.5,266.5,53.5,1.0,0.0,,,,
@@ -4072,18 +4050,6 @@
 218199816,7,,,,,,,,,15.0,0.0,Inversion,Swapped connection
 218248460,0,84.05,53.5,76.0,30.75,647.1850000000001,53.5,2.0,0.0,,,,
 218248460,1,,,,,,,,,30.0,0.0,Dommage – composant cassé,Damage: broken component
-10763357,0,84.05,53.5,0.0,0.0,0.0,0.0,1.0,0.0,,,,
-10763357,1,,,,,,,,,4.0,0.0,Mauvaise réf. – mécanique,Wrong reference: mechanical part
-10763365,0,84.05,53.5,0.0,0.0,0.0,0.0,1.0,0.0,,,,
-10763365,1,,,,,,,,,4.0,0.0,Mauvaise réf. – mécanique,Wrong reference: mechanical part
-10763367,0,84.05,53.5,0.0,0.0,0.0,0.0,1.0,0.0,,,,
-10763367,1,,,,,,,,,4.0,0.0,Mauvaise réf. – mécanique,Wrong reference: mechanical part
-10763371,0,84.05,53.5,0.0,0.0,0.0,0.0,1.0,0.0,,,,
-10763371,1,,,,,,,,,4.0,0.0,Mauvaise réf. – mécanique,Wrong reference: mechanical part
-10763377,0,84.05,53.5,0.0,0.0,0.0,0.0,1.0,0.0,,,,
-10763377,1,,,,,,,,,4.0,0.0,Mauvaise réf. – mécanique,Wrong reference: mechanical part
-10763383,0,84.05,53.5,0.0,0.0,0.0,0.0,1.0,0.0,,,,
-10763383,1,,,,,,,,,4.0,0.0,Mauvaise réf. – mécanique,Wrong reference: mechanical part
 218338648,0,84.05,53.5,76.0,0.0,0.0,53.5,1.0,0.0,,,,
 218338648,1,,,,,,,,,4.0,0.0,Mauvaise réf. – mécanique,Wrong reference: mechanical part
 218242503,0,0.0,53.5,76.0,102.5,20.5,53.5,1.0,0.0,,,,

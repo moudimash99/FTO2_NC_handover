@@ -30,12 +30,10 @@ TABLES = {
     "fto2_set_targets": "1_reglages_pages.csv",
     "fto2_set_cost": "1_cout_parametres.csv",
     "fto2_set_blackout": "1_calendrier_production.csv",
-    "fto2_set_deliveries": "0_livraisons_{year}.csv",
-    "fto2_set_eqmsn": "0_eqmsn_mois.csv",
     "fto2_set_part_prices": "1_prix_pieces.csv",
 }
-# dataset -> the name / value table whose lines it replaces, line by line
-LINES = {"fto2_set_plant": "2_parametres.csv"}
+# dataset -> the name / value table whose lines it replaces, line by line (none today)
+LINES = {}
 # dataset -> the line of 2_sources.csv that names the file it replaces, and the lines of 2_sources.csv that give the
 # column names in that file (a list is pasted from its header row: no line to skip)
 LISTS = {

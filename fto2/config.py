@@ -224,14 +224,11 @@ def _year(text, where):
 
 
 def year():
-    """The year the pages follow ('annee'). An empty line means the current year. Settings written before the line
-    existed gave a start date instead ('date_debut'): its year is used then."""
+    """The year the pages follow ('annee'). An empty line means the current year: it changes by itself on 1 January.
+    (A line 'date_debut' left from older settings is not read: it would hold the pages on its year.)"""
     import datetime as dt
     v = optional("annee")
-    if v:
-        return _year(v, "%s, annee" % held_by("annee"))
-    d = optional("date_debut")
-    return int(day(d, "%s, date_debut" % held_by("date_debut"))[:4]) if d else dt.date.today().year
+    return _year(v, "%s, annee" % held_by("annee")) if v else dt.date.today().year
 
 
 def comparison_year():

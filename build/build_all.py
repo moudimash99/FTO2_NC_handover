@@ -103,6 +103,13 @@ def load_exports():
         frames.append(r)
         files.append(f)
     x, info = core.merge_exports(frames)
+    # as the notebook does today: every NC through the exclusion rules, and only the NCs created in the year followed (the
+    # exports were made when the NCs fetched by number from the GPS register and the Test list skipped both)
+    from fto2 import selection
+    when = pd.to_datetime(x["creation_time"], errors="coerce", utc=True, format="mixed")
+    keep = ~selection.exclusions(x) & ~(when < pd.Timestamp(config.first_day(), tz="UTC")) & ~(when >= pd.Timestamp(config.year_end(), tz="UTC"))
+    REPORT["left_out_by_rules_or_year"] = int((~keep).sum())
+    x = x[keep.values].reset_index(drop=True)
     for c, values in materials.items():
         known = x["notification_number"].map(values)
         x[c] = x[c].where(x[c].notna(), known) if c in x.columns else known

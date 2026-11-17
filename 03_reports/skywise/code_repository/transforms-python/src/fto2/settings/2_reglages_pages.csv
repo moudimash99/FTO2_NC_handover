@@ -1,7 +1,7 @@
 nom;valeur;description
 semaine_fermeture_moins_de;10;Une semaine avec moins de défauts que ce nombre (toute l'usine) est une semaine de fermeture : hors moyennes
 msn_minimum;0.5;Un produit ou un mois compte dans les taux par MSN à partir de ce volume de MSN
-souscodes_non_precis;\(non précisé\)$|^Non codé$;Sous-codes « non précisés » (regex) : pas d'alarme sur eux
+souscodes_non_precis;\(non précisé\)$|^Non codé$|^Q11 \(composant\)$;Sous-codes « non précisés » (regex) : pas d'alarme sur eux
 semaine_faible_moins_de;0.6;Une semaine qui produit moins que cette part d'une semaine normale de la ligne est faible : hors références (page MFT, Tableau Elizabeth)
 mft_fenetres;1=4|4=13|13=52;Page MFT : période (semaines) = semaines de référence avant elle (1 semaine contre 4, 1 mois contre 3 mois, 3 mois contre 12 mois)
 mft_hausse_min_defauts;4;Page MFT, « Ce qui monte » : au moins ce nombre de défauts sur les 4 dernières semaines

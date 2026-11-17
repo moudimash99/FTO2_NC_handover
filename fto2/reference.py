@@ -50,12 +50,13 @@ def comparison_year(raw, station_desc):
 
 
 def deliveries(year):
-    """The products delivered in a past year, month by month: the volume that year's rates are counted on.
-    {"prod": {product: 12 months}, "months": [...], "delivered": "sheet" or "plan"}.
-      - from config/0_livraisons_<year>.csv when that table exists (2025: the Livraisons 2025 sheet);
-      - else counted in the production plan (_production_export): a product is delivered in the month its build ends, its
-        Départ OTA (the real date, else the planned one), with the same date corrections as the volumes of the year followed.
-    None when neither holds a delivery of that year."""
+    """The volume of a past year (the comparison year), month by month: what that year's rates are counted on.
+    {"prod": {product: 12 months}, "months": [...], "delivered": "sheet" or "built"}.
+      - from config/0_livraisons_<year>.csv when that table exists: the products delivered each month. Only 2025 has one (the
+        Livraisons 2025 sheet), because the production plan does not reach back to 2025;
+      - else measured as the year followed is: the products built, each spread over the days the plant worked from its
+        printing to its OTA (working_day_volume), so that both years' rates are counted the same way.
+    None when neither holds that year."""
     name = "0_livraisons_%d.csv" % year
     if os.path.exists(config.path(name)):
         t = config.frame(name)
@@ -63,13 +64,11 @@ def deliveries(year):
         return {"prod": {EQ_NAMES.get(k, k): [float(v) for v in vals] for k, vals in zip(t.produit_eqmsn, t[months].values)},
                 "months": months, "delivered": "sheet"}
     asof, recs = _production_export()
-    prod = {}
-    for c, _, end in _build_spans(asof, recs) if asof else []:
-        if end.year == year:
-            prod.setdefault(c["prod"], [0.0] * 12)[end.month - 1] += 1.0
+    prod = working_day_volume(asof, recs, year=year) if asof else {}
+    prod = {p: v for p, v in prod.items() if sum(v) > 0}
     if not prod:
         return None
-    return {"prod": prod, "months": ["%d-%02d" % (year, m) for m in range(1, 13)], "delivered": "plan"}
+    return {"prod": prod, "months": ["%d-%02d" % (year, m) for m in range(1, 13)], "delivered": "built"}
 
 
 
@@ -89,41 +88,23 @@ def reference_block(data):
 EQ_NAMES, _ = config.mapping("2_produits_noms_plan.csv", "nom_plan", "nom_affiche")   # the production files' product names, as the page shows them
 
 
-def _eqmsn_sheet(months):
-    """The EqMSN sheet's volumes (config/0_eqmsn_mois.csv, from the EqMSN Excel file: its Standard and Adjusted sheets), when
-    the table holds these months: {"asof", "forecastFrom", "std", "adj"}. None without the table, or when it is another year's."""
-    if not os.path.exists(config.path("0_eqmsn_mois.csv")):
-        return None
-    t = config.table("0_eqmsn_mois.csv")
-    if sorted(c for c in t.columns if c[:4].isdigit() and c[4:5] == "-") != months:
-        return None
-    out = {"asof": max(t["export_du"]), "forecastFrom": max(t["prevision_a_partir_de"])}
-    for version in ("std", "adj"):
-        out[version] = {r["produit"]: [float(r[m]) for m in months] for _, r in t[t["version"] == version].iterrows()}
-    return out
-
-
 def eqmsn(nc, weekly_csv=None):
     """Production volume of the year followed, for the Production tab and every rate per MSN: per product and month,
-    "wd": each aircraft counted on the days the plant works, from the production plan (working_day_volume; the pages' volume);
-    "std" and "adj": the EqMSN sheet's Standard and Adjusted volumes, while that sheet is the year's (_eqmsn_sheet), else the
-    working-day volume again. With it: the NC product labels each product matches (config/2_produits_plan.csv), each product's
-    line, taken from the NCs, each aircraft's build dates, and the volume per week for the alarms ("wdw").
-    None without a production plan and without the sheet."""
+    "wd": each aircraft counted on the days the plant works, from the production plan (working_day_volume; the pages' volume;
+    "std" holds the same, the name the pages first read). With it: the NC product labels each product matches
+    (config/2_produits_plan.csv), each product's line, taken from the NCs, each aircraft's build dates, the volume per week for
+    the alarms ("wdw"), and the working weight of each day and week (calendar_weights). None without a production plan."""
     year = config.year()
     months = ["%d-%02d" % (year, m) for m in range(1, 13)]
     asof, recs = _production_export()
-    sheet = _eqmsn_sheet(months)
-    if not sheet and not asof:
+    if not asof:
         return None
-    out = dict(sheet or {}, months=months)
-    if asof:
-        out["wd"] = working_day_volume(asof, recs)
-        out["wdw"] = working_day_volume(asof, recs, weekly=True)   # the same per week, for the alarms
-    if not sheet:   # the working-day volume is the only one; the months from the plan's export on are its forecast
-        out["std"] = out["wd"]
-        out["asof"] = asof.isoformat()
-        out["forecastFrom"] = "" if asof.year > year else "%d-01" % year if asof.year < year else asof.isoformat()[:7]
+    out = {"months": months, "wd": working_day_volume(asof, recs)}
+    out["wdw"] = working_day_volume(asof, recs, weekly=True)   # the same per week, for the alarms
+    out["std"] = out["wd"]
+    out["asof"] = asof.isoformat()   # the months from the plan's export on are its forecast
+    out["forecastFrom"] = "" if asof.year > year else "%d-01" % year if asof.year < year else asof.isoformat()[:7]
+    out["cal"] = calendar_weights(year)
     ref = config.frame("2_produits_plan.csv")
     out["map"] = {str(a).upper(): EQ_NAMES.get(b, b) for a, b in zip(ref.produit_nc, ref.produit_eqmsn)}
     out["toConfirm"] = [EQ_NAMES.get(b, b) for b, c in zip(ref.produit_eqmsn, ref.a_confirmer) if c == "oui"]
@@ -257,6 +238,65 @@ def _build_spans(asof, recs):
             yield c, s, e
 
 
+CALENDAR = "1_calendrier_production.csv"
+
+
+def _calendar():
+    """The blackout days: [(first day, last day, weight)], weight 0 (closed) or 0.5 (half closed)."""
+    import datetime as dt
+    F = CALENDAR
+    return [(dt.date.fromisoformat(config.day(r["debut"], "%s line %d, debut" % (F, i + 2))), dt.date.fromisoformat(config.day(r["fin"], "%s line %d, fin" % (F, i + 2))),
+             float(config.number(r["poids"], "%s line %d, poids" % (F, i + 2)))) for i, r in config.table(F, ["debut", "fin", "poids"]).iterrows()]
+
+
+def _day_weight(years):
+    """weight(day): 0 on Saturdays, Sundays, French public holidays and closed days, the calendar's weight on its days, else 1."""
+    cal = _calendar()
+    hol = set().union(*(_french_holidays(y) for y in years))
+
+    def weight(d):
+        if d.weekday() >= 5 or d in hol:
+            return 0
+        return next((w for a, b, w in cal if a <= d <= b), 1)
+    return weight
+
+
+def calendar_weights(year=None):
+    """The working weight of every day and every ISO week of the year followed, for the pages: {"days": {"AAAA-MM": [weight of
+    each day]}, "weeks": [weight of ISO week 1, 2...: its working days / 5]}. A week under 1 has a closure, a half-closed day or
+    a public holiday; the pages leave such weeks out of their averages."""
+    import datetime as dt
+    year = year or config.year()
+    weight = _day_weight(range(year - 1, year + 2))
+    days, weeks = {}, {}
+    d = dt.date(year, 1, 1)
+    while d.year == year:
+        days.setdefault("%d-%02d" % (year, d.month), []).append(weight(d))
+        d += dt.timedelta(1)
+    d = dt.date.fromisocalendar(year, 1, 1)
+    while d.isocalendar()[0] <= year:
+        y, n, _ = d.isocalendar()
+        if y == year:
+            weeks[n] = weeks.get(n, 0) + weight(d) / 5
+        d += dt.timedelta(1)
+    return {"days": days, "weeks": [round(weeks[n], 3) for n in sorted(weeks)]}
+
+
+def calendar_notes(today=None):
+    """Plain warnings when the blackout days do not cover the year followed: none at all in that year, or none at its end
+    (a day from 20 to 31 December). A day with no line counts as a full working day."""
+    import datetime as dt
+    year, cal = config.year(), _calendar()
+    today = today or dt.date.today()
+    if not any(a.year <= year <= b.year for a, b, _ in cal):
+        return ["No blackout day is written for %d (sheet Blackout days, %s): every weekday counts as a full working day, "
+                "so the volume of the closed weeks, and the targets, are too high." % (year, CALENDAR)]
+    if today.year == year and not any(a <= dt.date(year, 12, 31) and b >= dt.date(year, 12, 20) for a, b, _ in cal):
+        return ["No closure is written for the end of %d (sheet Blackout days, %s): the Christmas days count as full working "
+                "days, so December's volume and target are too high." % (year, CALENDAR)]
+    return []
+
+
 def working_day_volume(asof, recs, weekly=False, year=None):
     """EqMSN per product and month of the year followed, counted on the days the plant works. Same MSNs and dates as the EqMSN
     sheet (each MSN = 1.0 from its Impression date to its OTA, with the sheet's date corrections: _build_spans), but spread over
@@ -268,16 +308,7 @@ def working_day_volume(asof, recs, weekly=False, year=None):
     year: another year than the one followed."""
     import datetime as dt
     year = year or config.year()
-    F = "1_calendrier_production.csv"
-    cal = [(dt.date.fromisoformat(config.day(r["debut"], "%s line %d, debut" % (F, i + 2))), dt.date.fromisoformat(config.day(r["fin"], "%s line %d, fin" % (F, i + 2))),
-            float(config.number(r["poids"], "%s line %d, poids" % (F, i + 2)))) for i, r in config.table(F, ["debut", "fin", "poids"]).iterrows()]
-    hol = set().union(*(_french_holidays(y) for y in range(min(asof.year, year) - 2, max(asof.year, year) + 3)))
-
-    def weight(d):
-        if d.weekday() >= 5 or d in hol:
-            return 0
-        return next((w for a, b, w in cal if a <= d <= b), 1)
-
+    weight = _day_weight(range(min(asof.year, year) - 2, max(asof.year, year) + 3))
     out, wk = {}, {"line": {}, "prod": {}}
     for c, s, e in _build_spans(asof, recs):
         days = [s + dt.timedelta(n) for n in range((e - s).days + 1)]

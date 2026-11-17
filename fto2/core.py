@@ -34,7 +34,6 @@ import pandas as pd
 from . import config, downloads, rules, selection
 from .parser import fto2_logic as L
 
-HOME_PLANTS = tuple(config.parameter_list("usines_maison"))   # our plant's codes in the data (both spellings): config/2_parametres.csv
 from .parser import nc_defect_parser as PARSER
 from .cost.model import compute_cnq
 from .cost.orders import nc_order_times
@@ -205,6 +204,28 @@ def week_of(iso):
 
 
 # ============================================================ 2. official sub-code of each defect line
+def check_cause_tree():
+    """The cause tree is decided in the code (parser/nc_defect_parser.py: each sub-category's category, cause and 'minor');
+    config/3_sous_categories.csv describes it for the Définitions tab. Stop when the two differ, so that they cannot drift
+    apart: a change made in one only would change the page or the figures, not both."""
+    t = config.table("3_sous_categories.csv", ["categorie", "sous_categorie", "rca_type", "rca_nom", "mineur"])
+    cats = set(config.table("2_categories.csv", ["categorie"]).categorie)
+    bad = []
+    for i, r in enumerate(t.itertuples(), start=2):
+        sc = PARSER.SOUS_CATEGORIES.get(r.sous_categorie)
+        if sc is None:
+            bad.append("line %d: the sub-category '%s' does not exist in the code" % (i, r.sous_categorie))
+            continue
+        code = {"categorie": CAT_RENAME.get(sc[0], sc[0]), "rca_type": sc[1], "rca_nom": L.RCA_NAMES.get(sc[1], sc[1]),
+                "mineur": "oui" if PARSER.est_mineur(r.sous_categorie) else "non"}
+        bad += ["line %d, %s: '%s' here, '%s' in the code" % (i, k, getattr(r, k), v) for k, v in code.items() if str(getattr(r, k)).strip() != v]
+        if r.categorie not in cats:
+            bad.append("line %d: the category '%s' is not in 2_categories.csv" % (i, r.categorie))
+    if bad:
+        raise config.ConfigError("3_sous_categories.csv does not say what the code decides (parser/nc_defect_parser.py, "
+                                 "2_causes_noms.csv): %s. Change both, or neither." % "; ".join(bad[:6]))
+
+
 def official_subcode(d):
     """Official sub-code of each defect line: the one chosen by the long-text labelling; for the approved exceptions,
     which have no sub-code of their own, the parent code (E1 = part of Q06-001; E2 = a Q11 component code).

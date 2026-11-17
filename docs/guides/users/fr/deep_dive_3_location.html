@@ -1,0 +1,77 @@
+<!--
+title: Deep dive – Localisation
+subtitle: Produits, avions et postes
+kicker: Tableau de bord NC FTO2 · Utilisateurs · Mode Deep dive
+file: users/fr/Deep dive 3 - Localisation
+for: tous ceux qui analysent d’où viennent les NC
+foot: Tableau de bord NC FTO2 · Deep dive – Localisation
+short: yes
+lang: fr
+-->
+<h2>À quoi sert l’onglet</h2>
+<p>L’onglet Localisation répond à la question : <b>d’où</b> viennent les NC ? Il regarde les mêmes NC par produit, par avion et par poste, et les rapporte au volume produit partout où c’est possible, pour qu’un produit fabriqué souvent ne se retrouve pas en tête à tort. Il a trois parties : Produits, Avions, Postes.</p>
+<h2>Produits</h2>
+<h3>NC, défauts et coût attendus d’ici décembre, produit par produit</h3>
+<table class="keep fact"><tbody>
+  <tr><th style="width:30mm">Ce qu’on voit</th><td>Pour chaque produit, ce qui est déjà fait, puis ce qui est attendu à fin décembre.</td></tr>
+  <tr><th>Comment le lire</th><td>Barre pleine : réalisé. Partie en pointillé : la prévision (le taux de la période × les avions encore prévus). L’interrupteur <b>Par MSN</b> montre la même chose par avion produit.</td></tr>
+  <tr><th>À quoi ça sert</th><td>Montre quels produits pèseront le plus sur l’année, pas seulement ceux qui pèsent le plus aujourd’hui.</td></tr>
+  <tr><th>Un clic</th><td>Garde ce produit sur toute la page.</td></tr>
+</tbody></table>
+<h3>Taux mensuel, produit par produit</h3>
+<table class="keep fact"><tbody>
+  <tr><th style="width:30mm">Ce qu’on voit</th><td>Une grille : une ligne par produit, une colonne par mois.</td></tr>
+  <tr><th>Comment le lire</th><td>Plus la case est foncée, plus il y a de NC par avion produit ce mois-là. Un tiret : moins d’un demi-avion produit, donc pas de taux.</td></tr>
+  <tr><th>À quoi ça sert</th><td>Montre si un produit est toujours haut, ou s’il a eu un seul mauvais mois.</td></tr>
+  <tr><th>Un clic</th><td>Garde ce produit sur toute la page.</td></tr>
+</tbody></table>
+<h3>Coût par famille de produit</h3>
+<table class="keep fact"><tbody>
+  <tr><th style="width:30mm">Ce qu’on voit</th><td>Les dix familles de produit les plus coûteuses, avec leurs NC, leurs avions et leur coût moyen par avion.</td></tr>
+  <tr><th>Comment le lire</th><td>Les autres sont regroupées sur une ligne.</td></tr>
+  <tr><th>À quoi ça sert</th><td>Désigne les familles où la non-qualité coûte le plus pour chaque avion produit.</td></tr>
+  <tr><th>Un clic</th><td>Garde cette famille de produit sur toute la page.</td></tr>
+</tbody></table>
+<h3>Les trois premières causes de chaque produit</h3>
+<table class="keep fact"><tbody>
+  <tr><th style="width:30mm">Ce qu’on voit</th><td>Pour chaque produit, ses trois principales causes, en défauts par avion produit.</td></tr>
+  <tr><th>Comment le lire</th><td>Produits du plus touché au moins touché.</td></tr>
+  <tr><th>À quoi ça sert</th><td>Indique, produit par produit, où une action supprimerait le plus de défauts.</td></tr>
+  <tr><th>Un clic</th><td>Garde cette cause.</td></tr>
+</tbody></table>
+<h2>Avions</h2>
+<h3>Coût par avion (MSN)</h3>
+<table class="keep fact"><tbody>
+  <tr><th style="width:30mm">Ce qu’on voit</th><td>Une barre par avion, dans l’ordre de production, ligne par ligne.</td></tr>
+  <tr><th>Comment le lire</th><td>Pointillé : la moyenne de la ligne. Barres hachurées : avions encore en production, dont le coût peut encore augmenter. Barres pâles : avions commencés avant cette année. Les avions très au-dessus des autres sont nommés.</td></tr>
+  <tr><th>À quoi ça sert</th><td>Montre si les problèmes sont répartis, ou concentrés sur quelques avions.</td></tr>
+  <tr><th>Un clic</th><td>Garde les NC de cet avion.</td></tr>
+</tbody></table>
+<h3>Les FIN qui reviennent d’un avion à l’autre</h3>
+<table class="keep fact"><tbody>
+  <tr><th style="width:30mm">Ce qu’on voit</th><td>Une colonne par avion, une ligne par FIN.</td></tr>
+  <tr><th>Comment le lire</th><td>Un carré : un défaut sur ce FIN sur cet avion ; un carré foncé : deux ou plus. La ligne choisie dans le filtre, ou l’A350 quand toutes les lignes sont affichées.</td></tr>
+  <tr><th>À quoi ça sert</th><td>Une ligne pleine de carrés est un défaut qui se répète sur presque tous les avions : un bon candidat pour une action.</td></tr>
+  <tr><th>Un clic</th><td>Garde ce FIN.</td></tr>
+</tbody></table>
+<h2>Postes</h2>
+<h3>Défauts par poste et catégorie</h3>
+<table class="keep fact"><tbody>
+  <tr><th style="width:30mm">Ce qu’on voit</th><td>Les douze postes dont les NC portent le plus de défauts, répartis par catégorie.</td></tr>
+  <tr><th>Comment le lire</th><td>Le poste est celui où la NC a été rédigée.</td></tr>
+  <tr><th>À quoi ça sert</th><td>Montre si un type de défaut est trouvé surtout à un même endroit.</td></tr>
+  <tr><th>Un clic</th><td>Garde ce poste.</td></tr>
+</tbody></table>
+<h2>Autres graphiques et la liste</h2>
+<h3>Autres graphiques</h3>
+<p>Sous <b>▸ Autres graphiques</b> :</p>
+<table class="keep fact"><tbody>
+  <tr><th style="width:52mm">Quel crédit donner au taux de chaque produit ?</th><td>Le taux de chaque produit avec sa marge d’incertitude : large quand peu d’avions ont été produits ; un taux élevé sur peu d’avions peut donc n’être que du hasard.</td></tr>
+</tbody></table>
+<h3>Détail des NC : produit, avion, poste</h3>
+<table class="keep fact"><tbody>
+  <tr><th style="width:30mm">Ce qu’on voit</th><td>La liste derrière tous les graphiques de l’onglet, les plus récentes en premier : date, ligne, produit, MSN, poste, type, coût et titre.</td></tr>
+  <tr><th>Comment le lire</th><td>Cherchez-y par numéro de NC, mot ou FIN. Elle affiche 200 lignes à la fois ; <b>Afficher 200 de plus</b>, en bas, en affiche davantage.</td></tr>
+  <tr><th>À quoi ça sert</th><td>C’est là qu’un chiffre devient des cas réels. Dans cette liste, un clic sur une ligne, un produit, un MSN ou un poste filtre toute la page.</td></tr>
+  <tr><th>Un clic</th><td>—</td></tr>
+</tbody></table>

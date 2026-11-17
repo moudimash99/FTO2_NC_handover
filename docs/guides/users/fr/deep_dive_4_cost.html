@@ -1,0 +1,62 @@
+<!--
+title: Deep dive – Coût de non-qualité
+subtitle: Ce que coûtent les NC, et de quoi est fait le coût
+kicker: Tableau de bord NC FTO2 · Utilisateurs · Mode Deep dive
+file: users/fr/Deep dive 4 - Coût de non-qualité
+for: tous ceux qui suivent le coût de non-qualité
+foot: Tableau de bord NC FTO2 · Deep dive – Coût de non-qualité
+short: yes
+lang: fr
+-->
+<h2>À quoi sert l’onglet</h2>
+<p>L’onglet Coût de non-qualité répond à la question : <b>combien les NC coûtent-elles à FTO2, et sur quoi ?</b> Le coût est une estimation construite à partir du temps que prend chaque NC, au taux horaire de qui fait le travail : il est fait pour comparer causes, lignes et mois, pas pour remplacer un chiffre comptable. La méthode est dans <i>Comment le coût est calculé</i>.</p>
+<p>La ligne sous le titre donne l’image complète : le coût total pour FTO2, la part des NC émises à FTO2, les retours clients, et à côté, les aléas qualité qui n’ont mené à aucune NC. Les chiffres clés donnent le coût, le nombre de NC et le coût moyen par NC.</p>
+<h2>Les graphiques</h2>
+<h3>Répartition du coût par type de NC</h3>
+<table class="keep fact"><tbody>
+  <tr><th style="width:30mm">Ce qu’on voit</th><td>Une barre découpée par type de NC : NC câbles, test, contrôle final, interne, fournisseurs.</td></tr>
+  <tr><th>Comment le lire</th><td>Chaque partie représente sa part du coût de la sélection.</td></tr>
+  <tr><th>À quoi ça sert</th><td>Montre quel type de NC porte le coût.</td></tr>
+  <tr><th>Un clic</th><td>—</td></tr>
+</tbody></table>
+<h3>Décision, Ligne, Produit, Mois de création</h3>
+<table class="keep fact"><tbody>
+  <tr><th style="width:30mm">Ce qu’on voit</th><td>Le coût sous quatre angles : par décision prise, par ligne, par produit, par mois.</td></tr>
+  <tr><th>Comment le lire</th><td>Une barre par valeur, la plus grande en premier.</td></tr>
+  <tr><th>À quoi ça sert</th><td>Permet de suivre une partie du coût : une décision, une ligne, un produit, un mois.</td></tr>
+  <tr><th>Un clic</th><td>Filtre les autres graphiques de cet onglet, et sa liste.</td></tr>
+</tbody></table>
+<h3>De quoi est fait le coût, mois par mois</h3>
+<table class="keep fact"><tbody>
+  <tr><th style="width:30mm">Ce qu’on voit</th><td>Chaque mois découpé en gestion de la NC, reprise, matière et études d’ingénierie.</td></tr>
+  <tr><th>Comment le lire</th><td>Gestion de la NC = alerte, rédaction, support, recontrôle.</td></tr>
+  <tr><th>À quoi ça sert</th><td>Montre si une hausse vient de plus de NC, de retouches plus lourdes, ou des pièces et des études.</td></tr>
+  <tr><th>Un clic</th><td>—</td></tr>
+</tbody></table>
+<h3>Aléas qualité sans NC</h3>
+<table class="keep fact"><tbody>
+  <tr><th style="width:30mm">Ce qu’on voit</th><td>Le temps perdu déclaré dans MES sur les aléas qualité qui n’ont mené à aucune NC : heures perdues par mois et par ligne, et leur coût au taux production.</td></tr>
+  <tr><th>Comment le lire</th><td>Montré <b>à côté</b> du coût de non-qualité, sans y être ajouté. Quand un aléa mène bien à une NC, son temps est déjà dans le coût de cette NC.</td></tr>
+  <tr><th>À quoi ça sert</th><td>Montre du temps perdu qu’aucune NC n’enregistre.</td></tr>
+  <tr><th>Un clic</th><td><b>▸ Les aléas, un par ligne</b> les liste.</td></tr>
+</tbody></table>
+<h3>Autres graphiques du coût</h3>
+<p>Sous <b>▸ Autres graphiques du coût</b> :</p>
+<table class="keep fact"><tbody>
+  <tr><th style="width:52mm">Chaque NC dans le temps, à sa taille</th><td>Une bulle par NC, à la taille de son coût ; les cinq plus chères sont nommées. Montre si le coût vient de beaucoup de petites NC ou de quelques grosses.</td></tr>
+  <tr><th style="width:52mm">Comment la retouche est chiffrée</th><td>Combien de NC sont chiffrées à partir du temps planifié de leur ordre de retouche, et combien à partir du modèle.</td></tr>
+</tbody></table>
+<h3>Expliquer le calcul</h3>
+<table class="keep fact"><tbody>
+  <tr><th style="width:30mm">Ce qu’on voit</th><td>Sous <b>▸ Expliquer le calcul</b> : les six étapes d’une NC avec leur temps, leur taux et leur total ; ce qu’elles donnent une fois additionnées ; les règles particulières ; ce que compte chaque décision.</td></tr>
+  <tr><th>Comment le lire</th><td>Tapez un numéro de NC et cliquez sur <b>Afficher</b>, ou cliquez sur un exemple : le calcul de cette NC, ligne par ligne.</td></tr>
+  <tr><th>À quoi ça sert</th><td>Répond à « comment ce chiffre a-t-il été obtenu ? » avec les chiffres de votre sélection.</td></tr>
+  <tr><th>Un clic</th><td>—</td></tr>
+</tbody></table>
+<h3>Détail des NC et de leur coût</h3>
+<table class="keep fact"><tbody>
+  <tr><th style="width:30mm">Ce qu’on voit</th><td>La liste derrière tous les graphiques de l’onglet, les plus récentes en premier : NC, date, ligne, où elle a été trouvée, décision, nombre de défauts, coût et titre.</td></tr>
+  <tr><th>Comment le lire</th><td>Cherchez-y par numéro de NC, mot ou FIN. Elle affiche 200 lignes à la fois ; <b>Afficher 200 de plus</b>, en bas, en affiche davantage.</td></tr>
+  <tr><th>À quoi ça sert</th><td>C’est là qu’un chiffre devient des cas réels.</td></tr>
+  <tr><th>Un clic</th><td>—</td></tr>
+</tbody></table>

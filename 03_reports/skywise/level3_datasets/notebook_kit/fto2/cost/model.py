@@ -35,8 +35,7 @@ How one NC is costed
                   part (else 0)
   total         = each step's minutes / 60 * the rate of who does it (STEP_RATES: production, quality, ME)
                   + engineering hours * engineering rate (Airbus) + material + part
-  customer return: + a flat extra (CUSTOMER_RETURN_EXTRA), or replaced by the real amount when the NC dataset
-                   has a `customer_return_cost` value for that NC
+  customer return: + a flat extra (CUSTOMER_RETURN_EXTRA)
   AEC cost      = total if liability == AEC plant code, else 0   (others are shown aside)
 
 Two comparison figures are written next to it for every NC:
@@ -204,14 +203,11 @@ def compute_cnq(nc, defects, params=P):
     nc["cnq_cost_material"] = work * nc["_mat"]
     nc["cnq_cost_part"] = part_flag * part_in.fillna(0.0)
     modelled = nc[["cnq_cost_admin", "cnq_cost_work", "cnq_cost_engineering", "cnq_cost_material", "cnq_cost_part"]].sum(axis=1)
-    # customer returns: flat extra per return, or the real amount when the dataset carries one
+    # customer returns: a flat extra per return
     is_return = (nc["cnq_customer_return"] == 1) & has_master
-    col = params.CUSTOMER_RETURN_COST_COLUMN
-    real = pd.to_numeric(nc[col], errors="coerce") if col in nc.columns else pd.Series(np.nan, index=nc.index)
-    final = np.where(is_return & real.notna(), real.fillna(0.0), modelled + np.where(is_return, params.CUSTOMER_RETURN_EXTRA, 0.0))
+    final = modelled + np.where(is_return, params.CUSTOMER_RETURN_EXTRA, 0.0)
     nc["cnq_cost_modelled"] = modelled
     nc["cnq_cost_customer_adjust"] = final - modelled
-    nc["cnq_customer_amount_known"] = (is_return & real.notna()).astype(int)
     nc["cnq_cost_total"] = final
     # ---- comparison level 2 "Global": average times for every NC, same material
     global_eur = (alert * params.MIN_ALERT * R["alert"] + flag("write") * params.MIN_WRITE_NC_GLOBAL * R["writing"]
