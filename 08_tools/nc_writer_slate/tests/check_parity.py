@@ -2,6 +2,7 @@
 """
 Check that nc_writer.js says exactly what the Streamlit app says:
 same codes, products, detections and FIN lists, same defect lines, same SAP text.
+The products list may hold the products added on the Slate tool only (ADDED_PRODUCTS below), and nothing else.
 
     python tests/check_parity.py          (needs node on the PATH)
 
@@ -77,6 +78,9 @@ def check(name, ok, detail=""):
     print(("ok   " if ok else "FAIL ") + name + ("" if ok else "\n     " + detail))
     fails += 0 if ok else 1
 
+# products added on the Slate tool only, after the Streamlit app was frozen: they sit just before "Autre", which stays last
+ADDED_PRODUCTS = ["CA", "CA Superior", "Element OTP"]
+py["PRODUITS"] = py["PRODUITS"][:-1] + ADDED_PRODUCTS + py["PRODUITS"][-1:]
 for k in py:
     check("data " + k, res["data"][k] == py[k], "JS and Python differ")
 print("     %d natures, %d codes, %d with a CDVE variant" % (len(py["NATURES"]), sum(len(n["objects"]) for n in py["NATURES"]),
