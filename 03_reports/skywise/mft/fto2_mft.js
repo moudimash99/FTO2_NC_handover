@@ -193,9 +193,18 @@ function fto2SharedStore(api, local, seed) {
   var whenRead = new Promise(function (res) { open = res; });   // the page gets the store once the query has answered
   function copy(o) { return JSON.parse(JSON.stringify(o)); }
   function key(t) { return String(t == null ? '' : t).normalize('NFKD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^0-9a-z]/g, ''); }
-  function cell(r, name) { var ks = Object.keys(r); for (var i = 0; i < ks.length; i++) if (key(ks[i]) === name) return r[ks[i]]; return null; }   // msn, Msn, MSN...
-  function rowsOf(v) {   // rows, or one array per column
+  // a property of a row: msn, Msn, MSN, texte_sap, texteSap...; an object of an Ontology query may hold them one level down
+  // (properties, ...)
+  function cell(r, name) {
+    var ks = Object.keys(r), i;
+    for (i = 0; i < ks.length; i++) if (key(ks[i]) === name) return r[ks[i]];
+    for (i = 0; i < ks.length; i++) { var o = r[ks[i]]; if (o && typeof o === 'object' && !Array.isArray(o)) { var x = cell(o, name); if (x != null) return x; } }
+    return null;
+  }
+  function rowsOf(v) {   // rows, or one array per column, or (an Ontology query) the objects under data / objects
     if (Array.isArray(v)) return v;
+    var list = v.data || v.objects || v.results;
+    if (Array.isArray(list) && (!list.length || (list[0] && typeof list[0] === 'object' && !Array.isArray(list[0])))) return list;
     var cols = Object.keys(v), n = 0, out = [];
     cols.forEach(function (c) { if (Array.isArray(v[c]) && v[c].length > n) n = v[c].length; });
     for (var i = 0; i < n; i++) { var o = {}; cols.forEach(function (c) { o[c] = Array.isArray(v[c]) ? v[c][i] : null; }); out.push(o); }
