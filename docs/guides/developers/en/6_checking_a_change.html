@@ -1,0 +1,62 @@
+<!--
+title: Checking a change
+subtitle: How to make sure a change moves only what it should
+kicker: FTO2 NC dashboard · Developers
+file: developers/en/6 Checking a change
+for: The developer
+foot: FTO2 NC dashboard · Checking a change
+short: yes
+lang: en
+-->
+
+<h2>The principle</h2>
+<p>A change should move what it was meant to move, and nothing else. The only way to know is to look at the same figures
+before and after. It takes ten minutes, and it is the check that catches most mistakes.</p>
+
+<h2>Before the change</h2>
+<ol>
+  <li>Note the last lines the update printed: the number of NCs, of defect lines, and the cost.</li>
+  <li>On the dashboard, with the filters as the page opens, note the four key figures of <b>Essential › Summary</b>: NCs since
+    January, NCs per MSN, cost of non-quality, customer returns. Note one line's figures too.</li>
+  <li>Keep a copy of what you are about to change: the code file, the table, or the page's JS. It is your way back.</li>
+</ol>
+
+<h2>After the change</h2>
+<ol>
+  <li>Run the update, and read its first and last lines.</li>
+  <li>Compare with your notes. Only what you meant to change should move. A setting that should change one line's target
+    must not change another line's count.</li>
+  <li>For a page change: open the page in both languages, in Essential and in Deep dive, with a few filters, and open the
+    chart you changed with ⤢ <b>Enlarge</b>. Check the MFT page too when the change touches the bell or the tables.</li>
+  <li>If something moved that should not have, put the copy back and run again before looking further.</li>
+</ol>
+
+<h2>What to check, by kind of change</h2>
+<table class="keep">
+  <thead><tr><th style="width:52mm">Change</th><th>What to look at</th></tr></thead>
+  <tbody>
+    <tr><td>A Fusion sheet</td><td>The first lines of the update: the sheet is listed as used. Then the figure it feeds (a target, a cost,
+      a month's volume).</td></tr>
+    <tr><td>A rule table</td><td>The ⓘ panel under the filters, <i>How the selection is made</i>: how many NCs each filter keeps, before and
+      after.</td></tr>
+    <tr><td>The defect reader</td><td>The number of defect lines, and the Pareto by cause on one line. A small change to the reader can
+      move hundreds of lines.</td></tr>
+    <tr><td>The cost model</td><td>The cost of one NC with <b>Explain the calculation</b>, step by step, then the total.</td></tr>
+    <tr><td>A chart</td><td>The same count from another chart or tab: two charts of the same thing must agree.</td></tr>
+    <tr><td>The bell</td><td>The list of the bell on the dashboard and on the MFT page: they must ring the same.</td></tr>
+  </tbody>
+</table>
+
+<h2>The automatic checks</h2>
+<p>The code comes with automatic checks in its <code>tests</code> folder. The quick ones take seconds: every settings table is
+complete and readable, the rules work, the Fusion sheets give back the same settings as the files, and no business value or
+year is written in the code. Run them after any change to the code.</p>
+
+<h2>Three habits</h2>
+<ul>
+  <li><b>One change at a time.</b> Two changes made together cannot be told apart afterwards.</li>
+  <li><b>Write down why.</b> A line in the table's comment column, or a comment above the code, says why the rule exists. The
+    next person will want to remove it otherwise.</li>
+  <li><b>Tell the users when a figure moves for a reason.</b> A target that changes overnight with no word loses their trust
+    in the dashboard faster than a mistake.</li>
+</ul>

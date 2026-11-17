@@ -1,0 +1,74 @@
+<!--
+title: Start here – Developers
+subtitle: What the dashboard is made of, who changes what, and where to read next
+kicker: FTO2 NC dashboard · Developers
+file: developers/en/1 Start here
+for: The person who maintains the dashboard
+foot: FTO2 NC dashboard · Start here – Developers
+short: yes
+lang: en
+-->
+
+<h2>What you take over</h2>
+<p>The FTO2 NC dashboard follows the non-conformities (NCs) of the plant: how many, what kind, what they cost, and whether
+the year is on target. It lives entirely in Skywise. The team only opens the pages; everything behind them is yours.</p>
+<p>It is made of five parts, one after the other:</p>
+<table class="keep">
+  <thead><tr><th style="width:44mm">Part</th><th>What it is</th></tr></thead>
+  <tbody>
+    <tr><td><b>The settings</b></td><td>The values people fill in by hand (target, rates, blackout days, part prices, lists) in the Fusion
+      spreadsheet <i>FTO2 NC Dashboard - Settings</i>, and the rules (which NC counts, which product, which cause) in
+      small tables kept with the code.</td></tr>
+    <tr><td><b>The update</b></td><td>The pipeline: Python code that reads the NCs from Skywise, applies the rules, reads the defects written in each
+      NC, works out their cost, and writes four tables. It runs from the pipeline notebook.</td></tr>
+    <tr><td><b>The four tables</b></td><td><code>fto2_dash_nc</code> (one row per NC), <code>fto2_dash_defects</code> (one row per defect),
+      <code>fto2_dash_disruptions</code> (quality aléas with no NC) and <code>fto2_dash_ref</code> (everything else the
+      pages need).</td></tr>
+    <tr><td><b>The sync</b></td><td>The four tables are copied to Postgres, where the Slate pages can read them.</td></tr>
+    <tr><td><b>The pages</b></td><td>A Slate application: the dashboard, the MFT page, the Tableau Elizabeth, and the NC writer, which helps
+      write an NC to the standard.</td></tr>
+  </tbody>
+</table>
+
+<h2>One rule explains most of the design</h2>
+<p><b>The update decides and calculates; the pages only filter, add up and draw.</b> Which NC counts, what each defect is,
+what it costs: all of it is decided once, in the update. The pages never recompute it. So a number that is wrong
+everywhere is an update question; a number wrong on one chart only is a page question.</p>
+<p>A second rule follows from it: <b>no business value in the code.</b> A rate, a date, a product name or a threshold belongs
+in a settings table, not in the code. Most change requests are therefore a line in a table, not a code change.</p>
+
+<h2>Who changes what</h2>
+<table class="keep">
+  <thead><tr><th style="width:44mm">Who</th><th>What they change</th></tr></thead>
+  <tbody>
+    <tr><td><b>Head of Quality</b></td><td>The decided values: the cut of the target, the hourly rates and minutes, the blackout days, last
+      year's deliveries, the planned volume, the plant code. In the Fusion spreadsheet.</td></tr>
+    <tr><td><b>Configuration manager</b></td><td>The values that follow the work: part prices, the cable tracker, the GPS register, the Test list. In
+      the Fusion spreadsheet. Also the rule tables, with care.</td></tr>
+    <tr><td><b>Developer (you)</b></td><td>The code of the update and of the pages, the technical tables, the access rights, and help to the two
+      others when a value does not do what they expect.</td></tr>
+  </tbody>
+</table>
+<p>The year followed changes by itself on 1 January: nobody has to touch it.</p>
+
+<h2>Your first week</h2>
+<ol>
+  <li>Check you can open every part listed above, with your own account (<i>Skywise: access and ownership</i>).</li>
+  <li>Run the update once from start to end and read what it prints (<i>The pipeline</i>).</li>
+  <li>Open the dashboard and check that the date <b>Données au…</b> at the top moved to the day of the latest NC.</li>
+  <li>Open the pages in edit mode and find the code of one chart (<i>The front end</i>).</li>
+  <li>Read <i>Known limits and open work</i>: it lists what is known to be imperfect, so you don't rediscover it.</li>
+</ol>
+
+<div class="next">
+<h2>The documents of this folder</h2>
+<ul>
+  <li><i>Configuration</i>: the settings, who fills which, and what each one changes.</li>
+  <li><i>The pipeline</i>: how the update works, how to run it, and what to do when it stops.</li>
+  <li><i>The front end</i>: how a page gets its data, how to change a chart, the bell, and the boxes a page can show.</li>
+  <li><i>Skywise: access and ownership</i>: every object, who needs which right, and what to check before someone leaves.</li>
+  <li><i>Checking a change</i>, and <i>Known limits and open work</i>.</li>
+</ul>
+<p>The users' folder holds the guides of the people who read the dashboard; <i>How the cost is calculated</i> there is also the
+best plain description of the cost model.</p>
+</div>

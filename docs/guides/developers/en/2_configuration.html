@@ -1,0 +1,105 @@
+<!--
+title: Configuration
+subtitle: The settings of the dashboard: who fills which, and what each one changes
+kicker: FTO2 NC dashboard · Developers
+file: developers/en/2 Configuration
+for: The developer, the Head of Quality and the configuration manager
+foot: FTO2 NC dashboard · Configuration
+short: yes
+lang: en
+-->
+
+<h2>Two kinds of settings</h2>
+<p>Almost everything that can change in the dashboard is a setting, not code. There are two kinds:</p>
+<ul>
+  <li><b>The values people fill in by hand</b> are in the Fusion spreadsheet <i>FTO2 NC Dashboard - Settings</i>. Each sheet
+    is synced to a dataset of its own (<code>fto2_set_…</code>), which the update reads.</li>
+  <li><b>The rules and the technical tables</b> (which NC counts, which product, which cause, the cost model's details) are
+    small tables kept with the code, in the settings folder. They change rarely, and only with care.</li>
+</ul>
+<p>A change shows on the dashboard after the next update. Nothing is changed in the pages themselves.</p>
+
+<h2>Part 1 – The Head of Quality's sheets</h2>
+<p>The decided values. They are few, and each one moves figures of the whole year.</p>
+<table class="keep">
+  <thead><tr><th style="width:40mm">Sheet</th><th>What it holds</th><th style="width:34mm">When it changes</th></tr></thead>
+  <tbody>
+    <tr><td><b>Target and pages</b></td><td>The cut of the target (0.25 = 25 % fewer NCs per product than the comparison year), what the pages
+      show when they open, the target of an MFT action.</td><td>When the target or the review changes.</td></tr>
+    <tr><td><b>Cost rates and times</b></td><td>The hourly rates of production, quality and methods, and the minutes each step of an NC
+      takes.</td><td>When a rate or a process time changes.</td></tr>
+    <tr><td><b>Blackout days</b></td><td>The days the plant is closed (weight 0) or half closed (weight 0.5), one row per period. The volume
+      of a month is spread over its working days, so these days decide the volume of each month and week.</td><td>Each year,
+      and when a closure is added.</td></tr>
+    <tr><td><b>Deliveries last year</b></td><td>The products delivered each month of the comparison year: the base of this year's
+      targets.</td><td>Each January, for the year just ended.</td></tr>
+    <tr><td><b>Planned volume</b></td><td>The planned volume (EqMSN) of each product, month by month.</td><td>When the EqMSN sheet is
+      updated.</td></tr>
+    <tr><td><b>Plant</b></td><td>The plant followed, and how its code is written in SAP.</td><td>Rarely.</td></tr>
+  </tbody>
+</table>
+<p>The year followed is not a setting any more: it is the current year, and it changes by itself on 1 January. In early
+January the dashboard therefore starts almost empty; that is normal. The bell stays quiet until the year has 16 finished
+weeks (late April).</p>
+
+<h2>Part 2 – The configuration manager's sheets</h2>
+<table class="keep">
+  <thead><tr><th style="width:40mm">Sheet</th><th>What it holds</th><th style="width:34mm">When it changes</th></tr></thead>
+  <tbody>
+    <tr><td><b>Part prices</b></td><td>The unit price of each part (material number), so that a scrapped or exchanged part is counted in the
+      cost. Each update lists the parts still to price.</td><td>When a price is known or changes.</td></tr>
+    <tr><td><b>Cable tracker</b></td><td>The cable team's tracker, pasted as it is, from its header row.</td><td>At each update of the
+      tracker.</td></tr>
+    <tr><td><b>GPS register</b></td><td>The GPS register of the year followed, pasted from its header row.</td><td>At each update of the
+      register.</td></tr>
+    <tr><td><b>Test list</b></td><td>The Test team's NC list, pasted from its header row.</td><td>At each update of the list.</td></tr>
+  </tbody>
+</table>
+<p>Three rules for every sheet: keep the first row (the column names) exactly as it is; one row per item, no merged cells,
+no totals; a date written as 2026-05-15 or 15/05/2026.</p>
+
+<h2>How the update reads the sheets</h2>
+<ul>
+  <li>A sheet is used when its dataset can be read by the update (in the notebook: it is in the Data panel). Otherwise the
+    file of the settings folder with the same content is used, and the update says so at its start.</li>
+  <li>The column names are matched loosely (case, accents, spaces), because a sync may write them a little differently. A
+    sheet with a column missing is not used: the update names the column and keeps the file.</li>
+  <li>A sheet with its header only is not used: the file is kept rather than emptied.</li>
+  <li>The first lines printed by the update list which settings came from Fusion. Read them after any change.</li>
+</ul>
+
+<h2>The rule tables</h2>
+<p>The rules live in the settings folder, as small tables that open in Excel. Their name says who should touch them:</p>
+<table class="keep">
+  <thead><tr><th style="width:24mm">Starts with</th><th>What it is</th></tr></thead>
+  <tbody>
+    <tr><td><code>0_</code></td><td>History and fallbacks: last year's deliveries, the planned volume, the production plan as last read. Not edited
+      by hand.</td></tr>
+    <tr><td><code>1_</code></td><td>The values of the two sheets above, as files: the fallback when Fusion cannot be read. Also the MFT
+      actions.</td></tr>
+    <tr><td><code>2_</code></td><td>The rules and names: which NCs count, the line of each programme, the product of each NC, its type, its origin,
+      the cause names, the categories and their colours, the names of the source datasets and files.</td></tr>
+    <tr><td><code>3_</code></td><td>Expert: the cost model's details, the bell's settings, the official sub-codes.</td></tr>
+  </tbody>
+</table>
+<p>The table <code>lisez_moi.csv</code> lists every table, what it changes and which part of the code reads it.</p>
+
+<h3>How a rule table works</h3>
+<p>Each NC is tested against the rules in the order of the column <code>ordre</code>. The rows of one rule must all be true; the
+first rule that holds gives the result; the rule marked <code>toujours</code> is the default. A test reads one column of the NC
+data: equal to, one of a list, contains, starts with, or a pattern.</p>
+<p>So to send a new programme to its line, add one rule to <code>2_regle_ligne.csv</code>; to leave out a kind of NC, add one to
+<code>2_regle_exclusion.csv</code>. Put the new rule before a broader one, or the broader one wins first.</p>
+
+<h2>A mistake in a setting</h2>
+<p>The update reads every setting before it fetches anything. A badly filled value stops it within seconds, with nothing
+written, and with a plain message naming the table, the line and what to fix, for example
+<i>1_cout_parametres.csv, taux_qualite: 'abc' is not a number</i>. Fix the line and run the update again.</p>
+
+<div class="next">
+<h2>Read next</h2>
+<ul>
+  <li><i>The pipeline</i>: what the update does with these settings.</li>
+  <li><i>How the cost is calculated</i> (users' folder): what the rates and minutes mean.</li>
+</ul>
+</div>

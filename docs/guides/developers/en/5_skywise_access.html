@@ -1,0 +1,81 @@
+<!--
+title: Skywise: access and ownership
+subtitle: Every object of the dashboard, who needs which right, and what to check before someone leaves
+kicker: FTO2 NC dashboard · Developers
+file: developers/en/5 Skywise - access and ownership
+for: The developer and the owners
+foot: FTO2 NC dashboard · Skywise: access and ownership
+short: yes
+lang: en
+-->
+
+<h2>The objects</h2>
+<p>The dashboard is not one object in Skywise but a chain. A person who lacks access to one link sees an empty page or an
+error. These are the links, in the order the data flows:</p>
+<table class="keep">
+  <thead><tr><th style="width:48mm">Object</th><th>What it is</th></tr></thead>
+  <tbody>
+    <tr><td><b>Source data</b></td><td><code>non_conformity</code>, <code>work_order_operation</code>, <code>mes_disruptions</code>: owned by other
+      teams. <code>fto2_ai_labels</code>: the stored cause labels, owned by the dashboard.</td></tr>
+    <tr><td><b>The settings</b></td><td>The Fusion spreadsheet <i>FTO2 NC Dashboard - Settings</i> and its datasets <code>fto2_set_…</code>.</td></tr>
+    <tr><td><b>The pipeline</b></td><td>The Code Workspace: the pipeline notebook, its code, the settings folder and the files saved beside
+      it.</td></tr>
+    <tr><td><b>The four tables</b></td><td><code>fto2_dash_nc</code>, <code>fto2_dash_defects</code>, <code>fto2_dash_disruptions</code>,
+      <code>fto2_dash_ref</code>.</td></tr>
+    <tr><td><b>The sync</b></td><td>The four tables copied to Postgres, schema <code>foundry_sync</code>, same names.</td></tr>
+    <tr><td><b>The Slate application</b></td><td>The pages and their four queries; the NC writer, its object type <i>a30 Nc Writer Dataset</i>
+      and its action.</td></tr>
+    <tr><td><b>The documents</b></td><td>The folder Quality › NC dashboard, with <i>for users</i> and <i>for developers</i>.</td></tr>
+  </tbody>
+</table>
+<p>Keep everything in one folder of the team's project, never in a personal folder: sharing the folder then shares what it
+holds, and nothing depends on one person's account.</p>
+
+<h2>Who needs what</h2>
+<table class="keep">
+  <thead><tr><th style="width:44mm">Object</th><th style="width:30mm">Reader</th><th style="width:40mm">Head of Quality, configuration manager</th><th>Developer</th></tr></thead>
+  <tbody>
+    <tr><td>Slate application</td><td>view</td><td>view</td><td>edit</td></tr>
+    <tr><td>NC writer's action</td><td>run, for those who write NCs</td><td>run</td><td>edit</td></tr>
+    <tr><td>The four tables</td><td>view</td><td>view</td><td>edit</td></tr>
+    <tr><td>Fusion spreadsheet</td><td>none</td><td>edit</td><td>edit</td></tr>
+    <tr><td>Code Workspace</td><td>none</td><td>none</td><td>edit</td></tr>
+    <tr><td><code>fto2_ai_labels</code></td><td>none</td><td>none</td><td>edit</td></tr>
+    <tr><td>Source data</td><td>none</td><td>none</td><td>view</td></tr>
+  </tbody>
+</table>
+<p>Give each role to a group rather than to a name whenever Skywise allows it.</p>
+
+<h3>Two rules that explain most access problems</h3>
+<ul>
+  <li><b>A reader needs the application and the four tables.</b> The page reads the tables with the rights of the person who
+    opens it: someone who can open the application but not the tables gets an empty page.</li>
+  <li><b>The update runs with the rights of the person who runs it.</b> That person must be able to read every source and
+    write the four tables. The source data belongs to other teams: access is requested from their owners, and it can take
+    days. Ask early.</li>
+</ul>
+
+<h2>Giving access</h2>
+<p>Open the folder that holds the object, select it, choose <b>Share</b>, add the person or the group, and choose the role.
+To check a new reader: they open the dashboard link and see the date <b>Données au…</b> with figures. A box naming a query,
+or an empty page, means the four tables are missing from their rights.</p>
+
+<h2>Before someone leaves</h2>
+<p>A dashboard stops the day its only owner's account is closed. Go through this list with the successor at the keyboard, at
+least a week before the departure:</p>
+<ol>
+  <li>Nothing is in a personal folder. What was is moved into the team's folder, and the dashboard is opened once after the
+    move to check it still shows data.</li>
+  <li>At least two owners on the folder, the leaving person not counted, one of them a manager.</li>
+  <li>The successor has their own access to the three source datasets, and has run the update once with their own account.</li>
+  <li>The successor opens the application in edit mode and sees the queries and the code of each page.</li>
+  <li>Anything that runs on a schedule runs under an account that stays.</li>
+  <li>The leaving person's rights are removed afterwards, from the same places or from the group.</li>
+</ol>
+
+<div class="next">
+<h2>Read next</h2>
+<ul>
+  <li><i>Start here – Developers</i>, <i>Your first week</i>.</li>
+</ul>
+</div>

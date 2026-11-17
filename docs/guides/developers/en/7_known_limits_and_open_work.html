@@ -1,0 +1,55 @@
+<!--
+title: Known limits and open work
+subtitle: What is known to be imperfect, and what was planned but not finished
+kicker: FTO2 NC dashboard · Developers
+file: developers/en/7 Known limits and open work
+for: The developer
+foot: FTO2 NC dashboard · Known limits and open work
+short: yes
+lang: en
+-->
+
+<h2>Known limits</h2>
+<p>These are known, and accepted for now. The users' document <i>Known limits</i> explains the ones they can see.</p>
+<table class="keep">
+  <thead><tr><th style="width:52mm">Limit</th><th>What it means</th></tr></thead>
+  <tbody>
+    <tr><td><b>New defect lines</b></td><td>A defect line gets its precise cause when it is labelled. Until then it keeps the defect reader's
+      own cause, which is a little less precise. Each update lists the lines still to label.</td></tr>
+    <tr><td><b>The A400M</b></td><td>Its NCs reach Skywise without their text. One defect line is made from the title when a rule recognises
+      it; otherwise the NC counts, with no defect.</td></tr>
+    <tr><td><b>The cost is an estimate</b></td><td>Made to compare causes, lines and months, not to be booked. It has not been compared with
+      the official Airbus method.</td></tr>
+    <tr><td><b>Part prices</b></td><td>Many parts have no price yet: their NCs are counted without the part's value. Each update lists
+      them, most frequent first.</td></tr>
+    <tr><td><b>Material numbers in Fusion</b></td><td>A material number typed as a number loses its leading zeros. The update matches numbers
+      without leading zeros, but keep the column as text in the sheet.</td></tr>
+    <tr><td><b>Early January</b></td><td>The year followed changes by itself on 1 January, so the dashboard starts almost empty. The bell
+      stays quiet until the year has 16 finished weeks (late April).</td></tr>
+    <tr><td><b>Two copies of the bell</b></td><td>The dashboard and the MFT page each hold their own copy of the alarm engine. A change to
+      one must be made to the other.</td></tr>
+    <tr><td><b>Last year's deliveries</b></td><td>From the Fusion sheet when it is filled in; otherwise counted from the production plan,
+      which only knows the aircraft still in its exports.</td></tr>
+  </tbody>
+</table>
+
+<h2>Open work</h2>
+<table class="keep">
+  <thead><tr><th style="width:52mm">Item</th><th>Where it stands</th></tr></thead>
+  <tbody>
+    <tr><td><b>Running the update on a schedule</b></td><td>Today someone runs the pipeline notebook. The code is ready to run as a scheduled
+      pipeline in a Code Repository: the same steps, with a history of each table. To set up and test.</td></tr>
+    <tr><td><b>Labelling new defect lines</b></td><td>The lines to label are listed at each update. No NC text may leave Skywise for an
+      outside tool without the agreement of IT and of the data owner.</td></tr>
+    <tr><td><b>MFT actions kept for everyone</b></td><td>An action typed on the MFT page is kept in that browser only, until it is added to the
+      MFT actions table. Planned: keep them in one object of the NC writer's object type, so the page reads and saves them
+      for everyone. Tested in part.</td></tr>
+    <tr><td><b>The former outputs</b></td><td>While the line <code>garder_anciennes_sorties</code> is <code>oui</code>, the update still writes the
+      tables of the former Slate app. Set it to <code>non</code> once nobody uses that app.</td></tr>
+    <tr><td><b>Calculations as Slate functions</b></td><td>The targets, the bell and the cost explanation can also run as Slate functions
+      instead of inside the page. Ready and checked to give the same figures; not tried in Skywise. The pages work without
+      them.</td></tr>
+    <tr><td><b>A cleaner reference table</b></td><td><code>fto2_dash_ref</code> holds large blocks of text cut into pieces. It works, but a
+      table per subject would be easier to read. Not urgent.</td></tr>
+  </tbody>
+</table>

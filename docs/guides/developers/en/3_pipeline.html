@@ -1,0 +1,120 @@
+<!--
+title: The pipeline
+subtitle: How the update works, how to run it, and what to do when it stops
+kicker: FTO2 NC dashboard · Developers
+file: developers/en/3 The pipeline
+for: The developer
+foot: FTO2 NC dashboard · The pipeline
+short: yes
+lang: en
+-->
+
+<h2>What the update does</h2>
+<p>The update reads the NCs from Skywise, decides which ones count, reads the defects written in each NC, gives each defect a
+cause, works out the cost, and writes the four tables the pages read. It is plain Python, one file per subject, run from the
+pipeline notebook. The notebook itself holds only a few lines: it reads the settings, then calls the run.</p>
+
+<h3>What it reads</h3>
+<table class="keep">
+  <thead><tr><th style="width:48mm">Source</th><th>What it gives</th></tr></thead>
+  <tbody>
+    <tr><td><code>non_conformity</code></td><td>The NCs: the plant's own, and those of other plants where the plant is liable.</td></tr>
+    <tr><td><code>fto2_ai_labels</code></td><td>The stored cause label of each defect line.</td></tr>
+    <tr><td><code>work_order_operation</code></td><td>The rework orders and their planned time, for the cost.</td></tr>
+    <tr><td><code>mes_disruptions</code></td><td>The MES aléas, for the alert time and the aléas that led to no NC.</td></tr>
+    <tr><td><code>fto2_set_…</code></td><td>The settings kept in Fusion (<i>Configuration</i>).</td></tr>
+    <tr><td>The settings folder, and the files beside the notebook</td><td>The rule tables, the station list, the exports of the production plan.</td></tr>
+  </tbody>
+</table>
+
+<h3>The steps, in order</h3>
+<ol>
+  <li><b>Settings.</b> Every setting is read and checked first. A mistake stops the run here, before anything is fetched.</li>
+  <li><b>Selection.</b> The NCs created this year are fetched, the excluded ones are left out, and each NC gets its labels from
+    the rule tables: phase (series, REC, FTI), decision, origin, type, product.</li>
+  <li><b>The lists.</b> The NCs of the GPS register and the Test list that the selection missed are fetched by number.</li>
+  <li><b>Defects.</b> The defect reader splits each NC's text into defect lines and gives each one a sub-category. A400M NCs
+    have no text in Skywise: one line is made from the title.</li>
+  <li><b>Causes.</b> Each defect line takes its stored label, if its text has not changed since it was labelled. An official
+    sub-code written in the NC by a person always wins over the label. A line with no usable label keeps the reader's
+    own cause and is listed "to label".</li>
+  <li><b>Cost.</b> Rework orders, aléas and part prices are attached, and the cost model runs on every NC.</li>
+  <li><b>Reference data.</b> The production plan, the comparison year (its NCs go through the same steps, then are summed per
+    month), the cable requests, the MFT actions, the cause tree and the page settings.</li>
+  <li><b>Writing.</b> The four tables are written, then synced to Postgres.</li>
+</ol>
+<p>The run prints each step as it goes, so the last line printed says where it is.</p>
+
+<h2>The four tables</h2>
+<table class="keep">
+  <thead><tr><th style="width:44mm">Table</th><th>One row per</th></tr></thead>
+  <tbody>
+    <tr><td><code>fto2_dash_nc</code></td><td>NC: dates, line, plant, liability, cost and its steps, phase, MSN, product, station, type, source.</td></tr>
+    <tr><td><code>fto2_dash_defects</code></td><td>Defect line: category, cause, sub-category, cable or not, share of the NC's cost, text, sub-code,
+      FIN, where its cause comes from.</td></tr>
+    <tr><td><code>fto2_dash_disruptions</code></td><td>Quality aléa that led to no NC.</td></tr>
+    <tr><td><code>fto2_dash_ref</code></td><td>Piece of text. The reference data is one large block per page, cut into pieces because a cell
+      cannot hold it all; the pages glue the pieces back together.</td></tr>
+  </tbody>
+</table>
+<p>The meaning of every column is written next to it at the top of <code>core.py</code>. Two working files are also written
+beside the notebook: the lines to label, and the parts still to price.</p>
+
+<h2>The year</h2>
+<p>The year followed is the current year, and the comparison year the one before. Every date of the run comes from these two,
+through five small functions of <code>config.py</code>; no year is written anywhere in the code. To look back at a past year,
+write it on the line <code>annee</code> of <code>1_parametres.csv</code>; empty the line again afterwards.</p>
+
+<h2>The cost model, in short</h2>
+<p>Each NC goes through up to six steps: the alert, writing the NC, technical support, preparing the job, the hands-on work,
+and the re-check. Each step takes minutes, paid at the hourly rate of whoever does it. Engineering hours, material and the
+price of a rejected, scrapped or exchanged part are added. The decision (rework, scrap, design query…) says which steps are
+charged. When an NC has a closed rework order with a planned time, that time replaces the model's own estimate. The full
+description, with today's minutes and rates, is <i>How the cost is calculated</i> in the users' folder; the code is in
+<code>cost/</code>.</p>
+
+<h2>Running the update</h2>
+<ol>
+  <li>Open the pipeline notebook and run every cell, from the first to the last.</li>
+  <li>Read the first lines: the year followed, and which settings came from Fusion.</li>
+  <li>Read the last lines: the number of NCs and defect lines, the tables written, and any warning.</li>
+  <li>A few minutes later, open the dashboard: the date <b>Données au…</b> must be the day of the latest NC.</li>
+</ol>
+<p>The code is read again at every run: there is no need to restart the notebook after a change.</p>
+
+<h2>Where to change what</h2>
+<table class="keep">
+  <thead><tr><th style="width:74mm">You want to change…</th><th>Where</th></tr></thead>
+  <tbody>
+    <tr><td>A rule, a rate, a product, a date</td><td>A setting first (<i>Configuration</i>), not the code</td></tr>
+    <tr><td>Which NCs are fetched from Skywise</td><td><code>skywise.py</code>, <code>select_ncs</code></td></tr>
+    <tr><td>How defects are read from the text</td><td><code>parser/nc_defect_parser.py</code> (expert rules; test well)</td></tr>
+    <tr><td>A new column in the tables</td><td><code>core.py</code>, then the query and the page (<i>The front end</i>)</td></tr>
+    <tr><td>How the cost is calculated</td><td><code>cost/model.py</code></td></tr>
+    <tr><td>What the pages receive besides the tables</td><td><code>reference.py</code></td></tr>
+  </tbody>
+</table>
+
+<h2>When the update stops</h2>
+<table class="keep">
+  <thead><tr><th style="width:58mm">The message</th><th>What to do</th></tr></thead>
+  <tbody>
+    <tr><td>Names a settings table and a line</td><td>That line is badly filled: fix it, run again.</td></tr>
+    <tr><td>"settings table … not found"</td><td>A table was renamed or deleted: put it back.</td></tr>
+    <tr><td>A dataset that is not found (AliasNotDefined)</td><td>The dataset is not in the notebook's Data panel, or was renamed: add it, or
+      change its name in <code>2_sources.csv</code>.</td></tr>
+    <tr><td>A Fusion sheet "not used"</td><td>Not an error: the file is used instead. Fix the sheet's column names.</td></tr>
+    <tr><td>"fto2_dash_cout not written"</td><td>Normal: that table only serves an optional set-up.</td></tr>
+    <tr><td>A list "could not be read"</td><td>The GPS register or the Test list is missing or changed shape: its NCs run without the list's
+      information.</td></tr>
+    <tr><td>Any other error</td><td>The last step printed says where it was; the file of that step is where to look.</td></tr>
+  </tbody>
+</table>
+
+<div class="next">
+<h2>Read next</h2>
+<ul>
+  <li><i>The front end</i>: what the pages do with the four tables.</li>
+  <li><i>Checking a change</i>.</li>
+</ul>
+</div>
