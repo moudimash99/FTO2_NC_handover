@@ -50,10 +50,10 @@ checked on the laptop, the transform writes exactly the notebook's tables (`test
 
 One line each in the list of inputs of the transform, nothing else to change:
 
-- **The settings kept in Fusion:** `fto2_set_targets`, `fto2_set_cost`, `fto2_set_blackout`, `fto2_set_deliveries`,
-  `fto2_set_eqmsn`, `fto2_set_plant`, `fto2_set_part_prices`, `fto2_set_cables`, `fto2_set_gps`, `fto2_set_test`, for
-  example `fto2_set_cost=Input("<the dataset of the sheet Cost rates and times>"),`. A sheet not listed: its file in
-  `src/fto2/settings/` is used. The first lines of the build log say which settings came from Fusion.
+- **The settings kept in Fusion** that the update reads: `fto2_set_cost`, `fto2_set_blackout`, `fto2_set_part_prices`,
+  `fto2_set_cables`, `fto2_set_gps`, `fto2_set_test`. Their lines are written in the transform, after a `#`: remove the `#`
+  and write the dataset's path between the quotes. A sheet not listed: its file in `src/fto2/settings/` is used. The first
+  lines of the build log say which settings came from Fusion. (`fto2_set_targets` is read by the pages, not here.)
 - **The production plan:** `fto2_plan_exports`, a dataset holding the exports of the Tableau Avances / Retards as files,
   one per download, the date at the end of each name (`Avances_Retards_2026-11-03.csv`), the older ones kept. Not listed:
   the plan stays as it was last read (`src/fto2/settings/0_plan_msn.csv`).
