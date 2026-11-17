@@ -8,6 +8,8 @@ spreadsheet; the GPS register, the Test list and the cable tracker with their co
 them) and the production plan exports as a dataset of files. Then compares the tables it writes with the notebook's run:
 they must be the same. Exits 1 if they are not.
 """
+import importlib.util
+import inspect
 import os
 import re
 import shutil
@@ -70,6 +72,33 @@ def fake_transforms_api():
     sys.modules["transforms.api"] = api
 
 
+SHIPPED = ["non_conformity", "fto2_ai_labels", "work_order_operation", "mes_disruptions", "fto2_set_cost", "fto2_set_blackout",
+           "fto2_set_part_prices", "fto2_set_cables", "fto2_set_gps", "fto2_set_test", "fto2_dash_nc", "fto2_dash_defects",
+           "fto2_dash_disruptions", "fto2_dash_ref", "fto2_lines_to_label", "fto2_parts_to_price"]
+
+
+def load_transform(folder):
+    """build/repository/fto2_update.py: as shipped, its inputs and outputs checked; then run with its optional input (the
+    production plan's exports) turned on, its two lines without their #, as the README says to do."""
+    src = open(os.path.join(ROOT, "build", "repository", "fto2_update.py"), encoding="utf-8").read()
+
+    def module(text, name):
+        path = os.path.join(folder, name + ".py")
+        with open(path, "w", encoding="utf-8") as f:
+            f.write(text)
+        spec = importlib.util.spec_from_file_location(name, path)
+        m = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(m)
+        return m
+    shipped = module(src, "fto2_update_shipped")
+    names = list(inspect.signature(shipped.compute).parameters)
+    assert names == SHIPPED and sorted(shipped.compute.io) == sorted(SHIPPED), "fto2_update.py declares %s" % names
+    for line in ("    # fto2_plan_exports=Input(", "    # fto2_plan_exports: LightweightInput,"):
+        assert src.count(line) == 1, "fto2_update.py: the line %r is not there" % line
+        src = src.replace(line, line.replace("# ", "", 1))
+    return module(src, "fto2_update_with_plan")
+
+
 def synced(df):
     """Column names as a sync may write them: signs and accented letters replaced."""
     return df.set_axis([re.sub(r"[^0-9A-Za-z]", "_", str(c)) for c in df.columns], axis=1)
@@ -109,9 +138,9 @@ def main():
         outputs = {k: FakeOutput() for k in ("fto2_dash_nc", "fto2_dash_defects", "fto2_dash_disruptions", "fto2_dash_ref",
                                              "fto2_lines_to_label", "fto2_parts_to_price")}
         fake_transforms_api()
-        sys.path.insert(0, os.path.join(ROOT, "build", "repository"))
-        import fto2_update
-        fto2_update.compute(**inputs, **outputs)
+        fto2_update = load_transform(work)
+        params = inspect.signature(fto2_update.compute).parameters
+        fto2_update.compute(**{k: v for k, v in inputs.items() if k in params}, **outputs)
     finally:
         shutil.rmtree(work, ignore_errors=True)
         os.environ["FTO2_CONFIG"] = os.path.join(ROOT, "config")

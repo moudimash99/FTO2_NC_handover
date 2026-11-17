@@ -1,20 +1,19 @@
-"""FTO2 NC dashboard: the update, as a transform that Skywise can run on a schedule.
+"""FTO2 NC dashboard: the update, as a transform that Skywise runs on a schedule.
 
 The same steps as the pipeline notebook. The code is in src/fto2 (start with fto2/skywise.py), the settings in
 src/fto2/settings, the station list in src/fto2/files.
 
-Inputs: the four Skywise datasets below. Optional inputs, one line each in the list below (nothing else to change):
-  - the settings kept in Fusion that the update reads: fto2_set_cost, fto2_set_blackout, fto2_set_part_prices,
-    fto2_set_cables, fto2_set_gps, fto2_set_test (the pages read fto2_set_targets themselves). One that is not listed: its
-    file of src/fto2/settings is used.
-  - fto2_plan_exports: a dataset holding the exports of the Tableau Avances / Retards (production plan), one file per
-    download, the date at the end of its name, the older ones kept. Not listed: the plan stays as last read.
+Inputs: the four Skywise datasets (their ids below) and the six datasets of the Fusion spreadsheet "FTO2 NC Dashboard -
+Settings" that the update reads (the pages read the seventh, fto2_set_targets, themselves).
+Optional: fto2_plan_exports, a dataset holding the exports of the Tableau Avances / Retards (production plan), one file per
+download, the date at the end of its name, the older ones kept. Without it, the plan stays as last read.
 Outputs: the four tables the pages read, and two work lists (the defect lines still to label, the parts still to price).
 """
 from transforms.api import Input, LightweightInput, LightweightOutput, Output, transform
 
-FOLDER = "/Users/MMACX64V/workbook-output/"   # the folder where the tables are written
-TEST = "_test"   # first builds: tables of their own, to compare with the notebook's; then TEST = "" to write the real ones
+FOLDER = "/Users/MMACX64V/workbook-output/"   # the folder where the tables are written (the team's folder at the switch)
+FUSION = "/the/folder/of/the/Fusion/datasets/"   # the folder holding fto2_set_cost, fto2_set_blackout... (synced from Fusion)
+TEST = "_test"   # first builds: tables of their own; then TEST = "" to write the tables the pages read
 
 
 @transform.using(
@@ -22,13 +21,12 @@ TEST = "_test"   # first builds: tables of their own, to compare with the notebo
     fto2_ai_labels=Input("ri.foundry.main.dataset.750e7ebc-b07d-4ccc-bcd5-7163bb5da733"),
     work_order_operation=Input("ri.foundry.main.dataset.76c493ed-e717-4fd6-94e2-0207c0893c1c"),
     mes_disruptions=Input("ri.foundry.main.dataset.dda34674-9103-44da-9a4f-43f43d5074e7"),
-    # optional inputs: remove the # of a line and write the dataset's path (or its rid) between the quotes
-    # fto2_set_cost=Input("<the dataset of the Fusion sheet Cost rates and times>"),
-    # fto2_set_blackout=Input("<the dataset of the Fusion sheet Blackout days>"),
-    # fto2_set_part_prices=Input("<the dataset of the Fusion sheet Part prices>"),
-    # fto2_set_cables=Input("<the dataset of the Fusion sheet Cable tracker>"),
-    # fto2_set_gps=Input("<the dataset of the Fusion sheet GPS register>"),
-    # fto2_set_test=Input("<the dataset of the Fusion sheet Test list>"),
+    fto2_set_cost=Input(FUSION + "fto2_set_cost"),
+    fto2_set_blackout=Input(FUSION + "fto2_set_blackout"),
+    fto2_set_part_prices=Input(FUSION + "fto2_set_part_prices"),
+    fto2_set_cables=Input(FUSION + "fto2_set_cables"),
+    fto2_set_gps=Input(FUSION + "fto2_set_gps"),
+    fto2_set_test=Input(FUSION + "fto2_set_test"),
     # fto2_plan_exports=Input("<the dataset holding the exports of the production plan>"),
     fto2_dash_nc=Output(FOLDER + "fto2_dash_nc" + TEST),
     fto2_dash_defects=Output(FOLDER + "fto2_dash_defects" + TEST),
@@ -42,15 +40,20 @@ def compute(
     fto2_ai_labels: LightweightInput,
     work_order_operation: LightweightInput,
     mes_disruptions: LightweightInput,
+    fto2_set_cost: LightweightInput,
+    fto2_set_blackout: LightweightInput,
+    fto2_set_part_prices: LightweightInput,
+    fto2_set_cables: LightweightInput,
+    fto2_set_gps: LightweightInput,
+    fto2_set_test: LightweightInput,
+    # fto2_plan_exports: LightweightInput,
     fto2_dash_nc: LightweightOutput,
     fto2_dash_defects: LightweightOutput,
     fto2_dash_disruptions: LightweightOutput,
     fto2_dash_ref: LightweightOutput,
     fto2_lines_to_label: LightweightOutput,
     fto2_parts_to_price: LightweightOutput,
-    **optional_inputs,
 ):
     datasets = dict(locals())   # every input and output, by name
-    datasets.update(datasets.pop("optional_inputs"))
     from fto2 import transform_io
     transform_io.run(datasets)
