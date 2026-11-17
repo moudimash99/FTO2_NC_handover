@@ -310,11 +310,11 @@ try {
     }
     function v2Plan(m) { if (!PD) return null; var i = PD.months.indexOf(m); return i < 0 ? null : sumA(PD.prods.map(function (p) { return PD.prod[p][i] || 0; })); }
     // the forecast, the same on every chart (20 Oct): product by product, the product's value per MSN built in the period × its MSN planned
-    // that month, plus the NCs out of the production plan at their own monthly pace (July and August as V2W). A single overall pace over-
+    // that month, plus the NCs out of the production plan at their own monthly pace (each month by its planned volume, v2W). A single overall pace over-
     // forecasts: A320's planned volume grows at the end of the year while A320 has few NCs per unit. null without the real production plan.
     function v2Fc(f, M) {
       var E = pSrc(); if (!PD || !PA || !E || E !== D.eqmsn) return null;
-      var byP = {}, out = 0, w = function (m) { return V2W[+m.slice(5, 7)] || 1; }, K = v2OutK(M), C = K.cur;
+      var byP = {}, out = 0, w = v2W, K = v2OutK(M), C = K.cur;
       SEL_NC.forEach(function (n) { var v = f(n), p = v2InPlan(n); if (p) byP[p] = (byP[p] || 0) + v; else out += v; });
       var pace = K.a ? out / K.a : 0, res = {}, per = function (i, sh) { return sumA(Object.keys(byP).map(function (p) { return i < 0 ? 0 : byP[p] / PA[p].EQ * (PD.prod[p][i] || 0) * sh; })); };
       M.fc.forEach(function (m) { res[m] = per(PD.months.indexOf(m), 1) + pace * w(m); });
@@ -324,10 +324,10 @@ try {
     // the product of the plan an NC is counted under (its product has ≥ 0.5 MSN built in the period and the NC is in the per-MSN
     // data), else null: the NC is out of the plan. One test for every total, so the rows always add up to the Overview.
     function v2InPlan(n) { var E = pSrc(), p = E && E.map && E.map[String(n[26] || '').toUpperCase()]; return p && PA && PA[p] && PA[p].EQ >= EQMIN && PD.idx[n[0]] != null ? p : null; }
-    // weights of the months done (a) and to come (f) for the out-of-plan NCs, July and August lighter (V2W); the running month
+    // weights of the months done (a) and to come (f) for the out-of-plan NCs, each month by its planned volume (v2W); the running month
     // (pData) counts in both, by the share of its days gone and left
     function v2OutK(M) {
-      var w = function (m) { return V2W[+m.slice(5, 7)] || 1; }, C = PD && PD.cur != null && M.fc.length && M.act[M.act.length - 1] === PD.months[PD.cur] ? { m: PD.months[PD.cur], i: PD.cur, part: PD.part[PD.cur] } : null;
+      var w = v2W, C = PD && PD.cur != null && M.fc.length && M.act[M.act.length - 1] === PD.months[PD.cur] ? { m: PD.months[PD.cur], i: PD.cur, part: PD.part[PD.cur] } : null;
       var a = sumA(M.act.map(w)) - (C ? w(C.m) * (1 - C.part) : 0), f = sumA(M.fc.map(w)) + (C ? w(C.m) * (1 - C.part) : 0);
       return { a: a, f: f, k: a ? f / a : 0, cur: C };
     }
@@ -382,7 +382,17 @@ try {
       Y.forEach(function (x) { var p = E.map[String(x.p || '').toUpperCase()]; if (p && has(p) && out[PD.line[p] || '—']) out[PD.line[p] || '—'].nc += x.nc; });
       return out;
     }
-    var V2W = SET.poids_mois;   // weight of a month in the monthly target (config/2_reglages_pages.csv): July and August lighter
+    // the weight of a month for the NCs out of the production plan and for a monthly target with no plan line by line: its share of
+    // the year's planned volume (the plan's volume counts the working days, holidays and shutdowns), over the products of the lines
+    // shown, scaled so that an average month weighs 1. Without a planned volume: 1 for every month.
+    function v2W(m) {
+      if (!PD) return 1;
+      if (!PD.w) {   // once per production data (pData)
+        var vol = PD.months.map(function (x, i) { return sumA(PD.prods.map(function (p) { return (PD.prod[p] || [])[i] || 0; })); }), tot = sumA(vol);
+        PD.w = vol.map(function (v) { return tot > 0 ? v / (tot / vol.length) : 1; });
+      }
+      var i = PD.months.indexOf(m); return i < 0 ? 1 : PD.w[i];
+    }
     // the year's target line by line: each line's 2025 rate per product delivered - 25 %, times the line's 2026
     // volume month by month, summed over the lines; the NCs whose product is not in the production plan (no volume) keep their 2025
     // value - 25 %, spread over the months like a normal year. f25 / f26: the measure of a 2025 row / of a 2026 product (NCs or cost).
@@ -402,9 +412,9 @@ try {
         var l = x.line || '—', b = by[l] || (by[l] = { l: l, v25: 0, del: 0, vol: z(), v26: 0, eq26: 0, noPlan: true }); b.x25 = (b.x25 || 0) + f25(x); });
       var lines = lineOrder(Object.keys(by)).map(function (l) { var a = by[l]; a.r25 = a.del > 0 && a.v25 > 0 ? a.v25 / a.del : null; a.x25 = a.x25 || 0; a.xT = a.x25 * V2CUT;
         a.rt = (a.r25 != null ? a.r25 : a.eq26 ? a.v26 / a.eq26 : 0) * V2CUT; a.ph = a.r25 == null && !a.noPlan && sumA(a.vol) > 0; a.own = a.own || z(); a.n25o = a.n25o || 0; a.year = a.rt * sumA(a.vol) + sumA(a.own); return a; });   // no 2025 for a line: its 2026 rate - 25 %
-      var wsum = 0; for (var mm = 1; mm <= 12; mm++) wsum += V2W[mm] || 1;
+      var wsum = sumA(PD.months.map(v2W));
       return { lines: lines, out25: out, outT: out * V2CUT,
-        tm: function (m) { var i = PD.months.indexOf(m); return sumA(lines.map(function (a) { return i < 0 ? 0 : a.rt * a.vol[i] + a.own[i]; })) + out * V2CUT * (V2W[+m.slice(5, 7)] || 1) / wsum; },
+        tm: function (m) { var i = PD.months.indexOf(m); return sumA(lines.map(function (a) { return i < 0 ? 0 : a.rt * a.vol[i] + a.own[i]; })) + out * V2CUT * v2W(m) / wsum; },
         year: sumA(lines.map(function (a) { return a.year; })) + out * V2CUT };
     }
   

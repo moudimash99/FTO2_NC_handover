@@ -137,13 +137,13 @@
       "ncs": 713,
       "defects": 1463,
       "aleas": 99,
-      "js_kb": 1361
+      "js_kb": 1384
     },
-    "level23_js_kb": 477,
+    "level23_js_kb": 500,
     "slate_functions": {
-      "f_fto2_objectifs.js": 51,
-      "f_fto2_alarmes.js": 69,
-      "f_fto2_cout.js": 51
+      "f_fto2_objectifs.js": 52,
+      "f_fto2_alarmes.js": 70,
+      "f_fto2_cout.js": 52
     },
     "pipeline_notebook": true,
     "level4": [

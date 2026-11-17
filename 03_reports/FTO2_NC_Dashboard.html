@@ -567,7 +567,14 @@ table.cxt td.txt { min-width: 16em; }
   grid-template-areas: "rca line fin" "rca waf fin" "code code code"; }
 .v2par { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; align-items: stretch; margin: 6px 0 28px; }
 #parTop > .v2-band, #pgl > .v2-band, #kgl > .v2-band { grid-column: auto; }
-#parTop > [data-v2="a:flow"], #parTop > [data-v2="78"], #parFold [data-v2="VK"] { grid-column: 1 / -1; }
+#parTop > [data-v2="a:flow"], #parTop > [data-v2="78"], #parTop > [data-v2="a:cmo"], #parFold [data-v2="VK"] { grid-column: 1 / -1; }
+.cmo-ctl { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin: 2px 0 8px; }
+.cmo-ctl .grpseg { margin: 0; }
+.cmo-n { display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; color: var(--ink-2); }
+.cmo-n button { font: inherit; font-size: 13px; line-height: 1; width: 24px; height: 24px; border: 1px solid var(--ring); border-radius: 6px; background: var(--surface); color: var(--ink); cursor: pointer; }
+.cmo-n button:disabled { opacity: .4; cursor: default; }
+.cmo-n b { min-width: 1.2em; text-align: center; font-variant-numeric: tabular-nums; }
+.cmo-ctl select { font: inherit; font-size: 12.5px; padding: 3px 6px; border: 1px solid var(--ring); border-radius: 6px; background: var(--surface); color: var(--ink); max-width: 16rem; }
 #parTop > .v2-band, #pgl > .v2-band, #kgl > .v2-band { grid-template-columns: minmax(0, 1fr); background: var(--surface); border: 1px solid var(--ring); border-radius: 10px; padding: 18px 20px 16px; box-shadow: none; clip-path: none; row-gap: 10px; align-content: start; min-width: 0; }
 #parTop > .v2-band > .bhead, #pgl > .v2-band > .bhead, #kgl > .v2-band > .bhead { position: static; grid-column: 1; gap: 6px; }
 #parTop > .v2-band > .custom, #pgl > .v2-band > .custom, #kgl > .v2-band > .custom { grid-column: 1; grid-row: auto; }
@@ -722,6 +729,13 @@ footer p { max-width: none; }
 /* enlarge a chart: a quiet icon, stronger when the chart is pointed at (not to crowd the page) */
 .vu .vu-band .bhead { position: relative; padding-right: 40px; }
 .vu-x { display: none; }
+/* a chart as a PNG file: a quiet button at the top right of its card (left of ⤢ in Essentiel) */
+.v2-band.png-b { position: relative; }
+.v2-band.png-b > .bhead { padding-right: 48px; }
+.png-x { position: absolute; top: 12px; right: 12px; display: inline-grid; place-items: center; height: 26px; padding: 0 7px; font: inherit; font-size: 10.5px; font-weight: 700; letter-spacing: .06em; line-height: 1; color: var(--muted); background: transparent; border: 1px solid var(--ring); border-radius: 7px; cursor: pointer; opacity: .6; }
+.png-x:hover, .png-x:focus-visible { opacity: 1; color: var(--ink); background: var(--surface); }
+.vu .vu-band.png-b .bhead { padding-right: 76px; }
+.vu .vu-band .bhead .png-x { top: 2px; right: 36px; }
 .vu .vu-x { display: inline-grid; place-items: center; position: absolute; top: 0; right: 0; width: 30px; height: 30px; font: inherit; font-size: 15px; line-height: 1; color: var(--muted); background: transparent; border: 1px solid transparent; border-radius: 8px; padding: 0; cursor: pointer; opacity: .7; transition: opacity .2s, border-color .2s, color .2s; }
 .vu .vu-band:hover .vu-x, .vu .vu-x:focus-visible { opacity: 1; color: var(--ink); border-color: var(--ring); background: var(--surface); }
 .vu-up { color: var(--up); font-weight: 700; } .vu-down { color: var(--down); font-weight: 700; }
@@ -955,11 +969,15 @@ html.vu-lock { overflow: hidden; }
   <!-- Câbles: the cable team's requests for new cables (D.cables, the rows of the "Suivi NC câbles" page) -->
   <div class="panel" role="tabpanel" id="p-cbl" aria-labelledby="tab-cbl" hidden>
     <div class="lead"><h2 data-t="cbTitle"></h2><p class="sub" id="cbPer"></p></div>
+    <div class="controls">
+      <div class="ctl"><span class="label" id="cbmLab" data-t="cbCount"></span>
+        <div class="seg" role="group" aria-labelledby="cbmLab" id="cbMode"></div><span class="sub" id="cbModeN"></span></div>
+    </div>
     <div class="chips" id="cbChips"></div>
     <div id="cbBody">
       <div class="figs" id="cbFigs"></div>
       <div class="pp-grid cb-grid">
-        <div class="card pp-card pp-wide"><h3 data-t="cbMonth"></h3><p class="sub" id="cbShare"></p><div class="vlegend" id="cbLeg"></div><div id="cbMonthC"></div></div>
+        <div class="card pp-card pp-wide"><h3 id="cbMonthH"></h3><p class="sub" id="cbShare"></p><div class="vlegend" id="cbLeg"></div><div id="cbMonthC"></div></div>
         <div class="card pp-card"><h3 data-t="cbMx"></h3><div class="table-wrap" id="cbMx"></div></div>
         <div class="card pp-card"><h3 data-t="cbTypes"></h3><div class="cb-bars" id="cbTypes"></div></div>
         <div class="card pp-card"><h3 data-t="cbCauses"></h3><div class="cb-bars" id="cbCauses"></div></div>
@@ -1212,6 +1230,10 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
       w_fin: 'Contrôle final', w_test: 'Test', w_cab: 'Câbles', w_int: 'Interne', w_oth: 'Autres', d_rw: 'Retouche', d_rej: 'Rebut / rejet', d_exc: 'Échange', d_oth: 'Autres décisions',
       k_bub: 'Coût', t_bub: 'Volume ou coût unitaire', s_bub: 'Une bulle par cause (au moins 3 défauts). À droite : fréquente ; en haut : chère par défaut ; surface : coût total. Les pointillés relient les points de même coût total.',
       bubTip: '{n} défauts · {c} au total · {a} par défaut', axDef: 'Nombre de défauts (échelle logarithmique)', axAvg: 'Coût moyen par défaut', bubLeg: 'Cause (surface = coût total)', isoLeg: 'Même coût total',
+      k_cmo: 'Évolution', t_cmo: 'Les causes mois par mois', s_cmo: 'Les premières causes de la sélection, plus celles ajoutées à la main (Déverrouillage et FOD d’office, pour la sécurité). Mesure : celle de l’onglet, ou les NC.',
+      cmoMeas: 'Mesure', cmoNc: 'NC', cmoTop: 'Premières causes', cmoLess: 'Une cause de moins', cmoMore: 'Une cause de plus', cmoAdd: '+ Ajouter une cause', cmoDel: 'Retirer {c}', cmoAdded: 'ajoutée',
+      cmoTipvol: '{v} défauts', cmoTipcost: 'coût : {v}', cmoTipnc: '{v} NC', cmoLegvol: 'Défauts par mois.', cmoLegcost: 'Coût de non-qualité par mois.', cmoLegnc: 'NC par mois : une NC compte une fois pour chaque cause qu’elle a.',
+      pngT: 'Télécharger l’image (PNG)', vqBoth: 'A330 et A350', vqSegL: 'Lignes', c78None: 'La cause suivie', c78One: 'Ligne {l}.', c78Both: 'A330 et A350 : sans l’A320, dont les petites pièces comptées à l’unité feraient baisser le taux.',
       k_bump: 'Évolution', t_bump: 'Classement mensuel des causes', s_bump: 'Rang de chacune des 8 premières causes, mois par mois. Cliquez sur une courbe pour la suivre.',
       bumpTip: '{r} · {n} défauts', bumpNone: 'Aucun défaut ce mois-ci', lowVol: 'volume faible', lowTip: '{n} défauts : mois peu chargé, rangs moins fiables', beyond: '>10',
       unit: 'Qualité', title: 'Non-conformités FTO2', period: 'NC créées du {from} au {to}',
@@ -1233,7 +1255,8 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
       cbTitle: 'Suivi NC câbles', cbNoData: 'Le suivi des câbles n’est pas chargé.', cbF1: 'Demandes de câble', cbF2: 'Part impression {q}', cbF3: 'Lignes avec une cause', cbF4: 'Câbles récurrents', cbF5: 'Lignes avec une action',
       cbMonth: 'Demandes par mois et imputation', cbShare: 'Part impression : {v}', cbMx: 'Motif × imputation', cbTypes: 'Types de câble', cbCauses: 'Causes (proposées)', cbRec: 'Câbles récurrents', cbList: 'Demandes',
       cbMotif: 'Motif', cbProd: 'Prod. ligne', cbMach: 'Impr. machine', cbOper: 'Impr. opérateur', cbOther: 'Autre', cbCable: 'Câble', cbMotifs: 'Motifs', cbImp: 'Imputation', cbWk: 'Sem.', cbProg: 'Prog.', cbCause: 'Cause (proposée)', cbCables: 'Câbles', cbCom: 'Commentaire',
-      cbI0: 'Production ligne', cbI1: 'Impression – machine', cbI2: 'Impression – opérateur', cbI3: 'Définition', cbI4: 'Non renseigné', cbN: '{n} demandes', cbN1: '1 demande', cbSearch: 'Rechercher', cbNone: 'Aucune demande pour ce choix.', cbClear: 'Tout effacer', cbCableChip: 'Câble {c}', cbQ: 'T',
+      cbI0: 'Production ligne', cbI1: 'Impression – machine', cbI2: 'Impression – opérateur', cbI3: 'Définition', cbI4: 'Non renseigné', cbN: '{n} demandes', cbN1: '1 demande', cbNc: '{n} demandes · {c} câbles', cbCount: 'Compter', cbReq: 'Demandes', cbCab: 'Câbles', cbCabNote: 'Une demande compte pour le nombre de câbles qu’elle demande (un, si aucun câble n’est écrit).',
+      cbF1c: 'Câbles demandés', cbF3c: 'Câbles avec une cause', cbF5c: 'Câbles avec une action', cbMonthC: 'Câbles demandés par mois et imputation', cbSearch: 'Rechercher', cbNone: 'Aucune demande pour ce choix.', cbClear: 'Tout effacer', cbCableChip: 'Câble {c}', cbQ: 'T',
       ppTitle: 'Production : les volumes derrière les taux', ppSub: 'Combien de MSN sont produits, prévus et livrés, ligne par ligne et produit par produit ; puis comment ces chiffres servent aux taux, aux prévisions et aux objectifs.',
       ppF1: 'MSN produits sur la période', ppF2: 'MSN prévus en {YEAR} (année)', ppF3: 'produits livrés en {PREV}', ppF4: 'NC rattachées au plan / toutes les NC',
       ppLines: 'Par ligne', ppLinesS: 'Taux = NC ÷ MSN produits sur la période. Objectif = taux {PREV} − {CUT} % ; * : pas de {PREV}, taux {YEAR} − {CUT} %.', ppProds: 'Par produit', ppProdsS: 'Les produits du plan de production, ligne par ligne.',
@@ -1276,7 +1299,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
       allLines: 'Toutes lignes', v2Tgt: 'Objectif', v2Above: 'Au-dessus de l’objectif', v2Below: 'Sous l’objectif', v2TgtPh: 'Objectif (fictif)', v2Ph: 'fictif',
       v2Ph25: '{PREV} fictif (= {YEAR})', v2Y25b: '{PREV}, même filtre', v2Y25c: '{PREV} à la même date', v2Y25at: '{PREV} à la même date : {v}', v2TgtCumR: 'Objectif cumulé ({PREV} − {CUT} %)', v2StTgtR: 'objectif de l’année ({PREV} − {CUT} %)', v2StBudR: 'objectif de coût de l’année ({PREV} − {CUT} %)', v2StTgtL: 'objectif de l’année, somme des lignes', v2StBudL: 'objectif de coût de l’année, somme des lignes', v2TgtCumL: 'Objectif cumulé, ligne par ligne', v2BudL: 'Objectif de coût cumulé, ligne par ligne', v2TgtBar: 'Objectif', v2BudBar: 'Objectif', v2TgtN: '{a} NC pour un objectif de {t} NC (somme des lignes)', v2Mix: 'taux {PREV} au mix {YEAR} : {v}', v2BudR: 'Objectif de coût au prorata (coût {PREV} − {CUT} %)', v2TgtR: 'Objectif : taux {PREV} − {CUT} %', v2NoCli25: '{PREV} sans retours client (absents de l’extraction {PREV})', v2Rate25: '{PREV} : {v} NC par produit livré', v2Rate25s: 'Taux {PREV}', v2BudR2: 'objectif', v2MTgt: 'objectif mensuel {v} (fictif)', v2BudPh: 'Objectif de coût au prorata (fictif)', v2Y25: '{PREV}', v2Y26: '{YEAR} prévu', v2Flat: 'Stable', 
       vpFc: 'Fait et prévision', vpMsn: 'Par MSN', vpFcK: 'Volumes', vpFcT: 'NC, défauts et coût attendus d’ici décembre, produit par produit', vpFcS: 'Réalisé, puis prévision : volume de la période par MSN × MSN prévus jusqu’à décembre.', vpFcH: 'fait → fin décembre', vpDec: 'Prévu à fin décembre', xPartial: 'Semaine en cours non tracée (incomplète) : {n} NC', vpOutRow: 'Produit hors plan', vpOutL: 'Produits hors plan {l}', vpNoFc: 'pas de prévision', vpOwnPace: 'à son rythme', vpOut: '{n} NC sans produit du plan de production, comptées dans les totaux', dType: 'Répartition du coût par type de NC', typeSub: 'Type de la NC, là où elle a été trouvée ; « NC câbles » = NC du type Câbles ; 100 % = coût de la sélection.', ty_cab: 'NC câbles', ty_fin: 'Contrôle final', ty_test: 'Test', ty_int: 'Interne', ty_sup: 'Fournisseurs', ty_oth: 'Autres', wlCh_prod: 'Produits', wlCh_ac: 'Avions', wlCh_st: 'Postes', wlChs_prod: 'Taux, carte mensuelle, précision, projection et coût, produit par produit.', wlChs_ac: 'Coût par avion et FIN qui reviennent.', wlChs_st: 'Défauts par poste de rédaction de la NC.',
-      v2MonTgt: 'objectif du mois {v}', v2CurTip: 'mois en cours, {d} jours sur {n} · objectif à date {v}', v2CurLeg: 'Mois en cours : objectif au prorata des jours', v2CurPt: 'mois en cours : données au {d} seulement', v2CurPtL: 'Mois en cours (données au {d})', v2Cum: '{v} NC cumulées', v2Fc: 'prévues', v2TgtShort: 'objectif', v2Under: 'Mois sous son objectif', v2Over: 'Mois au-dessus de son objectif', v2CumLeg: 'NC cumulées', v2TgtCum: 'Objectif cumulé (fictif)', v2Summer: '{m} comptent pour {p} d’un mois.', v2Summer1: '{m} compte pour {p} d’un mois.', v2And: ' et ', v2PerMsnV: '{v} par MSN', v2StNow: 'NC depuis le début de la période', v2StFc: 'prévus à fin décembre', v2StTgt: 'objectif de l’année (fictif)', v2StCost: 'cumulés sur la période', v2StBud: 'objectif de coût de l’année (fictif)', v2QPer: 'Par MSN produit : la fermeture d’août ne pèse pas.', v2Q25: '{PREV} : défauts par produit livré (causes lues par le parseur) ; {YEAR} : par MSN produit.', v2Avg25: 'Moyenne {PREV} (par produit livré)', v2QMonth: 'Moyenne par mois.', v2PerMsn: 'par MSN', v2Ac: '{n} avions',
+      v2MonTgt: 'objectif du mois {v}', v2CurTip: 'mois en cours, {d} jours sur {n} · objectif à date {v}', v2CurLeg: 'Mois en cours : objectif au prorata des jours', v2CurPt: 'mois en cours : données au {d} seulement', v2CurPtL: 'Mois en cours (données au {d})', v2Cum: '{v} NC cumulées', v2Fc: 'prévues', v2TgtShort: 'objectif', v2Under: 'Mois sous son objectif', v2Over: 'Mois au-dessus de son objectif', v2CumLeg: 'NC cumulées', v2TgtCum: 'Objectif cumulé (fictif)', v2MonthW: 'Chaque mois compte selon son volume de travail prévu au plan de production.', v2PerMsnV: '{v} par MSN', v2StNow: 'NC depuis le début de la période', v2StFc: 'prévus à fin décembre', v2StTgt: 'objectif de l’année (fictif)', v2StCost: 'cumulés sur la période', v2StBud: 'objectif de coût de l’année (fictif)', v2QPer: 'Par MSN produit : la fermeture d’août ne pèse pas.', v2Q25: '{PREV} : défauts par produit livré (causes lues par le parseur) ; {YEAR} : par MSN produit.', v2Avg25: 'Moyenne {PREV} (par produit livré)', v2QMonth: 'Moyenne par mois.', v2PerMsn: 'par MSN', v2Ac: '{n} avions',
       scVol: 'Volume par mois', scTot: 'Total', scRate: 'Par MSN, par mois', scRateP: 'Par MSN', scLast3: '3 derniers mois', scNc: 'NC', scDef: 'Défauts', scCost: 'Coût',
       scNote: 'Par MSN : NC, défauts et coût des produits rattachés au fichier de production. Petit chiffre : écart des 3 derniers mois à la période.',
       tabWhere: 'Localisation', whereTitle: 'Localisation des NC', whereSub: 'Produits, lignes, avions et postes, rapportés au volume produit quand c’est possible.', cxSum: 'Expliquer le calcul',
@@ -1369,6 +1392,10 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
       w_fin: 'Final inspection', w_test: 'Test', w_cab: 'Cables', w_int: 'Internal', w_oth: 'Other', d_rw: 'Rework', d_rej: 'Scrap / rejection', d_exc: 'Exchange', d_oth: 'Other decisions',
       k_bub: 'Cost', t_bub: 'Volume or unit cost', s_bub: 'One bubble per root cause (3 defects or more). Right: frequent; up: expensive per defect; area: total cost. Dotted curves join points of equal total cost.',
       bubTip: '{n} defects · {c} in total · {a} per defect', axDef: 'Number of defects (log scale)', axAvg: 'Average cost per defect', bubLeg: 'Root cause (area = total cost)', isoLeg: 'Equal total cost',
+      k_cmo: 'Trend', t_cmo: 'Root causes month by month', s_cmo: 'The top root causes of the selection, plus those added by hand (Unlocked contact and FOD from the start, for safety). Measure: the tab’s, or NCs.',
+      cmoMeas: 'Measure', cmoNc: 'NCs', cmoTop: 'Top root causes', cmoLess: 'One root cause less', cmoMore: 'One root cause more', cmoAdd: '+ Add a root cause', cmoDel: 'Remove {c}', cmoAdded: 'added',
+      cmoTipvol: '{v} defects', cmoTipcost: 'cost: {v}', cmoTipnc: '{v} NCs', cmoLegvol: 'Defects per month.', cmoLegcost: 'Cost of non-quality per month.', cmoLegnc: 'NCs per month: an NC counts once for each root cause it has.',
+      pngT: 'Download the image (PNG)', vqBoth: 'A330 and A350', vqSegL: 'Lines', c78None: 'The root cause followed', c78One: 'Line {l}.', c78Both: 'A330 and A350: without the A320, whose small parts counted one by one would pull the rate down.',
       k_bump: 'Trend', t_bump: 'Monthly ranking of root causes', s_bump: 'Rank of each of the top 8 root causes, month by month. Click a line to follow it.',
       bumpTip: '{r} · {n} defects', bumpNone: 'No defect this month', lowVol: 'low volume', lowTip: '{n} defects: light month, ranks less reliable', beyond: '>10',
       unit: 'Quality', title: 'FTO2 Non-conformities', period: 'NCs created {from} to {to}',
@@ -1390,7 +1417,8 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
       cbTitle: 'Cable NC tracker', cbNoData: 'The cable tracker is not loaded.', cbF1: 'Cable requests', cbF2: 'Printing share {q}', cbF3: 'Rows with a cause', cbF4: 'Recurring cables', cbF5: 'Rows with an action',
       cbMonth: 'Requests per month by imputation', cbShare: 'Printing share: {v}', cbMx: 'Reason × imputation', cbTypes: 'Cable types', cbCauses: 'Causes (proposed)', cbRec: 'Recurring cables', cbList: 'Requests',
       cbMotif: 'Reason', cbProd: 'Prod. line', cbMach: 'Print. machine', cbOper: 'Print. operator', cbOther: 'Other', cbCable: 'Cable', cbMotifs: 'Reasons', cbImp: 'Imputation', cbWk: 'Wk', cbProg: 'Prog.', cbCause: 'Cause (proposed)', cbCables: 'Cables', cbCom: 'Comment',
-      cbI0: 'Production line', cbI1: 'Printing – machine', cbI2: 'Printing – operator', cbI3: 'Definition', cbI4: 'Blank', cbN: '{n} requests', cbN1: '1 request', cbSearch: 'Search', cbNone: 'No request for this choice.', cbClear: 'Clear all', cbCableChip: 'Cable {c}', cbQ: 'Q',
+      cbI0: 'Production line', cbI1: 'Printing – machine', cbI2: 'Printing – operator', cbI3: 'Definition', cbI4: 'Blank', cbN: '{n} requests', cbN1: '1 request', cbNc: '{n} requests · {c} cables', cbCount: 'Count', cbReq: 'Requests', cbCab: 'Cables', cbCabNote: 'A request counts for the number of cables it asks for (one, when no cable is written).',
+      cbF1c: 'Cables requested', cbF3c: 'Cables with a cause', cbF5c: 'Cables with an action', cbMonthC: 'Cables requested per month by imputation', cbSearch: 'Search', cbNone: 'No request for this choice.', cbClear: 'Clear all', cbCableChip: 'Cable {c}', cbQ: 'Q',
       ppTitle: 'Production: the volumes behind the rates', ppSub: 'How many MSN are built, planned and delivered, line by line and product by product; then how these figures feed the rates, the forecasts and the targets.',
       ppF1: 'MSN built in the period', ppF2: 'MSN planned in {YEAR} (year)', ppF3: 'products delivered in {PREV}', ppF4: 'NCs matched to the plan / all NCs',
       ppLines: 'By line', ppLinesS: 'Rate = NCs ÷ MSN built in the period. Target = {PREV} rate − {CUT}%; *: no {PREV}, {YEAR} rate − {CUT}%.', ppProds: 'By product', ppProdsS: 'The production plan’s products, line by line.',
@@ -1433,7 +1461,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
       allLines: 'All lines', v2Tgt: 'Target', v2Above: 'Above target', v2Below: 'Below target', v2TgtPh: 'Target (placeholder)', v2Ph: 'placeholder',
       v2Ph25: '{PREV} placeholder (= {YEAR})', v2Y25b: '{PREV}, same filter', v2Y25c: '{PREV} at the same date', v2Y25at: '{PREV} at the same date: {v}', v2TgtCumR: 'Cumulative target ({PREV} − {CUT}%)', v2StTgtR: 'target for the year ({PREV} − {CUT}%)', v2StBudR: 'cost target for the year ({PREV} − {CUT}%)', v2StTgtL: 'target for the year, sum of the lines', v2StBudL: 'cost target for the year, sum of the lines', v2TgtCumL: 'Cumulative target, line by line', v2BudL: 'Cumulative cost target, line by line', v2TgtBar: 'Target', v2BudBar: 'Target', v2TgtN: '{a} NCs against a target of {t} NCs (sum of the lines)', v2Mix: '{PREV} rate at the {YEAR} mix: {v}', v2BudR: 'Pro-rata cost target ({PREV} cost − {CUT}%)', v2TgtR: 'Target: {PREV} rate − {CUT}%', v2NoCli25: '{PREV} without customer returns (not in the {PREV} extract)', v2Rate25: '{PREV}: {v} NCs per product delivered', v2Rate25s: '{PREV} rate', v2BudR2: 'target', v2MTgt: 'monthly target {v} (placeholder)', v2BudPh: 'Pro-rata cost target (placeholder)', v2Y25: '{PREV}', v2Y26: '{YEAR} forecast', v2Flat: 'Flat', 
       vpFc: 'Done and forecast', vpMsn: 'Per MSN', vpFcK: 'Volumes', vpFcT: 'NCs, defects and cost expected by December, product by product', vpFcS: 'Actual, then the forecast: the period’s volume per MSN × the MSN planned to December.', vpFcH: 'done → end of December', vpDec: 'Expected by end of December', xPartial: 'Running week not drawn (incomplete): {n} NCs', vpOutRow: 'Product not in the plan', vpOutL: 'Products not in the plan, {l}', vpNoFc: 'no forecast', vpOwnPace: 'at its own pace', vpOut: '{n} NCs with no production plan product, counted in the totals', dType: 'Cost split by NC type', typeSub: 'NC type, where it was found; “Cable NCs” = NCs of the Cables type; 100% = the cost of the selection.', ty_cab: 'Cable NCs', ty_fin: 'Final inspection', ty_test: 'Test', ty_int: 'Internal', ty_sup: 'Suppliers', ty_oth: 'Other', wlCh_prod: 'Products', wlCh_ac: 'Aircraft', wlCh_st: 'Stations', wlChs_prod: 'Rates, monthly map, precision, forecast and cost, product by product.', wlChs_ac: 'Cost per aircraft and FINs that come back.', wlChs_st: 'Defects by the station where the NC was written.',
-      v2MonTgt: 'month target {v}', v2CurTip: 'running month, {d} of {n} days · target to date {v}', v2CurLeg: 'Running month: target pro-rated to the days gone', v2CurPt: 'running month: data to {d} only', v2CurPtL: 'Running month (data to {d})', v2Cum: '{v} NCs to date', v2Fc: 'expected', v2TgtShort: 'target', v2Under: 'Month under its target', v2Over: 'Month above its target', v2CumLeg: 'Cumulative NCs', v2TgtCum: 'Cumulative target (placeholder)', v2Summer: '{m} count as {p} of a month.', v2Summer1: '{m} counts as {p} of a month.', v2And: ' and ', v2PerMsnV: '{v} per MSN', v2StNow: 'NCs since the start of the period', v2StFc: 'expected by end of December', v2StTgt: 'target for the year (placeholder)', v2StCost: 'so far in the period', v2StBud: 'cost target for the year (placeholder)', v2QPer: 'Per MSN built: the August shutdown does not weigh.', v2Q25: '{PREV}: defects per product delivered (causes read by the parser); {YEAR}: per MSN built.', v2Avg25: '{PREV} average (per product delivered)', v2QMonth: 'Monthly average.', v2PerMsn: 'per MSN', v2Ac: '{n} aircraft',
+      v2MonTgt: 'month target {v}', v2CurTip: 'running month, {d} of {n} days · target to date {v}', v2CurLeg: 'Running month: target pro-rated to the days gone', v2CurPt: 'running month: data to {d} only', v2CurPtL: 'Running month (data to {d})', v2Cum: '{v} NCs to date', v2Fc: 'expected', v2TgtShort: 'target', v2Under: 'Month under its target', v2Over: 'Month above its target', v2CumLeg: 'Cumulative NCs', v2TgtCum: 'Cumulative target (placeholder)', v2MonthW: 'Each month counts by its planned working volume in the production plan.', v2PerMsnV: '{v} per MSN', v2StNow: 'NCs since the start of the period', v2StFc: 'expected by end of December', v2StTgt: 'target for the year (placeholder)', v2StCost: 'so far in the period', v2StBud: 'cost target for the year (placeholder)', v2QPer: 'Per MSN built: the August shutdown does not weigh.', v2Q25: '{PREV}: defects per product delivered (causes read by the parser); {YEAR}: per MSN built.', v2Avg25: '{PREV} average (per product delivered)', v2QMonth: 'Monthly average.', v2PerMsn: 'per MSN', v2Ac: '{n} aircraft',
       scVol: 'Volume per month', scTot: 'Total', scRate: 'Per MSN, per month', scRateP: 'Per MSN', scLast3: 'Last 3 months', scNc: 'NCs', scDef: 'Defects', scCost: 'Cost',
       scNote: 'Per MSN: NCs, defects and cost of the products matched to the production file. Small figure: last 3 months against the period.',
       tabWhere: 'Location', whereTitle: 'NC location', whereSub: 'Products, lines, aircraft and stations, against the volume built where possible.', cxSum: 'Explain the calculation',
@@ -1713,11 +1741,11 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
   }
   function v2Plan(m) { if (!PD) return null; var i = PD.months.indexOf(m); return i < 0 ? null : sumA(PD.prods.map(function (p) { return PD.prod[p][i] || 0; })); }
   // the forecast, the same on every chart (20 Oct): product by product, the product's value per MSN built in the period × its MSN planned
-  // that month, plus the NCs out of the production plan at their own monthly pace (July and August as V2W). A single overall pace over-
+  // that month, plus the NCs out of the production plan at their own monthly pace (each month by its planned volume, v2W). A single overall pace over-
   // forecasts: A320's planned volume grows at the end of the year while A320 has few NCs per unit. null without the real production plan.
   function v2Fc(f, M) {
     var E = pSrc(); if (!PD || !PA || !E || E !== D.eqmsn) return null;
-    var byP = {}, out = 0, w = function (m) { return V2W[+m.slice(5, 7)] || 1; }, K = v2OutK(M), C = K.cur;
+    var byP = {}, out = 0, w = v2W, K = v2OutK(M), C = K.cur;
     SEL_NC.forEach(function (n) { var v = f(n), p = v2InPlan(n); if (p) byP[p] = (byP[p] || 0) + v; else out += v; });
     var pace = K.a ? out / K.a : 0, res = {}, per = function (i, sh) { return sumA(Object.keys(byP).map(function (p) { return i < 0 ? 0 : byP[p] / PA[p].EQ * (PD.prod[p][i] || 0) * sh; })); };
     M.fc.forEach(function (m) { res[m] = per(PD.months.indexOf(m), 1) + pace * w(m); });
@@ -1727,10 +1755,10 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
   // the product of the plan an NC is counted under (its product has ≥ 0.5 MSN built in the period and the NC is in the per-MSN
   // data), else null: the NC is out of the plan. One test for every total, so the rows always add up to the Overview.
   function v2InPlan(n) { var E = pSrc(), p = E && E.map && E.map[String(n[26] || '').toUpperCase()]; return p && PA && PA[p] && PA[p].EQ >= EQMIN && PD.idx[n[0]] != null ? p : null; }
-  // weights of the months done (a) and to come (f) for the out-of-plan NCs, July and August lighter (V2W); the running month
+  // weights of the months done (a) and to come (f) for the out-of-plan NCs, each month by its planned volume (v2W); the running month
   // (pData) counts in both, by the share of its days gone and left
   function v2OutK(M) {
-    var w = function (m) { return V2W[+m.slice(5, 7)] || 1; }, C = PD && PD.cur != null && M.fc.length && M.act[M.act.length - 1] === PD.months[PD.cur] ? { m: PD.months[PD.cur], i: PD.cur, part: PD.part[PD.cur] } : null;
+    var w = v2W, C = PD && PD.cur != null && M.fc.length && M.act[M.act.length - 1] === PD.months[PD.cur] ? { m: PD.months[PD.cur], i: PD.cur, part: PD.part[PD.cur] } : null;
     var a = sumA(M.act.map(w)) - (C ? w(C.m) * (1 - C.part) : 0), f = sumA(M.fc.map(w)) + (C ? w(C.m) * (1 - C.part) : 0);
     return { a: a, f: f, k: a ? f / a : 0, cur: C };
   }
@@ -1785,7 +1813,17 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
     Y.forEach(function (x) { var p = E.map[String(x.p || '').toUpperCase()]; if (p && has(p) && out[PD.line[p] || '—']) out[PD.line[p] || '—'].nc += x.nc; });
     return out;
   }
-  var V2W = SET.poids_mois;   // weight of a month in the monthly target (config/2_reglages_pages.csv): July and August lighter
+  // the weight of a month for the NCs out of the production plan and for a monthly target with no plan line by line: its share of
+  // the year's planned volume (the plan's volume counts the working days, holidays and shutdowns), over the products of the lines
+  // shown, scaled so that an average month weighs 1. Without a planned volume: 1 for every month.
+  function v2W(m) {
+    if (!PD) return 1;
+    if (!PD.w) {   // once per production data (pData)
+      var vol = PD.months.map(function (x, i) { return sumA(PD.prods.map(function (p) { return (PD.prod[p] || [])[i] || 0; })); }), tot = sumA(vol);
+      PD.w = vol.map(function (v) { return tot > 0 ? v / (tot / vol.length) : 1; });
+    }
+    var i = PD.months.indexOf(m); return i < 0 ? 1 : PD.w[i];
+  }
   // the year's target line by line: each line's 2025 rate per product delivered - 25 %, times the line's 2026
   // volume month by month, summed over the lines; the NCs whose product is not in the production plan (no volume) keep their 2025
   // value - 25 %, spread over the months like a normal year. f25 / f26: the measure of a 2025 row / of a 2026 product (NCs or cost).
@@ -1805,9 +1843,9 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
       var l = x.line || '—', b = by[l] || (by[l] = { l: l, v25: 0, del: 0, vol: z(), v26: 0, eq26: 0, noPlan: true }); b.x25 = (b.x25 || 0) + f25(x); });
     var lines = lineOrder(Object.keys(by)).map(function (l) { var a = by[l]; a.r25 = a.del > 0 && a.v25 > 0 ? a.v25 / a.del : null; a.x25 = a.x25 || 0; a.xT = a.x25 * V2CUT;
       a.rt = (a.r25 != null ? a.r25 : a.eq26 ? a.v26 / a.eq26 : 0) * V2CUT; a.ph = a.r25 == null && !a.noPlan && sumA(a.vol) > 0; a.own = a.own || z(); a.n25o = a.n25o || 0; a.year = a.rt * sumA(a.vol) + sumA(a.own); return a; });   // no 2025 for a line: its 2026 rate - 25 %
-    var wsum = 0; for (var mm = 1; mm <= 12; mm++) wsum += V2W[mm] || 1;
+    var wsum = sumA(PD.months.map(v2W));
     return { lines: lines, out25: out, outT: out * V2CUT,
-      tm: function (m) { var i = PD.months.indexOf(m); return sumA(lines.map(function (a) { return i < 0 ? 0 : a.rt * a.vol[i] + a.own[i]; })) + out * V2CUT * (V2W[+m.slice(5, 7)] || 1) / wsum; },
+      tm: function (m) { var i = PD.months.indexOf(m); return sumA(lines.map(function (a) { return i < 0 ? 0 : a.rt * a.vol[i] + a.own[i]; })) + out * V2CUT * v2W(m) / wsum; },
       year: sumA(lines.map(function (a) { return a.year; })) + out * V2CUT };
   }
 
@@ -2331,7 +2369,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
       { fold: true, k: 'rca', t: 'dRca', top: 15, split: dCable, splitIf: cabOn, color: rcaCol, catKey: rcaCat, get: dRca, show: L },
       { fold: true, k: 'line', t: 'dLine', stack: function (r) { return catKey(dCat(r)); }, get: function (r) { return r[4]; }, show: function (v) { return v; }, order: lineOrder },
       { fold: true, k: 'code', t: 'dCode', sub: 'codeSub', top: 15, wide: true, longName: true, split: dCable, splitIf: cabOn, nokey: true, color: codeCol, catKey: codeCat, get: dCode, show: codeName },
-      { fold: true, k: 'fin', t: 'dFin', sub: 'finSub', top: 10, split: dCable, splitIf: cabOn, nokey: true, stack: function (r) { return catKey(dCat(r)); }, get: function (r) { return dFin(r) || null; }, show: function (v) { return v; } }
+      { fold: true, k: 'fin', t: 'dFin', sub: 'finSub', top: 10, split: dCable, splitIf: cabOn, nokey: true, stack: function (r) { return catKey(dCat(r)); }, get: function (r) { return finReal(r) || null; }, show: function (v) { return v; } }
     ],
     text: defectText, head: defectHead, row: defectRow, sort: byDate,
     after: function (b) {
@@ -2368,7 +2406,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
       { fold: true, k: 'rca', t: 'dRca', top: 15, split: kCab, splitIf: cabOn, color: rcaCol, catKey: rcaCat, get: function (u) { return u.d ? dRca(u.d) : null; }, show: L },
       { fold: true, k: 'line', t: 'dLine', stack: function (u) { return u.d ? catKey(dCat(u.d)) : '__none'; }, get: function (u) { return u.n[3]; }, show: function (v) { return v; }, order: lineOrder },
       { fold: true, k: 'code', t: 'dCode', sub: 'codeSub', top: 15, wide: true, longName: true, split: kCab, splitIf: cabOn, nokey: true, color: codeCol, catKey: codeCat, get: function (u) { return u.d ? dCode(u.d) : null; }, show: codeName },
-      { fold: true, k: 'fin', t: 'dFin', sub: 'finSub', top: 10, split: kCab, splitIf: cabOn, nokey: true, stack: function (u) { return u.d ? catKey(dCat(u.d)) : '__none'; }, get: function (u) { return u.d ? dFin(u.d) || null : null; }, show: function (v) { return v; } }
+      { fold: true, k: 'fin', t: 'dFin', sub: 'finSub', top: 10, split: kCab, splitIf: cabOn, nokey: true, stack: function (u) { return u.d ? catKey(dCat(u.d)) : '__none'; }, get: function (u) { return u.d ? finReal(u.d) || null : null; }, show: function (v) { return v; } }
     ],
     text: function (u) { return u.n[0] + ' ' + u.n[22] + ' ' + (u.d ? defectText(u.d) : ''); },
     sort: function (a, b2) { return kCost(b2) - kCost(a); },
@@ -2969,7 +3007,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
   // (chips at the top); the other cards only mark it. Imputation colours: teal, amber, plum (checked for colour blindness), greys.
   var CB_IMP = ['Production ligne', 'Impression – machine', 'Impression – opérateur', 'Définition (BE / ME)', 'Autre / non renseigné'],
     CB_COL = ['var(--c7)', 'var(--c3)', 'var(--c9)', 'var(--muted)', 'var(--dim)'], CB_UNK = 'Inconnu – à analyser',
-    CBF = { origine: '', motif: '', cause: '', cable: '' }, CB_Q = '';
+    CBF = { origine: '', motif: '', cause: '', cable: '' }, CB_Q = '', CB_M = 'req';   // CB_M: count the requests (req) or the cables asked for (cab)
   var CB_EN = { 'Câble court': 'Short cable', 'Câble abimé': 'Damaged cable', 'Câble manquant': 'Missing cable', 'Câble coupé': 'Cut cable',
     'Câble non conforme': 'Non-conforming cable', 'Rail abimé': 'Damaged rail', 'Production ligne': 'Production line', 'Impression – machine': 'Printing – machine',
     'Impression – opérateur': 'Printing – operator', 'Définition (BE / ME)': 'Definition (design office / ME)', 'Autre / non renseigné': 'Other / blank',
@@ -2985,13 +3023,20 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
     return (D.cables || []).map(function (a) { return { k: a[0], wk: a[1], d: a[2], nc: a[3], prog: a[4], msn: a[5], motif: a[6], imp: a[7], cause: a[8], cables: String(a[9] || '').split(' ').filter(Boolean), type: a[10], com: a[11], act: a[12] }; })
       .filter(function (r) { return (!GF.line || (r.prog === 'A321' ? 'A320' : r.prog) === GF.line) && r.d >= GF.from && r.d <= GF.to; });
   }
+  // what a request counts for: 1, or the number of cables it asks for (the cables written, one when none is written)
+  function cbW(r) { return CB_M === 'cab' ? Math.max(1, r.cables.length) : 1; }
+  function cbSum(rs) { return rs.reduce(function (a, r) { return a + cbW(r); }, 0); }
   function cbAttr(k, v, extra) { return ' data-cb="' + k + '" data-v="' + esc(v) + '"' + (extra || ''); }
   function renderCbl() {
     if (G.tab !== 'cbl') return;
     var body = document.getElementById('cbBody'); if (!body) return;
     if (!D.cables || !D.cables.length) { body.innerHTML = '<p class="empty">' + esc(S('cbNoData')) + '</p>'; return; }
     var R = cbRows(), ms = Object.keys(R.reduce(function (o, r) { o[r.d.slice(0, 7)] = 1; return o; }, {})).sort(), qs = ['T1', 'T2', 'T3', 'T4'].filter(function (q) { return R.some(function (r) { return cbQn(r) === q; }); });
-    var qn = function (q) { return S('cbQ') + q.slice(1); }, imp = function (q) { var x = R.filter(function (r) { return cbQn(r) === q; }); return x.length ? 100 * x.filter(function (r) { return r.imp.indexOf('Impression') === 0; }).length / x.length : null; };
+    var qn = function (q) { return S('cbQ') + q.slice(1); }, imp = function (q) { var x = R.filter(function (r) { return cbQn(r) === q; }); return x.length ? 100 * cbSum(x.filter(function (r) { return r.imp.indexOf('Impression') === 0; })) / cbSum(x) : null; };
+    var cab = CB_M === 'cab';
+    document.getElementById('cbMode').innerHTML = segHtml([['req', S('cbReq')], ['cab', S('cbCab')]], CB_M, 'data-cbm');
+    document.getElementById('cbModeN').textContent = cab ? S('cbCabNote') : '';
+    document.getElementById('cbMonthH').textContent = S(cab ? 'cbMonthC' : 'cbMonth');
     var ml = function (m) { return day(m + '-15', { month: 'long' }); };
     document.getElementById('cbPer').textContent = ms.length ? ml(ms[0]) + ' – ' + ml(ms[ms.length - 1]) + ' ' + ms[ms.length - 1].slice(0, 4) : '—';
     document.getElementById('cbQ').placeholder = S('cbSearch');
@@ -3004,14 +3049,14 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
     var by = {}; R.forEach(function (r) { r.cables.forEach(function (c) { var b = by[c] || (by[c] = { nc: {}, msn: {}, motif: {}, imp: {} }); b.nc[r.nc] = 1; b.msn[r.msn] = 1; b.motif[r.motif] = 1; b.imp[r.imp] = 1; }); });
     var rec = Object.keys(by).filter(function (c) { return Object.keys(by[c].nc).length >= 2; }).map(function (c) { var b = by[c]; return { c: c, n: Object.keys(b.nc).length, m: Object.keys(b.msn).length, motifs: Object.keys(b.motif), imps: Object.keys(b.imp) }; })
       .sort(function (a, b) { return b.n - a.n || b.m - a.m || a.c.localeCompare(b.c); });
-    var withCause = R.filter(function (r) { return r.cause !== CB_UNK; }).length, qL = qs[qs.length - 1];
-    document.getElementById('cbFigs').innerHTML = [[num(R.length), S('cbF1')], [qL && imp(qL) != null ? pct0(imp(qL)) : '—', S('cbF2', { q: qL ? qn(qL) : '' })], [R.length ? pct0(100 * withCause / R.length) : '—', S('cbF3')], [num(rec.length), S('cbF4')], [num(R.filter(function (r) { return r.act; }).length), S('cbF5')]]
+    var withCause = cbSum(R.filter(function (r) { return r.cause !== CB_UNK; })), qL = qs[qs.length - 1];
+    document.getElementById('cbFigs').innerHTML = [[num(cbSum(R)), S(cab ? 'cbF1c' : 'cbF1')], [qL && imp(qL) != null ? pct0(imp(qL)) : '—', S('cbF2', { q: qL ? qn(qL) : '' })], [R.length ? pct0(100 * withCause / cbSum(R)) : '—', S(cab ? 'cbF3c' : 'cbF3')], [num(rec.length), S('cbF4')], [num(cbSum(R.filter(function (r) { return r.act; }))), S(cab ? 'cbF5c' : 'cbF5')]]
       .map(function (x) { return '<div class="fig"><b>' + esc(x[0]) + '</b><span>' + esc(x[1]) + '</span></div>'; }).join('');
     document.getElementById('cbShare').textContent = S('cbShare', { v: qs.map(function (q) { var v = imp(q); return qn(q) + ' ' + (v == null ? '—' : pct0(v)); }).join(' · ') });
     // requests per month, stacked by imputation
     var imps = CB_IMP.filter(function (o) { return R.some(function (r) { return r.imp === o; }); }), mc = document.getElementById('cbMonthC');
     document.getElementById('cbLeg').innerHTML = imps.map(function (o) { return '<button type="button" class="cb-leg"' + cbAttr('origine', o, ' aria-pressed="' + (!CBF.origine || CBF.origine === o) + '"') + '><i class="sw" style="background:' + CB_COL[cbI(o)] + '"></i>' + esc(S('cbI' + cbI(o))) + '</button>'; }).join('');
-    var cnt = ms.map(function (m) { var o = { t: 0 }; imps.forEach(function (i) { o[i] = 0; }); R.forEach(function (r) { if (r.d.slice(0, 7) === m) { o[r.imp]++; o.t++; } }); return o; });
+    var cnt = ms.map(function (m) { var o = { t: 0 }; imps.forEach(function (i) { o[i] = 0; }); R.forEach(function (r) { if (r.d.slice(0, 7) === m) { o[r.imp] += cbW(r); o.t += cbW(r); } }); return o; });
     var W = Math.max(300, mc.clientWidth || 600), H = 240, l0 = 34, mb = 22, mt = 18, n = ms.length || 1, bw = (W - l0) / n, w = Math.min(32, bw * 0.6);
     var nt = pNice(Math.max.apply(null, cnt.map(function (o) { return o.t; }).concat([1])) * 1.08), Y = function (v) { return mt + (H - mt - mb) * (1 - v / nt.top); }, g = '';
     for (var t0 = 0; t0 <= nt.top + 1e-9; t0 += nt.step) g += '<line x1="' + l0 + '" x2="' + W + '" y1="' + r1(Y(t0)) + '" y2="' + r1(Y(t0)) + '" stroke="var(--grid)"/>' + tx(l0 - 6, Y(t0) + 4, num(t0), 'mu', 'end');
@@ -3021,10 +3066,10 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
           tip(monthName(m) + ' ' + m.slice(0, 4), imps.slice().reverse().map(function (j) { return S('cbI' + cbI(j)) + ' : ' + o[j]; }).concat([S('total') + ' : ' + o.t])) + '/>'; acc += v; });
       if (w >= 18 && o.t) g += tx(x + w / 2, Y(o.t) - 5, num(o.t), 'ink', 'middle');
       g += tx(l0 + i * bw + bw / 2, H - 6, day(m + '-15', { month: 'short' }), 'mu', 'middle'); });
-    mc.innerHTML = svg(W, H, g, S('cbMonth'));
+    mc.innerHTML = svg(W, H, g, S(cab ? 'cbMonthC' : 'cbMonth'));
     // reason x imputation
     var cols = [['cbProd', 'Production ligne'], ['cbMach', 'Impression – machine'], ['cbOper', 'Impression – opérateur'], ['cbOther', null]], mot = {};
-    R.forEach(function (r) { var a = mot[r.motif] || (mot[r.motif] = { m: r.motif, v: [0, 0, 0, 0], t: 0 }), j = r.imp === CB_IMP[0] ? 0 : r.imp === CB_IMP[1] ? 1 : r.imp === CB_IMP[2] ? 2 : 3; a.v[j]++; a.t++; });
+    R.forEach(function (r) { var a = mot[r.motif] || (mot[r.motif] = { m: r.motif, v: [0, 0, 0, 0], t: 0 }), j = r.imp === CB_IMP[0] ? 0 : r.imp === CB_IMP[1] ? 1 : r.imp === CB_IMP[2] ? 2 : 3; a.v[j] += cbW(r); a.t += cbW(r); });
     var mrows = Object.keys(mot).map(function (k) { return mot[k]; }).sort(function (a, b) { return b.t - a.t; }), mmax = Math.max.apply(null, mrows.map(function (a) { return Math.max.apply(null, a.v); }).concat([1]));
     var th = function (a) { return '<thead><tr>' + a.map(function (h, j) { return '<th scope="col"' + (j && h !== 'cbMotifs' && h !== 'cbImp' ? ' class="r"' : '') + '>' + esc(S(h)) + '</th>'; }).join('') + '</tr></thead>'; };
     document.getElementById('cbMx').innerHTML = mrows.length ? '<table class="cxt">' + th(['cbMotif', 'cbProd', 'cbMach', 'cbOper', 'cbOther', 'total']) + '<tbody>' + mrows.map(function (a) {
@@ -3032,13 +3077,13 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
         return '<td class="r' + (c[1] ? ' cb-c' : '') + (c[1] && CBF.motif === a.m && CBF.origine === c[1] ? ' cb-on' : '') + '"' + (v ? ' style="background:color-mix(in srgb, ' + col + ' ' + Math.round(8 + 42 * v / mmax) + '%, transparent)"' : '') +
           (c[1] ? ' data-cb="cell" data-m="' + esc(a.m) + '" data-v="' + esc(c[1]) + '" tabindex="0"' : '') + '>' + num(v) + '</td>'; }).join('') + '<td class="r">' + num(a.t) + '</td></tr>'; }).join('') + '</tbody></table>' : '<p class="empty">' + esc(S('cbNone')) + '</p>';
     // cable types, the eight most frequent, cut by imputation
-    var ty = {}; R.forEach(function (r) { if (!r.type) return; var a = ty[r.type] || (ty[r.type] = { t: 0, v: {} }); a.t++; a.v[r.imp] = (a.v[r.imp] || 0) + 1; });
+    var ty = {}; R.forEach(function (r) { if (!r.type) return; var a = ty[r.type] || (ty[r.type] = { t: 0, v: {} }); a.t += cbW(r); a.v[r.imp] = (a.v[r.imp] || 0) + cbW(r); });
     var tks = Object.keys(ty).sort(function (a, b) { return ty[b].t - ty[a].t; }).slice(0, 8), tmax = tks.length ? ty[tks[0]].t : 1;
     document.getElementById('cbTypes').innerHTML = tks.map(function (k) { var a = ty[k];
       return '<div class="cb-row"><span class="cb-lab">' + esc(k) + '</span><span><span class="cb-track" style="width:' + r1(100 * a.t / tmax) + '%">' + CB_IMP.filter(function (o) { return a.v[o]; }).map(function (o) {
         return '<span class="cb-seg" style="flex:' + a.v[o] + ';background:' + CB_COL[cbI(o)] + (CBF.origine && CBF.origine !== o ? ';opacity:.22' : '') + '"' + tip(k, [S('cbI' + cbI(o)) + ' : ' + a.v[o]]) + '></span>'; }).join('') + '</span></span><span class="cb-val">' + num(a.t) + '</span></div>'; }).join('') || '<p class="empty">' + esc(S('cbNone')) + '</p>';
     // proposed causes (under the imputation chosen), coloured by the imputation where each is most frequent; unknown last, in grey
-    var own = {}, cn = {}; R.forEach(function (r) { var o = own[r.cause] || (own[r.cause] = {}); o[r.imp] = (o[r.imp] || 0) + 1; if (!CBF.origine || r.imp === CBF.origine) cn[r.cause] = (cn[r.cause] || 0) + 1; });
+    var own = {}, cn = {}; R.forEach(function (r) { var o = own[r.cause] || (own[r.cause] = {}); o[r.imp] = (o[r.imp] || 0) + cbW(r); if (!CBF.origine || r.imp === CBF.origine) cn[r.cause] = (cn[r.cause] || 0) + cbW(r); });
     var ownOf = function (c) { var o = own[c] || {}; return Object.keys(o).sort(function (a, b) { return o[b] - o[a]; })[0]; }, cks = Object.keys(cn), cmax = Math.max.apply(null, cks.map(function (c) { return cn[c]; }).concat([1]));
     var crow = function (c, col) { return '<button type="button" class="cb-row' + (CBF.cause && CBF.cause !== c ? ' dim' : '') + '"' + cbAttr('cause', c, ' aria-pressed="' + (CBF.cause === c) + '"') + '><span class="cb-lab">' + esc(cbLab(c)) + '</span><span class="cb-track"><span class="cb-seg" style="width:' + r1(100 * cn[c] / cmax) + '%;background:' + col + '"></span></span><span class="cb-val">' + num(cn[c]) + '</span></button>'; };
     document.getElementById('cbCauses').innerHTML = cks.length ? cks.filter(function (c) { return c !== CB_UNK; }).sort(function (a, b) { return cn[b] - cn[a]; }).map(function (c) { return crow(c, CB_COL[cbI(ownOf(c))]); }).join('') +
@@ -3053,7 +3098,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
       return (!CBF.origine || r.imp === CBF.origine) && (!CBF.motif || r.motif === CBF.motif) && (!CBF.cause || r.cause === CBF.cause) && (!CBF.cable || r.cables.indexOf(CBF.cable) >= 0) &&
         (!q || [r.nc, r.msn, r.wk, r.cables.join(' '), r.type, r.com, r.motif, r.cause, r.imp, cbLab(r.motif), cbLab(r.cause), cbLab(r.imp)].join(' ').toLowerCase().indexOf(q) >= 0); })
       .sort(function (a, b) { return b.d.localeCompare(a.d) || b.k - a.k; });
-    document.getElementById('cbN').textContent = rows.length === 1 ? S('cbN1') : S('cbN', { n: num(rows.length) });
+    document.getElementById('cbN').textContent = CB_M === 'cab' ? S('cbNc', { n: num(rows.length), c: num(cbSum(rows)) }) : rows.length === 1 ? S('cbN1') : S('cbN', { n: num(rows.length) });
     var h = ['cbWk', 'NC', 'cbProg', 'MSN', 'cbMotif', 'cbImp', 'cbCause', 'cbCables', 'cbCom'];
     document.getElementById('cbList').innerHTML = rows.length ? '<table class="cxt"><thead><tr>' + h.map(function (k) { return '<th scope="col">' + esc(S(k)) + '</th>'; }).join('') + '</tr></thead><tbody>' + rows.map(function (r) {
       return '<tr><td>' + esc(r.wk) + '</td><td>' + esc(r.nc) + '</td><td>' + esc(r.prog) + '</td><td>' + esc(r.msn) + '</td><td>' + esc(cbLab(r.motif)) + '</td><td>' + esc(cbLab(r.imp)) + '</td><td>' + esc(cbLab(r.cause)) + '</td><td>' + esc(r.cables.join(' ')) + '</td><td class="cb-com">' + esc(r.com) + '</td></tr>'; }).join('') + '</tbody></table>' : '<p class="empty">' + esc(S('cbNone')) + '</p>';
@@ -3061,6 +3106,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
   (function () {
     var p = document.getElementById('p-cbl'); if (!p) return;
     p.addEventListener('click', function (e) {
+      var md = e.target.closest('[data-cbm]'); if (md) { CB_M = md.getAttribute('data-cbm'); hideTip(); renderCbl(); return; }
       var x = e.target.closest('[data-cbx]'); if (x) { var k = x.getAttribute('data-cbx'); if (k === 'all') CBF = { origine: '', motif: '', cause: '', cable: '' }; else CBF[k] = ''; renderCbl(); return; }
       var b = e.target.closest('[data-cb]'); if (!b) return;
       var t = b.getAttribute('data-cb'), v = b.getAttribute('data-v');
@@ -3266,6 +3312,22 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
   // ---------------------------------------------------------------- 5. Insights (selection)
   // Category colours: validated categorical order (blue, aqua, yellow, magenta, green, violet); orange stays reserved for cable.
   var A = { pin: null, top0: null, km: null, msn: null };
+  // a FIN that is a product's name, not an equipment's: a product of the production plan (its name or an NC product label
+  // it matches), or a product written the way the alias rules write them (742VU, 5881VB...). Left out of the FIN charts.
+  var PROD_NAMES = (function () {
+    var E = D.eqmsn || {}, o = {}, put = function (v) { v = String(v || '').trim().toUpperCase(); if (v) { o[v] = 1; o[v.replace(/[\s\-]+/g, '')] = 1; } };
+    Object.keys(E.map || {}).forEach(function (k) { put(k); put(E.map[k]); });
+    ['std', 'wd', 'adj'].forEach(function (v) { Object.keys(E[v] || {}).forEach(put); });
+    Object.keys((D.y25 && D.y25.prod) || {}).forEach(put);
+    (E.alias || []).forEach(function (x) { put(x[3]); });
+    return o;
+  })();
+  var PROD_RES = ((D.eqmsn && D.eqmsn.alias) || []).map(function (x) { try { return new RegExp(x[1]); } catch (e) { return null; } }).filter(Boolean);
+  function isProductName(f) {
+    var v = String(f || '').trim().toUpperCase(); if (!v) return false;
+    return !!(PROD_NAMES[v] || PROD_NAMES[v.replace(/[\s\-]+/g, '')]) || PROD_RES.some(function (re) { return re.test(v); });
+  }
+  function finReal(r) { var f = dFin(r); return f && !isProductName(f) ? f : ''; }   // the FIN of a defect line, product names left out
   function catFill(c) { return CATC[c] ? 'var(--c' + CATC[c] + ')' : 'var(--dim)'; }
   function catLabel(c) { return c === 'aside' ? S('asideGroup') : L(c); }
   // the category of a cause and of a sub-code (the most frequent among their defect lines): the colour of their bars, blue for
@@ -3491,6 +3553,67 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
     vSet('bump', svg(W0, H, g, S('t_bump')), cof[pin] ? sw(cof[pin] === 'aside' ? 'var(--ink-2)' : catFill(cof[pin]), L(pin) + ' · ' + catLabel(cof[pin])) : '', miniTable([S('rRca')].concat(months.map(monthName)), rows, 1));
   }
 
+  // 6b. The causes month by month: one line per cause over the months of the year followed, within the period. The top X causes of
+  // the selection (X: the card's − / +, 3 at first) and the causes added by hand (Déverrouillage and FOD from the start, for safety;
+  // ✕ takes one away). The measure is the Pareto tab's (defects or cost of non-quality), or NCs with the card's switch (an NC
+  // counts once for each cause it has). Colours: the cause's category, as on the other charts; two causes of one category differ by
+  // their dashes, and each line is named at its end.
+  var CMO = { n: 3, add: ['Déverrouillage', 'FOD'], nc: false };
+  function cmoMonths() {
+    var y = String(YEAR), from = GF.from > y + '-01-01' ? GF.from : y + '-01-01', to = [GF.to, D.meta.to, y + '-12-31'].sort()[0], out = [];
+    for (var d = new Date(from.slice(0, 7) + '-01T00:00:00Z'); d.toISOString().slice(0, 7) <= to.slice(0, 7); d.setUTCMonth(d.getUTCMonth() + 1)) out.push(d.toISOString().slice(0, 7));
+    return out;
+  }
+  function vCmo(rs) {
+    var months = cmoMonths(), mode = CMO.nc ? 'nc' : PMODE === 'cost' ? 'cost' : 'vol', fmt = mode === 'cost' ? eurK : num, mi = {}, val = {}, tot = {}, seen = {};
+    months.forEach(function (m, i) { mi[m] = i; });
+    rs.forEach(function (r) { var a = dRca(r), i = mi[r[2].slice(0, 7)]; if (!a || i == null) return;
+      if (mode === 'nc') { if (seen[a + '|' + r[0]]) return; seen[a + '|' + r[0]] = 1; }
+      var v = mode === 'cost' ? dAlloc(r) : 1;
+      (val[a] || (val[a] = months.map(function () { return 0; })))[i] += v; tot[a] = (tot[a] || 0) + v; });
+    var top = Object.keys(tot).sort(function (a, b) { return tot[b] - tot[a] || (a < b ? -1 : 1); }).slice(0, CMO.n);
+    var shown = top.concat(CMO.add.filter(function (a) { return top.indexOf(a) < 0; }));
+    var names = Object.keys(RCA_CAT).filter(function (a) { return a && CMO.add.indexOf(a) < 0; }).sort(function (a, b) { return L(a).localeCompare(L(b), loc()); });
+    var ctl = '<div class="cmo-ctl"><div class="seg grpseg" role="group" aria-label="' + esc(S('cmoMeas')) + '">' + segHtml([['m', S(PMODE === 'cost' ? 'mCost' : 'mVol')], ['nc', S('cmoNc')]], CMO.nc ? 'nc' : 'm', 'data-cmom') + '</div>' +
+      '<span class="cmo-n"><span>' + esc(S('cmoTop')) + '</span><button type="button" data-cmon="-1" aria-label="' + esc(S('cmoLess')) + '"' + (CMO.n <= 1 ? ' disabled' : '') + '>−</button><b>' + CMO.n + '</b><button type="button" data-cmon="1" aria-label="' + esc(S('cmoMore')) + '"' + (CMO.n >= 10 ? ' disabled' : '') + '>+</button></span>' +
+      '<select data-cmoadd aria-label="' + esc(S('cmoAdd')) + '"><option value="">' + esc(S('cmoAdd')) + '</option>' + names.map(function (a) { return '<option value="' + esc(a) + '">' + esc(L(a)) + '</option>'; }).join('') + '</select>' +
+      CMO.add.map(function (a) { return '<button type="button" class="chip" data-cmox="' + esc(a) + '" aria-label="' + esc(S('cmoDel', { c: L(a) })) + '">' + esc(L(a)) + ' <i aria-hidden="true">✕</i></button>'; }).join('') + '</div>';
+    if (!months.length || !shown.length) { vSet('cmo', ctl + EMPTY); return; }
+    var dash = {}, nCat = {}; shown.forEach(function (a) { var c = RCA_CAT[a] || 'aside', j = nCat[c] = (nCat[c] || 0) + 1; dash[a] = j === 1 ? '' : j === 2 ? '6 3' : j === 3 ? '1.5 3' : '8 3 1.5 3'; });
+    var W0 = vWidth('cmo', 360), right = W0 < 640 ? 130 : 190, ml = mode === 'cost' ? 62 : 40, mt = 14, h = 240, H = mt + h + 26, pw = W0 - ml - right, n = months.length;
+    var mx = Math.max.apply(null, shown.map(function (a) { return Math.max.apply(null, (val[a] || [0])); }).concat([1e-9])), nt = pNice(mx * 1.08), g = '';
+    function X(j) { return ml + (n > 1 ? j / (n - 1) * pw : pw / 2); } function Y(v) { return mt + h - v / nt.top * h; }
+    for (var t = 0; t <= nt.top + 1e-9; t += nt.step) g += '<line x1="' + ml + '" x2="' + (ml + pw) + '" y1="' + r1(Y(t)) + '" y2="' + r1(Y(t)) + '" stroke="var(--grid)"/>' + tx(ml - 6, Y(t) + 4, (mode === 'cost' && nt.top >= 10000 ? kEur : fmt)(Math.round(t * 100) / 100), 'mu', 'end');
+    months.forEach(function (m, j) { g += tx(X(j), H - 6, v2Mo(m, n > 1 ? pw / (n - 1) : pw, j), 'mu', 'middle'); });
+    var cur = monthShare(months[n - 1]).p < 1 ? n - 1 : -1, ends = [];
+    shown.slice().reverse().forEach(function (a) {
+      var v = val[a] || months.map(function () { return 0; }), col = vqCol(a), pts = v.map(function (x, j) { return r1(X(j)) + ',' + r1(Y(x)); });
+      g += '<path d="M' + pts.join('L') + '" fill="none" stroke="' + col + '" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"' + (dash[a] ? ' stroke-dasharray="' + dash[a] + '"' : '') + '/>';
+      v.forEach(function (x, j) { var cu = j === cur;
+        g += '<circle cx="' + r1(X(j)) + '" cy="' + r1(Y(x)) + '" r="' + (cu ? 3.5 : 3.2) + '" fill="' + (cu ? 'var(--surface)' : col) + '" stroke="' + (cu ? col : 'var(--surface)') + '" stroke-width="' + (cu ? 2 : 1.2) + '"/>' +
+          '<circle cx="' + r1(X(j)) + '" cy="' + r1(Y(x)) + '" r="9" fill="transparent"' + pk('rca', a) + tip(L(a) + ' · ' + monthName(months[j]) + ' ' + months[j].slice(0, 4), [S('cmoTip' + mode, { v: fmt(x) }), catLabel(RCA_CAT[a] || 'aside')].concat(cu ? [S('v2CurPt', { d: day(D.meta.to) })] : [])) + '/>'; });
+      ends.push({ a: a, y: Y(v[n - 1]) + 4 });
+    });
+    var ys = spread(ends.map(function (e) { return e.y; }), 14, mt + 4, mt + h + 4), maxCh = Math.floor((right - 14) / 6.6);
+    ends.forEach(function (e, i) { var t2 = L(e.a); if (t2.length > maxCh) t2 = t2.slice(0, maxCh - 1) + '…'; g += tx(X(n - 1) + 10, ys[i], t2, 'ink halo'); });
+    var leg = shown.map(function (a) { var col = vqCol(a); return '<span><i class="dash" style="border-top:2.5px ' + (dash[a] ? (dash[a] === '6 3' ? 'dashed' : 'dotted') : 'solid') + ' ' + col + '"></i>' + esc(L(a)) + (CMO.add.indexOf(a) >= 0 && top.indexOf(a) < 0 ? ' (' + esc(S('cmoAdded')) + ')' : '') + '</span>'; }).join('') +
+      (cur >= 0 ? '<span><i class="sw" style="background:var(--surface);border:2px solid var(--ink-2);border-radius:50%"></i>' + esc(S('v2CurPtL', { d: day(D.meta.to) })) + '</span>' : '') + '<span class="mu">' + esc(S('cmoLeg' + mode)) + '</span>';
+    var rows = shown.map(function (a) { var v = val[a] || months.map(function () { return 0; }); return [L(a)].concat(v.map(fmt)).concat([fmt(sumA(v))]); });
+    vSet('cmo', ctl + svg(W0, H, g, S('t_cmo')), leg, miniTable([S('rRca')].concat(months.map(monthName)).concat([S('total')]), rows, 1));
+  }
+  document.addEventListener('click', function (e) {
+    var t = e.target.closest && e.target.closest('[data-cmom], [data-cmon], [data-cmox]'); if (!t) return;
+    if (t.hasAttribute('data-cmom')) CMO.nc = t.getAttribute('data-cmom') === 'nc';
+    else if (t.hasAttribute('data-cmon')) CMO.n = Math.max(1, Math.min(10, CMO.n + +t.getAttribute('data-cmon')));
+    else { var a = t.getAttribute('data-cmox'); CMO.add = CMO.add.filter(function (x) { return x !== a; }); }
+    hideTip(); rvDraw('A:cmo');
+  });
+  document.addEventListener('change', function (e) {
+    var t = e.target.closest && e.target.closest('[data-cmoadd]'); if (!t || !t.value) return;
+    if (CMO.add.indexOf(t.value) < 0) CMO.add.push(t.value);
+    rvDraw('A:cmo');
+  });
+
   // ---- NC-level charts: aircraft (MSN), product family, lead time, hour, station, MFT actions
   // NC row extras: [25] msn, [26] product family, [27] station, [28] creation hour (Paris), [29] days to close, [30] open, [31] age if open
   var PROGS = ['A350', 'A330', 'A320', 'A400M'];
@@ -3644,7 +3767,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
     vSet('station', svg(W, H, g, S('t_station')), '', miniTable([S('hStation')].concat(cats.map(catLabel)).concat([S('total')]), rows, 1));
   }
 
-  var VIZ = ['flow', 'bub', 'msn', 'lead', 'station', 'bump', 'cal', 'prod'];
+  var VIZ = ['flow', 'bub', 'msn', 'lead', 'station', 'bump', 'cal', 'prod', 'cmo'];
   function vCard(k) {
     return '<article class="card vcard" id="v-' + k + '"><div class="vhead"><span class="kicker" data-t="k_' + k + '"></span><h3 data-t="t_' + k + '"></h3><p class="sub" data-t="s_' + k + '"></p></div>' +
       '<div class="vbody" id="v-' + k + '-b"></div><div class="vlegend" id="v-' + k + '-l"></div>' +
@@ -3726,7 +3849,11 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
   function gB(k) { return document.getElementById('g-' + k + '-b'); }
   function gWd(k, min) { return Math.max(gB(k).clientWidth || 520, min || 300); }
   function gSet(k, html, leg) { gB(k).innerHTML = html; var l = document.getElementById('g-' + k + '-l'); l.innerHTML = leg || ''; l.hidden = !leg; }
-  function gT(k) { return GSTR[k][G.lang][1]; }
+  function gT(k) { return gHead(k)[1]; }
+  // a chart's texts [kicker, title, subtitle, data]: GSTR, or worked out when the title follows a choice (GDYN: the lines shown,
+  // the cause followed)
+  var GDYN = {};
+  function gHead(k) { return GDYN[k] ? GDYN[k]() : GSTR[k][G.lang]; }
   function sw(c, lab, round) { return '<span><i class="sw" style="background:' + c + (round ? ';border-radius:50%' : '') + '"></i>' + esc(lab) + '</span>'; }
   function swl(c, lab, dash) { return '<span><i class="' + (dash ? 'dash' : 'ln') + '" style="' + (dash ? 'border-top-color:' : 'background:') + c + '"></i>' + esc(lab) + '</span>'; }
   function f2(x) { return (Math.round(x * 100) / 100).toLocaleString(loc(), { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
@@ -3762,8 +3889,8 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
             en: ['Cable', 'Cable defects per MSN, month by month', 'Line: period average; dotted: 3-month rolling average.', 'cable defects · MSN output as denominator'] },
     '76': { fr: ['Branchement', 'Erreurs de branchement par MSN, A330 et A350', 'Par produit, par cause : inversion, mauvaise borne, non connecté. Sans l’A320, dont les produits sont de petites pièces comptées à l’unité.', 'production MSN · défauts'],
             en: ['Connection', 'Connection errors per MSN, A330 and A350', 'By product and cause: swapped, wrong terminal, not connected. Without the A320, whose products are small parts counted one by one.', 'MSN output · defects'] },
-    '78': { fr: ['Branchement', 'Erreurs de branchement par MSN, mois par mois, A330 et A350', 'Inversions, mauvaises bornes, non connectés ; trait : moyenne de la période ; pointillé : moyenne glissante sur 3 mois. Sans l’A320 (petites pièces comptées à l’unité), qui ferait baisser le taux.', 'défauts · production MSN en dénominateur'],
-            en: ['Connection', 'Connection errors per MSN, month by month, A330 and A350', 'Swapped wires, wrong terminals, not connected; line: period average; dotted: 3-month rolling average. Without the A320 (small parts counted one by one), which would pull the rate down.', 'defects · MSN output as denominator'] }
+    '78': { fr: ['Cause', '{C} par MSN, mois par mois', 'La cause suivie dans « Classement mensuel des causes » (un clic sur sa courbe), sinon la première cause du dernier mois. Trait : moyenne de la période ; pointillé : moyenne glissante sur 3 mois. {L}', 'défauts · production MSN en dénominateur'],
+            en: ['Root cause', '{C} per MSN, month by month', 'The root cause followed in “Monthly ranking of root causes” (a click on its line), else the top root cause of the last month. Line: period average; dotted: 3-month rolling average. {L}', 'defects · MSN output as denominator'] }
   });
 
   function pTot(f) { return sumA(P_().filter(function (o) { return o.EQ > 0; }).map(f)); }
@@ -3800,12 +3927,12 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
     g += '<path d="' + solid.map(function (v, j) { return (j ? 'L' : 'M') + r1(X(j)) + ',' + r1(Y(v)); }).join('') + '" fill="none" stroke="' + col + '" stroke-width="2.2"/>';
     if (cj > 0) g += '<path d="M' + r1(X(cj - 1)) + ',' + r1(Y(r[cj - 1])) + 'L' + r1(X(cj)) + ',' + r1(Y(r[cj])) + '" fill="none" stroke="' + col + '" stroke-width="2" stroke-dasharray="1 4" stroke-linecap="round"/>';
     rows.forEach(function (x, j) { var cu = j === cj; g += '<circle cx="' + r1(X(j)) + '" cy="' + r1(Y(r[j])) + '" r="4" fill="' + (cu ? 'var(--surface)' : col) + '" stroke="' + (cu ? col : 'var(--surface)') + '" stroke-width="' + (cu ? 2 : 1.5) + '"' + ppk('month', PD.months[x.i]) + tip(monthName(PD.months[x.i]), [unitTip(r[j]), (cu ? S('v2CurPt', { d: day(D.meta.to) }) : gx('rollTip', { v: fmt(roll[j]) })), gx('eqTip', { v: f1(x.e) })]) + '/>' + tx(X(j), H - 6, monthName(PD.months[x.i]), 'mu', 'middle'); });
-    g += tx(ml + pw + 8, Y(mean) + 4, gx('mean') + ' ' + fmt(mean), 'mu');
-    var refs = ref ? [].concat(ref) : [];
-    if (refs.length > 1) { var yl = spread([Y(mean) + 4].concat(refs.map(function (q) { return Y(q.v) + 4; })), 14, mt, mt + h);
+    var refs = ref ? [].concat(ref) : [], yl = spread([Y(mean) + 4].concat(refs.map(function (q) { return Y(q.v) + 4; })), 14, mt, mt + h);   // the labels at the right, apart
+    g += tx(ml + pw + 8, yl[0], gx('mean') + ' ' + fmt(mean), 'mu');
+    if (refs.length > 1) {
       refs.forEach(function (q, j) { g += '<line x1="' + ml + '" x2="' + (ml + pw) + '" y1="' + r1(Y(q.v)) + '" y2="' + r1(Y(q.v)) + '" stroke="' + (q.col || 'var(--up)') + '" stroke-width="1.5" stroke-dasharray="6 4"/>' + tx(ml + pw + 8, yl[j + 1], q.short + ' ' + fmt(q.v), 'mu'); });
       ref = null; }
-    if (ref) { var yr = spread([Y(mean) + 4, Y(ref.v) + 4], 14, mt, mt + h)[1]; g += '<line x1="' + ml + '" x2="' + (ml + pw) + '" y1="' + r1(Y(ref.v)) + '" y2="' + r1(Y(ref.v)) + '" stroke="var(--up)" stroke-width="1.5" stroke-dasharray="6 4"/>' + tx(ml + pw + 8, yr, PREV + ' ' + fmt(ref.v), 'b', null, ' style="fill:var(--up)"'); }
+    if (ref) { var yr = yl[1]; g += '<line x1="' + ml + '" x2="' + (ml + pw) + '" y1="' + r1(Y(ref.v)) + '" y2="' + r1(Y(ref.v)) + '" stroke="var(--up)" stroke-width="1.5" stroke-dasharray="6 4"/>' + tx(ml + pw + 8, yr, PREV + ' ' + fmt(ref.v), 'b', null, ' style="fill:var(--up)"'); }
     gSet(k, svg(W0, H, g, gT(k)), swl(col, gx('monthLeg')) + (cj > 0 ? '<span><i class="sw" style="background:var(--surface);border:2px solid ' + col + ';border-radius:50%"></i>' + esc(S('v2CurPtL', { d: day(D.meta.to) })) + '</span>' : '') + swl('var(--ink-2)', gx('mean')) + swl('var(--ink-2)', gx('roll3'), true) + (ref ? swl('var(--up)', ref.lab, true) : '') + (refs.length > 1 ? refs.map(function (q) { return swl(q.col || 'var(--up)', q.lab, true); }).join('') : ''));
   }
 
@@ -4054,10 +4181,21 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
     gSet(k, svg(W0, H, g, gT(k)), keys.map(function (r, j) { return sw(tint('--c2', tints[j]), L(r)); }).join(''));
   }
 
-  // 78. connection errors per 10 MSN, month by month
-  function g78(k) { if (connNone(k)) return;
-    var R = y25Rca(), q = R ? y25Rate(R.filter(function (x) { return x.cat === 'Erreur Branchement'; }), function (x) { return x.d; }, function (p) { return !!CONN_LINES[PD.line[p]]; }) : null;   // 2025: connection errors per product delivered, A330 and A350
-    pTrend(k, pMonthly(function (o, i) { return o.connm[i]; }, connOk), f2, function (v) { return gx('perEq', { v: f2(v) }); }, tint('--c2', 100), q ? { v: q.r, lab: S('v2Avg25') } : null); }
+  // 78. one root cause per MSN, month by month: the cause followed in the monthly ranking (a:bump, A.pin), else the first cause of
+  // that chart's last month. A330 and A350 together (A320's small parts counted one by one would pull the rate down), or the line
+  // chosen in the filter bar
+  function c78Cause() {
+    if (A.pin) return A.pin;
+    var by = {}, last = ''; aRows().forEach(function (r) { var m = r[2].slice(0, 7), a = dRca(r), o = by[m] || (by[m] = {}); if (m > last) last = m; if (a) o[a] = (o[a] || 0) + 1; });
+    var c = by[last] || {}; return Object.keys(c).sort(function (a, b) { return c[b] - c[a] || (a < b ? -1 : 1); })[0] || '';
+  }
+  GDYN['78'] = function () { var t = GSTR['78'][G.lang].slice(), c = c78Cause(); t[1] = t[1].split('{C}').join(c ? L(c) : S('c78None')); t[2] = t[2].split('{L}').join(GF.line ? S('c78One', { l: GF.line }) : S('c78Both')); return t; };
+  function g78(k) {
+    var c = c78Cause(), keep = function (o) { return GF.line ? true : connOk(o); }, cm = {};
+    if (!c) { pEmpty(k); return; }
+    PD.defs.forEach(function (d) { if (d.rca !== c) return; var x = PD.ncs[d.n], o = cm[x.p] || (cm[x.p] = {}); o[x.m] = (o[x.m] || 0) + 1; });
+    var R = y25Rca(), q = R ? y25Rate(R.filter(function (x) { return x.rca === c; }), function (x) { return x.d; }, function (p) { return GF.line ? true : !!CONN_LINES[PD.line[p]]; }) : null;   // the comparison year: this cause per product delivered
+    pTrend(k, pMonthly(function (o, i) { return (cm[o.p] || {})[i] || 0; }, keep), f2, function (v) { return gx('perEq', { v: f2(v) }); }, vqCol(c), q ? { v: q.r, lab: S('v2Avg25') } : null); }
 
   // connection errors per million connection operations (a MIP has 5,572; MIP A350 only until the other products'
   // counts are known). References: 2025 (per MIP delivered), the target (2025 - 25 %), and the sigma level of the period
@@ -4199,12 +4337,12 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
 
   // ---------------------------------------------------------------- Drawing a chart by its key: 'A:<k>' an Analyses chart (RV_ANA), else a
   // numbered chart (PSPEC)
-  var RV_ANA = { lead: function () { vLead(); }, bump: function () { vBump(aRows()); }, cal: function () { vCal(aRows()); },
+  var RV_ANA = { lead: function () { vLead(); }, bump: function () { vBump(aRows()); }, cmo: function () { vCmo(aRows()); }, cal: function () { vCal(aRows()); },
     flow: function () { vFlow(aRows()); }, bub: function () { vBub(aRows()); }, msn: function () { vMsn(); }, prod: function () { vProd(); }, station: function () { vStation(aRows()); } };
   function rvIsAna(c) { return c.indexOf('A:') === 0; }
   function rvDraw(c) {
     if (rvIsAna(c)) { EMPTY = '<p class="empty">—</p>'; RV_ANA[c.slice(2)](); return; }
-    var t = GSTR[c][G.lang], sp = PSPEC.filter(function (x) { return x[0] === c; })[0];
+    var t = gHead(c), sp = PSPEC.filter(function (x) { return x[0] === c; })[0];
     document.getElementById('g-' + c + '-k').textContent = t[0];
     document.getElementById('g-' + c + '-h').textContent = t[1];
     document.getElementById('g-' + c + '-s').textContent = t[2];
@@ -4221,11 +4359,12 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
   var V2B = false, V2BAND = {};
   var V2L = {
     ov: { top: ['VT', 'VN', 'VB', 'a:lead', 'VX'], fold: ['a:cal'] },
-    pareto: { top: ['a:bub', 'a:bump', 'a:flow', '78', '76', 'VM', 'VQ', '53'],   // 30 Oct: connection errors by month alone on a row; per million operations beside by product
+    pareto: { top: ['a:bub', 'a:bump', 'a:flow', '78', '76', 'VM', 'VQ', '53', 'a:cmo'],   // 30 Oct: connection errors by month alone on a row; per million operations beside by product
                 inboard: ['VW'], fold: ['65', 'VK'] },   // under the lists; the hundred squares sit in the lists (20 Oct); swapped pins folded until checked on the real data (21 Oct)
     where: { top: ['VP', '61', 'a:prod', '54', 'a:msn', 'VF', 'a:station'], fold: ['64'] },   // fleet pictograms removed
     cnq: { more: ['VC'], fold: ['VE'] }
   };
+  var V2PNG = ['VN', 'VT', 'VQ', 'a:bump', 'a:bub', '78', '54', 'a:cmo'];   // the charts with a PNG button: Essentiel's (Synthèse, Détail) and the causes month by month
   var V2F = { VM: v2Mio, VT: v2Target, VN: v2Trend, VB: v2Budget, VS: v2Score, VX: v2Xmr, VW: v2Waffle, VQ: v2Quarters, VP: v2Prod, VF: v2Fins, VI: v2Icons, VC: v2Comp, VE: v2Each, VK: v2Pins };
   Object.assign(GSTR, withYears({
     VT: { fr: ['Objectif', 'Chaque ligne face à son objectif', 'NC par MSN produit ; trait : objectif, le taux {PREV} de la ligne (NC par produit livré) moins {CUT} %. Toutes lignes : la somme des objectifs des lignes.', 'production MSN · NC · livraisons {PREV}'],
@@ -4241,8 +4380,8 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
     VM: { fr: ['Branchement', 'Erreurs de branchement par million d’opérations, MIP A350', '5 572 opérations de branchement par MIP.', 'défauts · production MSN · livraisons {PREV}'],
           en: ['Connections', 'Connection errors per million operations, MIP A350', '5,572 connection operations per MIP.', 'defects · MSN output · {PREV} deliveries'] },
     VW: { fr: ['Répartition', 'Cent défauts', 'Chaque case : 1 % des défauts, par catégorie.', 'catégorie des défauts'], en: ['Breakdown', 'A hundred defects', 'Each square: 1% of defects, by category.', 'defect category'] },
-    VQ: { fr: ['{PREV} / {YEAR}', 'Causes : {PREV} contre {YEAR}, A330 et A350', 'Défauts par MSN, les 10 premières causes de {PREV} et de {YEAR}. A330 et A350.', 'causes · production MSN · livraisons {PREV}'],
-          en: ['{PREV} / {YEAR}', 'Root causes: {PREV} against {YEAR}, A330 and A350', 'Defects per MSN, the top 10 root causes of {PREV} and of {YEAR}. A330 and A350.', 'root causes · MSN output · {PREV} deliveries'] },
+    VQ: { fr: ['{PREV} / {YEAR}', 'Causes : {PREV} contre {YEAR}, {L}', 'Défauts par MSN, les 10 premières causes de {PREV} et de {YEAR}. {L}.', 'causes · production MSN · livraisons {PREV}'],
+          en: ['{PREV} / {YEAR}', 'Root causes: {PREV} against {YEAR}, {L}', 'Defects per MSN, the top 10 root causes of {PREV} and of {YEAR}. {L}.', 'root causes · MSN output · {PREV} deliveries'] },
     VP: { fr: ['Taux', 'NC, défauts et coût par MSN, produit par produit', 'Un même ordre de produits dans les trois colonnes ; tiret : ensemble des produits.', 'production MSN · NC · défauts · coût'],
           en: ['Rates', 'NCs, defects and cost per MSN, product by product', 'The same product order in all three columns; tick: all products together.', 'MSN output · NCs · defects · cost'] },
     VF: { fr: ['Récurrence', 'Les FIN qui reviennent d’un avion à l’autre', 'Une colonne par avion (MSN), une ligne par FIN ; carré : défaut sur ce FIN. Ligne du filtre, sinon A350.', 'FIN lu par le parseur · MSN'],
@@ -4265,12 +4404,91 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
     var c = V2BAND[k] = document.createElement('div'); c.className = 'card wide mk-band v2-band'; c.setAttribute('data-v2', k);
     c.innerHTML = '<div class="bhead"><span class="kicker"></span><h3></h3><p class="sub"></p><div class="v2stats"></div></div><div class="custom mk-body"></div>';
     c.querySelector('.mk-body').appendChild(el);
+    pngBtn(c, k);
     return c;
   }
   function v2Stats(k, items) {   // [[value, label, placeholder?]]
     var e = V2BAND[k] && V2BAND[k].querySelector('.v2stats'); if (!e) return;
     e.innerHTML = items.map(function (x) { return '<div' + (x[2] ? ' class="ph"' : '') + '><b>' + esc(x[0]) + '</b><span>' + esc(x[1]) + '</span></div>'; }).join('');
   }
+  // ---------------------------------------------------------------- a chart as a PNG file: a small button in its card's header (beside
+  // ⤢ Agrandir in Essentiel). The SVG is copied with the styles the page gives it (the page's CSS does not reach a copied SVG), in
+  // the light colours, drawn on a white canvas at twice its size, with the title, the headline figures and the key; the file is
+  // named after the title and comes through a link with a "download" name (a data URL, as tested in Slate)
+  var PNG_STY = ['fill', 'fill-opacity', 'stroke', 'stroke-width', 'stroke-dasharray', 'stroke-opacity', 'stroke-linecap', 'stroke-linejoin', 'opacity', 'paint-order',
+    'font-family', 'font-size', 'font-weight', 'font-style', 'font-variant-numeric', 'text-anchor', 'dominant-baseline', 'letter-spacing', 'visibility', 'display'];
+  function pngName(t) {
+    var n = String(t || '').replace(/[’‘`]/g, "'").replace(/[\\/:*?"<>|#%&$!@=;~^\[\]\{\}\u0000-\u001f]+/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 120);
+    return (n || 'graphique') + '.png';
+  }
+  function pngSvg(el) {   // a copy of the chart with its computed styles written on each node
+    var c = el.cloneNode(true), a = [el].concat([].slice.call(el.querySelectorAll('*'))), b = [c].concat([].slice.call(c.querySelectorAll('*')));
+    a.forEach(function (o, i) { var cs = getComputedStyle(o), st = b[i].style; PNG_STY.forEach(function (k) { var v = cs.getPropertyValue(k); if (v) st.setProperty(k, v); }); });
+    var r = el.getBoundingClientRect(), w = Math.round(r.width) || +el.getAttribute('width'), h = Math.round(r.height) || +el.getAttribute('height');
+    c.setAttribute('xmlns', 'http://www.w3.org/2000/svg'); c.setAttribute('width', w); c.setAttribute('height', h); c.style.overflow = 'visible';
+    return { s: new XMLSerializer().serializeToString(c), w: w, h: h };
+  }
+  function pngClear(c) { return !c || c === 'transparent' || /rgba\(.*,\s*0\)$/.test(c); }
+  function pngKey(l) {   // the key's items as drawn on the page: { m: its mark (a box, a line or a sign), text }
+    return !l || l.hidden ? [] : [].slice.call(l.children).map(function (it) {
+      var sm = it.tagName === 'DETAILS' ? it.querySelector('summary') : null, i = sm ? null : it.querySelector('i'), b = sm ? null : it.querySelector('b'), t = (sm || it).textContent.replace(/\s+/g, ' ').trim(), m = null;
+      if (i) { var cs = getComputedStyle(i), h = parseFloat(cs.height) || 0, wd = parseFloat(cs.width) || 0, bw = parseFloat(cs.borderTopWidth) || 0;
+        m = h <= 3 ? { k: 'line', c: pngClear(cs.backgroundColor) || bw ? cs.borderTopColor : cs.backgroundColor, w: Math.max(bw, h, 1.5), d: cs.borderTopStyle === 'dashed' ? [4, 3] : cs.borderTopStyle === 'dotted' ? [1.5, 2.5] : [] } :
+          wd <= 3 ? { k: 'tick', c: pngClear(cs.backgroundColor) ? cs.borderLeftColor : cs.backgroundColor, w: Math.max(wd, parseFloat(cs.borderLeftWidth) || 0, 1.5), d: cs.borderLeftStyle === 'dotted' ? [1.5, 2] : [] } :
+          { k: 'box', c: pngClear(cs.backgroundColor) ? '' : cs.backgroundColor, b: bw ? cs.borderTopColor : '', w: bw, r: parseFloat(cs.borderTopLeftRadius) >= 5 }; }
+      else if (b && b.textContent.trim().length <= 2) { m = { k: 'sign', c: getComputedStyle(b).color, t: b.textContent.trim() }; t = t.slice(b.textContent.trim().length).trim(); }
+      return { m: m, t: t };
+    }).filter(function (x) { return x.t; });
+  }
+  function pngOf(k) {
+    var band = V2BAND[k]; if (!band) return;
+    var a = k.indexOf('a:') === 0, body = document.getElementById(a ? 'v-' + k.slice(2) + '-b' : 'g-' + k + '-b'), leg = document.getElementById(a ? 'v-' + k.slice(2) + '-l' : 'g-' + k + '-l');
+    var svgs = body ? [].filter.call(body.querySelectorAll('svg'), function (x) { return x.getBoundingClientRect().width > 40; }) : [];
+    if (!svgs.length) return;
+    var root = document.documentElement, th = root.getAttribute('data-theme'), parts, key, title = (band.querySelector('.bhead h3') || {}).textContent || '', font = '';
+    var stats = [].map.call(band.querySelectorAll('.v2stats > div'), function (d) { return [].map.call(d.children, function (c) { return c.textContent.trim(); }).join(' '); }).filter(Boolean).join('  ·  ');
+    root.setAttribute('data-theme', 'light');   // the light colours, on the white background
+    try { parts = svgs.map(pngSvg); key = pngKey(leg); font = getComputedStyle(body).fontFamily; }
+    finally { if (th == null) root.removeAttribute('data-theme'); else root.setAttribute('data-theme', th); }
+    var pad = 18, W = Math.max.apply(null, parts.map(function (x) { return x.w; })) + 2 * pad, Z = 2, cv = document.createElement('canvas'), ctx = cv.getContext('2d');
+    ctx.font = '12px ' + font;
+    var rows = [], x = 0, line = [], lw = W - 2 * pad;   // the key, item after item, on as many lines as needed
+    key.forEach(function (it) { var w = (it.m ? 22 : 0) + ctx.measureText(it.t).width + 18; if (x + w > lw && line.length) { rows.push(line); line = []; x = 0; } line.push(it); x += w; });
+    if (line.length) rows.push(line);
+    var H = pad + 24 + (stats ? 20 : 0) + 8 + parts.reduce(function (t, p2) { return t + p2.h + 8; }, 0) + rows.length * 20 + pad;
+    cv.width = W * Z; cv.height = H * Z; ctx.scale(Z, Z);
+    ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, W, H);
+    ctx.fillStyle = '#15171a'; ctx.font = '600 17px ' + font; ctx.textBaseline = 'alphabetic'; ctx.fillText(title, pad, pad + 16);
+    var y = pad + 24; if (stats) { ctx.fillStyle = '#474c52'; ctx.font = '12.5px ' + font; ctx.fillText(stats, pad, y + 12); y += 20; } y += 8;
+    var n = 0, out = [];
+    parts.forEach(function (p2, j) {
+      var im = new Image(), y0 = y; y += p2.h + 8;
+      im.onload = function () { out[j] = [im, y0]; if (++n === parts.length) done(); };
+      im.onerror = function () { if (++n === parts.length) done(); };
+      im.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(p2.s);
+    });
+    function done() {
+      out.forEach(function (o) { if (o) ctx.drawImage(o[0], pad, o[1]); });
+      ctx.font = '12px ' + font; var yy = y + 10;
+      rows.forEach(function (r) { var xx = pad; r.forEach(function (it) {
+        var m = it.m, x0 = m ? xx + 22 : xx;
+        if (m && (m.k === 'line' || m.k === 'tick')) { ctx.save(); ctx.strokeStyle = m.c; ctx.lineWidth = m.w; ctx.setLineDash(m.d); ctx.beginPath();
+          if (m.k === 'line') { ctx.moveTo(xx, yy - 4); ctx.lineTo(xx + 16, yy - 4); } else { ctx.moveTo(xx + 8, yy - 10); ctx.lineTo(xx + 8, yy + 2); } ctx.stroke(); ctx.restore(); }
+        else if (m && m.k === 'box') { ctx.beginPath(); if (m.r) ctx.arc(xx + 8, yy - 4, 5.5, 0, 2 * Math.PI); else ctx.rect(xx + 2, yy - 10, 12, 12);
+          if (m.c) { ctx.fillStyle = m.c; ctx.fill(); } if (m.b) { ctx.strokeStyle = m.b; ctx.lineWidth = Math.max(1.2, m.w); ctx.stroke(); } }
+        else if (m && m.k === 'sign') { ctx.fillStyle = m.c; ctx.fillText(m.t, xx + 2, yy); }
+        ctx.fillStyle = m ? '#474c52' : '#737980'; ctx.fillText(it.t, x0, yy); xx = x0 + ctx.measureText(it.t).width + 18; }); yy += 20; });
+      var ln = document.createElement('a'); ln.href = cv.toDataURL('image/png'); ln.download = pngName(title); ln.style.display = 'none';
+      document.body.appendChild(ln); ln.click(); setTimeout(function () { ln.remove(); }, 1000);
+    }
+  }
+  function pngBtn(b, k) {
+    if (V2PNG.indexOf(k) < 0 || b.querySelector('.png-x')) return;
+    var x = document.createElement('button'); x.type = 'button'; x.className = 'png-x'; x.setAttribute('data-png', k); x.textContent = 'PNG';
+    b.classList.add('png-b'); b.querySelector('.bhead').appendChild(x); pngT(x);
+  }
+  function pngT(x) { x.title = S('pngT'); x.setAttribute('aria-label', S('pngT')); }
+  document.addEventListener('click', function (e) { var b = e.target.closest && e.target.closest('[data-png]'); if (!b) return; e.stopPropagation(); hideTip(); pngOf(b.getAttribute('data-png')); });
   function v2Wire(el) { el.addEventListener('pointermove', apMove); el.addEventListener('pointerleave', apLeave); el.addEventListener('click', apClick); return el; }
   function v2Grid(keys) { var g = document.createElement('div'); g.className = 'grid'; keys.forEach(function (k) { var b = v2Band(k); if (b) g.appendChild(b); }); return v2Wire(g); }
   function v2Fold(key, keys) {
@@ -4311,17 +4529,17 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
       c.innerHTML = '<div><span class="n">0' + (i + 1) + '</span><h3 data-t="wlCh_' + gk + '"></h3><p class="sub" data-t="wlChs_' + gk + '"></p></div>'; wg.appendChild(c);
     });
   }
-  function v2Head(k) { if (k.indexOf('a:') === 0) { var a = k.slice(2); return [S('k_' + a), S('t_' + a), S('s_' + a)]; } return GSTR[k][G.lang]; }
+  function v2Head(k) { if (k.indexOf('a:') === 0) { var a = k.slice(2); return [S('k_' + a), S('t_' + a), S('s_' + a)]; } return gHead(k); }
   function v2Draw(k) {
     if (k.indexOf('a:') === 0) { rvDraw('A:' + k.slice(2)); return; }
     if (!V2F[k]) { rvDraw(k); return; }
-    var t = GSTR[k][G.lang];
+    var t = gHead(k);
     document.getElementById('g-' + k + '-k').textContent = t[0]; document.getElementById('g-' + k + '-h').textContent = t[1]; document.getElementById('g-' + k + '-s').textContent = t[2];
     if (!PD && k !== 'VW' && k !== 'VQ' && k !== 'VX' && k !== 'VF' && k !== 'VI' && k !== 'VC' && k !== 'VE' && k !== 'VK') { pEmpty(k); return; }
     V2F[k](k);
   }
   function v2Render() {
-    v2Build();
+    v2Build(); document.querySelectorAll('.png-x').forEach(pngT);
     PD = pSrc() ? pData() : null; PA = PD ? pAgg(PD) : null;
     var L2 = V2L[G.tab]; if (!L2) return;
     if (G.tab === 'ov') v2Kpis();
@@ -4424,16 +4642,8 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
       g += tx(x + bw / 2, Y(tot) - 6, fmt(tot), 'ink b', 'middle') + tx(x + bw / 2, H - 6, b[0], 'ink', 'middle'); });
     return g;
   }
-  // the months that weigh less in the monthly target (config/2_reglages_pages.csv, poids_mois), in words: "Juillet et août
-  // comptent pour 60 % d'un mois."
-  function v2Light() {
-    var by = {}; Object.keys(V2W).forEach(function (m) { var w = V2W[m]; if (w != null && w !== 1) (by[w] || (by[w] = [])).push(+m); });
-    return Object.keys(by).map(function (w) {
-      var ms = by[w].sort(function (a, b) { return a - b; }).map(function (m) { return new Date(Date.UTC(2001, m - 1, 1)).toLocaleDateString(loc(), { month: 'long', timeZone: 'UTC' }); });
-      var t = ms.length > 1 ? ms.slice(0, -1).join(', ') + S('v2And') + ms[ms.length - 1] : ms[0];
-      return S(ms.length > 1 ? 'v2Summer' : 'v2Summer1', { m: t.charAt(0).toUpperCase() + t.slice(1), p: pct0(w * 100) });
-    }).join(' ');
-  }
+  // how the monthly target is spread over the months, in words: by the planned working volume (v2W), when there is a plan
+  function v2Light() { return PD ? S('v2MonthW') : ''; }
   function v2LineKeys(T) { return T.lines.map(function (a) { return sw(lineCol(a.l), a.l + (a.ph ? ' (' + S('v2Ph') + ')' : '')); }).join(''); }
   function v2Trend(k) {
     var O = objectif('nc'); if (!O) { pWait(k); return; }
@@ -4442,8 +4652,8 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
     var R5 = y25Sel(), n25 = R5 ? sumA(R5.map(function (x) { return x.nc; })) : 0, real = n25 > 0;   // without 2025 for the filter: placeholder 2025 = this year
     var T = real ? O.T : null;   // the target line by line (needs the production plan)
     var year = S2.tot + S2.ftot, y25 = real ? n25 : year, tgt = T ? T.year : y25 * V2CUT, c25 = real ? y25Cum(R5, function (x) { return x.nc; }, all.map(function (x) { return x.m; })) : null;
-    var wsum = 0; for (var mm = 1; mm <= 12; mm++) wsum += V2W[mm] || 1;
-    var mTgt = T ? T.tm : function (m) { return tgt * (V2W[+m.slice(5, 7)] || 1) / wsum; };
+    var wsum = 0, y0 = (all[0] || { m: YEAR }).m.slice(0, 4); for (var mm = 1; mm <= 12; mm++) wsum += v2W(y0 + '-' + (mm < 10 ? '0' : '') + mm);
+    var mTgt = T ? T.tm : function (m) { return tgt * v2W(m) / wsum; };
     v2Stats(k, [[num(S2.tot), S('v2StNow')], [num(Math.round(year)), S('v2StFc')], [num(Math.round(tgt)), S(T ? 'v2StTgtL' : real ? 'v2StTgtR' : 'v2StTgt'), !real]]);
     var cum = [0], ct = [0], c = 0, t = 0;
     all.forEach(function (x) { c += x.v; cum.push(c); t += mTgt(x.m); ct.push(t); });
@@ -4481,7 +4691,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
       swl('var(--s1)', S('v2CumLeg')) + '<span><i class="dash" style="border-top:2px dotted var(--s1)"></i>' + esc(fcl) + '</span>' + swl('var(--ink)', S(T ? 'v2TgtCumL' : real ? 'v2TgtCumR' : 'v2TgtCum'), true) + (T ? v2LineKeys(T) : '') +
       (real ? (T ? '' : '<span><i class="sw" style="background:' + tint('--ink-2', 30) + '"></i>' + esc(S('v2Y25b')) + '</span>') + swl(tint('--ink-2', 55), S('v2Y25c'))
         : '<span><i class="sw" style="background:' + tint('--ink-2', 18) + ';border:1px dashed var(--ink-2)"></i>' + esc(S('v2Ph25')) + '</span>') +
-      (real && !GF.fto2 ? '<span class="mu">' + esc(S('v2NoCli25')) + '</span>' : '') + '<span class="mu">' + esc(v2Light()) + '</span>');
+      (real && !GF.fto2 ? '<span class="mu">' + esc(S('v2NoCli25')) + '</span>' : '') + (v2Light() ? '<span class="mu">' + esc(v2Light()) + '</span>' : ''));
   }
 
   function v2Budget(k) {
@@ -4586,11 +4796,24 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
     gSet(k, svg(side ? Math.min(W0, gw + 384) : gw, Math.max(gw, side ? keys.length * 28 + 8 : 0), g, gT(k)), side ? '' : keys.map(function (c, i) { return sw(catFill(c), catLabel(c) + ' · ' + pct0(raw[i])); }).join(''));
   }
 
-  function v2Quarters(k) {   // 2025 against 2026, per MSN, A330 and A350 only (21 Oct). One row per cause (the slope chart
+  // the lines of the causes 2025 against 2026: the filter bar's line, A330 + A350 with all lines (A320's small parts counted one by
+  // one would pull the rate down); the card's switch (A330 + A350, A330, A350) wins while it is set, until the filter's line changes
+  var VQL = null;   // { v: '' (A330 + A350) or a line, at: the filter's line when it was pressed }
+  function vqLines() { var v = VQL && VQL.at === GF.line ? VQL.v : GF.line; return { v: v, lab: v || S('vqBoth') }; }
+  function vqSeg(Q) { return '<div class="seg grpseg" role="group" aria-label="' + esc(S('vqSegL')) + '">' + [['', 'A330 + A350'], ['A330', 'A330'], ['A350', 'A350']].map(function (x) { return '<button type="button" data-vql="' + x[0] + '" aria-pressed="' + (Q.v === x[0]) + '">' + x[1] + '</button>'; }).join('') + '</div>'; }
+  document.addEventListener('click', function (e) { var b = e.target.closest && e.target.closest('[data-vql]'); if (!b) return; VQL = { v: b.getAttribute('data-vql'), at: GF.line }; v2Render(); });
+  GDYN.VQ = function () { var L2 = vqLines().lab; return GSTR.VQ[G.lang].map(function (t) { return t.split('{L}').join(L2); }); };
+  // the page's numbers for another line of the filter bar, the time of fn (the filters, the selection and the production come back after)
+  function withLine(l, fn) {
+    if (l === GF.line) return fn();
+    var l0 = GF.line, P0 = PD, A0 = PA; GF.line = l; select(); PD = pSrc() ? pData() : null; PA = PD ? pAgg(PD) : null;
+    try { return fn(); } finally { GF.line = l0; select(); PD = P0; PA = A0; }
+  }
+  function v2Quarters(k) { var Q = vqLines(); withLine(Q.v, function () { vqDraw(k, Q); }); var b = gB(k); if (b) b.insertAdjacentHTML('afterbegin', vqSeg(Q)); }
+  function vqDraw(k, Q) {   // 2025 against 2026, per MSN (21 Oct). One row per cause (the slope chart
     // hid the causes that fell and crowded its labels): the top 10 causes of either year, hollow dot 2025, filled dot 2026, the arrow between
-    if (connNone(k, 'vqOnly')) return;
-    var keep = function (p) { return !!CONN_LINES[PD.line[p]]; };   // as the connection errors: A320's small parts counted one by one would pull the rate down
-    var R = y25Rca(), e26 = PD && PA ? sumA(P_().filter(function (o) { return o.EQ > 0 && connOk(o); }).map(function (o) { return o.EQ; })) : 0; if (!R || !e26) { pEmpty(k); return; }
+    var on = function (l) { return Q.v ? l === Q.v : !!CONN_LINES[l]; }, keep = function (p) { return on(PD.line[p]); };
+    var R = y25Rca(), e26 = PD && PA ? sumA(P_().filter(function (o) { return o.EQ > 0 && on(o.line); }).map(function (o) { return o.EQ; })) : 0; if (!R || !e26) { pEmpty(k); return; }
     var a = {}, b = {}, tot = {}, all = {};
     PD.defs.forEach(function (d) { if (keep(PD.ncs[d.n].p) && PA[PD.ncs[d.n].p].EQ > 0) tot[d.rca] = (tot[d.rca] || 0) + 1; });
     Object.keys(tot).forEach(function (c) { all[c] = 1; }); R.forEach(function (x) { if (x.rca) all[x.rca] = 1; });
@@ -4746,7 +4969,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
     var l = GF.line || 'A350', ms = {}, has = {}, fc = {};
     SEL_NC.forEach(function (n) { if (n[3] === l && n[25]) ms[n[25]] = 1; });
     var msn = Object.keys(ms).sort(function (a, b) { return (parseInt(a, 10) || 0) - (parseInt(b, 10) || 0); }), n0 = msn.length;
-    v2Defs().forEach(function (r) { var n = NC[r[0]], f = dFin(r); if (!f || n[3] !== l || !n[25]) return; var key = f + '|' + n[25]; if (!has[key]) { has[key] = 0; fc[f] = (fc[f] || 0) + 1; } has[key]++; });
+    v2Defs().forEach(function (r) { var n = NC[r[0]], f = finReal(r); if (!f || n[3] !== l || !n[25]) return; var key = f + '|' + n[25]; if (!has[key]) { has[key] = 0; fc[f] = (fc[f] || 0) + 1; } has[key]++; });
     var fins = Object.keys(fc).filter(function (f) { return fc[f] >= 2; }).sort(function (a, b) { return fc[b] - fc[a] || (a < b ? -1 : 1); }).slice(0, 10);
     if (!fins.length || n0 < 2) { pEmpty(k); return; }
     var W0 = gWd(k), lab = 92, mr = 78, cw = Math.max(2, (W0 - lab - mr) / n0), rh = 17, H = fins.length * rh + 26, g = '';
@@ -4786,7 +5009,7 @@ if (window.DASH && window.DASH.tables) window.DASH = fto2FromTables(window.DASH.
   function v2Pins(k) {
     var inv = v2Defs().filter(function (r) { return dRca(r) === 'Inversion'; }), per = {}, pairs = {}, nOk = 0, nAdj = 0;
     inv.forEach(function (r) { var p = pinPair(r[18]); if (!p) return; nOk++; if (pinNext(p[0], p[1])) nAdj++;
-      var f = dFin(r); if (!f) return; var n = NC[r[0]], ac = (n && n[25]) || 'NC ' + r[0], key = f + '|' + p[0] + '|' + p[1];
+      var f = finReal(r); if (!f) return; var n = NC[r[0]], ac = (n && n[25]) || 'NC ' + r[0], key = f + '|' + p[0] + '|' + p[1];
       (per[f] || (per[f] = {}))[ac] = 1; (pairs[key] || (pairs[key] = {}))[ac] = 1; });
     var rep = Object.keys(pairs).filter(function (q) { return Object.keys(pairs[q]).length >= 2; }).length;
     v2Stats(k, [[num(nOk) + ' / ' + num(inv.length), S('pinStatL')], [nOk ? pct0(nAdj / nOk * 100) : '—', S('pinAdjL')], [num(rep), S('pinRepL')]]);

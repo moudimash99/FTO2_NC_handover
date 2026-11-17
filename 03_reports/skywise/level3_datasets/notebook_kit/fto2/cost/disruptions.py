@@ -7,7 +7,7 @@ MES disruptions (aléas) and the cost of non-quality: the declared aléa time of
 
 nc   NC dataset with notification_number, work_order and the creation timestamp (creation_time)
 ds   MES disruptions (the Skywise "MES Disruptions" dataset, or its CSV export) with disruption_id, work_order,
-     open_date_time, open_date_time_tz, type_desc, time_lost (minutes typed by the operator), program, physical_station,
+     open_date_time (local time), type_desc, time_lost (minutes typed by the operator), program, physical_station,
      wo_designation, ds_material, comment, status
 
 Link: an aléa leads to an NC when the NC is on the same work order and was created between ALEA_LINK_HOURS[0] and
@@ -27,8 +27,13 @@ def _wo(s):
 
 
 def _opened(ds):
-    tz = ds["open_date_time_tz"].astype("string").fillna("") if "open_date_time_tz" in ds.columns else ""
-    return pd.to_datetime(ds["open_date_time"].astype("string").fillna("") + tz, errors="coerce", utc=True)
+    """When the aléa was opened, in UTC. The time is the plant's local time (Europe/Paris); a time that already carries its
+    zone is only converted. The separate time-zone column of MES is not read: it held the same offset, and its type
+    broke the read in Skywise."""
+    t = pd.to_datetime(ds["open_date_time"], errors="coerce")
+    if getattr(t.dt, "tz", None) is None:
+        t = t.dt.tz_localize("Europe/Paris", ambiguous="NaT", nonexistent="shift_forward")
+    return t.dt.tz_convert("UTC")
 
 
 def link(nc, ds, params=P):
