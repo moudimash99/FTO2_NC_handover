@@ -206,6 +206,6 @@ Not testable here, to watch on the first try:
 - The columns of Work_Order_Operation and MES Disruptions as the notebook reads them. The cell needs, for the
   operations: `order_number`, `order_type`, `plant`, `operation_short_text`, `labor_standard_value`,
   `setup_standard_value` and their two unit columns (unit IM = 1/100 hour); for the aléas: `disruption_id`, `plant`,
-  `physical_station`, `work_order`, `wo_designation`, `ds_material`, `type_desc`, `open_date_time`, `open_date_time_tz`,
+  `physical_station`, `work_order`, `wo_designation`, `ds_material`, `type_desc`, `open_date_time` (local time),
   `status`, `time_lost`, `program`, `comment`. These are the names in the September 2026 extracts.
 - Whether MES Disruptions holds every aléa: the extract stopped at exactly 2,500 rows (check H7).
