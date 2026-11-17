@@ -13,7 +13,8 @@ Outputs: the four tables the pages read, and two work lists (the defect lines st
 """
 from transforms.api import Input, LightweightInput, LightweightOutput, Output, transform
 
-FOLDER = "/Users/MMACX64V/workbook-output/"   # the folder where the tables are written (the team's folder at the switch)
+# the folder where the tables are written, in the repository's own project
+FOLDER = "/Airbus/Electrics Unit Performance Dashboard/protected/Qualité/NC Dashboard/For Developer/Datasets/"
 FUSION = "/the/folder/of/the/Fusion/datasets/"   # the folder holding the datasets synced from the Fusion spreadsheet
 SHEET = FUSION + "FTO2 NC Dashboard - Settings - "   # their names: the spreadsheet's, then the sheet's
 TEST = "_test"   # first builds: tables of their own; then TEST = "" to write the tables the pages read

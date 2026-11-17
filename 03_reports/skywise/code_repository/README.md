@@ -20,6 +20,10 @@ Everything else stays as it is.
 
 ## Steps
 
+0. **The repository must sit in the team's project**, the project where the tables are written (for example
+   *protected › Qualité › NC Dashboard › For Developer*): Skywise only lets a repository write tables inside its own project,
+   and a repository in a personal folder stops with its owner. To make one there: open that folder, *New* › *Code
+   repository*, Python transforms.
 1. **Start clean.** If the right-hand panel says *Conflicting remote changes*, press *Review and discard changes* (or *Merge
    and resolve* if you have changes to keep). The status bar should no longer show commits waiting (the arrows at the bottom).
 2. **Delete the example.** Right-click `src/myproject/datasets/lightweight-transform.py`, Delete.
@@ -41,17 +45,16 @@ Everything else stays as it is.
    `src/fto2/files`.
 8. **Two lines in `fto2_update.py`**, at the top:
    - `FUSION`: the path of the folder that holds the datasets of the Fusion spreadsheet (*FTO2 NC Dashboard - Settings -
-     Blackout days*, *... - Cost rates and times*...), ending with `/`. To find it: open that folder in Skywise and copy
-     its path (or copy the path of one of those datasets and keep it up to the last `/`). The datasets' names are already
-     in the file. If one of them was renamed or moved, write its whole path (or its id) on its own line instead.
-   - `FOLDER`: where the tables are written. Your own folder is fine for the test.
+     Blackout days*, *... - Cost rates and times*...), ending with `/`. Copy it, do not type it: a folder name cut short on
+     the screen, or a capital letter, and the build says the dataset does not exist. The datasets' names are already in the
+     file. If one of them was renamed or moved, write its id (*Copy RID*) on its own line instead.
+   - `FOLDER`: where the tables are written, in the repository's project. Its line holds the team's folder already.
    - Leave `TEST = "_test"`.
 9. **Commit**, then wait until the *Checks* tab is green.
 10. **Test build.** With `fto2_update.py` open, press *Build* (right-hand panel) and choose `fto2_dash_nc_test`. It takes a
     few minutes. The log starts with *Settings from Fusion: ...* (one entry per sheet) and ends with the tables written.
     Open `fto2_dash_nc_test`: it holds this year's NCs and last year's.
-11. **Switch.** In `fto2_update.py`, set `FOLDER` to the team's project folder and `TEST = ""`. Commit, then build
-    `fto2_dash_nc`.
+11. **Switch.** In `fto2_update.py`, set `TEST = ""`. Commit, then build `fto2_dash_nc`.
 12. **The sync.** Point the Postgres sync at the four new tables `fto2_dash_nc`, `fto2_dash_defects`,
     `fto2_dash_disruptions`, `fto2_dash_ref`, under the same names as today.
 13. **The pages.** Right after the first sync, paste the new files of the three pages (`UPDATE.md`, step 4): the pages of
@@ -82,7 +85,9 @@ Everything else stays as it is.
 | What you see | What to do |
 |---|---|
 | The checks fail on code style (*line too long*, *E501*...) | In `src/setup.cfg`, add the line `exclude = fto2` under `[flake8]` and under `[pycodestyle]`. In `src/.pylintrc`, under `[MASTER]`, add `ignore=fto2`. Commit again. |
-| A dataset not found (*FTO2 NC Dashboard - Settings - ...*) | Step 8: the `FUSION` folder (ending with `/`), or that dataset's own path on its line |
+| *Alias ... does not exist* (*FTO2 NC Dashboard - Settings - ...*) | Step 8: copy the `FUSION` folder's path again (ending with `/`), or put each dataset's id on its line |
+| *... could not be created since the user is not authorized. Datasets can only be created in the same project as the code repository* | Step 0: the repository is outside the project of `FOLDER` (a personal folder, for example) |
+| An input of another project must be added to the project | Accept the offer to add it to the project's references (a project owner may have to approve) |
 | `No module named` pandas, pyarrow or polars | Step 5 |
 | A settings table not found | Step 6 |
 | *The station list is missing* | Step 7 |
