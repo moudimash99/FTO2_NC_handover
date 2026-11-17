@@ -123,8 +123,9 @@ def scan(top):
 README = """FTO2 NC dashboard
 =================
 
-for_users/        The documents for the people who read the dashboard: start with "1 Introduction", then the
-                  "Start here" of your role (QLS, QCM, Manager); one "Deep dive" per tab. English in en/, French in fr/.
+for_users/        The documents for the people who use the dashboard: start with "1 Introduction", then the
+                  "Start here" of your role (QLS, QCM, Manager); one "Deep dive" per tab; "7" the MFT page, "8" the NC
+                  writer. English in en/, French in fr/.
 
 for_developers/   The documents for the person who maintains the dashboard: start with "1 Start here". English in
                   en/, French in fr/.
