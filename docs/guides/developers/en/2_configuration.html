@@ -29,17 +29,17 @@ lang: en
     <tr><td><b>Cost rates and times</b></td><td>The hourly rates of production, quality and methods, and the minutes each step of an NC
       takes.</td><td>When a rate or a process time changes.</td></tr>
     <tr><td><b>Blackout days</b></td><td>The days the plant is closed (weight 0) or half closed (weight 0.5), one row per period. The volume
-      of a month is spread over its working days, so these days decide the volume of each month and week.</td><td>Each year,
-      and when a closure is added.</td></tr>
-    <tr><td><b>Deliveries last year</b></td><td>The products delivered each month of the comparison year: the base of this year's
-      targets.</td><td>Each January, for the year just ended.</td></tr>
-    <tr><td><b>Planned volume</b></td><td>The planned volume (EqMSN) of each product, month by month.</td><td>When the EqMSN sheet is
-      updated.</td></tr>
-    <tr><td><b>Plant</b></td><td>The plant followed, and how its code is written in SAP.</td><td>Rarely.</td></tr>
+      of a month is spread over its working days, so these days decide the volume of each month and week, the share of the
+      month in progress, and the closure weeks every page leaves out of its averages. A day with no row is a full working
+      day: the update warns when the year, or its Christmas, has no closure.</td><td>Each year, Christmas included, and
+      when a closure is added.</td></tr>
   </tbody>
 </table>
-<p>The year followed is not a setting any more: it is the current year, and it changes by itself on 1 January. In early
-January the dashboard therefore starts almost empty; that is normal. The bell stays quiet until the year has 16 finished
+<p>Three values are not settings any more. The <b>year followed</b> is the current year, and it changes by itself on 1
+January. The <b>volumes</b> come from the production plan: last year's too, measured the same way (products built over the
+working days), except 2025, which the plan does not reach (<code>0_livraisons_2025.csv</code>, its deliveries). The <b>plant</b>
+is written in several rules and in the pages: changing it is a developer's task.</p>
+<p>Because the year changes on 1 January, the dashboard starts almost empty in early January; that is normal. The bell stays quiet until the year has 16 finished
 weeks (late April).</p>
 
 <h2>Part 2 – The configuration manager's sheets</h2>
@@ -73,8 +73,7 @@ no totals; a date written as 2026-05-15 or 15/05/2026.</p>
 <table class="keep">
   <thead><tr><th style="width:24mm">Starts with</th><th>What it is</th></tr></thead>
   <tbody>
-    <tr><td><code>0_</code></td><td>History and fallbacks: last year's deliveries, the planned volume, the production plan as last read. Not edited
-      by hand.</td></tr>
+    <tr><td><code>0_</code></td><td>History and fallbacks: 2025's deliveries, the production plan as last read. Not edited by hand.</td></tr>
     <tr><td><code>1_</code></td><td>The values of the two sheets above, as files: the fallback when Fusion cannot be read. Also the MFT
       actions.</td></tr>
     <tr><td><code>2_</code></td><td>The rules and names: which NCs count, the line of each programme, the product of each NC, its type, its origin,

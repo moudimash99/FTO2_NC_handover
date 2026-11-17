@@ -101,9 +101,12 @@ function elzMain(D, REF) {
   var WIDX = {}; WEEKS.forEach(function (w, i) { WIDX[w] = i; });
   var NW = WEEKS.length, PARTIAL = new Date(D.to + 'T00:00:00Z').getUTCDay() !== 0;
   var NCW = NCS.map(function (n) { return WIDX[isoWeek(n.d)]; });
-  var PLANT = WEEKS.map(function () { return 0; }); DEFS.forEach(function (d) { PLANT[NCW[d.n]]++; });
   var SET = REF.settings;   // the pages' settings, from config/ through the backend (fto2/reference.py page_settings)
-  var SHUT = PLANT.map(function (v, i) { return v < SET.semaine_fermeture && !(PARTIAL && i === NW - 1); });   // closure weeks: few defects on the whole plant
+  var YEAR = SET.annee || String(D.to).slice(0, 4);
+  // a week's working time (config/1_calendrier_production.csv: weekends, public holidays, closures), 1 = a normal week; weeks of
+  // another year than the one followed count as normal
+  function calW(w) { var P = SET.semaines_poids || [], n = +String(w).slice(6); return String(w).slice(0, 4) === String(YEAR) && P[n - 1] != null ? P[n - 1] : 1; }
+  var SHUT = WEEKS.map(function (w, i) { return calW(w) < SET.semaine_faible && !(PARTIAL && i === NW - 1); });   // closure weeks, from the blackout days
   function valid(i) { return i >= 0 && i < NW && !SHUT[i] && !(PARTIAL && i === NW - 1); }
   var LASTC = NW - 1; while (LASTC > 0 && !valid(LASTC)) LASTC--;
   var MOIS = ['janv.', 'févr.', 'mars', 'avr.', 'mai', 'juin', 'juil.', 'août', 'sept.', 'oct.', 'nov.', 'déc.'];

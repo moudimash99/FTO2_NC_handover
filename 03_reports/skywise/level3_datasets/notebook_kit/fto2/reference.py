@@ -580,7 +580,7 @@ def page_settings():
             "mft_baisse_min": n("mft_baisse_min_base"), "mft_baisse_facteur": n("mft_baisse_facteur"), "mft_fin_min": n("mft_fin_min_avions"),
             "action_baisse": action_cut, "action_coef": round(1 - action_cut, 12),
             "action_semaines": n("action_semaines_tenues"), "action_tendance": n("action_seuil_tendance"),
-            "semaine_fermeture": n("semaine_fermeture_moins_de"), "msn_minimum": n("msn_minimum"),
+            "semaines_poids": calendar_weights()["weeks"], "msn_minimum": n("msn_minimum"),
             "placeholder": config.parameter("souscodes_non_precis", F, keep_spaces=True).strip(),
             "defauts": opening,
             "categories": [{"nom": r["categorie"], "couleur": int(r["couleur"]) if r["couleur"].strip() else None,

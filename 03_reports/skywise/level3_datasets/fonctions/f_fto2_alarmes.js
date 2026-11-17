@@ -482,12 +482,20 @@ try {
     // reach into the plan's forecast months (export of 7 Oct, NCs to mid-October), those months count as built up to the last NC
     // day: the month of the last NC with its planned volume × the share of its days gone (P.part), the rest of it goes to the
     // forecast. Before (20 Oct) October's NCs fell out of every per-MSN total: Localisation 930 NCs against 994 on the Overview.
+    // the share of a month's working time gone at the end of a day ('AAAA-MM-JJ'): its working days so far ÷ the month's, the
+    // blackout days and public holidays counting as they do in the volume (D.eqmsn.cal, config/1_calendrier_production.csv);
+    // without them, its calendar days. On 14 August, 18 % of August is built, not 45 %.
+    function dayShare(day) {
+      var m = String(day).slice(0, 7), d = +String(day).slice(8, 10), W = D.eqmsn && D.eqmsn.cal && D.eqmsn.cal.days && D.eqmsn.cal.days[m];
+      if (W && W.length) { var tot = sumA(W); if (tot > 0) return Math.min(1, sumA(W.slice(0, d)) / tot); }
+      return Math.min(1, d / new Date(Date.UTC(+m.slice(0, 4), +m.slice(5, 7), 0)).getUTCDate());
+    }
     function pData() {
       var E = pSrc(), real = E === D.eqmsn, P = { real: real, E: E, months: E.months, fc: E.months.indexOf(E.forecastFrom), prod: E[PR.ver] || E.std, line: E.line, ncs: [], defs: [], cli: [], miss: {}, total: 0, idx: {} };
       if (P.fc < 0) P.fc = P.months.length;
       P.part = P.months.map(function () { return 1; });
       var L = real ? P.months.indexOf(D.meta.to.slice(0, 7)) : -1;
-      if (L >= P.fc) { var dm = new Date(Date.UTC(+D.meta.to.slice(0, 4), +D.meta.to.slice(5, 7), 0)).getUTCDate(); P.part[L] = Math.min(1, +D.meta.to.slice(8, 10) / dm); P.fc = L + 1; P.cur = L; }
+      if (L >= P.fc) { P.part[L] = dayShare(D.meta.to); P.fc = L + 1; P.cur = L; }
       P.all = Object.keys(P.prod).sort(function (a, b) { return sumA(P.prod[b]) - sumA(P.prod[a]); });
       var cnt = {}; REP.map(function (n) { return E.map[String(n[26] || '').toUpperCase()]; }).forEach(function (p) { if (p) cnt[p] = (cnt[p] || 0) + 1; });
       PCOL = {}; P.all.slice().sort(function (a, b) { return (cnt[b] || 0) - (cnt[a] || 0) || sumA(P.prod[b]) - sumA(P.prod[a]); }).forEach(function (p, i) { PCOL[p] = i < 6 ? 'var(--c' + (i + 1) + ')' : 'var(--dim)'; });
