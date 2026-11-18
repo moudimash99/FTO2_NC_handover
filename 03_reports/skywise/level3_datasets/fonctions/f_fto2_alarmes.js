@@ -65,8 +65,8 @@ try {
         if (!k) a._w = [num(r.cost_airbus), num(r.cost_global), num(r.cost_total), num(r.cost_admin), num(r.cost_work), num(r.cost_material), num(r.cost_engineering), num(r.cost_part)];   // REC cost switch (3 Nov)
         ncs.push(a); byNc[id] = { a: a, plant: str(r.plant), lt: str(r.long_text) };
       });
-      // products the production plan does not name, put back on their plan product (04_reference/produits_alias.csv, the same rules as
-      // the 2025 figures in build_all.alias_product): [line, product regex, station regex, plan product], first match wins
+      // products the production plan does not name, put back on their plan product (the settings table 2_produits_alias.csv):
+      // [line, product regex, station regex, plan product], first match wins
       var AL = (ref.eqmsn && ref.eqmsn.alias) || [], inPlan = (ref.eqmsn && ref.eqmsn.map) || {};
       if (AL.length) ncs.forEach(function (a) {
         var p = a[26] || 'Other'; if (inPlan[p.toUpperCase()]) return;
@@ -147,7 +147,7 @@ try {
     var G = { lang: 'fr', minor: true };
   /* ===== ALARM ENGINE START ===== */
   // Alarms: the bell lists what to look at, few lines, nothing raised by a single bad week. One rule for the
-  // dashboard and the MFT page (build_mft.py copies this block into the MFT page). Four ways something goes wrong, each tested on
+  // dashboard and the MFT page (the MFT page has a copy of this block). Four ways something goes wrong, each tested on
   // 2026 against a year where nothing changes:
   //  - rise ("en hausse"): an item of a line (all its defects, a category, a cause, a sub-code, a station, where they are found, a
   //    product, a cable imputation or reason), last 4 finished weeks against the 12 before, per MSN built (working days), binomial
@@ -366,9 +366,8 @@ try {
   /* ===== ALARM ENGINE END ===== */
     /* ===== MODEL START ===== */
     // ================================================================================================================
-    // The calculations of the dashboard, with no drawing. This file is inserted into the page (build/templates/dashboard.html,
-    // at /*@@MODEL@@*/) and into the three Slate functions (03_reports/skywise/level3_datasets/fonctions/), so the page and
-    // Skywise compute with the same code. It reads D (the data from fto2FromTables), SET (the settings), GF (the filters) and
+    // The calculations of the dashboard, with no drawing. The same code is in the page and in the three optional Slate
+    // functions, so both compute the same. It reads D (the data from fto2FromTables), SET (the settings), GF (the filters) and
     // G (language, minor defects); it touches no page element.
     //
     //   1. helpers           read a defect line or an NC, group NC types, the categories
@@ -735,7 +734,7 @@ try {
   
     // ---------------------------------------------------------------- 7. results (what the Slate functions return)
     // Each result is plain data (no function inside), so that a Slate function can hand it to the page. The page computes the
-    // same results itself when no Slate function is used (the laptop, or Skywise without the functions).
+    // same results itself when no Slate function is used.
   
     // the measures the targets are computed for: [value of a 2026 NC, value of a 2025 row, value of a 2026 product]
     var MEASURES = {

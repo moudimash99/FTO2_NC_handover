@@ -1,8 +1,7 @@
   /* ===== MODEL START ===== */
   // ================================================================================================================
-  // The calculations of the dashboard, with no drawing. This file is inserted into the page (build/templates/dashboard.html,
-  // at /*@@MODEL@@*/) and into the three Slate functions (03_reports/skywise/level3_datasets/fonctions/), so the page and
-  // Skywise compute with the same code. It reads D (the data from fto2FromTables), SET (the settings), GF (the filters) and
+  // The calculations of the dashboard, with no drawing. The same code is in the page and in the three optional Slate
+  // functions, so both compute the same. It reads D (the data from fto2FromTables), SET (the settings), GF (the filters) and
   // G (language, minor defects); it touches no page element.
   //
   //   1. helpers           read a defect line or an NC, group NC types, the categories
@@ -369,7 +368,7 @@
 
   // ---------------------------------------------------------------- 7. results (what the Slate functions return)
   // Each result is plain data (no function inside), so that a Slate function can hand it to the page. The page computes the
-  // same results itself when no Slate function is used (the laptop, or Skywise without the functions).
+  // same results itself when no Slate function is used.
 
   // the measures the targets are computed for: [value of a 2026 NC, value of a 2025 row, value of a 2026 product]
   var MEASURES = {

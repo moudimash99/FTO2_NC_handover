@@ -4,8 +4,8 @@
     from fto2 import skywise
     skywise.run(Dataset, Column)
 
-Dataset and Column are passed in (rather than imported here) so that the same run can be rehearsed on the laptop with a
-stand-in for Skywise that serves local files (tests/notebook_rehearsal.py).
+Dataset and Column are passed in (rather than imported here) so that the same run works in the pipeline notebook and in
+the Code Repository's transform (fto2/transform_io.py gives it the transform's inputs and outputs).
 
 Steps:
   0. the settings a person edits and the downloaded files are read once: a mistake stops the run before anything is written
@@ -256,7 +256,7 @@ def run(Dataset, Column, say=None, old_outputs=None):
     print("✅ fto2_dash_ref:", len(ref_t), "rows (the pages' reference data)")
     for line in downloads.report():
         print("  ", line)
-    # the cost explanation of each NC, for the Slate set-up with two functions (03_reports/skywise/level3_datasets/fonctions/):
+    # the cost explanation of each NC, for the optional Slate functions:
     # optional, so a missing dataset only prints a note
     try:
         cx_t = explain.table(nc_t, def_t, blocks["dashboard"]["cnqp"])

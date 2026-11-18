@@ -1150,8 +1150,8 @@ function fto2FromTables(ncIn, defIn, ref, disIn, cxIn) {
     if (!k) a._w = [num(r.cost_airbus), num(r.cost_global), num(r.cost_total), num(r.cost_admin), num(r.cost_work), num(r.cost_material), num(r.cost_engineering), num(r.cost_part)];   // REC cost switch (3 Nov)
     ncs.push(a); byNc[id] = { a: a, plant: str(r.plant), lt: str(r.long_text) };
   });
-  // products the production plan does not name, put back on their plan product (04_reference/produits_alias.csv, the same rules as
-  // the 2025 figures in build_all.alias_product): [line, product regex, station regex, plan product], first match wins
+  // products the production plan does not name, put back on their plan product (the settings table 2_produits_alias.csv):
+  // [line, product regex, station regex, plan product], first match wins
   var AL = (ref.eqmsn && ref.eqmsn.alias) || [], inPlan = (ref.eqmsn && ref.eqmsn.map) || {};
   if (AL.length) ncs.forEach(function (a) {
     var p = a[26] || 'Other'; if (inPlan[p.toUpperCase()]) return;
@@ -1659,9 +1659,8 @@ function fto2FromTables(ncIn, defIn, ref, disIn, cxIn) {
   function ruleName(r) { return G.lang === 'fr' ? (RULE_FR[r] || r) : r; }
   /* ===== MODEL START ===== */
   // ================================================================================================================
-  // The calculations of the dashboard, with no drawing. This file is inserted into the page (build/templates/dashboard.html,
-  // at /*@@MODEL@@*/) and into the three Slate functions (03_reports/skywise/level3_datasets/fonctions/), so the page and
-  // Skywise compute with the same code. It reads D (the data from fto2FromTables), SET (the settings), GF (the filters) and
+  // The calculations of the dashboard, with no drawing. The same code is in the page and in the three optional Slate
+  // functions, so both compute the same. It reads D (the data from fto2FromTables), SET (the settings), GF (the filters) and
   // G (language, minor defects); it touches no page element.
   //
   //   1. helpers           read a defect line or an NC, group NC types, the categories
@@ -2028,7 +2027,7 @@ function fto2FromTables(ncIn, defIn, ref, disIn, cxIn) {
 
   // ---------------------------------------------------------------- 7. results (what the Slate functions return)
   // Each result is plain data (no function inside), so that a Slate function can hand it to the page. The page computes the
-  // same results itself when no Slate function is used (the laptop, or Skywise without the functions).
+  // same results itself when no Slate function is used.
 
   // the measures the targets are computed for: [value of a 2026 NC, value of a 2025 row, value of a 2026 product]
   var MEASURES = {
@@ -2102,10 +2101,9 @@ function fto2FromTables(ncIn, defIn, ref, disIn, cxIn) {
   /* ===== MODEL END ===== */
 
   // ---------------------------------------------------------------- the calculations: here, or in Slate
-  // The targets and forecast (objectifs), the bell's alarms (alarmes) and the cost explanation (cout) come from the code inserted
-  // above (build/templates/model.js). In Skywise each can run as a Slate function instead (03_reports/skywise/level3_datasets/
-  // fonctions/): the page asks Slate for the filters of each chart that needs it, the chart says "Calcul dans Slate…" meanwhile,
-  // and the page draws again when the answer comes. Without the functions (the laptop, or Skywise without them) the page computes
+  // The targets and forecast (objectifs), the bell's alarms (alarmes) and the cost explanation (cout) come from the code just
+  // above (MODEL). Each can also run as a Slate function instead: the page asks Slate for the filters of each chart that needs it, the chart says "Calcul dans Slate…" meanwhile,
+  // and the page draws again when the answer comes. Without the functions the page computes
   // them itself, as it does when a function fails or gives no answer within 15 s. The cost explanation can also come from the
   // notebook's table fto2_dash_cout (D.cx).
   var SL = window.FTO2_SLATE || null;   // set by the Skywise glue: {use: {name: true}, ask(requests), show(waiting, failed), latest}
@@ -2801,7 +2799,7 @@ function fto2FromTables(ncIn, defIn, ref, disIn, cxIn) {
   // the NCs and the rates and targets made from them; the monthly plan by line; then how these numbers are made and used
   /* ===== ALARM ENGINE START ===== */
   // Alarms: the bell lists what to look at, few lines, nothing raised by a single bad week. One rule for the
-  // dashboard and the MFT page (build_mft.py copies this block into the MFT page). Four ways something goes wrong, each tested on
+  // dashboard and the MFT page (the MFT page has a copy of this block). Four ways something goes wrong, each tested on
   // 2026 against a year where nothing changes:
   //  - rise ("en hausse"): an item of a line (all its defects, a category, a cause, a sub-code, a station, where they are found, a
   //    product, a cable imputation or reason), last 4 finished weeks against the 12 before, per MSN built (working days), binomial
@@ -3746,7 +3744,7 @@ function fto2FromTables(ncIn, defIn, ref, disIn, cxIn) {
     if (!rows.length) { vSet('msn', EMPTY); return; }
     Object.keys(per).forEach(function (k) { var m = per[k], x = D.eqmsn && D.eqmsn.msn && D.eqmsn.msn[k]; m.st = x ? x[0] : m.first; m.lia = m.ncs.filter(function (n) { return n[5] === 1; }).length; });   // production start, else the first NC (30 Oct)
     var recent = isoDay(new Date(new Date(D.meta.to + 'T00:00:00Z').getTime() - 30 * 864e5));
-    // hatched: in production at the last NC date, from the production table (start .. OTA, build_all.production_msn); without it,
+    // hatched: in production at the last NC date, from the production table (start .. OTA); without it,
     // first NC in the last 30 days. Pale: the aircraft already had NCs in 2025, so part of it was built before this view (29 Oct)
     var PM = D.eqmsn && D.eqmsn.msn, Y25M = (D.y25 && D.y25.byMsn) || {};
     function inProd(l, msn, first) { if (!PM) return first >= recent; var x = PM[l + '|' + msn]; return !!x && x[0] <= D.meta.to && D.meta.to < x[1]; }
@@ -3986,8 +3984,7 @@ function fto2FromTables(ncIn, defIn, ref, disIn, cxIn) {
   function trunc(s, w) { var mc = Math.max(4, Math.floor(w / 6.5)); return s.length > mc ? s.slice(0, mc - 1) + '…' : s; }
 
   // ---------------------------------------------------------------- 7. NC rates: NCs, defects and cost per unit of volume built (MSN, only a denominator)
-  // real: 06_input_data/MSN_2026.xlsx (Standard and Adjusted sheets) with the NCs of the filter bar, matched on the product
-  // family (04_reference/eqmsn_produits.csv)
+  // real: the EqMSN volumes of the reference data with the NCs of the filter bar, matched on the product family
   Object.assign(GX.fr, { fcLeg: 'Prévision', fcSpan: '{a} à {b}', actLeg: 'Réalisé', eqTip: '{v} MSN', ncEq: '{n} NC · {e} MSN',
     perEq: '{v} par MSN', overall: 'Ensemble {v}', ciTip: 'IC 95 % : {a} à {b}', noData: 'Pas de production ou de NC rattachée pour ce choix.',
     pReal: 'Données réelles', rollTip: 'moyenne sur 3 mois : {v}', monthLeg: 'Mois', roll3: 'Moyenne glissante sur 3 mois', sig2: 'Limite à 2σ (dépassée par hasard environ 1 mois sur 40)', sig3: 'Limite à 3σ (au-delà, presque jamais le hasard)' });

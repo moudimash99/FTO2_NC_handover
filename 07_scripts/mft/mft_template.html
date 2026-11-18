@@ -879,8 +879,8 @@ var D = JSON.parse(document.getElementById('mft-data').textContent);   // the da
     finally { BUSY = false; if (btn) btn.disabled = false; }
   }
 
-  // ---------------------------------------------------------------- the bell: what to look at. The dashboard's alarm rule, copied in
-  // by build_mft.py, for the production type chosen, as of the week shown (its finished week); the line picker chooses whose
+  // ---------------------------------------------------------------- the bell: what to look at. The dashboard's alarm rule, copied
+  // here, for the production type chosen, as of the week shown (its finished week); the line picker chooses whose
   // alarms are listed; five lines at most. Seen marks: the page's store, collection 'alarmes' (the dashboard keeps its own).
   /*@@ALARMS@@*/
   // a sub-code that only says the defect has none yet ("T04 (non précisé)": a new line not yet labelled by the AI pass; "Non codé"):
@@ -1088,7 +1088,7 @@ var D = JSON.parse(document.getElementById('mft-data').textContent);   // the da
 
   // ---------------------------------------------------------------- the store: the actions and the alarms' marks
   (async function () {
-    var cl = window.FTO2_STORE;   // the store of 07_scripts/mft/mft_slate.js: this browser; in Slate with the state key "store", the shared one
+    var cl = window.FTO2_STORE;   // the store (STORE START): this browser; in Slate with the state key "store", the shared one
     try { USER = cl && cl.use ? await cl.use('user') : null; } catch (e) { USER = null; }
     try { DB = cl && cl.use ? await cl.use('db') : null; } catch (e) { DB = null; }
     if (USER) { try { UID = await USER.id(); } catch (e) { } try { CANW = await USER.can('data.write'); } catch (e) { CANW = null; } }

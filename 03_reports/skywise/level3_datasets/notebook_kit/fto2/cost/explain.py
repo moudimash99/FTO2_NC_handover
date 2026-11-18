@@ -1,10 +1,10 @@
 """The cost explanation of each NC ("Expliquer le calcul" on the dashboard's cost tab), worked out by the notebook.
 
-The dashboard can work it out itself (build/templates/model.js, coutNc) or read it from this table, fto2_dash_cout. Reading it is
-the second way of the Skywise set-up (03_reports/skywise/level3_datasets/fonctions/README.md): the page then only draws it.
+The dashboard can work it out itself (its JS, coutNc) or read it from this table, fto2_dash_cout, through the optional Slate
+functions: the page then only draws it.
 
 Same rules as the page, from the same inputs: the dashboard's NC and defect tables and the cost settings the page receives
-(fto2/reference.py, cnq_explain). tests/test_slate_functions.py checks that both give the same figures.
+(fto2/reference.py, cnq_explain).
 
     one row per NC (seq 0)              the euros of each step, the work factor, the adjustment (what the cost holds beyond the
                                         steps, engineering and material: the customer-return extra)

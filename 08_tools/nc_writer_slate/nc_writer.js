@@ -1,19 +1,17 @@
-// NC FTO2 · Saisie structurée: the Streamlit app (reference/app_streamlit.py) rebuilt for a Slate
-// Code Sandbox widget. Paste this file in the widget's JavaScript tab, nc_writer.css in the CSS tab
-// and nc_writer.html in the HTML tab. No library and no network call: the sandbox allows neither.
-// Outside Slate (nc_writer_standalone.html) the same code runs and only shows / downloads the NC.
+// NC FTO2 · Saisie structurée, in a Slate Code Sandbox widget: this file is the widget's JavaScript tab, nc_writer.css
+// its CSS tab and nc_writer.html its HTML tab. No library and no network call: the sandbox allows neither.
 (function (root) {
 "use strict";
 
 // What Slate sees on "Soumettre": the widget state gets submission = row, then the event "submit" fires with the row as
-// its value. In Slate, that event sets a variable with the row, and the action reads the variable (README, section 3).
+// its value. In Slate, that event sets a variable with the row, and the action reads the variable.
 // Never type two opening curly braces in this file: Slate would read them as a Handlebars template.
 // doneTitle / doneText: what the operator reads once the NC is handed over. The NC is saved when the action's form is
 // submitted; if Slate submits the action by itself on the event, write here that the NC is saved.
 var CONFIG = { stateKey: "submission", eventName: "submit", doneTitle: "NC envoyée",
   doneText: "Elle s’enregistre dans le formulaire sous la page. Si elle n’apparaît pas comme enregistrée, appuyez sur « Submit »." };
 
-// --- TAXONOMY: the official code sheet, copied from app_streamlit.py (tests/check_parity.py checks it) ---
+// --- TAXONOMY: the official code sheet ---
 // <DATA>
 var NATURES = [
   { code: "Q01", label: "Verrouillage", hint: "Contact non verrouillé / faux contact", isTest: false, objects: [
@@ -209,7 +207,7 @@ var ACT_OPTIONS = [
 var DEFAULT_HEADER = { msn: "", produit: "MIP A350", detection: "Poste" };
 var COMMENT_MAX = 200;
 
-// --- PURE HELPERS (same output as the Python app) ---
+// --- PURE HELPERS ---
 
 function genLine(seq, sub, qty, loc, objLabel, detail, comment) {
   var bits = [loc ? loc : "-", objLabel];
@@ -249,7 +247,7 @@ function findObject(nature, sub) {
   return null;
 }
 
-// test natures first when the NC was found at test, as in the Python app (stable sort)
+// test natures first when the NC was found at test (stable sort)
 function sortedNatures(isTest) {
   return NATURES.map(function (n, i) { return { n: n, i: i }; })
     .sort(function (a, b) { return ((a.n.isTest === isTest ? 0 : 1) - (b.n.isTest === isTest ? 0 : 1)) || a.i - b.i; })

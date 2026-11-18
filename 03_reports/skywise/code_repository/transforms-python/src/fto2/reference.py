@@ -6,7 +6,7 @@ The year followed and the comparison year come from config/2_parametres.csv (fto
 pages were first written for 2026 against 2025: the comparison year's block is still called 'y25' in the data, whatever
 the year.
 
-Everything is read from config/ and from the NC data, so the laptop build and the Skywise notebook make the same block
+Everything is read from config/ and from the NC data, so every run makes the same block
 (reference_block). REPORT collects counts for the build report.
 """
 import datetime as dt

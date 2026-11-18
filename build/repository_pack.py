@@ -124,8 +124,8 @@ def write(say=print):
     shutil.copytree(os.path.join(ROOT, "config"), os.path.join(SRC, "fto2", "settings"), ignore=skip)
     os.makedirs(os.path.join(SRC, "fto2", "files"))
     with open(os.path.join(SRC, "fto2", "files", "README.txt"), "w", encoding="utf-8") as f:
-        f.write("Put here fto2_station_mapping.csv, the station list (the file of the notebook's data/ folder), and the exports of "
-                "the Tableau Avances / Retards as downloaded (CSV), named Avances_Retards_<date>.csv: keep the older ones.\n")
+        f.write("This folder holds fto2_station_mapping.csv, the station list, and the exports of the Tableau Avances / Retards "
+                "(CSV), named Avances_Retards_<date>.csv: the newest is read; keep the older ones.\n")
     os.makedirs(os.path.join(SRC, "myproject", "datasets"))
     shutil.copyfile(os.path.join(ROOT, "build", "repository", "fto2_update.py"),
                     os.path.join(SRC, "myproject", "datasets", "fto2_update.py"))

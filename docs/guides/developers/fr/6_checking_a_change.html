@@ -60,8 +60,9 @@ modification du code.</p>
 
 <h2>Dans le Code Repository</h2>
 <ul>
-  <li><b>Téléversez des fichiers entiers plutôt que de les coller.</b> Un collage peut perdre la fin d’un long fichier, et le
-    build échoue alors loin de la cause (un module « has no attribute »). Le téléversement met chaque fichier tel quel.</li>
+  <li><b>Quand vous remplacez un fichier entier, vérifiez qu’il est complet.</b> Un long texte collé peut perdre sa fin, et
+    le build échoue alors loin de la cause (un module « has no attribute ») : vérifiez les dernières lignes du fichier avant
+    le commit.</li>
   <li><b>Aucune ligne de plus de 120 caractères dans le fichier du transform.</b> La vérification de style la refuse, et
     chaque build dit alors <i>No transforms discovered</i>.</li>
   <li><b>Lancez Build avec le fichier du transform à l’écran.</b> Build construit le fichier affiché ; depuis un autre fichier,

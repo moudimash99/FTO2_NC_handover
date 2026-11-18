@@ -16,7 +16,7 @@ import pandas as pd
 from . import rules
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-LAPTOP_DIR = os.path.join(os.path.dirname(HERE), "config")
+BESIDE_DIR = os.path.join(os.path.dirname(HERE), "config")   # a config/ folder beside the code, when there is one
 PACKAGE_DIR = os.path.join(HERE, "settings")   # in the Code Repository: the settings kept with the code
 SKYWISE_DIR = os.path.join("data", "config")
 
@@ -26,11 +26,11 @@ class ConfigError(ValueError):
 
 
 def folder():
-    """The settings folder: FTO2_CONFIG if set, else config/ on the laptop, fto2/settings/ in the Code Repository,
-    data/config/ in the Skywise notebook."""
+    """The settings folder: FTO2_CONFIG if set, else a config/ folder beside the code, fto2/settings/ in the Code
+    Repository, data/config/ in the pipeline notebook."""
     if os.environ.get("FTO2_CONFIG"):
         return os.environ["FTO2_CONFIG"]
-    for d in (LAPTOP_DIR, PACKAGE_DIR):
+    for d in (BESIDE_DIR, PACKAGE_DIR):
         if os.path.isdir(d):
             return d
     return SKYWISE_DIR

@@ -75,8 +75,8 @@ folder <code>files</code>, named <code>Avances_Retards_&lt;date&gt;.csv</code>. 
     row it found the header and how many rows it took (<i>Fusion sheet GPS register: header on row 4, 812 rows</i>). A sheet
     it cannot use gets a warning, <i>NOT USED</i>, with the reason (the columns it did not find) and what it kept instead;
     the warning comes again at the end. Read them after any change.</li>
-  <li>The sheet <i>Target and pages</i> can also be read by the pages themselves (an option of the Skywise set-up: its README,
-    step 3). A change there then shows the next time a page is opened, without waiting for the update. A line missing or
+  <li>The sheet <i>Target and pages</i> can also be read by the pages themselves (the line <code>reglages</code> of
+    their State). A change there then shows the next time a page is opened, without waiting for the update. A line missing or
     wrongly written keeps the update's value.</li>
 </ul>
 
@@ -109,8 +109,8 @@ written, and with a plain message naming the table, the line and what to fix, fo
 
 <div class="next">
 <h2>Not settings yet</h2>
-<p>A few values are still written in the code of the pages, not in a table. To change one, change the code, rebuild the page and
-paste it again in Slate (The front end).</p>
+<p>A few values are still written in the code of the pages, not in a table. To change one, change it in the page's JS, in its Slate
+application (The front end).</p>
 <table class="keep">
   <thead><tr><th style="width:80mm">Value</th><th>Where it is written</th></tr></thead>
   <tbody>

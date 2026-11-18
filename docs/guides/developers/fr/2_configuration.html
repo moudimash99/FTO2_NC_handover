@@ -81,8 +81,8 @@ développeur (le guide du pipeline).</p>
     812 rows</i>). Une feuille qu’elle ne peut pas utiliser reçoit un avertissement, <i>NOT USED</i>, avec la raison (les
     colonnes non trouvées) et ce qui est gardé à la place ; l’avertissement revient à la fin. Lisez-les après chaque
     changement.</li>
-  <li>La feuille <i>Target and pages</i> peut aussi être lue directement par les pages (une option de l’installation Skywise : son
-    README, étape 3). Une modification s’affiche alors à la prochaine ouverture d’une page, sans attendre la mise à jour. Une
+  <li>La feuille <i>Target and pages</i> peut aussi être lue directement par les pages (la ligne <code>reglages</code> de
+    leur State). Une modification s’affiche alors à la prochaine ouverture d’une page, sans attendre la mise à jour. Une
     ligne absente ou mal écrite garde la valeur de la mise à jour.</li>
 </ul>
 
@@ -118,8 +118,8 @@ secondes, sans rien écrire, avec un message clair qui nomme la table, la ligne 
 
 <div class="next">
 <h2>Pas encore des réglages</h2>
-<p>Quelques valeurs sont encore écrites dans le code des pages, pas dans une table. Pour en changer une : changer le code,
-reconstruire la page et la recoller dans Slate (Les pages).</p>
+<p>Quelques valeurs sont encore écrites dans le code des pages, pas dans une table. Pour en changer une : la modifier dans le JS de la page,
+dans son application Slate (Les pages).</p>
 <table class="keep">
   <thead><tr><th style="width:80mm">Valeur</th><th>Où elle est écrite</th></tr></thead>
   <tbody>

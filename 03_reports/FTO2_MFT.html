@@ -282,7 +282,7 @@ header.top .al-wrap { margin-left: auto; }
 <script>
 window.FTO2_MFT_REF = JSON.parse(document.getElementById('mft-ref').textContent);   // the tracker actions
 /* ===== STORE START ===== */
-// The store of both MFT pages: this one and the laptop page (07_scripts/mft/build_mft.py copies this block into it). Its calls:
+// The store of the MFT page. Its calls:
 // use('db') gives collection(name), then doc(id) with set, update and delete, and onSnapshot; note(lang) says where the actions
 // are kept. Neither page has a shared store: the shared actions are the table config/1_actions_mft.csv (they reach the page in
 // FTO2_MFT_REF.actions and replace this browser's copy at every load); an action typed on the page is kept in this browser
@@ -946,12 +946,12 @@ var D = JSON.parse(document.getElementById('mft-data').textContent);   // the da
     finally { BUSY = false; if (btn) btn.disabled = false; }
   }
 
-  // ---------------------------------------------------------------- the bell: what to look at. The dashboard's alarm rule, copied in
-  // by build_mft.py, for the production type chosen, as of the week shown (its finished week); the line picker chooses whose
+  // ---------------------------------------------------------------- the bell: what to look at. The dashboard's alarm rule, copied
+  // here, for the production type chosen, as of the week shown (its finished week); the line picker chooses whose
   // alarms are listed; five lines at most. Seen marks: the page's store, collection 'alarmes' (the dashboard keeps its own).
   /* ===== ALARM ENGINE START ===== */
   // Alarms: the bell lists what to look at, few lines, nothing raised by a single bad week. One rule for the
-  // dashboard and the MFT page (build_mft.py copies this block into the MFT page). Four ways something goes wrong, each tested on
+  // dashboard and the MFT page (the MFT page has a copy of this block). Four ways something goes wrong, each tested on
   // 2026 against a year where nothing changes:
   //  - rise ("en hausse"): an item of a line (all its defects, a category, a cause, a sub-code, a station, where they are found, a
   //    product, a cable imputation or reason), last 4 finished weeks against the 12 before, per MSN built (working days), binomial
@@ -1373,7 +1373,7 @@ var D = JSON.parse(document.getElementById('mft-data').textContent);   // the da
 
   // ---------------------------------------------------------------- the store: the actions and the alarms' marks
   (async function () {
-    var cl = window.FTO2_STORE;   // the store of 07_scripts/mft/mft_slate.js: this browser; in Slate with the state key "store", the shared one
+    var cl = window.FTO2_STORE;   // the store (STORE START): this browser; in Slate with the state key "store", the shared one
     try { USER = cl && cl.use ? await cl.use('user') : null; } catch (e) { USER = null; }
     try { DB = cl && cl.use ? await cl.use('db') : null; } catch (e) { DB = null; }
     if (USER) { try { UID = await USER.id(); } catch (e) { } try { CANW = await USER.can('data.write'); } catch (e) { CANW = null; } }

@@ -58,12 +58,10 @@ peuvent voir.</p>
       <code>3_sous_categories.csv</code> : la mise à jour s’arrête si les deux diffèrent). Pour chacune : la calculer une seule
       fois dans la mise à jour et l’envoyer aux pages.</td></tr>
     <tr><td><b>Lancer la mise à jour de façon planifiée</b></td><td>La mise à jour tourne comme transform du Code Repository, de
-      façon planifiée (le README du kit Code Repository). Dès qu’elle écrit les tables que lisent les pages (son étape 11), le
-      notebook n’est plus qu’une solution de secours : le code se change dans le repository seulement.</td></tr>
+      façon planifiée, et écrit les tables que lisent les pages. Le notebook n’est plus qu’une solution de secours : le code se change dans le repository seulement.</td></tr>
     <tr><td><b>Étiqueter les nouvelles lignes de défaut</b></td><td>Les lignes à étiqueter sont listées à chaque mise à jour. Aucun texte de NC
       ne peut sortir de Skywise vers un outil extérieur sans l’accord de l’IT et du propriétaire des données.</td></tr>
-    <tr><td><b>Actions MFT gardées pour tous</b></td><td>En cours de mise en place sur la page MFT dans Skywise (le README de
-      l’installation Skywise, étape 4) : les actions sont gardées dans un objet du type d’objet de la Saisie structurée de NC, et
+    <tr><td><b>Actions MFT gardées pour tous</b></td><td>En cours de mise en place sur la page MFT dans Skywise : les actions sont gardées dans un objet du type d’objet de la Saisie structurée de NC, et
       enregistrées pour tous en un clic (l’enregistrement de la page remplit une variable, qui soumet l’action). Reste à régler : la relecture des
       actions enregistrées. La copie Postgres des données du type d’objet a du retard sur l’Ontologie, et la source
       « foundry » de Slate n’a pas atteint l’API qui lit directement les objets. D’ici là, une action modifiée sur la page

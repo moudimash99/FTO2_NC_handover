@@ -8,8 +8,8 @@ DataFrames and returns them with cost columns added:
     nc       one row per NC            (the "FTO2" dataset)
     defects  one row per defect line   (the "FTO2 defects" dataset, output of the defect parser)
 
-All numbers come from the settings tables in config/ (read by params.py). No Foundry or Spark dependency here, so it can be
-tested on a laptop with two CSV files.
+All numbers come from the settings tables in config/ (read by params.py). No Foundry or Spark dependency here: it works on
+any two tables.
 
 How one NC is costed
 --------------------

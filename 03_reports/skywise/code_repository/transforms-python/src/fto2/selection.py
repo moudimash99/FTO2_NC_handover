@@ -8,7 +8,7 @@ NC type and product. Every rule comes from a table in config/:
   2_regle_type_nc.csv     NC type, in priority order
   2_regle_produit.csv     product, from the article and station texts
 
-The Skywise notebook and the laptop build both call apply_rules(), so the two cannot differ.
+Every run calls apply_rules(), so the selection is the same wherever the update runs.
 """
 from . import config, rules
 

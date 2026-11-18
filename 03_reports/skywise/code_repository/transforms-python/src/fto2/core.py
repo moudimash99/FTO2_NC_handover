@@ -2,16 +2,14 @@
 """
 FTO2 NC dashboard: from the Skywise NC exports to the dashboard's two tables.
 
-The same file runs in two places:
-    - on the laptop: build/build_all.py runs it on the CSV exports of 06_input_data;
-    - in Skywise (Level 3): the notebook runs it unchanged on the datasets fto2_dashboard_data and
-      fto2_dashboard_data_missing_ids that the pipeline notebook already writes.
+It runs in Skywise: fto2/skywise.py calls it, from the Code Repository's transform (or from the pipeline notebook, the
+fallback).
 The NC selection is the pipeline's: nothing here adds or removes an NC (the scope column only labels them).
 
     nc_t, def_t, dis_t, info, to_label = fto2_core.build(frames, labels, ops, dis)
 
 frames   the NC exports (standard + missing IDs) as pandas DataFrames, with the pipeline's columns
-labels   root-cause labels per defect line (04_reference/llm_labels_longtext.csv; a dataset in Skywise)
+labels   root-cause labels per defect line (the dataset fto2_ai_labels)
 The rules and reference tables (sub-codes, A400M titles, cost settings...) come from config/ (fto2/config.py).
 
 ops      the rework orders' operations (Work_Order_Operation, S03 at FTO2), or None: the model's work times
@@ -21,8 +19,7 @@ nc_t     one row per NC, columns NC_COLUMNS          -> dataset fto2_dash_nc
 def_t    one row per defect line, columns DEF_COLUMNS -> dataset fto2_dash_defects
 dis_t    one row per quality aléa that led to no NC, columns DIS_COLUMNS -> dataset fto2_dash_disruptions
 
-Needs on the import path: fto2_logic.py and nc_defect_parser.py (02_dashboard_pack/.../1_pipeline) and the cnq package
-(cnq_handoever/cnq). The dashboard's JavaScript (fto2FromTables) turns the two tables back into the page's data.
+Uses fto2/parser (fto2_logic.py, nc_defect_parser.py) and fto2/cost. The dashboard's JavaScript (fto2FromTables) turns the two tables back into the page's data.
 """
 import os
 import re
@@ -595,11 +592,10 @@ def lines_to_label(d, lt):
 
 
 # ============================================================ 7. a past year (2025) and raw extracts: the notebook's rules
-# The 2026 exports come out of the pipeline notebook with its selection and its *_auto columns. The 2025 extract and the raw
-# Skywise extracts go through the same rules here. The rules are the tables in config/ (fto2/selection.py), shared with the notebook.
+# The raw Skywise extracts go through the selection rules here. The rules are the tables in config/ (fto2/selection.py), shared with the notebook.
 def pipeline_rules(raw, station_desc):
-    """The notebook's selection and *_auto columns on a raw extract. station_desc: {station: description} (the notebook reads
-    data/fto2_station_mapping.csv; on the laptop the pairs come from the 2026 exports)."""
+    """The notebook's selection and *_auto columns on a raw extract. station_desc: {station: description} (read from the station
+    list, fto2_station_mapping.csv)."""
     return selection.apply_rules(raw, station_desc)
 
 
@@ -641,7 +637,7 @@ def year_rows(p, year, alias=None):
     Same scope rule as the dashboard (serie = plant FTO2 or FT02; client = customer return). Returns (rows, info)."""
     nc, d = p["nc"], p["d"]
     nc = nc[nc.date_creation.astype(str).str.startswith(str(year))].copy()
-    if alias:   # alias(line, product, station) -> the plan product (build_all.alias_product): products off the plan put back on theirs
+    if alias:   # alias(line, product, station) -> the plan product: products off the plan put back on theirs
         st = nc["station_description"] if "station_description" in nc.columns else nc.get("station", pd.Series("", index=nc.index))
         nc["produit"] = [alias(S_(l), S_(q) or "Other", S_(t)) for l, q, t in zip(nc.ligne, nc.produit, st)]
     nc["c3all"] = nc["cnq_cost_total"]   # the cost of the work whoever is liable (the REC cost switch)

@@ -4,7 +4,7 @@
 @@REF_READER@@
 @@REGLAGES@@
 // ---------------------------------------------------------------- the two Slate tables -> the page's data
-// As 07_scripts/mft/build_mft.py data() does from the CSV files: NCs raised at FTO2 (plant FTO2 or FT02) created in the year
+// NCs raised at FTO2 (plant FTO2 or FT02) created in the year
 // followed (config/2_parametres.csv, annee: it comes with the settings), their
 // defect lines, values numbered in dictionaries. Tables as Slate gives them (one array per column) or as rows.
 function mftFromTables(ncIn, defIn, R) {
@@ -24,7 +24,7 @@ function mftFromTables(ncIn, defIn, R) {
   var plan = R.plan || {}, alias = R.alias || [];
   // the NC's Responsabilité group, as the dashboard decides it (model.js liabCat): f FTO2 liable, s a supplier's number, o the others
   function liabGroup(r) { if (Math.round(parseFloat(r.on_aec) || 0) === 1) return 'f'; var c = str(r.liability).replace(/[\[\]\s]/g, '').replace(/^0+/, ''); return /^\d+$/.test(c) ? 's' : 'o'; }
-  function planProd(line, prod, station) {   // build_all.alias_product, then the plan's name; '' when not in the plan
+  function planProd(line, prod, station) {   // the settings' product aliases, then the plan's name; '' when not in the plan
     var p = prod || 'Other';
     if (!plan[p.toUpperCase()]) for (var i = 0; i < alias.length; i++) { var x = alias[i];
       if (x[0] === line && new RegExp(x[1]).test(p) && (!x[2] || new RegExp(x[2], 'i').test(station || ''))) { p = x[3]; break; } }
@@ -52,7 +52,7 @@ function mftFromTables(ncIn, defIn, R) {
 
 // ---------------------------------------------------------------- the store: the page's actions and alarm marks, in this browser
 /* ===== STORE START ===== */
-// The store of both MFT pages: this one and the laptop page (07_scripts/mft/build_mft.py copies this block into it). Its calls:
+// The store of the MFT page. Its calls:
 // use('db') gives collection(name), then doc(id) with set, update and delete, and onSnapshot; note(lang) says where the actions
 // are kept. Neither page has a shared store: the shared actions are the table config/1_actions_mft.csv (they reach the page in
 // FTO2_MFT_REF.actions and replace this browser's copy at every load); an action typed on the page is kept in this browser
@@ -101,7 +101,7 @@ window.FTO2_STORE = (function () {
 // Used when the sandbox's state has the key "store" (the query q_fto2_mft_store); without it, the browser store above. The
 // actions are kept in one object of the NC writer's object type ("a30 Nc Writer Dataset"): the object whose Msn is MFT-ACTIONS,
 // its Texte Sap holding every action as JSON {page, saved_at, actions}. Each save adds such an object; the page reads the one
-// saved last (saved_at). A row without the page's mark (the test box of 08_tools/mft_store_test) is not read. With no row at
+// saved last (saved_at). A row without the page's mark is not read. With no row at
 // all, the page starts from the table's actions (config/1_actions_mft.csv), and its first save writes them into the store.
 // Writing takes the NC writer's route: at each change the page fires the event "save" with the row to write (and puts it in
 // its state, key "store_row"); a Slate event copies it into a variable, the object type's Action widget takes its default
@@ -227,7 +227,7 @@ function fto2SharedStore(api, local, seed) {
   };
 }
 
-// ---------------------------------------------------------------- the page (07_scripts/mft/mft_template.html), started once the tables are in
+// ---------------------------------------------------------------- the page, started once the tables are in
 function mftMain() {
 @@MAIN@@
 }

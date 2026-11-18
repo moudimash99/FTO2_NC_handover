@@ -52,12 +52,11 @@ lang: en
       of detection and decisions (the pages translate them with their own lists); the cause tree (decided in the parser's
       code, described in <code>3_sous_categories.csv</code>: the update stops if the two differ). Each one: compute it once in
       the update and send it to the pages.</td></tr>
-    <tr><td><b>Running the update on a schedule</b></td><td>The update runs as a transform of the Code Repository, on a schedule
-      (the README of the code repository kit). Once it writes the tables the pages read (its step 11), the notebook is only a
-      fallback: change the code in the repository only.</td></tr>
+    <tr><td><b>Running the update on a schedule</b></td><td>The update runs as a transform of the Code Repository, on a schedule,
+      and writes the tables the pages read. The notebook is only a fallback: change the code in the repository only.</td></tr>
     <tr><td><b>Labelling new defect lines</b></td><td>The lines to label are listed at each update. No NC text may leave Skywise for an
       outside tool without the agreement of IT and of the data owner.</td></tr>
-    <tr><td><b>MFT actions kept for everyone</b></td><td>Being set up on the Skywise MFT page (the Skywise set-up's README, step 4):
+    <tr><td><b>MFT actions kept for everyone</b></td><td>Being set up on the MFT page in Skywise:
       the actions are kept in one object of the NC writer's object type and saved for everyone in one click (the page's save
       fills a variable, which submits the action). Not settled yet: how the page reads
       the saved actions back. The Postgres copy of the object type's data lags behind the Ontology, and Slate's "foundry"
