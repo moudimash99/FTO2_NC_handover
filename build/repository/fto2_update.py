@@ -1,15 +1,17 @@
 """FTO2 NC dashboard: the update, as a transform that Skywise runs on a schedule.
 
 The same steps as the pipeline notebook. The code is in src/fto2 (start with fto2/skywise.py), the settings in
-src/fto2/settings, the files kept with the code in src/fto2/files: the station list, and the exports of the Tableau
-Avances / Retards (production plan) as downloaded, named Avances_Retards_<date>.csv (the newest wins; keep the older ones).
+src/fto2/settings, the files kept with the code in src/fto2/files: the station list, and the exports of the
+Tableau Avances / Retards (production plan) as downloaded, named Avances_Retards_<date>.csv (the newest wins;
+keep the older ones).
 
 Inputs: the four Skywise datasets (their ids below) and the six datasets of the Fusion spreadsheet
 "FTO2 NC Dashboard - Settings" that the update reads, named by Fusion after the spreadsheet and the sheet
 ("FTO2 NC Dashboard - Settings - Blackout days"); in the code each one keeps a short name (fto2_set_blackout).
-The pages read the seventh sheet, "Target and pages", themselves. The last three sheets hold a whole sheet pasted as it is
-(the GPS register, the Test list, the cable tracker): the update finds their header row itself.
-Outputs: the four tables the pages read, and two work lists (the defect lines still to label, the parts still to price).
+The pages read the seventh sheet, "Target and pages", themselves. The last three sheets hold a whole sheet
+pasted as it is (the GPS register, the Test list, the cable tracker): the update finds their header row itself.
+Outputs: the four tables the pages read, and two work lists (the defect lines still to label, the parts still
+to price).
 """
 from transforms.api import Input, LightweightInput, LightweightOutput, Output, transform
 
