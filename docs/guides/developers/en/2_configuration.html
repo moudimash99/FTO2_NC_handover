@@ -58,10 +58,11 @@ weeks (late April).</p>
 </table>
 <p>The sheets filled in by hand: keep the first row (the column names) exactly as it is; one row per item, no merged cells,
 no totals; a date written as 2026-05-15 or 15/05/2026.</p>
-<p>The last four sheets are <b>pasted whole, as they are</b>: empty the sheet, copy everything at the source (Ctrl+A, Ctrl+C in
-Google Sheets or in the export) and paste it in cell A1. Delete nothing and rename nothing: the update finds the header row
-itself, among the first rows, and leaves out the title rows above it and the columns it does not need. The plan's date is a
-date written above the export's header if there is one, else the day of the update.</p>
+<p>The last three sheets are <b>pasted whole, as they are</b>: empty the sheet, copy everything at the source (Ctrl+A, Ctrl+C in
+Google Sheets) and paste it in cell A1. Delete nothing and rename nothing: the update finds the header row itself, among the
+first rows, and leaves out the title rows above it and the columns it does not need.</p>
+<p>The production plan is not in Fusion: the exports of the Tableau Avances / Retards are CSV files kept with the code, in its
+folder <code>files</code>, named <code>Avances_Retards_&lt;date&gt;.csv</code>. Adding one is a developer's task (the pipeline guide).</p>
 
 <h2>How the update reads the sheets</h2>
 <ul>

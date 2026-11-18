@@ -58,6 +58,16 @@ secondes : chaque table de réglages est complète et lisible, les règles fon
 réglages que les fichiers, et aucune valeur métier ni aucune année n’est écrite dans le code. Lancez-les après chaque
 modification du code.</p>
 
+<h2>Dans le Code Repository</h2>
+<ul>
+  <li><b>Téléversez des fichiers entiers plutôt que de les coller.</b> Un collage peut perdre la fin d’un long fichier, et le
+    build échoue alors loin de la cause (un module « has no attribute »). Le téléversement met chaque fichier tel quel.</li>
+  <li><b>Aucune ligne de plus de 120 caractères dans le fichier du transform.</b> La vérification de style la refuse, et
+    chaque build dit alors <i>No transforms discovered</i>.</li>
+  <li><b>Lancez Build avec le fichier du transform à l’écran.</b> Build construit le fichier affiché ; depuis un autre fichier,
+    il ne trouve rien à construire.</li>
+</ul>
+
 <h2>Trois habitudes</h2>
 <ul>
   <li><b>Une modification à la fois.</b> Deux modifications faites ensemble ne peuvent plus être distinguées ensuite.</li>

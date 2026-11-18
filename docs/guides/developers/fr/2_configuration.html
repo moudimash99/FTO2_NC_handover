@@ -59,11 +59,13 @@ muette tant que l’année n’a pas 16 semaines terminées (fin avril).</p>
 </table>
 <p>Les feuilles remplies à la main : gardez la première ligne (les noms des colonnes) exactement comme elle est ; une ligne
 par élément, pas de cellules fusionnées, pas de totaux ; une date s’écrit 2026-05-15 ou 15/05/2026.</p>
-<p>Les quatre dernières feuilles sont <b>collées en entier, telles quelles</b> : videz la feuille, copiez tout à la source
-(Ctrl+A puis Ctrl+C dans Google Sheets ou dans l’export) et collez en A1. Ne supprimez et ne renommez rien : la mise à jour
-trouve elle-même la ligne d’en-tête parmi les premières lignes, et laisse de côté les lignes de titre au-dessus et les
-colonnes dont elle n’a pas besoin. La date du plan est une date écrite au-dessus de l’en-tête de l’export s’il y en a une,
-sinon le jour de la mise à jour.</p>
+<p>Les trois dernières feuilles sont <b>collées en entier, telles quelles</b> : videz la feuille, copiez tout à la source
+(Ctrl+A puis Ctrl+C dans Google Sheets) et collez en A1. Ne supprimez et ne renommez rien : la mise à jour trouve elle-même la
+ligne d’en-tête parmi les premières lignes, et laisse de côté les lignes de titre au-dessus et les colonnes dont elle n’a pas
+besoin.</p>
+<p>Le plan de production n’est pas dans Fusion : les exports du Tableau Avances / Retards sont des fichiers CSV gardés avec le
+code, dans son dossier <code>files</code>, nommés <code>Avances_Retards_&lt;date&gt;.csv</code>. En ajouter un est une tâche du
+développeur (le guide du pipeline).</p>
 
 <h2>Comment la mise à jour lit les feuilles</h2>
 <ul>

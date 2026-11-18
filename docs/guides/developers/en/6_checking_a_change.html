@@ -52,6 +52,16 @@ before and after. It takes ten minutes, and it is the check that catches most mi
 complete and readable, the rules work, the Fusion sheets give back the same settings as the files, and no business value or
 year is written in the code. Run them after any change to the code.</p>
 
+<h2>In the Code Repository</h2>
+<ul>
+  <li><b>Upload whole files rather than pasting them.</b> A paste can lose the end of a long file, and the build then fails
+    far from the cause (a module "has no attribute"). Uploading puts each file exactly as it is.</li>
+  <li><b>No line over 120 characters in the transform file.</b> The style check refuses it, and every build then says
+    <i>No transforms discovered</i>.</li>
+  <li><b>Press Build with the transform file on screen.</b> Build builds the file shown; from any other file it finds
+    nothing to build.</li>
+</ul>
+
 <h2>Three habits</h2>
 <ul>
   <li><b>One change at a time.</b> Two changes made together cannot be told apart afterwards.</li>
