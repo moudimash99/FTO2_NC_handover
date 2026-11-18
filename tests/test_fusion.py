@@ -91,10 +91,13 @@ class TestFusion(unittest.TestCase):
         before = self.tables()
         said = self.load(**self.sheets)
         self.assertIn("fto2_set_cost", fusion.USED)
-        for name in fusion.PASTED:   # only the note: nothing pasted yet, the previous table is kept, and the run says so
+        # only the note: nothing pasted yet, the previous table is kept, and the run says so; the template has no sheet for the
+        # production plan any more (its exports are CSV files kept with the code, 18 Nov), and its absence is not said
+        for name in [n for n in fusion.PASTED if n != fusion.PLAN]:
             self.assertNotIn(name, fusion.USED)
             self.assertTrue(any(m.startswith("⚠️ Fusion sheet %s NOT USED: empty" % fusion.PASTED[name]) for m in said), said)
-        self.assertEqual(len(fusion.ALERTS), 4)
+        self.assertFalse(any("Production plan" in m for m in said), said)
+        self.assertEqual(len(fusion.ALERTS), 3)
         for name, t in self.tables().items():
             pd.testing.assert_frame_equal(t, before[name], obj=name)
 

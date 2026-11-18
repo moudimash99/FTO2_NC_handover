@@ -1,7 +1,8 @@
 """The downloads the team does not retype, read at each run as they are: the production plan and the cable requests.
 
-    production plan   the export of the Tableau Avances / Retards pasted in the Fusion sheet "Production plan";
-                      in the notebook, also every export saved in data/      2_sources.csv, line exports_plan
+    production plan   the exports of the Tableau Avances / Retards as downloaded (CSV), kept with the code: in the
+                      Code Repository src/fto2/files/, in the notebook data/   2_sources.csv, line exports_plan
+                      (a Fusion sheet "Production plan" is still read when one is given to the run)
     cable requests    the cable team's tracker pasted in the Fusion sheet "Cable tracker" (fto2/fusion.py turns it into a
                       file and names it on the line suivi_cables of 2_sources.csv), else the export saved in data/
 

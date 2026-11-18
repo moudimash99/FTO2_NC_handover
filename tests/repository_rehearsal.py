@@ -73,7 +73,7 @@ def fake_transforms_api():
 
 
 SHIPPED = ["non_conformity", "fto2_ai_labels", "work_order_operation", "mes_disruptions", "fto2_set_cost", "fto2_set_blackout",
-           "fto2_set_part_prices", "fto2_set_cables", "fto2_set_gps", "fto2_set_test", "fto2_set_plan", "fto2_dash_nc",
+           "fto2_set_part_prices", "fto2_set_cables", "fto2_set_gps", "fto2_set_test", "fto2_dash_nc",
            "fto2_dash_defects", "fto2_dash_disruptions", "fto2_dash_ref", "fto2_lines_to_label", "fto2_parts_to_price"]
 
 
@@ -117,9 +117,9 @@ def main():
         fusion["fto2_set_test"] = pasted(os.path.join(work, manual_lists._src("liste_test")))   # 2 title rows
         cables = [f for f in os.listdir(data) if "cables" in f.lower() and f.endswith(".csv")]
         fusion["fto2_set_cables"] = pasted(os.path.join(data, cables[0]), ["Suivi des demandes de câbles A30"])
-        newest = sorted(f for f in os.listdir(data) if f.startswith("Avances_Retards"))[-1]   # 5 rows of legend above its header
-        fusion["fto2_set_plan"] = pasted(os.path.join(data, newest),
-                                         ["", "Tableau Avances / Retards au %s" % downloads._dmy(downloads.file_day(newest))])
+        for f in os.listdir(data):   # the production plan: the exports as downloaded, kept with the code (src/fto2/files)
+            if f.startswith("Avances_Retards"):
+                shutil.copy(os.path.join(data, f), files)
         nc = tables["non_conformity"].copy()
         # the liability is a list in Skywise: a list for every NC (the comparison year's rows are still text here)
         nc["liability"] = nc["liability"].map(R._as_list).map(lambda v: v if isinstance(v, list) else [v] if isinstance(v, str) else None)

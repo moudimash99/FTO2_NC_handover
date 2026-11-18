@@ -52,8 +52,7 @@ ouverture, sans attendre le notebook (de même pour les filtres à l'ouverture e
 
 **Commencer une nouvelle année** (chaque mois de janvier) : l'année suivie change toute seule (la ligne `annee` de
 `config/1_parametres.csv` reste vide). Puis :
-- coller un export récent du Tableau Avances / Retards dans la feuille Fusion « Production plan » (voir « Mettre à jour le
-  plan de production ») : les avions livrés de l'année d'avant qu'il ne liste plus restent, repris de
+- ajouter un export récent du Tableau Avances / Retards (voir « Mettre à jour le plan de production ») : les avions livrés de l'année d'avant qu'il ne liste plus restent, repris de
   `config/0_plan_msn.csv` ; ils donnent les livraisons de l'année d'avant, donc les objectifs ;
 - ajouter les fermetures de la nouvelle année dans `config/1_calendrier_production.csv` ;
 - coller le registre GPS de la nouvelle année dans la feuille Fusion « GPS register », en entier, tel quel. (Sans Fusion,
@@ -68,13 +67,12 @@ ligne `annee`, les pages gardent cette année, complète, et le notebook le rapp
 **Un nouveau produit** : la règle qui le reconnaît dans `config/2_regle_produit.csv` ; son nom dans le plan de production
 dans `config/2_produits_plan.csv`.
 
-**Mettre à jour le plan de production** : ouvrir l'export du Tableau Avances / Retards, tout copier (Ctrl+A puis Ctrl+C),
-vider la feuille Fusion « Production plan » (Ctrl+A puis Suppr) et coller en A1 (Ctrl+V), tel quel, lignes du haut
-comprises. Le nouvel export l'emporte pour chaque avion, et un avion livré qu'il ne liste plus garde sa dernière ligne.
-La date de l'export est une date écrite au-dessus de son en-tête s'il y en a une, sinon le jour de la mise à jour. Les
-premières lignes de la mise à jour disent sur quelle ligne l'en-tête a été trouvé et quelle date a été prise ; une ligne
-qui commence par ⚠️ dit que la feuille n'a pas été utilisée, et pourquoi. (Sans Fusion, dans le notebook : déposer le
-fichier CSV dans `data/`, à côté des exports précédents, son nom commençant par `Avances_Retards`.)
+**Mettre à jour le plan de production** : télécharger l'export du Tableau Avances / Retards en CSV, tel quel, depuis le
+Tableau d'origine (pas une copie : dans une copie, les dates prévues deviennent `#REF!`), et le nommer
+`Avances_Retards_<date de l'export>.csv` (par exemple `Avances_Retards_2026-11-18.csv`). Dans le Code Repository, le
+déposer dans `src/fto2/files/`, à côté de la liste des postes et des exports précédents (les garder : le plus récent
+l'emporte pour chaque avion, et un avion livré qu'il ne liste plus garde sa dernière ligne), puis commit et build. (Dans
+le notebook : le déposer dans `data/`, à côté des exports précédents.)
 
 **Ajouter une action MFT** : une ligne dans `config/1_actions_mft.csv`, avec un `id` à elle. Le problème visé :
 `niveau` (`cat` = une catégorie, `rca` = une cause, `sub` = une sous-catégorie, `code` = un sous-code, `where` = un lieu de

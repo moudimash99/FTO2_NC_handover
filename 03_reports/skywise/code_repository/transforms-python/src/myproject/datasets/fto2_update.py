@@ -1,14 +1,14 @@
 """FTO2 NC dashboard: the update, as a transform that Skywise runs on a schedule.
 
 The same steps as the pipeline notebook. The code is in src/fto2 (start with fto2/skywise.py), the settings in
-src/fto2/settings, the station list in src/fto2/files.
+src/fto2/settings, the files kept with the code in src/fto2/files: the station list, and the exports of the Tableau
+Avances / Retards (production plan) as downloaded, named Avances_Retards_<date>.csv (the newest wins; keep the older ones).
 
-Inputs: the four Skywise datasets (their ids below) and the seven datasets of the Fusion spreadsheet
+Inputs: the four Skywise datasets (their ids below) and the six datasets of the Fusion spreadsheet
 "FTO2 NC Dashboard - Settings" that the update reads, named by Fusion after the spreadsheet and the sheet
 ("FTO2 NC Dashboard - Settings - Blackout days"); in the code each one keeps a short name (fto2_set_blackout).
-The pages read the eighth sheet, "Target and pages", themselves. The last four sheets hold a whole sheet pasted as it is
-(the GPS register, the Test list, the cable tracker, the export of the Tableau Avances / Retards): the update finds
-their header row itself.
+The pages read the seventh sheet, "Target and pages", themselves. The last three sheets hold a whole sheet pasted as it is
+(the GPS register, the Test list, the cable tracker): the update finds their header row itself.
 Outputs: the four tables the pages read, and two work lists (the defect lines still to label, the parts still to price).
 """
 from transforms.api import Input, LightweightInput, LightweightOutput, Output, transform
@@ -31,7 +31,6 @@ TEST = "_test"   # first builds: tables of their own; then TEST = "" to write th
     fto2_set_cables=Input(SHEET + "Cable tracker"),
     fto2_set_gps=Input(SHEET + "GPS register"),
     fto2_set_test=Input(SHEET + "Test list"),
-    fto2_set_plan=Input(SHEET + "Production plan"),
     fto2_dash_nc=Output(FOLDER + "fto2_dash_nc" + TEST),
     fto2_dash_defects=Output(FOLDER + "fto2_dash_defects" + TEST),
     fto2_dash_disruptions=Output(FOLDER + "fto2_dash_disruptions" + TEST),
@@ -50,7 +49,6 @@ def compute(
     fto2_set_cables: LightweightInput,
     fto2_set_gps: LightweightInput,
     fto2_set_test: LightweightInput,
-    fto2_set_plan: LightweightInput,
     fto2_dash_nc: LightweightOutput,
     fto2_dash_defects: LightweightOutput,
     fto2_dash_disruptions: LightweightOutput,

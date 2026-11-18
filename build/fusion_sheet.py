@@ -46,8 +46,6 @@ SHEETS = [
      "At each update of the register.", PASTE),
     ("Test list", "fto2_set_test", CM, "The Test team's NC list: the whole Google sheet, pasted as it is.",
      "At each update of the list.", PASTE),
-    ("Production plan", "fto2_set_plan", CM, "The export of the Tableau Avances / Retards, pasted as it is.",
-     "At each new export.", PASTE_PLAN),
 ]
 
 HEAD_FONT, HEAD_FILL = Font(bold=True, color="FFFFFF"), PatternFill("solid", fgColor="1D6B52")

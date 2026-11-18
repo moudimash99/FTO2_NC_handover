@@ -377,7 +377,8 @@ def load(Dataset, say=print):
         if name in USED:
             say("Fusion sheet %s: %s" % (sheet, USED[name]))
         elif KEPT[name].startswith("not given"):
-            say("Fusion sheet %s: %s; %s" % (sheet, KEPT[name], _instead(name, sources)))
+            if name != PLAN:   # the plan: its exports are files kept with the code, a sheet is optional
+                say("Fusion sheet %s: %s; %s" % (sheet, KEPT[name], _instead(name, sources)))
         else:
             instead = _instead(name, sources)
             ALERTS.append("⚠️ Fusion sheet %s NOT USED: %s. %s." % (sheet, KEPT[name], instead[0].upper() + instead[1:]))

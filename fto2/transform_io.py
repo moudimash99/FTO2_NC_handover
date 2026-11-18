@@ -13,9 +13,10 @@ The names of the inputs and outputs are the ones of fto2/settings/2_sources.csv 
 (fto2_set_..., see fto2/fusion.py) and of the tables the run writes. A dataset that is not declared raises KeyError when it
 is read or written: the run treats the optional ones that way (a Fusion sheet not declared: its file is used) and says so.
 
-Besides the datasets, the run needs one file, which the transform puts where the notebook has it (data/): the station list,
-fto2/files/fto2_station_mapping.csv, kept in the repository. The production plan, the cable requests and the two lists come
-from the Fusion sheets they are pasted in (fto2_set_plan, fto2_set_cables, fto2_set_gps, fto2_set_test).
+Besides the datasets, the run needs the files kept in the repository's fto2/files/, which the transform puts where the
+notebook has them (data/): the station list (fto2_station_mapping.csv) and the exports of the Tableau Avances / Retards
+(production plan), as downloaded, named Avances_Retards_<date>.csv. The cable requests and the two lists come from the
+Fusion sheets they are pasted in (fto2_set_cables, fto2_set_gps, fto2_set_test).
 """
 import glob
 import os

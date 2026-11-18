@@ -12,7 +12,7 @@
 #     team's tracker (their names are in data/config/2_sources.csv);
 #   - Data panel: read non_conformity, fto2_ai_labels, work_order_operation, mes_disruptions, and the settings kept in
 #     Fusion: fto2_set_targets, fto2_set_cost, fto2_set_blackout, fto2_set_part_prices, fto2_set_cables, fto2_set_gps,
-#     fto2_set_test, fto2_set_plan (each one missing: its file in data/ is used);
+#     fto2_set_test (each one missing: its file in data/ is used);
 #     write fto2_dash_nc, fto2_dash_defects, fto2_dash_disruptions, and while 'garder_anciennes_sorties' is oui
 #     (data/config/2_parametres.csv) also fto2_dashboard_data, fto2_dashboard_data_missing_ids, fto2_parsed_defects,
 #     fto2_parsed_defects_missing_ids.

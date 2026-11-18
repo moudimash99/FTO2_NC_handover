@@ -58,8 +58,8 @@ by its name and finds it in either part; a line written in both stops the run wi
 
 ### Files saved as they are downloaded
 
-With the Fusion spreadsheet, the production plan, the cable tracker, the GPS register and the Test list are pasted whole
-into their sheets (*Production plan*, *Cable tracker*, *GPS register*, *Test list*), as they are: the update finds each
+With the Fusion spreadsheet, the cable tracker, the GPS register and the Test list are pasted whole
+into their sheets (*Cable tracker*, *GPS register*, *Test list*), as they are: the update finds each
 header row itself, says on which row in its first lines, and keeps the previous table, loudly, when it cannot
 (`fto2/fusion.py`). The plan's sheet is read as the newest export, dated by a date written above its header, else by the
 day of the run. Without those sheets (a notebook whose Data panel does not have them), the files below are read.

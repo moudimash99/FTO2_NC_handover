@@ -62,7 +62,7 @@ Everything else stays as it is.
    (*protected › Qualité › NC Dashboard › For Developer › Datasets*), and `FUSION`, the *Fusion Sheets* folder in it, which
    holds the datasets of the Fusion spreadsheet (*FTO2 NC Dashboard - Settings - Blackout days*...). Change them only if
    those folders move; then copy the path, do not type it. If one dataset was renamed or moved, write its id (*Copy RID*)
-   on its own line instead. The spreadsheet needs its sheet *Production plan*, synced like the others (`UPDATE.md`, step 1).
+   on its own line instead.
    - Leave `TEST = "_test"`.
 9. **Commit**, then wait until the *Checks* tab is green.
 10. **Test build.** With `fto2_update.py` open, press *Build* (right-hand panel) and choose `fto2_dash_nc_test`. It takes a
@@ -88,10 +88,14 @@ Everything else stays as it is.
 
 ## Later
 
-- **The production plan, the cable tracker, the GPS register, the Test list:** empty the Fusion sheet, paste the new
-  export or the whole Google sheet there, as it is, from cell A1, then build (or wait for the schedule). Nothing to delete
-  or rename: the update finds the header row itself. The plan's older aircraft come from
-  `src/fto2/settings/0_plan_msn.csv`; the export's date is the one written above its header, else the day of the update.
+- **The production plan:** download the export of the Tableau Avances / Retards as a CSV, as it is, and name it
+  `Avances_Retards_<date of the export>.csv` (for example `Avances_Retards_2026-11-18.csv`). Upload it into `src/fto2/files/`,
+  beside the station list and the older exports (keep them: the newest wins, an aircraft it no longer lists keeps its last
+  line), commit, build. Check before: the first row of each aircraft holds dates, not `#REF!` (download from the original
+  Tableau, not a copy).
+- **The cable tracker, the GPS register, the Test list:** empty the Fusion sheet, paste the whole Google sheet there, as it
+  is, from cell A1, then build (or wait for the schedule). Nothing to delete or rename: the update finds the header row
+  itself.
 - **A rule changed** (a table of `src/fto2/settings`): edit the table, commit, build. The settings people fill in by hand are
   in Fusion: nothing to commit for them.
 
@@ -120,7 +124,8 @@ def write(say=print):
     shutil.copytree(os.path.join(ROOT, "config"), os.path.join(SRC, "fto2", "settings"), ignore=skip)
     os.makedirs(os.path.join(SRC, "fto2", "files"))
     with open(os.path.join(SRC, "fto2", "files", "README.txt"), "w", encoding="utf-8") as f:
-        f.write("Put here fto2_station_mapping.csv, the station list (the file of the notebook's data/ folder).\n")
+        f.write("Put here fto2_station_mapping.csv, the station list (the file of the notebook's data/ folder), and the exports of "
+                "the Tableau Avances / Retards as downloaded (CSV), named Avances_Retards_<date>.csv: keep the older ones.\n")
     os.makedirs(os.path.join(SRC, "myproject", "datasets"))
     shutil.copyfile(os.path.join(ROOT, "build", "repository", "fto2_update.py"),
                     os.path.join(SRC, "myproject", "datasets", "fto2_update.py"))

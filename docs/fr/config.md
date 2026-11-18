@@ -61,7 +61,7 @@ l'exécution avec un message.
 ### Les fichiers déposés tels que téléchargés
 
 Avec le classeur Fusion, le plan de production, le suivi des câbles, le registre GPS et la liste Test sont collés en entier
-dans leurs feuilles (*Production plan*, *Cable tracker*, *GPS register*, *Test list*), tels quels : la mise à jour trouve
+dans leurs feuilles (*Cable tracker*, *GPS register*, *Test list*), tels quels : la mise à jour trouve
 elle-même chaque ligne d'en-tête, dit laquelle dans ses premières lignes, et garde la table précédente, en le signalant,
 quand elle ne peut pas (`fto2/fusion.py`). La feuille du plan est lue comme l'export le plus récent, daté par une date écrite
 au-dessus de son en-tête, sinon par le jour de l'exécution. Sans ces feuilles (un notebook dont le panneau Data ne les a
