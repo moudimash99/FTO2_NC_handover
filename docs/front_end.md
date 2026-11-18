@@ -1,10 +1,11 @@
 # Front end: how the pages' code works
 
-The front end is the three pages of the Slate app: the **dashboard**, the **MFT page** and the **Tableau Elizabeth**. They
-read the tables the notebook writes, then filter, add up and draw. This guide explains their code.
+The front end is three pages, each a Slate application of its own: the **dashboard**, the **MFT page** and the **NC
+writer**. The dashboard and the MFT page read the tables the update writes, then filter, add up and draw. The NC writer helps
+write an NC to the standard and saves it. This guide explains their code.
 
-The three guides: `config.md` (the settings tables; in the Code Workspace also as `data/config/README.md`), `logic.md` (the
-notebook's code) and `front_end.md` (the pages' code); these two are also in `notebook_kit/`.
+The three guides of the code: *The settings, table by table* (the settings), *The update, step by step* (the update's code)
+and *The pages, in detail* (this one). The part prices have a guide of their own: *Part prices*.
 
 **Contents**
 
@@ -14,7 +15,7 @@ notebook's code) and `front_end.md` (the pages' code); these two are also in `no
 4. [Finding and changing a chart](#4-finding-and-changing-a-chart)
 5. [The alarms (the bell)](#5-the-alarms-the-bell)
 6. [The MFT page's code](#6-the-mft-pages-code)
-7. [The Tableau Elizabeth's code](#7-the-tableau-elizabeths-code)
+7. [The NC writer's code](#7-the-nc-writers-code)
 8. [Editing a page in Slate](#8-editing-a-page-in-slate)
 9. [When a page shows a box](#9-when-a-page-shows-a-box)
 
@@ -23,7 +24,7 @@ notebook's code) and `front_end.md` (the pages' code); these two are also in `no
 ## 1. The big picture
 
 ```
- Postgres (synced from the notebook's tables)
+ Postgres (synced from the update's tables)
         |
  Slate queries: q_fto2_nc, q_fto2_def, q_fto2_dis, q_fto2_ref
         |
@@ -33,7 +34,7 @@ notebook's code) and `front_end.md` (the pages' code); these two are also in `no
      filters  ->  adds up  ->  draws (SVG charts, tables)
 ```
 
-Each page is one Slate **code sandbox** with four parts:
+Each page is a Slate application with one **code sandbox**, in four parts:
 
 | Part | What it holds |
 |---|---|
@@ -42,9 +43,12 @@ Each page is one Slate **code sandbox** with four parts:
 | JS | the code: plain JavaScript, no outside library |
 | State | the links to the queries, e.g. `{"nc": "{{q_fto2_nc}}", ...}` |
 
-**The rule of the split:** the notebook decides and calculates (which NC counts, what each defect is, what it costs; see
-`logic.md`). The pages only filter, add up and draw. A number wrong everywhere is a notebook question; a number wrong on one
-chart only is a page question.
+Changing a page means changing its JS (or its CSS, its HTML) in the sandbox of its Slate application (section 8). The
+functions and variables named in this guide are those of the page's JS: search for them there.
+
+**The rule of the split:** the update decides and calculates (which NC counts, what each defect is, what it costs; see *The
+update, step by step*). The pages only filter, add up and draw. A number wrong everywhere is an update question; a number
+wrong on one chart only is a page question.
 
 ## 2. How the data reaches a page
 
@@ -54,15 +58,18 @@ chart only is a page question.
 3. **The loader**, at the very end of the JS, watches those four names. When all have arrived, it starts the page. If one is
    missing for too long, it shows a box saying which one (section 9).
 4. **The reference data** comes in pieces of text (`partie`, `morceau`, `texte`). `fto2RefBlocks`, at the top of the JS, glues
-   each part's pieces back together and reads them as one block: the production plan, 2025, the cable requests, the MFT
-   actions, the cost settings, the cause tree, and the page settings (target, filters at opening, colours, alarm settings).
+   each part's pieces back together and reads them as one block: the production plan, the comparison year, the cable
+   requests, the MFT actions, the cost settings, the cause tree, and the page settings (target, filters at opening, colours,
+   alarm settings, the working weight of each week).
 5. **The adapter** `fto2FromTables` (between `ADAPTER START` and `ADAPTER END`) turns the two tables into the page's data `D`.
-6. **Two optional keys** (Skywise only). `reglages`, the query `q_fto2_set_targets` (the Fusion sheet "Target and pages"), on
-   the dashboard and the MFT page: `fto2Reglages`, near the top of the JS, writes its lines into the page settings before the
-   page starts (the target's cut, the filters at opening, the target of an MFT action), so a change in the sheet needs no
-   notebook run. A line missing or wrongly written keeps the reference value; the browser's console says which. With the Slate
-   functions, the page sends its cut with each request. `store`, on the MFT page only: section 6. Without these keys in the
-   state box, the pages work as before.
+   The tables hold two years, the comparison year and the year followed: the dashboard keeps the year followed (the adapter
+   drops the rest), the MFT page keeps both.
+6. **Two optional keys.** `reglages`, the query `q_fto2_set_targets` (the Fusion sheet "Target and pages"), on the dashboard
+   and the MFT page: `fto2Reglages`, near the top of the JS, writes its lines into the page settings before the page starts
+   (the target's cut, the filters at opening, the target of an MFT action), so a change in the sheet shows at the next
+   opening, without waiting for the update. A line missing or wrongly written keeps the update's value; the browser's
+   console says which. `store`, on the MFT page only: section 6. Without these keys in the state box, the pages work as
+   before.
 
 **The data inside the page.** `D.ncs` is a list of NCs, each one a list of values by position:
 
@@ -99,7 +106,7 @@ Search for these markers to find your way, from top to bottom:
 | `Drawing a chart by its key` | `rvDraw`: draws an `a:` chart or a numbered chart from its key |
 | `ALARM ENGINE START` … `END` | the alarm statistics (section 5) |
 | `Dashboard v2 (main page)` | which charts appear on which tab, and their drawing functions (section 4) |
-| `filter bar` | the filters and what happens when they change |
+| `filter bar` | the filters and what happens when they change; the CSV download (`csvOf`) |
 | `language, tabs, minor switch` | the language switch, the tabs, `renderAll` |
 | `Simple mode` | the Essentiel mode (Synthèse and Détail) |
 | the end of the file | the loader (section 2) and the error box |
@@ -131,14 +138,17 @@ The page holds no year of its own. The two years come with the settings (`SET.an
 - **The alarm engine** reads the year from `window.FTO2_YEAR`, set by the page just before it: its week 0 is ISO week 1 of
   the year followed, and a date outside that year has no week (-1).
 - **The forecast's name** ("Prévision (oct. à déc.)") is made by `fcLeg` from the months the forecast really covers.
+- **The calendar:** a week under `semaine_faible_moins_de` of a normal week is a closure week, left out of the averages
+  (`calW`); the month in progress counts the share of its working time gone (`dayShare`), not of its calendar days.
 
-So a new year needs no change in the pages: the notebook sends the new year, and everything above follows.
+So a new year needs no change in the pages: the update sends the new year, and everything above follows.
 
 ### What happens when someone clicks
 
 1. **A filter changes** (the filter bar, or a click on a chart). The filters are kept in `GF`: dates (`from`, `to`), period
-   (`preset`), line, phase, Responsabilité boxes (`liab`), plant switch (`fto2`), data source, cost mode, and a clicked value
-   (`pick`).
+   (`preset`: since 1 January, the last 30 days, the last full month, the last 3, 6 or 12 months, all dates, or dates
+   chosen), line, phase, Responsabilité boxes (`liab`), plant switch (`fto2`), data source (`src`: one list, "Source des
+   données": all the data, Skywise only, GPS register, Test list), cost mode, and a clicked value (`pick`).
 2. `setGF` stores the change and calls `select()`, which makes the lists of NCs on screen:
    - `SEL_NC`: every NC the filters keep;
    - `SER_NC`: FTO2's own NCs, without customer returns;
@@ -155,6 +165,13 @@ click (`pickSet`), sets `GF.pick`, and every tab follows. A chip in the filter b
 **The ⓘ panel** ("Comment la sélection est faite", section `the ⓘ panel`) replays the same filters one by one and says what
 each removes.
 
+### Downloads: CSV and images
+
+- **CSV:** at the bottom of every tab, the NCs of the selection download as a CSV file, as a short extract or a full one
+  (`csvOf`: its two column lists, the most useful first).
+- **Image:** every chart card has an **⤓ Image** button that saves the chart as a PNG picture (`pngBtn`, `pngOf`); a card
+  with no chart drawn (a table) hides it.
+
 ### Texts and languages
 
 Every text is in `STR`: `STR.fr` and `STR.en`, by key. The code uses `S('key')`, with values filled in where `{n}`, `{v}`...
@@ -163,7 +180,7 @@ text, change it in both languages.
 
 ### Essentiel and Deep dive
 
-`MODE` is `simple` (Essentiel) or `expert` (Deep dive). Essentiel shows two tabs (Synthèse, Détail) made of charts borrowed
+`MODE` is `simple` (Essentiel) or `expert` (Deep dive). Essentiel shows two tabs (Synthèse, Détail) made of charts taken
 from the Deep dive tabs (`V2L.syn`, `V2L.det`). Détail's charts run from January to the end of the period (`ytd`).
 
 ## 4. Finding and changing a chart
@@ -174,7 +191,7 @@ In the section `Dashboard v2 (main page)`, **`V2L`** lists the chart cards of ea
 
 ```
 ov:     top: ['VT', 'VN', 'VB', 'a:lead', 'VX'], fold: ['a:cal']
-pareto: top: ['a:bub', 'a:bump', 'a:flow', '78', '76', 'VM', 'VQ', '53', 'a:cmo'] ...
+pareto: top: ['a:bump', '78', 'a:flow', 'a:bub', '53', '76', 'VM', 'VQ', 'a:cmo'] ...
 where:  top: ['VP', '61', 'a:prod', '54', 'a:msn', 'VF', 'a:station'] ...
 ```
 
@@ -196,6 +213,19 @@ The cards of the numbered charts and of the `a:` charts are first made in two bo
 **To find a chart's code from the page:** take a few words of its title, search them in the JS: they lead to its `GSTR` or
 `STR` entry, whose key leads to its function.
 
+### Three charts of the Pareto tab
+
+- **"Classement mensuel des causes"** (`a:bump`): the rank of each of the top 8 causes, month by month. A click on a line
+  follows that cause.
+- **The followed cause per MSN, month by month** (`78`, for example "Inversion par MSN"), beside the ranking: the cause
+  clicked in the ranking, else the first cause of the last month. Its two limits, 2σ and 3σ, are straight lines: the
+  period's rate plus two and three times the usual spread of its monthly values (the month in progress left out; no limits
+  with fewer than three months). `pTrend` draws it.
+- **"Les causes mois par mois"** (`a:cmo`, function `vCmo`): one bar per month, the causes stacked. A switch shows the causes
+  or the categories of the Pareto; the card's − / + sets how many of the first ones are shown (3 at first), and others can be
+  added by hand: Déverrouillage and FOD are added from the start, for safety (`CMO`). The measure is the tab's (defects or
+  cost), or NCs with the card's other switch.
+
 ### The drawing helpers
 
 A chart function counts from `SEL_NC` (or `D.defects` filtered the same way), then draws SVG with:
@@ -215,7 +245,13 @@ A chart function counts from `SEL_NC` (or `D.defects` filtered the same way), th
 apply; put any new text in `STR` (both languages).
 
 **Adding a chart:** copy a similar chart's function under a new key, add the key to `V2F` and its titles to `GSTR`, then add
-the key to `V2L` on the tab you want.
+the key to `V2L` on the tab you want. Its card gets the ⤓ Image button by itself.
+
+### Values still written in the code
+
+A few values are written in the dashboard's JS, not in a setting: `OPS_MSN` (the connection operations per aircraft of the
+MIP A350, 5,572, for the errors per million operations), `CONN_LINES` (the lines whose cable defects count as connector
+defects: A330, A350) and `CMO` (the causes added at first on "Les causes mois par mois"). To change one, change the JS.
 
 ### The colours
 
@@ -245,13 +281,16 @@ has 16 finished weeks (late April) it says "Pas encore assez de semaines pour co
 
 ## 6. The MFT page's code
 
-One line at a time: the week's Pareto, the analysis, and the follow-up of the MFT actions. Its JS, from top to bottom:
+One line at a time: the week's Pareto, the analysis, and the follow-up of the MFT actions. It keeps both years, so that a
+week, a month or an action is compared with the weeks before it across the new year. Like the dashboard, it has a
+**Responsabilité** list (FTO2, Suppliers, Others), and every count, chart and the bell follow the groups ticked. Its JS, from
+top to bottom:
 
 | Section | What is there |
 |---|---|
 | `the two Slate tables -> the page's data` | its own adapter (simpler than the dashboard's) |
-| `the store` | where actions typed on the page are kept: **in this browser only** |
-| `the shared store` | in Skywise with the state key `store`: the actions kept for everyone (`fto2SharedStore`, below) |
+| `the store` | where actions typed on the page are kept without the key `store`: **in this browser only** |
+| `the shared store` | with the state key `store`: the actions kept for everyone (`fto2SharedStore`, below) |
 | `data`, `weeks (ISO)`, `state`, `helpers` | the data, the week numbers, what the user chose (line, phase, period) |
 | `controls` | the line, phase and period buttons |
 | `tab 1: the week's Pareto` | the Pareto of the week against the weeks before |
@@ -263,60 +302,77 @@ One line at a time: the week's Pareto, the analysis, and the follow-up of the MF
 | `Slate: wait for the two queries` | the loader |
 
 **Where the actions come from:** `1_actions_mft.csv` in the settings, through `ref`. They replace the browser's copy at every
-load. An action typed on the page stays in that browser until someone adds it to the table.
+load. With no saved actions (below), the page starts from the table's.
 
-**The actions kept for everyone** (Skywise, state key `store`, the query `q_fto2_mft_store`; set-up in
-`03_reports/skywise/README.md`, step 4). The actions are kept in one object of the NC writer's object type: Msn `MFT-ACTIONS`,
-its Texte Sap holding `{page, saved_at, actions}` as JSON. `fto2SharedStore` (in `07_scripts/mft/mft_slate.js`, after the
-browser store) has the same calls as the browser store, so the page's code does not change. It reads the store row saved last
-(with no row: the table's actions); at each change it updates its copy at once, then fires the event `save` with the whole list
-as one row, as the NC writer does with an NC. A Slate event puts the row into a variable, the Action widget of the object type
-takes it as its default values, and the user presses Submit. Until the query brings back a row saved at or after the change,
-the note above the actions asks for Submit. The alarms' "Vu" marks stay in the browser. The laptop page keeps the browser
-store only.
+**The actions kept for everyone** (state key `store`, the query `q_fto2_mft_store`). The actions are kept in one object of
+the NC writer's object type, *a30 Nc Writer Dataset*: its Msn is `MFT-ACTIONS`, its Texte Sap holds the whole list as JSON
+(`{page, saved_at, actions}`). `fto2SharedStore` has the same calls as the browser store, so the rest of the page does not
+change. At each change it updates its own copy at once, then puts the whole list as one row in the state key `store_row` and
+fires the event `save` with it, as the NC writer does with an NC. A Slate event puts the row into a variable, and the
+variable's change submits the object type's Action widget: one click on the page saves the list for everyone. Each save
+adds an object; the page takes the one saved last. The alarms' "Vu" marks stay in the browser.
+
+**Not settled yet: reading the saves back.** The query `q_fto2_mft_store` reads the Postgres copy of the object type's data,
+which lags behind the Ontology; Slate's "foundry" HTTP source did not reach the API that reads the objects directly. Until a
+way is found, an action changed on the page is not kept: the table `1_actions_mft.csv` is what everyone sees, and the
+dashboard's bell knows only the actions of the table.
 
 **Its thresholds** ("what goes up", "what goes down", recurring FINs: the `mft_` rows) come from `2_reglages_pages.csv`,
-the action targets (the `action_` rows) from `1_reglages_pages.csv`.
+the action targets (the `action_` rows) from `1_reglages_pages.csv` (the sheet *Target and pages*).
 
-## 7. The Tableau Elizabeth's code
+## 7. The NC writer's code
 
-A line's NCs, three families of problems, a Pareto, and the weeks over a threshold (10 NCs a week by default). Its JS:
+A page of its own, which helps write an NC to the standard: the person picks the product and the place of detection, then
+each defect from the official code sheet (nature, object, sub-code, quantity, location), and the page writes the SAP text.
+It reads no query. Its JS, from top to bottom:
 
 | Section | What is there |
 |---|---|
-| `the two tables -> the page's data` | `elzFromTables`: its own adapter |
-| `families` | how an NC is put in a family (cables first, then the others); `cableWhy` says why an NC counts as a cable problem |
-| `weeks (ISO)` | week numbers, shutdown and low weeks |
-| `state`, `helpers` | line, phase, period, threshold; remembered in the browser |
-| `render` | the drawing |
-| `events` | the clicks |
-| `start` | the loader |
+| `CONFIG` | the state key (`submission`) and the event (`submit`) used to hand the NC to Slate, and the message shown once it is sent |
+| `NATURES` | the official code sheet: each nature (Q01, Q03... T08) with its objects, sub-codes, severity and RPN |
+| `PRODUITS`, `DETECTIONS`, `FIN_MAPPING` | the products, the places of detection, the FINs suggested for each nature |
+| `CTX_OPTIONS`, `ACT_OPTIONS` | the ready-made sentences for the context and the action asked |
+| `buildSapText`, `buildRow` | the SAP text, and the row saved: date, MSN, product, place of detection, number of defects, SAP text, defects as JSON |
+| `sendToSlate` | the only place that talks to Slate |
+
+**Saving an NC.** On "Soumettre la NC", `sendToSlate` puts the NC as one row in the state key `submission` and fires the
+event `submit` with it (the sandbox's state is not seen by the other widgets: the NC leaves with the event). In the Slate
+application, that event sets the variable `v_submission` with the row; the Action widget of the object type *a30 Nc Writer
+Dataset* takes its values from that variable (Detection, Produit, Msn, Texte Sap, Total Defauts; the key, Timestamp, is
+filled by the action), and the variable's change submits it. So the NC is saved in one click. To change a list (a product,
+a FIN), change it at the top of the JS.
 
 ## 8. Editing a page in Slate
 
-1. **Copy the current JS** (or CSS, HTML) out of the sandbox and keep it as it is: it is your way back.
-2. Make the change in a text editor (the dashboard's JS is long; Slate's editor is slow with it), then paste it back.
-3. Check the page: both languages, Essentiel and Deep dive, a few filters. Note the headline figures before and after: only
-   what you meant to change should move.
-4. If the page breaks, paste the previous version back.
+1. Open the page's Slate application in edit mode, and its code sandbox.
+2. **Keep a copy of the current JS** (or CSS, HTML) as it is: it is your way back.
+3. Make the change in the sandbox. The dashboard's JS is long, and Slate's editor is slow with it: a search for the
+   function's name is the quickest way in.
+4. Check the page: both languages, Essentiel and Deep dive, a few filters, the chart you changed with ⤢ **Enlarge**. Note the
+   headline figures before and after: only what you meant to change should move. Check the MFT page too when the change
+   touches the bell or the tables.
+5. If the page breaks, paste the previous version back.
 
 **Three rules for code in Slate:**
 
 - **Never two `{` in a row** in the JS. Slate reads them as a link to a query and breaks the code.
 - **Every CSS rule starts with `.fto2`**, so the styles don't leak into the rest of the Slate page.
 - **No data in the code.** Data and settings come from the queries. A list or a value that someone may want to change belongs
-  in a settings table (`config.md`), read by the notebook and passed to the page through `ref`.
+  in a setting (*The settings, table by table*), read by the update and passed to the page through `ref`.
 
-**A new column from the notebook** (`logic.md`, section 6): add it to the query's SQL in Slate, read it in the adapter
-(`fto2FromTables`: add it to the NC's or the defect line's list), then use it in a chart.
+**A new column from the update** (*The update, step by step*, section 6): add it to the query's SQL in Slate, read it in the
+adapter (`fto2FromTables`: add it to the NC's or the defect line's list), then use it in a chart.
 
 ## 9. When a page shows a box
 
 | The box says | What it means | Where to look |
 |---|---|---|
 | Still waiting for a query, with its name | The query doesn't exist under that name, or fails | The query's name and SQL in Slate |
-| "La requête … n'a renvoyé aucune ligne" | The query works but the table is empty | The sync, then the notebook's run |
+| "La requête … n'a renvoyé aucune ligne" | The query works but the table is empty | The sync, then the update's last run |
 | "aucune NC lisible … colonnes reçues : …" | The query returns columns the page doesn't expect | Compare them with the table's columns |
 | "exactement N lignes reçues" | Slate probably cut the result | A row limit on the query |
+| The shared actions are not read yet (MFT page) | The query `q_fto2_mft_store` did not answer | The query, its table and its column names (section 6) |
 | An error with a line of code | The JS has a mistake | Paste the previous JS back |
 | The HTML part is missing | The HTML tab is empty | Paste the HTML part |
+
+An empty page with no box at all is usually a rights problem: the person can open the application but not the four tables.
