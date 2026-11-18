@@ -52,16 +52,16 @@ lang: en
       of detection and decisions (the pages translate them with their own lists); the cause tree (decided in the parser's
       code, described in <code>3_sous_categories.csv</code>: the update stops if the two differ). Each one: compute it once in
       the update and send it to the pages.</td></tr>
-    <tr><td><b>Running the update on a schedule</b></td><td>The transform for the Code Repository is ready, and checked to write exactly the
-      notebook's tables. Its steps are in the README of the code repository kit: add the files, build once to tables of its
-      own, compare, then switch and schedule. Until then, the notebook is run by hand.</td></tr>
+    <tr><td><b>Running the update on a schedule</b></td><td>The update runs as a transform of the Code Repository, on a schedule
+      (the README of the code repository kit). Once it writes the tables the pages read (its step 11), the notebook is only a
+      fallback: change the code in the repository only.</td></tr>
     <tr><td><b>Labelling new defect lines</b></td><td>The lines to label are listed at each update. No NC text may leave Skywise for an
       outside tool without the agreement of IT and of the data owner.</td></tr>
-    <tr><td><b>MFT actions kept for everyone</b></td><td>Ready as an option of the Skywise MFT page (the Skywise set-up's README, step 4): the
-      actions are kept in one object of the NC writer's object type, and saved for everyone when Submit is pressed in a save
-      form. Checked on the laptop with a stand-in for Slate; in Skywise, the reading and the saving were tried with a test box,
-      not yet with the page. Without the option, an action typed on the page stays in that browser. The dashboard's bell still
-      knows only the actions of the table.</td></tr>
+    <tr><td><b>MFT actions kept for everyone</b></td><td>Being set up on the Skywise MFT page (the Skywise set-up's README, step 4):
+      the actions are kept in one object of the NC writer's object type and saved for everyone in one click (the page's save
+      fills a variable, which submits the action). The saved actions are to be read with a query of the Ontology (Slate's API
+      gateway source), because the synced dataset lags behind the Ontology. Without it, an action typed on the page stays in
+      that browser. The dashboard's bell still knows only the actions of the table.</td></tr>
     <tr><td><b>The former outputs</b></td><td>While the line <code>garder_anciennes_sorties</code> is <code>oui</code>, the update still writes the
       tables of the former Slate app. Set it to <code>non</code> once nobody uses that app.</td></tr>
     <tr><td><b>Calculations as Slate functions</b></td><td>The targets, the bell and the cost explanation can also run as Slate functions
