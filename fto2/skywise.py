@@ -249,8 +249,7 @@ def run(Dataset, Column, say=None, old_outputs=None):
     say("Reference data: production plan, cable requests, MFT actions, settings...")
     eq = reference.eqmsn(prepared["nc"])
     blocks = {"dashboard": reference.dashboard_block(prepared["d"], prepared["nc"], prepared["codes"], y25),
-              "mft": reference.mft_block(eq),
-              "elizabeth": {"vol": reference.weekly_volume(eq), "settings": reference.page_settings()}}
+              "mft": reference.mft_block(eq)}
     ref_t = reference.ref_table(blocks)
     Dataset.get("fto2_dash_ref").write_table(ref_t)
     print("✅ fto2_dash_ref:", len(ref_t), "rows (the pages' reference data)")

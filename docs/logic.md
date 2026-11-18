@@ -24,7 +24,7 @@ The three guides of the code: *The settings, table by table* (the settings), *Th
 ```
  Skywise datasets                          the settings
    non_conformity        (the NCs)           Fusion: FTO2 NC Dashboard - Settings
-   fto2_ai_labels        (the AI labels)     src/fto2/settings/ (the tables)
+   fto2_ai_labels        (stored labels)     src/fto2/settings/ (the tables)
    work_order_operation  (rework orders)     src/fto2/files/ (stations, production plan)
    mes_disruptions       (aléas)                   |
             \                                      /
@@ -33,7 +33,7 @@ The three guides of the code: *The settings, table by table* (the settings), *Th
    fto2_dash_nc           one row per NC
    fto2_dash_defects      one row per defect line
    fto2_dash_disruptions  the quality aléas that led to no NC
-   fto2_dash_ref          everything else the pages need (production plan, comparison year, settings...)
+   fto2_dash_ref          the rest: production plan, comparison year, settings...
                                    |
                          synced to Postgres -> read by the Slate pages
 ```
@@ -110,7 +110,7 @@ still writes them, while `garder_anciennes_sorties` is `oui`.
 2. **Rework orders:** the NC's rework orders, their state and planned time (`cost/orders.py`).
 3. **Aléas:** the quality aléa that led to each NC and its declared time, and the aléas that led to no NC
    (`cost/disruptions.py`).
-4. **Labels:** each defect line takes its AI label from `fto2_ai_labels`, **only if the line's text is still the same as when
+4. **Labels:** each defect line takes its stored label from `fto2_ai_labels`, **only if the line's text is still the same as when
    it was labelled**. Otherwise it keeps the defect reader's label and is listed "to label". A code written in the NC by a
    person wins over the label: written with the NC writer, the whole sub-code (Q03-006) decides the line; typed by hand, the
    code counts by its family (Q03), and a label from another family gives way to it. Then the category, cause, "minor" flag
@@ -121,7 +121,7 @@ still writes them, while `garder_anciennes_sorties` is `oui`.
 6. **Cost:** the cost model runs on every NC (`cost/model.py`, section 4).
 7. **Scope:** where each NC was raised: `serie`, `client` (customer return), `autre` (`2_regle_perimetre.csv`).
 8. **Tables:** `core.tables` puts it all into the two tables, column by column, and `core.dis_table` makes the aléa table.
-9. **Lines to label:** `core.lines_to_label` makes the work list `fto2_lines_to_label`: the lines without a usable AI label,
+9. **Lines to label:** `core.lines_to_label` makes the work list `fto2_lines_to_label`: the lines without a usable stored label,
    with their full text, ready for the next labelling pass.
 
 **E. The reference data** (`reference.py`): the production plan; the comparison year (the year before the one followed,
@@ -224,7 +224,7 @@ year followed, and marks each NC with the list it is on (`Ext_Source`: `GPS`, `T
 - `customer_return_extras`: the customer-return tab's fields (damage type, moment of detection, observed symptom).
 - `tables`: the two tables, in the order of `NC_COLUMNS` and `DEF_COLUMNS` (the column lists at the top of the file, each with
   its meaning).
-- `lines_to_label`: the defect lines that need an AI label.
+- `lines_to_label`: the defect lines that need a label.
 - `liab_cat`: the three "Responsabilité" groups (`2_regle_responsabilite.csv`).
 - `year_rows`, `year_causes`: the comparison year, from the NCs of the same run, summed per month.
 
@@ -261,7 +261,7 @@ The other files:
 | `parts.py` | The part's value: `part_values` gives each NC the unit price of its material (the sheet *Part prices*, else `1_prix_pieces.csv`, matched on the material number without leading zeros) × its quantity; `to_price` lists the materials that still need a price. Guide: *Part prices* |
 | `explain.py` | Writes each NC's cost explanation as a table (only for an optional Slate set-up, not used) |
 
-The model runs twice: once on the AI labels (the dashboard's figures) and once on the defect reader's own labels (kept for
+The model runs twice: once on the stored labels (the dashboard's figures) and once on the defect reader's own labels (kept for
 comparison).
 
 ### `reference.py`: what the pages need besides the NC tables
@@ -302,7 +302,7 @@ An export that is not the one expected stops the run with a message that says wh
 | Table | One row per | Columns |
 |---|---|---|
 | `fto2_dash_nc` | NC | Listed with their meaning in `core.py`, `NC_COLUMNS`: number, dates, line, plant, liability, cost decision and levels, cost per step, phase, MSN, product, station, NC type, source, rework orders, aléas... |
-| `fto2_dash_defects` | defect line | `core.py`, `DEF_COLUMNS`: NC, line number, category, cause, sub-category, minor, cable, cost share, quantity, text, sub-code, FIN, where the label comes from (`ai`, `titre`, `parser`) |
+| `fto2_dash_defects` | defect line | `core.py`, `DEF_COLUMNS`: NC, line number, category, cause, sub-category, minor, cable, cost share, quantity, text, sub-code, FIN, where the label comes from (`ai` a stored label, `titre` the title, `parser` the defect reader) |
 | `fto2_dash_disruptions` | quality aléa with no NC | `core.py`, `DIS_COLUMNS`: number, date, line, station, work order, minutes, counted or not, reason, status, comment |
 | `fto2_dash_ref` | piece of text | `partie` (one per page: dashboard, mft), `morceau` (0, 1, 2... in order), `texte`. The pages glue the pieces of a part back together and read them as one block of data. Cut into pieces because one cell can't hold it all. |
 

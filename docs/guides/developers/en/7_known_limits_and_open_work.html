@@ -62,8 +62,9 @@ lang: en
       the saved actions back. The Postgres copy of the object type's data lags behind the Ontology, and Slate's "foundry"
       source did not reach the API that reads the objects directly. Until it is settled, an action changed on the page is
       not kept. The dashboard's bell still knows only the actions of the table.</td></tr>
-    <tr><td><b>The former outputs</b></td><td>While the line <code>garder_anciennes_sorties</code> is <code>oui</code>, the update still writes the
-      tables of the former Slate app. Set it to <code>non</code> once nobody uses that app.</td></tr>
+    <tr><td><b>The former outputs</b></td><td>The scheduled update never writes the tables of the former Slate app. Only the
+      pipeline notebook, the fallback, still writes them while its line <code>garder_anciennes_sorties</code> is <code>oui</code>:
+      set it to <code>non</code> once nobody uses that app.</td></tr>
     <tr><td><b>Calculations as Slate functions</b></td><td>The targets, the bell and the cost explanation can also run as Slate functions
       instead of inside the page. Ready and checked to give the same figures; not tried in Skywise. The pages work without
       them.</td></tr>

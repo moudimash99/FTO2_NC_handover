@@ -270,7 +270,7 @@ with far more NCs than usual. The settings (weeks, thresholds, how many shown) c
 | Part | Where |
 |---|---|
 | The statistics | between `ALARM ENGINE START` and `ALARM ENGINE END`: `run` (the test), `seen` (an alarm marked as seen), `spark` (the small curve) |
-| What is followed | `alCompute` (in `MODEL`, section 6): all defects, categories, causes, sub-codes, stations, where found, products, cable requests, aircraft, per line |
+| What is followed | `alCompute` (in `MODEL`, its part on alarms): all defects, categories, causes, sub-codes, stations, where found, products, cable requests, aircraft, per line |
 | The bell on screen | `alRender` (the list), `alGo` (a click opens the problem), `alText` / `alName` (the wording) |
 
 **The MFT page has its own copy of the alarm engine.** If you change one, change the other the same way, or the two pages will

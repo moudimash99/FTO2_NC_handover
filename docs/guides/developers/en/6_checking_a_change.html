@@ -48,9 +48,9 @@ before and after. It takes ten minutes, and it is the check that catches most mi
 </table>
 
 <h2>The automatic checks</h2>
-<p>The code comes with automatic checks in its <code>tests</code> folder. The quick ones take seconds: every settings table is
-complete and readable, the rules work, the Fusion sheets give back the same settings as the files, and no business value or
-year is written in the code. Run them after any change to the code.</p>
+<p>The Code Repository runs its checks at each commit: the code must load, and the transform file must pass the style
+check (no line over 120 characters). A commit with a red check is not built. After a change of the code, build once by hand and
+read the update's first and last lines before the schedule runs it.</p>
 
 <h2>In the Code Repository</h2>
 <ul>

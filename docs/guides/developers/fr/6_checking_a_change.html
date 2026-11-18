@@ -53,10 +53,10 @@ erreurs.</p>
 </table>
 
 <h2>Les vérifications automatiques</h2>
-<p>Le code est livré avec des vérifications automatiques, dans son dossier <code>tests</code>. Les plus rapides prennent quelques
-secondes : chaque table de réglages est complète et lisible, les règles fonctionnent, les feuilles Fusion redonnent les mêmes
-réglages que les fichiers, et aucune valeur métier ni aucune année n’est écrite dans le code. Lancez-les après chaque
-modification du code.</p>
+<p>Le Code Repository lance ses vérifications à chaque commit : le code doit se charger, et le fichier du transform doit
+passer la vérification de style (aucune ligne de plus de 120 caractères). Un commit dont une vérification est rouge n’est pas
+construit. Après une modification du code, lancez un build à la main et lisez les premières et les dernières lignes de la mise
+à jour avant que la planification ne la lance.</p>
 
 <h2>Dans le Code Repository</h2>
 <ul>

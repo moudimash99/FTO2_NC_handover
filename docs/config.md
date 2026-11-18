@@ -67,8 +67,8 @@ run.
 | *Test list* | Configuration manager | Pasted whole, as it is | The Test team's NC list |
 
 A sheet filled by hand replaces its table for the run; the table of `src/fto2/settings/` is not changed, and stays the
-fallback, used when the sheet cannot be read. The sheet *Target and pages* is read by the dashboard and the MFT page
-themselves, when they open: a change there shows at the next opening, without waiting for the update. A line missing or
+fallback, used when the sheet cannot be read. The sheet *Target and pages* is not an input of the update: the dashboard and
+the MFT page read it themselves, when they open, so a change there shows at the next opening, without waiting for the update. A line missing or
 wrongly written there keeps the value of the table `1_reglages_pages.csv`, which the update sends.
 
 ### The four groups of tables

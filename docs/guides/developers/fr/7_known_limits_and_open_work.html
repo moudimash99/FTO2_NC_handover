@@ -67,9 +67,10 @@ peuvent voir.</p>
       « foundry » de Slate n’a pas atteint l’API qui lit directement les objets. D’ici là, une action modifiée sur la page
       n’est pas gardée. La cloche du tableau de
       bord ne connaît encore que les actions de la table.</td></tr>
-    <tr><td><b>Les anciennes sorties</b></td><td>Tant que la ligne <code>garder_anciennes_sorties</code> vaut <code>oui</code>, la mise à jour écrit
-      encore les tables de l’ancienne application Slate. Passez-la à <code>non</code> dès que plus personne n’utilise cette
-      application.</td></tr>
+    <tr><td><b>Les anciennes sorties</b></td><td>La mise à jour planifiée n’écrit jamais les tables de l’ancienne application
+      Slate. Seul le notebook du pipeline, la solution de secours, les écrit encore tant que sa ligne
+      <code>garder_anciennes_sorties</code> vaut <code>oui</code> : passez-la à <code>non</code> dès que plus personne
+      n’utilise cette application.</td></tr>
     <tr><td><b>Les calculs en fonctions Slate</b></td><td>Les objectifs, la cloche et l’explication du coût peuvent aussi tourner comme
       fonctions Slate, au lieu de tourner dans la page. Prêt, et vérifié : les chiffres sont les mêmes ; pas essayé dans
       Skywise. Les pages fonctionnent sans.</td></tr>
