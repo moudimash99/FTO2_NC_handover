@@ -1,8 +1,12 @@
 # Settings (config): how they work and how to fill them
 
 Everything about the dashboard that someone may want to change without touching the code is a small table in the folder
-`data/config/`, next to the notebook in the Code Workspace. There are 45 tables, in four groups. This guide explains what is
+`data/config/`, next to the notebook in the Code Workspace. There are 43 tables, in four groups. This guide explains what is
 in them, how they are built, how to fill them in, and how the code reads them.
+
+**In the Code Repository** (where the update runs on a schedule), the same tables are in `src/fto2/settings/`, and the code
+named `notebook_kit/fto2/` below is `src/fto2/`. Where this guide says "run the notebook", commit the change and build the
+update (or wait for the schedule). The values people fill in by hand are read from the Fusion spreadsheet first (section 2).
 
 The three guides: `config.md` (the settings tables; in the Code Workspace also as `data/config/README.md`), `logic.md` (the
 notebook's code) and `front_end.md` (the pages' code); these two are also in `notebook_kit/`.

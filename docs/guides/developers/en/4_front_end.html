@@ -10,7 +10,7 @@ lang: en
 -->
 
 <h2>The pages</h2>
-<p>The Slate application holds the dashboard, the MFT page and the Tableau Elizabeth. Each page is one Slate code sandbox in
+<p>Each page is a Slate application of its own: the dashboard, the MFT page and the NC writer. Each is one Slate code sandbox in
 four parts: CSS (the look), HTML (the frame, one empty box per chart), JS (plain JavaScript, no outside library) and State
 (the links to the queries). The pages only filter, add up and draw; every number they show was decided by the update.</p>
 
@@ -67,11 +67,11 @@ make the lists of NCs on screen (<code>SEL_NC</code>: everything the filters kee
   <li><b>Adding one:</b> copy a similar chart's function under a new key, add the key to <code>V2F</code>, its titles to
     <code>GSTR</code>, and the key to <code>V2L</code>.</li>
   <li><b>Download:</b> every chart card gets an <b>⤓ Image</b> button that saves the chart as a PNG (<code>pngBtn</code>,
-    <code>pngOf</code>); a card with no chart drawn hides it. The NCs of the selection download as CSV under <i>NC detail</i>
+    <code>pngOf</code>); a card with no chart drawn hides it. The NCs of the selection download as CSV at the bottom of every tab
     (<code>csvOf</code>: its two column lists, short and full, the most useful first).</li>
 </ul>
-<p>The tables hold two years: the comparison year and the year followed. Each page chooses what it shows: the dashboard and the
-Tableau Elizabeth keep the year followed (the adapter drops the rest), the MFT page keeps both, so that a week, a month or an
+<p>The tables hold two years: the comparison year and the year followed. Each page chooses what it shows: the dashboard keeps
+the year followed (the adapter drops the rest), the MFT page keeps both, so that a week, a month or an
 action is compared with the weeks before it across the new year. The page holds no year of its own: the years come with the
 settings, and the texts write them as <code>{YEAR}</code> and <code>{PREV}</code>. The names <code>y25</code> and <code>v26</code> in the code date from the first year followed: read them as
 "the comparison year" and "the year followed".</p>
@@ -89,16 +89,15 @@ rings when the rise is too big to be chance. It also catches slow rises and airc
 settings are in <code>3_alarmes.csv</code>. <b>The MFT page has its own copy of the alarm engine:</b> a change to one must be
 made to the other, or the two pages will ring differently.</p>
 
-<h2>The MFT page and the Tableau Elizabeth</h2>
-<p>Both read the same tables through their own, simpler adapter. The MFT page shows one line at a time: the week's Pareto,
-the analysis, and the follow-up of the MFT actions. The Tableau Elizabeth shows a line's NCs in three families, with the weeks
-above a threshold.</p>
+<h2>The MFT page</h2>
+<p>It reads the same tables through its own, simpler adapter. The MFT page shows one line at a time: the week's Pareto,
+the analysis, and the follow-up of the MFT actions.</p>
 <p>The MFT page has the dashboard's <b>Responsabilité</b> list: each NC gets a group from the table (FTO2 when the NC is on
 FTO2, Suppliers when its liability is a supplier's number, Others for the rest), and every count, chart and the bell follow the
 groups ticked. With the key <code>store</code>, the MFT actions are kept in one object of the NC writer's object type (its Msn
 is <code>MFT-ACTIONS</code>, its Texte Sap the whole list as JSON): a change fires the event <code>save</code> with the whole
-list, the user's <b>Submit</b> in the Action widget saves it, and the page takes the object saved last. The set-up:
-<code>README.md</code> of the Skywise folder, step 4.</p>
+list, the variable's change submits the Action widget (one click), and the page takes the object saved last. How the page
+reads the saves back is not settled yet (<i>Known limits and open work</i>).</p>
 
 <h2>The NC writer</h2>
 <p>The NC writer is a page of its own that helps write an NC to the standard. When the text is ready, it fills a Slate variable

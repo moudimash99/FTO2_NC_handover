@@ -295,10 +295,28 @@ def sources():
     return out
 
 
+def docs_zip():
+    """docs/FTO2_NC_Documentation.zip: every guide as PDF, users and developers, French and English, and nothing else."""
+    import zipfile
+    out = os.path.join(os.path.dirname(HERE), "FTO2_NC_Documentation.zip")
+    with zipfile.ZipFile(out, "w", zipfile.ZIP_DEFLATED) as z:
+        for d, dirs, files in sorted(os.walk(OUT)):
+            dirs.sort()
+            for f in sorted(files):
+                if f.endswith(".pdf"):
+                    path = os.path.join(d, f)
+                    info = zipfile.ZipInfo(os.path.join("FTO2_NC_Documentation", os.path.relpath(path, OUT)), (2026, 1, 1, 0, 0, 0))
+                    info.compress_type = zipfile.ZIP_DEFLATED
+                    z.writestr(info, open(path, "rb").read())
+    print("%30s -> %s" % ("all the guides", os.path.relpath(out, os.path.dirname(os.path.dirname(HERE)))))
+
+
 def main():
     names = [n[:-5] if n.endswith(".html") else n for n in sys.argv[1:]] or sources()
     for n in names:
         build(n)
+    if not sys.argv[1:]:   # every guide built: the documentation zip too
+        docs_zip()
 
 
 if __name__ == "__main__":

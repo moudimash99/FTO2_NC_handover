@@ -108,6 +108,23 @@ written, and with a plain message naming the table, the line and what to fix, fo
 <i>1_cout_parametres.csv, taux_qualite: 'abc' is not a number</i>. Fix the line and run the update again.</p>
 
 <div class="next">
+<h2>Not settings yet</h2>
+<p>A few values are still written in the code of the pages, not in a table. To change one, change the code, rebuild the page and
+paste it again in Slate (The front end).</p>
+<table class="keep">
+  <thead><tr><th style="width:80mm">Value</th><th>Where it is written</th></tr></thead>
+  <tbody>
+    <tr><td>The NC writer's lists: products, natures of defect, places of detection, suggested FINs</td><td>The NC writer's JS, at
+      the top (<code>PRODUITS</code>, <code>NATURES</code>, <code>DETECTIONS</code>, <code>FIN_MAPPING</code>)</td></tr>
+    <tr><td>The connection operations per aircraft of the MIP A350 (5,572), for the errors per million operations</td><td>The
+      dashboard's JS, <code>OPS_MSN</code></td></tr>
+    <tr><td>The lines whose cable defects are counted as connector defects (A330, A350)</td><td>The dashboard's JS,
+      <code>CONN_LINES</code></td></tr>
+    <tr><td>The causes and categories added at first on <i>Les causes mois par mois</i> (Déverrouillage, FOD)</td><td>The
+      dashboard's JS, <code>CMO</code></td></tr>
+  </tbody>
+</table>
+
 <h2>Read next</h2>
 <ul>
   <li><i>The pipeline</i>: what the update does with these settings.</li>

@@ -117,6 +117,24 @@ secondes, sans rien écrire, avec un message clair qui nomme la table, la ligne 
 <i>1_cout_parametres.csv, taux_qualite: 'abc' is not a number</i>. Corrigez la ligne et relancez la mise à jour.</p>
 
 <div class="next">
+<h2>Pas encore des réglages</h2>
+<p>Quelques valeurs sont encore écrites dans le code des pages, pas dans une table. Pour en changer une : changer le code,
+reconstruire la page et la recoller dans Slate (Les pages).</p>
+<table class="keep">
+  <thead><tr><th style="width:80mm">Valeur</th><th>Où elle est écrite</th></tr></thead>
+  <tbody>
+    <tr><td>Les listes de la Saisie structurée de NC : produits, natures de défaut, lieux de détection, FIN suggérés</td><td>Le JS
+      de la Saisie structurée, en haut (<code>PRODUITS</code>, <code>NATURES</code>, <code>DETECTIONS</code>,
+      <code>FIN_MAPPING</code>)</td></tr>
+    <tr><td>Les opérations de branchement par avion du MIP A350 (5 572), pour les erreurs par million d’opérations</td><td>Le JS du
+      tableau de bord, <code>OPS_MSN</code></td></tr>
+    <tr><td>Les lignes dont les défauts câble comptent comme défauts de connecteur (A330, A350)</td><td>Le JS du tableau de bord,
+      <code>CONN_LINES</code></td></tr>
+    <tr><td>Les causes et catégories ajoutées d’office sur <i>Les causes mois par mois</i> (Déverrouillage, FOD)</td><td>Le JS du
+      tableau de bord, <code>CMO</code></td></tr>
+  </tbody>
+</table>
+
 <h2>À lire ensuite</h2>
 <ul>
   <li><i>Le pipeline</i> : ce que la mise à jour fait de ces réglages.</li>

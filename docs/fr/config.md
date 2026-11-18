@@ -1,8 +1,13 @@
 # Paramètres (config) : comment ils fonctionnent et comment les remplir
 
 Tout ce que l'on peut vouloir changer dans le tableau de bord sans toucher au code est une petite table du dossier
-`data/config/`, à côté du notebook dans le Code Workspace. Il y a 45 tables, en quatre groupes. Ce guide explique ce
+`data/config/`, à côté du notebook dans le Code Workspace. Il y a 43 tables, en quatre groupes. Ce guide explique ce
 qu'elles contiennent, comment elles sont construites, comment les remplir et comment le code les lit.
+
+**Dans le Code Repository** (où la mise à jour tourne de façon planifiée), les mêmes tables sont dans `src/fto2/settings/`, et
+le code nommé `notebook_kit/fto2/` plus bas est `src/fto2/`. Là où ce guide dit « lancer le notebook », faites un commit de la
+modification puis un build de la mise à jour (ou attendez la planification). Les valeurs remplies à la main sont lues d'abord
+dans le classeur Fusion (section 2).
 
 Les trois guides : `config.md` (les tables de paramètres ; dans le Code Workspace, aussi sous le nom `data/config/README.md`),
 `logic.md` (le code du notebook) et `front_end.md` (le code des pages) ; ces deux derniers sont aussi dans `notebook_kit/`.

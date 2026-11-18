@@ -10,7 +10,7 @@ lang: fr
 -->
 
 <h2>Les pages</h2>
-<p>L’application Slate contient le tableau de bord, la page MFT et le Tableau Elizabeth. Chaque page est un code sandbox Slate en
+<p>Chaque page est une application Slate à part : le tableau de bord, la page MFT et la Saisie structurée de NC. Chacune est un code sandbox Slate en
 quatre parties : CSS (l’apparence), HTML (le cadre, un emplacement vide par graphique), JS (du JavaScript simple, sans
 bibliothèque extérieure) et State (les liens vers les requêtes). Les pages ne font que filtrer, additionner et dessiner ;
 chaque chiffre qu’elles affichent a été décidé par la mise à jour.</p>
@@ -69,10 +69,10 @@ faire les listes de NC à l’écran (<code>SEL_NC</code> : tout ce que les fi
     titres à <code>GSTR</code>, et la clé à <code>V2L</code>.</li>
   <li><b>Téléchargement :</b> chaque carte de graphique reçoit un bouton <b>⤓ Image</b> qui enregistre le graphique en PNG
     (<code>pngBtn</code>, <code>pngOf</code>) ; une carte sans graphique le cache. Les NC de la sélection se téléchargent en CSV
-    sous le <i>Détail des NC</i> (<code>csvOf</code> : ses deux listes de colonnes, courte et complète, les plus utiles d’abord).</li>
+    en bas de chaque onglet (<code>csvOf</code> : ses deux listes de colonnes, courte et complète, les plus utiles d’abord).</li>
 </ul>
 <p>Les tables contiennent deux années : l’année de comparaison et l’année suivie. Chaque page choisit ce qu’elle
-montre : le tableau de bord et le Tableau Elizabeth gardent l’année suivie (l’adaptateur laisse le reste de côté), la page
+montre : le tableau de bord garde l’année suivie (l’adaptateur laisse le reste de côté), la page
 MFT garde les deux, pour qu’une semaine, un mois ou une action soit comparé aux semaines d’avant, même au changement
 d’année. La page ne contient aucune année à elle : les années arrivent avec les réglages, et les textes les écrivent
 <code>{YEAR}</code> et <code>{PREV}</code>. Les noms <code>y25</code> et <code>v26</code> dans le code datent de la première année suivie : lisez-les comme
@@ -93,17 +93,16 @@ qui ont bien plus de NC que d’habitude. Ses réglages sont dans <code>3_alarme
 moteur d’alarmes :</b> une modification de l’une doit être faite aussi dans l’autre, sinon les deux pages sonneront
 différemment.</p>
 
-<h2>La page MFT et le Tableau Elizabeth</h2>
-<p>Les deux lisent les mêmes tables, par leur propre adaptateur, plus simple. La page MFT montre une ligne à la fois : le Pareto
-de la semaine, l’analyse, et le suivi des actions MFT. Le Tableau Elizabeth montre les NC d’une ligne en trois familles, avec
-les semaines au-dessus d’un seuil.</p>
+<h2>La page MFT</h2>
+<p>Elle lit les mêmes tables, par son propre adaptateur, plus simple. La page MFT montre une ligne à la fois : le Pareto
+de la semaine, l’analyse, et le suivi des actions MFT.</p>
 <p>La page MFT a la liste <b>Responsabilité</b> du tableau de bord : chaque NC reçoit un groupe tiré de la table (FTO2 quand
 la NC est imputée à FTO2, Fournisseurs quand sa responsabilité est un numéro de fournisseur, Autres pour le reste), et chaque
 compte, chaque graphique et la cloche suivent les groupes cochés. Avec la clé <code>store</code>, les actions MFT sont gardées
 dans un objet du type d’objet de la Saisie structurée de NC (son Msn vaut <code>MFT-ACTIONS</code>, son Texte Sap la liste entière
-en JSON) : un changement envoie l’événement <code>save</code> avec toute la liste, le <b>Submit</b> de l’utilisateur dans le
-widget Action l’enregistre, et la page prend l’objet enregistré en dernier. La mise en place : <code>README.md</code> du
-dossier Skywise, étape 4.</p>
+en JSON) : un changement envoie l’événement <code>save</code> avec toute la liste, le changement de la variable soumet le
+widget Action (un clic), et la page prend l’objet enregistré en dernier. La relecture des enregistrements n’est pas encore
+réglée (<i>Limites connues et travail en cours</i>).</p>
 
 <h2>La Saisie structurée de NC</h2>
 <p>La Saisie structurée de NC est une page à part, qui aide à rédiger une NC selon le standard. Quand le texte est prêt, elle
