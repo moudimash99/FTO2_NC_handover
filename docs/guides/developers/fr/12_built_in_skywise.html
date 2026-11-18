@@ -1,0 +1,555 @@
+<!--
+title: Comment c’est construit dans Skywise
+subtitle: Chaque objet Skywise du tableau de bord, comment ils s’enchaînent, et comment reconstruire chaque partie dans Skywise
+kicker: Tableau de bord NC FTO2 · Développeurs
+file: developers/fr/12 Comment c'est construit dans Skywise
+for: Le développeur
+label_for: Pour
+foot: Tableau de bord NC FTO2 · Comment c’est construit dans Skywise
+version: Novembre 2026
+contents: Sommaire
+depth: 2
+lang: fr
+-->
+
+<h2>La chaîne d’un coup d’œil</h2>
+<p>Le tableau de bord vit entièrement dans Skywise. Ce n’est pas un seul objet, mais une chaîne : les données vont des datasets
+sources, par la mise à jour, jusqu’à trois applications Slate. Chaque maillon est dans le projet de l’équipe, jamais dans un
+dossier personnel. Chaque maillon a son chapitre dans ce guide.</p>
+
+<h3>Des sources aux pages</h3>
+<table class="keep">
+  <thead><tr><th style="width:30mm">Maillon</th><th style="width:72mm">Objet Skywise</th><th>Ce qu’il fait</th></tr></thead>
+  <tbody>
+    <tr><td><b>Données sources</b></td><td>Les datasets <code>non_conformity</code>, <code>fto2_ai_labels</code>,
+      <code>work_order_operation</code>, <code>mes_disruptions</code></td><td>Les NC, les étiquettes de cause enregistrées, les
+      ordres de retouche, les aléas MES.</td></tr>
+    <tr><td><b>Réglages</b></td><td>Le classeur Fusion <i>FTO2 NC Dashboard - Settings</i> : sept feuilles, chacune synchronisée vers un
+      dataset <i>FTO2 NC Dashboard - Settings - &lt;feuille&gt;</i></td><td>Les valeurs remplies à la main, et les listes collées
+      entières.</td></tr>
+    <tr><td><b>Mise à jour</b></td><td>Un Code Repository de transforms Python ; le transform
+      <code>src/myproject/datasets/fto2_update.py</code></td><td>Lit les sources et les réglages, écrit six tables.</td></tr>
+    <tr><td><b>Planification</b></td><td>Une planification à heure fixe sur le dataset <code>fto2_dash_nc</code></td><td>Lance la mise
+      à jour toute seule.</td></tr>
+    <tr><td><b>Tables</b></td><td>Six datasets : <code>fto2_dash_nc</code>, <code>fto2_dash_defects</code>,
+      <code>fto2_dash_disruptions</code>, <code>fto2_dash_ref</code>, <code>fto2_lines_to_label</code>,
+      <code>fto2_parts_to_price</code></td><td>Quatre pour les pages, deux listes de travail.</td></tr>
+    <tr><td><b>Synchronisation Postgres</b></td><td>Les quatre tables des pages et la feuille <i>Target and pages</i>, copiées dans
+      Postgres, schéma <code>foundry_sync</code></td><td>Slate lit Postgres, pas les datasets.</td></tr>
+    <tr><td><b>Pages</b></td><td>Trois applications Slate : le tableau de bord, la page MFT, la Saisie structurée de NC</td><td>Chacune
+      lit ses requêtes et dessine sa page.</td></tr>
+    <tr><td><b>Ontologie</b></td><td>Le type d’objet <i>a30 Nc Writer Dataset</i> et son action</td><td>Garde chaque NC rédigée avec la
+      Saisie structurée de NC.</td></tr>
+  </tbody>
+</table>
+
+<h3>Où est gardé le code de chaque partie</h3>
+<table class="keep">
+  <thead><tr><th style="width:38mm">Partie</th><th>Gardée dans</th><th style="width:50mm">Versions antérieures</th></tr></thead>
+  <tbody>
+    <tr><td><b>La mise à jour</b></td><td>Le Code Repository : le fichier du transform, le code dans <code>src/fto2/</code>, les tables de
+      règles dans <code>src/fto2/settings/</code>, la liste des postes et les exports du plan de production dans
+      <code>src/fto2/files/</code>.</td><td>L’historique du repository : chaque commit, sur chaque branche.</td></tr>
+    <tr><td><b>Les pages</b></td><td>Chaque application Slate : son code sandbox (CSS, HTML, JS, State), ses requêtes, ses variables
+      et ses événements.</td><td>L’historique des versions de l’application.</td></tr>
+    <tr><td><b>Les valeurs remplies à la main</b></td><td>Le classeur Fusion.</td><td>L’historique de chaque dataset synchronisé : une
+      version par synchronisation.</td></tr>
+    <tr><td><b>Le type d’objet et son action</b></td><td>Ontology Manager.</td><td>–</td></tr>
+  </tbody>
+</table>
+<p>Quand une partie doit être reconstruite, son code vient de ces endroits, et de nulle part ailleurs.</p>
+
+<h3>Les noms qui tiennent la chaîne</h3>
+<p>Chaque maillon trouve le suivant par son nom. Renommez-en un, et le maillon suivant s’arrête. Gardez ces noms exactement,
+majuscules et espaces compris :</p>
+<table class="keep">
+  <thead><tr><th style="width:78mm">Nom</th><th>Qui le cherche</th></tr></thead>
+  <tbody>
+    <tr><td>Le dossier <i>protected › Qualité › NC Dashboard › For Developer › Datasets</i>, et son dossier <i>Fusion Sheets</i></td>
+      <td>Le transform : il écrit ses tables dans le premier et lit les datasets Fusion dans le second.</td></tr>
+    <tr><td>Les noms du classeur et de ses sept feuilles</td><td>Fusion nomme chaque dataset d’après eux ; le transform lit les
+      datasets sous ces noms.</td></tr>
+    <tr><td>Les tables <code>fto2_dash_…</code></td><td>La synchronisation Postgres, qui garde les noms ; puis les requêtes.</td></tr>
+    <tr><td>Les requêtes <code>q_fto2_…</code></td><td>Le State de chaque code sandbox.</td></tr>
+    <tr><td>Les clés du State <code>nc</code>, <code>def</code>, <code>dis</code>, <code>ref</code>, <code>reglages</code>,
+      <code>store</code></td><td>Le JS de la page.</td></tr>
+    <tr><td>Les sandboxes <code>w_fto2_mft</code>, <code>w_nc_writer</code></td><td>Les événements qui les écoutent.</td></tr>
+    <tr><td>Les variables <code>v_mft_store</code>, <code>v_submission</code></td><td>Les événements, et les champs du widget
+      Action.</td></tr>
+  </tbody>
+</table>
+
+<h2>Les sources et les réglages</h2>
+
+<h3>Les datasets sources</h3>
+<table class="keep">
+  <thead><tr><th style="width:46mm">Dataset</th><th>Ce que la mise à jour y prend</th><th style="width:34mm">Propriétaire</th></tr></thead>
+  <tbody>
+    <tr><td><code>non_conformity</code></td><td>Les NC : celles de l’usine, et celles d’autres usines dont l’usine est responsable.</td>
+      <td>Une autre équipe</td></tr>
+    <tr><td><code>fto2_ai_labels</code></td><td>L’étiquette de cause enregistrée pour chaque ligne de défaut.</td><td>Le tableau de
+      bord</td></tr>
+    <tr><td><code>work_order_operation</code></td><td>Les ordres de retouche et leur temps planifié, pour le coût.</td><td>Une autre
+      équipe</td></tr>
+    <tr><td><code>mes_disruptions</code></td><td>Les aléas MES : le temps d’alerte, et les aléas qui n’ont mené à aucune NC.</td><td>Une
+      autre équipe</td></tr>
+  </tbody>
+</table>
+<p>Le transform désigne ces quatre-là par leur identifiant, pas par leur chemin : un nouveau nom ou un nouveau dossier choisi par
+leur propriétaire ne casse pas le lien. La mise à jour lit <code>fto2_ai_labels</code> mais ne l’écrit jamais : il contient
+toutes les étiquettes enregistrées jusqu’ici. Gardez-le.</p>
+
+<h3>Le classeur Fusion</h3>
+<p>Un classeur, <i>FTO2 NC Dashboard - Settings</i>, avec sept feuilles. Chaque feuille est synchronisée vers un dataset à elle,
+dans le dossier <i>Fusion Sheets</i>. Fusion nomme le dataset d’après le classeur et la feuille : <i>FTO2 NC Dashboard -
+Settings - Blackout days</i>.</p>
+<table class="keep">
+  <thead><tr><th style="width:40mm">Feuille</th><th style="width:44mm">Remplie</th><th>Lue par</th><th style="width:38mm">Nom dans la mise à jour</th></tr></thead>
+  <tbody>
+    <tr><td><b>Target and pages</b></td><td>à la main</td><td>les pages, par la synchronisation Postgres</td><td>–</td></tr>
+    <tr><td><b>Cost rates and times</b></td><td>à la main</td><td>la mise à jour</td><td><code>fto2_set_cost</code></td></tr>
+    <tr><td><b>Blackout days</b></td><td>à la main</td><td>la mise à jour</td><td><code>fto2_set_blackout</code></td></tr>
+    <tr><td><b>Part prices</b></td><td>à la main</td><td>la mise à jour</td><td><code>fto2_set_part_prices</code></td></tr>
+    <tr><td><b>Cable tracker</b></td><td>collée entière, telle quelle</td><td>la mise à jour</td><td><code>fto2_set_cables</code></td></tr>
+    <tr><td><b>GPS register</b></td><td>collée entière, telle quelle</td><td>la mise à jour</td><td><code>fto2_set_gps</code></td></tr>
+    <tr><td><b>Test list</b></td><td>collée entière, telle quelle</td><td>la mise à jour</td><td><code>fto2_set_test</code></td></tr>
+  </tbody>
+</table>
+<ul>
+  <li><b>Remplie à la main :</b> la première ligne porte les noms des colonnes, puis une ligne par élément.</li>
+  <li><b>Collée entière, telle quelle :</b> la feuille est vidée, puis toute la source est collée à partir de la cellule A1. On ne
+    supprime rien et on ne renomme rien : la mise à jour trouve elle-même la ligne d’en-tête et laisse le reste de côté.</li>
+</ul>
+
+<h3>Les réglages gardés avec le code</h3>
+<p>Les règles et les tables techniques sont de petites tables CSV dans le Code Repository, dossier <code>src/fto2/settings/</code>.
+Leur nom commence par leur groupe : <code>0_</code> historique et secours, <code>1_</code> les valeurs des feuilles Fusion sous forme
+de fichiers (et les actions MFT), <code>2_</code> règles et noms, <code>3_</code> expert. La table <code>lisez_moi.csv</code> les liste
+toutes.</p>
+<p>Les tables <code>1_</code> servent de secours : quand un dataset Fusion ne peut pas être lu, la mise à jour prend la table au
+même contenu, et le dit dans ses premières lignes. Elles donnent aussi ses colonnes à chaque feuille remplie à la main :</p>
+<table class="keep">
+  <thead><tr><th style="width:40mm">Feuille</th><th style="width:58mm">Sa table dans <code>src/fto2/settings/</code></th><th>Colonnes</th></tr></thead>
+  <tbody>
+    <tr><td>Target and pages</td><td><code>1_reglages_pages.csv</code></td><td>nom, valeur, description</td></tr>
+    <tr><td>Cost rates and times</td><td><code>1_cout_parametres.csv</code></td><td>nom, valeur, unite, description</td></tr>
+    <tr><td>Blackout days</td><td><code>1_calendrier_production.csv</code></td><td>debut, fin, poids, motif</td></tr>
+    <tr><td>Part prices</td><td><code>1_prix_pieces.csv</code></td><td>materiel, designation, prix_unitaire_eur</td></tr>
+  </tbody>
+</table>
+
+<h2>La mise à jour dans le Code Repository</h2>
+<p>La mise à jour est un seul transform Python, dans un Code Repository du projet de l’équipe. C’est un transform léger
+(lightweight) : du Python simple avec pandas et polars, sans Spark. Un seul build lit toutes les sources et tous les réglages,
+et écrit les six tables.</p>
+
+<h3>Ce que contient le repository</h3>
+<table class="keep">
+  <thead><tr><th style="width:74mm">Dans le repository</th><th>Ce que c’est</th></tr></thead>
+  <tbody>
+    <tr><td><code>src/myproject/datasets/fto2_update.py</code></td><td>Le transform : ses entrées, ses sorties et les lignes de dossier en
+      haut du fichier. Il passe tout au code.</td></tr>
+    <tr><td><code>src/fto2/</code></td><td>Le code, un fichier par sujet. <code>skywise.py</code> lance les étapes dans l’ordre ;
+      <code>transform_io.py</code> les relie au transform.</td></tr>
+    <tr><td><code>src/fto2/settings/</code></td><td>Les tables de règles (section 2.3).</td></tr>
+    <tr><td><code>src/fto2/files/</code></td><td>La liste des postes <code>fto2_station_mapping.csv</code>, et les exports du plan de
+      production, nommés <code>Avances_Retards_&lt;date&gt;.csv</code>. Le plus récent est lu ; les anciens sont gardés.</td></tr>
+    <tr><td><code>conda_recipe/meta.yaml</code></td><td>Les bibliothèques dont le code a besoin (section 3.2).</td></tr>
+    <tr><td><code>src/setup.py</code></td><td>Garde les réglages et les fichiers dans le paquet (section 3.2).</td></tr>
+    <tr><td><code>src/setup.cfg</code>, <code>src/.pylintrc</code></td><td>Les vérifications de style lancées à chaque commit.</td></tr>
+  </tbody>
+</table>
+
+<h3>Le transform et son paquet</h3>
+<ul>
+  <li><b>Entrées :</b> les quatre datasets sources, par leur identifiant ; les six datasets Fusion que lit la mise à jour, par leur
+    chemin (le dossier <i>Fusion Sheets</i>, puis <i>FTO2 NC Dashboard - Settings - &lt;feuille&gt;</i>).</li>
+  <li><b>Sorties :</b> les six tables, dans le dossier <i>Datasets</i>.</li>
+  <li><b>Les lignes du haut :</b> <code>FOLDER</code>, le dossier où les tables sont écrites ; <code>FUSION</code>, le dossier
+    <i>Fusion Sheets</i> qu’il contient ; <code>TEST</code>.</li>
+  <li><b><code>TEST = "_test"</code></b> écrit des tables à part (<code>fto2_dash_nc_test</code>…), pour un premier essai.
+    <b><code>TEST = ""</code></b> écrit les tables que lisent les pages.</li>
+  <li><b>Aucune ligne de ce fichier ne doit dépasser 120 caractères</b> (chapitre 7).</li>
+</ul>
+<p>La recette conda, <code>conda_recipe/meta.yaml</code>, liste sous <code>run:</code> les trois bibliothèques dont le code a besoin,
+avec le même retrait que les lignes au-dessus :</p>
+<pre><code>    - pandas
+    - pyarrow
+    - polars</code></pre>
+<p><code>src/setup.py</code> garde les tables de réglages et les fichiers avec le code. Après la ligne
+<code>install_requires=[],</code> il contient :</p>
+<pre><code>package_data={"fto2": ["settings/*", "files/*"]},</code></pre>
+<p>Sans cette ligne, le build ne trouve pas les tables de réglages.</p>
+
+<h3>La planification</h3>
+<p>La mise à jour tourne selon une planification à heure fixe, posée sur le dataset <code>fto2_dash_nc</code>. Un build de ce
+dataset écrit les six tables.</p>
+<table class="keep">
+  <thead><tr><th style="width:34mm">Réglage</th><th>Valeur</th></tr></thead>
+  <tbody>
+    <tr><td><b>Déclencheur</b></td><td>Une heure, assez tôt pour que les tables soient à jour quand l’équipe ouvre les pages (par exemple chaque jour ouvré avant la prise de poste). Vérifiez l’heure réglée dans la planification elle-même.</td></tr>
+    <tr><td><b>Cible</b></td><td><code>fto2_dash_nc</code> seul, pas ce qui est en amont : les données sources appartiennent à
+      d’autres équipes.</td></tr>
+    <tr><td><b>Tourne sous</b></td><td>Le projet (son compte de service), si Skywise le propose ; sinon un compte qui reste. Une
+      planification tourne avec les droits de son propriétaire, et s’arrête avec son compte.</td></tr>
+    <tr><td><b>En cas d’échec</b></td><td>Une notification au propriétaire.</td></tr>
+    <tr><td><b>Nom</b></td><td><i>FTO2 NC dashboard - daily update</i></td></tr>
+  </tbody>
+</table>
+
+<h3>Lire le journal d’un build</h3>
+<ol>
+  <li><b>Les premières lignes :</b> l’année suivie et l’année de comparaison ; <i>Settings from Fusion</i>, les feuilles lues ; une
+    ligne pour chaque feuille collée entière (<i>Fusion sheet GPS register: header on row 4, … rows</i>). Une ligne qui commence
+    par ⚠️ nomme une feuille qui n’a pas été utilisée, et dit pourquoi.</li>
+  <li><b>Les dernières lignes :</b> les comptes, les tables écrites, et de nouveau les avertissements.</li>
+  <li><b>Quelques minutes après la synchronisation :</b> la date <b>Données au…</b> du tableau de bord est le jour de la dernière
+    NC.</li>
+</ol>
+
+<h2>Les tables et la synchronisation Postgres</h2>
+
+<h3>Les six tables</h3>
+<table class="keep">
+  <thead><tr><th style="width:46mm">Table</th><th>Une ligne par</th><th style="width:40mm">Lue par</th></tr></thead>
+  <tbody>
+    <tr><td><code>fto2_dash_nc</code></td><td>NC : dates, ligne, responsabilité, coût et ses étapes, phase, MSN, produit, poste,
+      type.</td><td>Les pages</td></tr>
+    <tr><td><code>fto2_dash_defects</code></td><td>Ligne de défaut : catégorie, cause, sous-catégorie, part du coût de la NC, texte,
+      sous-code.</td><td>Les pages</td></tr>
+    <tr><td><code>fto2_dash_disruptions</code></td><td>Aléa qualité qui n’a mené à aucune NC.</td><td>Le tableau de bord</td></tr>
+    <tr><td><code>fto2_dash_ref</code></td><td>Morceau de texte. Les données de référence (plan de production, année passée, câbles,
+      actions MFT, réglages du coût, arbre des causes) sont coupées en morceaux ; les pages les recollent.</td><td>Les pages</td></tr>
+    <tr><td><code>fto2_lines_to_label</code></td><td>Ligne de défaut encore à étiqueter.</td><td>Le développeur</td></tr>
+    <tr><td><code>fto2_parts_to_price</code></td><td>Pièce encore à chiffrer, la plus fréquente d’abord.</td><td>Le gestionnaire de
+      configuration</td></tr>
+  </tbody>
+</table>
+<p>Les tables contiennent deux années : l’année de comparaison et l’année suivie. Chaque page choisit ce qu’elle montre.</p>
+
+<h3>La synchronisation vers Postgres</h3>
+<p>Slate lit Postgres, pas les datasets. Chaque table que lisent les pages est synchronisée vers Postgres, dans le schéma
+<code>foundry_sync</code>. Les requêtes Slate y accèdent par la source <code>postgate-airbus-2</code>.</p>
+<table class="keep">
+  <thead><tr><th>Dataset Skywise</th><th style="width:66mm">Table Postgres (schéma <code>foundry_sync</code>)</th></tr></thead>
+  <tbody>
+    <tr><td><code>fto2_dash_nc</code></td><td><code>fto2_dash_nc</code></td></tr>
+    <tr><td><code>fto2_dash_defects</code></td><td><code>fto2_dash_defects</code></td></tr>
+    <tr><td><code>fto2_dash_disruptions</code></td><td><code>fto2_dash_disruptions</code></td></tr>
+    <tr><td><code>fto2_dash_ref</code></td><td><code>fto2_dash_ref</code></td></tr>
+    <tr><td><i>FTO2 NC Dashboard - Settings - Target and pages</i></td><td><code>fto2_set_targets</code></td></tr>
+    <tr><td>Le dataset où écrit l’action de <i>a30 Nc Writer Dataset</i></td><td><code>fto2_mft_store</code> : seulement pour
+      l’enregistrement partagé de la page MFT, pas utilisé (section 5.4)</td></tr>
+  </tbody>
+</table>
+<p>Les deux listes de travail ne sont pas synchronisées : elles se lisent dans Skywise. Un nouveau build arrive dans les pages
+une fois sa synchronisation passée.</p>
+
+<h2>Les applications Slate</h2>
+<p>Il y a une application Slate par page. Chacune contient un code sandbox en quatre parties : CSS (l’apparence), HTML (le
+cadre), JS (du JavaScript simple, sans bibliothèque extérieure) et State (les liens vers les requêtes). Les requêtes lisent
+Postgres par <code>postgate-airbus-2</code>.</p>
+
+<h3>Les trois applications</h3>
+<table class="keep">
+  <thead><tr><th style="width:26mm">Application</th><th style="width:46mm">Requêtes</th><th>Code sandbox</th><th style="width:30mm">Clés du State</th></tr></thead>
+  <tbody>
+    <tr><td><b>Le tableau de bord</b></td><td><code>q_fto2_nc</code>, <code>q_fto2_def</code>, <code>q_fto2_dis</code>,
+      <code>q_fto2_ref</code>, <code>q_fto2_set_targets</code></td><td>Nom libre ; toute la largeur, environ 1 400 px de haut.</td>
+      <td><code>nc</code>, <code>def</code>, <code>dis</code>, <code>ref</code>, <code>reglages</code></td></tr>
+    <tr><td><b>La page MFT</b></td><td><code>q_fto2_nc</code>, <code>q_fto2_def</code>, <code>q_fto2_ref</code>,
+      <code>q_fto2_set_targets</code>, <code>q_fto2_mft_store</code></td><td><code>w_fto2_mft</code> ; toute la largeur, environ
+      1 400 px de haut. Événement <code>save</code>.</td><td><code>nc</code>, <code>def</code>, <code>ref</code>,
+      <code>reglages</code>, <code>store</code></td></tr>
+    <tr><td><b>La Saisie structurée de NC</b></td><td>Aucune</td><td><code>w_nc_writer</code> ; environ 1 316 px de large et 900 px
+      de haut. Événement <code>submit</code>.</td><td>Aucune : son State est <code>{}</code></td></tr>
+  </tbody>
+</table>
+<p>Le State relie chaque clé à une requête : le nom de la requête, entre doubles accolades. Le State du tableau de bord :</p>
+<pre><code>{
+  "nc": "{{q_fto2_nc}}",
+  "def": "{{q_fto2_def}}",
+  "dis": "{{q_fto2_dis}}",
+  "ref": "{{q_fto2_ref}}",
+  "reglages": "{{q_fto2_set_targets}}"
+}</code></pre>
+<p>Celui de la page MFT est le même sans <code>dis</code>, et avec la ligne <code>"store": "{{q_fto2_mft_store}}"</code>. Les lignes
+<code>reglages</code> et <code>store</code> peuvent être enlevées : la page marche alors sans elles.</p>
+
+<h3>Les requêtes</h3>
+<table class="keep">
+  <thead><tr><th style="width:38mm">Requête</th><th style="width:40mm">Lit</th><th>Bon à savoir</th></tr></thead>
+  <tbody>
+    <tr><td><code>q_fto2_nc</code></td><td><code>fto2_dash_nc</code></td><td>Liste les colonnes qu’utilise la page. Les dates arrivent en
+      texte (<code>CAST(created AS VARCHAR) AS created</code>). Triée par <code>created</code>, <code>nc</code>.</td></tr>
+    <tr><td><code>q_fto2_def</code></td><td><code>fto2_dash_defects</code></td><td>Triée par <code>nc</code>, <code>seq</code>.</td></tr>
+    <tr><td><code>q_fto2_dis</code></td><td><code>fto2_dash_disruptions</code></td><td>La date <code>opened</code> en texte. Triée par
+      <code>opened</code>, <code>id</code>.</td></tr>
+    <tr><td><code>q_fto2_ref</code></td><td><code>fto2_dash_ref</code></td><td>Les colonnes <code>partie</code>, <code>morceau</code>,
+      <code>texte</code>, triées par les deux premières.</td></tr>
+    <tr><td><code>q_fto2_set_targets</code></td><td><code>fto2_set_targets</code></td><td>Toutes les colonnes : la page trouve
+      <code>nom</code> et <code>valeur</code> quel que soit le nom que leur a donné la synchronisation.</td></tr>
+    <tr><td><code>q_fto2_mft_store</code></td><td><code>fto2_mft_store</code></td><td>Les objets dont le Msn vaut
+      <code>MFT-ACTIONS</code>, les 20 derniers enregistrés. Pas utilisée (section 5.4).</td></tr>
+  </tbody>
+</table>
+<p>Le texte exact de chaque requête est dans l’application : ouvrez la requête. Un texte antérieur est dans l’historique des
+versions de l’application. Les requêtes n’ont pas de limite de lignes.</p>
+
+<h3>Les enregistrements de la page MFT et de la Saisie structurée de NC</h3>
+<h4>La page MFT</h4>
+<p>Le code sandbox n’écrit rien lui-même. Il passe toute la liste des actions avec un événement, et Slate l’enregistre par
+l’action du type d’objet <i>a30 Nc Writer Dataset</i>. Voici les pièces, dans l’ordre où elles agissent :</p>
+<table class="keep">
+  <thead><tr><th style="width:28mm">Pièce</th><th style="width:78mm">Réglée sur</th><th>Ce qu’elle fait</th></tr></thead>
+  <tbody>
+    <tr><td><b>Événement du sandbox</b></td><td><code>save</code>, dans l’onglet Interaction de <code>w_fto2_mft</code> :
+      <code>["save"]</code></td><td>Envoyé avec toute la liste à chaque changement.</td></tr>
+    <tr><td><b>Variable</b></td><td><code>v_mft_store</code>, valeur <code>{}</code></td><td>Garde la liste à enregistrer.</td></tr>
+    <tr><td><b>Événement 1</b></td><td>Déclencheur <code>w_fto2_mft.save</code> ; action <code>v_mft_store.set</code> ; code
+      <code>return {{slEventValue}};</code></td><td>Met la liste dans la variable.</td></tr>
+    <tr><td><b>Widget Action</b></td><td>L’action <i>Create or Modify a30 Nc Writer Dataset</i>, ses champs liés à la variable
+      (ci-dessous)</td><td>Enregistre la liste dans un objet.</td></tr>
+    <tr><td><b>Événement 2</b></td><td>Déclencheur : <code>v_mft_store</code> a changé ; action : le widget Action, Submit</td>
+      <td>Enregistre chaque changement, en un clic.</td></tr>
+    <tr><td><b>Événement 3</b></td><td>Déclencheur : le widget Action, envoi réussi ; action : lancer <code>q_fto2_mft_store</code></td>
+      <td>Relit l’enregistrement.</td></tr>
+  </tbody>
+</table>
+<table class="keep">
+  <thead><tr><th style="width:40mm">Champ de l’action</th><th>Valeur par défaut</th></tr></thead>
+  <tbody>
+    <tr><td>Detection</td><td><code>"{{v_mft_store.detection}}"</code></td></tr>
+    <tr><td>Produit</td><td><code>"{{v_mft_store.produit}}"</code></td></tr>
+    <tr><td>Msn</td><td><code>"{{v_mft_store.msn}}"</code></td></tr>
+    <tr><td>Texte Sap</td><td><code>"{{v_mft_store.texte_sap}}"</code></td></tr>
+    <tr><td>Total Defauts</td><td><code>{{v_mft_store.total_defauts}}</code>, sans guillemets : un nombre</td></tr>
+    <tr><td>Timestamp (la clé)</td><td>Laissé vide : l’action le remplit.</td></tr>
+  </tbody>
+</table>
+<p>L’objet enregistré a le Msn <code>MFT-ACTIONS</code>, et son Texte Sap contient toute la liste en JSON. Chaque enregistrement
+ajoute un objet ; la page prend le dernier enregistré.</p>
+
+<h4>La Saisie structurée de NC</h4>
+<p>Le même principe, avec d’autres noms :</p>
+<table class="keep">
+  <thead><tr><th style="width:28mm">Pièce</th><th>Réglée sur</th></tr></thead>
+  <tbody>
+    <tr><td><b>Événement du sandbox</b></td><td><code>submit</code>, dans l’onglet Interaction de <code>w_nc_writer</code> :
+      <code>["submit"]</code></td></tr>
+    <tr><td><b>Variable</b></td><td><code>v_submission</code>, valeur <code>{}</code></td></tr>
+    <tr><td><b>Événement 1</b></td><td>Déclencheur <code>w_nc_writer.submit</code> ; action <code>v_submission.set</code> ; code
+      <code>return {{slEventValue}};</code></td></tr>
+    <tr><td><b>Widget Action</b></td><td>La même action de <i>a30 Nc Writer Dataset</i>. Ses champs prennent
+      <code>v_submission.detection</code>, <code>.produit</code>, <code>.msn</code>, <code>.texte_sap</code> entre doubles accolades et
+      entre guillemets, et <code>v_submission.total_defauts</code> sans guillemets.</td></tr>
+    <tr><td><b>Événement 2</b></td><td>Déclencheur : <code>v_submission</code> a changé ; action : le widget Action, Submit</td></tr>
+  </tbody>
+</table>
+<p>L’opérateur appuie sur <b>Soumettre la NC</b> : la page dit <b>NC envoyée</b>, et un objet est créé pour la NC. Les listes de la
+Saisie structurée de NC (produits, défauts, lieux de détection, FIN) sont en haut de son JS.</p>
+
+<h4>Le type d’objet</h4>
+<p>Dans Ontology Manager, le type d’objet <i>a30 Nc Writer Dataset</i> contient un objet par enregistrement. Ses propriétés :
+Timestamp (la clé, remplie par l’action), Detection, Produit, Msn, Texte Sap et Total Defauts. Son action, <i>Create or Modify
+a30 Nc Writer Dataset</i>, écrit dans un dataset à elle. Ontology Manager montre aussi les noms d’API du type d’objet et de
+ses propriétés.</p>
+
+<h3>L’enregistrement partagé de la page MFT n’est pas encore utilisé</h3>
+<div class="warn"><span class="t">Reste à régler</span>
+<p>Les pièces de la section 5.3, pour la page MFT, sont en place, mais la relecture des enregistrements n’est pas réglée. Deux
+chemins ont été essayés :</p>
+<ul>
+  <li><b>Par Postgres :</b> le dataset du type d’objet synchronisé sous le nom <code>fto2_mft_store</code>. Cette copie a du retard
+    sur l’Ontologie : la page ne voit pas un enregistrement au moment où il est fait.</li>
+  <li><b>Directement dans l’Ontologie :</b> la requête <code>q_fto2_mft_store</code> sur la source HTTP « foundry » de Slate, qui
+    cherche les objets dont le Msn vaut <code>MFT-ACTIONS</code>. Elle n’a pas atteint l’API des objets.</li>
+</ul>
+<p>L’enregistrement partagé n’est donc pas utilisé. Les actions MFT que tout le monde voit sont celles de la table
+<code>1_actions_mft.csv</code> du Code Repository : une action ajoutée là apparaît après le build suivant. Une action modifiée sur la
+page elle-même n’est pas gardée. La cloche du tableau de bord ne connaît que les actions de la table.</p>
+</div>
+
+<h2>Reconstruire une partie</h2>
+<p>Avant de commencer :</p>
+<ul>
+  <li><b>Souvent, rien n’est à reconstruire.</b> Une version antérieure tirée de l’historique (section 1.2) suffit : l’historique
+    des versions de l’application, les commits du repository, les versions antérieures d’un dataset.</li>
+  <li><b>Une partie à la fois.</b> Gardez l’ancienne jusqu’à ce que la nouvelle marche.</li>
+  <li><b>Prenez le code dans Skywise :</b> dans la partie telle qu’elle est, ou dans une version antérieure de son historique.</li>
+  <li><b>Copiez chaque morceau en entier.</b> Un long texte collé peut perdre sa fin. Comparez ses dernières lignes avec
+    l’original avant d’enregistrer.</li>
+  <li><b>Gardez exactement chaque nom de la section 1.3.</b></li>
+</ul>
+
+<h3>Une application Slate</h3>
+<ol class="steps">
+  <li>Dans le dossier de l’équipe, créez une nouvelle application Slate. Gardez l’ancienne ouverte à côté.</li>
+  <li>Pour chaque requête de la page (section 5.1) : panneau Queries, <b>+</b>, source <code>postgate-airbus-2</code>, le nom exact,
+    et le texte copié de l’ancienne requête. Appuyez sur Test : elle renvoie des lignes.</li>
+  <li>Ajoutez un code sandbox (<b>Widgets › Advanced › Code Sandbox</b>). Donnez-lui la taille et le nom de la section 5.1.</li>
+  <li>Ouvrez l’ancien code sandbox, ou la version qui marchait dans l’historique des versions de l’application. Copiez chaque
+    onglet en entier dans le même onglet du nouveau : CSS, HTML, JS, State. Laissez Libraries vide.</li>
+  <li>Vérifiez la fin du JS : la page démarre par du code tout à la fin, donc un JS coupé n’affiche rien.</li>
+  <li>Pour la page MFT et la Saisie structurée de NC, ajoutez l’événement du sandbox, la variable, le widget Action et les
+    événements (section 6.2).</li>
+  <li>Prévisualisez. Le tableau de bord affiche la date <b>Données au…</b> de la dernière NC. La page MFT s’ouvre sur la ligne qui a
+    le plus de NC, sur la dernière semaine complète, avec <b>Responsabilité FTO2</b>. La Saisie structurée de NC affiche
+    <b>Nouvelle NC</b>.</li>
+  <li>Partagez la nouvelle application avec les lecteurs (lecture), donnez-leur son lien, puis retirez l’ancienne.</li>
+</ol>
+
+<h3>Les enregistrements de la page MFT et de la Saisie structurée de NC</h3>
+<h4>La page MFT</h4>
+<ol class="steps">
+  <li>Dans <code>w_fto2_mft</code>, onglet Interaction, Events : <code>["save"]</code>.</li>
+  <li>Panneau Variables, <b>+</b> : <code>v_mft_store</code>, valeur <code>{}</code>.</li>
+  <li>Panneau Events, <b>+</b> : déclencheur <code>w_fto2_mft.save</code>, action <code>v_mft_store.set</code>, code
+    <code>return {{slEventValue}};</code></li>
+  <li>Sous la page, ajoutez un widget Action avec l’action <i>Create or Modify a30 Nc Writer Dataset</i>. Donnez à ses paramètres
+    par défaut les valeurs de la section 5.3. Laissez Timestamp vide.</li>
+  <li>Panneau Events, <b>+</b> : déclencheur <code>v_mft_store</code> a changé, action Submit du widget Action. Pas de code.</li>
+  <li>Panneau Events, <b>+</b> : déclencheur envoi réussi du widget Action, action lancer <code>q_fto2_mft_store</code>. Pas de
+    code.</li>
+  <li>Vérifiez, une fois la relecture réglée : changez le point de la semaine d’une action. La note grise
+    <b>Enregistrement…</b> apparaît, puis disparaît. Ontology Manager montre un objet de Msn <code>MFT-ACTIONS</code>. Après un
+    rechargement, le changement est toujours là.</li>
+</ol>
+
+<h4>La Saisie structurée de NC</h4>
+<ol class="steps">
+  <li>Dans <code>w_nc_writer</code>, onglet Interaction, Events : <code>["submit"]</code>. Son State : <code>{}</code>.</li>
+  <li>Panneau Variables, <b>+</b> : <code>v_submission</code>, valeur <code>{}</code>.</li>
+  <li>Panneau Events, <b>+</b> : déclencheur <code>w_nc_writer.submit</code>, action <code>v_submission.set</code>, code
+    <code>return {{slEventValue}};</code></li>
+  <li>Ajoutez un widget Action avec l’action de <i>a30 Nc Writer Dataset</i>. Liez ses champs à <code>v_submission</code> comme dans
+    la section 5.3.</li>
+  <li>Panneau Events, <b>+</b> : déclencheur <code>v_submission</code> a changé, action Submit du widget Action. Pas de code.</li>
+  <li>Vérifiez : rédigez une NC de test avec deux défauts et appuyez sur <b>Soumettre la NC</b>. La page dit <b>NC envoyée</b>, et
+    un nouvel objet existe, avec le MSN tapé.</li>
+</ol>
+
+<h3>Le Code Repository et sa planification</h3>
+<p>Essayez d’abord le même repository : son historique garde chaque version antérieure de chaque fichier. Remettez dans le
+fichier la version qui marchait, commitez, lancez le build. Un nouveau repository n’est utile que si l’ancien est perdu.</p>
+<ol class="steps">
+  <li>Ouvrez le projet de l’équipe, celui qui contient le dossier <i>Datasets</i>. <b>New › Code repository</b>, Python transforms.
+    Un repository n’écrit des tables que dans son propre projet.</li>
+  <li>Supprimez le transform d’exemple créé par le modèle, dans <code>src/myproject/datasets</code>.</li>
+  <li>Créez les dossiers <code>src/fto2</code>, <code>src/fto2/settings</code> et <code>src/fto2/files</code>, avec les mêmes fichiers
+    que l’ancien repository, sous les mêmes noms. Copiez le contenu de chaque fichier en entier, depuis l’ancien repository ou son
+    historique. Vérifiez les dernières lignes de chacun.</li>
+  <li>Créez <code>src/myproject/datasets/fto2_update.py</code> de la même façon. Vérifiez les lignes <code>FOLDER</code> et
+    <code>FUSION</code> : copiez le chemin d’un dossier depuis Skywise plutôt que de le taper. Mettez <code>TEST = "_test"</code>.</li>
+  <li>Dans <code>conda_recipe/meta.yaml</code>, sous <code>run:</code>, ajoutez pandas, pyarrow et polars (section 3.2).</li>
+  <li>Dans <code>src/setup.py</code>, après <code>install_requires=[],</code>, ajoutez la ligne <code>package_data</code> (section
+    3.2).</li>
+  <li>Commitez, et attendez que l’onglet Checks soit vert. Si la vérification de style refuse des lignes de <code>fto2</code> : dans
+    <code>src/setup.cfg</code>, ajoutez <code>exclude = fto2</code> sous <code>[flake8]</code> et sous <code>[pycodestyle]</code> ; dans
+    <code>src/.pylintrc</code>, sous <code>[MASTER]</code>, ajoutez <code>ignore=fto2</code>. Commitez de nouveau.</li>
+  <li>Avec <code>fto2_update.py</code> à l’écran, appuyez sur <b>Build</b> et choisissez <code>fto2_dash_nc_test</code>. Lisez le
+    journal (section 3.4). Ouvrez <code>fto2_dash_nc_test</code> : il contient les NC de cette année et de l’année passée.</li>
+  <li>Mettez <code>TEST = ""</code>, commitez, et lancez le build de <code>fto2_dash_nc</code>.</li>
+  <li>Posez la planification sur le <code>fto2_dash_nc</code> du nouveau repository (ci-dessous), et supprimez l’ancienne
+    planification.</li>
+</ol>
+<h4>La planification</h4>
+<ol class="steps">
+  <li>Ouvrez le dataset <code>fto2_dash_nc</code>, puis <b>Schedules</b> (ou sélectionnez-le dans Data Lineage et ouvrez le panneau
+    Schedules). Créez une nouvelle planification.</li>
+  <li>Déclencheur : une heure, par exemple chaque jour ouvré avant la prise de poste, fuseau Europe/Paris.</li>
+  <li>Cible : <code>fto2_dash_nc</code> seul, pas ce qui est en amont.</li>
+  <li>Si Skywise le propose, faites-la tourner pour le projet plutôt que sous une personne. Sinon, prenez un compte qui reste.
+    Cochez la notification en cas d’échec.</li>
+  <li>Nommez-la <i>FTO2 NC dashboard - daily update</i>, et enregistrez.</li>
+  <li>Le lendemain matin : le build apparaît dans l’historique des Builds, et la date <b>Données au…</b> du tableau de bord a
+    avancé.</li>
+</ol>
+
+<h3>Le classeur Fusion et sa synchronisation</h3>
+<p>Si une seule feuille a été vidée par erreur, son dernier contenu est dans les versions antérieures de son dataset.
+Reconstruisez tout le classeur seulement s’il est perdu.</p>
+<ol class="steps">
+  <li>Dans le dossier de l’équipe, créez le classeur <i>FTO2 NC Dashboard - Settings</i>, avec sept feuilles nommées exactement
+    comme dans la section 2.2.</li>
+  <li>Les quatre feuilles remplies à la main : sur la première ligne, les colonnes de la section 2.3. Puis les valeurs, depuis la
+    dernière version du dataset de la feuille, ou depuis sa table dans <code>src/fto2/settings/</code>.</li>
+  <li>Les trois feuilles collées entières : collez la source actuelle à partir de la cellule A1, en entier, telle quelle.</li>
+  <li>Synchronisez chaque feuille vers un dataset du dossier <i>Fusion Sheets</i>. Gardez le nom que donne Fusion :
+    <i>FTO2 NC Dashboard - Settings - &lt;feuille&gt;</i>.</li>
+  <li>Synchronisez <i>FTO2 NC Dashboard - Settings - Target and pages</i> vers Postgres, sous le nom <code>fto2_set_targets</code>
+    (section suivante).</li>
+  <li>Lancez le build de <code>fto2_dash_nc</code>, ou attendez la planification. Les premières lignes du journal disent quels
+    réglages viennent de Fusion, et sur quelle ligne a été trouvé l’en-tête de chaque feuille collée entière.</li>
+</ol>
+<p>Un dataset sous un autre nom ou dans un autre dossier n’est pas trouvé par le transform. Rendez-lui son nom et son dossier, ou
+écrivez son identifiant (<b>Copy RID</b>) à la place de son chemin dans le transform.</p>
+
+<h3>Les synchronisations Postgres</h3>
+<ol class="steps">
+  <li>Ouvrez le dataset, puis ses synchronisations. Ajoutez une synchronisation Postgres avec les mêmes réglages que celles des
+    autres tables : la même base, le schéma <code>foundry_sync</code>, le nom de table de la section 4.2.</li>
+  <li>Lancez-la une fois. Dans Slate, testez la requête qui la lit : elle renvoie des lignes.</li>
+  <li>Quand une table gagne une colonne, lancez sa synchronisation, puis ajoutez la colonne à sa requête.</li>
+</ol>
+<p>Les pages ne voient un nouveau build qu’une fois sa synchronisation passée.</p>
+
+<h2>Ce qui casse le plus souvent</h2>
+
+<h4>Dans les pages</h4>
+<table class="keep">
+  <thead><tr><th style="width:48mm">Ce que vous voyez</th><th>Ce que ça veut dire</th><th style="width:52mm">Que faire</th></tr></thead>
+  <tbody>
+    <tr><td>Un encadré qui nomme une requête, toujours en attente après 20 secondes</td><td>L’application n’a pas de requête de ce nom,
+      ou la requête échoue. Souvent une ligne du State (<code>reglages</code>, <code>store</code>) dont la requête n’est pas dans
+      cette application.</td><td>Ajoutez la requête sous ce nom exact, ou enlevez la ligne du State.</td></tr>
+    <tr><td><i>La requête … n’a renvoyé aucune ligne</i></td><td>La requête tourne, mais sa table Postgres est vide.</td><td>Vérifiez la
+      synchronisation, puis le dernier build.</td></tr>
+    <tr><td><i>exactement N lignes reçues</i></td><td>Une limite de lignes sur la requête a coupé le résultat.</td><td>Enlevez la
+      limite.</td></tr>
+    <tr><td><i>aucune NC lisible … colonnes reçues</i></td><td>La requête renvoie des colonnes que la page n’attend pas.</td><td>Comparez
+      la requête avec la table.</td></tr>
+    <tr><td>Une erreur qui nomme une ligne de code</td><td>Le JS a une erreur, ou il a été coupé au collage.</td><td>Recollez la version
+      qui marchait, depuis l’historique des versions.</td></tr>
+    <tr><td>Une page vide, sans encadré</td><td>Le lecteur peut ouvrir l’application mais pas les tables.</td><td>Ses droits
+      (<i>Skywise : accès et propriété</i>).</td></tr>
+    <tr><td><i>Les actions partagées ne sont pas encore lues</i> (page MFT)</td><td><code>q_fto2_mft_store</code> n’a rien renvoyé après
+      20 secondes.</td><td>Normal tant que l’enregistrement partagé n’est pas utilisé (section 5.4).</td></tr>
+  </tbody>
+</table>
+
+<h4>Dans la mise à jour</h4>
+<table>
+  <thead><tr><th style="width:48mm">Ce que vous voyez</th><th>Ce que ça veut dire</th><th style="width:52mm">Que faire</th></tr></thead>
+  <tbody>
+    <tr><td><i>No transforms discovered</i></td><td>Build a été lancé depuis un autre fichier. Ou une ligne du fichier du transform
+      dépasse 120 caractères, et la vérification de style a refusé le fichier.</td><td>Ouvrez <code>fto2_update.py</code> et lancez
+      Build depuis là. Raccourcissez la ligne trop longue.</td></tr>
+    <tr><td><i>module … has no attribute …</i></td><td>Un fichier a été coupé quand il a été remplacé. L’erreur se montre loin de la
+      cause.</td><td>Ouvrez le fichier nommé, comparez ses dernières lignes avec l’historique, et recopiez-le en entier.</td></tr>
+    <tr><td><i>⚠️ Fusion sheet … NOT USED</i>, dans les premières lignes</td><td>La ligne d’en-tête n’a pas été trouvée : une colonne
+      manque ou a été renommée dans la source. La table précédente est gardée.</td><td>Videz la feuille et recollez toute la source
+      à partir de A1. Une colonne renommée dans la source est nommée dans la ligne.</td></tr>
+    <tr><td><i>Alias … does not exist</i> (<i>FTO2 NC Dashboard - Settings - …</i>)</td><td>Un dataset Fusion a été renommé, ou mis
+      dans un autre dossier.</td><td>Son nom et son dossier d’origine, ou son identifiant dans le transform.</td></tr>
+    <tr><td><i>… could not be created since the user is not authorized …</i></td><td>Le repository est hors du projet des
+      tables.</td><td>Un repository dans le projet de l’équipe (section 6.3).</td></tr>
+    <tr><td>Une entrée d’un autre projet doit être ajoutée au projet</td><td>Une source est dans un autre projet.</td><td>Acceptez la
+      proposition ; un propriétaire du projet devra peut-être approuver.</td></tr>
+    <tr><td><i>No module named</i> pandas, pyarrow ou polars</td><td>Il manque la ligne dans la recette conda.</td><td>Section 3.2.</td></tr>
+    <tr><td><i>settings table … not found</i></td><td>Il manque la ligne <code>package_data</code> dans <code>src/setup.py</code>, ou une
+      table a été renommée.</td><td>Section 3.2, ou le nom d’origine de la table.</td></tr>
+    <tr><td><i>The station list is missing</i></td><td><code>fto2_station_mapping.csv</code> n’est pas dans
+      <code>src/fto2/files/</code>.</td><td>Remettez-le depuis l’historique.</td></tr>
+    <tr><td>Les vérifications échouent : <i>line too long</i>, <i>E501</i></td><td>Les règles de style s’appliquent au dossier
+      <code>fto2</code>.</td><td>Section 6.3, étape 7.</td></tr>
+  </tbody>
+</table>
+
+<div class="next">
+<h3 class="plain">À lire ensuite</h3>
+<ul>
+  <li><i>Skywise : accès et propriété</i> : qui a besoin de quel droit.</li>
+  <li><i>Le pipeline</i> et <i>Les pages</i> : ce que font la mise à jour et les pages.</li>
+</ul>
+</div>
