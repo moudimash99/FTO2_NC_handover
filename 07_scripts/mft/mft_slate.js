@@ -126,8 +126,9 @@ function fto2SharedStore(api, local, seed) {
   }
   function rowsOf(v) {   // rows, or one array per column, or (an Ontology query) the objects under data / objects
     if (Array.isArray(v)) return v;
-    var list = v.data || v.objects || v.results;
+    var list = v.data || v.objects || v.results || v.result;   // result: an HTTP query's extractor ("result": "$") wraps the answer
     if (Array.isArray(list) && (!list.length || (list[0] && typeof list[0] === 'object' && !Array.isArray(list[0])))) return list;
+    if (list && typeof list === 'object' && !Array.isArray(list)) return rowsOf(list);
     var cols = Object.keys(v), n = 0, out = [];
     cols.forEach(function (c) { if (Array.isArray(v[c]) && v[c].length > n) n = v[c].length; });
     for (var i = 0; i < n; i++) { var o = {}; cols.forEach(function (c) { o[c] = Array.isArray(v[c]) ? v[c][i] : null; }); out.push(o); }
