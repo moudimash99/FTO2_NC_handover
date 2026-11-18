@@ -125,6 +125,7 @@
 .fto2 .fb-menu label { display: flex; align-items: center; gap: 9px; padding: 7px 10px; border-radius: 6px; font-size: 14px; cursor: pointer; white-space: nowrap; color: var(--ink); text-transform: none; letter-spacing: 0; font-weight: 400; }
 .fto2 .fb-menu label:hover { background: var(--band); }
 .fto2 .fb-menu input { width: 16px; height: 16px; accent-color: var(--s1); margin: 0; }
+.fto2 .csv-all { margin: 18px 0 14px !important; }
 .fto2 .csv-row { grid-column: 1 / -1; width: 100%; display: flex; flex-wrap: wrap; justify-content: flex-start; align-items: center; gap: 8px 10px; margin: 10px 0 4px; font-size: 13px; color: var(--muted); text-align: left; }
 .fto2 .fb-menu small { color: var(--muted); margin-left: auto; padding-left: 12px; font-variant-numeric: tabular-nums; }
 .fto2 .fb-reset { font: inherit; font-size: 13px; color: var(--s1); background: none; border: 1px solid var(--ring); border-radius: 6px; padding: 5px 12px; cursor: pointer; }
@@ -880,7 +881,6 @@ setTimeout(function () { SlateFunctions._set('nc', {"nc":["900000001","900000002
         <div class="table-wrap"><table><thead><tr id="nth"></tr></thead><tbody id="ntb"></tbody></table></div>
         <button type="button" class="more" id="nm" hidden></button>
       </div></details>
-    <div class="csv-row"><span data-t="csvLab"></span><button type="button" class="fb-info" data-csv="short"><span aria-hidden="true">⤓</span> <span data-t="csvShort"></span></button><button type="button" class="fb-info" data-csv="full"><span aria-hidden="true">⤓</span> <span data-t="csvFull"></span></button></div>
   </div>
 
   <!-- 2. Pareto: volume (defects) or cost, same breakdowns -->
@@ -996,7 +996,6 @@ setTimeout(function () { SlateFunctions._set('nc', {"nc":["900000001","900000002
         <div class="table-wrap"><table><thead><tr id="whTh"></tr></thead><tbody id="whTb"></tbody></table></div>
         <button type="button" class="more" id="whM" hidden></button>
       </div></details>
-    <div class="csv-row"><span data-t="csvLab"></span><button type="button" class="fb-info" data-csv="short"><span aria-hidden="true">⤓</span> <span data-t="csvShort"></span></button><button type="button" class="fb-info" data-csv="full"><span aria-hidden="true">⤓</span> <span data-t="csvFull"></span></button></div>
   </div>
 
   <!-- Never shown: the cards of the Analyses charts are made here, then placed in the tabs (v2Build) -->
@@ -1087,6 +1086,8 @@ setTimeout(function () { SlateFunctions._set('nc', {"nc":["900000001","900000002
     <div class="vu-par" id="vuPar"></div>
     <div class="vu-grid" id="vuDetGrid"></div>
   </div>
+  <!-- the download of the NCs of the selection, at the bottom of every tab -->
+    <div class="csv-row csv-all"><span data-t="csvLab"></span><button type="button" class="fb-info" data-csv="short"><span aria-hidden="true">⤓</span> <span data-t="csvShort"></span></button><button type="button" class="fb-info" data-csv="full"><span aria-hidden="true">⤓</span> <span data-t="csvFull"></span></button></div>
   <div class="vu-ov" id="vuOv" hidden><div class="vu-scrim" id="vuScrim"></div>
     <div class="vu-panel" id="vuPanel" role="dialog" aria-modal="true" aria-label=""><div class="vu-top"><button type="button" class="vu-close" id="vuClose" data-t="vuClose"></button></div><div id="vuHold"></div></div></div>
 
