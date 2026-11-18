@@ -1,10 +1,11 @@
-# Logique : comment fonctionne le code du notebook
+# Logique : comment fonctionne le code de la mise à jour
 
-La logique, c'est tout ce que fait le notebook : il lit les NC dans Skywise, décide lesquelles comptent, lit leurs défauts,
-les étiquette, calcule leur coût et écrit les tables que les pages lisent. Ce guide explique ce code.
+La logique, c'est tout ce que fait la mise à jour : elle lit les NC dans Skywise, décide lesquelles comptent, lit leurs
+défauts, les étiquette, calcule leur coût et écrit les tables que les pages lisent. Elle tourne comme un transform du Code
+Repository, selon une planification. Ce guide explique ce code.
 
-Les trois guides : `config.md` (les tables de paramètres ; dans le Code Workspace, aussi sous le nom `data/config/README.md`),
-`logic.md` (le code du notebook) et `front_end.md` (le code des pages) ; ces deux derniers sont aussi dans `notebook_kit/`.
+Les trois guides du code : *Les réglages, table par table* (les paramètres), *La mise à jour, étape par étape* (celui-ci) et
+*Les pages, en détail* (le code des pages). Le prix des pièces a son propre guide : *Le prix des pièces*.
 
 **Sommaire**
 
@@ -12,22 +13,22 @@ Les trois guides : `config.md` (les tables de paramètres ; dans le Code Workspa
 2. [Où se trouve le code](#2-où-se-trouve-le-code)
 3. [L'exécution, étape par étape](#3-lexécution-étape-par-étape)
 4. [Chaque fichier expliqué](#4-chaque-fichier-expliqué)
-5. [Les tables qu'il écrit](#5-les-tables-quil-écrit)
+5. [Les tables qu'elle écrit](#5-les-tables-quelle-écrit)
 6. [Modifier la logique](#6-modifier-la-logique)
-7. [Quand le notebook s'arrête](#7-quand-le-notebook-sarrête)
+7. [Quand la mise à jour s'arrête](#7-quand-la-mise-à-jour-sarrête)
 
 ---
 
 ## 1. La vue d'ensemble
 
 ```
- Skywise datasets                          data/config/ (the settings)
-   non_conformity        (the NCs)                 |
-   fto2_ai_labels        (the AI labels)           |
-   work_order_operation  (rework orders)           |
+ Skywise datasets                          the settings
+   non_conformity        (the NCs)           Fusion: FTO2 NC Dashboard - Settings
+   fto2_ai_labels        (the AI labels)     src/fto2/settings/ (the tables)
+   work_order_operation  (rework orders)     src/fto2/files/ (stations, production plan)
    mes_disruptions       (aléas)                   |
             \                                      /
-             THE NOTEBOOK  ->  notebook_kit/fto2/  (the code)
+             THE UPDATE: fto2_update.py  ->  src/fto2/  (the code)
                                    |
    fto2_dash_nc           one row per NC
    fto2_dash_defects      one row per defect line
@@ -43,20 +44,26 @@ question de logique ; un chiffre faux sur un seul graphique est une question de 
 
 ## 2. Où se trouve le code
 
-Dans le Code Workspace :
+Dans le Code Repository :
 
 | Quoi | Où |
 |---|---|
-| Le notebook | `fto2_pipeline_notebook` : trois cellules courtes. Il ne fait qu'appeler `skywise.run(...)`. |
-| Le code | `notebook_kit/fto2/` : du Python simple, un fichier par sujet. |
-| Les paramètres | `data/config/` (voir `config.md`). |
-| Les fichiers lus en plus des datasets | `data/` : la liste des postes, le registre GPS, la liste Test (noms dans `data/config/2_sources.csv`). |
+| Le transform | `src/myproject/datasets/fto2_update.py` : il liste les entrées (les quatre datasets Skywise, six feuilles du classeur Fusion) et les sorties (les quatre tables, deux listes de travail), puis appelle le code. Skywise le lance selon une planification ; pour le lancer tout de suite, lancez un build de `fto2_dash_nc`. |
+| Le code | `src/fto2/` : du Python simple, un fichier par sujet. |
+| Les paramètres | Le classeur Fusion *FTO2 NC Dashboard - Settings*, et les tables de `src/fto2/settings/` (voir *Les réglages, table par table*). |
+| Les fichiers gardés avec le code | `src/fto2/files/` : la liste des postes (`fto2_station_mapping.csv`) et les exports du plan de production (`Avances_Retards_<date>.csv`). |
 
-Les fichiers de `notebook_kit/fto2/` :
+**La solution de secours.** Le notebook du pipeline, dans un Code Workspace, fait tourner le même code (`notebook_kit/fto2/`,
+ses paramètres dans `data/config/`). Ce n'est qu'une solution de secours : modifiez le code dans le Code Repository seulement,
+sinon les deux copies divergent.
+
+Les fichiers de `src/fto2/` :
 
 | Fichier | En une phrase |
 |---|---|
 | `skywise.py` | L'exécution : lit les datasets, appelle tout le reste dans l'ordre, écrit les tables. **Commencez la lecture ici.** |
+| `transform_io.py` | Relie les entrées et les sorties du transform à l'exécution, pour que le transform et le notebook fassent les mêmes étapes. |
+| `fusion.py` | Lit les feuilles du classeur Fusion, avant tout le reste. |
 | `config.py` | Lit les tables de paramètres et s'arrête avec un message clair quand l'une d'elles est mal remplie. |
 | `rules.py` | Le moteur de règles : applique une table de règles (`2_regle_*.csv`) aux NC. |
 | `selection.py` | Quelles NC comptent, et les étiquettes que chaque NC reçoit des tables de règles. |
@@ -65,29 +72,39 @@ Les fichiers de `notebook_kit/fto2/` :
 | `core.py` | Des NC aux tables du tableau de bord : défauts, étiquettes, ordres de retouche, aléas, coût, périmètre. |
 | `cost/` | Le modèle de coût, avec les ordres de retouche, les aléas et les prix des pièces. |
 | `reference.py` | Tout ce dont les pages ont besoin en plus des tables de NC (plan de production, année de comparaison, câbles, actions, paramètres). |
-| `downloads.py` | Lit les fichiers déposés dans `data/` tels qu'ils ont été téléchargés : les exports du plan de production, le suivi de l'équipe câbles. |
+| `downloads.py` | Lit les exports du plan de production et le suivi de l'équipe câbles, tels qu'ils arrivent. |
 
 ## 3. L'exécution, étape par étape
 
-`skywise.py`, fonction `run`. Le notebook affiche chaque étape pendant son exécution, donc la dernière ligne affichée dit où il
-en est.
+`skywise.py`, fonction `run`. L'exécution affiche chaque étape dans le journal du build au fur et à mesure, donc la dernière
+ligne affichée dit où elle en est.
+
+**0. Les paramètres** (`fusion.py`, puis `check_settings`)
+
+1. Les feuilles du classeur Fusion d'abord : chaque feuille remplie à la main remplace sa table de paramètres pour cette
+   exécution, et chaque feuille collée en entier devient la liste que l'exécution lit (section 4). Les premières lignes du
+   journal disent quelles feuilles ont été utilisées (*Settings from Fusion: …*, *Fusion sheet GPS register: header on row 4,
+   812 rows*), lesquelles ne l'ont pas été, et pourquoi.
+2. Chaque paramètre est ensuite lu et vérifié, avant toute lecture de données : une erreur arrête l'exécution ici, en
+   quelques secondes, sans rien écrire. L'arbre des causes de l'onglet Définitions est vérifié par rapport au code, et une
+   fermeture qui manque dans les jours de fermeture est signalée.
 
 **A. La sélection standard** (`select_ncs`, puis `selection.apply_rules`)
 
-1. Lit les NC de l'usine créées pendant l'année suivie (`2_parametres.csv` : `usine` ; `1_parametres.csv` : `annee`), plus les
-   NC d'autres usines pour lesquelles l'usine est responsable. On demande à Skywise les NC créées à partir du 1er janvier
-   (`config.first_day`) ; les NC créées après le 31 décembre sont retirées en Python (`skywise._until`), parce que le filtre
-   de Skywise échoue sur trois conditions reliées par `&`.
+1. Lit les NC de l'usine créées depuis le 1er janvier de l'année de comparaison, donc les deux années (`2_parametres.csv` :
+   `usine` ; `1_parametres.csv` : `annee`), plus les NC d'autres usines pour lesquelles l'usine est responsable. On demande à
+   Skywise les NC créées à partir de ce jour (`config.first_day_read`) ; les NC créées après le 31 décembre de l'année suivie
+   sont retirées en Python (`skywise._until`), parce que le filtre de Skywise échoue sur trois conditions reliées par `&`.
 2. Laisse de côté les NC exclues (`2_regle_exclusion.csv` : ERMA, NC supprimées dans une autre usine).
 3. Ajoute les étiquettes tirées des tables de règles, dans cet ordre : phase (`2_regle_phase.csv`), libellé de la décision
    (`2_decisions.csv`), origine (`2_regle_origine.csv`), type (`2_regle_type_nc.csv`, qui utilise l'origine), produit
    (`2_regle_produit.csv`).
 
-**B. Les listes manuelles** (`manual_lists.py`) : les NC du registre GPS et de la liste Test que l'étape A n'a pas trouvées
-sont récupérées par leur numéro, puis passent par les mêmes règles.
+**B. Les listes manuelles** (`manual_lists.py`) : les NC du registre GPS et de la liste Test, datées de l'année suivie, que
+l'étape A n'a pas trouvées sont récupérées par leur numéro, puis passent par les mêmes règles.
 
-**C. Les anciennes sorties** : tant que `garder_anciennes_sorties` vaut `oui`, les quatre tables de l'ancienne application
-Slate sont écrites comme avant.
+**C. Les anciennes sorties** : la mise à jour planifiée n'écrit jamais les quatre tables de l'ancienne application Slate.
+Seul le notebook du pipeline les écrit encore, tant que `garder_anciennes_sorties` vaut `oui`.
 
 **D. Les tables du tableau de bord** (`core.build`, qui appelle `core.prepare` puis `core.tables`) :
 
@@ -98,31 +115,59 @@ Slate sont écrites comme avant.
    (`cost/disruptions.py`).
 4. **Étiquettes :** chaque ligne de défaut prend son étiquette IA dans `fto2_ai_labels`, **seulement si le texte de la ligne
    est toujours le même qu'au moment où elle a été étiquetée**. Sinon, elle garde l'étiquette du lecteur de défauts et elle
-   est listée « à étiqueter ». Ensuite, la catégorie, la cause, l'indicateur « mineur » et le sous-code officiel découlent de
-   l'étiquette.
-5. **Prix des pièces :** les données NC donnent la pièce concernée par chaque NC (colonne `material`) ; son prix vient de
-   `1_prix_pieces.csv` (`cost/parts.py`). Les matériels encore sans prix sont écrits dans `fto2_parts_to_price.csv`.
+   est listée « à étiqueter ». Un code écrit dans la NC par une personne l'emporte sur l'étiquette : écrit avec la Saisie
+   structurée de NC, le sous-code entier (Q03-006) décide de la ligne ; tapé à la main, le code compte par sa famille (Q03),
+   et une étiquette d'une autre famille lui cède la place. Ensuite, la catégorie, la cause, l'indicateur « mineur » et le
+   sous-code officiel découlent de l'étiquette.
+5. **Prix des pièces :** les données NC donnent la pièce concernée par chaque NC (colonne `material`) ; son prix vient de la
+   feuille *Part prices*, sinon de `1_prix_pieces.csv` (`cost/parts.py`). Les matériels encore sans prix forment la liste de
+   travail `fto2_parts_to_price`.
 6. **Coût :** le modèle de coût est appliqué à chaque NC (`cost/model.py`, section 4).
 7. **Périmètre :** où chaque NC a été émise : `serie`, `client` (retour client), `autre` (`2_regle_perimetre.csv`).
 8. **Tables :** `core.tables` met le tout dans les deux tables, colonne par colonne, et `core.dis_table` fait la table des
    aléas.
-9. **Lignes à étiqueter :** `core.lines_to_label` écrit `fto2_lines_to_label.csv` à côté du notebook : les lignes sans
-   étiquette IA utilisable, avec leur texte complet, prêtes pour la prochaine passe d'étiquetage.
+9. **Lignes à étiqueter :** `core.lines_to_label` fait la liste de travail `fto2_lines_to_label` : les lignes sans étiquette
+   IA utilisable, avec leur texte complet, prêtes pour la prochaine passe d'étiquetage.
 
-**E. Les données de référence** (`reference.py`) : le plan de production, l'année de comparaison (l'année qui précède l'année
-suivie, sauf si `annee_comparaison` en désigne une autre : ses NC sont lues dans Skywise, à partir du 1er janvier et
-arrêtées à la fin de l'année comme à l'étape A ; elles passent par les mêmes règles, le même lecteur de défauts, les mêmes
-prix des pièces et le même modèle de coût, puis sont additionnées par mois), les demandes de câbles, les actions MFT, les
-paramètres du coût, l'arbre des causes et les paramètres des pages. Elles sont regroupées dans `fto2_dash_ref`
-(section 5).
+**E. Les données de référence** (`reference.py`) : le plan de production ; l'année de comparaison (l'année qui précède
+l'année suivie, sauf si `annee_comparaison` en désigne une autre), additionnée par mois à partir des NC traitées à l'étape D,
+donc les deux années passent par les mêmes règles, le même lecteur de défauts, les mêmes prix des pièces et le même modèle de
+coût ; son volume, mesuré comme celui de l'année suivie (section 4, `deliveries`) ; les demandes de câbles, les actions MFT,
+les paramètres du coût, l'arbre des causes, les paramètres des pages, et le poids de travail de chaque jour et de chaque
+semaine des deux années (tiré des jours de fermeture). Elles sont regroupées dans `fto2_dash_ref` (section 5).
 
-**L'année.** Toutes les dates de l'exécution viennent d'une seule ligne, `annee` dans `1_parametres.csv`, par cinq fonctions
-de `config.py` : `year()`, `comparison_year()`, `first_day()` (le 1er janvier), `year_end()` (le 1er janvier de l'année
-suivante) et `aleas_since()` (le 1er décembre de l'année d'avant : une NC de début janvier peut suivre un aléa de fin
-décembre). Aucune année n'est écrite dans le code : `tests/test_config.py` échoue s'il y en a une. Quand l'année suivie est
-terminée, les dernières lignes de l'exécution le disent et donnent la ligne à changer.
+**L'année.** Toutes les dates de l'exécution viennent d'une seule ligne, `annee` dans `1_parametres.csv` (vide : l'année en
+cours), par six fonctions de `config.py` : `year()`, `comparison_year()`, `first_day()` (le 1er janvier de l'année suivie),
+`first_day_read()` (le 1er janvier de l'année de comparaison, le premier jour lu), `year_end()` (le 1er janvier de l'année
+suivante) et `aleas_since()` (le 1er décembre avant la première année lue : une NC de début janvier peut suivre un aléa de
+fin décembre). Aucune année n'est écrite dans le code : gardez-le ainsi. Quand l'année suivie est terminée, les dernières
+lignes de l'exécution le disent et donnent la ligne à changer.
 
 ## 4. Chaque fichier expliqué
+
+### `fusion.py` : les feuilles Fusion
+
+Tourne en premier, avant que le reste du code soit lu. Pour chaque feuille donnée à la mise à jour (les entrées `fto2_set_…`
+du transform) :
+
+- une feuille remplie à la main (*Cost rates and times*, *Blackout days*, *Part prices*) remplace sa table de
+  `src/fto2/settings/` pour cette exécution, sur une copie de travail : la table elle-même n'est pas modifiée, et reste la
+  valeur de secours ;
+- une feuille collée en entier (*Cable tracker*, *GPS register*, *Test list*) est lue comme la feuille d'où elle vient : sa
+  ligne d'en-tête est la première de ses premières lignes qui contient toutes les colonnes que l'exécution lit ; les lignes
+  de titre au-dessus, les autres colonnes et les lignes vides sont laissées de côté.
+
+Les noms des colonnes sont comparés avec souplesse (majuscules, accents, espaces, signes). Une feuille à laquelle il manque
+une colonne, ou qui n'a que sa première ligne, n'est pas utilisée : l'exécution dit laquelle, et pourquoi, et garde la table
+ou la liste qu'elle avait. Une feuille collée qu'elle ne peut pas utiliser est signalée clairement, au début et à nouveau à
+la fin de l'exécution (*⚠️ Fusion sheet … NOT USED*). La septième feuille, *Target and pages*, n'est pas une entrée de la mise
+à jour : les pages la lisent elles-mêmes.
+
+### `transform_io.py` : le transform et l'exécution
+
+Donne à l'exécution ses entrées et ses sorties, pour que les mêmes étapes tournent dans le transform et dans le notebook. Il
+met aussi les fichiers de `src/fto2/files/` là où l'exécution les cherche, et s'arrête avec « the station list is missing »
+quand `fto2_station_mapping.csv` n'y est pas.
 
 ### `config.py` : la lecture des paramètres
 
@@ -132,20 +177,22 @@ terminée, les dernières lignes de l'exécution le disent et donnent la ligne �
   sur `|` ; `parameter_yes` lit `oui` / `non` ; `optional` donne `''` pour une ligne vide ou absente.
 - Deux de ces tables sont en deux parties (`SPLIT`) : les lignes de la personne responsable sont dans `1_parametres.csv` et
   `1_reglages_pages.csv`, les lignes techniques dans la table `2_` du même nom. `parameter` cherche dans les deux ; `held_by`
-  dit quelle partie contient une ligne, pour qu'une erreur nomme le bon fichier.
+  dit quelle partie contient une ligne, pour qu'une erreur nomme la bonne table.
 - `path(name)` : où se trouve une table. Un dossier de paramètres créé avant le regroupement des tables en contient certaines
   sous leur ancien nom : une table introuvable sous son nom est prise sous son ancien nom (`FORMER`).
-- `year`, `comparison_year`, `first_day`, `year_end`, `aleas_since` : l'année suivie et les dates qui en dépendent.
-- `number`, `day` : un nombre ou une date tels qu'une personne les tape dans Excel (`0,25` ; `31/01/2026`).
+- `year`, `comparison_year`, `first_day`, `first_day_read`, `year_end`, `aleas_since` : l'année suivie et les dates qui en
+  dépendent.
+- `number`, `day` : un nombre ou une date tels qu'une personne les tape (`0,25` ; `31/01/2026`).
 - `rule_table(name, columns)` : une table de règles, vérifiée par `rules.check`.
 - `mapping(name, key, value)` : une table à deux colonnes utilisée comme table de correspondance, avec sa ligne `(autre)`
   comme valeur par défaut.
-- `folder()` : où sont les paramètres (`data/config/` dans le Code Workspace).
+- `folder()` : où sont les paramètres (`src/fto2/settings/` dans le Code Repository ; une copie de travail une fois les
+  feuilles Fusion lues).
 
 ### `rules.py` : le moteur de règles
 
 Une seule fonction applique toutes les tables de règles, donc elles se comportent toutes de la même façon (cette façon est
-expliquée dans `config.md`, section 4.3).
+expliquée dans *Les réglages, table par table*, section 4).
 
 - `check(table, name, columns)` : liste chaque problème en clair (un test inconnu, une règle par défaut manquante, une
   expression régulière fausse, une colonne absente des données NC).
@@ -163,8 +210,9 @@ expliquée dans `config.md`, section 4.3).
 
 ### `manual_lists.py` : le registre GPS et la liste Test
 
-Lit les deux fichiers (`2_sources.csv` dit où ils sont, combien de lignes sauter et quelles colonnes contiennent le numéro de
-NC et la date ; `{annee}` dans un nom de fichier tient la place de l'année suivie), garde les NC datées de l'année suivie, et marque chaque NC avec la liste où elle figure (`Ext_Source` :
+Lit les deux listes, telles que leurs feuilles Fusion les donnent (`2_sources.csv` nomme les colonnes qui contiennent le
+numéro de NC et la date, et la liste utilisée quand une feuille ne peut pas être lue ; `{annee}` dans un nom tient la place de
+l'année suivie), garde les NC datées de l'année suivie, et marque chaque NC avec la liste où elle figure (`Ext_Source` :
 `GPS`, `Test`, ou aucune).
 
 ### `parser/` : le lecteur de défauts
@@ -179,6 +227,8 @@ NC et la date ; `{annee}` dans un nom de fichier tient la place de l'année suiv
 
 ### `core.py` : des NC aux tables du tableau de bord
 
+- `check_cause_tree` : l'arbre des causes de l'onglet Définitions (`3_sous_categories.csv`) dit ce que le code décide ;
+  l'exécution s'arrête si les deux diffèrent.
 - `prepare` : les étapes D1 à D7 ci-dessus.
 - `official_subcode` : le sous-code officiel de chaque ligne de défaut, à partir de son étiquette.
 - `title_lines` : les lignes A400M lues dans le titre de la NC.
@@ -190,7 +240,7 @@ NC et la date ; `{annee}` dans un nom de fichier tient la place de l'année suiv
   chaque colonne avec sa signification).
 - `lines_to_label` : les lignes de défaut qui ont besoin d'une étiquette IA.
 - `liab_cat` : les trois groupes « Responsabilité » (`2_regle_responsabilite.csv`).
-- `year_baseline`, `year_causes` : l'année de comparaison passée par les mêmes règles, additionnée par mois.
+- `year_rows`, `year_causes` : l'année de comparaison, à partir des NC de la même exécution, additionnée par mois.
 
 ### `cost/` : le modèle de coût
 
@@ -212,7 +262,7 @@ comptées, et si la pièce compte.
    modèle, et les minutes de logistique (`minutes_logistique`) sont ajoutées à la préparation quand une pièce doit être
    approvisionnée (la NC indique un matériel).
 3. **Euros :** les minutes de chaque étape à son taux, plus l'ingénierie, la matière et la valeur de la pièce (le prix de la
-   pièce, tiré de `1_prix_pieces.csv`, pour les décisions qui la prennent en compte).
+   pièce, tiré de la feuille *Part prices*, pour les décisions qui la prennent en compte).
 4. **Retours clients :** un supplément forfaitaire, ou le montant réel quand il est connu.
 5. **Deux niveaux de comparaison :** « global » (des temps moyens pour toutes les NC) et « Standard Airbus » (le coût officiel
    par décision).
@@ -223,10 +273,10 @@ Les autres fichiers :
 
 | Fichier | Ce qu'il fait |
 |---|---|
-| `params.py` | Transforme les tables de coût de `data/config/` en paramètres du modèle |
+| `params.py` | Transforme les paramètres du coût (la feuille *Cost rates and times* et les tables de coût) en paramètres du modèle |
 | `orders.py` | Lit les opérations des ordres de retouche et leur temps prévu ; donne un état aux ordres de chaque NC (used, open, no_time, not_found) |
 | `disruptions.py` | Relie les aléas aux NC (même ordre de travail, de 2 h avant à 72 h après) et construit le bloc des aléas sans NC |
-| `parts.py` | La valeur de la pièce : `part_values` donne à chaque NC le prix unitaire de son matériel (`1_prix_pieces.csv`, retrouvé par le numéro de matériel sans les zéros de tête) × sa quantité ; `to_price` liste les matériels qui attendent encore un prix. Guide : `part_prices.md` |
+| `parts.py` | La valeur de la pièce : `part_values` donne à chaque NC le prix unitaire de son matériel (la feuille *Part prices*, sinon `1_prix_pieces.csv`, retrouvé par le numéro de matériel sans les zéros de tête) × sa quantité ; `to_price` liste les matériels qui attendent encore un prix. Guide : *Le prix des pièces* |
 | `explain.py` | Écrit l'explication du coût de chaque NC sous forme de table (seulement pour une configuration Slate facultative, non utilisée) |
 
 Le modèle est appliqué deux fois : une fois sur les étiquettes IA (les chiffres du tableau de bord) et une fois sur les étiquettes
@@ -236,11 +286,12 @@ propres au lecteur de défauts (gardées pour comparaison).
 
 | Fonction | Donne aux pages |
 |---|---|
-| `eqmsn`, `working_day_volume`, `production_msn` | Le plan de production : les MSN produits par produit et par mois de l'année suivie (comptés sur les jours travaillés, `1_calendrier_production.csv`), et les dates de production de chaque avion |
+| `eqmsn`, `working_day_volume`, `production_msn` | Le plan de production : les MSN produits par produit et par mois de l'année suivie (chaque avion réparti sur les jours où l'usine travaille, tirés des jours de fermeture), et les dates de production de chaque avion |
 | `weekly_volume` | Les MSN produits par ligne et par semaine de l'année : le dénominateur des alarmes |
-| `comparison_year` | L'année de comparaison, additionnée par mois, ligne, produit. Les pages connaissent ce bloc sous le nom `y25`, son nom depuis la première année suivie (2026, comparée à 2025) |
-| `deliveries` | Les produits livrés pendant l'année de comparaison, mois par mois : `0_livraisons_<year>.csv` quand cette table existe, sinon comptés dans le plan de production (un produit est livré le mois de son Départ OTA) |
-| `cable_requests` | Les demandes de l'équipe câbles (`downloads.cables` : l'export du suivi déposé dans `data/`, sinon `0_demandes_cables.csv`) |
+| `calendar_weights`, `calendar_notes` | Le poids de travail de chaque jour et de chaque semaine des deux années ; l'avertissement quand l'année, ou son Noël, n'a aucune fermeture |
+| `comparison_year` | L'année de comparaison, à partir des NC de la même exécution, additionnée par mois, ligne, produit, avec ses défauts par cause et son volume. Les pages connaissent ce bloc sous le nom `y25`, son nom depuis la première année suivie (2026, comparée à 2025) |
+| `deliveries` | Le volume de l'année de comparaison, mois par mois : `0_livraisons_<year>.csv` quand cette table existe (2025 : le plan ne remonte pas jusque-là), sinon mesuré dans le plan de production comme celui de l'année suivie (les produits fabriqués, répartis sur les jours travaillés) |
+| `cable_requests` | Les demandes de l'équipe câbles (`downloads.cables` : la feuille *Cable tracker*, sinon `0_demandes_cables.csv`) |
 | `mft_actions`, `mft_actions_page` | Les actions MFT (`1_actions_mft.csv`), chacune reliée à son problème ; `_actions` vérifie d'abord la table (ids, genre de problème, dates) |
 | `cnq_explain` | Les paramètres du coût, pour « Expliquer le calcul » |
 | `rca_reference` | L'arbre des causes pour l'onglet Définitions, avec des exemples réels |
@@ -248,65 +299,75 @@ propres au lecteur de défauts (gardées pour comparaison).
 | `dashboard_block`, `mft_block` | Tout ce qui précède, regroupé en paquets par page |
 | `ref_table` | Les paquets, découpés en lignes de texte pour `fto2_dash_ref` |
 
-### `downloads.py` : les fichiers déposés tels qu'ils ont été téléchargés
+### `downloads.py` : les exports du plan de production et le suivi câbles
 
-Deux choses arrivent à l'exécution sous forme de fichiers que l'équipe télécharge et dépose dans `data/`, sans table à
-remplir (`2_sources.csv` les nomme : `exports_plan`, `suivi_cables`).
+Deux choses arrivent à l'exécution telles quelles, sans table à remplir : le plan de production, sous forme des exports du
+Tableau Avances / Retards gardés dans `src/fto2/files/`, et le suivi de l'équipe câbles, collé en entier dans la feuille
+*Cable tracker*. `2_sources.csv` les nomme : `exports_plan`, `suivi_cables`.
 
 | Fonction | Ce qu'elle fait |
 |---|---|
-| `files`, `file_day` | Les fichiers que nomme une ligne de `2_sources.csv`, du plus ancien au plus récent. Le jour d'un téléchargement est la date à la fin de son nom, sinon le jour où il a été enregistré |
+| `files`, `file_day` | Les fichiers que nomme une ligne de `2_sources.csv`, du plus ancien au plus récent. Le jour d'un export est la date à la fin de son nom (`Avances_Retards_2026-11-18.csv`) |
 | `plan_of_export` | Un export du Tableau Avances / Retards sous forme de lignes du plan : une par avion et par produit, avec la date prévue et la date réelle de ses 8 jalons ; un MSN affiché `#N/A` est repris des exports plus anciens |
 | `merge_plan`, `plan` | Le plan à partir de tous les exports, du plus ancien au plus récent : la ligne la plus récente de chaque avion l'emporte ; un avion livré avant un nouvel export garde sa dernière ligne ; une ligne qui a quitté l'export avant sa livraison est abandonnée. `0_plan_msn.csv` est lu comme un export de plus |
-| `cables_of_export`, `cables` | L'export le plus récent du suivi de l'équipe câbles sous forme de lignes de demandes (origine tirée de `2_cables_origines.csv`, cause proposée tirée de `2_regle_cause_cable.csv`) ; sans export, `0_demandes_cables.csv` |
-| `report` | Deux lignes pour le journal de l'exécution : quels fichiers ont été lus |
+| `cables_of_export`, `cables` | Le suivi câbles sous forme de lignes de demandes (origine tirée de `2_cables_origines.csv`, cause proposée tirée de `2_regle_cause_cable.csv`) ; sans lui, `0_demandes_cables.csv` |
+| `report` | Deux lignes pour le journal de l'exécution : quels exports ont été lus |
 
-Un fichier qui n'est pas l'export attendu arrête l'exécution avec un message qui dit quel fichier et ce qui était cherché.
+Un export qui n'est pas celui attendu arrête l'exécution avec un message qui dit quel fichier et ce qui était cherché.
 
-## 5. Les tables qu'il écrit
+## 5. Les tables qu'elle écrit
 
 | Table | Une ligne par | Colonnes |
 |---|---|---|
 | `fto2_dash_nc` | NC | Listées avec leur signification dans `core.py`, `NC_COLUMNS` : numéro, dates, ligne, usine, responsabilité, décision de coût et niveaux, coût par étape, phase, MSN, produit, poste, type de NC, source, ordres de retouche, aléas... |
 | `fto2_dash_defects` | ligne de défaut | `core.py`, `DEF_COLUMNS` : NC, numéro de ligne, catégorie, cause, sous-catégorie, mineur, câble, part du coût, quantité, texte, sous-code, FIN, d'où vient l'étiquette (`ai`, `titre`, `parser`) |
 | `fto2_dash_disruptions` | aléa qualité sans NC | `core.py`, `DIS_COLUMNS` : numéro, date, ligne, poste, ordre de travail, minutes, compté ou non, motif, statut, commentaire |
-| `fto2_dash_ref` | morceau de texte | `partie` (dashboard, mft, elizabeth), `morceau` (0, 1, 2... dans l'ordre), `texte`. Les pages recollent les morceaux d'une partie et les lisent comme un seul bloc de données. Découpée en morceaux parce qu'une cellule ne peut pas tout contenir. |
+| `fto2_dash_ref` | morceau de texte | `partie` (une par page : dashboard, mft), `morceau` (0, 1, 2... dans l'ordre), `texte`. Les pages recollent les morceaux d'une partie et les lisent comme un seul bloc de données. Découpée en morceaux parce qu'une cellule ne peut pas tout contenir. |
 
-Sont aussi écrits : `fto2_lines_to_label.csv` (à côté du notebook) et, tant que `garder_anciennes_sorties` vaut `oui`, les
-quatre tables de l'ancienne application.
+Les tables contiennent les deux années, l'année de comparaison et l'année suivie : chaque page choisit ce qu'elle montre.
+
+Sont aussi écrites, comme datasets à côté des tables, les deux listes de travail : `fto2_lines_to_label` (les lignes de
+défaut à étiqueter) et `fto2_parts_to_price` (les matériels encore sans prix).
 
 ## 6. Modifier la logique
 
 **Vérifiez d'abord que ce n'est pas un paramètre.** La plupart des changements (une règle, un taux, un produit, une date) se
-font dans une table de `data/config/`, pas dans le code : voir `config.md`.
+font dans une feuille Fusion ou une table de `src/fto2/settings/`, pas dans le code : voir *Les réglages, table par table*.
 
-**Où changer quoi :**
+**Où changer quoi** (dans `src/fto2/`) :
 
 | Vous voulez changer... | Fichier |
 |---|---|
 | Quelles NC sont lues dans Skywise | `skywise.py`, `select_ncs` |
 | Un nouveau genre d'étiquette sur chaque NC | une table de règles, plus une ligne dans `selection.add_columns` |
 | Comment les défauts sont lus dans le texte | `parser/nc_defect_parser.py` (expert) |
-| Une nouvelle colonne dans les tables du tableau de bord | `core.py` : ajoutez-la à `NC_COLUMNS` / `DEF_COLUMNS` et remplissez-la dans `tables` ; puis ajoutez-la à la query dans Slate et lisez-la dans la page (`front_end.md`) |
+| Une nouvelle colonne dans les tables du tableau de bord | `core.py` : ajoutez-la à `NC_COLUMNS` / `DEF_COLUMNS` et remplissez-la dans `tables` ; puis ajoutez-la à la requête dans Slate et lisez-la dans la page (*Les pages, en détail*, section 8) |
 | Comment le coût est calculé | `cost/model.py` |
-| Comment une pièce est trouvée et chiffrée | `cost/parts.py` (les prix eux-mêmes : `1_prix_pieces.csv`) |
+| Comment une pièce est trouvée et chiffrée | `cost/parts.py` (les prix eux-mêmes : la feuille *Part prices*) |
 | Ce que les pages reçoivent en plus des tables | `reference.py` |
+| Une nouvelle entrée (un dataset, une feuille Fusion) | le transform `src/myproject/datasets/fto2_update.py`, sous le nom que le code lit |
 
-**Tester un changement dans le Code Workspace :**
+**Vérifier un changement dans le Code Repository :**
 
-1. Notez les chiffres que le notebook affiche à la fin (nombre de NC, lignes de défaut, coût) et les chiffres clés du tableau
-   de bord.
-2. Modifiez le code dans `notebook_kit/fto2/` et gardez une copie du fichier tel qu'il était.
-3. Redémarrez le kernel du notebook (Python garde l'ancien code en mémoire jusque-là) et lancez toutes les cellules.
-4. Comparez : seul ce que vous vouliez changer doit bouger.
+1. Notez les chiffres que la mise à jour affiche à la fin de son journal (nombre de NC, lignes de défaut, coût) et les
+   chiffres clés du tableau de bord (Essentiel › Synthèse, avec les filtres de l'ouverture).
+2. Modifiez le code dans `src/fto2/`. Le Code Repository garde chaque version précédente : c'est votre moyen de revenir en
+   arrière.
+3. Faites un commit, attendez les vérifications, puis lancez un build de `fto2_dash_nc` (appuyez sur Build avec
+   `fto2_update.py` à l'écran).
+4. Comparez : seul ce que vous vouliez changer doit bouger. Si autre chose a bougé, revenez à la version précédente et
+   relancez un build avant de chercher plus loin.
 
-## 7. Quand le notebook s'arrête
+## 7. Quand la mise à jour s'arrête
 
 | Le message | Ce qu'il veut dire | Que faire |
 |---|---|---|
-| Nomme un fichier de `data/config/` et une ligne | Une table de paramètres est mal remplie | Corrigez cette ligne (`config.md`, section 1) |
-| « settings table … not found » | Une table a été renommée, déplacée ou supprimée | Remettez-la dans `data/config/` |
-| Un nom de dataset introuvable | Le dataset n'est pas dans le panneau Data du notebook, ou il a été renommé | Ajoutez-le, ou changez son nom dans `2_sources.csv` |
-| « 1_prix_pieces.csv: '…' is not a price » | Un prix de la liste des prix des pièces contient du texte | Corrigez cette ligne |
+| Nomme une table de paramètres et une ligne | Un paramètre est mal rempli. Une table `1_` peut être sa feuille Fusion, qui remplace la table pour l'exécution | Corrigez cette ligne, dans la feuille ou dans `src/fto2/settings/` (*Les réglages, table par table*, section 1) |
+| « settings table … not found » | Une table a été renommée, déplacée ou supprimée | Remettez-la dans `src/fto2/settings/` |
+| Un nom de dataset introuvable | Le dataset n'est pas une entrée du transform, ou il a été renommé | Ajoutez-le aux entrées de `fto2_update.py`, ou changez son nom dans `2_sources.csv` |
+| « the station list is missing » | `fto2_station_mapping.csv` n'est pas dans `src/fto2/files/` | Remettez-le là |
+| « ⚠️ Fusion sheet … NOT USED » | Une feuille collée n'a pas pu être lue (en général sa ligne d'en-tête : une colonne absente ou renommée à la source). L'exécution garde ce qu'elle avait et dit pourquoi | Videz la feuille, collez à nouveau toute la source en A1, et lancez un build |
+| Une liste « could not be read » | Le registre GPS ou la liste Test manque ou a changé de forme | Ses NC passent sans les informations de la liste : collez la liste à nouveau |
+| « 1_prix_pieces.csv: '…' is not a price » | Un prix de la feuille *Part prices* contient du texte | Corrigez cette ligne |
 | « fto2_dash_cout not written » | Normal : cette table ne sert qu'à une configuration facultative | Rien |
-| Toute autre erreur | La dernière étape affichée dit où il en était | Le fichier de cette étape (section 3) |
+| Toute autre erreur | La dernière étape affichée dit où elle en était | Le fichier de cette étape (section 3) |
