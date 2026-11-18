@@ -59,9 +59,10 @@ lang: en
       outside tool without the agreement of IT and of the data owner.</td></tr>
     <tr><td><b>MFT actions kept for everyone</b></td><td>Being set up on the Skywise MFT page (the Skywise set-up's README, step 4):
       the actions are kept in one object of the NC writer's object type and saved for everyone in one click (the page's save
-      fills a variable, which submits the action). The saved actions are to be read with a query of the Ontology (Slate's API
-      gateway source), because the synced dataset lags behind the Ontology. Without it, an action typed on the page stays in
-      that browser. The dashboard's bell still knows only the actions of the table.</td></tr>
+      fills a variable, which submits the action). Not settled yet: how the page reads
+      the saved actions back. The Postgres copy of the object type's data lags behind the Ontology, and Slate's "foundry"
+      source did not reach the API that reads the objects directly. Until it is settled, an action changed on the page is
+      not kept. The dashboard's bell still knows only the actions of the table.</td></tr>
     <tr><td><b>The former outputs</b></td><td>While the line <code>garder_anciennes_sorties</code> is <code>oui</code>, the update still writes the
       tables of the former Slate app. Set it to <code>non</code> once nobody uses that app.</td></tr>
     <tr><td><b>Calculations as Slate functions</b></td><td>The targets, the bell and the cost explanation can also run as Slate functions

@@ -18,14 +18,14 @@ voit une page vide ou une erreur. Voici les maillons, dans l’ordre où circule
     <tr><td><b>Données sources</b></td><td><code>non_conformity</code>, <code>work_order_operation</code>, <code>mes_disruptions</code> : propriété d’autres
       équipes. <code>fto2_ai_labels</code> : les étiquettes de cause enregistrées, propriété du tableau de bord.</td></tr>
     <tr><td><b>Les réglages</b></td><td>Le classeur Fusion <i>FTO2 NC Dashboard - Settings</i> et ses datasets <code>fto2_set_…</code>.</td></tr>
-    <tr><td><b>Le pipeline</b></td><td>Le Code Repository qui lance la mise à jour selon une planification (son code, ses réglages et sa liste des
-      postes). Tant qu’il n’est pas en service : le Code Workspace avec le notebook du pipeline.</td></tr>
+    <tr><td><b>Le pipeline</b></td><td>Le Code Repository qui lance la mise à jour selon une planification (son code, ses réglages, sa liste des
+      postes et les exports du plan de production). Tant qu’il n’est pas en service : le Code Workspace avec le notebook du pipeline.</td></tr>
     <tr><td><b>Les quatre tables</b></td><td><code>fto2_dash_nc</code>, <code>fto2_dash_defects</code>, <code>fto2_dash_disruptions</code>,
       <code>fto2_dash_ref</code>.</td></tr>
     <tr><td><b>La synchronisation</b></td><td>Les quatre tables copiées dans Postgres, schéma <code>foundry_sync</code>, sous les mêmes noms ;
-      avec elles <code>fto2_set_targets</code> (la feuille <i>Target and pages</i>, lue par les pages) et, sous le nom
-      <code>fto2_mft_store</code>, le dataset où écrit l’action de la Saisie structurée de NC (les actions MFT).</td></tr>
-    <tr><td><b>L’application Slate</b></td><td>Les pages et leurs requêtes (les quatre tables, les réglages, les actions MFT) ; la Saisie structurée de NC, son type d’objet <i>a30 Nc Writer Dataset</i>
+      avec elles <code>fto2_set_targets</code> (la feuille <i>Target and pages</i>, lue par les pages). La façon dont la page MFT relit les
+      actions qu’elle enregistre n’est pas encore réglée (<i>Limites connues et travail en cours</i>).</td></tr>
+    <tr><td><b>Les applications Slate</b></td><td>Une par page, chacune avec ses requêtes : le tableau de bord et la page MFT (les quatre tables, les réglages, les actions MFT), et la Saisie structurée de NC, avec son type d’objet <i>a30 Nc Writer Dataset</i>
       et son action.</td></tr>
     <tr><td><b>Les documents</b></td><td>Le dossier Quality › NC dashboard, avec <i>for users</i> et <i>for developers</i>.</td></tr>
   </tbody>
@@ -37,7 +37,7 @@ tout ce qu’il contient, et rien ne dépend du compte d’une seule personne.</
 <table class="keep">
   <thead><tr><th style="width:44mm">Objet</th><th style="width:30mm">Lecteur</th><th style="width:40mm">Responsable qualité, gestionnaire de configuration</th><th>Développeur</th></tr></thead>
   <tbody>
-    <tr><td>Application Slate</td><td>lecture</td><td>lecture</td><td>modification</td></tr>
+    <tr><td>Applications Slate</td><td>lecture</td><td>lecture</td><td>modification</td></tr>
     <tr><td>Action de la Saisie structurée de NC</td><td>exécution, pour ceux qui rédigent des NC ou changent les actions MFT</td><td>exécution</td><td>modification</td></tr>
     <tr><td>Les quatre tables, <code>fto2_set_targets</code>, <code>fto2_mft_store</code></td><td>lecture</td><td>lecture</td><td>modification</td></tr>
     <tr><td>Classeur Fusion</td><td>aucun</td><td>modification</td><td>modification</td></tr>

@@ -18,14 +18,14 @@ error. These are the links, in the order the data flows:</p>
     <tr><td><b>Source data</b></td><td><code>non_conformity</code>, <code>work_order_operation</code>, <code>mes_disruptions</code>: owned by other
       teams. <code>fto2_ai_labels</code>: the stored cause labels, owned by the dashboard.</td></tr>
     <tr><td><b>The settings</b></td><td>The Fusion spreadsheet <i>FTO2 NC Dashboard - Settings</i> and its datasets <code>fto2_set_…</code>.</td></tr>
-    <tr><td><b>The pipeline</b></td><td>The Code Repository that runs the update on a schedule (its code, settings and station list). While it is
+    <tr><td><b>The pipeline</b></td><td>The Code Repository that runs the update on a schedule (its code, settings, station list and the production plan's exports). While it is
       not in use: the Code Workspace with the pipeline notebook.</td></tr>
     <tr><td><b>The four tables</b></td><td><code>fto2_dash_nc</code>, <code>fto2_dash_defects</code>, <code>fto2_dash_disruptions</code>,
       <code>fto2_dash_ref</code>.</td></tr>
     <tr><td><b>The sync</b></td><td>The four tables copied to Postgres, schema <code>foundry_sync</code>, same names; with them
-      <code>fto2_set_targets</code> (the sheet <i>Target and pages</i>, read by the pages) and, as <code>fto2_mft_store</code>, the
-      dataset the NC writer's action writes to (the MFT actions).</td></tr>
-    <tr><td><b>The Slate application</b></td><td>The pages and their queries (the four tables, the settings, the MFT actions); the NC writer, its object type <i>a30 Nc Writer Dataset</i>
+      <code>fto2_set_targets</code> (the sheet <i>Target and pages</i>, read by the pages). How the MFT page reads back the
+      actions it saves is not settled yet (<i>Known limits and open work</i>).</td></tr>
+    <tr><td><b>The Slate applications</b></td><td>One per page, each with its queries: the dashboard and the MFT page (the four tables, the settings, the MFT actions), and the NC writer, with its object type <i>a30 Nc Writer Dataset</i>
       and its action.</td></tr>
     <tr><td><b>The documents</b></td><td>The folder Quality › NC dashboard, with <i>for users</i> and <i>for developers</i>.</td></tr>
   </tbody>
@@ -37,7 +37,7 @@ holds, and nothing depends on one person's account.</p>
 <table class="keep">
   <thead><tr><th style="width:44mm">Object</th><th style="width:30mm">Reader</th><th style="width:40mm">Head of Quality, configuration manager</th><th>Developer</th></tr></thead>
   <tbody>
-    <tr><td>Slate application</td><td>view</td><td>view</td><td>edit</td></tr>
+    <tr><td>Slate applications</td><td>view</td><td>view</td><td>edit</td></tr>
     <tr><td>NC writer's action</td><td>run, for those who write NCs or change the MFT actions</td><td>run</td><td>edit</td></tr>
     <tr><td>The four tables, <code>fto2_set_targets</code>, <code>fto2_mft_store</code></td><td>view</td><td>view</td><td>edit</td></tr>
     <tr><td>Fusion spreadsheet</td><td>none</td><td>edit</td><td>edit</td></tr>

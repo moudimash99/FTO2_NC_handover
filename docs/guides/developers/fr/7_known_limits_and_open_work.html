@@ -64,9 +64,10 @@ peuvent voir.</p>
       ne peut sortir de Skywise vers un outil extérieur sans l’accord de l’IT et du propriétaire des données.</td></tr>
     <tr><td><b>Actions MFT gardées pour tous</b></td><td>En cours de mise en place sur la page MFT dans Skywise (le README de
       l’installation Skywise, étape 4) : les actions sont gardées dans un objet du type d’objet de la Saisie structurée de NC, et
-      enregistrées pour tous en un clic (l’enregistrement de la page remplit une variable, qui soumet l’action). Les actions
-      enregistrées seront lues par une requête de l’Ontologie (la source « API gateway » de Slate), car le dataset synchronisé
-      a du retard sur l’Ontologie. Sans cela, une action saisie sur la page reste dans ce navigateur. La cloche du tableau de
+      enregistrées pour tous en un clic (l’enregistrement de la page remplit une variable, qui soumet l’action). Reste à régler : la relecture des
+      actions enregistrées. La copie Postgres des données du type d’objet a du retard sur l’Ontologie, et la source
+      « foundry » de Slate n’a pas atteint l’API qui lit directement les objets. D’ici là, une action modifiée sur la page
+      n’est pas gardée. La cloche du tableau de
       bord ne connaît encore que les actions de la table.</td></tr>
     <tr><td><b>Les anciennes sorties</b></td><td>Tant que la ligne <code>garder_anciennes_sorties</code> vaut <code>oui</code>, la mise à jour écrit
       encore les tables de l’ancienne application Slate. Passez-la à <code>non</code> dès que plus personne n’utilise cette
